@@ -1,0 +1,22 @@
+# VPS — mọi giá trị từ deploy/.env (không có giá trị mặc định cho bí mật)
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 30       # postgres max_connections=50 (TECH_STACK mục 16.2)
+  data:
+    redis:
+      host: redis
+  mail:
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+genie:
+  storage:
+    endpoint: http://minio:9000
+  ai-worker:
+    url: http://ai-worker:8000
+
+logging:
+  level:
+    root: INFO

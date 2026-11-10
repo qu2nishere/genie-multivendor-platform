@@ -1,0 +1,35 @@
+# Deploy — TECH_STACK mục 15: Environment production (cần người duyệt) → SSH VPS → deploy.sh
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Phiên bản cần triển khai (vX.Y.Z)'
+        required: true
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Xác định TAG
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          RUN_TAG: ${{ github.event.workflow_run.head_branch }}
+        run: echo "tag=${INPUT_TAG:-$RUN_TAG}" >> "$GITHUB_OUTPUT"
+      - name: Triển khai qua SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/genie/deploy
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            ./scripts/deploy.sh ${{ steps.tag.outputs.tag }}

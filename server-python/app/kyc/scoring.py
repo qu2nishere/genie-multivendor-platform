@@ -1,0 +1,3 @@
+"""Tính riskScore: < 30 VERIFIED, 30–69 MANUAL_REVIEW, >= 70 REJECTED."""
+
+# TODO

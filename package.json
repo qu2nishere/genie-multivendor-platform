@@ -1,0 +1,19 @@
+{
+  "name": "genie-platform",
+  "private": true,
+  "description": "Công cụ gốc của monorepo: husky, commitlint, lint-staged (TECH_STACK mục 2.2)",
+  "scripts": {
+    "prepare": "husky",
+    "changelog": "git-cliff -o CHANGELOG.md"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "web/**/*.{ts,tsx,astro,js,mjs,cjs}": "npm --prefix web exec -- eslint --fix",
+    "web/**/*.{ts,tsx,astro,json,css,md}": "npm --prefix web exec -- prettier --write"
+  }
+}

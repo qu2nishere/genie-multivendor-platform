@@ -1,0 +1,41 @@
+# git-cliff — sinh CHANGELOG từ Conventional Commits (TECH_STACK mục 13.6)
+# Chạy: npx git-cliff --tag vX.Y.Z -o CHANGELOG.md
+
+[changelog]
+header = """
+# Changelog
+
+Mọi thay đổi đáng chú ý của Genie được ghi ở đây (SemVer, sinh tự động bằng git-cliff).\n
+"""
+body = """
+{% if version %}\
+## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {% if commit.scope %}**{{ commit.scope }}:** {% endif %}{{ commit.message | upper_first }}\
+{% endfor %}
+{% endfor %}\n
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+commit_parsers = [
+  { message = "^feat", group = "Tính năng" },
+  { message = "^fix", group = "Sửa lỗi" },
+  { message = "^perf", group = "Hiệu năng" },
+  { message = "^refactor", group = "Tái cấu trúc" },
+  { message = "^docs", group = "Tài liệu" },
+  { message = "^test", group = "Kiểm thử" },
+  { message = "^(build|ci)", group = "Build & CI" },
+  { message = "^chore\(release\)", skip = true },
+  { message = "^chore", group = "Việc vặt" },
+  { message = "^revert", group = "Hoàn tác" },
+]
+tag_pattern = "v[0-9].*"
+sort_commits = "oldest"

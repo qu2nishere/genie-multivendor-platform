@@ -1,0 +1,8 @@
+# Thay genie-team/... bằng team / tài khoản GitHub thật của nhóm
+*                     @genie-team/tech-lead
+/server-spring/       @genie-team/backend
+/server-python/       @genie-team/ai
+/web/                 @genie-team/frontend
+/deploy/              @genie-team/tech-lead
+/.github/             @genie-team/tech-lead
+/server-spring/src/main/resources/db/migration/  @genie-team/tech-lead @genie-team/backend

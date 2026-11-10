@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /server-spring
+    schedule: { interval: weekly }
+    commit-message: { prefix: build, include: scope }
+  - package-ecosystem: npm
+    directory: /web
+    schedule: { interval: weekly }
+    commit-message: { prefix: build, include: scope }
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: monthly }
+  - package-ecosystem: pip
+    directory: /server-python
+    schedule: { interval: weekly }
+    commit-message: { prefix: build, include: scope }
+  - package-ecosystem: docker
+    directory: /server-spring
+    schedule: { interval: monthly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }

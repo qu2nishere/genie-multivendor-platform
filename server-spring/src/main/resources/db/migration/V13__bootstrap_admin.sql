@@ -1,0 +1,3 @@
+-- Tạo Admin đầu tiên từ biến môi trường BOOTSTRAP_ADMIN_EMAIL, BOOTSTRAP_ADMIN_PASSWORD_HASH
+-- (truyền qua spring.flyway.placeholders.*)
+-- TODO: INSERT INTO users (...) VALUES ('${bootstrap_admin_email}', '${bootstrap_admin_password_hash}', 'ADMIN', ...);

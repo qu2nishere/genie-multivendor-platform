@@ -1,0 +1,7 @@
+# Từ điển teencode → từ chuẩn, mỗi dòng: <teencode>\t<từ chuẩn>
+# Phải GIỐNG HỆT bản dùng lúc huấn luyện PhoBERT
+ko	không
+k	không
+dc	được
+đc	được
+sp	sản phẩm

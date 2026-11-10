@@ -1,0 +1,3 @@
+-- Dữ liệu demo — CHỈ chạy ở profile local / demo (spring.flyway.locations thêm classpath:db/seed nếu tách)
+-- 1 Admin, 2 Staff, 5 shop đã KYC, ~200 sản phẩm, voucher mẫu
+-- TODO

@@ -1,0 +1,122 @@
+# Staging / demo trên VPS 4 vCPU / 8 GB — TECH_STACK mục 16
+# Chạy: export TAG=vX.Y.Z && docker compose pull && docker compose up -d   (deploy/scripts/deploy.sh)
+# Chỉ nginx mở cổng 80/443; postgres, redis, minio, ai-worker chỉ trong mạng nội bộ.
+
+x-common: &common
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  nginx:
+    <<: *common
+    image: nginx:1.27-alpine
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - certbot-www:/var/www/certbot:ro
+    depends_on: [frontend, backend, minio]
+    deploy: { resources: { limits: { memory: 64m } } }
+    healthcheck: { test: ["CMD", "nginx", "-t"], interval: 60s }
+
+  frontend:
+    <<: *common
+    image: ghcr.io/${GHCR_OWNER:-genie}/genie-frontend:${TAG}
+    environment:
+      PUBLIC_API_URL: ${PUBLIC_API_URL}
+      PUBLIC_S3_URL: ${PUBLIC_S3_URL}
+      INTERNAL_API_URL: http://backend:8080
+      PUBLIC_WEB_URL: ${PUBLIC_WEB_URL}
+    depends_on: [backend]
+    deploy: { resources: { limits: { memory: 384m } } }
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://localhost:4321/"], interval: 30s }
+
+  backend:
+    <<: *common
+    image: ghcr.io/${GHCR_OWNER:-genie}/genie-backend:${TAG}
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: -Xms512m -Xmx1536m
+      GENIE_VERSION: ${TAG}
+      REDIS_HOST: redis
+      MINIO_ENDPOINT: http://minio:9000
+      AI_WORKER_URL: http://ai-worker:8000
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio: { condition: service_healthy }
+    deploy: { resources: { limits: { memory: 2g } } }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      start_period: 90s
+
+  ai-worker:
+    <<: *common
+    image: ghcr.io/${GHCR_OWNER:-genie}/genie-ai-worker:${TAG}
+    environment:
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+      BACKEND_URL: http://backend:8080
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_APP_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_APP_SECRET_KEY}
+    volumes: [models:/app/models]
+    deploy: { resources: { limits: { memory: 2g } } }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      start_period: 120s
+
+  postgres:
+    <<: *common
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: genie
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    deploy: { resources: { limits: { memory: 2g } } }
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d genie"], interval: 10s }
+
+  redis:
+    <<: *common
+    image: redis:7-alpine
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redisdata:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    deploy: { resources: { limits: { memory: 320m } } }
+    healthcheck: { test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"], interval: 10s }
+
+  minio:
+    <<: *common
+    image: minio/minio:RELEASE.2024-08-17T01-24-54Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes: [miniodata:/data]
+    deploy: { resources: { limits: { memory: 512m } } }
+    healthcheck: { test: ["CMD", "mc", "ready", "local"], interval: 15s }
+
+  minio-init:
+    image: minio/mc:RELEASE.2024-08-17T11-33-50Z
+    depends_on: { minio: { condition: service_healthy } }
+    env_file: .env
+    entrypoint: ["/bin/sh", "/init.sh"]
+    volumes: [./minio/init.sh:/init.sh:ro]
+    restart: "no"
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  models:
+  certbot-www:

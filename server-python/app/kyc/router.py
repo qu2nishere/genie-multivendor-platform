@@ -1,0 +1,3 @@
+"""POST /kyc/verify"""
+
+# TODO

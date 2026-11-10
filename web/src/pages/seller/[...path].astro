@@ -1,0 +1,8 @@
+---
+import AppShellLayout from '@/layouts/AppShellLayout.astro';
+import SellerApp from '@/app/seller/SellerApp';
+---
+
+<AppShellLayout title="Kênh Người bán">
+  <SellerApp client:only="react" />
+</AppShellLayout>
