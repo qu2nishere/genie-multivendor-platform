@@ -1,0 +1,81 @@
+---
+// Footer storefront (prototype index.html Footer) — plan G07.19: SSR tĩnh, các nhóm liên kết chính sách
+// + nhóm "Bán hàng"; ở màn hẹp gập lại bằng <details> (không cần JS).
+import { listPolicyGroups, policyHref } from '@/features/policies';
+import { createT } from '@/shared/lib/i18n';
+import { GenieMark, GenieWordmark } from '@/shared/ui/brand';
+import { Icon } from '@/shared/ui/icon/Icon';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const groups = listPolicyGroups();
+const sell = [
+  { href: '/become-seller', label: t('layout.footer.become_seller') },
+  { href: '/seller', label: t('layout.footer.seller_center') },
+];
+---
+
+<footer class="tr-foot">
+  <div class="tr-foot__in" style={`--cols: ${groups.length + 1}`}>
+    <div>
+      <div class="tr-foot__brand" aria-label="Genie">
+        <GenieMark size={34} /><GenieWordmark fontPx={38} />
+      </div>
+      <p>{t('layout.footer.tagline')}</p>
+    </div>
+    {
+      groups.map((g) => (
+        <details class="tr-foot__group" open>
+          <summary class="tr-foot__head">
+            <h2 class="m-0 text-[inherit] font-[inherit]">{g.title}</h2>
+            <Icon name="chevron-down" size={18} />
+          </summary>
+          <ul class="list-none m-0 p-0">
+            {g.pages.map((p) => (
+              <li>
+                <a class="tr-foot__link" href={policyHref(p.slug)}>
+                  {p.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))
+    }
+    <details class="tr-foot__group" open>
+      <summary class="tr-foot__head">
+        <h2 class="m-0 text-[inherit] font-[inherit]">{t('layout.footer.selling')}</h2>
+        <Icon name="chevron-down" size={18} />
+      </summary>
+      <ul class="list-none m-0 p-0">
+        {
+          sell.map((l) => (
+            <li>
+              <a class="tr-foot__link" href={l.href}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+        <li><span class="tr-foot__link opacity-70">{t('layout.footer.app_soon')}</span></li>
+      </ul>
+    </details>
+  </div>
+  <div class="tr-foot__legal">{t('layout.footer.legal')}</div>
+</footer>
+
+<script>
+  // Màn hẹp: nhóm footer gập mặc định (prototype); màn rộng luôn mở. Không JS → luôn mở (vẫn bấm được).
+  const narrow = window.matchMedia('(max-width: 768px)');
+  const sync = () =>
+    document.querySelectorAll<HTMLDetailsElement>('.tr-foot__group').forEach((d) => {
+      d.open = !narrow.matches;
+    });
+  sync();
+  narrow.addEventListener('change', sync);
+  // Màn rộng: tiêu đề nhóm không gập (như prototype, chỉ là nhãn)
+  document.querySelectorAll('.tr-foot__head').forEach((s) =>
+    s.addEventListener('click', (e) => {
+      if (!narrow.matches) e.preventDefault();
+    }),
+  );
+</script>

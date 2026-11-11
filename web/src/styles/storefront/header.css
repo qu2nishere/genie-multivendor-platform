@@ -247,7 +247,7 @@
       width: 48px;
       height: 36px;
     }
-    .tr-user span {
+    .tr-user .tr-user__name {
       display: none;
     }
     .tr-user {
@@ -365,6 +365,21 @@
     .tr-cats {
       padding-left: 16px;
       padding-right: 16px;
+    }
+  }
+}
+
+/* Web: chữ "Genie" của logo là SVG (.tr-logo__word) thay cho <span> font "Genie Script" (G03.08);
+   cỡ theo prototype: 34px desktop/màn hẹp (themes.css), tối thiểu 20px ở 360px. */
+@layer components {
+  .tr-logo__word {
+    flex: none;
+    margin-top: 2px;
+  }
+  @media (max-width: 360px) {
+    .tr-logo__word {
+      height: 28px;
+      width: auto;
     }
   }
 }

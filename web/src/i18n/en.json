@@ -277,7 +277,17 @@
   },
   "layout": {
     "header": {
-      "home": "Genie — Home"
+      "home": "Genie — Home",
+      "sell": "Sell",
+      "language": "Language",
+      "help": "Help",
+      "notifications": "Notifications",
+      "notifications_unread": "Notifications, {count} unread",
+      "cart": "Cart",
+      "cart_count": "Cart, {count} items",
+      "categories": "Categories",
+      "all_categories": "All categories",
+      "theme": "Theme"
     },
     "notfound": {
       "title": "Page not found",
@@ -302,6 +312,58 @@
         "title": "Free shipping",
         "text": "Apply a free-shipping code right at checkout."
       }
+    },
+    "footer": {
+      "tagline": "A multi-seller marketplace that holds your money until you receive your order, with 7-day returns.",
+      "selling": "Selling",
+      "become_seller": "Become a seller",
+      "seller_center": "Seller Center",
+      "app_soon": "Mobile app (coming soon)",
+      "legal": "© 2026 Genie (working name). Student project prototype with sample data. Prices in VND (₫)."
+    }
+  },
+  "notifications": {
+    "panel": {
+      "title": "Notifications",
+      "mark_all": "Mark all as read",
+      "empty": "No notifications yet",
+      "see_all": "See all notifications"
+    }
+  },
+  "cart": {
+    "mini": {
+      "empty_title": "Your cart is empty",
+      "empty_text": "Add products to your cart to keep shopping",
+      "recent": "Recently added",
+      "more": "{count} more items in your cart",
+      "view": "View cart"
+    }
+  },
+  "auth": {
+    "prompt": {
+      "title": "Please sign in",
+      "text": "You need to sign in to use this feature.",
+      "later": "Later"
+    },
+    "menu": {
+      "label": "Account",
+      "profile": "My account",
+      "orders": "My orders",
+      "seller": "Seller Center",
+      "switch": "Switch to Seller Center",
+      "logout_confirm": "Are you sure you want to sign out of {name}?"
+    }
+  },
+  "search": {
+    "box": {
+      "placeholder": "Search products, brands, verified shops…",
+      "submit": "Search"
+    },
+    "suggest": {
+      "label": "Search suggestions",
+      "trending": "Trending",
+      "category": "Category",
+      "shop": "Shop"
     }
   }
 }

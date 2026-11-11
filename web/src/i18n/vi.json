@@ -277,7 +277,17 @@
   },
   "layout": {
     "header": {
-      "home": "Genie — Trang chủ"
+      "home": "Genie — Trang chủ",
+      "sell": "Bán hàng",
+      "language": "Ngôn ngữ",
+      "help": "Hỗ trợ",
+      "notifications": "Thông báo",
+      "notifications_unread": "Thông báo, {count} chưa đọc",
+      "cart": "Giỏ hàng",
+      "cart_count": "Giỏ hàng, {count} sản phẩm",
+      "categories": "Danh mục",
+      "all_categories": "Tất cả danh mục",
+      "theme": "Giao diện"
     },
     "notfound": {
       "title": "Không tìm thấy trang",
@@ -302,6 +312,58 @@
         "title": "Freeship",
         "text": "Áp mã freeship ngay ở bước thanh toán."
       }
+    },
+    "footer": {
+      "tagline": "Sàn đa người bán giữ tiền của bạn đến khi bạn nhận hàng, kèm 7 ngày đổi trả.",
+      "selling": "Bán hàng",
+      "become_seller": "Trở thành Người bán",
+      "seller_center": "Kênh người bán",
+      "app_soon": "Ứng dụng di động (sắp ra mắt)",
+      "legal": "© 2026 Genie (tên tạm). Bản mẫu đồ án, dữ liệu minh họa. Giá hiển thị bằng VND (₫)."
+    }
+  },
+  "notifications": {
+    "panel": {
+      "title": "Thông báo",
+      "mark_all": "Đánh dấu đã đọc",
+      "empty": "Chưa có thông báo nào",
+      "see_all": "Xem tất cả thông báo"
+    }
+  },
+  "cart": {
+    "mini": {
+      "empty_title": "Giỏ hàng của bạn đang trống",
+      "empty_text": "Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm",
+      "recent": "Sản phẩm mới thêm",
+      "more": "Còn {count} sản phẩm trong giỏ",
+      "view": "Xem Giỏ Hàng"
+    }
+  },
+  "auth": {
+    "prompt": {
+      "title": "Vui lòng đăng nhập",
+      "text": "Bạn cần đăng nhập để thực hiện tính năng này.",
+      "later": "Để sau"
+    },
+    "menu": {
+      "label": "Tài khoản",
+      "profile": "Tài khoản của tôi",
+      "orders": "Đơn mua",
+      "seller": "Kênh người bán",
+      "switch": "Chuyển sang Kênh người bán",
+      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name}?"
+    }
+  },
+  "search": {
+    "box": {
+      "placeholder": "Tìm sản phẩm, thương hiệu, shop đã xác minh…",
+      "submit": "Tìm"
+    },
+    "suggest": {
+      "label": "Gợi ý tìm kiếm",
+      "trending": "Xu hướng",
+      "category": "Danh mục",
+      "shop": "Shop"
     }
   }
 }

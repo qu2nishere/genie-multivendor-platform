@@ -70,7 +70,8 @@ module.exports = {
           { from: 'middleware', allow: ['shared', 'shared-lib'] },
           {
             from: 'layouts',
-            allow: ['features-public', 'layouts', 'shared', 'shared-lib', 'shared-hooks', 'styles', 'assets'],
+            // app: island lớn (Header) cần Providers (QueryClient, locale, phiên)
+            allow: ['features-public', 'layouts', 'shared', 'shared-lib', 'shared-hooks', 'styles', 'assets', 'app'],
           },
           { from: 'app', allow: ['features-public', 'shared', 'shared-lib', 'shared-hooks', 'app'] },
           {

@@ -1,9 +1,13 @@
 ---
 // Khung trang storefront (plan G07.04, G07.06; TS 2.4): SEO + Open Graph, theme, nhãn bỏ qua,
-// nền trời, <main id="main">, toast. Header / Footer gắn ở G07.13 / G07.19.
+// nền trời, Header (island client:load), <main id="main">, Footer (SSR tĩnh), toast.
 import SeoHead from './partials/SeoHead.astro';
 import ThemeBoot from './partials/ThemeBoot.astro';
+import Footer from './storefront/Footer.astro';
+import Header from './storefront/Header';
 import ToastHost from './storefront/ToastHost';
+import { buildTree, listCategories } from '@/features/catalog';
+import { LOGGED_IN_COOKIE } from '@/shared/auth/session';
 import { createT } from '@/shared/lib/i18n';
 import type { JsonLd } from '@/shared/lib/seo';
 import '@/styles/global.css';
@@ -26,9 +30,20 @@ interface Props {
   task?: boolean;
   /** Trang chủ: nền trời cao theo hero (tr-main--home). */
   home?: boolean;
+  /** Chữ đang tìm (giữ lại trong ô tìm kiếm trên trang /search). */
+  query?: string;
 }
 
-const { variant, task = false, home = false, ...seo } = Astro.props;
+const { variant, task = false, home = false, query, ...seo } = Astro.props;
+// Hàng danh mục header: SSR lấy cây danh mục (gốc + con cho ngăn kéo màn hẹp)
+const categories = buildTree(await listCategories()).map((c) => ({
+  slug: c.slug,
+  name: c.name,
+  icon: c.icon,
+  children: c.children.map((s) => ({ slug: s.slug, name: s.name })),
+}));
+const loggedInHint = Astro.cookies.has(LOGGED_IN_COOKIE);
+const path = Astro.url.pathname + Astro.url.search;
 const lang = Astro.locals.lang ?? 'vi';
 const t = createT(lang);
 const rootClass = ['tr-root', variant && `tr-root--${variant}`, task && 'tr-root--task']
@@ -46,11 +61,17 @@ const rootClass = ['tr-root', variant && `tr-root--${variant}`, task && 'tr-root
     <a class="tr-skip" href="#main">{t('common.label.skip_to_content')}</a>
     <div class={rootClass}>
       <div class="tr-sky" aria-hidden="true"></div>
-      <slot name="header" />
+      <Header
+        client:load
+        categories={categories}
+        loggedInHint={loggedInHint}
+        path={path}
+        initialQuery={query}
+      />
       <main id="main" tabindex="-1" class:list={['tr-main', home && 'tr-main--home']}>
         <slot />
       </main>
-      <slot name="footer" />
+      <Footer />
       <slot name="overlays" />
     </div>
     <ToastHost client:idle />

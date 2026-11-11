@@ -113,10 +113,10 @@
       display: block !important;
       transition: transform var(--dur-base) var(--ease-out);
     }
-    .tr-foot__group[data-open='1'] .tr-foot__head svg {
+    .tr-foot__group[open] .tr-foot__head svg {
       transform: rotate(180deg);
     }
-    .tr-foot__group:not([data-open='1']) .tr-foot__link {
+    .tr-foot__group:not([open]) .tr-foot__link {
       display: none;
     }
     .tr-foot__link {
@@ -144,5 +144,41 @@
   }
   .tr-foot__legal {
     padding: 12px 24px;
+  }
+}
+
+/* Web: mỗi nhóm footer là <details>/<summary> (gập ở màn hẹp không cần JS) thay cho
+   <button> + data-open của prototype; tiêu đề nhóm là <h2> trong summary (thứ tự tiêu đề R18). */
+@layer components {
+  .tr-foot__group > summary {
+    list-style: none;
+    margin: 0 0 8px;
+  }
+  .tr-foot__group > summary::-webkit-details-marker {
+    display: none;
+  }
+  .tr-foot__head h2 {
+    font: var(--weight-bold) 13px var(--font-sans);
+    color: var(--text-inverse);
+  }
+  .tr-foot__group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Prototype dùng <button> cho liên kết footer: không gạch chân (base.css gạch chân li a) */
+  .tr-foot__group li a.tr-foot__link {
+    text-decoration: none;
+  }
+  .tr-foot__group li a.tr-foot__link:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 768px) {
+    .tr-foot__group > summary {
+      margin: 0;
+    }
+    .tr-foot__head h2 {
+      font-size: var(--text-sm);
+    }
   }
 }

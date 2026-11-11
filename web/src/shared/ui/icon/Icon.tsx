@@ -53,3 +53,7 @@ export function Icon({
 }
 
 export type { IconName };
+
+/** Chuỗi bất kỳ (icon danh mục / thông báo từ dữ liệu) → IconName hợp lệ, không có thì dùng `fallback`. */
+export const toIconName = (s: string, fallback: IconName = 'package'): IconName =>
+  Object.prototype.hasOwnProperty.call(ICONS, s) ? (s as IconName) : fallback;
