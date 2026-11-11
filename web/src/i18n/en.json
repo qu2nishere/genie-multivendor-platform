@@ -262,6 +262,17 @@
     "wishlist": {
       "add": "Add to wishlist",
       "remove": "Remove from wishlist"
+    },
+    "dash": {
+      "no_data": "No data to compare yet",
+      "no_data_against": "No data {against} yet",
+      "waiting": "{count} tasks waiting for you",
+      "no_backlog": "Nothing waiting",
+      "moving": "{count} orders in progress",
+      "outcomes": "How finished orders ended",
+      "chart_aria": "{name}. Peak {max} on {at}. Use the arrow keys to read each point.",
+      "as_table": "View as table",
+      "point": "Point"
     }
   }
 }

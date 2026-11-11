@@ -262,6 +262,17 @@
     "wishlist": {
       "add": "Yêu thích",
       "remove": "Bỏ yêu thích"
+    },
+    "dash": {
+      "no_data": "Chưa có dữ liệu so sánh",
+      "no_data_against": "Chưa có dữ liệu {against}",
+      "waiting": "{count} việc đang chờ bạn",
+      "no_backlog": "Không có việc tồn",
+      "moving": "{count} đơn đang xử lý",
+      "outcomes": "Kết quả các đơn đã xong",
+      "chart_aria": "{name}. Cao nhất {max} vào {at}. Dùng phím mũi tên để đọc từng mốc.",
+      "as_table": "Xem dạng bảng",
+      "point": "Mốc"
     }
   }
 }

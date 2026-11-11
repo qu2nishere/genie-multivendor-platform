@@ -62,6 +62,21 @@ export function formatCompact(n: number, opts: Opts = {}): string {
 }
 
 /**
+ * Tiền rút gọn cho trục biểu đồ / chỗ hẹp (prototype dash.jsx short):
+ * vi "1,84 tỷ" / "45,8 tr" / "950k"; en "1.84B" / "45.8M" / "950k".
+ */
+export function formatMoneyShort(n: number, opts: Opts = {}): string {
+  const l = opts.locale ?? currentLocale();
+  const tag = intlTag(l);
+  const trim = (v: number, d: number) => numberFormat(tag, { maximumFractionDigits: d }).format(v);
+  const a = Math.abs(n);
+  if (a >= 1e9) return trim(n / 1e9, 2) + (l === 'vi' ? ' tỷ' : 'B');
+  if (a >= 1e6) return trim(n / 1e6, 1) + (l === 'vi' ? ' tr' : 'M');
+  if (a >= 1e3) return trim(n / 1e3, 0) + 'k';
+  return trim(n, 0);
+}
+
+/**
  * Đọc ngược chuỗi gọn ("1,2k", "980", "2.5M", "1.250") → số.
  * Thay parseSold lặp ở Category / Search / Shop của prototype.
  */
