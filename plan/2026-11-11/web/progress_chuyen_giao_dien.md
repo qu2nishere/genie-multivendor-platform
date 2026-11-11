@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-11 — mới lập, chưa bắt đầu |
+| **Cập nhật gần nhất** | 2026-11-11 — xong G00–G06 (nền tảng: công cụ, token, tài sản, shared/lib, shared/api, shared/ui); đang G07 trên `feature/web-storefront-public` |
 
 **Cách dùng**
 
@@ -32,20 +32,20 @@
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| G00 | Chuẩn bị repo, nhánh, môi trường | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
-| G01 | Công cụ & cấu hình `web/` | 11 | 1 | 0 / 12 | 12 / 12 | — | `feature/web-foundation` 
-| G02 | Token thiết kế, font, theme Tailwind, CSS nền | 15 | 2 | 0 / 17 | 17 / 17 | — | `feature/web-foundation` 
-| G03 | Tài sản tĩnh & thương hiệu | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
-| G04 | `shared/lib`, hook dùng chung, nền i18n | 14 | 1 | 0 / 15 | 15 / 15 | — | `feature/web-foundation` 
-| G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
-| G06 | `shared/ui` (design system) | 37 | 5 | 0 / 42 | 42 / 42 | — | `feature/web-foundation` 
-| G07 | Layout & khung trang | 26 | 4 | 0 / 30 | 0 / 30 | |
-| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 0 / 61 | 0 / 61 | |
-| G09 | Xác thực | 14 | 1 | 0 / 15 | 0 / 15 | |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 | 0 / 75 | |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 | 0 / 51 | |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 | 0 / 52 | |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 | 0 / 26 | |
+| G00 | Chuẩn bị repo, nhánh, môi trường | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
+| G01 | Công cụ & cấu hình `web/` | 11 | 1 | 12 / 12 | — | `feature/web-foundation` |
+| G02 | Token thiết kế, font, theme Tailwind, CSS nền | 15 | 2 | 17 / 17 | — | `feature/web-foundation` |
+| G03 | Tài sản tĩnh & thương hiệu | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
+| G04 | `shared/lib`, hook dùng chung, nền i18n | 14 | 1 | 15 / 15 | — | `feature/web-foundation` |
+| G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
+| G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
+| G07 | Layout & khung trang | 26 | 4 | 0 / 30 |  |  |
+| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 0 / 61 |  |  |
+| G09 | Xác thực | 14 | 1 | 0 / 15 |  |  |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
 | **Tổng** | | **379** | **50** | **119 / 429** | | |
 
 ---
@@ -741,3 +741,4 @@
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-11 | Lập plan và progress | |
+| 2026-11-11 | G00–G06: nhánh develop + feature/web-foundation, công cụ (Prettier, Vitest, Playwright, ESLint boundaries), token + Tailwind, tài sản thương hiệu, shared/lib (i18n, format, storage, seo), shared/api (http, mock, lỗi GNE-*), shared/ui (40+ component + bộ thống kê), thư viện /dev/ui | 46557a9 … f6095a3 |
