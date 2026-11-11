@@ -1,5 +1,6 @@
 // Danh mục: mock khi USE_MOCK, sau này gọi /api/v1/public/categories (giữ nguyên chữ ký hàm).
 import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { SEED_VERIFIED_BRANDS } from '@/shared/api/mock/seed';
 import { serverHttp } from '@/shared/api/server-http';
 import type { AttributeFilter, Category } from '../domain/catalog.types';
 import type { AttributeFilterDto, CategoryDto } from './catalog.dto';
@@ -45,4 +46,10 @@ export async function listAttributeFilters(categoryId: number): Promise<Attribut
 /** Mock: id sản phẩm thuộc danh mục con (prototype nhóm theo ảnh). Backend lọc thẳng theo category_id. */
 export function mockProductIdsOfSubcategory(categoryId: number): readonly number[] | undefined {
   return SUB_CATEGORY_PRODUCTS[categoryId];
+}
+
+/** Thương hiệu đã xác minh (prototype VERIFIED_BRANDS) — bộ lọc "Thương hiệu" hiện dấu tích. */
+export async function listVerifiedBrands(): Promise<string[]> {
+  if (USE_MOCK) return [...SEED_VERIFIED_BRANDS];
+  return serverHttp<string[]>('/public/brands/verified');
 }

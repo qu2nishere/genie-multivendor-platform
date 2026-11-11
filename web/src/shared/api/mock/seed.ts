@@ -24,6 +24,7 @@ export const SEED_SHOPS = [
     description: 'Thiết bị công nghệ chính hãng — bảo hành 12 tháng.',
     vacation: null,
     followed: true,
+    is_favorite: false,
   },
   {
     id: 2,
@@ -44,6 +45,7 @@ export const SEED_SHOPS = [
     description: 'Giày sneaker & thời trang chính hãng.',
     vacation: null,
     followed: false,
+    is_favorite: true,
   },
   {
     id: 3,
@@ -64,6 +66,7 @@ export const SEED_SHOPS = [
     description: 'Thời trang nam nữ phong cách Hàn Quốc.',
     vacation: null,
     followed: true,
+    is_favorite: false,
   },
   {
     id: 4,
@@ -84,6 +87,7 @@ export const SEED_SHOPS = [
     description: 'Đồ gia dụng & trang trí nhà cửa.',
     vacation: null,
     followed: false,
+    is_favorite: true,
   },
   {
     id: 5,
@@ -104,6 +108,7 @@ export const SEED_SHOPS = [
     description: 'Mỹ phẩm & chăm sóc da chính hãng.',
     vacation: null,
     followed: true,
+    is_favorite: false,
   },
   {
     id: 6,
@@ -127,6 +132,7 @@ export const SEED_SHOPS = [
       message: 'Shop đang tạm nghỉ, sẽ trả lời bạn khi mở lại nhé!',
     },
     followed: false,
+    is_favorite: false,
   },
 ] as const;
 

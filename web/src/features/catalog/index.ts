@@ -7,4 +7,5 @@ export {
   getCategoryBySlug,
   listAttributeFilters,
   mockProductIdsOfSubcategory,
+  listVerifiedBrands,
 } from './infrastructure/catalog.api';
