@@ -32,13 +32,13 @@
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| G00 | Chuẩn bị repo, nhánh, môi trường | 10 | 1 | 0 / 11 | 10 / 11 | |
-| G01 | Công cụ & cấu hình `web/` | 11 | 1 | 0 / 12 | 0 / 12 | |
-| G02 | Token thiết kế, font, theme Tailwind, CSS nền | 15 | 2 | 0 / 17 | 0 / 17 | |
-| G03 | Tài sản tĩnh & thương hiệu | 10 | 1 | 0 / 11 | 0 / 11 | |
-| G04 | `shared/lib`, hook dùng chung, nền i18n | 14 | 1 | 0 / 15 | 0 / 15 | |
-| G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 0 / 11 | 0 / 11 | |
-| G06 | `shared/ui` (design system) | 37 | 5 | 0 / 42 | 0 / 42 | |
+| G00 | Chuẩn bị repo, nhánh, môi trường | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
+| G01 | Công cụ & cấu hình `web/` | 11 | 1 | 0 / 12 | 12 / 12 | — | `feature/web-foundation` 
+| G02 | Token thiết kế, font, theme Tailwind, CSS nền | 15 | 2 | 0 / 17 | 17 / 17 | — | `feature/web-foundation` 
+| G03 | Tài sản tĩnh & thương hiệu | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
+| G04 | `shared/lib`, hook dùng chung, nền i18n | 14 | 1 | 0 / 15 | 15 / 15 | — | `feature/web-foundation` 
+| G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 0 / 11 | 11 / 11 | — | `feature/web-foundation` 
+| G06 | `shared/ui` (design system) | 37 | 5 | 0 / 42 | 42 / 42 | — | `feature/web-foundation` 
 | G07 | Layout & khung trang | 26 | 4 | 0 / 30 | 0 / 30 | |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 0 / 61 | 0 / 61 | |
 | G09 | Xác thực | 14 | 1 | 0 / 15 | 0 / 15 | |
@@ -46,7 +46,7 @@
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 | 0 / 51 | |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 | 0 / 52 | |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 | 0 / 26 | |
-| **Tổng** | | **379** | **50** | **10 / 429** | | |
+| **Tổng** | | **379** | **50** | **119 / 429** | | |
 
 ---
 
@@ -62,154 +62,154 @@
 - [x] **G00.08** Đo baseline
 - [x] **G00.09** Dựng bản đối chiếu
 - [x] **G00.10** Chụp ảnh tham chiếu
-- [ ] **G00.C1** 🔖 COMMIT `docs: add web ui migration plan and progress tracker` · hash: `_______`
+- [x] **G00.C1** 🔖 COMMIT `docs: add web ui migration plan and progress tracker` · hash: `46557a9`
 
 ## G01 — Công cụ & cấu hình `web/`
 
-- [ ] **G01.01** Prettier
-- [ ] **G01.02** Vitest
-- [ ] **G01.03** Playwright
-- [ ] **G01.04** Biến môi trường
-- [ ] **G01.05** Kiểu môi trường
-- [ ] **G01.06** ESLint boundaries
-- [ ] **G01.07** ESLint import sâu
-- [ ] **G01.08** ESLint cho test & cấu hình
-- [ ] **G01.09** Script `verify`
-- [ ] **G01.10** `check-i18n.mjs`
-- [ ] **G01.11** Sửa lỗi baseline
-- [ ] **G01.C1** 🔖 COMMIT `build(web): add prettier, vitest, playwright config and env example` · hash: `_______`
+- [x] **G01.01** Prettier
+- [x] **G01.02** Vitest
+- [x] **G01.03** Playwright
+- [x] **G01.04** Biến môi trường
+- [x] **G01.05** Kiểu môi trường
+- [x] **G01.06** ESLint boundaries
+- [x] **G01.07** ESLint import sâu
+- [x] **G01.08** ESLint cho test & cấu hình
+- [x] **G01.09** Script `verify`
+- [x] **G01.10** `check-i18n.mjs`
+- [x] **G01.11** Sửa lỗi baseline
+- [x] **G01.C1** 🔖 COMMIT `build(web): add prettier, vitest, playwright config and env example` · hash: `d787910`
 
 ## G02 — Token thiết kế, font, theme Tailwind, CSS nền
 
 
 **Nhóm A — Token**
 
-- [ ] **G02.01** Font tệp
-- [ ] **G02.02** Token font
-- [ ] **G02.03** Token màu
-- [ ] **G02.04** Token chữ
-- [ ] **G02.05** Token khoảng cách
-- [ ] **G02.06** Token hiệu ứng
-- [ ] **G02.07** CSS nền
-- [ ] **G02.08** Sửa `global.css`
-- [ ] **G02.C1** 🔖 COMMIT `feat(web): port design tokens and base styles from prototype` · hash: `_______`
+- [x] **G02.01** Font tệp
+- [x] **G02.02** Token font
+- [x] **G02.03** Token màu
+- [x] **G02.04** Token chữ
+- [x] **G02.05** Token khoảng cách
+- [x] **G02.06** Token hiệu ứng
+- [x] **G02.07** CSS nền
+- [x] **G02.08** Sửa `global.css`
+- [x] **G02.C1** 🔖 COMMIT `feat(web): port design tokens and base styles from prototype` · hash: `674cb5c`
 
 **Nhóm B — Tailwind**
 
-- [ ] **G02.09** Tailwind màu
-- [ ] **G02.10** Tailwind hình khối
-- [ ] **G02.11** Tailwind chữ
-- [ ] **G02.12** Tailwind bố cục
-- [ ] **G02.13** Responsive
-- [ ] **G02.14** Kiểm kê lớp `lz-*`
-- [ ] **G02.15** Trang thư viện nội bộ
-- [ ] **G02.C2** 🔖 COMMIT `feat(web): map prototype tokens into tailwind theme` · hash: `_______`
+- [x] **G02.09** Tailwind màu
+- [x] **G02.10** Tailwind hình khối
+- [x] **G02.11** Tailwind chữ
+- [x] **G02.12** Tailwind bố cục
+- [x] **G02.13** Responsive
+- [x] **G02.14** Kiểm kê lớp `lz-*`
+- [x] **G02.15** Trang thư viện nội bộ
+- [x] **G02.C2** 🔖 COMMIT `feat(web): map prototype tokens into tailwind theme` · hash: `fb6c735`
 
 ## G03 — Tài sản tĩnh & thương hiệu
 
-- [ ] **G03.01** Ảnh sản phẩm mẫu
-- [ ] **G03.02** Banner
-- [ ] **G03.03** Logo thanh toán
-- [ ] **G03.04** SVG thương hiệu
-- [ ] **G03.05** Favicon
-- [ ] **G03.06** `GenieMark` / `GenieLogo`
-- [ ] **G03.07** `GenieCoin`
-- [ ] **G03.08** Font logo
-- [ ] **G03.09** Ảnh nền theme
-- [ ] **G03.10** Hằng đường dẫn ảnh
-- [ ] **G03.C1** 🔖 COMMIT `feat(web): add brand assets and mock catalog images` · hash: `_______`
+- [x] **G03.01** Ảnh sản phẩm mẫu
+- [x] **G03.02** Banner
+- [x] **G03.03** Logo thanh toán
+- [x] **G03.04** SVG thương hiệu
+- [x] **G03.05** Favicon
+- [x] **G03.06** `GenieMark` / `GenieLogo`
+- [x] **G03.07** `GenieCoin`
+- [x] **G03.08** Font logo
+- [x] **G03.09** Ảnh nền theme
+- [x] **G03.10** Hằng đường dẫn ảnh
+- [x] **G03.C1** 🔖 COMMIT `feat(web): add brand assets and mock catalog images` · hash: `29e40e3`
 
 ## G04 — `shared/lib`, hook dùng chung, nền i18n
 
-- [ ] **G04.01** `cn()`
-- [ ] **G04.02** Định dạng tiền
-- [ ] **G04.03** Định dạng ngày & số
-- [ ] **G04.04** Che dữ liệu
-- [ ] **G04.05** Test định dạng
-- [ ] **G04.06** Lưu trình duyệt
-- [ ] **G04.07** Hàm `t()`
-- [ ] **G04.08** Hook `useT()`
-- [ ] **G04.09** Test i18n
-- [ ] **G04.10** Quy ước không gian khóa
-- [ ] **G04.11** Công cụ tra bản dịch
-- [ ] **G04.12** SEO
-- [ ] **G04.13** Hook dùng chung
-- [ ] **G04.14** Cập nhật boundaries
-- [ ] **G04.C1** 🔖 COMMIT `feat(web): add i18n, formatting, storage and shared hooks` · hash: `_______`
+- [x] **G04.01** `cn()`
+- [x] **G04.02** Định dạng tiền
+- [x] **G04.03** Định dạng ngày & số
+- [x] **G04.04** Che dữ liệu
+- [x] **G04.05** Test định dạng
+- [x] **G04.06** Lưu trình duyệt
+- [x] **G04.07** Hàm `t()`
+- [x] **G04.08** Hook `useT()`
+- [x] **G04.09** Test i18n
+- [x] **G04.10** Quy ước không gian khóa
+- [x] **G04.11** Công cụ tra bản dịch
+- [x] **G04.12** SEO
+- [x] **G04.13** Hook dùng chung
+- [x] **G04.14** Cập nhật boundaries
+- [x] **G04.C1** 🔖 COMMIT `feat(web): add i18n, formatting, storage and shared hooks` · hash: `6510c2b`
 
 ## G05 — `shared/api`, phiên đăng nhập, lớp mock
 
-- [ ] **G05.01** Kiểu phong bì API
-- [ ] **G05.02** Lỗi
-- [ ] **G05.03** `http.ts`
-- [ ] **G05.04** `server-http.ts`
-- [ ] **G05.05** `idempotency.ts`
-- [ ] **G05.06** Lớp mock
-- [ ] **G05.07** Phiên
-- [ ] **G05.08** Quyền
-- [ ] **G05.09** Providers
-- [ ] **G05.10** Test
-- [ ] **G05.C1** 🔖 COMMIT `feat(web): add api client, session, permissions and mock layer` · hash: `_______`
+- [x] **G05.01** Kiểu phong bì API
+- [x] **G05.02** Lỗi
+- [x] **G05.03** `http.ts`
+- [x] **G05.04** `server-http.ts`
+- [x] **G05.05** `idempotency.ts`
+- [x] **G05.06** Lớp mock
+- [x] **G05.07** Phiên
+- [x] **G05.08** Quyền
+- [x] **G05.09** Providers
+- [x] **G05.10** Test
+- [x] **G05.C1** 🔖 COMMIT `feat(web): add api client, session, permissions and mock layer` · hash: `b44e30c`
 
 ## G06 — `shared/ui` (design system)
 
 
 **Nhóm A — Phần tử cơ bản**
 
-- [ ] **G06.01** `Icon`
-- [ ] **G06.02** `Button`
-- [ ] **G06.03** `IconButton`
-- [ ] **G06.04** `Input`
-- [ ] **G06.05** `Textarea`
-- [ ] **G06.06** `PasswordInput`
-- [ ] **G06.07** `Checkbox`, `Radio`, `Switch`
-- [ ] **G06.08** `Select`
-- [ ] **G06.09** `Tabs`, `Segmented`
-- [ ] **G06.10** `Badge`, `StatusBadge`, `Tag`
-- [ ] **G06.11** `Avatar`
-- [ ] **G06.C1** 🔖 COMMIT `feat(web): add base form and display components to shared ui` · hash: `_______`
+- [x] **G06.01** `Icon`
+- [x] **G06.02** `Button`
+- [x] **G06.03** `IconButton`
+- [x] **G06.04** `Input`
+- [x] **G06.05** `Textarea`
+- [x] **G06.06** `PasswordInput`
+- [x] **G06.07** `Checkbox`, `Radio`, `Switch`
+- [x] **G06.08** `Select`
+- [x] **G06.09** `Tabs`, `Segmented`
+- [x] **G06.10** `Badge`, `StatusBadge`, `Tag`
+- [x] **G06.11** `Avatar`
+- [x] **G06.C1** 🔖 COMMIT `feat(web): add base form and display components to shared ui` · hash: `cbc0ee1`
 
 **Nhóm B — Lớp phủ & phản hồi**
 
-- [ ] **G06.12** `Modal`
-- [ ] **G06.13** `Popover` / `Dropdown`
-- [ ] **G06.14** `Toast`
-- [ ] **G06.15** `EmptyState`, `Skeleton`, `Spinner`
-- [ ] **G06.16** `OtpInput`
-- [ ] **G06.17** `Countdown`
-- [ ] **G06.18** `Pagination`
-- [ ] **G06.19** `Card`, `PanelHead`, `SectionHead`
-- [ ] **G06.C2** 🔖 COMMIT `feat(web): add overlay and feedback components to shared ui` · hash: `_______`
+- [x] **G06.12** `Modal`
+- [x] **G06.13** `Popover` / `Dropdown`
+- [x] **G06.14** `Toast`
+- [x] **G06.15** `EmptyState`, `Skeleton`, `Spinner`
+- [x] **G06.16** `OtpInput`
+- [x] **G06.17** `Countdown`
+- [x] **G06.18** `Pagination`
+- [x] **G06.19** `Card`, `PanelHead`, `SectionHead`
+- [x] **G06.C2** 🔖 COMMIT `feat(web): add overlay and feedback components to shared ui` · hash: `225e430`
 
 **Nhóm C — Thành phần thương mại**
 
-- [ ] **G06.20** `Price`
-- [ ] **G06.21** `Rating`
-- [ ] **G06.22** `QuantityStepper`
-- [ ] **G06.23** `ProductCard`
-- [ ] **G06.24** `VendorChip`, `Seal`
-- [ ] **G06.25** `VoucherTag`, `Ticket`
-- [ ] **G06.26** `QrPlaceholder`
-- [ ] **G06.27** `DataTable`
-- [ ] **G06.28** `Field`, `FormSection`, `DateInput`
-- [ ] **G06.C3** 🔖 COMMIT `feat(web): add commerce and data components to shared ui` · hash: `_______`
+- [x] **G06.20** `Price`
+- [x] **G06.21** `Rating`
+- [x] **G06.22** `QuantityStepper`
+- [x] **G06.23** `ProductCard`
+- [x] **G06.24** `VendorChip`, `Seal`
+- [x] **G06.25** `VoucherTag`, `Ticket`
+- [x] **G06.26** `QrPlaceholder`
+- [x] **G06.27** `DataTable`
+- [x] **G06.28** `Field`, `FormSection`, `DateInput`
+- [x] **G06.C3** 🔖 COMMIT `feat(web): add commerce and data components to shared ui` · hash: `a703360`
 
 **Nhóm D — Bộ thống kê (`dash.jsx` + `dash.css`)**
 
-- [ ] **G06.29** `Delta`, `StatTile`, `Kpi`
-- [ ] **G06.30** `WorkQueue`, `Pipeline`
-- [ ] **G06.31** `BarList`, `StackBar`, `SegBar`
-- [ ] **G06.32** `TimeChart`
-- [ ] **G06.33** `dash.css`
-- [ ] **G06.34** Test hàm thuần
-- [ ] **G06.C4** 🔖 COMMIT `feat(web): add dashboard chart components to shared ui` · hash: `_______`
+- [x] **G06.29** `Delta`, `StatTile`, `Kpi`
+- [x] **G06.30** `WorkQueue`, `Pipeline`
+- [x] **G06.31** `BarList`, `StackBar`, `SegBar`
+- [x] **G06.32** `TimeChart`
+- [x] **G06.33** `dash.css`
+- [x] **G06.34** Test hàm thuần
+- [x] **G06.C4** 🔖 COMMIT `feat(web): add dashboard chart components to shared ui` · hash: `4b76a89`
 
 **Nhóm E — Rà soát**
 
-- [ ] **G06.35** Xuất tập trung
-- [ ] **G06.36** Thư viện nội bộ
-- [ ] **G06.37** Xóa stub cũ
-- [ ] **G06.C5** 🔖 COMMIT `feat(web): add component gallery and shared ui barrel` · hash: `_______`
+- [x] **G06.35** Xuất tập trung
+- [x] **G06.36** Thư viện nội bộ
+- [x] **G06.37** Xóa stub cũ
+- [x] **G06.C5** 🔖 COMMIT `feat(web): add component gallery and shared ui barrel` · hash: `f6095a3`
 
 ## G07 — Layout & khung trang
 
@@ -677,7 +677,26 @@
 
 | Lớp CSS prototype | Component đích | Xong |
 |---|---|---|
-| | | |
+| `.lz-btn` (+ `--secondary/outline/ghost/subtle/danger/sm/lg/block`) | `Button` | ☑ |
+| `.lz-iconbtn` (+ `--solid/outline/sm`) | `IconButton` | ☑ |
+| `.lz-field`, `__label`, `.req`, `__hint`, `__error` | `Field` | ☑ |
+| `.lz-inputwrap` (`__icon`, `--icon`, `--icon-right`), `.lz-input`, `--invalid` | `Input` | ☑ |
+| `.lz-textarea` | `Textarea` | ☑ |
+| `.lz-select` | `Select` | ☑ |
+| `.lz-check`, `__box` | `Checkbox` | ☑ |
+| `.lz-radio`, `__box` | `Radio` | ☑ |
+| `.lz-switch`, `__track`, `__thumb` | `Switch` | ☑ |
+| `.lz-badge` (+ `--neutral/primary/solid/flash/success/warning/danger/mint/gold/outline`) | `Badge` | ☑ |
+| `.lz-tag` (+ `--brand`, `__x`) | `Tag` | ☑ |
+| `.lz-status`, `__dot` | `StatusBadge` | ☑ |
+| `.lz-price` (`__now`, `.sym`, `__was`, `--sm/--lg`) | `Price` | ☑ |
+| `.lz-rating` (`__stars`, `__num`, `__count`) | `Rating` | ☑ |
+| `.lz-qty` | `QuantityStepper` | ☑ |
+| `.lz-vendor` (`__logo`, `__name`, `__meta`) | `VendorChip` | ☑ |
+| `.lz-voucher` (+ `--platform/shop/freeship`, `__amt`, `__body`, `__kind`) | `VoucherTag` | ☑ |
+| `.lz-card` | `Card` | ☐ |
+| `.lz-pcard` (`__media`, `__flags`, `__disc`, `__body`, `__title`, `__foot`, `__loc`) | `ProductCard` | ☑ |
+| `.lz-spin`, `.lz-typing-dot` (nhắc trong `base.css`) | `Spinner`, chấm đang gõ của `ChatWidget` | ☐ |
 
 ### Lệch giao diện so với prototype (G13.05, G13.06)
 
@@ -691,6 +710,31 @@
 |---|---|
 | G00.03 | Không có quyền truy cập Jira từ máy làm việc → bỏ mã `[#GNE-…]` trong commit / tên nhánh (D6). Khi có Epic thì bổ sung ở tiêu đề PR. |
 | G00.04 / G00.05 | Đã tạo nhánh `develop` và `feature/web-foundation` **ở local**; chưa `git push` lên `origin` — chờ chủ dự án xác nhận đẩy nhánh. |
+| G00.06 / G01.C1 | Hook `lint-staged` lỗi trên Windows (prettier chạy từ gốc repo không tìm thấy `prettier-plugin-astro`, `eslint` không có trên PATH) → chuyển cấu hình sang `web/.lintstagedrc.mjs` (gọi binary trong `web/node_modules`) và `web/.prettierrc.mjs` (import plugin). Không dùng `--no-verify`. Kèm `package-lock.json` gốc (CI chạy `npm ci` ở gốc cho commitlint). |
+| G01.07 | Trong cùng feature dùng import tương đối; `@/features/<x>/<tầng>/**` bị chặn ở mọi nơi. `pages/` lấy dữ liệu SSR qua hàm `*.api.ts` được xuất ở `index.ts` (bỏ quyền import sâu `feature-infrastructure` của pages). |
+| G01.06 | Luật boundaries dùng capture `feature`: tầng trong feature chỉ import tầng của **chính** feature đó; bật `no-unknown-files` + `no-unknown` cho `src/**`. Đã thử 5 kiểu vi phạm (ui → infrastructure feature khác, import sâu bằng alias, file lạ, shared → features, domain → infrastructure): đều báo lỗi. |
+| G02.08 / G02.13 | CSS chuẩn bắt buộc `@import` đứng đầu nên `responsive.css` (và sau này CSS component) được import ngay sau `base.css`, trước `@tailwind`; quy tắc của chúng là bộ chọn phần tử / `@layer components` nên không đè utility. Bộ chọn `[style*=…]` của prototype không mang sang — bảng đối chiếu sang tiền tố `sm:/md:/lg:` ghi ở đầu `styles/responsive.css`. Điểm gãy Tailwind: sm 481, md 769, lg 1101, xl 1200, 2xl 1440. |
+| G02.15 | `/dev/ui` dùng `AppShellLayout` (thêm prop `noindex`, mặc định bật) để pages không import thẳng `styles/`; build production trả 404. |
+| G03.03 | Đã chép đủ 4 logo; chỉ `vnpay.png` và `card.svg` (mô tả thẻ qua VNPay) được khai trong `shared/lib/assets.ts`. `momo-logo.png`, `zalopay-logo.png` **ngoài phạm vi TS 3.5** (chỉ VNPay / VietQR / COD) → không hiển thị ở đâu. |
+| G03.05 | `favicon.svg` ở gốc prototype thực chất là favicon mặc định của Astro (chữ A); prototype dùng `genie-coin.svg` (97 KB vì nhúng PNG). Đã dựng `favicon.svg` 6,7 KB từ đồng xu (bỏ lớp PNG), xuất `favicon.ico` 16/32/48 và `apple-touch-icon.png` 180. |
+| G03.08 | `GenieLogo` dùng font `MJ Milestone Script` (Fortune Foundry, "All rights reserved", không kèm giấy phép web) → **không** phát hành tệp font: chuyển chữ "Genie" thành path SVG bằng fontTools (`shared/ui/brand/genieLettering.ts`), giống cách prototype đã làm với chữ trên đồng xu. `Baloo 2` là font theme `sleeve` (OFL) → xử lý ở G07.24. |
+| G03.09 | SVGO `--multipass`: `dongson-drum.svg` 1.713 KB → 440 KB, `hoian-lanterns.svg` 4,9 → 3,8 KB; đặt ở `public/img/themes/` (kèm `genie-lamp.svg`), chỉ tải qua `background` của bộ chọn `[data-theme=…]` nên theme khác không tải. |
+| G04.06 | Bảng khóa theo LUU_TRU_DU_LIEU 6.2: `genie.popup.seen` là **sessionStorage** (plan ghi chung là storage); thêm các khóa `checkout.draft/idem`, `search.recent`, `recent.viewed`, `ui.seller/admin`. Phong bì `{version, expires_at}` + `clearUserData()` đúng mẫu 6.5. |
+| G04.07 / G04.08 | Ngôn ngữ khi SSR lấy theo request qua `registerServerLocale()` (middleware sẽ dùng AsyncLocalStorage ở G07.10) thay vì biến toàn cục, tránh lẫn ngôn ngữ giữa request song song; trên trình duyệt dùng nanostore `$locale` khởi tạo từ `<html lang>`. Ghi chú quy ước khóa đặt ở khóa `_meta.convention` của cả 2 file JSON (JSON không có chú thích). |
+| G04.04 | Che dữ liệu đặt riêng `shared/lib/mask.ts` (không gộp vào `format.ts`). |
+| G04.14 | Element `shared-hooks` đã khai ở G01.06; đã thử: `feature-domain` import `@/shared/hooks` → lỗi boundaries. |
+| G05.01 | API_SPEC 0.4 có **hai** kiểu phân trang: số trang `{page,size,total_items,total_pages}` và con trỏ `{limit,has_more,next_cursor}` → khai cả `Page<T>` và `CursorPage<T>`; mock có `paginatePage` + `paginateCursor`. |
+| G05.02 | Nhập đủ **92 mã** của danh mục Document_Vi 3.7.1 vào `errors.*` (vi + en) và `shared/api/error-codes.ts`; prototype không còn mã `LZD-*` nào trong JSX, `normalizeCode()` vẫn đổi `LZD-` → `GNE-` phòng dữ liệu cũ. Thêm `errors.network/timeout/not_found/unknown` cho lỗi phía client. |
+| G05.07 | Mock có 2 tài khoản: người mua + chủ shop `MOCK_USER` (Trần Thị Mai) cho storefront / `/seller`, Admin `MOCK_STAFF` (Đặng Hải Yến, đủ 13 quyền) cho `/admin` — chọn theo đường dẫn, không có nút đổi vai (D5). |
+| G05.09 | `Providers` gồm QueryClient + khởi tạo locale + `bootstrapSession()`; vùng hiện toast là `ToastHost` tách riêng (G06.14 / G07.07) vì mỗi island là một cây React riêng — toast đi qua nanostore dùng chung. |
+| G06.06 | Luật mật khẩu (passwordIssue, độ mạnh 0–4) đặt ở `shared/lib/password.ts` để `PasswordInput` (shared/ui) dùng được; `features/auth/domain/password.rules.ts` (G09.01) sẽ tái xuất từ đây. |
+| G06.07 / G06.09 | `Checkbox`, `Radio`, `Switch` nằm chung `shared/ui/Choice.tsx`; `Tabs`, `Segmented` chung `Tabs.tsx`. `Segmented` giữ đúng prototype (`.dash-seg`: role=group + aria-pressed), `Tabs` là tablist có phím mũi tên và hỗ trợ `href` (R16). |
+| G06.12–G06.19 | Đã kiểm bằng Playwright trên `/dev/ui`: ConfirmDialog focus vào nút đầu (bỏ nút Đóng như prototype), Esc đóng; Dropdown ↓ đi đúng mục; OtpInput dán "123456" điền đủ 6 ô. Sửa xung đột lớp Tailwind (`border-transparent` đè viền biến thể secondary/outline; nền trang hiện tại của Pagination). |
+| G06.23 | Storefront prototype thực tế dùng thẻ `CardX` (lớp `.tr-card*` trong storefront.css), không dùng `ProductCard` của DS (`.lz-pcard`). `shared/ui/ProductCard` dựng theo `CardX` ở mức "Marketplace density" (thân 13px, giá 15px, tim 32px — tim có vùng chạm 44px bằng pseudo-element), giữ nguyên tên lớp `tr-card*` để `themes.css` đè được; ở G07.01 các quy tắc `.tr-card*`, `.tr-bar`, `.tr-ticket*` của storefront.css không chép lại (đã nằm trong component). Liên kết chính là `<a href>` (R16), ảnh có `alt`/`width`/`height` (R18). |
+| G06.21 / G06.25 / G06.28 | Thêm `RatingInput` (radiogroup, dùng cho ReviewModal), `Ticket` + `TicketSaveButton` (phiếu .tr-ticket), `FormSection` + `FormGrid` + `DateInput` ở `FormSection.tsx` (`Field` đã có từ G06.04). |
+| G06.29–G06.33 | Bộ thống kê dùng lại lớp `dash-*` chuyển nguyên từ `dash.css` sang `styles/dash.css` (bọc `@layer components`, nạp trong `AppShellLayout`) vì lưới `--n`, bộ chọn `[data-tone]`, mũi tên `::after` của pipeline không gọn bằng utility; bỏ `.dash-seg` (Segmented là utility) và `.tr-kycdemo` (D5). Bảng ICONS prototype **thiếu `arrow-down-right`** mà `Delta` dùng (prototype không hiện mũi tên giảm) → bổ sung icon Lucide. `short()` → `formatMoneyShort()` trong `format.ts` ("45,8 tr" / "45.8M"). |
+| G06.37 | 9 file stub `return null` (Badge, Button, EmptyState, Input, Modal, Price, Rating, Select, Toast) được **viết đè tại chỗ** bằng bản thật trong G06.01–G06.25 nên không còn file stub nào để xóa; `grep TODO src/shared/ui` rỗng. |
+| G06.36 | `/dev/ui` có 4 island (`GalleryBasics`, `GalleryOverlays`, `GalleryCommerce`, `GalleryDash`) đủ biến thể; đã chụp so ở 1280 / 1440 / 360 px với ảnh tham chiếu (thẻ sản phẩm trang chủ, bảng điều khiển vendor). |
 
 ## Nhật ký
 
