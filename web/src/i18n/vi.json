@@ -164,5 +164,52 @@
     "GNE-SYS-5030": "Hệ thống đang bận. Vui lòng thử lại sau.",
     "GNE-DB-5002": "Hệ thống đang bận. Vui lòng thử lại sau vài giây.",
     "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại."
+  },
+  "ui": {
+    "close": "Đóng",
+    "remove": "Gỡ bỏ",
+    "required_mark": "bắt buộc",
+    "qty": {
+      "decrease": "Giảm",
+      "increase": "Tăng",
+      "label": "Số lượng"
+    },
+    "password": {
+      "show": "Hiện mật khẩu",
+      "hide": "Ẩn mật khẩu",
+      "strength": {
+        "0": "Rất yếu",
+        "1": "Yếu",
+        "2": "Trung bình",
+        "3": "Mạnh",
+        "4": "Rất mạnh"
+      },
+      "match": "Mật khẩu khớp",
+      "mismatch": "Mật khẩu không khớp",
+      "issue": {
+        "length": "Mật khẩu tối thiểu 8 ký tự",
+        "upper": "Cần ít nhất 1 chữ hoa",
+        "lower": "Cần ít nhất 1 chữ thường",
+        "digit": "Cần ít nhất 1 chữ số",
+        "special": "Cần ít nhất 1 ký tự đặc biệt"
+      }
+    },
+    "select": {
+      "placeholder": "Chọn..."
+    },
+    "status": {
+      "PENDING": "Chờ xử lý",
+      "PAID": "Đã thanh toán",
+      "SHIPPED": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn tất",
+      "CANCELLED": "Đã hủy",
+      "ERROR": "Lỗi",
+      "VERIFIED": "Đã xác minh",
+      "REJECTED": "Từ chối",
+      "HELD": "Đang giữ",
+      "AVAILABLE": "Khả dụng"
+    },
+    "char_count": "{count}/{max}"
   }
 }

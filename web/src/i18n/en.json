@@ -164,5 +164,52 @@
     "GNE-SYS-5030": "The system is busy. Please try again shortly.",
     "GNE-DB-5002": "The system is busy. Please try again in a few seconds.",
     "GNE-MINIO-5003": "The upload link expired. Please upload again."
+  },
+  "ui": {
+    "close": "Close",
+    "remove": "Remove",
+    "required_mark": "required",
+    "qty": {
+      "decrease": "Decrease",
+      "increase": "Increase",
+      "label": "Quantity"
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password",
+      "strength": {
+        "0": "Very weak",
+        "1": "Weak",
+        "2": "Fair",
+        "3": "Strong",
+        "4": "Very strong"
+      },
+      "match": "Passwords match",
+      "mismatch": "Passwords don't match",
+      "issue": {
+        "length": "Use at least 8 characters",
+        "upper": "Add at least 1 uppercase letter",
+        "lower": "Add at least 1 lowercase letter",
+        "digit": "Add at least 1 number",
+        "special": "Add at least 1 special character"
+      }
+    },
+    "select": {
+      "placeholder": "Select..."
+    },
+    "status": {
+      "PENDING": "Pending",
+      "PAID": "Paid",
+      "SHIPPED": "Shipping",
+      "DELIVERED": "Delivered",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "ERROR": "Error",
+      "VERIFIED": "Verified",
+      "REJECTED": "Rejected",
+      "HELD": "Held",
+      "AVAILABLE": "Available"
+    },
+    "char_count": "{count}/{max}"
   }
 }
