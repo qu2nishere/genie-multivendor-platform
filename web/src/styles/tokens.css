@@ -1,3 +1,573 @@
-/* Token thiết kế lấy từ prototype genie/tokens/*.css, DESIGN.md — TODO */
+/* ===========================================================================
+   Genie — design tokens (chuyển từ prototype genie/tokens/*.css, plan G02)
+   GIỮ NGUYÊN tên biến để CSS storefront / theme dùng lại được.
+   Thứ tự: fonts → colors → typography → spacing → effects
+   =========================================================================== */
+
+/* Genie webfonts — Be Vietnam Pro (Vietnamese-first geometric sans) + IBM Plex Mono.
+   Subsets vendored locally: vietnamese, latin-ext, latin. ₫ (U+20AB) lives in the vietnamese subset. */
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-800-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-800-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-800-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-600-vietnamese.woff2') format('woff2');
+  unicode-range:
+    U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+    U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-600-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-600-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ===========================================================================
+   Genie — Color tokens
+   Multivendor marketplace. Warm paper ground, white content sheets, navy ink,
+   royal blue for actions, marigold for money and the one thing to look at.
+   Base ramps first, semantic aliases below. Use the aliases in product code.
+   =========================================================================== */
 :root {
+  /* --- Brand: deep blue (fills, actions) ----------------------------------- */
+  --brand-50: #eef3ff;
+  --brand-100: #dce6fe;
+  --brand-200: #b9cdfb;
+  --brand-300: #8cacf6;
+  --brand-400: #5a85ee;
+  --brand-500: #1d4ed8; /* primary, white text 6.7:1 */
+  --brand-600: #1a43bd; /* hover */
+  --brand-700: #16379b; /* pressed / active */
+  --brand-800: #122c7a;
+  --brand-900: #0b1f4b;
+
+  /* --- Sky (tints and accents only, never behind white text) --------------- */
+  --sky-50: #eaf7fe;
+  --sky-100: #d2eefc;
+  --sky-200: #a6ddf8;
+  --sky-300: #74c8f3;
+  --sky-400: #38b1ec;
+
+  /* --- Flash sale (red, used sparingly for urgency) ------------------------ */
+  --flash-50: #ffedf1;
+  --flash-100: #ffd3dd;
+  --flash-500: #c8103f;
+  --flash-600: #a50d34;
+
+  /* --- Gold / marigold (money accent, ratings, points) ----------------------
+     400 is a fill under navy text (10:1). Never gold text on white: use 700. */
+  --gold-50: #fff7e0;
+  --gold-100: #ffe9ae;
+  --gold-400: #ffc02e;
+  --gold-500: #f2a900;
+  --gold-600: #8a6100;
+  --gold-700: #6e4e00;
+
+  /* --- Freeship green ------------------------------------------------------ */
+  --mint-50: #e6f8f0;
+  --mint-100: #bcedd8;
+  --mint-500: #0b7f4c;
+  --mint-600: #09693f;
+
+  /* --- Ink (vendor & admin dashboard chrome) ------------------------------- */
+  --ink-700: #2a3550;
+  --ink-800: #1b2438;
+  --ink-900: #111827;
+  --ink-950: #0a0f1c;
+
+  /* --- Paper (warm page ground; white sheets sit on it) -------------------- */
+  --paper-50: #f7f5f0;
+  --paper-100: #efebe2;
+
+  /* --- Neutrals (cool gray) ------------------------------------------------ */
+  --gray-0: #ffffff;
+  --gray-25: #fafbfd;
+  --gray-50: #f3f6fa;
+  --gray-100: #e9edf3;
+  --gray-200: #dce2eb;
+  --gray-300: #c4cdd9;
+  --gray-400: #98a3b3;
+  --gray-500: #5d697d;
+  --gray-600: #4a5568;
+  --gray-700: #36404f;
+  --gray-800: #242c39;
+  --gray-900: #121824;
+
+  /* --- Semantic status palette --------------------------------------------- */
+  --green-50: #e7f7ee;
+  --green-500: #0e8a4b;
+  --green-600: #0a7039;
+  --amber-50: #fff6e5;
+  --amber-500: #f5a524;
+  --amber-600: #9a5b00;
+  --red-50: #fdecec;
+  --red-200: #f3b0a8;
+  --red-500: #d3122a;
+  --red-600: #b00e22;
+  /* Information. Cyan-leaning so it never reads as the brand. */
+  --blue-50: #e5f5fb;
+  --blue-100: #cbebf7;
+  --blue-200: #9fdaef;
+  --blue-300: #6dc5e5;
+  --blue-500: #0b7fab;
+  --blue-600: #08688d;
+  --purple-50: #f1ecfe;
+  --purple-500: #6c2bd9;
+
+  /* =========================================================================
+     SEMANTIC ALIASES — prefer these in product code
+     ========================================================================= */
+  /* Primary action */
+  --color-primary: var(--brand-500);
+  --color-primary-hover: var(--brand-600);
+  --color-primary-active: var(--brand-700);
+  --color-primary-tint: var(--brand-50);
+  --color-on-primary: #ffffff;
+
+  /* Accent: marigold, the money highlight. Navy on it, never white. */
+  --color-accent: var(--gold-400);
+  --color-accent-hover: var(--gold-500);
+  --color-on-accent: var(--brand-900);
+  --color-accent-ink: var(--gold-700); /* accent as text on white, 7.6:1 */
+  --color-accent-tint: var(--gold-50);
+
+  /* Accents */
+  --color-flash: var(--flash-500);
+  --color-voucher: var(--gold-500);
+  --color-freeship: var(--mint-500);
+
+  /* Text */
+  --text-strong: var(--gray-900);
+  --text-body: var(--gray-800);
+  --text-muted: var(--gray-600);
+  --text-subtle: var(--gray-500);
+  --text-disabled: var(--gray-400);
+  --text-inverse: #ffffff;
+  --text-link: var(--brand-600);
+  --text-price: var(--gray-900); /* prices stay ink so they never read as links */
+
+  /* Surfaces */
+  --surface-page: var(--paper-50);
+  --surface-card: var(--gray-0);
+  --surface-sunken: var(--gray-100);
+  --surface-raised: var(--gray-0);
+  --surface-tint: var(--brand-50);
+  --surface-ink: var(--ink-900); /* dark dashboard chrome */
+  --surface-ink-2: var(--ink-800);
+  --surface-overlay: rgba(11, 31, 75, 0.55);
+
+  /* Borders */
+  --border-subtle: var(--gray-100);
+  --border-default: var(--gray-200);
+  --border-strong: var(--gray-300);
+  --border-focus: var(--brand-500);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(29, 78, 216, 0.4);
+
+  /* --- Order lifecycle status ---------------------------------------------- */
+  --status-pending-fg: var(--amber-600);
+  --status-pending-bg: var(--amber-50);
+  --status-paid-fg: var(--blue-600);
+  --status-paid-bg: var(--blue-50);
+  --status-shipped-fg: var(--purple-500);
+  --status-shipped-bg: var(--purple-50);
+  --status-delivered-fg: var(--mint-600);
+  --status-delivered-bg: var(--mint-50);
+  --status-completed-fg: var(--green-600);
+  --status-completed-bg: var(--green-50);
+  --status-cancelled-fg: var(--gray-600);
+  --status-cancelled-bg: var(--gray-100);
+  --status-error-fg: var(--red-600);
+  --status-error-bg: var(--red-50);
+
+  /* --- KYC verification ----------------------------------------------------- */
+  --kyc-pending-fg: var(--amber-600);
+  --kyc-pending-bg: var(--amber-50);
+  --kyc-verified-fg: var(--green-600);
+  --kyc-verified-bg: var(--green-50);
+  --kyc-rejected-fg: var(--red-600);
+  --kyc-rejected-bg: var(--red-50);
+
+  /* --- Escrow wallet -------------------------------------------------------- */
+  --escrow-held-fg: var(--amber-600);
+  --escrow-held-bg: var(--amber-50);
+  --escrow-available-fg: var(--green-600);
+  --escrow-available-bg: var(--green-50);
+  --escrow-commission: var(--gray-600);
+}
+
+/* ===========================================================================
+   Genie — Typography tokens
+   Be Vietnam Pro (geometric, Vietnamese-first) for everything; IBM Plex Mono
+   for SKU / order IDs / waybill codes / ledger figures. Dense marketplace
+   scale — base text is 14px.
+   =========================================================================== */
+:root {
+  /* Families */
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* Type scale (dense) */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px; /* default body */
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 34px;
+  --text-5xl: 44px;
+  --text-display: 56px;
+
+  /* Line heights */
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.02em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-caps: 0.06em; /* uppercase eyebrows / labels */
+
+  /* Tabular figures for prices, money, counts */
+  --numeric-tabular: tabular-nums; /* @kind other */
+
+  /* --- Semantic text roles ------------------------------------------------- */
+  --type-display: var(--weight-black) var(--text-display)/var(--leading-tight) var(--font-sans);
+  --type-h1: var(--weight-bold) var(--text-4xl)/var(--leading-tight) var(--font-sans);
+  --type-h2: var(--weight-bold) var(--text-3xl)/var(--leading-snug) var(--font-sans);
+  --type-h3: var(--weight-semibold) var(--text-2xl)/var(--leading-snug) var(--font-sans);
+  --type-h4: var(--weight-semibold) var(--text-xl)/var(--leading-snug) var(--font-sans);
+  --type-body: var(--weight-regular) var(--text-base)/var(--leading-normal) var(--font-sans);
+  --type-body-sm: var(--weight-regular) var(--text-sm)/var(--leading-normal) var(--font-sans);
+  --type-label: var(--weight-semibold) var(--text-sm)/var(--leading-snug) var(--font-sans);
+  --type-caption: var(--weight-regular) var(--text-xs)/var(--leading-snug) var(--font-sans);
+}
+
+/* ===========================================================================
+   Genie — Spacing & layout tokens. 4px base grid.
+   =========================================================================== */
+:root {
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 12px;
+  --space-6: 16px;
+  --space-7: 20px;
+  --space-8: 24px;
+  --space-9: 32px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 64px;
+  --space-13: 80px;
+  --space-14: 96px;
+
+  /* Component sizing */
+  --control-h-sm: 32px;
+  --control-h-md: 40px;
+  --control-h-lg: 44px; /* minimum interactive target */
+  --control-h-xl: 52px;
+  --tap-min: 44px; /* accessibility floor for all hit targets */
+
+  /* Layout */
+  --container-max: 1280px;
+  --container-wide: 1440px;
+  --gutter: 16px;
+  --rail-vendor: 232px; /* vendor/admin sidebar width */
+}
+
+/* ===========================================================================
+   Genie — Radii, shadows, borders, motion.
+   Soft 10px default radius. Shadows are subtle and cool-neutral; the brand
+   "lift" shadow uses a faint blue cast on hover for product cards.
+   =========================================================================== */
+:root {
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px; /* default — buttons, inputs, cards */
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* Borders */
+  --border-1: 1px;
+  --border-2: 2px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(11, 31, 75, 0.06);
+  --shadow-sm: 0 1px 3px rgba(11, 31, 75, 0.08), 0 1px 2px rgba(11, 31, 75, 0.04);
+  --shadow-md: 0 4px 12px rgba(11, 31, 75, 0.08), 0 1px 3px rgba(11, 31, 75, 0.05);
+  --shadow-lg: 0 12px 28px rgba(11, 31, 75, 0.12), 0 4px 8px rgba(11, 31, 75, 0.06);
+  --shadow-xl: 0 24px 48px rgba(11, 31, 75, 0.2);
+  /* Product-card hover lift */
+  --shadow-lift: 0 10px 24px rgba(11, 31, 75, 0.14), 0 2px 6px rgba(11, 31, 75, 0.08);
+  /* Inset for sunken fields / wells */
+  --shadow-inset: inset 0 1px 2px rgba(11, 31, 75, 0.06);
+
+  /* Motion */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 180ms; /* @kind other */
+  --dur-slow: 280ms; /* @kind other */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.45, 0, 0.2, 1); /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* @kind other */
+
+  /* Z-index */
+  --z-sticky: 100; /* @kind other */
+  --z-dropdown: 400; /* @kind other */
+  --z-overlay: 800; /* @kind other */
+  --z-modal: 900; /* @kind other */
+  --z-toast: 1000; /* @kind other */
 }

@@ -1,5 +1,8 @@
+/* Thứ tự (plan G02.08): tokens → base → Tailwind → CSS component → responsive.
+   @import phải đứng trước mọi quy tắc khác. */
+@import './tokens.css';
+@import './base.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './tokens.css';
