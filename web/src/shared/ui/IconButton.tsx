@@ -15,8 +15,8 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
 }
 
 const VARIANT: Record<IconButtonVariant, string> = {
-  plain: 'bg-transparent text-body hover:bg-gray-100 active:bg-gray-200',
-  solid: 'bg-primary text-white hover:bg-primary-hover',
+  plain: 'bg-transparent text-body border-transparent hover:bg-gray-100 active:bg-gray-200',
+  solid: 'bg-primary text-white border-transparent hover:bg-primary-hover',
   outline: 'bg-transparent text-body border-line hover:border-line-strong hover:bg-gray-50',
 };
 
@@ -32,7 +32,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       aria-label={label}
       title={label}
       className={cn(
-        'relative inline-flex items-center justify-center w-11 h-11 flex-none rounded-md border-[1.5px] border-solid border-transparent cursor-pointer',
+        'relative inline-flex items-center justify-center w-11 h-11 flex-none rounded-md border-[1.5px] border-solid cursor-pointer',
         'transition-colors duration-fast ease-out focus-visible:outline-none focus-visible:shadow-focus disabled:opacity-[.45] disabled:cursor-not-allowed',
         VARIANT[variant],
         className,

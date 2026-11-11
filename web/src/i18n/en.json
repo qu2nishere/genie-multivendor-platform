@@ -210,6 +210,19 @@
       "HELD": "Held",
       "AVAILABLE": "Available"
     },
-    "char_count": "{count}/{max}"
+    "char_count": "{count}/{max}",
+    "otp": {
+      "group": "{length}-digit verification code",
+      "digit": "Digit {n}"
+    },
+    "countdown": {
+      "ends_in": "Ends in",
+      "ends_midnight": "Ends at midnight today"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "prev": "Previous",
+      "next": "Next"
+    }
   }
 }

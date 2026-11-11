@@ -14,21 +14,22 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
 // .lz-btn của prototype viết lại bằng utility (plan G06.02). Mọi cỡ giữ vùng chạm ≥ 44 px.
 const BASE =
-  'inline-flex items-center justify-center gap-2 min-h-[44px] border-[1.5px] border-solid border-transparent rounded-md ' +
+  'inline-flex items-center justify-center gap-2 min-h-[44px] border-[1.5px] border-solid rounded-md ' +
   'font-sans font-semibold leading-none tracking-[-0.01em] cursor-pointer select-none whitespace-nowrap no-underline ' +
   'transition-[background-color,transform,box-shadow,border-color,color] duration-fast ease-out ' +
   'hover:no-underline active:translate-y-px focus-visible:outline-none focus-visible:shadow-focus ' +
   'disabled:opacity-[.45] disabled:pointer-events-none aria-disabled:opacity-[.45] aria-disabled:pointer-events-none';
 
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-primary-on hover:bg-primary-hover active:bg-primary-active',
+  primary:
+    'bg-primary text-primary-on border-transparent hover:bg-primary-hover active:bg-primary-active',
   secondary:
     'bg-surface-card text-primary border-primary hover:bg-primary-tint active:bg-brand-100',
   outline:
     'bg-surface-card text-body border-line-strong hover:bg-gray-50 hover:border-primary hover:text-primary active:bg-gray-100',
-  ghost: 'bg-transparent text-body hover:bg-gray-100 active:bg-gray-200',
-  subtle: 'bg-gray-100 text-body hover:bg-gray-200',
-  danger: 'bg-red-500 text-white hover:bg-red-600 active:bg-red-600',
+  ghost: 'bg-transparent text-body border-transparent hover:bg-gray-100 active:bg-gray-200',
+  subtle: 'bg-gray-100 text-body border-transparent hover:bg-gray-200',
+  danger: 'bg-red-500 text-white border-transparent hover:bg-red-600 active:bg-red-600',
 };
 
 const SIZE: Record<ButtonSize, string> = {

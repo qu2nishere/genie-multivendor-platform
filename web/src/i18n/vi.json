@@ -210,6 +210,19 @@
       "HELD": "Đang giữ",
       "AVAILABLE": "Khả dụng"
     },
-    "char_count": "{count}/{max}"
+    "char_count": "{count}/{max}",
+    "otp": {
+      "group": "Mã xác thực {length} chữ số",
+      "digit": "Chữ số thứ {n}"
+    },
+    "countdown": {
+      "ends_in": "Kết thúc sau",
+      "ends_midnight": "Kết thúc lúc 24:00 hôm nay"
+    },
+    "pagination": {
+      "label": "Phân trang",
+      "prev": "Trước",
+      "next": "Sau"
+    }
   }
 }

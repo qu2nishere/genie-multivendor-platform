@@ -22,7 +22,13 @@ export function useFocusTrap(
     const root = ref.current;
     if (!root) return undefined;
     const previous = document.activeElement as HTMLElement | null;
-    const first = initialFocus?.current ?? focusableIn(root)[0] ?? root;
+    // Bỏ qua nút có data-skip-autofocus (nút Đóng ở đầu hộp) khi chọn chỗ focus đầu tiên
+    const items = focusableIn(root);
+    const first =
+      initialFocus?.current ??
+      items.find((el) => !el.hasAttribute('data-skip-autofocus')) ??
+      items[0] ??
+      root;
     first.focus({ preventScroll: true });
 
     const onKey = (e: KeyboardEvent) => {
