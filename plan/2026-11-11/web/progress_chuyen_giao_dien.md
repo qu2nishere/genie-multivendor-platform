@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-11 — xong G00–G06 (nền tảng: công cụ, token, tài sản, shared/lib, shared/api, shared/ui); đang G07 trên `feature/web-storefront-public` |
+| **Cập nhật gần nhất** | 2026-11-11 — xong G00–G07 (nền tảng + layout, header, footer, 9 theme); đang G08 trên `feature/web-storefront-public` |
 
 **Cách dùng**
 
@@ -39,14 +39,14 @@
 | G04 | `shared/lib`, hook dùng chung, nền i18n | 14 | 1 | 15 / 15 | — | `feature/web-foundation` |
 | G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
 | G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
-| G07 | Layout & khung trang | 26 | 4 | 0 / 30 |  |  |
+| G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 0 / 61 |  |  |
 | G09 | Xác thực | 14 | 1 | 0 / 15 |  |  |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **119 / 429** | | |
+| **Tổng** | | **379** | **50** | **149 / 429** | | |
 
 ---
 
@@ -216,45 +216,45 @@
 
 **Nhóm A — CSS storefront**
 
-- [ ] **G07.01** Tách `storefront.css`
-- [ ] **G07.02** Chuẩn hóa giá trị
-- [ ] **G07.03** Nhập vào `global.css`
-- [ ] **G07.C1** 🔖 COMMIT `feat(web): port storefront stylesheet into layered css modules` · hash: `_______`
+- [x] **G07.01** Tách `storefront.css`
+- [x] **G07.02** Chuẩn hóa giá trị
+- [x] **G07.03** Nhập vào `global.css`
+- [x] **G07.C1** 🔖 COMMIT `feat(web): port storefront stylesheet into layered css modules` · hash: `4bcae11`
 
 **Nhóm B — Layout**
 
-- [ ] **G07.04** `SeoHead.astro` + `<head>` của `StorefrontLayout.astro`
-- [ ] **G07.05** `ThemeBoot.astro`
-- [ ] **G07.06** Khung thân
-- [ ] **G07.07** `ToastHost.tsx`
-- [ ] **G07.08** `AuthLayout.astro`
-- [ ] **G07.09** `AppShellLayout.astro`
-- [ ] **G07.10** `middleware.ts`
-- [ ] **G07.11** `404.astro`
-- [ ] **G07.C2** 🔖 COMMIT `feat(web): build storefront, auth and app shell layouts` · hash: `_______`
+- [x] **G07.04** `SeoHead.astro` + `<head>` của `StorefrontLayout.astro`
+- [x] **G07.05** `ThemeBoot.astro`
+- [x] **G07.06** Khung thân
+- [x] **G07.07** `ToastHost.tsx`
+- [x] **G07.08** `AuthLayout.astro`
+- [x] **G07.09** `AppShellLayout.astro`
+- [x] **G07.10** `middleware.ts`
+- [x] **G07.11** `404.astro`
+- [x] **G07.C2** 🔖 COMMIT `feat(web): build storefront, auth and app shell layouts` · hash: `7cfb914`
 
 **Nhóm C — Header & Footer**
 
-- [ ] **G07.12** Thanh tiện ích trên cùng
-- [ ] **G07.13** Thanh chính
-- [ ] **G07.14** `SearchBox`
-- [ ] **G07.15** `MiniCart`
-- [ ] **G07.16** `UserMenu`
-- [ ] **G07.17** `NotifPanel`
-- [ ] **G07.18** Menu danh mục & điều hướng màn hẹp
-- [ ] **G07.19** `Footer.astro`
-- [ ] **G07.20** `LoginPrompt`
-- [ ] **G07.21** Khóa i18n khung trang
-- [ ] **G07.C3** 🔖 COMMIT `feat(web): add storefront header, footer and global overlays` · hash: `_______`
+- [x] **G07.12** Thanh tiện ích trên cùng
+- [x] **G07.13** Thanh chính
+- [x] **G07.14** `SearchBox`
+- [x] **G07.15** `MiniCart`
+- [x] **G07.16** `UserMenu`
+- [x] **G07.17** `NotifPanel`
+- [x] **G07.18** Menu danh mục & điều hướng màn hẹp
+- [x] **G07.19** `Footer.astro`
+- [x] **G07.20** `LoginPrompt`
+- [x] **G07.21** Khóa i18n khung trang
+- [x] **G07.C3** 🔖 COMMIT `feat(web): add storefront header, footer and global overlays` · hash: `3b73c77`
 
 **Nhóm D — Đủ 9 theme (D1 đã chốt)**
 
-- [ ] **G07.22** `themes.css` phần theme `genie` + `classic`
-- [ ] **G07.23** 7 theme còn lại
-- [ ] **G07.24** Font theme
-- [ ] **G07.25** `ThemePicker`
-- [ ] **G07.26** Kiểm 9 theme
-- [ ] **G07.C4** 🔖 COMMIT `feat(web): port storefront themes and theme picker` · hash: `_______`
+- [x] **G07.22** `themes.css` phần theme `genie` + `classic`
+- [x] **G07.23** 7 theme còn lại
+- [x] **G07.24** Font theme
+- [x] **G07.25** `ThemePicker`
+- [x] **G07.26** Kiểm 9 theme
+- [x] **G07.C4** 🔖 COMMIT `feat(web): port storefront themes and theme picker` · hash: `3dda4a9`
 
 ## G08 — Storefront công khai (SSR + islands)
 
@@ -735,6 +735,17 @@
 | G06.29–G06.33 | Bộ thống kê dùng lại lớp `dash-*` chuyển nguyên từ `dash.css` sang `styles/dash.css` (bọc `@layer components`, nạp trong `AppShellLayout`) vì lưới `--n`, bộ chọn `[data-tone]`, mũi tên `::after` của pipeline không gọn bằng utility; bỏ `.dash-seg` (Segmented là utility) và `.tr-kycdemo` (D5). Bảng ICONS prototype **thiếu `arrow-down-right`** mà `Delta` dùng (prototype không hiện mũi tên giảm) → bổ sung icon Lucide. `short()` → `formatMoneyShort()` trong `format.ts` ("45,8 tr" / "45.8M"). |
 | G06.37 | 9 file stub `return null` (Badge, Button, EmptyState, Input, Modal, Price, Rating, Select, Toast) được **viết đè tại chỗ** bằng bản thật trong G06.01–G06.25 nên không còn file stub nào để xóa; `grep TODO src/shared/ui` rỗng. |
 | G06.36 | `/dev/ui` có 4 island (`GalleryBasics`, `GalleryOverlays`, `GalleryCommerce`, `GalleryDash`) đủ biến thể; đã chụp so ở 1280 / 1440 / 360 px với ảnh tham chiếu (thẻ sản phẩm trang chủ, bảng điều khiển vendor). |
+| G07.01 | Tách bằng script theo **từng bộ chọn** (mỗi quy tắc nhiều bộ chọn được chia về đúng khối, giữ thứ tự gốc và vị trí trong @media) → `styles/storefront/{shell,header,home,footer,product,search,cart,checkout,account,chat}.css` + `index.css`, bọc `@layer components`. Không có quy tắc nào thuộc `shop`/`order` trong storefront.css gốc nên không tạo 2 file đó. Bỏ 56 bộ chọn: `.tr-card*` (29), `.tr-ticket*` (17), `.tr-bar` (3) — đã nằm trong ProductCard/FlashProgress/Ticket; `.tr-demo`, `.tr-acct__demo` (D5); 3 bộ chọn `[style*=…]` khớp style inline của prototype. |
+| G07.02 / G07.03 | Màu cứng → token: `#fff` nền → `--surface-card`, chữ → `--text-inverse`, viền / vòng focus trắng → `--surface-card`; thêm token `--foot-ink`, `--foot-legal`, `--camp-ink`, `--camp-sub`. Giữ nguyên các lớp phủ `rgba(11,31,75,α)` / `rgba(255,255,255,α)` của lớp kính (không có token alpha) và kích thước px của bố cục. Tailwind `safelist: /^(tr|dash|gn|lz)-/` để lớp ghép động không bị loại; `Button` thêm móc `lz-btn` để `.tr .lz-btn` (nút bo viên thuốc) áp dụng. |
+| G07.10 | Middleware dùng `AsyncLocalStorage` + `registerServerLocale()` để mọi `t()` / định dạng khi SSR đúng ngôn ngữ của request (đã thử: cookie `lang=en` → `<html lang="en">`, `og:locale=en_US`). Trang cần đăng nhập: `/seller`, `/admin`, `/checkout` (trừ `/checkout/result`), `/orders`, `/account`, `/chat`; `/cart` để khách vãng lai dùng (giỏ khách). Đã thử `/orders` → 302 `/auth/login?next=%2Forders`. |
+| G07.08 | Lời hứa ở cột thương hiệu trang đăng nhập dùng `<p class="gn-auth__title">` thay `<h1>` của prototype để trang chỉ có một `<h1>` là tiêu đề form (R18); kiểu chữ tương ứng thêm khi chuyển `themes.css` (G07.22). Khóa theme lưu `genie.theme` (prototype: `genie_theme`). |
+| G07.C2 / G07.C3 | Hai commit 7cfb914, 3b73c77 build hỏng (`dash.css` import riêng trong AppShellLayout → Tailwind báo `@layer components` thiếu `@tailwind components`); sửa bằng commit riêng nhập `dash.css` qua `global.css`. Từ đây mọi commit đi qua script cổng: chỉ commit khi `npm run verify` xanh và có "Complete!". |
+| G07.13–G07.19 | Header cần dữ liệu thật nên làm sớm một phần các feature: `catalog` (đủ 4 tầng — phần lớn G08.04), `notifications` (đủ 4 tầng + NotifPanel), `cart` (types, mock seedCart, store, MiniCart — G10.01–03 mở rộng), `search` (gợi ý — G08.17 mở rộng), `auth` (UserMenu, LoginPrompt, store `requireLogin`), `policies` (dữ liệu 25 trang sinh từ pages-data.js — tức G08.41). Bộ seed dùng chung `shared/api/mock/seed.ts` **sinh tự động** từ data.jsx (sản phẩm p1→id 1, shop techzone→id 1) để các `*.mock.ts` không chép trùng dữ liệu. |
+| G07.18 / G07.19 | Màn hẹp: giữ hàng danh mục cuộn ngang như prototype + thêm chip "Tất cả danh mục" mở ngăn kéo (Modal) có cả danh mục con. Footer dùng `<details>/<summary>` (gập ở ≤768px không cần JS; màn rộng luôn mở). Logo header/footer: chữ "Genie" dạng SVG (`GenieWordmark`) thay font Genie Script. Prototype có **25** trang chính sách (plan ghi 28). |
+| G07.16 | Layout được phép import `app/` (Header là island lớn cần `Providers`) — bổ sung vào luật boundaries. `SessionUser` thêm `shop_name` cho mục chuyển sang Kênh người bán. |
+| G07.24 | Tự lưu trữ font 8 theme (Archivo, Alegreya, Baloo 2, Bai Jamjuree, Bricolage Grotesque, Lexend, Phudu, Saira Condensed — OFL 1.1) tải đúng URL Google Fonts của prototype, chỉ giữ tập latin / latin-ext / vietnamese: 45 tệp woff2 (1,2 MB) ở `public/fonts/themes/`, khai trong `styles/theme-fonts.css`; trình duyệt chỉ tải khi theme tương ứng bật. |
+| G07.26 | Đã kiểm 9 theme trên khung trang hiện có (header, footer, nút, trang 404) ở 1440 px bằng `?theme=`; lựa chọn lưu `genie.theme` và giữ khi mở lại. Tương phản đo tự động: nút chính 5,76–18,72; h1 ≥ 15,2; chữ phụ ≥ 6,45; link footer ≥ 5,34 (đạt WCAG AA). Trang chủ / sản phẩm / đăng nhập / Seller / Admin chưa dựng → kiểm lại 9 theme trên các trang đó ở G13.05, G13.06. |
+| G07.22 / G07.23 | themes.css giữ nguyên (không bọc @layer, độ ưu tiên [data-theme] đè utility); bỏ @font-face "Genie Script" và quy tắc font của `.tr-logo span`/`.tr-foot__brand` (logo là SVG); ảnh nền theme đọc từ `/img/themes/`. ThemePicker còn gắn ở góc trang đăng nhập (AuthTools); thanh trên Admin gắn ở G12.03. |
 
 ## Nhật ký
 
@@ -742,3 +753,4 @@
 |---|---|---|
 | 2026-11-11 | Lập plan và progress | |
 | 2026-11-11 | G00–G06: nhánh develop + feature/web-foundation, công cụ (Prettier, Vitest, Playwright, ESLint boundaries), token + Tailwind, tài sản thương hiệu, shared/lib (i18n, format, storage, seo), shared/api (http, mock, lỗi GNE-*), shared/ui (40+ component + bộ thống kê), thư viện /dev/ui | 46557a9 … f6095a3 |
+| 2026-11-11 | G07: CSS storefront tách 10 module, layout Storefront/Auth/AppShell, SeoHead, ThemeBoot, middleware (ngôn ngữ theo request), 404, Header/Footer + catalog/notifications/cart/search/auth/policies tối thiểu, 9 theme + font tự lưu trữ + ThemePicker | 4bcae11 … 3dda4a9 |
