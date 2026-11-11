@@ -365,5 +365,48 @@
       "category": "Danh mục",
       "shop": "Shop"
     }
+  },
+  "theme": {
+    "picker": {
+      "title": "Chọn giao diện",
+      "saved_here": "Lưu trên trình duyệt này",
+      "change": "Đổi giao diện"
+    },
+    "genie": {
+      "name": "Đèn thần",
+      "note": "Đúng tên Genie: đèn đồng thau, khói ngọc lam sau lớp kính"
+    },
+    "hoian": {
+      "name": "Phố Hội",
+      "note": "Tường vàng Hội An, đèn lồng lụa, cửa chớp xanh, ngói âm dương"
+    },
+    "dongho": {
+      "name": "Giấy điệp",
+      "note": "Tranh Đông Hồ: đỏ son, vàng hoè, mực than"
+    },
+    "dongson": {
+      "name": "Trống đồng",
+      "note": "Mặt trống Đông Sơn: đồng thau, vàng đồng, xanh gỉ đồng"
+    },
+    "polymer": {
+      "name": "Tiền polymer",
+      "note": "Xanh ngọc, hồng, ô kính trong và hoa văn guilloche"
+    },
+    "buudien": {
+      "name": "Tem bưu chính",
+      "note": "Vàng bưu điện, mực navy, tem răng cưa và dấu bưu điện"
+    },
+    "saigon": {
+      "name": "Mái bạt Sài Gòn",
+      "note": "Biển hiệu kẻ tay: xanh lá, vàng hướng dương, mái bạt sọc"
+    },
+    "sleeve": {
+      "name": "Bìa đĩa than",
+      "note": "Một mảng tím phẳng, ảnh duotone, chữ in hoa nghiêng"
+    },
+    "classic": {
+      "name": "Mực & hoa cúc",
+      "note": "Bản gốc của Genie: mực navy, xanh dương và vàng hoa cúc"
+    }
   }
 }

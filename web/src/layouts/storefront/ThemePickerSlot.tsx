@@ -1,4 +1,6 @@
-// Chỗ đặt nút đổi theme trên header (D1). ThemePicker đầy đủ ở G07.25.
+// Nút đổi theme trên header storefront (D1, plan G07.25) — đúng vị trí prototype (giữa Hỗ trợ và chuông).
+import { ThemePicker } from '@/shared/ui/brand';
+
 export default function ThemePickerSlot() {
-  return null;
+  return <ThemePicker />;
 }

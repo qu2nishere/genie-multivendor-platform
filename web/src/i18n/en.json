@@ -365,5 +365,48 @@
       "category": "Category",
       "shop": "Shop"
     }
+  },
+  "theme": {
+    "picker": {
+      "title": "Choose a theme",
+      "saved_here": "Saved in this browser",
+      "change": "Change theme"
+    },
+    "genie": {
+      "name": "Magic lamp",
+      "note": "True to the name: a brass lamp, teal smoke behind glass"
+    },
+    "hoian": {
+      "name": "Hội An",
+      "note": "Hội An's yellow walls, silk lanterns, green shutters, curved tiles"
+    },
+    "dongho": {
+      "name": "Điệp paper",
+      "note": "Đông Hồ prints: vermilion, sophora yellow, charcoal ink"
+    },
+    "dongson": {
+      "name": "Bronze drum",
+      "note": "The Đông Sơn drum face: brass, bronze gold, verdigris green"
+    },
+    "polymer": {
+      "name": "Polymer notes",
+      "note": "Jade, pink, a clear window and guilloche patterns"
+    },
+    "buudien": {
+      "name": "Postage stamp",
+      "note": "Post-office yellow, navy ink, perforated stamps and postmarks"
+    },
+    "saigon": {
+      "name": "Saigon awning",
+      "note": "Hand-painted signs: green, sunflower yellow, striped awnings"
+    },
+    "sleeve": {
+      "name": "Record sleeve",
+      "note": "One flat purple field, duotone photos, slanted capitals"
+    },
+    "classic": {
+      "name": "Ink & marigold",
+      "note": "Genie's original: navy ink, royal blue and marigold"
+    }
   }
 }
