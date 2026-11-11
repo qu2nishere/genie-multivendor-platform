@@ -1,26 +1,58 @@
 ---
-// Header, footer, SEO, Open Graph — TODO
+// Khung trang storefront (plan G07.04, G07.06; TS 2.4): SEO + Open Graph, theme, nhãn bỏ qua,
+// nền trời, <main id="main">, toast. Header / Footer gắn ở G07.13 / G07.19.
+import SeoHead from './partials/SeoHead.astro';
+import ThemeBoot from './partials/ThemeBoot.astro';
+import ToastHost from './storefront/ToastHost';
+import { createT } from '@/shared/lib/i18n';
+import type { JsonLd } from '@/shared/lib/seo';
+import '@/styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
+  canonical?: string;
+  image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  follow?: boolean;
+  type?: 'website' | 'product' | 'article';
+  jsonLd?: JsonLd[];
+  /**
+   * Biến thể lớp gốc (prototype index.html): bar = có thanh mua dính đáy (sản phẩm, checkout);
+   * cart = thanh tổng giỏ; task = trang tác vụ (ẩn hàng danh mục ở màn hẹp).
+   */
+  variant?: 'bar' | 'cart';
+  task?: boolean;
+  /** Trang chủ: nền trời cao theo hero (tr-main--home). */
+  home?: boolean;
 }
-const { title, description } = Astro.props;
+
+const { variant, task = false, home = false, ...seo } = Astro.props;
 const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const rootClass = ['tr-root', variant && `tr-root--${variant}`, task && 'tr-root--task']
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SeoHead {...seo} />
+    <ThemeBoot />
   </head>
-  <body>
-    <slot />
+  <body class="tr">
+    <a class="tr-skip" href="#main">{t('common.label.skip_to_content')}</a>
+    <div class={rootClass}>
+      <div class="tr-sky" aria-hidden="true"></div>
+      <slot name="header" />
+      <main id="main" tabindex="-1" class:list={['tr-main', home && 'tr-main--home']}>
+        <slot />
+      </main>
+      <slot name="footer" />
+      <slot name="overlays" />
+    </div>
+    <ToastHost client:idle />
   </body>
 </html>
-<style is:global>
-  @import '../styles/global.css';
-</style>

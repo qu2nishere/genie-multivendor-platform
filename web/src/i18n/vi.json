@@ -274,5 +274,34 @@
       "as_table": "Xem dạng bảng",
       "point": "Mốc"
     }
+  },
+  "layout": {
+    "header": {
+      "home": "Genie — Trang chủ"
+    },
+    "notfound": {
+      "title": "Không tìm thấy trang",
+      "text": "Trang bạn tìm có thể đã bị gỡ, đổi địa chỉ hoặc chưa từng tồn tại.",
+      "home": "Về trang chủ",
+      "search": "Tìm sản phẩm"
+    },
+    "auth": {
+      "brand_label": "Cam kết của Genie",
+      "promise_1": "Nhận hàng rồi,",
+      "promise_2": "tiền mới đến shop.",
+      "lead": "Mọi shop đều đã xác minh danh tính. Genie giữ tiền của bạn đến khi bạn nhận hàng.",
+      "hold": {
+        "title": "Giữ tiền đến khi nhận hàng",
+        "text": "Shop chỉ nhận tiền sau khi bạn xác nhận đã nhận."
+      },
+      "return": {
+        "title": "Đổi trả trong 7 ngày",
+        "text": "Hàng lỗi hoặc không đúng mô tả được hoàn tiền."
+      },
+      "freeship": {
+        "title": "Freeship",
+        "text": "Áp mã freeship ngay ở bước thanh toán."
+      }
+    }
   }
 }

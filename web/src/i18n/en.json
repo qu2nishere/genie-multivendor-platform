@@ -274,5 +274,34 @@
       "as_table": "View as table",
       "point": "Point"
     }
+  },
+  "layout": {
+    "header": {
+      "home": "Genie — Home"
+    },
+    "notfound": {
+      "title": "Page not found",
+      "text": "The page you're looking for may have been removed, moved, or never existed.",
+      "home": "Back to home",
+      "search": "Search products"
+    },
+    "auth": {
+      "brand_label": "Genie's promise",
+      "promise_1": "You receive it,",
+      "promise_2": "then the shop gets paid.",
+      "lead": "Every shop is identity-verified. Genie holds your money until you receive your order.",
+      "hold": {
+        "title": "Money held until delivery",
+        "text": "The shop is paid only after you confirm you've received it."
+      },
+      "return": {
+        "title": "7-day returns",
+        "text": "Faulty or not-as-described items are refunded."
+      },
+      "freeship": {
+        "title": "Free shipping",
+        "text": "Apply a free-shipping code right at checkout."
+      }
+    }
   }
 }
