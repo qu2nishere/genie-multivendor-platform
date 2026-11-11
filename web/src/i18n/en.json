@@ -223,6 +223,45 @@
       "label": "Pagination",
       "prev": "Previous",
       "next": "Next"
+    },
+    "price": {
+      "original": "original price"
+    },
+    "rating": {
+      "value": "Rated {value} out of 5",
+      "choose": "Choose a rating",
+      "stars": "{n} stars"
+    },
+    "seal": {
+      "label": "Verified seal of {name}"
+    },
+    "voucher": {
+      "kind": {
+        "platform": "Genie",
+        "shop": "Shop",
+        "freeship": "Free ship"
+      },
+      "ticket": {
+        "platform": "Genie voucher",
+        "shop": "Shop voucher",
+        "freeship": "Free shipping"
+      },
+      "save": "Save",
+      "save_aria": "Save voucher {label}",
+      "saved_aria": "{label} saved to your Voucher wallet",
+      "saved_title": "Saved to your Voucher wallet"
+    },
+    "qr": {
+      "mock": "Simulated QR code"
+    },
+    "flash": {
+      "progress": "Flash Sale progress",
+      "sold": "{sold}/{total} sold",
+      "sold_out": "Sold out"
+    },
+    "wishlist": {
+      "add": "Add to wishlist",
+      "remove": "Remove from wishlist"
     }
   }
 }

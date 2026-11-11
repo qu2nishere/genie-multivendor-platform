@@ -223,6 +223,45 @@
       "label": "Phân trang",
       "prev": "Trước",
       "next": "Sau"
+    },
+    "price": {
+      "original": "giá gốc"
+    },
+    "rating": {
+      "value": "Đánh giá {value} trên 5 sao",
+      "choose": "Chọn số sao",
+      "stars": "{n} sao"
+    },
+    "seal": {
+      "label": "Con dấu xác minh của {name}"
+    },
+    "voucher": {
+      "kind": {
+        "platform": "Genie",
+        "shop": "Shop",
+        "freeship": "Freeship"
+      },
+      "ticket": {
+        "platform": "Voucher Genie",
+        "shop": "Voucher của shop",
+        "freeship": "Freeship"
+      },
+      "save": "Lưu",
+      "save_aria": "Lưu voucher {label}",
+      "saved_aria": "Đã lưu {label} vào Kho Voucher",
+      "saved_title": "Đã lưu vào Kho Voucher"
+    },
+    "qr": {
+      "mock": "Mã QR mô phỏng"
+    },
+    "flash": {
+      "progress": "Tiến độ Flash Sale",
+      "sold": "Đã bán {sold}/{total}",
+      "sold_out": "Đã hết suất"
+    },
+    "wishlist": {
+      "add": "Yêu thích",
+      "remove": "Bỏ yêu thích"
     }
   }
 }
