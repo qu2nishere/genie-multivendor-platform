@@ -1,0 +1,175 @@
+---
+// Thư viện nội bộ (plan G02.15, G06.36): token + component để so với DESIGN.md / prototype.
+// Chỉ có khi chạy dev; bản build production trả 404 thật.
+import AppShellLayout from '@/layouts/AppShellLayout.astro';
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const ramps: { name: string; steps: (string | number)[] }[] = [
+  { name: 'brand', steps: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'sky', steps: [50, 100, 200, 300, 400] },
+  { name: 'flash', steps: [50, 100, 500, 600] },
+  { name: 'gold', steps: [50, 100, 400, 500, 600, 700] },
+  { name: 'mint', steps: [50, 100, 500, 600] },
+  { name: 'ink', steps: [700, 800, 900, 950] },
+  { name: 'paper', steps: [50, 100] },
+  { name: 'gray', steps: [0, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900] },
+  { name: 'green', steps: [50, 500, 600] },
+  { name: 'amber', steps: [50, 500, 600] },
+  { name: 'red', steps: [50, 200, 500, 600] },
+  { name: 'blue', steps: [50, 100, 200, 300, 500, 600] },
+  { name: 'purple', steps: [50, 500] },
+];
+const semantic = [
+  'color-primary',
+  'color-primary-hover',
+  'color-primary-tint',
+  'color-accent',
+  'color-accent-ink',
+  'color-flash',
+  'color-voucher',
+  'color-freeship',
+  'text-strong',
+  'text-body',
+  'text-muted',
+  'text-subtle',
+  'text-link',
+  'surface-page',
+  'surface-card',
+  'surface-sunken',
+  'surface-tint',
+  'surface-ink',
+  'border-subtle',
+  'border-default',
+  'border-strong',
+];
+const sizes = ['2xs', 'xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', 'display'];
+const roles = ['display', 'h1', 'h2', 'h3', 'h4', 'body', 'body-sm', 'label', 'caption'];
+const radii = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'];
+const shadows = ['xs', 'sm', 'md', 'lg', 'xl', 'lift', 'inset'];
+const spaces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+---
+
+<AppShellLayout title="Thư viện giao diện | Genie" noindex>
+  <main class="bg-surface-page mx-auto max-w-wide px-4 py-8 flex flex-col gap-10">
+    <header>
+      <h1 class="text-3xl text-strong">Thư viện giao diện Genie</h1>
+      <p class="text-muted">
+        Token từ <code class="code">genie/tokens/*.css</code> — so với DESIGN.md.
+      </p>
+    </header>
+
+    <section aria-labelledby="h-color">
+      <h2 id="h-color" class="text-2xl text-strong mb-4">Màu — thang gốc</h2>
+      <div class="flex flex-col gap-3">
+        {
+          ramps.map((r) => (
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="w-16 font-semibold text-sm">{r.name}</span>
+              {r.steps.map((s) => (
+                <div class="flex flex-col items-center gap-1">
+                  <span
+                    class="block w-14 h-10 rounded-sm border border-line-subtle"
+                    style={`background: var(--${r.name}-${s})`}
+                  />
+                  <span class="code text-2xs text-muted">{s}</span>
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section aria-labelledby="h-sem">
+      <h2 id="h-sem" class="text-2xl text-strong mb-4">Màu — bí danh ngữ nghĩa</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        {
+          semantic.map((n) => (
+            <div class="flex items-center gap-2">
+              <span
+                class="block w-10 h-10 rounded-sm border border-line-subtle flex-none"
+                style={`background: var(--${n})`}
+              />
+              <span class="code text-2xs break-all">--{n}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section aria-labelledby="h-type">
+      <h2 id="h-type" class="text-2xl text-strong mb-4">Chữ</h2>
+      <div class="flex flex-col gap-2 mb-6">
+        {
+          sizes.map((s) => (
+            <div class="flex items-baseline gap-4">
+              <span class="code text-2xs w-20 text-muted">--text-{s}</span>
+              <span style={`font-size: var(--text-${s})`}>Genie giữ tiền — 1.250.000₫</span>
+            </div>
+          ))
+        }
+      </div>
+      <div class="flex flex-col gap-2">
+        {
+          roles.map((r) => (
+            <div class="flex items-baseline gap-4">
+              <span class="code text-2xs w-20 text-muted">--type-{r}</span>
+              <span style={`font: var(--type-${r})`}>Nhận hàng rồi, tiền mới đến shop</span>
+            </div>
+          ))
+        }
+        <p class="code">TR-20260608-000141 · SKU-AB12 · IBM Plex Mono</p>
+        <p class="eyebrow">Nhãn chữ hoa</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-shape">
+      <h2 id="h-shape" class="text-2xl text-strong mb-4">Bo góc &amp; đổ bóng</h2>
+      <div class="flex flex-wrap gap-4 mb-6">
+        {
+          radii.map((r) => (
+            <div class="flex flex-col items-center gap-1">
+              <span
+                class="block w-20 h-14 bg-brand-100 border border-brand-300"
+                style={`border-radius: var(--radius-${r})`}
+              />
+              <span class="code text-2xs">{r}</span>
+            </div>
+          ))
+        }
+      </div>
+      <div class="flex flex-wrap gap-6">
+        {
+          shadows.map((s) => (
+            <div class="flex flex-col items-center gap-2">
+              <span
+                class="block w-28 h-16 bg-surface-card rounded-md"
+                style={`box-shadow: var(--shadow-${s})`}
+              />
+              <span class="code text-2xs">{s}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section aria-labelledby="h-space">
+      <h2 id="h-space" class="text-2xl text-strong mb-4">Khoảng cách (lưới 4 px)</h2>
+      <div class="flex flex-col gap-1">
+        {
+          spaces.map((n) => (
+            <div class="flex items-center gap-3">
+              <span class="code text-2xs w-20 text-muted">--space-{n}</span>
+              <span class="block h-3 bg-brand-400 rounded-xs" style={`width: var(--space-${n})`} />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <slot />
+  </main>
+</AppShellLayout>
