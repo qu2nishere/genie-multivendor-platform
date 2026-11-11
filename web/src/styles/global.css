@@ -5,6 +5,7 @@
 @import './tokens.css';
 @import './base.css';
 @import './responsive.css';
+@import './dash.css';
 @import './storefront/index.css';
 
 @tailwind base;
