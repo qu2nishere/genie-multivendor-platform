@@ -1,0 +1,98 @@
+/* ===========================================================================
+   Genie storefront — Thanh toán: thanh trả tiền, bước, chip tiền.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  .tr-moneychip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font: var(--weight-semibold) var(--text-xs)/1.4 var(--font-sans);
+    white-space: nowrap;
+  }
+  .tr-moneychip--hold {
+    background: var(--sky-50);
+    color: var(--brand-700);
+  }
+  .tr-moneychip--done {
+    background: var(--green-50);
+    color: var(--green-600);
+  }
+  .tr-moneychip--muted {
+    background: var(--gray-100);
+    color: var(--text-muted);
+  }
+  .tr-steps__now,
+  .tr-paybar {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .tr-root--bar {
+      padding-bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+    .tr-steps > * > :last-child {
+      display: none;
+    }
+    .tr-steps > * > :nth-child(2),
+    .tr-steps > * > :first-child:not(:only-child) + div {
+      width: 36px !important;
+      height: 36px !important;
+    }
+    .tr-steps__now {
+      display: block;
+      margin-top: 14px;
+      text-align: center;
+      font: var(--type-body-sm);
+      color: var(--text-muted);
+    }
+    .tr-steps__now b {
+      color: var(--text-strong);
+    }
+    .tr-paybar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+      background: var(--surface-card);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      box-shadow: 0 -6px 20px rgba(11, 31, 75, 0.12);
+    }
+    .tr-paybar > div {
+      flex: 1;
+      min-width: 0;
+    }
+    .tr-paybar small {
+      display: block;
+      font: var(--type-caption);
+      color: var(--text-muted);
+    }
+    .tr-paybar b {
+      display: block;
+      font: 800 20px/1.2 var(--font-sans);
+      color: var(--text-price);
+      font-variant-numeric: tabular-nums;
+    }
+    .tr-paybar .lz-btn {
+      flex: none;
+    }
+    .tr-inline-cta {
+      display: none !important;
+    }
+  }
+  @media (max-width: 360px) {
+    .tr-paybar .lz-btn {
+      padding: 0 14px;
+      font-size: var(--text-base);
+    }
+    .tr-paybar b {
+      font-size: 18px;
+    }
+  }
+}

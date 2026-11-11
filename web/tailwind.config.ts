@@ -8,6 +8,8 @@ const ramp = (prefix: string, steps: (string | number)[]) =>
 
 export default {
   content: ['./src/**/*.{astro,html,ts,tsx,md}'],
+  // Lớp CSS thành phần ghép động (tr-root--bar, tr-ticket--shop, dash-delta--good…) không bị loại (G07.03)
+  safelist: [{ pattern: /^(tr|dash|gn|lz)-/ }],
   theme: {
     // Điểm gãy lấy từ responsive.css / storefront.css của prototype (max-width 480 / 768 / 1100 / 1199)
     screens: {

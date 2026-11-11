@@ -1,0 +1,370 @@
+/* ===========================================================================
+   Genie storefront — Header: thanh kính, logo, ô tìm kiếm, nút, huy hiệu, hàng danh mục.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  .tr-top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding-bottom: 10px;
+    transition:
+      background-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .tr-top[data-stuck='1'] {
+    background: var(--top-bg, rgba(247, 245, 240, 0.94));
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 1px 0 var(--top-line, rgba(0, 0, 0, 0.08)),
+      0 8px 20px -14px rgba(0, 0, 0, 0.3);
+  }
+  .tr-pillwrap {
+    position: relative;
+    z-index: 2;
+    padding: 12px 24px 0;
+  }
+  .tr-pill {
+    max-width: 1232px;
+    margin: 0 auto;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 10px 8px 18px;
+    border-radius: var(--radius-2xl);
+  }
+  .tr-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    flex: none;
+    color: var(--brand-900);
+    border-radius: var(--radius-md);
+  }
+  .tr-logo span {
+    font: 800 26px/1 var(--font-sans);
+    letter-spacing: -0.03em;
+  }
+  .tr-search {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    height: 48px;
+    background: var(--surface-card);
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    box-shadow: inset 0 0 0 1px rgba(11, 31, 75, 0.08);
+  }
+  .tr-search:focus-within {
+    box-shadow: inset 0 0 0 2px var(--brand-500);
+  }
+  .tr-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    height: 100%;
+    padding: 0 12px;
+    font: var(--type-body);
+    color: var(--text-strong);
+    box-shadow: none;
+  }
+  .tr-search input::placeholder {
+    color: var(--text-subtle);
+  }
+  .tr-search__go {
+    flex: none;
+    width: 56px;
+    height: 40px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--brand-500);
+    color: var(--text-inverse);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .tr-search__go:hover {
+    background: var(--brand-600);
+  }
+  .tr-sug {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--surface-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: 6px;
+    z-index: 120;
+  }
+  .tr-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: none;
+    color: var(--brand-900);
+  }
+  .tr-iconbtn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .tr-iconbtn:hover {
+    background: rgba(11, 31, 75, 0.08);
+  }
+  .tr-textbtn {
+    height: 44px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: var(--weight-semibold) var(--text-sm) var(--font-sans);
+    white-space: nowrap;
+  }
+  .tr-textbtn:hover {
+    background: rgba(11, 31, 75, 0.08);
+  }
+  .tr-badge {
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: var(--radius-pill);
+    background: var(--brand-900);
+    color: var(--text-inverse);
+    font: 700 11px/18px var(--font-sans);
+    text-align: center;
+  }
+  .tr-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 12px 0 5px;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--brand-900);
+    font: 600 14px var(--font-sans);
+    cursor: pointer;
+  }
+  .tr-user:hover {
+    background: var(--surface-card);
+  }
+  .tr-cats {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 24px 0;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tr-cats::-webkit-scrollbar {
+    display: none;
+  }
+  .tr-cat {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid rgba(11, 31, 75, 0.1);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.62);
+    color: var(--brand-900);
+    font: var(--weight-medium) var(--text-sm) var(--font-sans);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tr-cat:hover {
+    background: var(--surface-card);
+    border-color: rgba(11, 31, 75, 0.18);
+  }
+  .tr-cat:focus-visible {
+    box-shadow:
+      0 0 0 3px var(--surface-card),
+      0 0 0 5px var(--brand-500);
+  }
+  .tr-catban .tr-banner img {
+    aspect-ratio: 6 / 1;
+  }
+  @media (max-width: 1100px) {
+    .tr-textbtn--wide {
+      display: none;
+    }
+  }
+  @media (max-width: 768px) {
+    .tr-pillwrap {
+      padding: 8px 8px 0;
+    }
+    .tr-pill {
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      padding: 6px 8px 8px 12px;
+      border-radius: var(--radius-xl);
+    }
+    .tr-logo {
+      margin-right: auto;
+    }
+    .tr-logo span {
+      font-size: 22px;
+    }
+    .tr-search {
+      order: 3;
+      flex: 1 0 100%;
+      height: 44px;
+    }
+    .tr-search__go {
+      width: 48px;
+      height: 36px;
+    }
+    .tr-user span {
+      display: none;
+    }
+    .tr-user {
+      padding: 0 5px;
+    }
+    .tr-cats {
+      padding: 10px 8px 0;
+    }
+  }
+  .tr-lang-code {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .tr-cat {
+      min-height: 44px;
+    }
+    .tr-lang-full {
+      display: none;
+    }
+    .tr-lang-code {
+      display: inline;
+    }
+    .tr-root--task .tr-cats {
+      display: none;
+    }
+  }
+  @media (max-width: 360px) {
+    .tr-pill {
+      padding-left: 10px;
+      column-gap: 2px;
+    }
+    .tr-logo img {
+      width: 26px;
+      height: 26px;
+    }
+    .tr-logo span {
+      font-size: 20px;
+    }
+    .tr-pill .tr-textbtn {
+      padding: 0 4px;
+    }
+    .tr-pill .tr-iconbtn {
+      width: 40px;
+    }
+  }
+  @media (min-width: 769px) {
+    .tr-pillwrap {
+      padding: 8px 24px 0;
+    }
+    .tr-pill {
+      min-height: 52px;
+      gap: 14px;
+      padding: 6px 8px 6px 14px;
+      border-radius: var(--radius-xl);
+    }
+    .tr-logo span {
+      font-size: 22px;
+    }
+    .tr-logo .tr-mark {
+      width: 28px;
+      height: 28px;
+    }
+    .tr-search {
+      height: 40px;
+      padding: 3px;
+    }
+    .tr-search input {
+      font-size: 14px;
+    }
+    .tr-search__go {
+      width: 48px;
+      height: 34px;
+    }
+    .tr-iconbtn {
+      width: 38px;
+      height: 38px;
+    }
+    .tr-iconbtn svg {
+      width: 20px;
+      height: 20px;
+    }
+    .tr-textbtn {
+      height: 38px;
+      padding: 0 10px;
+      font-size: 13px;
+    }
+    .tr-user {
+      height: 38px;
+      font-size: 13px;
+    }
+    .tr-badge {
+      top: 1px;
+      right: 0;
+      min-width: 16px;
+      height: 16px;
+      font-size: 10px;
+      line-height: 16px;
+      padding: 0 4px;
+    }
+    .tr-cats {
+      padding: 8px 24px 0;
+      gap: 4px;
+    }
+    .tr-cat {
+      height: 30px;
+      padding: 0 11px;
+      gap: 5px;
+      font-size: 13px;
+    }
+    .tr-top {
+      padding-bottom: 8px;
+    }
+  }
+  @media (max-width: 768px) {
+    .tr-cats {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+}
