@@ -1,4 +1,22 @@
 // eslint-plugin-boundaries: luật phụ thuộc tầng & feature — TECH_STACK mục 5.2
+// ui → application → domain ← infrastructure; feature khác chỉ qua features/<x>/index.ts
+const sameFeature = (type) => [type, { feature: '${from.feature}' }];
+
+const DEEP_FEATURE_IMPORT = {
+  group: [
+    '@/features/*/domain',
+    '@/features/*/domain/**',
+    '@/features/*/application',
+    '@/features/*/application/**',
+    '@/features/*/infrastructure',
+    '@/features/*/infrastructure/**',
+    '@/features/*/ui',
+    '@/features/*/ui/**',
+  ],
+  message:
+    'Chỉ import feature qua "@/features/<x>" (index.ts). Trong cùng feature dùng đường dẫn tương đối (TECH_STACK 5.2).',
+};
+
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -12,38 +30,95 @@ module.exports = {
   ],
   settings: {
     'import/resolver': { typescript: { project: './tsconfig.json' } },
+    // Thứ tự quan trọng: mẫu khớp trước thắng
     'boundaries/elements': [
+      { type: 'env', pattern: 'src/env.d.ts', mode: 'file' },
+      { type: 'middleware', pattern: 'src/middleware.ts', mode: 'file' },
       { type: 'pages', pattern: 'src/pages/**' },
       { type: 'layouts', pattern: 'src/layouts/**' },
       { type: 'app', pattern: 'src/app/**' },
-      { type: 'features-public', pattern: 'src/features/*/index.ts', mode: 'file' },
+      { type: 'i18n', pattern: 'src/i18n/**' },
+      { type: 'styles', pattern: 'src/styles/**' },
+      { type: 'assets', pattern: 'src/assets/**' },
+      { type: 'features-public', pattern: 'src/features/*/index.ts', mode: 'file', capture: ['feature'] },
       { type: 'feature-domain', pattern: 'src/features/*/domain/**', capture: ['feature'] },
       { type: 'feature-application', pattern: 'src/features/*/application/**', capture: ['feature'] },
       { type: 'feature-infrastructure', pattern: 'src/features/*/infrastructure/**', capture: ['feature'] },
       { type: 'feature-ui', pattern: 'src/features/*/ui/**', capture: ['feature'] },
       { type: 'shared-lib', pattern: 'src/shared/lib/**' },
+      { type: 'shared-hooks', pattern: 'src/shared/hooks/**' },
       { type: 'shared', pattern: 'src/shared/**' },
     ],
+    'boundaries/ignore': ['**/*.test.ts', '**/*.test.tsx'],
   },
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    'boundaries/element-types': ['error', {
-      default: 'disallow',
-      rules: [
-        { from: 'pages', allow: ['features-public', 'layouts', 'shared', 'shared-lib', 'app', 'feature-infrastructure'] },
-        { from: 'layouts', allow: ['features-public', 'shared', 'shared-lib'] },
-        { from: 'app', allow: ['features-public', 'shared', 'shared-lib', 'app'] },
-        { from: 'features-public', allow: ['feature-domain', 'feature-application', 'feature-infrastructure', 'feature-ui'] },
-        { from: 'feature-ui', allow: ['feature-application', 'feature-domain', 'feature-ui', 'shared', 'shared-lib', 'features-public'] },
-        { from: 'feature-application', allow: ['feature-domain', 'feature-infrastructure', 'feature-application', 'shared', 'shared-lib'] },
-        { from: 'feature-infrastructure', allow: ['feature-domain', 'feature-infrastructure', 'shared', 'shared-lib'] },
-        { from: 'feature-domain', allow: ['feature-domain', 'shared-lib'] },
-        { from: 'shared', allow: ['shared', 'shared-lib'] },
-        { from: 'shared-lib', allow: ['shared-lib'] },
-      ],
-    }],
+    'no-restricted-imports': ['error', { patterns: [DEEP_FEATURE_IMPORT] }],
+    'boundaries/element-types': [
+      'error',
+      {
+        default: 'disallow',
+        message: '${file.type} không được import ${dependency.type} (TECH_STACK 5.2)',
+        rules: [
+          {
+            from: 'pages',
+            allow: ['features-public', 'layouts', 'shared', 'shared-lib', 'shared-hooks', 'app', 'i18n', 'assets'],
+          },
+          { from: 'middleware', allow: ['shared', 'shared-lib'] },
+          {
+            from: 'layouts',
+            allow: ['features-public', 'layouts', 'shared', 'shared-lib', 'shared-hooks', 'styles', 'assets'],
+          },
+          { from: 'app', allow: ['features-public', 'shared', 'shared-lib', 'shared-hooks', 'app'] },
+          {
+            from: 'features-public',
+            allow: [
+              sameFeature('feature-domain'),
+              sameFeature('feature-application'),
+              sameFeature('feature-infrastructure'),
+              sameFeature('feature-ui'),
+            ],
+          },
+          {
+            from: 'feature-ui',
+            allow: [
+              sameFeature('feature-application'),
+              sameFeature('feature-domain'),
+              sameFeature('feature-ui'),
+              // .astro SSR được lấy dữ liệu trong frontmatter (TECH_STACK 5.2)
+              sameFeature('feature-infrastructure'),
+              'shared',
+              'shared-lib',
+              'shared-hooks',
+              'features-public',
+              'assets',
+            ],
+          },
+          {
+            from: 'feature-application',
+            allow: [
+              sameFeature('feature-domain'),
+              sameFeature('feature-infrastructure'),
+              sameFeature('feature-application'),
+              'shared',
+              'shared-lib',
+              'shared-hooks',
+            ],
+          },
+          {
+            from: 'feature-infrastructure',
+            allow: [sameFeature('feature-domain'), sameFeature('feature-infrastructure'), 'shared', 'shared-lib'],
+          },
+          { from: 'feature-domain', allow: [sameFeature('feature-domain'), 'shared-lib'] },
+          { from: 'shared', allow: ['shared', 'shared-lib', 'shared-hooks', 'assets'] },
+          { from: 'shared-hooks', allow: ['shared-hooks', 'shared-lib', 'shared'] },
+          { from: 'shared-lib', allow: ['shared-lib', 'i18n'] },
+        ],
+      },
+    ],
   },
   overrides: [
     {
@@ -51,6 +126,37 @@ module.exports = {
       parser: 'astro-eslint-parser',
       parserOptions: { parser: '@typescript-eslint/parser', extraFileExtensions: ['.astro'] },
     },
+    {
+      // Mọi file trong src phải thuộc một element; import tới file không thuộc element nào bị chặn
+      files: ['src/**/*.{ts,tsx,astro}'],
+      excludedFiles: ['**/*.test.ts', '**/*.test.tsx'],
+      rules: {
+        'boundaries/no-unknown-files': 'error',
+        'boundaries/no-unknown': 'error',
+      },
+    },
+    {
+      files: ['src/env.d.ts'],
+      rules: { '@typescript-eslint/triple-slash-reference': 'off' },
+    },
+    {
+      // Test & cấu hình: nới luật boundaries, giữ no-explicit-any
+      files: ['**/*.test.ts', '**/*.test.tsx', 'tests/**', '*.config.*', '*.cjs', '*.mjs'],
+      rules: {
+        'boundaries/element-types': 'off',
+        'boundaries/no-unknown': 'off',
+        'boundaries/no-unknown-files': 'off',
+        'boundaries/no-private': 'off',
+        'boundaries/entry-point': 'off',
+        'no-restricted-imports': 'off',
+        '@typescript-eslint/no-explicit-any': 'error',
+      },
+    },
+    {
+      files: ['*.cjs'],
+      env: { node: true },
+      rules: { '@typescript-eslint/no-require-imports': 'off', 'no-undef': 'off' },
+    },
   ],
-  ignorePatterns: ['dist/', 'node_modules/', '.astro/'],
+  ignorePatterns: ['dist/', 'node_modules/', '.astro/', 'playwright-report/', 'test-results/', 'public/'],
 };
