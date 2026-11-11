@@ -1,7 +1,73 @@
 {
+  "_meta": {
+    "convention": "Khóa: <feature>.<màn>.<ý nghĩa> (TS 11). Dùng chung: common.action.*, common.state.*, common.label.*; lỗi API: errors.GNE-*; khung trang: layout.*. Thêm khóa ở vi.json thì thêm cùng khóa ở en.json (scripts/check-i18n.mjs)."
+  },
   "common": {
     "app_name": "Genie",
     "points": "Điểm Genie",
-    "authentic": "Chính hãng"
+    "points_short": "Điểm",
+    "authentic": "Chính hãng",
+    "authentic_shops": "Shop Chính Hãng",
+    "action": {
+      "all": "Tất cả",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "close": "Đóng",
+      "confirm": "Xác nhận",
+      "add": "Thêm",
+      "detail": "Chi tiết",
+      "back": "Quay lại",
+      "next": "Tiếp tục",
+      "submit": "Gửi",
+      "search": "Tìm kiếm",
+      "apply": "Áp dụng",
+      "reset": "Đặt lại",
+      "retry": "Thử lại",
+      "view_all": "Xem tất cả",
+      "view_more": "Xem thêm",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "show": "Hiện",
+      "hide": "Ẩn",
+      "select_all": "Chọn tất cả",
+      "upload": "Tải lên",
+      "download": "Tải về",
+      "export_csv": "Xuất CSV",
+      "send": "Gửi",
+      "share": "Chia sẻ",
+      "follow": "Theo dõi",
+      "following": "Đang theo dõi",
+      "chat": "Chat",
+      "login": "Đăng nhập",
+      "register": "Đăng ký",
+      "logout": "Đăng xuất"
+    },
+    "state": {
+      "loading": "Đang tải...",
+      "saving": "Đang lưu...",
+      "empty": "Chưa có dữ liệu",
+      "error": "Đã có lỗi xảy ra",
+      "no_results": "Không tìm thấy kết quả phù hợp",
+      "out_of_stock": "Hết hàng",
+      "preorder": "Đặt trước",
+      "required": "Bắt buộc",
+      "optional": "Không bắt buộc"
+    },
+    "label": {
+      "page": "Trang {page}",
+      "prev_page": "Trang trước",
+      "next_page": "Trang sau",
+      "sold": "Đã bán {count}",
+      "free_ship": "Miễn phí vận chuyển",
+      "quantity": "Số lượng",
+      "price": "Giá",
+      "total": "Tổng cộng",
+      "skip_to_content": "Bỏ qua tới nội dung chính"
+    }
+  },
+  "errors": {
+    "unknown": "Có lỗi xảy ra, vui lòng thử lại."
   }
 }

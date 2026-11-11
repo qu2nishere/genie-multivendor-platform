@@ -1,7 +1,73 @@
 {
+  "_meta": {
+    "convention": "Keys: <feature>.<screen>.<meaning> (TS 11). Shared: common.action.*, common.state.*, common.label.*; API errors: errors.GNE-*; page chrome: layout.*. Every key added to vi.json must also be added to en.json (scripts/check-i18n.mjs)."
+  },
   "common": {
     "app_name": "Genie",
     "points": "Genie Points",
-    "authentic": "Authentic"
+    "points_short": "Points",
+    "authentic": "Authentic",
+    "authentic_shops": "Authentic Shops",
+    "action": {
+      "all": "All",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save",
+      "close": "Close",
+      "confirm": "Confirm",
+      "add": "Add",
+      "detail": "Details",
+      "back": "Back",
+      "next": "Continue",
+      "submit": "Submit",
+      "search": "Search",
+      "apply": "Apply",
+      "reset": "Reset",
+      "retry": "Try again",
+      "view_all": "View all",
+      "view_more": "See more",
+      "copy": "Copy",
+      "copied": "Copied",
+      "show": "Show",
+      "hide": "Hide",
+      "select_all": "Select all",
+      "upload": "Upload",
+      "download": "Download",
+      "export_csv": "Export CSV",
+      "send": "Send",
+      "share": "Share",
+      "follow": "Follow",
+      "following": "Following",
+      "chat": "Chat",
+      "login": "Sign in",
+      "register": "Sign up",
+      "logout": "Sign out"
+    },
+    "state": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "empty": "Nothing here yet",
+      "error": "Something went wrong",
+      "no_results": "No matching results",
+      "out_of_stock": "Out of stock",
+      "preorder": "Pre-order",
+      "required": "Required",
+      "optional": "Optional"
+    },
+    "label": {
+      "page": "Page {page}",
+      "prev_page": "Previous page",
+      "next_page": "Next page",
+      "sold": "{count} sold",
+      "free_ship": "Free shipping",
+      "quantity": "Quantity",
+      "price": "Price",
+      "total": "Total",
+      "skip_to_content": "Skip to main content"
+    }
+  },
+  "errors": {
+    "unknown": "Something went wrong, please try again."
   }
 }
