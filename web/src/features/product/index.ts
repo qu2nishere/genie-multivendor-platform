@@ -33,4 +33,10 @@ export {
   getProduct,
   listRelated,
   listProductsByIds,
+  listFeed,
 } from './infrastructure/product.api';
+export { $wishlist, loadWishlist, toggleWishlist } from './application/wishlist.store';
+export { default as ProductGrid, ProductGridBody, type ProductGridProps } from './ui/ProductGrid';
+export { default as ProductFeed, type ProductFeedProps } from './ui/ProductFeed';
+export { WishHeart } from './ui/WishHeart';
+export { toCardData } from './ui/toCard';

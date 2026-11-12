@@ -1,0 +1,41 @@
+---
+// "Shop đã xác minh" trên trang chủ (prototype Home.jsx .tr-shops) — khối tĩnh SSR, mỗi shop là
+// liên kết thật sang /shop/{id} (R16, R17). Con dấu sinh từ mã shop (Seal).
+import { createT } from '@/shared/lib/i18n';
+import { formatCompact, formatNumber } from '@/shared/lib/format';
+import { Seal } from '@/shared/ui';
+import type { Shop } from '../domain/shop.types';
+import { shopHref } from '../domain/shop.rules';
+
+interface Props {
+  shops: Shop[];
+  /** id của tiêu đề khối (aria-labelledby). */
+  labelledBy?: string;
+}
+
+const { shops, labelledBy } = Astro.props;
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+---
+
+<ul class="tr-shops list-none m-0" aria-labelledby={labelledBy}>
+  {
+    shops.map((s) => (
+      <li class="contents">
+        <a class="tr-shop" href={shopHref(s.id)}>
+          <Seal id={s.id} name={s.name} size={40} />
+          <span>
+            <b>{s.name}</b>
+            <small>
+              {t('home.shops.meta', {
+                rating: formatNumber(s.rating, { locale: lang }),
+                followers: formatCompact(s.followerCount, { locale: lang }),
+                location: s.location,
+              })}
+            </small>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

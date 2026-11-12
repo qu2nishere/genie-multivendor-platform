@@ -408,5 +408,90 @@
       "name": "Mực & hoa cúc",
       "note": "Bản gốc của Genie: mực navy, xanh dương và vàng hoa cúc"
     }
+  },
+  "home": {
+    "meta": {
+      "title": "Nhận hàng rồi, tiền mới đến shop",
+      "description": "Sàn mua sắm nhiều shop: Genie giữ tiền của bạn cho đến khi bạn nhận hàng, mọi shop đều xác minh danh tính. Flash Sale mỗi ngày, voucher và freeship."
+    },
+    "hero": {
+      "title_a": "Nhận hàng rồi, ",
+      "title_mark": "tiền mới đến shop.",
+      "lead": "Genie giữ tiền của bạn cho đến khi bạn nhận hàng. Mọi shop đều phải xác minh danh tính mới được bán.",
+      "shelf": "Sản phẩm nổi bật"
+    },
+    "feed": {
+      "title": "Gợi ý cho bạn",
+      "more": "Xem thêm sản phẩm",
+      "see_more": "Xem thêm"
+    },
+    "flash": {
+      "title": "Flash Sale",
+      "see_all": "Xem tất cả",
+      "list": "Sản phẩm Flash Sale"
+    },
+    "vouchers": {
+      "title": "Lưu voucher, dùng khi thanh toán"
+    },
+    "shops": {
+      "title": "Shop đã xác minh",
+      "meta": "{rating} sao · {followers} người theo dõi · {location}"
+    }
+  },
+  "promotions": {
+    "banner": {
+      "carousel": "băng chuyền",
+      "label": "Banner",
+      "prev": "Banner trước",
+      "next": "Banner sau",
+      "go": "Banner {n}"
+    },
+    "popup": {
+      "label_many": "{title}, 1 trong {count} banner",
+      "next": "Lá tiếp theo",
+      "back": "Lá trước",
+      "go": "Xem banner {n}: {title}"
+    },
+    "voucher": {
+      "saved_toast": "Đã lưu voucher thành công"
+    }
+  },
+  "payment": {
+    "rail": {
+      "example": "Ví dụ:",
+      "yours": "Đơn của bạn:",
+      "at": "tại {shop}",
+      "hint": "Bấm từng bước để xem tiền đi đâu",
+      "step": {
+        "pay": "Bạn thanh toán",
+        "hold": "Genie giữ tiền",
+        "receive": "Bạn nhận hàng",
+        "release": "Shop nhận tiền"
+      },
+      "note": {
+        "pay": "Trả qua VNPay hoặc VietQR. Chọn COD thì bạn trả tiền khi nhận hàng.",
+        "hold": "Tiền nằm ở sàn, shop chưa nhận được đồng nào.",
+        "receive": "Bạn có 7 ngày kiểm tra và yêu cầu trả hàng nếu có lỗi.",
+        "release": "Bạn xác nhận hoặc hết 7 ngày thì sàn mới chuyển tiền cho shop."
+      }
+    }
+  },
+  "product": {
+    "card": {
+      "vacation": "Shop đang tạm nghỉ"
+    },
+    "wishlist": {
+      "added": "Đã thêm vào danh sách yêu thích",
+      "removed": "Đã bỏ khỏi danh sách yêu thích"
+    },
+    "promise": {
+      "label": "Khi mua ở Genie",
+      "hold_title": "Genie giữ tiền đến khi bạn nhận hàng",
+      "hold_text": "Trả trước qua VNPay hoặc VietQR, tiền chưa đến shop cho tới khi bạn xác nhận.",
+      "return_title": "7 ngày để yêu cầu trả hàng",
+      "return_text": "Hàng lỗi hoặc sai mô tả, gửi ảnh và video bằng chứng ngay trong đơn.",
+      "verified_title": "{shop} đã xác minh danh tính",
+      "verified_text": "Bán trên Genie từ {year}, đánh giá shop {rating} sao."
+    }
   }
 }

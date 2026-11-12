@@ -40,10 +40,13 @@ module.exports = {
       { type: 'i18n', pattern: 'src/i18n/**' },
       { type: 'styles', pattern: 'src/styles/**' },
       { type: 'assets', pattern: 'src/assets/**' },
-      { type: 'features-public', pattern: 'src/features/*/index.ts', mode: 'file', capture: ['feature'] },
+      // index.ts: API công khai chung; server.ts: component .astro (chỉ trang / layout / .astro dùng)
+      { type: 'features-public', pattern: 'src/features/*/{index,server}.ts', mode: 'file', capture: ['feature'] },
       { type: 'feature-domain', pattern: 'src/features/*/domain/**', capture: ['feature'] },
       { type: 'feature-application', pattern: 'src/features/*/application/**', capture: ['feature'] },
       { type: 'feature-infrastructure', pattern: 'src/features/*/infrastructure/**', capture: ['feature'] },
+      // .astro trong ui: frontmatter SSR được lấy dữ liệu qua infrastructure của chính feature (TS 5.2)
+      { type: 'feature-ui-astro', pattern: 'src/features/*/ui/**/*.astro', mode: 'file', capture: ['feature'] },
       { type: 'feature-ui', pattern: 'src/features/*/ui/**', capture: ['feature'] },
       { type: 'shared-lib', pattern: 'src/shared/lib/**' },
       { type: 'shared-hooks', pattern: 'src/shared/hooks/**' },
@@ -81,6 +84,7 @@ module.exports = {
               sameFeature('feature-application'),
               sameFeature('feature-infrastructure'),
               sameFeature('feature-ui'),
+              sameFeature('feature-ui-astro'),
             ],
           },
           {
@@ -89,7 +93,20 @@ module.exports = {
               sameFeature('feature-application'),
               sameFeature('feature-domain'),
               sameFeature('feature-ui'),
-              // .astro SSR được lấy dữ liệu trong frontmatter (TECH_STACK 5.2)
+              'shared',
+              'shared-lib',
+              'shared-hooks',
+              'features-public',
+              'assets',
+            ],
+          },
+          {
+            from: 'feature-ui-astro',
+            allow: [
+              sameFeature('feature-application'),
+              sameFeature('feature-domain'),
+              sameFeature('feature-ui'),
+              sameFeature('feature-ui-astro'),
               sameFeature('feature-infrastructure'),
               'shared',
               'shared-lib',
@@ -134,6 +151,21 @@ module.exports = {
       rules: {
         'boundaries/no-unknown-files': 'error',
         'boundaries/no-unknown': 'error',
+      },
+    },
+    {
+      // Island React không được kéo component .astro (server.ts) vào bundle trình duyệt
+      files: ['src/**/*.tsx'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              DEEP_FEATURE_IMPORT,
+              { group: ['@/features/*/server'], message: 'server.ts chỉ dành cho .astro (SSR).' },
+            ],
+          },
+        ],
       },
     },
     {

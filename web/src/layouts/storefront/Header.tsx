@@ -10,7 +10,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Providers } from '@/app/providers';
+import { Providers } from '@/shared/providers/Providers';
 import { LoginButton, LoginPrompt, requireLogin, UserMenu } from '@/features/auth';
 import { $cartCount, $cartLines, loadCart, MiniCart } from '@/features/cart';
 import { badgeText, NotifPanel, useNotifications } from '@/features/notifications';

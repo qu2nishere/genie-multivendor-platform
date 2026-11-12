@@ -84,7 +84,7 @@
     }
     .lz-pcard:hover,
     .tr-card__main:hover img,
-    .tr-shelf button:hover img {
+    .tr-shelf__item:hover img {
       transform: none !important;
     }
   }

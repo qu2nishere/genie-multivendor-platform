@@ -85,6 +85,8 @@ export interface ProductQuery {
   freeship?: boolean;
   minRating?: number;
   attribute?: string;
+  /** Chỉ sản phẩm đang Flash Sale. */
+  flash?: boolean;
   sort?: ProductSort;
   page?: number;
   size?: number;

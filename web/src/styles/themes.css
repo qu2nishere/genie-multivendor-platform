@@ -401,7 +401,7 @@
   .tr-play .tr-hero > p {
     animation: tr-in-rise 0.7s var(--ease-out) 0.45s both;
   }
-  .tr-play .tr-shelf button {
+  .tr-play .tr-shelf__item {
     animation: var(--in-shelf, tr-in-rise) 0.7s var(--ease-out) both;
     animation-delay: calc(0.5s + var(--i, 0) * 70ms);
   }
@@ -570,7 +570,7 @@
   -webkit-mask: radial-gradient(circle, transparent 0 40px, #000 41px);
   mask: radial-gradient(circle, transparent 0 40px, #000 41px);
 }
-[data-theme='dongho'] .tr-shelf button {
+[data-theme='dongho'] .tr-shelf__item {
   border-radius: var(--radius-md);
   box-shadow:
     0 0 0 1.5px #1e1814,
@@ -785,7 +785,7 @@
     animation: tr-turn 70s linear infinite reverse;
   }
 }
-[data-theme='polymer'] .tr-shelf button {
+[data-theme='polymer'] .tr-shelf__item {
   border-radius: var(--radius-xl);
 }
 [data-theme='polymer'] .tr-stage .tr-rail.tr-glass {
@@ -982,7 +982,7 @@
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='14'%3E%3Cpath d='M0 7q7.5-7 15 0t15 0 15 0 15 0' fill='none' stroke='%230D1526' stroke-opacity='.7' stroke-width='3'/%3E%3C/svg%3E")
     0 0 / 60px 14px repeat;
 }
-[data-theme='buudien'] .tr-shelf button {
+[data-theme='buudien'] .tr-shelf__item {
   border-radius: 0;
   padding: 7px;
   background: #fff;
@@ -993,7 +993,7 @@
     radial-gradient(circle at center, transparent 4.2px, #000 4.6px) -7px -7px / 14px 14px,
     linear-gradient(#000, #000) 7px 7px / calc(100% - 14px) calc(100% - 14px) no-repeat;
 }
-[data-theme='buudien'] .tr-shelf button img {
+[data-theme='buudien'] .tr-shelf__item img {
   border-radius: 0;
 }
 [data-theme='buudien'] .tr-shelf {
@@ -1234,7 +1234,7 @@
 [data-theme='saigon'] .tr-hero > p {
   color: #d9eee2;
 }
-[data-theme='saigon'] .tr-shelf button {
+[data-theme='saigon'] .tr-shelf__item {
   box-shadow:
     0 0 0 3px #fff,
     0 14px 26px -12px rgba(6, 44, 28, 0.7);
@@ -1485,18 +1485,18 @@
 [data-theme='sleeve'] .tr-shelf {
   gap: 0;
 }
-[data-theme='sleeve'] .tr-shelf button {
+[data-theme='sleeve'] .tr-shelf__item {
   border-radius: 0;
   background: #5b3fd1;
   box-shadow: none;
 }
-[data-theme='sleeve'] .tr-shelf button img {
+[data-theme='sleeve'] .tr-shelf__item img {
   filter: grayscale(1) contrast(1.15);
   mix-blend-mode: multiply;
   transition: filter 0.5s var(--ease-out);
 }
-[data-theme='sleeve'] .tr-shelf button:hover img,
-[data-theme='sleeve'] .tr-shelf button:focus-visible img {
+[data-theme='sleeve'] .tr-shelf__item:hover img,
+[data-theme='sleeve'] .tr-shelf__item:focus-visible img {
   filter: none;
   mix-blend-mode: normal;
 }
@@ -1726,7 +1726,7 @@
     animation: tr-turn 240s linear infinite;
   }
 }
-[data-theme='dongson'] .tr-shelf button {
+[data-theme='dongson'] .tr-shelf__item {
   border-radius: var(--radius-xl);
   box-shadow:
     0 0 0 1.5px #e5c68c,
@@ -2098,7 +2098,7 @@
   height: 231px;
   background: url('/img/themes/hoian-lanterns.svg') center top / contain no-repeat;
 }
-[data-theme='hoian'] .tr-shelf button {
+[data-theme='hoian'] .tr-shelf__item {
   box-shadow:
     0 0 0 3px #fffbf2,
     0 12px 24px -14px rgba(58, 35, 18, 0.6);

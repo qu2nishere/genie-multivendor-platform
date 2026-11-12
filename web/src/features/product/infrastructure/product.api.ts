@@ -33,6 +33,7 @@ const toQuery = (q: ProductQuery) => ({
   freeship: q.freeship,
   min_rating: q.minRating,
   attribute: q.attribute,
+  flash: q.flash,
   sort: q.sort,
   page: q.page ?? 1,
   size: q.size ?? 20,
@@ -91,4 +92,31 @@ export async function listProductsByIds(ids: number[]): Promise<ProductSummary[]
   return (await get<ProductSummaryDto[]>('/public/products', { ids: ids.join(',') })).data.map(
     toProductSummary,
   );
+}
+
+/**
+ * "Gợi ý hôm nay" (trang chủ, /discover): danh sách gợi ý có phân trang. Mock giống prototype —
+ * xoay vòng 20 sản phẩm mẫu thành 240 mục (8 trang × 30); `offset` để trang chủ bắt đầu từ mục 6.
+ */
+export async function listFeed(
+  opts: { page?: number; size?: number; offset?: number } = {},
+): Promise<Page<ProductSummary>> {
+  const page = Math.max(1, opts.page ?? 1);
+  const size = opts.size ?? 30;
+  if (USE_MOCK) {
+    await mockDelay();
+    const all = queryProducts({});
+    const total = 240;
+    const start = (page - 1) * size;
+    const n = Math.max(0, Math.min(size, total - start));
+    const items = Array.from({ length: n }, (_, i) =>
+      toProductSummary(toSummaryDto(all[(start + i + (opts.offset ?? 0)) % all.length])),
+    );
+    return { items, page, size, total_items: total, total_pages: Math.ceil(total / size) };
+  }
+  const res = await get<ProductSummaryDto[]>('/public/feed', { page, size });
+  const pg = isPagePagination(res.pagination)
+    ? res.pagination
+    : { page, size, total_items: res.data.length, total_pages: 1 };
+  return { items: res.data.map(toProductSummary), ...pg };
 }

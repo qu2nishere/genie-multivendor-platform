@@ -142,6 +142,7 @@ export function queryProducts(q: ProductQuery): SeedProduct[] {
   if (q.freeship) list = list.filter((p) => p.free_ship);
   if (q.minRating) list = list.filter((p) => p.rating >= (q.minRating ?? 0));
   if (q.attribute) list = list.filter((p) => p.attribute === q.attribute);
+  if (q.flash) list = list.filter((p) => p.is_flash);
   switch (q.sort) {
     case 'hot':
       list.sort((a, b) => b.sold_count - a.sold_count);

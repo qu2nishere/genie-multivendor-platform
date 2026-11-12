@@ -86,7 +86,8 @@
     height: clamp(200px, 19vw, 276px);
     margin-bottom: -60px;
   }
-  .tr-shelf button {
+  .tr-shelf__item {
+    display: block;
     position: relative;
     border: 0;
     padding: 0;
@@ -116,7 +117,7 @@
     object-fit: cover;
     transition: transform var(--dur-slow) var(--ease-out);
   }
-  .tr-shelf button:hover img {
+  .tr-shelf__item:hover img {
     transform: scale(1.04);
   }
   .tr-rail {
@@ -838,6 +839,10 @@
     cursor: pointer;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
+  a.tr-shop {
+    color: inherit;
+    text-decoration: none;
+  }
   .tr-shop:hover {
     background: var(--brand-50);
   }
@@ -885,7 +890,7 @@
     .tr-section--banner {
       padding-top: 28px;
     }
-    .tr-shelf button {
+    .tr-shelf__item {
       flex: none;
       width: 44vw;
       height: 150px;
