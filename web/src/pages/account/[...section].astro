@@ -1,7 +1,23 @@
 ---
+// Khu Tài khoản (plan G10.44; prototype Account.jsx) — /account/{mục}, khung SSR + island client:load,
+// cần đăng nhập (middleware), noindex. /account → hồ sơ; /account/orders → /orders; mục lạ → 404 (R19).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { AccountSectionView, isAccountSection, type AccountOwnSection } from '@/features/account';
+import { AccountShell } from '@/features/account/server';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const section = (Astro.params.section ?? '').replace(/\/+$/, '');
+if (section === '') return Astro.redirect('/account/profile', 302);
+if (section === 'orders') return Astro.redirect('/orders', 301);
+const OWN: AccountOwnSection[] = ['profile', 'address', 'password', 'logins', 'devices'];
+if (!isAccountSection(section)) return Astro.rewrite('/404');
+const own = (OWN as string[]).includes(section) ? (section as AccountOwnSection) : null;
+if (!own) return Astro.rewrite('/404');
 ---
 
-<StorefrontLayout title="Tài khoản">
-  <!-- Hồ sơ, địa chỉ, voucher, Điểm, yêu thích… -->
+<StorefrontLayout title={t(`account.menu.${section}`)} noindex task>
+  <AccountShell active={section}>
+    <AccountSectionView client:load section={own} />
+  </AccountShell>
 </StorefrontLayout>

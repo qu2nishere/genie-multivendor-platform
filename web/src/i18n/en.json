@@ -1199,7 +1199,12 @@
         "region": "Choose Province, District and Ward",
         "line": "Enter the street address",
         "line_long": "Address can be at most 255 characters"
-      }
+      },
+      "book": "Address book",
+      "book_sub": "Manage your delivery addresses",
+      "empty": "No addresses yet",
+      "remove_title": "Delete address",
+      "remove_text": "Are you sure you want to delete this address?"
     },
     "menu": {
       "label": "Account",
@@ -1216,7 +1221,142 @@
       "points": "Genie Points",
       "wishlist": "Wishlist",
       "following": "Followed shops",
-      "logout_confirm": "Log out of {name} on this device?"
+      "logout_confirm": "Log out of {name} on this device?",
+      "kind_both": "Email and Google",
+      "kind_google": "Google account",
+      "kind_email": "Email account"
+    },
+    "otp": {
+      "sent": "A verification code was sent to {email}",
+      "demo": "test code: 123456",
+      "resend": "Resend code",
+      "resend_in": "Resend code in {s}s",
+      "resent": "Code resent"
+    },
+    "profile": {
+      "title": "My profile",
+      "sub": "Manage your details to keep your account secure",
+      "verified": "Verified",
+      "linked_google": "Linked to Google",
+      "email_need_password_before": "Changing to another email requires you to",
+      "email_need_password_after": "first. Then you can sign in with Google (old email) or Email + password (new email).",
+      "phone_empty": "No phone number yet",
+      "gender": "Gender",
+      "genders": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "OTHER": "Other",
+        "PREFER_NOT_TO_SAY": "Prefer not to say"
+      },
+      "dob": "Date of birth",
+      "dob_empty": "Not set — pick a date to update.",
+      "bio": "Bio",
+      "language": "Language",
+      "lang": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      },
+      "save": "Save changes",
+      "saved": "Profile saved",
+      "avatar_pick": "Choose photo",
+      "avatar_hint": "JPG, PNG. Max 1 MB.",
+      "avatar_saved": "Profile photo updated",
+      "avatar_invalid": "Photo must be JPG / PNG and at most 1 MB.",
+      "err": {
+        "name": "Please enter your full name",
+        "name_long": "Name can be at most 100 characters",
+        "dob": "Invalid date of birth",
+        "bio": "Bio can be at most 200 characters"
+      },
+      "change": "Change"
+    },
+    "email": {
+      "title": "Change login email",
+      "current": "Current email:",
+      "new": "New email",
+      "note": "Genie sends a 6-digit code to the new email. After the change you sign in with the new email; your Google link stays.",
+      "send": "Send code",
+      "other": "Use another email",
+      "done": "Login email changed to {email}",
+      "err": {
+        "same": "The new email must differ from the current one"
+      }
+    },
+    "delete": {
+      "open": "Delete account",
+      "title": "Delete account",
+      "text": "This cannot be undone after 30 days. {name}'s profile will be anonymised and vouchers and Points cancelled. Within 30 days, log in and tap \"Cancel deletion\" to keep the account.",
+      "blocked": "You still have orders in progress. Complete them before deleting your account:",
+      "send_otp": "Send OTP",
+      "confirm": "Confirm deletion",
+      "done": "Deletion request received. A confirmation email with the 30-day deadline has been sent.",
+      "pending": "Your account will be anonymised on {date}. You can cancel the request until then.",
+      "cancel": "Cancel deletion",
+      "cancelled": "Deletion cancelled, your account is back to normal"
+    },
+    "password": {
+      "sub": "Secure your account with a strong password",
+      "sub_set": "Your account only uses Google. No old password is needed because you signed in with Google; afterwards you can sign in with either email or Google.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "hint": "At least 8 characters with upper- and lowercase letters, a number and a symbol",
+      "check": {
+        "checking": "Checking...",
+        "ok": "Correct",
+        "bad": "Incorrect"
+      },
+      "submit": "Update password",
+      "set_submit": "Set password",
+      "confirm_otp": "Confirm password change",
+      "changed": "Password changed",
+      "set_done": "Password set",
+      "done_note": "Password updated. Other devices have been signed out.",
+      "tips_title": "Security tips",
+      "tips": {
+        "1": "Don't reuse the same password on many sites",
+        "2": "Mix uppercase letters, numbers and symbols",
+        "3": "Avoid personal info (name, birthday)",
+        "4": "Change your password every 3–6 months"
+      },
+      "err": {
+        "current": "Enter your current password",
+        "same": "The new password must differ from the current one",
+        "wrong": "Current password is incorrect"
+      }
+    },
+    "logins": {
+      "sub": "Ways to sign in to the same account",
+      "info": "An account has only one password. Google is just another way in: however you sign in, you reach the same account {email} with the same orders, wallet and Points.",
+      "password": "Email and password",
+      "has_pw": "Password set",
+      "no_pw": "No password",
+      "linked": "Linked",
+      "not_linked": "Not linked",
+      "only_way": "This is your only way to sign in. Set a password first if you want to unlink.",
+      "link": "Link Google",
+      "unlink": "Unlink",
+      "keep": "Keep linked",
+      "count": "{count} sign-in method(s) enabled",
+      "since": "Google linked {when}",
+      "link_title": "Link Google",
+      "link_text": "Genie will open Google sign-in. A Google account with a verified email will be attached to your current account {email}; no new account is created.",
+      "unlink_title": "Unlink Google?",
+      "unlink_text": "After unlinking, \"Sign in with Google\" will no longer open this account until you link it again. You can still sign in with email and password.",
+      "linked_toast": "Google linked. Next time \"Sign in with Google\" opens this account",
+      "unlinked_toast": "Google unlinked. Sign in with email and password"
+    },
+    "devices": {
+      "sub": "Sessions currently signed in to your account",
+      "logout_others": "Sign out all other devices",
+      "tip_before": "If you see an unknown device, sign it out right away and",
+      "tip_link": "change your password",
+      "count": "You are signed in on {count} device(s).",
+      "current": "This device",
+      "active": "Active now",
+      "this": "This session",
+      "out_one": "Device signed out",
+      "out_all": "All other devices signed out"
     }
   },
   "orders": {

@@ -1199,7 +1199,12 @@
         "region": "Chọn đầy đủ Tỉnh / Quận / Phường",
         "line": "Nhập địa chỉ cụ thể",
         "line_long": "Địa chỉ tối đa 255 ký tự"
-      }
+      },
+      "book": "Sổ địa chỉ",
+      "book_sub": "Quản lý địa chỉ nhận hàng của bạn",
+      "empty": "Chưa có địa chỉ nào",
+      "remove_title": "Xóa địa chỉ",
+      "remove_text": "Bạn có chắc muốn xóa địa chỉ này?"
     },
     "menu": {
       "label": "Tài khoản",
@@ -1216,7 +1221,142 @@
       "points": "Điểm Genie",
       "wishlist": "Sản phẩm yêu thích",
       "following": "Shop đang theo dõi",
-      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name} trên thiết bị này?"
+      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name} trên thiết bị này?",
+      "kind_both": "Email và Google",
+      "kind_google": "Tài khoản Google",
+      "kind_email": "Tài khoản Email"
+    },
+    "otp": {
+      "sent": "Mã xác nhận đã gửi đến {email}",
+      "demo": "mã thử: 123456",
+      "resend": "Gửi lại mã",
+      "resend_in": "Gửi lại mã sau {s}s",
+      "resent": "Đã gửi lại mã"
+    },
+    "profile": {
+      "title": "Hồ sơ của tôi",
+      "sub": "Quản lý thông tin để bảo mật tài khoản",
+      "verified": "Đã xác minh",
+      "linked_google": "Liên kết Google",
+      "email_need_password_before": "Đổi sang email khác yêu cầu",
+      "email_need_password_after": "trước. Sau đó bạn có thể đăng nhập bằng Google (email cũ) hoặc Email + mật khẩu (email mới).",
+      "phone_empty": "Chưa có số điện thoại",
+      "gender": "Giới tính",
+      "genders": {
+        "MALE": "Nam",
+        "FEMALE": "Nữ",
+        "OTHER": "Khác",
+        "PREFER_NOT_TO_SAY": "Không muốn nói"
+      },
+      "dob": "Ngày sinh",
+      "dob_empty": "Chưa thiết lập — chọn ngày để cập nhật.",
+      "bio": "Giới thiệu",
+      "language": "Ngôn ngữ",
+      "lang": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      },
+      "save": "Lưu thay đổi",
+      "saved": "Đã lưu hồ sơ",
+      "avatar_pick": "Chọn ảnh",
+      "avatar_hint": "Định dạng JPG, PNG. Tối đa 1 MB.",
+      "avatar_saved": "Đã cập nhật ảnh đại diện",
+      "avatar_invalid": "Ảnh phải là JPG / PNG và tối đa 1 MB.",
+      "err": {
+        "name": "Vui lòng nhập Họ và tên",
+        "name_long": "Họ tên tối đa 100 ký tự",
+        "dob": "Ngày sinh không hợp lệ",
+        "bio": "Giới thiệu tối đa 200 ký tự"
+      },
+      "change": "Thay đổi"
+    },
+    "email": {
+      "title": "Đổi email đăng nhập",
+      "current": "Email hiện tại:",
+      "new": "Email mới",
+      "note": "Genie gửi mã 6 số tới email mới. Sau khi đổi, bạn đăng nhập bằng email mới; liên kết Google vẫn giữ nguyên.",
+      "send": "Gửi mã xác nhận",
+      "other": "Đổi email khác",
+      "done": "Đã đổi email đăng nhập thành {email}",
+      "err": {
+        "same": "Email mới phải khác email hiện tại"
+      }
+    },
+    "delete": {
+      "open": "Xóa tài khoản",
+      "title": "Xóa tài khoản",
+      "text": "Hành động này không thể hoàn tác sau 30 ngày. Hồ sơ của {name} sẽ được ẩn danh, voucher và Điểm bị hủy. Trong 30 ngày, đăng nhập lại và bấm \"Hủy yêu cầu xóa\" để giữ tài khoản.",
+      "blocked": "Bạn còn đơn đang xử lý, cần hoàn tất trước khi xóa tài khoản:",
+      "send_otp": "Gửi mã OTP",
+      "confirm": "Xác nhận xóa",
+      "done": "Đã ghi nhận yêu cầu xóa tài khoản. Email xác nhận kèm hạn 30 ngày đã được gửi.",
+      "pending": "Tài khoản sẽ được ẩn danh vào {date}. Bạn có thể hủy yêu cầu trong thời gian này.",
+      "cancel": "Hủy yêu cầu xóa",
+      "cancelled": "Đã hủy yêu cầu xóa, tài khoản trở lại bình thường"
+    },
+    "password": {
+      "sub": "Bảo mật tài khoản bằng mật khẩu mạnh",
+      "sub_set": "Tài khoản đang chỉ có Google. Không cần mật khẩu cũ vì bạn đã đăng nhập bằng Google; sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google.",
+      "current": "Mật khẩu hiện tại",
+      "new": "Mật khẩu mới",
+      "confirm": "Nhập lại mật khẩu mới",
+      "hint": "Tối thiểu 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt",
+      "check": {
+        "checking": "Đang kiểm tra...",
+        "ok": "Chính xác",
+        "bad": "Không chính xác"
+      },
+      "submit": "Cập nhật mật khẩu",
+      "set_submit": "Thiết lập mật khẩu",
+      "confirm_otp": "Xác nhận đổi mật khẩu",
+      "changed": "Đổi mật khẩu thành công",
+      "set_done": "Thiết lập mật khẩu thành công",
+      "done_note": "Đã cập nhật mật khẩu. Các thiết bị khác đã được đăng xuất.",
+      "tips_title": "Mẹo bảo mật",
+      "tips": {
+        "1": "Không dùng mật khẩu giống nhau cho nhiều trang",
+        "2": "Kết hợp chữ hoa, số và ký tự đặc biệt",
+        "3": "Không dùng thông tin cá nhân (tên, ngày sinh)",
+        "4": "Đổi mật khẩu định kỳ 3–6 tháng"
+      },
+      "err": {
+        "current": "Nhập mật khẩu hiện tại",
+        "same": "Mật khẩu mới phải khác mật khẩu hiện tại",
+        "wrong": "Mật khẩu hiện tại không đúng"
+      }
+    },
+    "logins": {
+      "sub": "Các cách đăng nhập vào cùng một tài khoản",
+      "info": "Một tài khoản chỉ có một mật khẩu. Google chỉ là thêm một cách đăng nhập: dù vào bằng cách nào, bạn vẫn vào đúng tài khoản {email} với cùng đơn hàng, ví và Điểm.",
+      "password": "Email và mật khẩu",
+      "has_pw": "Đã có mật khẩu",
+      "no_pw": "Chưa có mật khẩu",
+      "linked": "Đã liên kết",
+      "not_linked": "Chưa liên kết",
+      "only_way": "Đây là cách đăng nhập duy nhất. Thiết lập mật khẩu trước nếu muốn gỡ liên kết.",
+      "link": "Liên kết Google",
+      "unlink": "Gỡ liên kết",
+      "keep": "Giữ liên kết",
+      "count": "{count} cách đăng nhập đang bật",
+      "since": "liên kết Google {when}",
+      "link_title": "Liên kết Google",
+      "link_text": "Genie sẽ mở trang đăng nhập Google. Tài khoản Google có email đã xác minh sẽ được gắn vào tài khoản {email} hiện tại, không tạo tài khoản mới.",
+      "unlink_title": "Gỡ liên kết Google?",
+      "unlink_text": "Sau khi gỡ, bấm \"Đăng nhập Google\" sẽ không vào tài khoản này nữa cho đến khi bạn liên kết lại. Bạn vẫn đăng nhập được bằng email và mật khẩu.",
+      "linked_toast": "Đã liên kết Google. Lần sau bấm \"Đăng nhập Google\" là vào tài khoản này",
+      "unlinked_toast": "Đã gỡ liên kết Google. Bạn đăng nhập bằng email và mật khẩu"
+    },
+    "devices": {
+      "sub": "Các phiên đang đăng nhập vào tài khoản của bạn",
+      "logout_others": "Đăng xuất tất cả thiết bị khác",
+      "tip_before": "Nếu thấy thiết bị lạ, hãy đăng xuất ngay và",
+      "tip_link": "đổi mật khẩu",
+      "count": "Bạn đang đăng nhập trên {count} thiết bị.",
+      "current": "Thiết bị hiện tại",
+      "active": "Đang hoạt động",
+      "this": "Phiên này",
+      "out_one": "Đã đăng xuất thiết bị",
+      "out_all": "Đã đăng xuất tất cả thiết bị khác"
     }
   },
   "orders": {

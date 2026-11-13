@@ -11,3 +11,6 @@ export {
   isAccountSection,
   type AccountSection,
 } from './domain/account.menu';
+export type { Profile, LoginMethods, Device, Gender } from './domain/account.types';
+export { useProfile, useLoginMethods } from './application/useAccount';
+export { default as AccountSectionView, type AccountOwnSection } from './ui/AccountSectionView';

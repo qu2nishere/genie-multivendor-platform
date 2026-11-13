@@ -10,6 +10,7 @@ import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { Providers } from '@/shared/providers/Providers';
 import { Avatar, ConfirmDialog, Icon, type IconName } from '@/shared/ui';
+import { useLoginMethods } from '../application/useAccount';
 import { ACCOUNT_MENU, type AccountSection } from '../domain/account.menu';
 
 export interface AccountNavProps {
@@ -40,7 +41,8 @@ function Nav({ active }: AccountNavProps) {
       return (vouchers.data ?? []).filter((v) => v.saved && v.status === 'active').length;
     return 0;
   };
-  const hasPw = user?.has_password !== false;
+  const methods = useLoginMethods(!!user);
+  const hasPw = methods.data ? methods.data.password : user?.has_password !== false;
 
   return (
     <aside className="tr-acct sticky top-[calc(var(--top-h,86px)+12px)] max-md:static">
@@ -48,7 +50,17 @@ function Nav({ active }: AccountNavProps) {
         <Avatar name={user?.name ?? '…'} src={user?.avatar_url ?? null} size={48} />
         <div className="min-w-0">
           <div className="font-bold text-sm text-strong truncate">{user?.name ?? '…'}</div>
-          <div className="text-xs text-muted mt-px truncate">{user?.email ?? ''}</div>
+          <div className="text-xs text-muted mt-px truncate">
+            {methods.data
+              ? t(
+                  methods.data.password && methods.data.identities.length
+                    ? 'account.menu.kind_both'
+                    : methods.data.identities.length
+                      ? 'account.menu.kind_google'
+                      : 'account.menu.kind_email',
+                )
+              : (user?.email ?? '')}
+          </div>
         </div>
       </div>
       <nav ref={navRef} className="tr-acct__menu" aria-label={t('account.menu.label')}>
