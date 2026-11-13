@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 25 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 33 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **250 / 429** | | |
+| **Tổng** | | **379** | **50** | **258 / 429** | | |
 
 ---
 
@@ -398,14 +398,14 @@
 
 **Nhóm D — Thanh toán & kết quả**
 
-- [ ] **G10.23** `MoneyRail`, `MoneyChip`, `HoldNote`
-- [ ] **G10.24** `PayModal` + `PayGateway`
-- [ ] **G10.25** `VietQrPanel`
-- [ ] **G10.26** COD
-- [ ] **G10.27** `OrderDone`
-- [ ] **G10.28** `PaymentFailed`
-- [ ] **G10.29** `pages/checkout/result.astro`
-- [ ] **G10.C4** 🔖 COMMIT `feat(web): add payment flows and checkout result page` · hash: `_______`
+- [x] **G10.23** `MoneyRail`, `MoneyChip`, `HoldNote`
+- [x] **G10.24** `PayModal` + `PayGateway`
+- [x] **G10.25** `VietQrPanel`
+- [x] **G10.26** COD
+- [x] **G10.27** `OrderDone`
+- [x] **G10.28** `PaymentFailed`
+- [x] **G10.29** `pages/checkout/result.astro`
+- [x] **G10.C4** 🔖 COMMIT `feat(web): add payment flows and checkout result page` · hash: `ad830ca`
 
 **Nhóm E — Đơn mua & theo dõi**
 
@@ -789,6 +789,8 @@
 | G10.20 | Làm sớm phần sổ địa chỉ của nhóm G để checkout dùng: miền / lược đồ zod / hạ tầng 3.8–3.9 / hook TanStack, `AddressModal` (chọn, đặt mặc định, sửa, thêm), `AddressForm` (react-hook-form + zod qua `shared/lib/zodResolver.ts` — không thêm @hookform/resolvers), `RegionPicker` (3 tab + tìm nhanh, cây GHN rút gọn của prototype), GPS → reverse-geocode (từ chối định vị thì dùng tọa độ TP. HCM). G10.48 / G10.49 sẽ tick khi có `AddressPanel` ở trang Tài khoản. SĐT hiển thị nhóm "0901 234 567" (`formatPhone`). |
 | G10.21 | Nháp `genie.checkout.draft` đọc sau khi mount (tránh lệch hydrate); lời nhắn từng shop lưu nháp ngay khi gõ; đặt thành công thì xóa nháp + Idempotency-Key. Địa chỉ không lưu vào nháp (LUU_TRU 6.7). |
 | G10.22 | /checkout khớp sf-checkout-1440 / 360 (bố cục 2 cột → 1 cột, thanh trả tiền dính đáy màn hẹp, đơn con gập "Xem thêm"). Đã thử đặt COD thật: chuyển `/checkout/result?session=8801`; trang kết quả làm ở nhóm D. |
+| G10.23–G10.26 | `MoneyRail`, `HoldNote` có từ G08; thêm `MoneyChip` (hàm `moneyChip` + test), `PayModal` (chọn phương thức / bước QR), `VietQrPanel` (QR giữ chỗ, đếm ngược tới `expires_at`, sao chép số TK / nội dung `TR…`), `PayGateway`, `PaymentLogo` / `CodLogo` ở `payment/ui` — chỉ vẽ; `checkout/ui/PaymentFlow.tsx` ghép với hook checkout. VNPAY: thật → chuyển `payment_url`; mock (`mock:vnpay`) → cổng mô phỏng, "Thanh toán" → phiên COMPLETED, "Quay lại đơn hàng" = VNPAY trả về "khách hủy" → trang thất bại. VietQR: hỏi lại phiên mỗi 3 giây; mock tự coi SePay đã nhận tiền sau ~12 giây (thay nút "Mô phỏng: SePay báo đã nhận tiền" của prototype — D5). COD → kết quả ngay. |
+| G10.27–G10.29 | `/checkout/result?session=<id>` (island `CheckoutResult`): chỉ đọc GET 6.11 rồi hiện OrderDone (mã giao dịch, từng đơn con + Theo dõi → /orders/{id}, tổng; COD "Thu khi nhận hàng", không có đường tiền), PaymentFailed (giữ chỗ còn mm:ss đếm từng giây, Thử lại / Đổi phương thức → PayModal → 6.12, Về giỏ; hết giữ chỗ thì ẩn nút thử lại), hoặc "Đang chờ xác nhận" (tự hỏi lại). Thiếu / sai mã phiên → "Không tìm thấy giao dịch" (prototype mở thẳng thì hiện biên nhận mẫu — không làm). Đã thử thật 4 luồng: COD, VNPAY thành công, VNPAY hủy, VietQR (360px) — đều đúng trang. |
 
 ## Nhật ký
 
@@ -807,3 +809,4 @@
 | 2026-11-13 | Giỏ hàng nhiều shop: miền / hạ tầng / store giỏ, đổi phân loại, xóa nhiều, giỏ khách (G10 nhóm A) | 8a9c33e |
 | 2026-11-13 | Voucher xếp chồng, Voucher Picker, phí ship, công tắc Điểm ở giỏ (G10 nhóm B) | 37f2d0b |
 | 2026-11-13 | Trang Thanh toán gộp nhiều shop, sổ địa chỉ + RegionPicker, giữ hàng 15 phút, nháp checkout (G10 nhóm C) | 3bd8edb |
+| 2026-11-13 | Luồng thanh toán VNPAY / VietQR / COD, cổng mô phỏng, trang kết quả (G10 nhóm D) | ad830ca |
