@@ -363,7 +363,8 @@
       "separate": "Một đơn riêng",
       "ship_free": "Shop miễn phí vận chuyển",
       "ship_fee": "Phí ship {fee}",
-      "subtotal": "Tạm tính ({count}):"
+      "subtotal": "Tạm tính ({count}):",
+      "voucher": "Thêm voucher của Shop"
     },
     "line": {
       "select": "Chọn {title}",
@@ -399,13 +400,21 @@
       "info_discount": " · giảm {amount}",
       "total": "Tổng thanh toán",
       "total_count": "({count} sản phẩm):",
-      "checkout": "Mua hàng ({count})"
+      "checkout": "Mua hàng ({count})",
+      "voucher": "Voucher Genie",
+      "freeship": "+ Freeship",
+      "points": "Dùng {points} Điểm",
+      "points_toggle": "Dùng Điểm Genie để giảm giá"
     },
     "variant": {
       "title": "Chọn phân loại",
       "stock": "Kho: {stock}",
       "back": "Trở lại",
       "confirm": "Xác nhận"
+    },
+    "picker": {
+      "platform_title": "Chọn Voucher Genie",
+      "shop_title": "Chọn Voucher của Shop"
     }
   },
   "auth": {
@@ -721,6 +730,28 @@
       "count": "{n} sản phẩm tham gia",
       "gone_title": "Chiến dịch không tồn tại hoặc đã kết thúc",
       "gone_text": "Đường dẫn \"/{slug}\" không khớp chiến dịch nào đang chạy."
+    },
+    "picker": {
+      "code_label": "Mã Voucher",
+      "code_placeholder": "Nhập mã voucher",
+      "empty": "Chưa có mã giảm giá nào phù hợp",
+      "platform_group": "Mã Giảm Giá",
+      "freeship_group": "Miễn Phí Vận Chuyển",
+      "shop_group": "Voucher của Shop",
+      "only": "Chỉ áp dụng: {list}",
+      "except": "Ngoại trừ: {list}",
+      "expiry": "HSD: {date}",
+      "none": "Chưa chọn Voucher nào",
+      "chosen": "Đã chọn {count} Voucher.",
+      "saving": "Tiết kiệm",
+      "shipping_fee": "Phí vận chuyển",
+      "applied": "Áp dụng mã voucher thành công!",
+      "not_eligible": "Mã voucher chưa đủ điều kiện áp dụng cho đơn hàng này.",
+      "reason": {
+        "no_items": "Giỏ hàng chưa có sản phẩm phù hợp",
+        "min_order": "Chưa đạt giá trị tối thiểu {amount}",
+        "not_active": "Voucher chưa đến thời gian sử dụng"
+      }
     }
   },
   "payment": {

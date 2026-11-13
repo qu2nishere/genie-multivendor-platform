@@ -363,7 +363,8 @@
       "separate": "Separate order",
       "ship_free": "Free shipping by shop",
       "ship_fee": "Shipping {fee}",
-      "subtotal": "Subtotal ({count}):"
+      "subtotal": "Subtotal ({count}):",
+      "voucher": "Add shop voucher"
     },
     "line": {
       "select": "Select {title}",
@@ -399,13 +400,21 @@
       "info_discount": " · {amount} off",
       "total": "Total",
       "total_count": "({count} items):",
-      "checkout": "Check out ({count})"
+      "checkout": "Check out ({count})",
+      "voucher": "Genie voucher",
+      "freeship": "+ Free shipping",
+      "points": "Use {points} Points",
+      "points_toggle": "Use Genie Points for a discount"
     },
     "variant": {
       "title": "Choose variant",
       "stock": "Stock: {stock}",
       "back": "Back",
       "confirm": "Confirm"
+    },
+    "picker": {
+      "platform_title": "Choose a Genie voucher",
+      "shop_title": "Choose a shop voucher"
     }
   },
   "auth": {
@@ -721,6 +730,28 @@
       "count": "{n} products taking part",
       "gone_title": "This campaign doesn't exist or has ended",
       "gone_text": "The link \"/{slug}\" doesn't match any running campaign."
+    },
+    "picker": {
+      "code_label": "Voucher code",
+      "code_placeholder": "Enter voucher code",
+      "empty": "No matching vouchers yet",
+      "platform_group": "Discounts",
+      "freeship_group": "Free shipping",
+      "shop_group": "Shop vouchers",
+      "only": "Only for: {list}",
+      "except": "Except: {list}",
+      "expiry": "Expires: {date}",
+      "none": "No voucher selected",
+      "chosen": "{count} voucher(s) selected.",
+      "saving": "You save",
+      "shipping_fee": "shipping fee",
+      "applied": "Voucher applied!",
+      "not_eligible": "This voucher does not apply to this order yet.",
+      "reason": {
+        "no_items": "No matching items in your cart",
+        "min_order": "Minimum order of {amount} not reached",
+        "not_active": "This voucher is not active yet"
+      }
     }
   },
   "payment": {

@@ -5,7 +5,7 @@ import { emptyDraft, type CheckoutDraft } from '../domain/draft.types';
 interface DraftDto {
   selected_item_ids: number[];
   notes: Record<string, string>;
-  voucher_codes: string[];
+  voucher_codes?: string[];
   use_coins: boolean;
 }
 
@@ -17,7 +17,7 @@ export function readDraft(): CheckoutDraft {
     notes: Object.fromEntries(
       Object.entries(d.notes ?? {}).map(([k, v]) => [Number(k), String(v)]),
     ),
-    voucherCodes: Array.isArray(d.voucher_codes) ? d.voucher_codes.map(String) : [],
+    voucherCodes: Array.isArray(d.voucher_codes) ? d.voucher_codes.map(String) : null,
     usePoints: d.use_coins === true,
   };
 }
@@ -26,7 +26,7 @@ export function writeDraft(d: CheckoutDraft): void {
   const dto: DraftDto = {
     selected_item_ids: d.itemIds,
     notes: Object.fromEntries(Object.entries(d.notes).filter(([, v]) => v.trim() !== '')),
-    voucher_codes: d.voucherCodes,
+    ...(d.voucherCodes ? { voucher_codes: d.voucherCodes } : {}),
     use_coins: d.usePoints,
   };
   store.set('checkoutDraft', dto);

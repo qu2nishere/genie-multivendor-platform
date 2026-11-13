@@ -8,7 +8,9 @@ import { saveCheckoutDraft } from '@/features/checkout';
 import { errorMessage } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { Providers } from '@/shared/providers/Providers';
-import { Button, ConfirmDialog, Icon, Skeleton, toast } from '@/shared/ui';
+import { VoucherPicker } from '@/features/promotions';
+import { formatNumber, formatVND } from '@/shared/lib/format';
+import { Button, ConfirmDialog, Icon, Skeleton, Switch, toast } from '@/shared/ui';
 import {
   changeGuestVariant,
   removeLines,
@@ -24,7 +26,6 @@ import {
   initialSelection,
   isBuyable,
   lineKeyOf,
-  linesSubtotal,
   pruneSelection,
   toggleGroup,
   toggleKey,
@@ -32,6 +33,7 @@ import {
 import type { CartLine } from '../domain/cart.types';
 import { CartBar } from './CartBar';
 import { CartGroupCard } from './CartGroupCard';
+import { useCartPricing } from './useCartPricing';
 import { VariantModal } from './VariantModal';
 
 export interface CartPageProps {
@@ -43,12 +45,16 @@ type Confirm =
   { kind: 'remove'; lines: CartLine[]; zero?: boolean } | { kind: 'over_stock'; stock: number };
 
 function CartScreen({ buyKey }: CartPageProps) {
-  const { t } = useT();
+  const { t, locale } = useT();
   const cart = useCart();
   const [selected, setSelected] = useState<Set<string> | null>(null);
   const [confirm, setConfirm] = useState<Confirm | null>(null);
   const [variantLine, setVariantLine] = useState<CartLine | null>(null);
   const [busy, setBusy] = useState(false);
+  /** Hộp voucher đang mở: sàn (platform) hoặc voucher của một shop. */
+  const [picker, setPicker] = useState<
+    { mode: 'platform' } | { mode: 'shop'; shopId: number } | null
+  >(null);
 
   // Lựa chọn ban đầu khi giỏ nạp xong; sau đó chỉ bỏ khóa không còn trong giỏ
   useEffect(() => {
@@ -68,8 +74,18 @@ function CartScreen({ buyKey }: CartPageProps) {
 
   const sel = useMemo(() => selected ?? new Set<string>(), [selected]);
   const groups = useMemo(() => groupByShop(cart.lines), [cart.lines]);
-  const picked = cart.lines.filter((l) => sel.has(l.key) && isBuyable(l));
+  const picked = useMemo(
+    () => cart.lines.filter((l) => sel.has(l.key) && isBuyable(l)),
+    [cart.lines, sel],
+  );
   const buyableKeys = cart.lines.filter(isBuyable).map((l) => l.key);
+  const pricing = useCartPricing(
+    picked,
+    groups.map((g) => g.shop.id),
+  );
+  const { price } = pricing;
+  const vnd = (n: number) => formatVND(n, { locale });
+  const vouchersOn = !cart.guest;
 
   const run = async (job: () => Promise<void> | void) => {
     setBusy(true);
@@ -182,6 +198,30 @@ function CartScreen({ buyKey }: CartPageProps) {
           onQty={onQty}
           onVariant={setVariantLine}
           onRemove={(l) => setConfirm({ kind: 'remove', lines: [l] })}
+          shipLabel={
+            !pricing.ready
+              ? undefined
+              : g.lines.some((l) => sel.has(l.key)) && pricing.freeByShop(g.shop.id)
+                ? t('cart.group.ship_free')
+                : t('cart.group.ship_fee', { fee: vnd(pricing.shipOfShop(g.shop.id)) })
+          }
+          shopCut={price.shopByShop[g.shop.id] ?? 0}
+          lineCuts={price.perLine}
+          voucherSlot={
+            vouchersOn && (
+              <button
+                type="button"
+                className="tr-vfoot__voucher"
+                onClick={() => setPicker({ mode: 'shop', shopId: g.shop.id })}
+              >
+                <Icon name="ticket" size={16} className="text-primary" />
+                {t('cart.group.voucher')}
+                {(price.shopByShop[g.shop.id] ?? 0) > 0 && (
+                  <span className="text-primary">(−{vnd(price.shopByShop[g.shop.id])})</span>
+                )}
+              </button>
+            )
+          }
         />
       ))}
 
@@ -190,8 +230,44 @@ function CartScreen({ buyKey }: CartPageProps) {
         selectedCount={picked.length}
         allState={checkState(sel, buyableKeys)}
         orderCount={new Set(picked.map((l) => l.shop.id)).size}
-        total={linesSubtotal(picked)}
-        busy={busy}
+        total={price.total}
+        shipping={price.shipping}
+        discount={price.discountTotal}
+        busy={busy || !pricing.ready}
+        tools={
+          vouchersOn && (
+            <>
+              <button
+                type="button"
+                className="tr-cart-tools__btn"
+                onClick={() => setPicker({ mode: 'platform' })}
+              >
+                <Icon name="ticket" size={15} /> {t('cart.bar.voucher')}
+                {price.platformDiscount > 0 && (
+                  <b className="text-primary">(−{vnd(price.platformDiscount)})</b>
+                )}
+                {price.freeshipDiscount > 0 && (
+                  <b className="text-mint-600">{t('cart.bar.freeship')}</b>
+                )}
+              </button>
+              <label
+                className={
+                  'inline-flex items-center gap-1.5 text-link text-sm whitespace-nowrap' +
+                  (pricing.pointsUsable > 0 ? '' : ' opacity-40')
+                }
+              >
+                <Icon name="star" size={15} className="text-gold-500" />
+                {t('cart.bar.points', { points: formatNumber(pricing.pointsUsable, { locale }) })}
+                <Switch
+                  checked={pricing.usePoints && pricing.pointsUsable > 0}
+                  disabled={pricing.pointsUsable <= 0}
+                  onChange={() => pricing.setUsePoints(!pricing.usePoints)}
+                  aria-label={t('cart.bar.points_toggle')}
+                />
+              </label>
+            </>
+          )
+        }
         onToggleAll={() =>
           setSelected(checkState(sel, buyableKeys) === 'all' ? new Set() : new Set(buyableKeys))
         }
@@ -224,6 +300,27 @@ function CartScreen({ buyKey }: CartPageProps) {
           setConfirm(null);
         }}
       />
+
+      {vouchersOn && (
+        <VoucherPicker
+          open={picker !== null}
+          onClose={() => setPicker(null)}
+          title={t(
+            picker?.mode === 'shop' ? 'cart.picker.shop_title' : 'cart.picker.platform_title',
+          )}
+          mode={picker?.mode ?? 'platform'}
+          shopId={picker?.mode === 'shop' ? picker.shopId : null}
+          lines={
+            picker?.mode === 'shop'
+              ? pricing.lines.filter((l) => l.shopId === picker.shopId)
+              : pricing.lines
+          }
+          selection={pricing.selection}
+          ctx={pricing.ctx}
+          onFound={pricing.addVoucher}
+          onConfirm={pricing.setSelection}
+        />
+      )}
 
       <VariantModal
         line={variantLine}

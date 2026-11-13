@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getVouchersByCodes, listMyVouchers, saveVoucher } from '../infrastructure/voucher.api';
+import {
+  findVoucherByCode,
+  getVouchersByCodes,
+  listMyVouchers,
+  saveVoucher,
+} from '../infrastructure/voucher.api';
 
 export const vouchersByCodeKey = (codes: string[]) =>
   ['vouchers', 'by-code', codes.join(',')] as const;
@@ -30,4 +35,9 @@ export function useSaveVoucher(onSaved?: () => void, onFailed?: (e: unknown) => 
     },
     onError: (e) => onFailed?.(e),
   });
+}
+
+/** Tra voucher theo mã (ô "Nhập mã voucher" của Voucher Picker). */
+export function useFindVoucher() {
+  return useMutation({ mutationFn: findVoucherByCode });
 }

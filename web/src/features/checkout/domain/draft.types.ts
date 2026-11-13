@@ -5,14 +5,17 @@ export interface CheckoutDraft {
   itemIds: number[];
   /** Lời nhắn cho từng shop (shop_id → nội dung). */
   notes: Record<number, string>;
-  /** Mã voucher đã chọn (sàn, freeship, voucher shop) — shop của voucher suy từ kho voucher. */
-  voucherCodes: string[];
+  /**
+   * Mã voucher đã chọn (sàn, freeship, voucher shop) — shop của voucher suy từ kho voucher.
+   * null = người dùng chưa chọn lần nào → dùng bộ mã giảm nhiều nhất.
+   */
+  voucherCodes: string[] | null;
   usePoints: boolean;
 }
 
 export const emptyDraft = (): CheckoutDraft => ({
   itemIds: [],
   notes: {},
-  voucherCodes: [],
+  voucherCodes: null,
   usePoints: false,
 });

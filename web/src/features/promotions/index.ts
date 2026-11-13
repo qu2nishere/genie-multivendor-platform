@@ -32,3 +32,29 @@ export {
 } from './domain/flash.rules';
 export type { Campaign } from './domain/campaign.types';
 export { getCampaign, listCampaignSlugs } from './infrastructure/campaign.api';
+export type {
+  PricingLine,
+  PricingContext,
+  PriceBreakdown,
+  ShipFn,
+  VoucherSelection,
+  IneligibleReason,
+} from './domain/pricing.types';
+export {
+  priceCart,
+  bestVouchers,
+  voucherCheck,
+  voucherDiscount,
+  voucherLines,
+  eligibleBase,
+  emptySelection,
+  pruneVoucherSelection,
+  selectionToCodes,
+  selectionFromCodes,
+  extraSaving,
+  usableVouchers,
+  POINTS_RATIO,
+} from './domain/pricing.rules';
+export { findVoucherByCode } from './infrastructure/voucher.api';
+export { useFindVoucher } from './application/useVouchers';
+export { VoucherPicker, type VoucherPickerProps } from './ui/VoucherPicker';

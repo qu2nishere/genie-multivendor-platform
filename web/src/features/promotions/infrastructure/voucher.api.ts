@@ -60,3 +60,24 @@ export async function listShopVouchers(shopId: number): Promise<Voucher[]> {
     await request<VoucherDto[]>(`/public/shops/${shopId}/vouchers`, { auth: false, baseUrl })
   ).data.map(toVoucher);
 }
+
+/**
+ * Tra voucher theo mã để "Áp dụng" trong Voucher Picker (POST /me/checkout/applicable-vouchers với
+ * `code`, API_SPEC 6.9) — trả cả voucher chưa lưu. Không tồn tại → GNE-VCH-4041.
+ */
+export async function findVoucherByCode(code: string): Promise<Voucher> {
+  const c = code.trim().toUpperCase();
+  if (USE_MOCK) {
+    await mockDelay(150);
+    const d = VOUCHER_DTOS.find((v) => v.code === c);
+    if (!d || d.status === 'expired' || d.status === 'used') mockFail('GNE-VCH-4041');
+    return toVoucher(withSaved(d));
+  }
+  const list = await api.post<{ voucher: VoucherDto }[]>('/me/checkout/applicable-vouchers', {
+    code: c,
+    scope: 'PLATFORM',
+    cart_item_ids: [],
+  });
+  if (!list[0]) throw new Error('GNE-VCH-4041');
+  return toVoucher(list[0].voucher);
+}
