@@ -41,12 +41,12 @@
 | G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 |  |  |
-| G09 | Xác thực | 14 | 1 | 0 / 15 |  |  |
+| G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **210 / 429** | | |
+| **Tổng** | | **379** | **50** | **225 / 429** | | |
 
 ---
 
@@ -343,21 +343,21 @@
 
 ## G09 — Xác thực
 
-- [ ] **G09.01** Miền auth
-- [ ] **G09.02** Lược đồ form
-- [ ] **G09.03** Hạ tầng auth
-- [ ] **G09.04** Tầng ứng dụng
-- [ ] **G09.05** `LoginForm`
-- [ ] **G09.06** Bước OTP
-- [ ] **G09.07** Trạng thái khóa
-- [ ] **G09.08** `RegisterForm`
-- [ ] **G09.09** `ForgotForm`
-- [ ] **G09.10** `SocialButton`, `SsoDialog`
-- [ ] **G09.11** `pages/auth/{login,register,forgot}.astro`
-- [ ] **G09.12** `pages/auth/oauth-callback.astro`
-- [ ] **G09.13** Hiển thị lỗi xác thực
-- [ ] **G09.14** Khóa i18n `auth.*`; `index.ts` xuất `LoginPrompt`, `UserMenu`, hook phiên
-- [ ] **G09.C1** 🔖 COMMIT `feat(web): build login, register and password recovery flows` · hash: `_______`
+- [x] **G09.01** Miền auth
+- [x] **G09.02** Lược đồ form
+- [x] **G09.03** Hạ tầng auth
+- [x] **G09.04** Tầng ứng dụng
+- [x] **G09.05** `LoginForm`
+- [x] **G09.06** Bước OTP
+- [x] **G09.07** Trạng thái khóa
+- [x] **G09.08** `RegisterForm`
+- [x] **G09.09** `ForgotForm`
+- [x] **G09.10** `SocialButton`, `SsoDialog`
+- [x] **G09.11** `pages/auth/{login,register,forgot}.astro`
+- [x] **G09.12** `pages/auth/oauth-callback.astro`
+- [x] **G09.13** Hiển thị lỗi xác thực
+- [x] **G09.14** Khóa i18n `auth.*`; `index.ts` xuất `LoginPrompt`, `UserMenu`, hook phiên
+- [x] **G09.C1** 🔖 COMMIT `feat(web): build login, register and password recovery flows` · hash: `49bbf6f`
 
 ## G10 — Trang người mua (cần đăng nhập)
 
@@ -767,6 +767,11 @@
 | G08.45 | robots.txt sinh động (pages/robots.txt.ts) thay cho public/robots.txt để dòng Sitemap là URL tuyệt đối theo tên miền; chặn thêm /cart, /orders, /chat, /auth, /dev ngoài /seller, /admin, /account, /checkout. |
 | G08.47–G08.53 | JSON-LD trang chủ / danh sách / sản phẩm, phân trang SSR, mã trạng thái đã làm cùng từng trang ở nhóm B–F; nhóm G thêm canonicalUrl() (bỏ tham số theo dõi, trang lọc / sắp xếp trỏ về gốc, giữ page), bổ sung width/height cho ảnh lightbox và ảnh bìa shop, kiểm tra một h1 mỗi trang bằng e2e. |
 | G08.54 | tests/e2e/seo.spec.ts chạy tắt JavaScript, 8 kịch bản, xanh trên cả mobile-360 và desktop-1440 (chạy tay bằng npx playwright test — npm run verify chỉ chạy Vitest). |
+| G09.03 | Theo API_SPEC §2: login (POST /auth/sessions), OTP challenge / resend / verify, registrations, password-resets, logout, OAuth token. Không có endpoint kiểm trùng email riêng — trùng email báo qua 409 GNE-AUTH-4091 khi đăng ký (form hiện liên kết Đăng nhập / Quên mật khẩu). Mock giữ trạng thái khóa / OTP trong bộ nhớ trình duyệt. |
+| G09.04 | Gộp giỏ khách sau đăng nhập ghép ở tầng UI (ui/completeLogin.ts truyền mergeGuestCart của cart) vì ESLint boundaries không cho application import feature khác; thêm mergeGuestCart + POST /me/cart/merge (mock). AuthSession / VerifyResult trong domain là kiểu tổng quát để domain không phụ thuộc shared/auth. |
+| G09.10 | Mock: hộp "Tiếp tục với Google / Apple" rồi đăng nhập luôn; thật: chuyển sang /auth/oauth/{provider}/authorize, next đi kèm địa chỉ callback. Bỏ bảng mô phỏng GoogleFlow (D5). |
+| G09 (sửa kèm) | Header chỉ đọc phiên / số giỏ thật sau khi mount (hết lỗi hydration khi đã đăng nhập); giỏ khách hiện số dòng trên icon giỏ; quy tắc min-height 44px cho label ở màn hẹp không áp vào nhãn ô nhập (.lz-field). |
+| Nhánh | feature/web-auth tạo từ feature/web-storefront-public (các nhánh xếp chồng vì chưa mở PR / merge vào develop; vẫn local, chưa push). |
 
 ## Nhật ký
 
@@ -781,3 +786,4 @@
 | 2026-11-13 | Trang shop, Flash Sale, chiến dịch (G08 nhóm E) | 65aa679 |
 | 2026-11-13 | Trang chính sách, sitemap, robots (G08 nhóm F) | 254fcc6 |
 | 2026-11-13 | SEO: canonical, dữ liệu có cấu trúc, kiểm tra không JS (G08 nhóm G) | aac0d8a |
+| 2026-11-13 | Đăng nhập, đăng ký, quên mật khẩu, OAuth callback (G09) | 49bbf6f |
