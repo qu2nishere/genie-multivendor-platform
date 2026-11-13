@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 17 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 25 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **242 / 429** | | |
+| **Tổng** | | **379** | **50** | **250 / 429** | | |
 
 ---
 
@@ -387,14 +387,14 @@
 
 **Nhóm C — Thanh toán**
 
-- [ ] **G10.16** Miền checkout
-- [ ] **G10.17** Hạ tầng checkout
-- [ ] **G10.18** `CheckoutPage`
-- [ ] **G10.19** Đếm ngược giữ chỗ 15 phút + xử lý dòng hết hàng (sửa số lượng / bỏ món)
-- [ ] **G10.20** Chọn / đổi địa chỉ tại checkout
-- [ ] **G10.21** Nháp checkout
-- [ ] **G10.22** `pages/checkout.astro` + khóa i18n `checkout.*`
-- [ ] **G10.C3** 🔖 COMMIT `feat(web): build consolidated checkout page` · hash: `_______`
+- [x] **G10.16** Miền checkout
+- [x] **G10.17** Hạ tầng checkout
+- [x] **G10.18** `CheckoutPage`
+- [x] **G10.19** Đếm ngược giữ chỗ 15 phút + xử lý dòng hết hàng (sửa số lượng / bỏ món)
+- [x] **G10.20** Chọn / đổi địa chỉ tại checkout
+- [x] **G10.21** Nháp checkout
+- [x] **G10.22** `pages/checkout.astro` + khóa i18n `checkout.*`
+- [x] **G10.C3** 🔖 COMMIT `feat(web): build consolidated checkout page` · hash: `3bd8edb`
 
 **Nhóm D — Thanh toán & kết quả**
 
@@ -783,6 +783,12 @@
 | G10.11 | `checkout/domain/shipping.rules.ts` (shipFee, shipOf, makeShipFn, isFreeByShop) + test. Chính sách phí ship lấy qua `useShipPolicies` — API_SPEC chỉ trả phí ship trong preview 6.8, tạm dùng `GET /public/shops/shipping-policies?ids=` (ghi G13.20). |
 | G10.12 | Kho voucher dùng lại `listMyVouchers` (G08); thêm `findVoucherByCode` cho ô nhập mã (6.9 có `code`, trả cả voucher chưa lưu; mã hết hạn / đã dùng → GNE-VCH-4041). Tạo sớm `features/coins` tối thiểu (GET /me/coins → số dư) cho công tắc Điểm; G10.56 mở rộng. |
 | G10.13–G10.15 | `VoucherPicker` ở promotions/ui (bám VoucherPicker.jsx; voucher không đủ điều kiện mờ + lý do; nhập mã). Ghép giá ở `cart/ui/useCartPricing.ts` (kho voucher + phí ship + số dư Điểm + nháp checkout) — sẽ dùng lại ở trang Thanh toán. Lựa chọn voucher / Điểm lưu `genie.checkout.draft` (voucher_codes, use_coins), tải lại trang vẫn giữ; chưa chọn lần nào → bộ mã giảm nhiều nhất như prototype. Khách vãng lai không hiện voucher / Điểm (cần tài khoản). Đã thử thật: bỏ voucher sàn → 3.634.000₫, bật Điểm → 3.632.750₫, tải lại giữ nguyên. |
+| G10.16–G10.17 | Miền `checkout.types` (PaymentMethod VNPAY / VIETQR / COD, CheckoutSession, PaymentInstruction, PlaceOrderInput, HOLD_MINUTES, NOTE_MAX) + `checkout.rules` (đếm ngược giữ chỗ, nhãn nút theo phương thức, đọc `out_of_stock_cart_item_ids` của GNE-INV-4090, `resultView`, mã đơn TR-yyyyMMdd-NNNNNN theo giờ VN) + test. Hạ tầng 6.10–6.12 gửi Idempotency-Key (dùng lại `genie.checkout.idem` tới khi đặt thành công). Mock không có engine giá phía server → `createCheckout` nhận thêm `CheckoutQuote` (bảng giá client đã hiển thị) chỉ để dựng đơn mock; API thật bỏ qua. Kho mock dùng chung `shared/api/mock/placed.ts` ("đơn vừa đặt"): giỏ mock bỏ dòng đã đặt, ví Điểm mock trừ Điểm đã dùng, Đơn mua (G10.31) sẽ đọc đơn mới — thay cho transaction phía server. VNPay mock trả `payment_url = mock:vnpay` để client mở cổng giả lập (nhóm D). |
+| G10.18 | `CheckoutPage` dùng lại `useCartPricing` của giỏ (cùng lựa chọn voucher / Điểm qua nháp) → số liệu khớp prototype: tổng 3.485.200₫, tổng đơn từng shop 1.339.200 / 812.765 / 783.000 / 408.294 / 141.941₫. Thêm "Có bộ mã tiết kiệm thêm … / Áp bộ mã tốt nhất" (extraSaving). Bỏ hộp "Mô phỏng lỗi thanh toán và hết hàng" của prototype (D5). |
+| G10.19 | Đồng hồ giữ hàng 15 phút tính từ lúc vào trang (`HoldCountdown`), hết giờ cho "Giữ lại". Lỗi GNE-INV-4090 → dòng hết hàng bị gạch + nhãn "Hết hàng", nút "Bỏ món" (bỏ khỏi nháp) và "Sửa số lượng ở giỏ"; tổng tiền tính lại không gồm dòng đó. Dữ liệu mock mặc định không sinh lỗi này (không có công tắc kịch bản — D5); đường xử lý có test ở rules. |
+| G10.20 | Làm sớm phần sổ địa chỉ của nhóm G để checkout dùng: miền / lược đồ zod / hạ tầng 3.8–3.9 / hook TanStack, `AddressModal` (chọn, đặt mặc định, sửa, thêm), `AddressForm` (react-hook-form + zod qua `shared/lib/zodResolver.ts` — không thêm @hookform/resolvers), `RegionPicker` (3 tab + tìm nhanh, cây GHN rút gọn của prototype), GPS → reverse-geocode (từ chối định vị thì dùng tọa độ TP. HCM). G10.48 / G10.49 sẽ tick khi có `AddressPanel` ở trang Tài khoản. SĐT hiển thị nhóm "0901 234 567" (`formatPhone`). |
+| G10.21 | Nháp `genie.checkout.draft` đọc sau khi mount (tránh lệch hydrate); lời nhắn từng shop lưu nháp ngay khi gõ; đặt thành công thì xóa nháp + Idempotency-Key. Địa chỉ không lưu vào nháp (LUU_TRU 6.7). |
+| G10.22 | /checkout khớp sf-checkout-1440 / 360 (bố cục 2 cột → 1 cột, thanh trả tiền dính đáy màn hẹp, đơn con gập "Xem thêm"). Đã thử đặt COD thật: chuyển `/checkout/result?session=8801`; trang kết quả làm ở nhóm D. |
 
 ## Nhật ký
 
@@ -800,3 +806,4 @@
 | 2026-11-13 | Đăng nhập, đăng ký, quên mật khẩu, OAuth callback (G09) | 49bbf6f |
 | 2026-11-13 | Giỏ hàng nhiều shop: miền / hạ tầng / store giỏ, đổi phân loại, xóa nhiều, giỏ khách (G10 nhóm A) | 8a9c33e |
 | 2026-11-13 | Voucher xếp chồng, Voucher Picker, phí ship, công tắc Điểm ở giỏ (G10 nhóm B) | 37f2d0b |
+| 2026-11-13 | Trang Thanh toán gộp nhiều shop, sổ địa chỉ + RegionPicker, giữ hàng 15 phút, nháp checkout (G10 nhóm C) | 3bd8edb |
