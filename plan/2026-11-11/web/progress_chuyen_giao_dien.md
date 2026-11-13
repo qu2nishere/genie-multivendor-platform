@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 14 / 51 | — | `feature/seller-ui` |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 22 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **314 / 429** | | |
+| **Tổng** | | **379** | **50** | **322 / 429** | | |
 
 ---
 
@@ -489,14 +489,14 @@
 
 **Nhóm C — Đơn hàng & trả hàng**
 
-- [ ] **G11.13** `seller-orders` miền
-- [ ] **G11.14** Hạ tầng
-- [ ] **G11.15** `FulfillmentPage`
-- [ ] **G11.16** Xác nhận / từ chối đơn có lý do
-- [ ] **G11.17** Đóng gói & tạo vận đơn
-- [ ] **G11.18** `ReturnsPage`
-- [ ] **G11.19** Khóa i18n `seller-orders.*`
-- [ ] **G11.C3** 🔖 COMMIT `feat(seller-ui): add order fulfillment and returns screens` · hash: `_______`
+- [x] **G11.13** `seller-orders` miền
+- [x] **G11.14** Hạ tầng
+- [x] **G11.15** `FulfillmentPage`
+- [x] **G11.16** Xác nhận / từ chối đơn có lý do
+- [x] **G11.17** Đóng gói & tạo vận đơn
+- [x] **G11.18** `ReturnsPage`
+- [x] **G11.19** Khóa i18n `seller-orders.*`
+- [x] **G11.C3** 🔖 COMMIT `feat(seller-ui): add order fulfillment and returns screens` · hash: `93021af`
 
 **Nhóm D — Sản phẩm**
 
@@ -823,6 +823,10 @@
 | G11.09 | `seller-dashboard`: GET /seller/dashboard (10.2). Mock: hàng "Việc cần làm" + số sản phẩm đếm từ kho dùng chung `shared/api/mock/seller.ts` (thêm `sellerOrdersStore`, `sellerProductsStore` theo prototype) nên xác nhận đơn ở màn Đơn hàng sẽ đổi số ở Tổng quan và huy hiệu nav; tìm nhanh cũng đọc kho này. Đồng hồ mock đứng ở ngày chốt số liệu của bản mẫu (08/06/2026) để "hôm nay / hôm qua" và "còn 12 giờ" khớp prototype. |
 | G11.10 | `OverviewPage` khớp ảnh `vendor-1440/360`. Doanh thu dùng `seller-analytics` (endpoint 10.2 revenue nằm dưới /seller/analytics). "Đơn hàng gần đây" dùng `useSellerOrders({ size: 5 })` của `seller-orders` (đã dựng sớm phần miền + danh sách: kiểu, huy hiệu, tab, mốc thời gian — nhóm C dùng tiếp). Ô việc / nút dẫn route SPA thật (`/orders?tab=NEW`, `/returns`, `/chat`, `/wallet?withdraw=1`). `KycBanner` có làm nhưng thực tế không hiện vì cổng KYC khóa Tổng quan khi chưa VERIFIED (API 0.9). |
 | G11.11 | `StatsPage`: chọn Hôm nay / 7 ngày / 30 ngày / Tùy chọn ngày (chưa đủ ngày → lời nhắc, không giữ số cũ). Prototype không có nút xuất ở màn này; thêm "Xuất CSV" (chỉ số kỳ + kết quả đơn + top sản phẩm) theo plan, dùng `shared/lib/csv.ts` (+test). Tiêu đề khối dùng `<h2>` vì `<h1>` đã ở thanh trên (R18). Mock "Tùy chọn ngày" trả số 30 ngày như prototype. |
+| G11.13–G11.14 | `seller-orders`: miền + danh sách đã dựng sớm ở nhóm B, nhóm này thêm `fulfillment.rules` (thao tác theo trạng thái = `allowed_actions`, lý do từ chối, chọn hãng, thu hộ COD), `fulfillment.schema` (zod), miền trả hàng `refund.*`; test chuyển trạng thái NEW → CONFIRMED → PREPARING → giao hãng và các nút trả hàng. Trạng thái vận đơn dùng bộ chuẩn hóa của API (`IN_TRANSIT`, `DELIVERY_FAILED`…) thay mã GHN thô của prototype (`ghnStatus`). Kho mock thêm `sellerRefundsStore`; mọi thao tác ghi kho chung rồi làm mới mọi truy vấn `['seller', …]` (Tổng quan, huy hiệu nav, tìm nhanh đổi theo — đã thử). |
+| G11.15 | `FulfillmentPage`: tab là `Tabs` điều hướng route SPA (`/orders?tab=`; "Trả hàng" → `/returns`), mặc định "Tất cả" (prototype mở tab "Mới"; nút "Xem tất cả" ở Tổng quan cần tab Tất cả). `?q=` từ tìm nhanh / Tổng quan điền sẵn ô tìm. Có phân trang 10 đơn / trang. Màn hẹp: tab đang chọn tự cuộn vào khung nhìn. |
+| G11.16–G11.17 | Từ chối: react-hook-form + zod, "Lý do khác" bắt buộc ghi chú (nút khóa tới khi nhập). Bàn giao ĐVVC: báo giá từ API (10.3), hãng được chọn đánh dấu, gửi kèm Idempotency-Key, xong mở ngay Phiếu gửi hàng; "In" dùng `window.print()` như prototype (PDF A6 của hãng để G13). |
+| G11.18 | `ReturnsPage`: lý do trả hàng dùng lại khóa `refunds.reason.*` của phía khách; ảnh bằng chứng là liên kết mở ảnh gốc; "Yêu cầu bổ sung" chỉ 1 lần (ẩn sau khi dùng, mock trả GNE-SUP-4091 nếu gọi lại). Thêm hộp xác nhận cho "Đã nhận hàng hoàn" / "Nhờ Sàn phân xử" (prototype bấm là đổi ngay). |
 
 ## Nhật ký
 
@@ -849,3 +853,4 @@
 | 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |
 | 2026-11-13 | Seller Center: khung SPA (thanh bên, thanh trên, chuông, tìm nhanh, menu tài khoản), router lazy, cổng KYC, 404 nội bộ (G11 nhóm A) | e1de77b |
 | 2026-11-13 | Seller Center: Tổng quan (việc cần làm, doanh thu, tiền của shop, đơn gần đây, đơn 30 ngày, sản phẩm) + Phân tích (4 ô số, tiền thực về shop, kết quả đơn, nguồn truy cập, cảm xúc đánh giá, top sản phẩm, xuất CSV) (G11 nhóm B) | 428eaa8 |
+| 2026-11-13 | Seller Center: Đơn hàng (tab, tìm, sắp xếp, xác nhận / từ chối, chuẩn bị, bàn giao 3PL, phiếu gửi hàng, chi tiết) + Trả hàng (48 giờ, bằng chứng, 6 thao tác) (G11 nhóm C) | 93021af |
