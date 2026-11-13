@@ -16,6 +16,10 @@ export interface CountdownProps {
    */
   variant?: 'clock' | 'amber' | 'plain';
   onEnd?: () => void;
+  /** Nhãn đọc màn hình của đồng hồ clock (mặc định "Kết thúc lúc 24:00 hôm nay"). */
+  label?: string;
+  /** Chữ nhỏ trước đồng hồ clock (mặc định "Kết thúc sau"). */
+  prefix?: string;
   className?: string;
 }
 
@@ -26,6 +30,8 @@ export function Countdown({
   format,
   variant = 'plain',
   onEnd,
+  label,
+  prefix,
   className,
 }: CountdownProps) {
   const { t } = useT();
@@ -61,9 +67,9 @@ export function Countdown({
       <span
         className={cn('tr-clock', className)}
         role="timer"
-        aria-label={t('ui.countdown.ends_midnight')}
+        aria-label={label ?? t('ui.countdown.ends_midnight')}
       >
-        <small>{t('ui.countdown.ends_in')}</small>
+        <small>{prefix ?? t('ui.countdown.ends_in')}</small>
         {text}
       </span>
     );

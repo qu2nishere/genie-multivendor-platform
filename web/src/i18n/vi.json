@@ -163,7 +163,8 @@
     "GNE-ADM-4221": "Email nhân viên phải có đuôi @genie.example.",
     "GNE-SYS-5030": "Hệ thống đang bận. Vui lòng thử lại sau.",
     "GNE-DB-5002": "Hệ thống đang bận. Vui lòng thử lại sau vài giây.",
-    "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại."
+    "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại.",
+    "GNE-CMP-4041": "Chiến dịch không tồn tại hoặc đã kết thúc."
   },
   "ui": {
     "close": "Đóng",
@@ -538,6 +539,24 @@
     },
     "voucher": {
       "saved_toast": "Đã lưu voucher thành công"
+    },
+    "flash": {
+      "meta_title": "Flash Sale hôm nay",
+      "meta_description": "Flash Sale mỗi ngày trên Genie: giá giảm sâu theo khung giờ, số suất có hạn, Genie giữ tiền đến khi bạn nhận hàng.",
+      "slots": "Khung giờ Flash Sale",
+      "live": "Đang diễn ra",
+      "upcoming": "Sắp diễn ra",
+      "ended": "Đã kết thúc",
+      "ends_in": "Kết thúc sau",
+      "starts_in": "Bắt đầu sau",
+      "ends_at": "Khung giờ kết thúc lúc {time}",
+      "starts_at": "Khung giờ mở bán lúc {time}",
+      "upcoming_note": "Các sản phẩm dưới đây mở bán giá Flash Sale lúc {time} hôm nay."
+    },
+    "campaign": {
+      "count": "{n} sản phẩm tham gia",
+      "gone_title": "Chiến dịch không tồn tại hoặc đã kết thúc",
+      "gone_text": "Đường dẫn \"/{slug}\" không khớp chiến dịch nào đang chạy."
     }
   },
   "payment": {
@@ -717,6 +736,29 @@
       "confirm_text": "Bạn sẽ không nhận được khuyến mãi từ {shop} nữa.",
       "confirm": "Hủy theo dõi",
       "cancel": "Không"
+    },
+    "empty": "Shop chưa có sản phẩm nào ở mục này.",
+    "head": {
+      "meta": "Online · Tham gia từ {year} · Phản hồi {time}",
+      "reopen": "Dự kiến mở lại ngày {until}."
+    },
+    "stat": {
+      "rating": "Đánh giá",
+      "followers": "Người theo dõi",
+      "products": "Sản phẩm",
+      "response": "Phản hồi chat"
+    },
+    "search": {
+      "label": "Tìm trong Shop",
+      "placeholder": "Tìm sản phẩm trong {shop}…",
+      "submit": "Tìm trong shop",
+      "all": "Tìm toàn sàn"
+    },
+    "tab": {
+      "label": "Danh mục của shop",
+      "all": "Tất cả sản phẩm",
+      "new": "Mới nhất",
+      "hot": "Bán chạy"
     }
   }
 }

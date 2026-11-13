@@ -168,6 +168,7 @@ export function queryProducts(q: ProductQuery): SeedProduct[] {
   if (q.attributes?.length)
     list = list.filter((p) => !!p.attribute && q.attributes?.includes(p.attribute));
   if (q.flash) list = list.filter((p) => p.is_flash);
+  if (q.minDiscount) list = list.filter((p) => p.discount_pct >= (q.minDiscount ?? 0));
   switch (q.sort) {
     case 'hot':
       list.sort((a, b) => b.sold_count - a.sold_count);

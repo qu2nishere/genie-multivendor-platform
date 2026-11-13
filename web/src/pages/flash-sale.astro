@@ -1,7 +1,134 @@
 ---
+// Flash Sale (plan G08.38) — prototype chưa có màn riêng: dựng từ Flash Band của trang chủ
+// (DESIGN.md "Flash Band": nền kem, đồng hồ đếm, thanh "đã bán") + các khung giờ trong ngày.
+// Khung đang chạy: lưới có thanh tiến độ, đồng hồ đếm tới hết khung; khung sắp tới: đếm tới giờ mở.
+// Chọn khung bằng liên kết ?slot=HH (R16).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listProducts, ProductGrid } from '@/features/product';
+import {
+  BannerCarousel,
+  BannerLink,
+  flashSlots,
+  listLiveBanners,
+  pickSlot,
+  secondsUntilHour,
+  slotLabel,
+} from '@/features/promotions';
+import { clockVN } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { cn } from '@/shared/lib/cn';
+import { Breadcrumbs, Countdown } from '@/shared/ui';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const now = clockVN();
+const slots = flashSlots(now.hour);
+const slot = pickSlot(now.hour, Astro.url.searchParams.get('slot'));
+const live = slot.state === 'live';
+const [banners, page] = await Promise.all([
+  listLiveBanners('FLASH_SALE_TOP'),
+  listProducts({ flash: true, size: 30 }),
+]);
+const seconds = secondsUntilHour(live ? slot.endHour : slot.hour, now);
+const stateLabel = (s: (typeof slots)[number]) =>
+  s.state === 'live'
+    ? t('promotions.flash.live')
+    : s.state === 'ended'
+      ? t('promotions.flash.ended')
+      : t('promotions.flash.upcoming');
 ---
 
-<StorefrontLayout title="Flash Sale">
-  <!-- Flash Sale -->
+<StorefrontLayout
+  title={t('promotions.flash.meta_title')}
+  description={t('promotions.flash.meta_description')}
+  canonical="/flash-sale"
+>
+  <div class="mx-auto max-w-[1280px] px-6 pt-4 max-md:px-3">
+    <Breadcrumbs
+      items={[{ name: t('layout.nav.home'), href: '/' }, { name: t('home.flash.title') }]}
+    />
+  </div>
+  <section class="tr-section tr-flash !pt-0" aria-labelledby="flash-title">
+    <div class="tr-flash__in">
+      <div class="tr-section__head tr-flash__head">
+        <h1 id="flash-title">{t('home.flash.title')}</h1>
+        <Countdown
+          client:load
+          seconds={seconds}
+          format="hh:mm:ss"
+          variant="clock"
+          prefix={live ? t('promotions.flash.ends_in') : t('promotions.flash.starts_in')}
+          label={live
+            ? t('promotions.flash.ends_at', { time: slotLabel(slot.endHour % 24) })
+            : t('promotions.flash.starts_at', { time: slotLabel(slot.hour) })}
+        />
+      </div>
+
+      <nav
+        class="mb-[18px] grid grid-cols-5 gap-2 max-md:flex max-md:overflow-x-auto"
+        aria-label={t('promotions.flash.slots')}
+      >
+        {
+          slots.map((s) => {
+            const on = s.hour === slot.hour;
+            const cls = cn(
+              'flex min-h-[56px] flex-none flex-col items-center justify-center rounded-md px-4 text-center no-underline hover:no-underline max-md:min-w-[104px]',
+              on ? 'bg-flash-500 text-white' : 'bg-surface-card text-body',
+              s.state === 'ended' && 'opacity-50',
+            );
+            const body = (
+              <>
+                <b class="text-lg leading-tight">{slotLabel(s.hour)}</b>
+                <small class={cn('text-xs', on ? 'text-white/90' : 'text-muted')}>
+                  {stateLabel(s)}
+                </small>
+              </>
+            );
+            return s.state === 'ended' ? (
+              <span class={cls} aria-disabled="true">
+                {body}
+              </span>
+            ) : (
+              <a
+                class={cn(cls, !on && 'hover:text-flash-600')}
+                href={s.state === 'live' ? '/flash-sale' : `/flash-sale?slot=${s.hour}`}
+                aria-current={on ? 'page' : undefined}
+              >
+                {body}
+              </a>
+            );
+          })
+        }
+      </nav>
+
+      {
+        banners.length > 0 && (
+          <div class="tr-flash__banner">
+            {banners.length === 1 ? (
+              <BannerLink client:visible b={banners[0]} priority />
+            ) : (
+              <BannerCarousel client:visible items={banners} compact priority />
+            )}
+          </div>
+        )
+      }
+
+      {
+        !live && (
+          <p
+            class="m-0 mb-3.5 rounded-md bg-surface-card px-4 py-3 text-sm text-body"
+            role="status"
+          >
+            {t('promotions.flash.upcoming_note', { time: slotLabel(slot.hour) })}
+          </p>
+        )
+      }
+      <ProductGrid
+        client:visible
+        items={page.items}
+        flashBar={live}
+        priorityCount={6}
+        aria-label={t('home.flash.list')}
+      />
+    </div>
+  </section>
 </StorefrontLayout>

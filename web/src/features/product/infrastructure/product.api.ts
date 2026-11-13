@@ -43,6 +43,7 @@ const toQuery = (q: ProductQuery) => ({
   min_rating: q.minRating,
   attributes: q.attributes?.join(','),
   flash: q.flash,
+  min_discount: q.minDiscount,
   sort: q.sort,
   page: q.page ?? 1,
   size: q.size ?? 20,

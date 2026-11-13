@@ -1,5 +1,6 @@
 // Voucher của người dùng: kho voucher, lưu voucher. Mock khi USE_MOCK; sau này /api/v1/me/vouchers.
-import { api } from '@/shared/api/http';
+import { api, request } from '@/shared/api/http';
+import { env } from '@/shared/config/env';
 import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
 import type { Voucher } from '../domain/voucher.types';
 import type { VoucherDto } from './voucher.dto';
@@ -43,4 +44,19 @@ export async function saveVoucher(code: string): Promise<void> {
     return;
   }
   await api.post('/me/vouchers', { code });
+}
+
+/** Voucher shop đang chạy (trang shop) — công khai, gọi được từ SSR. */
+export async function listShopVouchers(shopId: number): Promise<Voucher[]> {
+  if (USE_MOCK) {
+    await mockDelay(80);
+    return VOUCHER_DTOS.filter((v) => v.shop_id === shopId && v.status === 'active').map(toVoucher);
+  }
+  const baseUrl =
+    typeof window === 'undefined'
+      ? (env.INTERNAL_API_URL ?? env.PUBLIC_API_URL)
+      : env.PUBLIC_API_URL;
+  return (
+    await request<VoucherDto[]>(`/public/shops/${shopId}/vouchers`, { auth: false, baseUrl })
+  ).data.map(toVoucher);
 }

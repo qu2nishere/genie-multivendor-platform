@@ -1,7 +1,284 @@
 ---
+// Trang shop (prototype Shop.jsx) — plan G08.37. Ảnh bìa + chỉ số (Stat), thẻ nhận diện chồng lên bìa,
+// theo dõi / chat (island), trạng thái tạm nghỉ, tìm trong shop (form GET sang /search phạm vi shop),
+// voucher shop, tab danh mục (liên kết ?tab=) + lưới sản phẩm phân trang. Shop lạ → 404.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listRootCategories } from '@/features/catalog';
+import { listProducts, ProductGrid, productHref, type ProductSort } from '@/features/product';
+import { listShopVouchers, SaveVoucher } from '@/features/promotions';
+import { getShop, ShopActions, shopHref, type Shop } from '@/features/shop';
+import { env } from '@/shared/config/env';
+import { formatCompact, formatNumber } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { cn } from '@/shared/lib/cn';
+import { breadcrumbLd, itemListLd } from '@/shared/lib/seo';
+import { Badge, Icon, Pagination, Seal } from '@/shared/ui';
+
+const PAGE_SIZE = 30;
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+
+const id = Number(Astro.params.id);
+let shop: Shop | null = null;
+if (Number.isSafeInteger(id) && id > 0) {
+  try {
+    shop = await getShop(id);
+  } catch {
+    shop = null;
+  }
+}
+if (!shop) return Astro.rewrite('/404');
+
+const path = shopHref(shop.id);
+const params = Astro.url.searchParams;
+const pageNum = Math.max(1, Number(params.get('page')) || 1);
+
+// Tab: tất cả / mới nhất / bán chạy / danh mục của shop
+const [allOfShop, roots, vouchers] = await Promise.all([
+  listProducts({ shopId: shop.id, size: 60 }),
+  listRootCategories(),
+  listShopVouchers(shop.id),
+]);
+const catIds = Array.from(new Set(allOfShop.items.map((p) => p.categoryId)));
+const cats = roots.filter((c) => catIds.includes(c.id));
+const tabs = [
+  { id: 'all', label: t('shop.tab.all') },
+  { id: 'new', label: t('shop.tab.new') },
+  { id: 'hot', label: t('shop.tab.hot') },
+  ...cats.map((c) => ({ id: c.slug, label: c.name })),
+];
+const tabParam = params.get('tab') ?? 'all';
+const tab = tabs.some((x) => x.id === tabParam) ? tabParam : 'all';
+const sort: ProductSort | undefined = tab === 'new' ? 'new' : tab === 'hot' ? 'hot' : undefined;
+const tabCat = cats.find((c) => c.slug === tab);
+
+const page = await listProducts({
+  shopId: shop.id,
+  categoryId: tabCat?.id,
+  sort,
+  page: pageNum,
+  size: PAGE_SIZE,
+});
+const tabHref = (id: string, p = 1) => {
+  const q = new URLSearchParams();
+  if (id !== 'all') q.set('tab', id);
+  if (p > 1) q.set('page', String(p));
+  const s = q.toString();
+  return s ? `${path}?${s}` : path;
+};
+
+const stats = [
+  { value: formatNumber(shop.rating, { locale: lang }), label: t('shop.stat.rating'), star: true },
+  { value: formatCompact(shop.followerCount, { locale: lang }), label: t('shop.stat.followers') },
+  { value: formatNumber(allOfShop.total_items, { locale: lang }), label: t('shop.stat.products') },
+  { value: `${shop.responseRate}%`, label: t('shop.stat.response') },
+];
+const crumbs = [
+  { name: t('layout.nav.home'), url: '/' },
+  { name: shop.name, url: path },
+];
+const canonical = tab === 'all' && pageNum === 1 ? path : tabHref(tab, pageNum);
 ---
 
-<StorefrontLayout title="Shop">
-  <!-- Trang shop — SSR -->
+<StorefrontLayout
+  title={shop.name}
+  description={`${shop.name} — ${shop.description}`}
+  canonical={canonical}
+  image={shop.coverImage}
+  imageAlt={shop.name}
+  jsonLd={[
+    breadcrumbLd(crumbs, site),
+    itemListLd(
+      page.items.map((p) => ({ name: p.title, url: productHref(p) })),
+      site,
+    ),
+  ]}
+>
+  <div class="relative">
+    <div
+      class="relative h-[220px] overflow-hidden max-md:h-[160px]"
+      style={`background:${shop.logoBg}`}
+    >
+      <img
+        src={shop.coverImage}
+        alt=""
+        class="absolute inset-0 h-full w-full object-cover"
+        fetchpriority="high"
+      />
+      <div
+        class="absolute inset-0"
+        style="background:linear-gradient(180deg, rgba(11,31,75,.58) 0%, rgba(11,31,75,.14) 48%, rgba(11,31,75,.62) 100%)"
+      >
+      </div>
+      <dl
+        class="absolute inset-x-0 top-0 mx-auto m-0 flex max-w-[1280px] flex-wrap justify-end gap-[26px] px-6 py-5 max-md:hidden"
+      >
+        {
+          stats.map((s) => (
+            <div class="flex min-w-[78px] flex-col-reverse text-center">
+              <dt class="mt-0.5 text-xs text-white/70">{s.label}</dt>
+              <dd class="m-0 flex items-center justify-center gap-1 text-[17px] font-extrabold text-white">
+                {s.star && <Icon name="star" size={15} style={{ color: 'var(--gold-400)' }} />}
+                {s.value}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <div class="mx-auto max-w-[1280px] px-6 max-md:px-3">
+      <div
+        class="relative -mt-14 flex flex-wrap items-center gap-[18px] rounded-lg bg-surface-card px-[22px] py-[18px] shadow-md"
+      >
+        <div
+          class="-mt-11 grid h-[88px] w-[88px] flex-none place-items-center rounded-lg border-4 border-solid border-white bg-white shadow-md"
+        >
+          <Seal id={shop.id} name={shop.name} size={76} />
+        </div>
+        <div class="min-w-[220px] flex-1">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="m-0 text-2xl font-extrabold tracking-[-0.01em] text-strong">{shop.name}</h1>
+            {shop.authentic && <Badge variant="primary">{t('product.badge.authentic')}</Badge>}
+            {shop.favorite && <Badge variant="primary">{t('shop.badge.favorite')}</Badge>}
+            {
+              shop.vacation && (
+                <Badge variant="neutral" icon="clock">
+                  {t('product.card.vacation')}
+                </Badge>
+              )
+            }
+          </div>
+          <div class="mt-[5px] text-sm text-muted">
+            {t('shop.head.meta', { year: shop.joinedYear, time: shop.responseTime })}
+          </div>
+          <div class="mt-[3px] text-sm text-muted">{shop.description}</div>
+          <dl class="m-0 mt-2 hidden flex-wrap gap-x-4 gap-y-1 text-xs text-muted max-md:flex">
+            {
+              stats.map((s) => (
+                <div class="flex gap-1">
+                  <dt>{s.label}</dt>
+                  <dd class="m-0 font-semibold text-body">{s.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+        <ShopActions client:idle shopId={shop.id} shopName={shop.name} />
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-[1280px] px-6 pb-14 pt-[18px] max-md:px-3">
+    {
+      shop.vacation && (
+        <div
+          role="status"
+          class="mb-3.5 flex items-center gap-2.5 rounded-lg bg-gray-100 px-4 py-3 text-sm text-body"
+        >
+          <Icon name="clock" size={17} />
+          {shop.vacation.message} {t('shop.head.reopen', { until: shop.vacation.until })}
+        </div>
+      )
+    }
+
+    <form
+      method="get"
+      action="/search"
+      role="search"
+      class="mb-3.5 flex flex-wrap items-center gap-3 rounded-lg bg-surface-card px-4 py-3 shadow-sm"
+    >
+      <Icon name="store" size={18} className="text-primary" />
+      <label for="shop-q" class="text-sm font-semibold text-strong">{t('shop.search.label')}</label>
+      <input type="hidden" name="shop" value={shop.id} />
+      <div
+        class="flex min-w-[240px] flex-1 overflow-hidden rounded-md border-[1.5px] border-solid border-line focus-within:border-primary"
+      >
+        <input
+          id="shop-q"
+          name="q"
+          type="search"
+          maxlength="100"
+          placeholder={t('shop.search.placeholder', { shop: shop.name })}
+          class="h-10 flex-1 border-0 bg-transparent px-3.5 text-base text-body outline-none max-md:h-11"
+        />
+        <button
+          type="submit"
+          name="scope"
+          value="shop"
+          aria-label={t('shop.search.submit')}
+          class="grid w-[52px] cursor-pointer place-items-center border-0 bg-primary text-white"
+        >
+          <Icon name="search" size={18} />
+        </button>
+      </div>
+      <button
+        type="submit"
+        name="scope"
+        value="all"
+        class="inline-flex min-h-[44px] cursor-pointer items-center gap-[5px] border-0 bg-transparent text-sm text-muted hover:text-primary"
+      >
+        {t('shop.search.all')}
+        <Icon name="arrow-right" size={14} />
+      </button>
+    </form>
+
+    {
+      vouchers.length > 0 && (
+        <div class="mb-[18px]">
+          <SaveVoucher
+            client:idle
+            items={vouchers.map((v) => ({
+              code: v.code,
+              kind: v.kind,
+              amount: v.amountLabel,
+              label: v.conditionLabel,
+            }))}
+          />
+        </div>
+      )
+    }
+
+    <nav
+      class="tr-scrollrow flex gap-1 overflow-x-auto rounded-t-lg bg-surface-card px-4 pt-1 shadow-sm [box-shadow:inset_0_-1px_0_var(--border-subtle),var(--shadow-sm)]"
+      aria-label={t('shop.tab.label')}
+    >
+      {
+        tabs.map((x) => (
+          <a
+            href={tabHref(x.id)}
+            aria-current={x.id === tab ? 'page' : undefined}
+            class={cn(
+              'inline-flex min-h-[44px] flex-none items-center whitespace-nowrap border-0 border-b-2 border-solid px-3 text-sm no-underline hover:no-underline',
+              x.id === tab
+                ? 'border-primary font-semibold text-primary'
+                : 'border-transparent text-body hover:text-primary',
+            )}
+          >
+            {x.label}
+          </a>
+        ))
+      }
+    </nav>
+    <section
+      class="rounded-b-lg bg-surface-card px-4 py-[18px] shadow-sm"
+      aria-label={tabs.find((x) => x.id === tab)?.label}
+    >
+      {
+        page.items.length > 0 ? (
+          <>
+            <ProductGrid client:visible items={page.items} aria-label={shop.name} />
+            <Pagination
+              page={page.page}
+              total={page.total_pages}
+              hrefFor={(n) => tabHref(tab, n)}
+              className="mt-6"
+            />
+          </>
+        ) : (
+          <p class="m-0 py-12 text-center text-base text-muted">{t('shop.empty')}</p>
+        )
+      }
+    </section>
+  </div>
 </StorefrontLayout>

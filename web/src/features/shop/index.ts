@@ -10,3 +10,5 @@ export {
 export { getShop, listShops, listFollowedShops, setFollow } from './infrastructure/shop.api';
 export { useFollowedShops, useSetFollow, FOLLOWED_SHOPS_KEY } from './application/useFollow';
 export { default as ShopStrip, type ShopStripProps } from './ui/ShopStrip';
+export { FollowButton, ChatButton, type FollowButtonProps } from './ui/FollowButton';
+export { default as ShopActions } from './ui/ShopActions';

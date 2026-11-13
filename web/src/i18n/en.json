@@ -163,7 +163,8 @@
     "GNE-ADM-4221": "Staff emails must end with @genie.example.",
     "GNE-SYS-5030": "The system is busy. Please try again shortly.",
     "GNE-DB-5002": "The system is busy. Please try again in a few seconds.",
-    "GNE-MINIO-5003": "The upload link expired. Please upload again."
+    "GNE-MINIO-5003": "The upload link expired. Please upload again.",
+    "GNE-CMP-4041": "This campaign doesn't exist or has ended."
   },
   "ui": {
     "close": "Close",
@@ -538,6 +539,24 @@
     },
     "voucher": {
       "saved_toast": "Voucher saved"
+    },
+    "flash": {
+      "meta_title": "Today's Flash Sale",
+      "meta_description": "Daily Flash Sale on Genie: deep discounts by time slot, limited quantities, with Genie holding your money until you receive your order.",
+      "slots": "Flash Sale time slots",
+      "live": "Live now",
+      "upcoming": "Coming up",
+      "ended": "Ended",
+      "ends_in": "Ends in",
+      "starts_in": "Starts in",
+      "ends_at": "This slot ends at {time}",
+      "starts_at": "This slot opens at {time}",
+      "upcoming_note": "The products below go on Flash Sale at {time} today."
+    },
+    "campaign": {
+      "count": "{n} products taking part",
+      "gone_title": "This campaign doesn't exist or has ended",
+      "gone_text": "The link \"/{slug}\" doesn't match any running campaign."
     }
   },
   "payment": {
@@ -717,6 +736,29 @@
       "confirm_text": "You won't get promotions from {shop} anymore.",
       "confirm": "Unfollow",
       "cancel": "No"
+    },
+    "empty": "This shop has no products in this section yet.",
+    "head": {
+      "meta": "Online · Joined {year} · Replies {time}",
+      "reopen": "Expected to reopen on {until}."
+    },
+    "stat": {
+      "rating": "Rating",
+      "followers": "Followers",
+      "products": "Products",
+      "response": "Chat response"
+    },
+    "search": {
+      "label": "Search this shop",
+      "placeholder": "Search products in {shop}…",
+      "submit": "Search in shop",
+      "all": "Search everywhere"
+    },
+    "tab": {
+      "label": "Shop categories",
+      "all": "All products",
+      "new": "Newest",
+      "hot": "Best selling"
     }
   }
 }

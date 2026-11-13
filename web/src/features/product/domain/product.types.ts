@@ -103,6 +103,8 @@ export interface ProductQuery {
   attributes?: string[];
   /** Chỉ sản phẩm đang Flash Sale. */
   flash?: boolean;
+  /** Giảm giá tối thiểu (%) — sản phẩm tham gia chiến dịch. */
+  minDiscount?: number;
   sort?: ProductSort;
   page?: number;
   size?: number;
