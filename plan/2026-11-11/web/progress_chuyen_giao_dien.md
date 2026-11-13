@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-11 — xong G00–G07 (nền tảng + layout, header, footer, 9 theme); đang G08 trên `feature/web-storefront-public` |
+| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 nhóm A (giỏ hàng); đang G10 trên `feature/web-buyer` |
 
 **Cách dùng**
 
@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 9 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **225 / 429** | | |
+| **Tổng** | | **379** | **50** | **234 / 429** | | |
 
 ---
 
@@ -364,15 +364,15 @@
 
 **Nhóm A — Giỏ hàng**
 
-- [ ] **G10.01** Miền giỏ
-- [ ] **G10.02** Hạ tầng giỏ
-- [ ] **G10.03** Ứng dụng giỏ
-- [ ] **G10.04** `CartPage`
-- [ ] **G10.05** `VariantModal`
-- [ ] **G10.06** Tóm tắt giỏ
-- [ ] **G10.07** Giỏ rỗng & giỏ khách
-- [ ] **G10.08** `pages/cart.astro` + khóa i18n `cart.*`
-- [ ] **G10.C1** 🔖 COMMIT `feat(web): build multi-shop cart page` · hash: `_______`
+- [x] **G10.01** Miền giỏ
+- [x] **G10.02** Hạ tầng giỏ
+- [x] **G10.03** Ứng dụng giỏ
+- [x] **G10.04** `CartPage`
+- [x] **G10.05** `VariantModal`
+- [x] **G10.06** Tóm tắt giỏ
+- [x] **G10.07** Giỏ rỗng & giỏ khách
+- [x] **G10.08** `pages/cart.astro` + khóa i18n `cart.*`
+- [x] **G10.C1** 🔖 COMMIT `feat(web): build multi-shop cart page` · hash: `8a9c33e`
 
 **Nhóm B — Voucher & Điểm**
 
@@ -772,6 +772,13 @@
 | G09.10 | Mock: hộp "Tiếp tục với Google / Apple" rồi đăng nhập luôn; thật: chuyển sang /auth/oauth/{provider}/authorize, next đi kèm địa chỉ callback. Bỏ bảng mô phỏng GoogleFlow (D5). |
 | G09 (sửa kèm) | Header chỉ đọc phiên / số giỏ thật sau khi mount (hết lỗi hydration khi đã đăng nhập); giỏ khách hiện số dòng trên icon giỏ; quy tắc min-height 44px cho label ở màn hẹp không áp vào nhãn ô nhập (.lz-field). |
 | Nhánh | feature/web-auth tạo từ feature/web-storefront-public (các nhánh xếp chồng vì chưa mở PR / merge vào develop; vẫn local, chưa push). |
+| Nhánh (G10) | feature/web-buyer tạo từ feature/web-auth (xếp chồng, local, chưa push). |
+| G10.02 | DTO giỏ theo đúng API_SPEC 6.1 (nhóm theo shop, `id` dòng giỏ, `variant_id`, `is_available`, `unavailable_reason`); thêm 2 trường client cần mà spec chưa có: `product_slug` (liên kết /p/{slug}-{id}, R16) và `category_name` (voucher theo ngành khi tính ở mock) — ghi vào danh sách nối backend G13.20. Giỏ khách dựng dòng hiển thị qua `GET /public/variants?ids=` (spec chưa có endpoint tra SKU công khai — bổ sung G13.20). Đổi phân loại dùng API 5.10 `GET /public/products/{id}/variants` (`useVariantChoice`). |
+| G10.02 (mock) | Trang storefront là MPA nên mock trong bộ nhớ mất khi chuyển trang → thêm `mockState(name, init)` ở `shared/api/mock.ts`: giữ trạng thái mock có thể sửa (giỏ, sau này đơn, địa chỉ…) trong sessionStorage `genie.mock.<name>`, chỉ khi USE_MOCK; SSR / test giữ trong bộ nhớ. Xóa cùng lớp mock khi nối backend. |
+| G10.03 | `useCart` đọc store nanostores dùng chung (header ↔ trang giỏ) thay vì cache TanStack riêng; TanStack Query chỉ dùng tra dòng giỏ khách và phân loại. Thêm `setLineQty`, `setLineVariant`, `removeLines`, `buyAgain` (6.6, dùng ở G10.37), thao tác giỏ khách; test gộp giỏ khách `mergeGuestCart.test.ts`. |
+| G10.04–G10.07 | Tên sản phẩm / ảnh / tên shop là `<a href>` thật; nút Chat dẫn `/chat?shop=` (G10.64). Dòng không mua được (hết hàng, shop nghỉ…) hiện nhãn lý do, không chọn được, khóa ô số lượng. Ô "chọn tất cả" của shop / thanh tổng có trạng thái một phần (indeterminate). Khách: xem giỏ tạm + thanh nhắc đăng nhập; bấm "Mua hàng" mở LoginPrompt (next=/cart, đăng nhập xong tự gộp giỏ). |
+| G10.06 | `CartSummary.astro` của khung cũ bỏ đi: thanh tổng phụ thuộc lựa chọn của người dùng nên là `CartBar.tsx` trong island (prototype .tr-cartbar, màn hẹp tách công cụ + thanh trả tiền dính đáy). Phí ship / voucher / Điểm nối ở nhóm B. "Mua hàng" ghi `genie.checkout.draft` (selected_item_ids…) rồi sang /checkout — phần nháp tạo sớm trong `features/checkout` (G10.21 hoàn thiện phần khôi phục). |
+| G10.08 | So ảnh /cart với sf-cart-1440 / sf-cart-360: khớp bố cục, nhóm shop, dòng đổi giá, thanh tổng dính đáy; phần voucher shop, Voucher Genie, Điểm, phí ship đối chiếu lại sau nhóm B. HTML SSR có đúng một `<h1>`. |
 
 ## Nhật ký
 
@@ -787,3 +794,4 @@
 | 2026-11-13 | Trang chính sách, sitemap, robots (G08 nhóm F) | 254fcc6 |
 | 2026-11-13 | SEO: canonical, dữ liệu có cấu trúc, kiểm tra không JS (G08 nhóm G) | aac0d8a |
 | 2026-11-13 | Đăng nhập, đăng ký, quên mật khẩu, OAuth callback (G09) | 49bbf6f |
+| 2026-11-13 | Giỏ hàng nhiều shop: miền / hạ tầng / store giỏ, đổi phân loại, xóa nhiều, giỏ khách (G10 nhóm A) | 8a9c33e |
