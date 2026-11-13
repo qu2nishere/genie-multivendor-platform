@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 9 / 51 | — | `feature/seller-ui` |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 14 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **309 / 429** | | |
+| **Tổng** | | **379** | **50** | **314 / 429** | | |
 
 ---
 
@@ -481,11 +481,11 @@
 
 **Nhóm B — Tổng quan & phân tích**
 
-- [ ] **G11.09** `seller-dashboard` miền + mock
-- [ ] **G11.10** `OverviewPage`
-- [ ] **G11.11** `seller-analytics`
-- [ ] **G11.12** Khóa i18n `seller-dashboard.*`, `seller-analytics.*`
-- [ ] **G11.C2** 🔖 COMMIT `feat(seller-ui): add overview and analytics screens` · hash: `_______`
+- [x] **G11.09** `seller-dashboard` miền + mock
+- [x] **G11.10** `OverviewPage`
+- [x] **G11.11** `seller-analytics`
+- [x] **G11.12** Khóa i18n `seller-dashboard.*`, `seller-analytics.*`
+- [x] **G11.C2** 🔖 COMMIT `feat(seller-ui): add overview and analytics screens` · hash: `428eaa8`
 
 **Nhóm C — Đơn hàng & trả hàng**
 
@@ -820,6 +820,9 @@
 | G11.03–G11.04 | Khung theo `VendorShell`: mục nav là `NavLink` thật, mục bị khóa là nút `aria-disabled` + toast. Màn hẹp: thanh bên thành dải trên, nav cuộn ngang (như responsive.css prototype). Bỏ bảng "Mô phỏng KYC" (D5). Chuông dùng lại `NotifPanel` (thêm `onSelect`, `seeAllHref`) + modal chi tiết có nút "Mở trang liên quan"; mock chọn bộ thông báo của shop khi đang ở `/seller`. Tìm nhanh debounce 250 ms, từ 2 ký tự (10.1b): bấm đơn → `/seller/orders?q=<mã>`, sản phẩm → form sửa. Ngôn ngữ dùng `<select>` như prototype. |
 | G11.05 | `KycGate`: thông điệp riêng cho chưa nộp / đang chờ (gom PENDING · AI_PROCESSING · MANUAL_REVIEW) / bị từ chối / cần bổ sung; chỉ mở Hồ sơ KYC + Cài đặt (API 0.9). |
 | G11.07 | Ngữ cảnh shop (10.1, 10.1b, tài khoản nhận tiền) đặt ở `features/seller-settings` (feature sở hữu thông tin shop) thay vì một feature mới. Kho mock dùng chung `shared/api/mock/seller.ts` giữ tên shop + trạng thái KYC: mở shop ở `/become-seller` đặt NOT_SUBMITTED → vào Seller Center thấy cổng KYC. |
+| G11.09 | `seller-dashboard`: GET /seller/dashboard (10.2). Mock: hàng "Việc cần làm" + số sản phẩm đếm từ kho dùng chung `shared/api/mock/seller.ts` (thêm `sellerOrdersStore`, `sellerProductsStore` theo prototype) nên xác nhận đơn ở màn Đơn hàng sẽ đổi số ở Tổng quan và huy hiệu nav; tìm nhanh cũng đọc kho này. Đồng hồ mock đứng ở ngày chốt số liệu của bản mẫu (08/06/2026) để "hôm nay / hôm qua" và "còn 12 giờ" khớp prototype. |
+| G11.10 | `OverviewPage` khớp ảnh `vendor-1440/360`. Doanh thu dùng `seller-analytics` (endpoint 10.2 revenue nằm dưới /seller/analytics). "Đơn hàng gần đây" dùng `useSellerOrders({ size: 5 })` của `seller-orders` (đã dựng sớm phần miền + danh sách: kiểu, huy hiệu, tab, mốc thời gian — nhóm C dùng tiếp). Ô việc / nút dẫn route SPA thật (`/orders?tab=NEW`, `/returns`, `/chat`, `/wallet?withdraw=1`). `KycBanner` có làm nhưng thực tế không hiện vì cổng KYC khóa Tổng quan khi chưa VERIFIED (API 0.9). |
+| G11.11 | `StatsPage`: chọn Hôm nay / 7 ngày / 30 ngày / Tùy chọn ngày (chưa đủ ngày → lời nhắc, không giữ số cũ). Prototype không có nút xuất ở màn này; thêm "Xuất CSV" (chỉ số kỳ + kết quả đơn + top sản phẩm) theo plan, dùng `shared/lib/csv.ts` (+test). Tiêu đề khối dùng `<h2>` vì `<h1>` đã ở thanh trên (R18). Mock "Tùy chọn ngày" trả số 30 ngày như prototype. |
 
 ## Nhật ký
 
@@ -845,3 +848,4 @@
 | 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
 | 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |
 | 2026-11-13 | Seller Center: khung SPA (thanh bên, thanh trên, chuông, tìm nhanh, menu tài khoản), router lazy, cổng KYC, 404 nội bộ (G11 nhóm A) | e1de77b |
+| 2026-11-13 | Seller Center: Tổng quan (việc cần làm, doanh thu, tiền của shop, đơn gần đây, đơn 30 ngày, sản phẩm) + Phân tích (4 ô số, tiền thực về shop, kết quả đơn, nguồn truy cập, cảm xúc đánh giá, top sản phẩm, xuất CSV) (G11 nhóm B) | 428eaa8 |
