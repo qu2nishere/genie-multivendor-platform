@@ -7,6 +7,7 @@ import Footer from './storefront/Footer.astro';
 import Header from './storefront/Header';
 import ToastHost from './storefront/ToastHost';
 import { buildTree, listCategories } from '@/features/catalog';
+import { ChatWidget } from '@/features/chat';
 import { LOGGED_IN_COOKIE } from '@/shared/auth/session';
 import { createT } from '@/shared/lib/i18n';
 import type { JsonLd } from '@/shared/lib/seo';
@@ -32,9 +33,11 @@ interface Props {
   home?: boolean;
   /** Chữ đang tìm (giữ lại trong ô tìm kiếm trên trang /search). */
   query?: string;
+  /** Ẩn khung chat nổi (trang /chat toàn trang). */
+  noChat?: boolean;
 }
 
-const { variant, task = false, home = false, query, ...seo } = Astro.props;
+const { variant, task = false, home = false, query, noChat = false, ...seo } = Astro.props;
 // Hàng danh mục header: SSR lấy cây danh mục (gốc + con cho ngăn kéo màn hẹp)
 const categories = buildTree(await listCategories()).map((c) => ({
   slug: c.slug,
@@ -73,6 +76,7 @@ const rootClass = ['tr-root', variant && `tr-root--${variant}`, task && 'tr-root
       </main>
       <Footer />
       <slot name="overlays" />
+      {!noChat && <ChatWidget client:only="react" />}
     </div>
     <ToastHost client:idle />
   </body>

@@ -1676,5 +1676,136 @@
       "day": "Day {n}",
       "done": "Checked in! +{points} Points"
     }
+  },
+  "chat": {
+    "title": "Chat with shops",
+    "empty": "No conversations yet. Tap \"Chat now\" on a product page to ask the shop.",
+    "pick": "Pick a conversation to view messages",
+    "preview": {
+      "image": "[Image]",
+      "product": "[Product]",
+      "order": "[Order]"
+    },
+    "status": {
+      "SENDING": "Sending…",
+      "SENT": "Sent",
+      "DELIVERED": "Delivered",
+      "SEEN": "Seen",
+      "FAILED": "Failed to send"
+    },
+    "quick": {
+      "stock": "Is this item in stock?",
+      "eta": "When will it arrive?",
+      "discount": "Any extra discount?",
+      "photo": "Can I see real photos?"
+    },
+    "order": "Order",
+    "view_product": "View product",
+    "image_alt": "Image sent in the conversation",
+    "image_invalid": "Images must be JPG / PNG / WEBP, up to 5 MB.",
+    "typing": "Shop is typing…",
+    "send_image": "Send image",
+    "send_order": "Send order",
+    "no_orders": "No orders with this shop yet",
+    "placeholder": "Type a message…",
+    "send": "Send",
+    "online": "Online",
+    "offline": "Offline",
+    "open_full": "Open full page",
+    "launcher": "Chat with shops",
+    "launcher_unread": "Chat with shops, {count} unread",
+    "response": "Replies {rate}% · within about {minutes} min"
+  },
+  "seller-onboarding": {
+    "landing": {
+      "page_title": "Become a seller",
+      "meta_description": "Open a free shop on Genie: escrow payments, built-in shipping, marketing tools and sales reports.",
+      "badge": "Genie seller channel",
+      "title": "Grow your business with millions of shoppers",
+      "lead": "Open a shop for free, manage orders, your shop wallet and payouts — all in one place.",
+      "stats": {
+        "fee": {
+          "value": "0₫",
+          "label": "Shop opening fee"
+        },
+        "sellers": {
+          "value": "2.8M+",
+          "label": "Sellers"
+        },
+        "commission": {
+          "value": "5%",
+          "label": "Commission from"
+        }
+      },
+      "need_login_a": "You need to",
+      "login": "sign in",
+      "need_login_b": "before opening a shop.",
+      "form_title": "Open your shop",
+      "form_sub": "It only takes 2 minutes.",
+      "shop_name": "Shop name",
+      "owner": "Owner's full name",
+      "phone": "Phone number",
+      "category": "Main category",
+      "type": "Business type",
+      "types": {
+        "INDIVIDUAL": "Individual",
+        "HOUSEHOLD": "Household business",
+        "BUSINESS": "Company"
+      },
+      "terms_a": "I agree to Genie's",
+      "terms_link": "Seller Terms",
+      "terms_b": "and",
+      "commission_link": "Commission Policy",
+      "terms_c": ".",
+      "submit": "Open my shop",
+      "login_cta": "Sign in to open a shop",
+      "already": "Already a seller?",
+      "seller_center": "Sign in to Seller Center",
+      "otp_title": "Verify your email",
+      "otp_sent": "A 6-digit code was sent to {email}",
+      "done": "Shop created. Next: KYC verification.",
+      "err": {
+        "shop": "Shop name needs at least 3 characters",
+        "shop_long": "Shop name can be at most 60 characters",
+        "owner": "Enter the owner's full name",
+        "category": "Choose a category",
+        "terms": "You need to accept the Seller Terms"
+      },
+      "why_title": "Why sell on Genie?",
+      "why_sub": "A complete ecosystem to run your shop efficiently.",
+      "benefits": {
+        "escrow": {
+          "title": "Escrow payments",
+          "desc": "Money is held safely and released to your wallet when the order completes."
+        },
+        "logistics": {
+          "title": "3PL shipping partners",
+          "desc": "GHN, GHTK, ViettelPost and J&T Express built in — print waybills in seconds. Genie Express for same-city orders."
+        },
+        "marketing": {
+          "title": "Marketing tools",
+          "desc": "Create shop vouchers, join Flash Sales and platform campaigns."
+        },
+        "analytics": {
+          "title": "Reports & analytics",
+          "desc": "Track revenue, orders and conversion rate in real time."
+        }
+      },
+      "steps_title": "3 steps to start selling",
+      "steps": {
+        "register": {
+          "title": "Register your shop",
+          "desc": "Enter your shop name, category and contact details."
+        },
+        "kyc": {
+          "title": "KYC verification",
+          "desc": "Upload your ID / business licence. AI reviews instantly; flagged files are reviewed within 24 working hours."
+        },
+        "sell": {
+          "title": "List & get orders",
+          "desc": "Once VERIFIED, list products and start selling."
+        }
+      }
+    }
   }
 }

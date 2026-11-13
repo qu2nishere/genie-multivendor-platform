@@ -1,7 +1,22 @@
 ---
+// Chat toàn trang (plan G10.64) — cần đăng nhập, noindex; client:only vì chỉ có dữ liệu riêng tư.
+// ?shop=&product=&order= từ "Chat ngay" / "Liên hệ Shop".
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { ChatPage } from '@/features/chat';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const num = (k: string) => {
+  const v = Number(Astro.url.searchParams.get(k));
+  return Number.isInteger(v) && v > 0 ? v : null;
+};
 ---
 
-<StorefrontLayout title="Chat">
-  <!-- Island client:only="react" -->
+<StorefrontLayout title={t('chat.title')} noindex task noChat>
+  <ChatPage
+    client:only="react"
+    shopId={num('shop')}
+    productId={num('product')}
+    orderId={num('order')}
+  />
 </StorefrontLayout>

@@ -1676,5 +1676,136 @@
       "day": "Ngày {n}",
       "done": "Điểm danh thành công! +{points} Điểm"
     }
+  },
+  "chat": {
+    "title": "Chat với Shop",
+    "empty": "Chưa có cuộc trò chuyện nào. Bấm \"Chat ngay\" ở trang sản phẩm để hỏi Shop.",
+    "pick": "Chọn một cuộc trò chuyện để xem tin nhắn",
+    "preview": {
+      "image": "[Hình ảnh]",
+      "product": "[Sản phẩm]",
+      "order": "[Đơn hàng]"
+    },
+    "status": {
+      "SENDING": "Đang gửi…",
+      "SENT": "Đã gửi",
+      "DELIVERED": "Đã nhận",
+      "SEEN": "Đã xem",
+      "FAILED": "Gửi lỗi"
+    },
+    "quick": {
+      "stock": "Sản phẩm còn hàng không?",
+      "eta": "Khi nào giao tới?",
+      "discount": "Có giảm thêm không ạ?",
+      "photo": "Cho mình xem ảnh thật"
+    },
+    "order": "Đơn hàng",
+    "view_product": "Xem sản phẩm",
+    "image_alt": "Ảnh gửi trong cuộc trò chuyện",
+    "image_invalid": "Ảnh phải là JPG / PNG / WEBP, tối đa 5 MB.",
+    "typing": "Shop đang nhập…",
+    "send_image": "Gửi ảnh",
+    "send_order": "Gửi đơn hàng",
+    "no_orders": "Chưa có đơn với shop này",
+    "placeholder": "Nhập tin nhắn…",
+    "send": "Gửi",
+    "online": "Đang hoạt động",
+    "offline": "Không hoạt động",
+    "open_full": "Mở toàn trang",
+    "launcher": "Chat với shop",
+    "launcher_unread": "Chat với shop, {count} tin chưa đọc",
+    "response": "Phản hồi {rate}% · trong khoảng {minutes} phút"
+  },
+  "seller-onboarding": {
+    "landing": {
+      "page_title": "Trở thành Người bán",
+      "meta_description": "Mở Shop miễn phí trên Genie: thanh toán bảo chứng, vận chuyển tích hợp, công cụ marketing và báo cáo bán hàng.",
+      "badge": "Kênh người bán Genie",
+      "title": "Bắt đầu kinh doanh cùng hàng triệu khách hàng",
+      "lead": "Mở Shop miễn phí, quản lý đơn hàng, ví tiền của shop và rút tiền — tất cả trong một nơi.",
+      "stats": {
+        "fee": {
+          "value": "0₫",
+          "label": "Phí mở Shop"
+        },
+        "sellers": {
+          "value": "2,8tr+",
+          "label": "Người bán"
+        },
+        "commission": {
+          "value": "5%",
+          "label": "Hoa hồng từ"
+        }
+      },
+      "need_login_a": "Bạn cần",
+      "login": "đăng nhập",
+      "need_login_b": "trước khi mở Shop.",
+      "form_title": "Đăng ký mở Shop",
+      "form_sub": "Chỉ mất 2 phút để bắt đầu.",
+      "shop_name": "Tên Shop",
+      "owner": "Họ tên chủ Shop",
+      "phone": "Số điện thoại",
+      "category": "Ngành hàng",
+      "type": "Loại hình",
+      "types": {
+        "INDIVIDUAL": "Cá nhân",
+        "HOUSEHOLD": "Hộ kinh doanh",
+        "BUSINESS": "Doanh nghiệp"
+      },
+      "terms_a": "Tôi đồng ý với",
+      "terms_link": "Điều khoản Người bán",
+      "terms_b": "và",
+      "commission_link": "Chính sách hoa hồng",
+      "terms_c": "của Genie.",
+      "submit": "Đăng ký mở Shop",
+      "login_cta": "Đăng nhập để mở Shop",
+      "already": "Đã là Người bán?",
+      "seller_center": "Đăng nhập Seller Center",
+      "otp_title": "Xác minh Email mở Shop",
+      "otp_sent": "Mã 6 số đã gửi tới {email}",
+      "done": "Đã tạo Shop. Tiếp theo: xác minh KYC.",
+      "err": {
+        "shop": "Tên Shop cần ít nhất 3 ký tự",
+        "shop_long": "Tên Shop tối đa 60 ký tự",
+        "owner": "Nhập họ tên chủ Shop",
+        "category": "Chọn ngành hàng",
+        "terms": "Bạn cần đồng ý với Điều khoản Người bán"
+      },
+      "why_title": "Vì sao chọn bán trên Genie?",
+      "why_sub": "Hệ sinh thái đầy đủ để bạn vận hành Shop hiệu quả.",
+      "benefits": {
+        "escrow": {
+          "title": "Thanh toán bảo chứng (Escrow)",
+          "desc": "Tiền được giữ tạm an toàn và giải ngân về ví khi đơn hoàn tất."
+        },
+        "logistics": {
+          "title": "Đối tác vận chuyển 3PL",
+          "desc": "Tích hợp sẵn GHN, GHTK, ViettelPost, J&T Express — in vận đơn trong vài giây. Hỗ trợ thêm Genie Express cho đơn nội thành."
+        },
+        "marketing": {
+          "title": "Công cụ marketing",
+          "desc": "Tạo voucher Shop, tham gia Flash Sale & chiến dịch của sàn."
+        },
+        "analytics": {
+          "title": "Báo cáo & phân tích",
+          "desc": "Theo dõi doanh thu, đơn hàng, tỉ lệ chuyển đổi theo thời gian thực."
+        }
+      },
+      "steps_title": "3 bước để bắt đầu bán hàng",
+      "steps": {
+        "register": {
+          "title": "Đăng ký thông tin Shop",
+          "desc": "Điền tên shop, ngành hàng và thông tin liên hệ."
+        },
+        "kyc": {
+          "title": "Xác minh KYC",
+          "desc": "Tải CCCD / ĐKKD. AI thẩm định ngay, hồ sơ nghi ngờ được duyệt trong 24 giờ làm việc."
+        },
+        "sell": {
+          "title": "Đăng bán & nhận đơn",
+          "desc": "Sau khi VERIFIED, đăng sản phẩm và bắt đầu bán ngay."
+        }
+      }
+    }
   }
 }
