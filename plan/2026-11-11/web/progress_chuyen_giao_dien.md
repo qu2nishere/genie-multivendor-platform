@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 22 / 51 | — | `feature/seller-ui` |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 36 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **322 / 429** | | |
+| **Tổng** | | **379** | **50** | **336 / 429** | | |
 
 ---
 
@@ -500,20 +500,20 @@
 
 **Nhóm D — Sản phẩm**
 
-- [ ] **G11.20** `seller-products` miền
-- [ ] **G11.21** Hạ tầng
-- [ ] **G11.22** `ProductsPage`
-- [ ] **G11.23** `ProductEditor` khung
-- [ ] **G11.24** `ImageUpload`
-- [ ] **G11.25** `BasicInfo`
-- [ ] **G11.26** `SpecsTable`
-- [ ] **G11.27** `RichDescription`
-- [ ] **G11.28** `VariantSection`
-- [ ] **G11.29** `ShippingInfo`
-- [ ] **G11.30** `LegalDocs`
-- [ ] **G11.31** `VendorCatalogPage`
-- [ ] **G11.32** Khóa i18n `seller-products.*`
-- [ ] **G11.C4** 🔖 COMMIT `feat(seller-ui): add product list, editor and catalog screens` · hash: `_______`
+- [x] **G11.20** `seller-products` miền
+- [x] **G11.21** Hạ tầng
+- [x] **G11.22** `ProductsPage`
+- [x] **G11.23** `ProductEditor` khung
+- [x] **G11.24** `ImageUpload`
+- [x] **G11.25** `BasicInfo`
+- [x] **G11.26** `SpecsTable`
+- [x] **G11.27** `RichDescription`
+- [x] **G11.28** `VariantSection`
+- [x] **G11.29** `ShippingInfo`
+- [x] **G11.30** `LegalDocs`
+- [x] **G11.31** `VendorCatalogPage`
+- [x] **G11.32** Khóa i18n `seller-products.*`
+- [x] **G11.C4** 🔖 COMMIT `feat(seller-ui): add product list, editor and catalog screens` · hash: `2a33c6b`
 
 **Nhóm E — Ví, KYC**
 
@@ -827,6 +827,11 @@
 | G11.15 | `FulfillmentPage`: tab là `Tabs` điều hướng route SPA (`/orders?tab=`; "Trả hàng" → `/returns`), mặc định "Tất cả" (prototype mở tab "Mới"; nút "Xem tất cả" ở Tổng quan cần tab Tất cả). `?q=` từ tìm nhanh / Tổng quan điền sẵn ô tìm. Có phân trang 10 đơn / trang. Màn hẹp: tab đang chọn tự cuộn vào khung nhìn. |
 | G11.16–G11.17 | Từ chối: react-hook-form + zod, "Lý do khác" bắt buộc ghi chú (nút khóa tới khi nhập). Bàn giao ĐVVC: báo giá từ API (10.3), hãng được chọn đánh dấu, gửi kèm Idempotency-Key, xong mở ngay Phiếu gửi hàng; "In" dùng `window.print()` như prototype (PDF A6 của hãng để G13). |
 | G11.18 | `ReturnsPage`: lý do trả hàng dùng lại khóa `refunds.reason.*` của phía khách; ảnh bằng chứng là liên kết mở ảnh gốc; "Yêu cầu bổ sung" chỉ 1 lần (ẩn sau khi dùng, mock trả GNE-SUP-4091 nếu gọi lại). Thêm hộp xác nhận cho "Đã nhận hàng hoàn" / "Nhờ Sàn phân xử" (prototype bấm là đổi ngay). |
+| G11.20 | `seller-products` miền: kiểu theo 10.5 (`$ProductInput`), quy tắc ma trận phân loại (`combos` / `syncVariants` giữ giá-tồn-SKU khi sửa nhóm), giới hạn (8 ảnh, 2 nhóm, 50 biến thể, 4 giấy tờ, mô tả 10.000 ký tự, đặt trước 7–30 ngày), `missingSpecs`, `publishIssues`, `requiresReview` (chỉ đổi giá / tồn thì không duyệt lại); zod cho các ô nhập tay + form đề xuất danh mục; 9 test. Thông số bắt buộc / gợi ý và "bắt buộc giấy tờ" lấy từ luật ngành (10.5 listing-rules) thay vì hằng số trong UI như prototype. |
+| G11.21 | Hạ tầng đủ 10.5–10.6 (danh sách có `summary.counts`, chi tiết, lưu nháp / gửi duyệt, ẩn / hiện, xóa, luật ngành, thương hiệu tìm + thêm mới, cây danh mục, đề xuất). Mock: hàng danh sách ở kho dùng chung `sellerProductsStore`, chi tiết form ở kho riêng; gửi duyệt khi shop chưa VERIFIED → GNE-VND-4031, thiếu giấy tờ / thông số → GNE-CAT-4222 / 4223; xóa sản phẩm còn đơn đang xử lý → GNE-CAT-4094 (đã thử với "Tai nghe ANC"). Lớp tải tệp thêm mục đích sản phẩm / shop / KYC theo API 4.1: ảnh sản phẩm nén WebP, giấy tờ sản phẩm + KYC giữ nguyên tệp; `UploadedFile.mediaType` thêm `DOCUMENT`. |
+| G11.22 | `ProductsPage`: tab trạng thái là route `?tab=` có số đếm, thêm ô tìm theo tên (prototype không có), tên sản phẩm là liên kết tới form, Xóa có hộp xác nhận. |
+| G11.23–G11.30 | `ProductEditor` (react-hook-form giữ cả 7 khối): `/products/new`, `/products/:id/edit`; chờ duyệt → chỉ xem; bị từ chối → hiện lý do; rời trang khi đang sửa → hỏi lại (cả `beforeunload`); lỗi gửi duyệt viền đỏ khối + cuộn tới khối đầu tiên. Ảnh: kéo thả + phím ← → / Delete. Mô tả: `contentEditable` như prototype; chèn liên kết dùng hộp nhập URL (thay `window.prompt`), chèn ảnh qua upload DESCRIPTION_IMAGE. Phân loại: ảnh theo giá trị qua VARIANT_IMAGE. Vận chuyển: "Gửi hàng từ" chỉ hiển thị (API lấy từ địa chỉ lấy hàng, không nhận từ client) — giá trị tạm cố định tới khi có Cài đặt (G11.43). |
+| G11.31 | `VendorCatalogPage`: cây 2 cấp + đề xuất; form đề xuất rhf + zod, trùng tên báo ngay dưới ô (GNE-CAT-4091), đủ 5 đề xuất chờ → GNE-CAT-4221. Kiểm thử e2e trên server dev riêng cổng 4330 vì server 4321 đang chạy giữ bản tối ưu dependency cũ (Vite 504 khi tải `browser-image-compression`). |
 
 ## Nhật ký
 
@@ -854,3 +859,4 @@
 | 2026-11-13 | Seller Center: khung SPA (thanh bên, thanh trên, chuông, tìm nhanh, menu tài khoản), router lazy, cổng KYC, 404 nội bộ (G11 nhóm A) | e1de77b |
 | 2026-11-13 | Seller Center: Tổng quan (việc cần làm, doanh thu, tiền của shop, đơn gần đây, đơn 30 ngày, sản phẩm) + Phân tích (4 ô số, tiền thực về shop, kết quả đơn, nguồn truy cập, cảm xúc đánh giá, top sản phẩm, xuất CSV) (G11 nhóm B) | 428eaa8 |
 | 2026-11-13 | Seller Center: Đơn hàng (tab, tìm, sắp xếp, xác nhận / từ chối, chuẩn bị, bàn giao 3PL, phiếu gửi hàng, chi tiết) + Trả hàng (48 giờ, bằng chứng, 6 thao tác) (G11 nhóm C) | 93021af |
+| 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
