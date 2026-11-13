@@ -64,3 +64,81 @@
     }
   }
 }
+
+/* Mô tả sản phẩm (prototype ProductDescription): HTML người bán, thu gọn 480px kèm lớp mờ. */
+@layer components {
+  .tr-desc {
+    font: var(--type-body);
+    line-height: 1.8;
+    color: var(--text-body);
+  }
+  .tr-desc p {
+    margin: 0 0 16px;
+  }
+  .tr-desc .lead {
+    margin-bottom: 6px;
+    font: var(--weight-bold) 15px var(--font-sans);
+    color: var(--text-strong);
+  }
+  .tr-desc h3 {
+    margin: 16px 0 8px;
+    font: var(--weight-semibold) 14px var(--font-sans);
+    color: var(--text-strong);
+  }
+  .tr-desc ul {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    list-style: disc;
+  }
+  .tr-desc ul.checks {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tr-desc ul.checks li::before {
+    content: '✅ ';
+  }
+  .tr-desc hr {
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
+    margin: 16px 0;
+  }
+  .tr-descbox[data-clamp]:not([data-open]) .tr-desc {
+    max-height: 480px;
+    overflow: hidden;
+  }
+  .tr-desc__fade {
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+  }
+  .tr-descbox[data-clamp]:not([data-open]) .tr-desc__fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 80px;
+    align-items: flex-end;
+    padding: 0 0 16px;
+    background: linear-gradient(transparent, var(--surface-card));
+  }
+  .tr-desc__fade[hidden] {
+    display: none;
+  }
+  .tr-desc__toggle {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    color: var(--text-body);
+    font: var(--weight-semibold) var(--text-sm) var(--font-sans);
+    cursor: pointer;
+  }
+  .tr-desc__toggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}

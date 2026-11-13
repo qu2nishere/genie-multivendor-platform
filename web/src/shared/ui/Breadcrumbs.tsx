@@ -19,6 +19,7 @@ export function Breadcrumbs({ items, className }: { items: Crumb[]; className?: 
           const last = i === items.length - 1;
           return (
             <li key={`${c.name}-${i}`} className="inline-flex min-w-0 items-center gap-[7px]">
+              {i > 0 && <Icon name="chevron-right" size={14} aria-hidden="true" />}
               {c.href && !last ? (
                 <a href={c.href} className="text-link no-underline hover:underline">
                   {c.name}
@@ -31,7 +32,6 @@ export function Breadcrumbs({ items, className }: { items: Crumb[]; className?: 
                   {c.name}
                 </span>
               )}
-              {!last && <Icon name="chevron-right" size={14} aria-hidden="true" />}
             </li>
           );
         })}

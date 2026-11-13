@@ -41,6 +41,7 @@ export const toProduct = (d: ProductDetailDto): Product => ({
   images: d.images,
   reviewCount: d.review_count,
   variantGroups: d.variant_groups.map(toVariantGroup),
+  skus: d.variants.map((v) => ({ id: v.id, options: v.option_indexes })),
   specs: d.specs,
   descriptionHtml: d.description_html,
 });

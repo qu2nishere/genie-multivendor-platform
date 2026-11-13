@@ -10,6 +10,7 @@ import {
   needsCanonicalRedirect,
   priceOf,
   productHref,
+  skuOf,
   stockOf,
   stockState,
   variantLabel,
@@ -108,5 +109,18 @@ describe('product.rules', () => {
     expect(decodeSelection(GROUPS, '1-1')).toEqual({ 'Màu sắc': 1, 'Phiên bản': 1 });
     expect(decodeSelection(GROUPS, '3-0')).toEqual({ 'Màu sắc': null, 'Phiên bản': 0 });
     expect(decodeSelection(GROUPS, null)).toEqual({ 'Màu sắc': null, 'Phiên bản': null });
+  });
+
+  it('SKU theo tổ hợp phân loại', () => {
+    const p = {
+      variantGroups: GROUPS,
+      skus: [
+        { id: 100, options: [0, 0] },
+        { id: 111, options: [1, 1] },
+      ],
+    };
+    expect(skuOf(p, { 'Màu sắc': 1, 'Phiên bản': 1 })).toBe(111);
+    expect(skuOf(p, { 'Màu sắc': 1, 'Phiên bản': null })).toBeNull();
+    expect(skuOf(p, { 'Màu sắc': 2, 'Phiên bản': 0 })).toBeNull();
   });
 });

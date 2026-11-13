@@ -7,6 +7,7 @@ export type {
   ProductSort,
   ProductBadge,
   ProductSpec,
+  ProductSku,
   VariantGroup,
   VariantOption,
   FlashInfo,
@@ -25,6 +26,7 @@ export {
   maxQty,
   needsCanonicalRedirect,
   encodeSelection,
+  skuOf,
   decodeSelection,
   LOW_STOCK,
   type Selection,
@@ -42,3 +44,6 @@ export { default as ProductGrid, ProductGridBody, type ProductGridProps } from '
 export { default as ProductFeed, type ProductFeedProps } from './ui/ProductFeed';
 export { WishHeart } from './ui/WishHeart';
 export { toCardData } from './ui/toCard';
+export { default as ProductGallery, type ProductGalleryProps } from './ui/ProductGallery';
+export { default as WishShare, type WishShareProps } from './ui/WishShare';
+export { default as BuyBox, type BuyBoxProps } from './ui/BuyBox';

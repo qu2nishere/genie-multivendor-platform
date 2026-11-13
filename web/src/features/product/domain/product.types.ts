@@ -49,6 +49,12 @@ export interface ProductSummary {
   attribute: string | null;
 }
 
+export interface ProductSku {
+  id: number;
+  /** Chỉ số lựa chọn theo thứ tự nhóm phân loại. */
+  options: number[];
+}
+
 export interface ProductSpec {
   key: string;
   value: string;
@@ -60,6 +66,8 @@ export interface Product extends ProductSummary {
   images: string[];
   reviewCount: number;
   variantGroups: VariantGroup[];
+  /** SKU theo tổ hợp phân loại (product_variant_id dùng cho giỏ / đơn). */
+  skus: ProductSku[];
   specs: ProductSpec[];
   /** Mô tả HTML do người bán soạn (đã làm sạch phía server). */
   descriptionHtml: string;

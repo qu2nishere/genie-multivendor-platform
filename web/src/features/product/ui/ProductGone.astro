@@ -1,0 +1,28 @@
+---
+// Sản phẩm đã gỡ / không tồn tại (prototype ProductDetail.jsx ProductGone) — plan G08.31.
+// Trang gọi phải đặt HTTP 404 (R19); gợi ý 6 sản phẩm đánh giá cao.
+import { createT } from '@/shared/lib/i18n';
+import { buttonClass, Icon } from '@/shared/ui';
+import type { ProductSummary } from '../domain/product.types';
+import ProductGrid from './ProductGrid';
+
+interface Props {
+  picks: ProductSummary[];
+}
+
+const { picks } = Astro.props;
+const t = createT(Astro.locals.lang ?? 'vi');
+---
+
+<div class="mx-auto max-w-[1280px] px-6 pb-[60px] pt-10 max-md:px-3">
+  <div class="mb-6 grid place-items-center gap-3 rounded-lg bg-surface-card py-12 shadow-sm">
+    <Icon name="package" size={46} className="text-subtle" />
+    <h1 class="m-0 text-xl font-bold text-strong">{t('product.gone.title')}</h1>
+    <a href="/" class={buttonClass({ variant: 'outline' })}>
+      <Icon name="house" size={18} />
+      {t('product.gone.home')}
+    </a>
+  </div>
+  <h2 class="m-0 mb-3.5 text-xl font-bold text-strong">{t('product.related.title')}</h2>
+  <ProductGrid client:visible items={picks} aria-label={t('product.related.title')} />
+</div>

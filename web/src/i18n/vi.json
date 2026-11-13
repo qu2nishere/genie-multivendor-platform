@@ -343,6 +343,10 @@
       "recent": "Sản phẩm mới thêm",
       "more": "Còn {count} sản phẩm trong giỏ",
       "view": "Xem Giỏ Hàng"
+    },
+    "add": {
+      "added": "Đã thêm vào giỏ hàng",
+      "guest_full": "Giỏ hàng đã đủ 50 sản phẩm. Đăng nhập để thêm tiếp."
     }
   },
   "auth": {
@@ -562,7 +566,9 @@
     },
     "wishlist": {
       "added": "Đã thêm vào danh sách yêu thích",
-      "removed": "Đã bỏ khỏi danh sách yêu thích"
+      "removed": "Đã bỏ khỏi danh sách yêu thích",
+      "on": "Đã yêu thích",
+      "off": "Yêu thích"
     },
     "promise": {
       "label": "Khi mua ở Genie",
@@ -572,6 +578,63 @@
       "return_text": "Hàng lỗi hoặc sai mô tả, gửi ảnh và video bằng chứng ngay trong đơn.",
       "verified_title": "{shop} đã xác minh danh tính",
       "verified_text": "Bán trên Genie từ {year}, đánh giá shop {rating} sao."
+    },
+    "sold": "Đã bán",
+    "badge": {
+      "authentic": "Chính hãng",
+      "flash": "FLASH SALE",
+      "genuine": "Chính hãng 100%"
+    },
+    "buy": {
+      "add": "Thêm vào giỏ",
+      "now": "Mua ngay",
+      "preorder": "Đặt trước",
+      "pick_variant": "Vui lòng chọn Phân loại hàng",
+      "pick_all": "Vui lòng chọn đầy đủ Phân loại hàng",
+      "flash_out": "Sản phẩm này đã hết suất Flash Sale",
+      "flash_limit": "Giá Flash Sale áp dụng tối đa 1 suất cho mỗi tài khoản",
+      "preorder_note": "Hàng đặt trước, shop chuẩn bị trong {days} ngày trước khi giao.",
+      "vacation": "Shop đang tạm nghỉ đến {until}. Bạn chưa thể đặt mua sản phẩm này.",
+      "stock_a": "Còn",
+      "stock_b": "sản phẩm",
+      "low": "Sắp hết",
+      "hold_a": "Khi đặt hàng, Genie giữ chỗ sản phẩm trong",
+      "hold_b": "15 phút",
+      "hold_c": "để bạn thanh toán.",
+      "hold_note_a": "Khi trả trước qua VNPay hoặc VietQR, Genie giữ tiền của bạn và chỉ chuyển cho",
+      "hold_note_b": "sau khi bạn nhận hàng."
+    },
+    "gallery": {
+      "zoom": "Phóng to ảnh {title}",
+      "thumbs": "Ảnh sản phẩm",
+      "thumb": "Ảnh {n}",
+      "lightbox": "Ảnh sản phẩm {title}",
+      "image_of": "{title} — ảnh {n}/{total}",
+      "position": "Ảnh {n} trên {total}",
+      "prev": "Ảnh trước",
+      "next": "Ảnh sau"
+    },
+    "share": {
+      "copied": "Đã sao chép liên kết sản phẩm",
+      "failed": "Không sao chép được liên kết"
+    },
+    "specs": {
+      "title": "Chi tiết sản phẩm",
+      "category": "Danh Mục",
+      "brand": "Thương hiệu",
+      "shop": "Shop"
+    },
+    "desc": {
+      "title": "Mô tả sản phẩm",
+      "less": "Thu gọn"
+    },
+    "related": {
+      "title": "Sản phẩm tương tự",
+      "empty": "Không có sản phẩm tương tự."
+    },
+    "gone": {
+      "title": "Sản phẩm không còn bán",
+      "home": "Về trang chủ"
     }
   },
   "catalog": {
@@ -593,6 +656,67 @@
     "meta": {
       "title_page": "Gợi ý hôm nay — Trang {page}",
       "description": "Gợi ý hôm nay trên Genie: sản phẩm bán chạy và hàng mới từ các shop đã xác minh, Genie giữ tiền đến khi bạn nhận hàng."
+    }
+  },
+  "reviews": {
+    "title": "Đánh giá sản phẩm",
+    "summary": "/ 5 · {n} đánh giá",
+    "empty": "Chưa có đánh giá nào ở mục này",
+    "filter": {
+      "label": "Lọc đánh giá",
+      "all": "Tất cả",
+      "5": "5 Sao",
+      "4": "4 Sao",
+      "3": "3 Sao",
+      "img": "Có hình ảnh",
+      "buy": "Đã mua hàng"
+    },
+    "item": {
+      "anonymous": "Đánh giá ẩn tên",
+      "verified": "Đã mua hàng",
+      "variant": "Phân loại: {variant}",
+      "photo": "Ảnh khách hàng chụp {n}",
+      "reply": "Phản hồi của Người bán",
+      "helpful": "Hữu ích ({n})"
+    },
+    "report": {
+      "action": "Báo cáo",
+      "done": "Đã báo cáo",
+      "title": "Báo cáo đánh giá",
+      "reason": "Lý do",
+      "note": "Ghi chú",
+      "note_ph": "Ghi chú thêm (không bắt buộc)",
+      "submit": "Gửi báo cáo",
+      "sent": "Đã gửi báo cáo tới bộ phận kiểm duyệt",
+      "reasons": {
+        "SPAM": "Spam / chuyển hướng giao dịch",
+        "OFFENSIVE": "Ngôn từ thô tục, xúc phạm",
+        "FAKE_BUYER": "Mua giả, không phải người mua thật"
+      }
+    }
+  },
+  "shop": {
+    "badge": {
+      "favorite": "Shop Yêu Thích"
+    },
+    "state": {
+      "online": "Online",
+      "vacation": "Đang tạm nghỉ"
+    },
+    "strip": {
+      "label": "Thông tin shop {shop}",
+      "visit": "Xem shop {shop}",
+      "meta": "{followers} người theo dõi · {location} · Đánh giá shop {rating} sao",
+      "chat": "Chat ngay",
+      "view": "Xem shop"
+    },
+    "follow": {
+      "done": "Đã theo dõi {shop}",
+      "undone": "Đã hủy theo dõi {shop}",
+      "confirm_title": "Hủy theo dõi Shop?",
+      "confirm_text": "Bạn sẽ không nhận được khuyến mãi từ {shop} nữa.",
+      "confirm": "Hủy theo dõi",
+      "cancel": "Không"
     }
   }
 }

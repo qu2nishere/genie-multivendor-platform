@@ -112,6 +112,13 @@ export function toDetailDto(p: SeedProduct): ProductDetailDto {
     ],
     review_count: p.sold_count,
     variant_groups: VARIANT_GROUPS,
+    // mọi tổ hợp màu × phiên bản: id = productId * 100 + màu * 10 + phiên bản
+    variants: VARIANT_GROUPS[0].options.flatMap((_, c) =>
+      VARIANT_GROUPS[1].options.map((__, v) => ({
+        id: p.id * 100 + c * 10 + v,
+        option_indexes: [c, v],
+      })),
+    ),
     specs: [
       { key: 'Thương hiệu', value: p.brand },
       { key: 'Chất liệu', value: 'Nhựa ABS + Polycarbonate' },

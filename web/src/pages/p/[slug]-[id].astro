@@ -1,7 +1,222 @@
 ---
+// Trang chi tiết sản phẩm (prototype ProductDetail.jsx) — plan G08.35. SSR đầy đủ: tên, giá, ảnh,
+// thông số, mô tả, đánh giá trang đầu, sản phẩm tương tự; title / description / OG ảnh sản phẩm;
+// JSON-LD Product + BreadcrumbList. Slug sai → 301 về URL chuẩn; không có / đã gỡ → 404 + ProductGone.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { categoryHref, listCategories, mockProductIdsOfSubcategory } from '@/features/catalog';
+import {
+  BuyBox,
+  getProduct,
+  listProducts,
+  listRelated,
+  needsCanonicalRedirect,
+  ProductGallery,
+  ProductGrid,
+  productHref,
+  stockOf,
+  WishShare,
+  type Product,
+} from '@/features/product';
+import {
+  ProductDescription,
+  ProductGone,
+  PromiseStrip,
+  SpecsTable,
+} from '@/features/product/server';
+import { isReviewFilter, listReviews, ReviewList } from '@/features/reviews';
+import { getShop, shopHref, ShopStrip } from '@/features/shop';
+import { env } from '@/shared/config/env';
+import { createT } from '@/shared/lib/i18n';
+import { breadcrumbLd, productLd } from '@/shared/lib/seo';
+import { splitSlugId } from '@/shared/lib/slug';
+import { Breadcrumbs } from '@/shared/ui';
+
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+
+// /p/{slug}-{id}: tách theo số cuối (slug có thể chứa gạch nối)
+const segment = decodeURIComponent(Astro.url.pathname.replace(/^\/p\//, '').replace(/\/$/, ''));
+const parsed = splitSlugId(segment);
+
+let product: Product | null = null;
+if (parsed) {
+  try {
+    product = await getProduct(parsed.id);
+  } catch {
+    product = null;
+  }
+}
+
+if (product && parsed && needsCanonicalRedirect(parsed.slug, product)) {
+  return Astro.redirect(productHref(product) + Astro.url.search, 301);
+}
+
+let gonePicks: Awaited<ReturnType<typeof listProducts>>['items'] = [];
+if (!product) {
+  Astro.response.status = 404;
+  // prototype: 6 sản phẩm đánh giá cao nhất
+  gonePicks = (await listProducts({ size: 60 })).items
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 6);
+}
+
+const p = product;
+const reviewPageParam = Number(Astro.url.searchParams.get('review_page') ?? '1');
+const reviewPage = Number.isInteger(reviewPageParam) && reviewPageParam > 0 ? reviewPageParam : 1;
+const reviewFilter = Astro.url.searchParams.get('review_filter');
+
+const [shop, all, related, reviews] = p
+  ? await Promise.all([
+      getShop(p.shopId),
+      listCategories(),
+      listRelated(p.id),
+      listReviews(p.id, {
+        page: reviewPage,
+        filter: isReviewFilter(reviewFilter) ? reviewFilter : 'all',
+      }),
+    ])
+  : [null, [], [], null];
+
+// Danh mục gốc › con chứa sản phẩm (mock: nhóm theo ảnh như prototype; backend trả thẳng danh mục lá)
+const root = p ? all.find((c) => c.id === p.categoryId) : undefined;
+const sub = root
+  ? all.find(
+      (c) => c.parentId === root.id && mockProductIdsOfSubcategory(c.id)?.includes(p?.id ?? -1),
+    )
+  : undefined;
+const cats = [root, sub]
+  .filter((c): c is NonNullable<typeof c> => !!c)
+  .map((c) => ({
+    name: c.name,
+    href: c.parentId ? `${categoryHref(root?.slug ?? '')}?sub=${c.slug}` : categoryHref(c.slug),
+  }));
+
+const href = p ? productHref(p) : '/';
+const crumbs = p
+  ? [{ name: t('layout.nav.home'), href: '/' }, ...cats, { name: p.title, href }]
+  : [];
+const plain = p
+  ? p.descriptionHtml
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+  : '';
+const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
 ---
 
-<StorefrontLayout title="Sản phẩm">
-  <!-- Trang sản phẩm — SSR, JSON-LD Product + BreadcrumbList -->
-</StorefrontLayout>
+{
+  p && shop && reviews ? (
+    <StorefrontLayout
+      variant="bar"
+      title={p.title}
+      description={`${p.title} — ${plain}`}
+      canonical={href}
+      image={p.images[0]}
+      imageAlt={p.title}
+      type="product"
+      jsonLd={[
+        productLd(
+          {
+            name: p.title,
+            url: href,
+            images: p.images,
+            description: plain,
+            sku: p.sku,
+            brand: p.brand,
+            price: p.price,
+            inStock: totalStock > 0,
+            preorder: !!p.preorderDays,
+            sellerName: shop.name,
+            rating: { value: p.rating, count: p.reviewCount },
+            reviews: reviews.items.slice(0, 3).map((r) => ({
+              author: r.anonymous ? `${r.authorName[0]}***` : r.authorName,
+              rating: r.rating,
+              body: r.text,
+              date: r.createdAt,
+            })),
+          },
+          site,
+        ),
+        breadcrumbLd(
+          crumbs.map((c) => ({ name: c.name, url: c.href })),
+          site,
+        ),
+      ]}
+    >
+      <div class="mx-auto max-w-[1280px] px-6 pb-[60px] pt-4 max-md:px-3">
+        <Breadcrumbs
+          items={[...crumbs.slice(0, -1), { name: p.title }]}
+          className="[&_li:last-child]:max-md:hidden"
+        />
+
+        <div class="grid grid-cols-[440px_1fr] gap-6 rounded-lg bg-surface-card p-5 shadow-sm max-lg:grid-cols-[minmax(0,360px)_1fr] max-md:grid-cols-1 max-md:p-3">
+          <div class="min-w-0">
+            <ProductGallery client:idle images={p.images} title={p.title} />
+            <WishShare
+              client:idle
+              productId={p.id}
+              title={p.title}
+              href={href}
+              variantGroups={p.variantGroups}
+            />
+          </div>
+          <BuyBox
+            client:load
+            product={p}
+            shopName={shop.name}
+            vacationUntil={shop.vacation ? shop.vacation.until : null}
+          />
+        </div>
+
+        <ShopStrip
+          client:idle
+          productId={p.id}
+          shop={{
+            id: shop.id,
+            name: shop.name,
+            authentic: shop.authentic,
+            favorite: shop.favorite,
+            followerCount: shop.followerCount,
+            location: shop.location,
+            rating: shop.rating,
+            vacation: shop.vacation,
+          }}
+        />
+
+        <PromiseStrip shopName={shop.name} joinedYear={shop.joinedYear} rating={shop.rating} />
+        <SpecsTable
+          specs={p.specs}
+          brand={p.brand}
+          categories={cats}
+          shop={{ name: shop.name, href: shopHref(shop.id) }}
+        />
+        <ProductDescription html={p.descriptionHtml} />
+
+        <ReviewList
+          client:visible
+          productId={p.id}
+          rating={p.rating}
+          reviewCount={p.reviewCount}
+          initial={reviews}
+          initialPage={reviewPage}
+        />
+
+        <section aria-labelledby="related-title">
+          <h2 id="related-title" class="m-0 mb-3.5 mt-6 text-xl font-bold text-strong">
+            {t('product.related.title')}
+          </h2>
+          {related.length > 0 ? (
+            <ProductGrid client:visible items={related} aria-label={t('product.related.title')} />
+          ) : (
+            <p class="m-0 py-6 text-center text-base text-muted">{t('product.related.empty')}</p>
+          )}
+        </section>
+      </div>
+    </StorefrontLayout>
+  ) : (
+    <StorefrontLayout title={t('product.gone.title')} noindex>
+      <ProductGone picks={gonePicks} />
+    </StorefrontLayout>
+  )
+}

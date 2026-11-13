@@ -343,6 +343,10 @@
       "recent": "Recently added",
       "more": "{count} more items in your cart",
       "view": "View cart"
+    },
+    "add": {
+      "added": "Added to cart",
+      "guest_full": "Your cart already has 50 items. Log in to add more."
     }
   },
   "auth": {
@@ -562,7 +566,9 @@
     },
     "wishlist": {
       "added": "Added to your wishlist",
-      "removed": "Removed from your wishlist"
+      "removed": "Removed from your wishlist",
+      "on": "In wishlist",
+      "off": "Wishlist"
     },
     "promise": {
       "label": "When you buy on Genie",
@@ -572,6 +578,63 @@
       "return_text": "Faulty or not as described? Send photo and video evidence right in the order.",
       "verified_title": "{shop} has verified its identity",
       "verified_text": "Selling on Genie since {year}, shop rating {rating} stars."
+    },
+    "sold": "Sold",
+    "badge": {
+      "authentic": "Authentic",
+      "flash": "FLASH SALE",
+      "genuine": "100% genuine"
+    },
+    "buy": {
+      "add": "Add to cart",
+      "now": "Buy now",
+      "preorder": "Pre-order",
+      "pick_variant": "Please choose a variation",
+      "pick_all": "Please choose all variations",
+      "flash_out": "This Flash Sale is sold out",
+      "flash_limit": "Flash Sale price is limited to 1 item per account",
+      "preorder_note": "Pre-order item: the shop prepares it within {days} days before shipping.",
+      "vacation": "The shop is on vacation until {until}. You can't order this product yet.",
+      "stock_a": "Only",
+      "stock_b": "left",
+      "low": "Almost gone",
+      "hold_a": "When you order, Genie reserves the item for",
+      "hold_b": "15 minutes",
+      "hold_c": "while you pay.",
+      "hold_note_a": "When you prepay with VNPay or VietQR, Genie holds your money and only pays",
+      "hold_note_b": "after you receive your order."
+    },
+    "gallery": {
+      "zoom": "Enlarge image of {title}",
+      "thumbs": "Product images",
+      "thumb": "Image {n}",
+      "lightbox": "Images of {title}",
+      "image_of": "{title} — image {n}/{total}",
+      "position": "Image {n} of {total}",
+      "prev": "Previous image",
+      "next": "Next image"
+    },
+    "share": {
+      "copied": "Product link copied",
+      "failed": "Couldn't copy the link"
+    },
+    "specs": {
+      "title": "Product details",
+      "category": "Category",
+      "brand": "Brand",
+      "shop": "Shop"
+    },
+    "desc": {
+      "title": "Description",
+      "less": "Show less"
+    },
+    "related": {
+      "title": "Similar products",
+      "empty": "No similar products."
+    },
+    "gone": {
+      "title": "This product is no longer for sale",
+      "home": "Back to home"
     }
   },
   "catalog": {
@@ -593,6 +656,67 @@
     "meta": {
       "title_page": "Today's picks — Page {page}",
       "description": "Today's picks on Genie: best sellers and new arrivals from verified shops, with Genie holding your money until you receive your order."
+    }
+  },
+  "reviews": {
+    "title": "Product reviews",
+    "summary": "/ 5 · {n} reviews",
+    "empty": "No reviews in this section yet",
+    "filter": {
+      "label": "Filter reviews",
+      "all": "All",
+      "5": "5 stars",
+      "4": "4 stars",
+      "3": "3 stars",
+      "img": "With photos",
+      "buy": "Verified purchase"
+    },
+    "item": {
+      "anonymous": "Anonymous review",
+      "verified": "Verified purchase",
+      "variant": "Variation: {variant}",
+      "photo": "Customer photo {n}",
+      "reply": "Seller's reply",
+      "helpful": "Helpful ({n})"
+    },
+    "report": {
+      "action": "Report",
+      "done": "Reported",
+      "title": "Report review",
+      "reason": "Reason",
+      "note": "Note",
+      "note_ph": "Additional note (optional)",
+      "submit": "Send report",
+      "sent": "Report sent to the moderation team",
+      "reasons": {
+        "SPAM": "Spam / moving the deal off-platform",
+        "OFFENSIVE": "Vulgar or abusive language",
+        "FAKE_BUYER": "Fake purchase, not a real buyer"
+      }
+    }
+  },
+  "shop": {
+    "badge": {
+      "favorite": "Preferred shop"
+    },
+    "state": {
+      "online": "Online",
+      "vacation": "On vacation"
+    },
+    "strip": {
+      "label": "About {shop}",
+      "visit": "Visit {shop}",
+      "meta": "{followers} followers · {location} · Shop rating {rating} stars",
+      "chat": "Chat now",
+      "view": "View shop"
+    },
+    "follow": {
+      "done": "Following {shop}",
+      "undone": "Unfollowed {shop}",
+      "confirm_title": "Unfollow this shop?",
+      "confirm_text": "You won't get promotions from {shop} anymore.",
+      "confirm": "Unfollow",
+      "cancel": "No"
     }
   }
 }

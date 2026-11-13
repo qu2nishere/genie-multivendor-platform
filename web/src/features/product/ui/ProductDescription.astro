@@ -1,0 +1,47 @@
+---
+// "Mô tả sản phẩm" (prototype ProductDetail.jsx ProductDescription) — plan G08.29, SSR tĩnh.
+// HTML do người bán soạn, đã làm sạch phía server. Có JS: cao quá 480px thì thu gọn kèm "Xem thêm" /
+// "Thu gọn"; tắt JS: hiện đầy đủ.
+import { createT } from '@/shared/lib/i18n';
+
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+const t = createT(Astro.locals.lang ?? 'vi');
+---
+
+<section
+  class="tr-descbox relative mb-4 overflow-hidden rounded-lg bg-surface-card px-6 py-5 shadow-sm max-md:px-4"
+  aria-labelledby="desc-title"
+  data-more={t('common.action.view_more')}
+  data-less={t('product.desc.less')}
+>
+  <h2 id="desc-title" class="m-0 mb-4 text-xl font-bold text-strong">{t('product.desc.title')}</h2>
+  <div class="tr-desc" id="product-desc" set:html={html} />
+  <div class="tr-desc__fade" hidden>
+    <button type="button" class="tr-desc__toggle" aria-expanded="false" aria-controls="product-desc"
+    ></button>
+  </div>
+</section>
+
+<script>
+  const MAX_H = 480;
+  const boxes = Array.from(document.querySelectorAll('.tr-descbox')) as HTMLElement[];
+  for (const box of boxes) {
+    const body = box.querySelector('.tr-desc') as HTMLElement | null;
+    const fade = box.querySelector('.tr-desc__fade') as HTMLElement | null;
+    const btn = box.querySelector('.tr-desc__toggle') as HTMLButtonElement | null;
+    if (!body || !fade || !btn || body.scrollHeight <= MAX_H + 40) continue;
+    const set = (open: boolean) => {
+      box.toggleAttribute('data-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? (box.dataset.less ?? '') : (box.dataset.more ?? '');
+    };
+    fade.hidden = false;
+    box.setAttribute('data-clamp', '');
+    set(false);
+    btn.addEventListener('click', () => set(!box.hasAttribute('data-open')));
+  }
+</script>

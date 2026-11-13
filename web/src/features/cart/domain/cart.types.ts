@@ -21,7 +21,7 @@ export interface CartLine {
 
 /** Giỏ khách vãng lai lưu ở trình duyệt (LUU_TRU_DU_LIEU 6.3) — chỉ id biến thể + số lượng. */
 export interface GuestCartItem {
-  product_variant_id: string;
+  product_variant_id: number;
   quantity: number;
   added_at: string;
 }
@@ -30,4 +30,19 @@ export interface GuestCart {
   version: 1;
   expires_at: string;
   items: GuestCartItem[];
+}
+
+/** Dữ liệu nút "Thêm vào giỏ" gửi đi (trang sản phẩm dựng từ lựa chọn phân loại). */
+export interface CartLineInput {
+  variantId: number;
+  productId: number;
+  productSlug: string;
+  shopId: number;
+  title: string;
+  image: string;
+  variantLabel: string;
+  price: number;
+  originalPrice: number | null;
+  qty: number;
+  stock: number;
 }

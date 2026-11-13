@@ -8,3 +8,5 @@ export {
   shopShipFee,
 } from './domain/shop.rules';
 export { getShop, listShops, listFollowedShops, setFollow } from './infrastructure/shop.api';
+export { useFollowedShops, useSetFollow, FOLLOWED_SHOPS_KEY } from './application/useFollow';
+export { default as ShopStrip, type ShopStripProps } from './ui/ShopStrip';

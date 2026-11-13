@@ -79,6 +79,13 @@ export function maxQty(p: Pick<ProductSummary, 'flash'>, stock: number): number 
   return Math.max(1, Number.isFinite(stock) ? stock : 99);
 }
 
+/** SKU (product_variant_id) của lựa chọn đầy đủ; thiếu nhóm nào → null. */
+export function skuOf(p: Pick<Product, 'variantGroups' | 'skus'>, sel: Selection): number | null {
+  const idx = p.variantGroups.map((g) => sel[g.name]);
+  if (idx.some((i) => i == null)) return null;
+  return p.skus.find((s) => s.options.every((o, k) => o === idx[k]))?.id ?? null;
+}
+
 /** Slug trên URL khác slug chuẩn → cần chuyển hướng 301 (R19). */
 export const needsCanonicalRedirect = (urlSlug: string, p: Pick<ProductSummary, 'slug'>): boolean =>
   urlSlug !== p.slug;

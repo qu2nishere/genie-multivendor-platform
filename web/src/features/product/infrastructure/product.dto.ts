@@ -32,6 +32,8 @@ export interface ProductDetailDto extends ProductSummaryDto {
   images: string[];
   review_count: number;
   variant_groups: VariantGroupDto[];
+  /** Mỗi tổ hợp phân loại là một SKU (product_variant_id), option_indexes theo thứ tự nhóm. */
+  variants: { id: number; option_indexes: number[] }[];
   specs: { key: string; value: string }[];
   description_html: string;
 }

@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { Providers } from '@/shared/providers/Providers';
 import { LoginButton, LoginPrompt, requireLogin, UserMenu } from '@/features/auth';
-import { $cartCount, $cartLines, loadCart, MiniCart } from '@/features/cart';
+import { $cartCount, $cartLines, loadCart, loadGuestCart, MiniCart } from '@/features/cart';
 import { badgeText, NotifPanel, useNotifications } from '@/features/notifications';
 import { SearchBox } from '@/features/search';
 import { $session } from '@/shared/auth/session';
@@ -81,6 +81,7 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
 
   useEffect(() => {
     if (session.status === 'authenticated') void loadCart();
+    else if (session.status === 'guest') loadGuestCart();
   }, [session.status]);
 
   // Thanh + hàng danh mục dính chung; khi cuộn thì lấy nền theme (--top-bg). Công bố chiều cao qua --top-h.
@@ -174,13 +175,13 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
                   href="/cart"
                   onClick={guard}
                   aria-label={
-                    loggedIn && cartCount > 0
+                    cartCount > 0
                       ? t('layout.header.cart_count', { count: cartCount })
                       : t('layout.header.cart')
                   }
                 >
                   <Icon name="shopping-cart" size={22} />
-                  {loggedIn && cartCount > 0 && <span className="tr-badge">{cartCount}</span>}
+                  {cartCount > 0 && <span className="tr-badge">{cartCount}</span>}
                 </a>
               }
               panel={<MiniCart lines={lines} />}
