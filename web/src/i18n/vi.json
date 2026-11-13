@@ -277,6 +277,14 @@
     },
     "breadcrumb": {
       "label": "Đường dẫn"
+    },
+    "media": {
+      "drop": "Kéo thả hoặc bấm để tải lên",
+      "remove": "Xóa tệp {name}",
+      "too_many": "Tối đa {max} tệp",
+      "type": "{name}: định dạng không được hỗ trợ",
+      "size": "{name}: tối đa {mb} MB",
+      "failed": "Không tải lên được {name}, vui lòng thử lại"
     }
   },
   "layout": {
@@ -985,6 +993,24 @@
         "OFFENSIVE": "Ngôn từ thô tục, xúc phạm",
         "FAKE_BUYER": "Mua giả, không phải người mua thật"
       }
+    },
+    "form": {
+      "title": "Đánh giá sản phẩm",
+      "step": "Sản phẩm {n}/{count}",
+      "stars": "Số sao",
+      "content": "Nhận xét của bạn",
+      "placeholder": "Hãy chia sẻ nhận xét của bạn về sản phẩm này nhé...",
+      "images": "Hình ảnh đính kèm ({n}/5)",
+      "images_hint": "Đánh giá có ảnh được tặng 50 Điểm. JPG, PNG tối đa 5 MB.",
+      "video": "Video (tùy chọn)",
+      "video_hint": "1 video MP4, tối đa 30 MB.",
+      "name": "Hiển thị tên",
+      "public": "Hiển thị tên công khai",
+      "anonymous": "Đánh giá ẩn tên",
+      "submit": "Gửi đánh giá",
+      "submit_next": "Gửi và đánh giá sản phẩm tiếp theo",
+      "done": "Cảm ơn bạn đã đánh giá!",
+      "done_points": "Cảm ơn bạn đã đánh giá! Bạn được cộng {points} Điểm."
     }
   },
   "shop": {
@@ -1327,7 +1353,97 @@
       "discount": "Giảm giá voucher",
       "return_closed": "Đơn hàng đã quá thời hạn 7 ngày bảo vệ khiếu nại",
       "on_the_way": "Đang trên đường giao đến bạn",
-      "preparing": "Người bán đang chuẩn bị hàng"
+      "preparing": "Người bán đang chuẩn bị hàng",
+      "request_return": "Yêu cầu Trả hàng / Hoàn tiền",
+      "review": "Đánh giá sản phẩm"
+    }
+  },
+  "refunds": {
+    "form": {
+      "title": "Yêu cầu Trả hàng / Hoàn tiền",
+      "type": "Phương án bạn muốn",
+      "items": "Chọn sản phẩm cần trả",
+      "reason": "Lý do trả hàng",
+      "evidence": "Bằng chứng: ít nhất 1 ảnh rõ nhãn vận đơn và 1 video mở hộp",
+      "evidence_hint": "Tối đa 10 MB / tệp (JPG, PNG, MP4). Ảnh được nén trước khi tải lên.",
+      "missing": "Còn thiếu {what}.",
+      "missing_IMAGE": "1 ảnh",
+      "missing_VIDEO": "1 video mở hộp",
+      "bank": "Tài khoản ngân hàng nhận tiền hoàn",
+      "bank_hint": "Đơn {method} được hoàn bằng chuyển khoản, nhân viên sàn chuyển trong 3 ngày làm việc sau khi có kết quả.",
+      "bank_name": "Ngân hàng",
+      "account": "Số tài khoản",
+      "holder": "Tên chủ tài khoản",
+      "amount": "Số tiền hoàn dự kiến",
+      "note": "Shop có 48 giờ để phản hồi yêu cầu. Trong thời gian này, Genie vẫn giữ tiền và chưa chuyển cho shop.",
+      "submit": "Gửi yêu cầu",
+      "sent": "Đã gửi yêu cầu trả hàng. Shop có 48 giờ để phản hồi."
+    },
+    "type": {
+      "RETURN_AND_REFUND": "Trả hàng và Hoàn tiền",
+      "REFUND_ONLY": "Hoàn tiền ngay không cần trả hàng"
+    },
+    "type_hint": {
+      "RETURN_AND_REFUND": "Gửi hàng về shop rồi nhận lại tiền",
+      "REFUND_ONLY": "Khi hàng thiếu hoặc hư hỏng một phần"
+    },
+    "reason": {
+      "DAMAGED_IN_TRANSIT": "Hàng bể vỡ do vận chuyển",
+      "WRONG_SIZE_COLOR": "Hàng sai kích thước / màu sắc",
+      "COUNTERFEIT": "Hàng giả / nhái",
+      "MISSING_ACCESSORIES": "Hàng thiếu phụ kiện",
+      "NOT_RECEIVED": "Không nhận được hàng",
+      "NOT_AS_DESCRIBED": "Hàng không đúng mô tả",
+      "DEFECTIVE": "Sản phẩm lỗi"
+    },
+    "status": {
+      "REQUESTED": {
+        "label": "Chờ shop phản hồi",
+        "note": "Shop có 48 giờ để phản hồi. Quá hạn, hệ thống tự đồng ý theo phương án bạn chọn."
+      },
+      "AWAITING_EVIDENCE": {
+        "label": "Shop cần thêm bằng chứng",
+        "note": "Bạn có 48 giờ để bổ sung ảnh / video hoặc khiếu nại lên Sàn."
+      },
+      "SHOP_REJECTED": {
+        "label": "Shop đã từ chối",
+        "note": "Bạn có 48 giờ để chấp nhận hoặc khiếu nại lên Sàn. Quá hạn, yêu cầu tự đóng."
+      },
+      "AWAITING_RETURN_SHIPMENT": {
+        "label": "Chờ gửi hàng hoàn",
+        "note": "Shop đã đồng ý nhận lại hàng. Bạn có 7 ngày để giao hàng cho đơn vị vận chuyển, quá hạn yêu cầu tự đóng."
+      },
+      "DISPUTED": {
+        "label": "Sàn đang phân xử",
+        "note": "Nhân viên Genie đang xem xét bằng chứng của hai bên."
+      },
+      "REFUNDED": {
+        "label": "Đã hoàn tiền",
+        "note": "Tiền đã được hoàn về cho bạn."
+      },
+      "REJECTED": {
+        "label": "Đã đóng",
+        "note": "Bạn đã chấp nhận shop từ chối. Đơn hàng được hoàn thành."
+      }
+    },
+    "block": {
+      "title": "Yêu cầu {code}",
+      "plan": "Phương án:",
+      "reason": "Lý do:",
+      "shop_said": "Shop nhắn:",
+      "deadline": "Hạn của bước này: {date}",
+      "bank": "Đơn {method} không có giao dịch thẻ để hoàn: sau khi được duyệt, nhân viên sàn chuyển khoản về tài khoản ngân hàng bạn đã cung cấp.",
+      "resolved": "Xử lý xong lúc {date}",
+      "more": "Tải thêm ảnh / video",
+      "send_more": "Gửi bổ sung",
+      "more_sent": "Đã gửi bằng chứng bổ sung",
+      "escalate": "Khiếu nại lên Sàn",
+      "accept": "Chấp nhận"
+    },
+    "err": {
+      "bank": "Chọn ngân hàng",
+      "account": "Số tài khoản gồm 6–20 chữ số",
+      "holder": "Nhập tên chủ tài khoản"
     }
   }
 }

@@ -1,6 +1,7 @@
 // Đơn mua (API_SPEC 7.1–7.4). Mock: đơn mẫu + đơn vừa đặt ở checkout, giữ thay đổi trong phiên tab.
 import { api } from '@/shared/api/http';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { activityStore } from '@/shared/api/mock/activity';
 import { placedStore, type MockPlacedSession } from '@/shared/api/mock/placed';
 import { allowedActions, countByGroup, filterByGroup } from '../domain/order.rules';
 import type {
@@ -62,7 +63,42 @@ function allMock(): OrderDetailDto[] {
     const paid = { ...o, status: 'PAID' as OrderStatus, payment_expires_at: null };
     return { ...paid, allowed_actions: actionsOf(paid) };
   });
-  return [...placed, ...seed];
+  return [...placed, ...seed].map(withActivity);
+}
+
+/** Áp yêu cầu trả hàng / đánh giá (kho "hoạt động" mock) lên đơn — server làm việc này khi ghi. */
+function withActivity(o: OrderDetailDto): OrderDetailDto {
+  const { refunds, reviews } = activityStore.get();
+  const r = [...refunds].reverse().find((x) => x.order_id === o.id);
+  const reviewed =
+    o.items.length > 0 && o.items.every((it) => reviews.some((v) => v.order_item_id === it.id));
+  let next: OrderDetailDto = { ...o, is_reviewed: o.is_reviewed || reviewed };
+  if (r) {
+    const status: OrderStatus =
+      r.status === 'REJECTED'
+        ? 'COMPLETED'
+        : r.status === 'REFUNDED'
+          ? 'REFUNDED'
+          : 'RETURN_REQUESTED';
+    next = {
+      ...next,
+      status,
+      return_window_closed: next.return_window_closed || r.status === 'REJECTED',
+      refund_request: {
+        id: r.id,
+        code: r.code,
+        status: r.status,
+        request_type: r.request_type,
+        reason_code: r.reason_code,
+        refund_amount: r.refund_amount,
+        shop_message: r.shop_message,
+        deadline_at: r.deadline_at,
+        refund_bank_masked: r.refund_bank_masked,
+        resolved_at: r.resolved_at,
+      },
+    };
+  }
+  return { ...next, allowed_actions: actionsOf(next) };
 }
 
 const actionsOf = (o: OrderDetailDto) =>

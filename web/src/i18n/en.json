@@ -277,6 +277,14 @@
     },
     "breadcrumb": {
       "label": "Breadcrumb"
+    },
+    "media": {
+      "drop": "Drag & drop or click to upload",
+      "remove": "Remove file {name}",
+      "too_many": "Up to {max} files",
+      "type": "{name}: unsupported format",
+      "size": "{name}: max {mb} MB",
+      "failed": "Could not upload {name}, please try again"
     }
   },
   "layout": {
@@ -985,6 +993,24 @@
         "OFFENSIVE": "Vulgar or abusive language",
         "FAKE_BUYER": "Fake purchase, not a real buyer"
       }
+    },
+    "form": {
+      "title": "Review products",
+      "step": "Product {n}/{count}",
+      "stars": "Rating",
+      "content": "Your review",
+      "placeholder": "Share what you think about this product...",
+      "images": "Photos ({n}/5)",
+      "images_hint": "Reviews with photos earn 50 Points. JPG, PNG up to 5 MB.",
+      "video": "Video (optional)",
+      "video_hint": "1 MP4 video, up to 30 MB.",
+      "name": "Name display",
+      "public": "Show my name",
+      "anonymous": "Review anonymously",
+      "submit": "Submit review",
+      "submit_next": "Submit and review next product",
+      "done": "Thanks for your review!",
+      "done_points": "Thanks for your review! You earned {points} Points."
     }
   },
   "shop": {
@@ -1327,7 +1353,97 @@
       "discount": "Voucher discount",
       "return_closed": "The 7-day protection period for this order has ended",
       "on_the_way": "On its way to you",
-      "preparing": "The seller is preparing your order"
+      "preparing": "The seller is preparing your order",
+      "request_return": "Request return / refund",
+      "review": "Review products"
+    }
+  },
+  "refunds": {
+    "form": {
+      "title": "Request return / refund",
+      "type": "What would you like?",
+      "items": "Items to return",
+      "reason": "Reason",
+      "evidence": "Evidence: at least 1 photo showing the shipping label and 1 unboxing video",
+      "evidence_hint": "Max 10 MB per file (JPG, PNG, MP4). Photos are compressed before upload.",
+      "missing": "Still missing {what}.",
+      "missing_IMAGE": "1 photo",
+      "missing_VIDEO": "1 unboxing video",
+      "bank": "Bank account for the refund",
+      "bank_hint": "{method} orders are refunded by bank transfer; staff transfer it within 3 working days after the decision.",
+      "bank_name": "Bank",
+      "account": "Account number",
+      "holder": "Account holder",
+      "amount": "Estimated refund",
+      "note": "The shop has 48 hours to respond. Meanwhile Genie keeps holding the money.",
+      "submit": "Send request",
+      "sent": "Return request sent. The shop has 48 hours to respond."
+    },
+    "type": {
+      "RETURN_AND_REFUND": "Return and refund",
+      "REFUND_ONLY": "Refund only, no return"
+    },
+    "type_hint": {
+      "RETURN_AND_REFUND": "Ship the item back, then get your money back",
+      "REFUND_ONLY": "When items are missing or partly damaged"
+    },
+    "reason": {
+      "DAMAGED_IN_TRANSIT": "Damaged in transit",
+      "WRONG_SIZE_COLOR": "Wrong size / colour",
+      "COUNTERFEIT": "Counterfeit",
+      "MISSING_ACCESSORIES": "Missing accessories",
+      "NOT_RECEIVED": "Not received",
+      "NOT_AS_DESCRIBED": "Not as described",
+      "DEFECTIVE": "Defective"
+    },
+    "status": {
+      "REQUESTED": {
+        "label": "Awaiting shop response",
+        "note": "The shop has 48 hours to respond. If it doesn't, your request is approved automatically."
+      },
+      "AWAITING_EVIDENCE": {
+        "label": "Shop needs more evidence",
+        "note": "You have 48 hours to add photos / videos or escalate to Genie."
+      },
+      "SHOP_REJECTED": {
+        "label": "Rejected by shop",
+        "note": "You have 48 hours to accept or escalate to Genie. Otherwise the request closes."
+      },
+      "AWAITING_RETURN_SHIPMENT": {
+        "label": "Awaiting return shipment",
+        "note": "The shop accepted the return. Hand the parcel to the carrier within 7 days."
+      },
+      "DISPUTED": {
+        "label": "Under Genie review",
+        "note": "Genie staff are reviewing evidence from both sides."
+      },
+      "REFUNDED": {
+        "label": "Refunded",
+        "note": "The money has been refunded to you."
+      },
+      "REJECTED": {
+        "label": "Closed",
+        "note": "You accepted the shop's rejection. The order is completed."
+      }
+    },
+    "block": {
+      "title": "Request {code}",
+      "plan": "Option:",
+      "reason": "Reason:",
+      "shop_said": "Shop says:",
+      "deadline": "Deadline for this step: {date}",
+      "bank": "{method} orders have no card transaction to reverse: after approval, staff transfer the refund to the bank account you provided.",
+      "resolved": "Resolved at {date}",
+      "more": "Add photos / videos",
+      "send_more": "Send evidence",
+      "more_sent": "Additional evidence sent",
+      "escalate": "Escalate to Genie",
+      "accept": "Accept"
+    },
+    "err": {
+      "bank": "Choose a bank",
+      "account": "Account number must be 6–20 digits",
+      "holder": "Enter the account holder's name"
     }
   }
 }

@@ -1,6 +1,7 @@
 // Điểm Genie (API_SPEC 3.13). Mock giữ trong phiên tab (mockState).
 import { api } from '@/shared/api/http';
 import { mockDelay, mockState, USE_MOCK } from '@/shared/api/mock';
+import { activityStore } from '@/shared/api/mock/activity';
 import { placedStore } from '@/shared/api/mock/placed';
 import type { CoinSummary } from '../domain/coins.types';
 import type { CoinSummaryDto } from './coins.dto';
@@ -13,8 +14,9 @@ export async function getCoins(): Promise<CoinSummary> {
   if (USE_MOCK) {
     await mockDelay(120);
     const used = placedStore.get().sessions.reduce((n, x) => n + x.coin_discount, 0);
+    const earned = activityStore.get().reviews.reduce((n, x) => n + x.coins_awarded, 0);
     const d = coinsDb.get();
-    return toCoinSummary({ ...d, balance: Math.max(0, d.balance - used) });
+    return toCoinSummary({ ...d, balance: Math.max(0, d.balance - used + earned) });
   }
   return toCoinSummary(await api.get<CoinSummaryDto>('/me/coins'));
 }

@@ -1,8 +1,10 @@
 // Theo dõi đơn (prototype OrderTracking.jsx) — plan G10.36–G10.38, island client:load: thanh 7 bước,
 // thẻ ĐVVC + mã vận đơn, ghi chú giữ tiền / ngày giải ngân, hành trình (mới nhất trước), địa chỉ,
 // sản phẩm + tiền, nút theo trạng thái (Đã nhận hàng, Trả hàng, Đánh giá, Mua lại, Chat, Hủy).
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatPhone } from '@/features/account';
+import { RefundBlock, ReturnModal } from '@/features/refunds';
+import { ReviewModal } from '@/features/reviews';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatDateTime, formatVND } from '@/shared/lib/format';
@@ -229,7 +231,17 @@ function Timeline({ o }: { o: OrderDetail }) {
   );
 }
 
-function Side({ o, h }: { o: OrderDetail; h: OrderHandlers }) {
+function Side({
+  o,
+  h,
+  onReturn,
+  onReview,
+}: {
+  o: OrderDetail;
+  h: OrderHandlers;
+  onReturn: () => void;
+  onReview: () => void;
+}) {
   const { t, locale } = useT();
   const vnd = (n: number) => formatVND(n, { locale });
   const a = new Set(o.actions);
@@ -333,6 +345,16 @@ function Side({ o, h }: { o: OrderDetail; h: OrderHandlers }) {
             {t('orders.action.received')}
           </Button>
         )}
+        {a.has('REQUEST_RETURN') && (
+          <Button block variant="outline" iconLeft="undo-2" onClick={onReturn}>
+            {t('orders.detail.request_return')}
+          </Button>
+        )}
+        {a.has('REVIEW') && (
+          <Button block size="lg" iconLeft="star" onClick={onReview}>
+            {t('orders.detail.review')}
+          </Button>
+        )}
         {o.status === 'COMPLETED' && o.returnWindowClosed && (
           <p className="m-0 text-xs text-muted text-center">{t('orders.detail.return_closed')}</p>
         )}
@@ -365,6 +387,22 @@ function Tracking({ id }: OrderTrackingProps) {
   const { t } = useT();
   const q = useOrder(id);
   const { handlers, dialogs } = useOrderHandlers();
+  // ?return=1 / ?review=1 từ nút trên thẻ đơn → mở hộp tương ứng khi đơn cho phép
+  const [modal, setModal] = useState<'return' | 'review' | null>(null);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const want = p.get('return') ? 'return' : p.get('review') ? 'review' : null;
+    if (!want || !q.data) return;
+    if (q.data.actions.includes(want === 'return' ? 'REQUEST_RETURN' : 'REVIEW')) setModal(want);
+    p.delete('return');
+    p.delete('review');
+    const qs = p.toString();
+    window.history.replaceState(
+      null,
+      '',
+      window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash,
+    );
+  }, [q.data]);
   if (q.isError)
     return (
       <div className="max-w-[560px] mx-auto px-6 py-16 text-center">
@@ -408,13 +446,30 @@ function Tracking({ id }: OrderTrackingProps) {
             <div className="flex flex-col gap-[18px] min-w-0">
               <Carrier o={o} />
               <EscrowNote o={o} />
+              {o.refund && (
+                <RefundBlock
+                  refund={{ ...o.refund, orderId: o.id }}
+                  paymentMethod={o.paymentMethod}
+                />
+              )}
               <Timeline o={o} />
             </div>
-            <Side o={o} h={handlers} />
+            <Side
+              o={o}
+              h={handlers}
+              onReturn={() => setModal('return')}
+              onReview={() => setModal('review')}
+            />
           </div>
         </>
       )}
       {dialogs}
+      {o && (
+        <>
+          <ReturnModal open={modal === 'return'} order={o} onClose={() => setModal(null)} />
+          <ReviewModal open={modal === 'review'} order={o} onClose={() => setModal(null)} />
+        </>
+      )}
     </div>
   );
 }

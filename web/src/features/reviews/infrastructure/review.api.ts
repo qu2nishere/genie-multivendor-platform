@@ -1,7 +1,8 @@
 // Đánh giá sản phẩm: GET /public/products/{id}/reviews (kèm summary), POST /reviews/{id}/helpful,
 // POST /reviews/{id}/reports. Mock khi USE_MOCK.
 import { api, request } from '@/shared/api/http';
-import { mockDelay, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { activityStore } from '@/shared/api/mock/activity';
 import { env } from '@/shared/config/env';
 import { isPagePagination } from '@/shared/api/types';
 import { matchesFilter, summarize } from '../domain/review.rules';
@@ -68,4 +69,53 @@ export async function reportReview(
     reason,
     note: note?.trim() || undefined,
   });
+}
+
+/** Dữ liệu gửi đánh giá một dòng hàng (API_SPEC 7.9). */
+export interface ReviewInput {
+  orderId: number;
+  orderItemId: number;
+  rating: number;
+  content: string;
+  imageKeys: string[];
+  videoKey: string | null;
+  anonymous: boolean;
+}
+
+/** POST /me/reviews — +50 Điểm khi có ảnh; đã đánh giá → 409 GNE-SOC-4091. */
+export async function createReview(
+  input: ReviewInput,
+): Promise<{ id: number; coinsAwarded: number }> {
+  if (USE_MOCK) {
+    await mockDelay(400);
+    const db = activityStore.get();
+    if (db.reviews.some((r) => r.order_item_id === input.orderItemId)) mockFail('GNE-SOC-4091');
+    const coins = input.imageKeys.length ? 50 : 0;
+    const id = 5500 + db.reviews.length + 1;
+    activityStore.set({
+      ...db,
+      reviews: [
+        ...db.reviews,
+        {
+          id,
+          order_id: input.orderId,
+          order_item_id: input.orderItemId,
+          rating: input.rating,
+          with_media: input.imageKeys.length > 0 || !!input.videoKey,
+          coins_awarded: coins,
+          created_at: new Date().toISOString(),
+        },
+      ],
+    });
+    return { id, coinsAwarded: coins };
+  }
+  const r = await api.post<{ id: number; coins_awarded: number }>('/me/reviews', {
+    order_item_id: input.orderItemId,
+    rating: input.rating,
+    content: input.content,
+    image_object_keys: input.imageKeys,
+    video_object_key: input.videoKey,
+    is_anonymous: input.anonymous,
+  });
+  return { id: r.id, coinsAwarded: r.coins_awarded };
 }
