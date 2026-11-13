@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 (trang người mua); trên nhánh `feature/web-buyer` |
+| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G10; đang G11 (Seller Center) trên `feature/seller-ui` |
 
 **Cách dùng**
 
@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 9 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **300 / 429** | | |
+| **Tổng** | | **379** | **50** | **309 / 429** | | |
 
 ---
 
@@ -469,15 +469,15 @@
 
 **Nhóm A — Khung SPA**
 
-- [ ] **G11.01** Router
-- [ ] **G11.02** `SellerApp.tsx`
-- [ ] **G11.03** Layout Seller
-- [ ] **G11.04** `NotifBell`, `AccountMenu`, `SellerSearch`
-- [ ] **G11.05** `KycGate`
-- [ ] **G11.06** `pages/seller/[...path].astro`
-- [ ] **G11.07** Hạ tầng shop người bán
-- [ ] **G11.08** Khóa i18n `seller.shell.*`
-- [ ] **G11.C1** 🔖 COMMIT `feat(seller-ui): scaffold seller center shell and routing` · hash: `_______`
+- [x] **G11.01** Router
+- [x] **G11.02** `SellerApp.tsx`
+- [x] **G11.03** Layout Seller
+- [x] **G11.04** `NotifBell`, `AccountMenu`, `SellerSearch`
+- [x] **G11.05** `KycGate`
+- [x] **G11.06** `pages/seller/[...path].astro`
+- [x] **G11.07** Hạ tầng shop người bán
+- [x] **G11.08** Khóa i18n `seller.shell.*`
+- [x] **G11.C1** 🔖 COMMIT `feat(seller-ui): scaffold seller center shell and routing` · hash: `e1de77b`
 
 **Nhóm B — Tổng quan & phân tích**
 
@@ -816,6 +816,10 @@
 | G10.64 | `/chat` cần đăng nhập, noindex; `?shop=&product=&order=` mở hội thoại và tự gửi thẻ sản phẩm / thẻ đơn rồi bỏ tham số khỏi URL. Màn hẹp: danh sách → luồng tin có nút quay lại. |
 | G10.65 | `BecomeSeller` (seller-onboarding): form rhf + zod, điền sẵn họ tên / email / SĐT từ phiên, ngành hàng lấy danh mục gốc (SSR), loại hình INDIVIDUAL/HOUSEHOLD/BUSINESS → 9.1 → modal OTP → 9.2 → làm mới token → `/seller/kyc`. Tên shop trùng (GNE-VND-4094) báo ngay dưới ô. Mock bỏ kiểm GNE-VND-4093 (tài khoản mẫu vốn là chủ shop) để trình diễn được luồng. Điều khoản dẫn `/policies/seller-terms`, `/policies/commission-rates` (R16). |
 | G10.66 | `/become-seller` công khai, lập chỉ mục; phần giới thiệu / lợi ích / 3 bước render SSR, chỉ thẻ đăng ký là island. Ở 360px thẻ lợi ích xếp 1 cột (prototype 2 cột chữ bị bó hẹp). Khóa `chat.*`, `seller-onboarding.landing.*` (vi + en). |
+| G11.01–G11.02 | Nhánh `feature/seller-ui` tách từ `feature/web-buyer` (xếp chồng, chưa push). `app/seller/routes.tsx`: bảng route mục 4.3, mỗi màn `lazy`; màn chưa chuyển dùng tạm `Pending` (thay dần ở nhóm B–F); đường dẫn lạ → 404 nội bộ. `SellerApp`: `BrowserRouter basename="/seller"` (bật cờ v7), tải `GET /seller/me` trước — lỗi 403 (chưa có shop) → mời "Đăng ký mở Shop". |
+| G11.03–G11.04 | Khung theo `VendorShell`: mục nav là `NavLink` thật, mục bị khóa là nút `aria-disabled` + toast. Màn hẹp: thanh bên thành dải trên, nav cuộn ngang (như responsive.css prototype). Bỏ bảng "Mô phỏng KYC" (D5). Chuông dùng lại `NotifPanel` (thêm `onSelect`, `seeAllHref`) + modal chi tiết có nút "Mở trang liên quan"; mock chọn bộ thông báo của shop khi đang ở `/seller`. Tìm nhanh debounce 250 ms, từ 2 ký tự (10.1b): bấm đơn → `/seller/orders?q=<mã>`, sản phẩm → form sửa. Ngôn ngữ dùng `<select>` như prototype. |
+| G11.05 | `KycGate`: thông điệp riêng cho chưa nộp / đang chờ (gom PENDING · AI_PROCESSING · MANUAL_REVIEW) / bị từ chối / cần bổ sung; chỉ mở Hồ sơ KYC + Cài đặt (API 0.9). |
+| G11.07 | Ngữ cảnh shop (10.1, 10.1b, tài khoản nhận tiền) đặt ở `features/seller-settings` (feature sở hữu thông tin shop) thay vì một feature mới. Kho mock dùng chung `shared/api/mock/seller.ts` giữ tên shop + trạng thái KYC: mở shop ở `/become-seller` đặt NOT_SUBMITTED → vào Seller Center thấy cổng KYC. |
 
 ## Nhật ký
 
@@ -840,3 +844,4 @@
 | 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
 | 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
 | 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |
+| 2026-11-13 | Seller Center: khung SPA (thanh bên, thanh trên, chuông, tìm nhanh, menu tài khoản), router lazy, cổng KYC, 404 nội bộ (G11 nhóm A) | e1de77b |
