@@ -40,13 +40,13 @@
 | G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
 | G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
-| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 0 / 61 |  |  |
+| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 26 / 61 |  |  |
 | G09 | Xác thực | 14 | 1 | 0 / 15 |  |  |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **149 / 429** | | |
+| **Tổng** | | **379** | **50** | **175 / 429** | | |
 
 ---
 
@@ -261,38 +261,38 @@
 
 **Nhóm A — Miền danh mục & sản phẩm**
 
-- [ ] **G08.01** Kiểu domain sản phẩm
-- [ ] **G08.02** Quy tắc sản phẩm
-- [ ] **G08.03** Hạ tầng sản phẩm
-- [ ] **G08.04** Kiểu & hạ tầng danh mục
-- [ ] **G08.05** Kiểu & hạ tầng shop
-- [ ] **G08.06** API công khai feature
-- [ ] **G08.C1** 🔖 COMMIT `feat(web): add catalog, product and shop domain with mock data` · hash: `_______`
+- [x] **G08.01** Kiểu domain sản phẩm
+- [x] **G08.02** Quy tắc sản phẩm
+- [x] **G08.03** Hạ tầng sản phẩm
+- [x] **G08.04** Kiểu & hạ tầng danh mục
+- [x] **G08.05** Kiểu & hạ tầng shop
+- [x] **G08.06** API công khai feature
+- [x] **G08.C1** 🔖 COMMIT `feat(web): add catalog, product and shop domain with mock data` · hash: `f630a30`
 
 **Nhóm B — Trang chủ**
 
-- [ ] **G08.07** Miền banner
-- [ ] **G08.08** `BannerCarousel`, `BannerSlot`, `BannerPair`, `BannerPicture`
-- [ ] **G08.09** `BannerPopup`
-- [ ] **G08.10** `CategoryTiles.astro`
-- [ ] **G08.11** `FlashBand`
-- [ ] **G08.12** `SaveVoucher`
-- [ ] **G08.13** `ProductFeed`
-- [ ] **G08.14** Dải cam kết (Promise Strip trong `DESIGN.md`)
-- [ ] **G08.15** `pages/index.astro`
-- [ ] **G08.16** Khóa i18n `home.*`
-- [ ] **G08.C2** 🔖 COMMIT `feat(web): build storefront home page` · hash: `_______`
+- [x] **G08.07** Miền banner
+- [x] **G08.08** `BannerCarousel`, `BannerSlot`, `BannerPair`, `BannerPicture`
+- [x] **G08.09** `BannerPopup`
+- [-] **G08.10** `CategoryTiles.astro`
+- [x] **G08.11** `FlashBand`
+- [x] **G08.12** `SaveVoucher`
+- [x] **G08.13** `ProductFeed`
+- [x] **G08.14** Dải cam kết (Promise Strip trong `DESIGN.md`)
+- [x] **G08.15** `pages/index.astro`
+- [x] **G08.16** Khóa i18n `home.*`
+- [x] **G08.C2** 🔖 COMMIT `feat(web): build storefront home page` · hash: `a14191c`
 
 **Nhóm C — Danh mục, tìm kiếm, khám phá**
 
-- [ ] **G08.17** Quy tắc lọc & sắp xếp
-- [ ] **G08.18** `FilterPanel`
-- [ ] **G08.19** `SortBar`, `ResultGrid`
-- [ ] **G08.20** `pages/c/[slug].astro`
-- [ ] **G08.21** `pages/search.astro`
-- [ ] **G08.22** `pages/discover.astro`
-- [ ] **G08.23** Khóa i18n `catalog.*`, `search.*`, `discover.*`
-- [ ] **G08.C3** 🔖 COMMIT `feat(web): build category, search and discover pages` · hash: `_______`
+- [x] **G08.17** Quy tắc lọc & sắp xếp
+- [x] **G08.18** `FilterPanel`
+- [x] **G08.19** `SortBar`, `ResultGrid`
+- [x] **G08.20** `pages/c/[slug].astro`
+- [x] **G08.21** `pages/search.astro`
+- [x] **G08.22** `pages/discover.astro`
+- [x] **G08.23** Khóa i18n `catalog.*`, `search.*`, `discover.*`
+- [x] **G08.C3** 🔖 COMMIT `feat(web): build category, search and discover pages` · hash: `89fc8d3`
 
 **Nhóm D — Chi tiết sản phẩm**
 
@@ -746,6 +746,16 @@
 | G07.24 | Tự lưu trữ font 8 theme (Archivo, Alegreya, Baloo 2, Bai Jamjuree, Bricolage Grotesque, Lexend, Phudu, Saira Condensed — OFL 1.1) tải đúng URL Google Fonts của prototype, chỉ giữ tập latin / latin-ext / vietnamese: 45 tệp woff2 (1,2 MB) ở `public/fonts/themes/`, khai trong `styles/theme-fonts.css`; trình duyệt chỉ tải khi theme tương ứng bật. |
 | G07.26 | Đã kiểm 9 theme trên khung trang hiện có (header, footer, nút, trang 404) ở 1440 px bằng `?theme=`; lựa chọn lưu `genie.theme` và giữ khi mở lại. Tương phản đo tự động: nút chính 5,76–18,72; h1 ≥ 15,2; chữ phụ ≥ 6,45; link footer ≥ 5,34 (đạt WCAG AA). Trang chủ / sản phẩm / đăng nhập / Seller / Admin chưa dựng → kiểm lại 9 theme trên các trang đó ở G13.05, G13.06. |
 | G07.22 / G07.23 | themes.css giữ nguyên (không bọc @layer, độ ưu tiên [data-theme] đè utility); bỏ @font-face "Genie Script" và quy tắc font của `.tr-logo span`/`.tr-foot__brand` (logo là SVG); ảnh nền theme đọc từ `/img/themes/`. ThemePicker còn gắn ở góc trang đăng nhập (AuthTools); thanh trên Admin gắn ở G12.03. |
+| G08.02 | `badgeStatus` (ánh xạ trạng thái đơn → màu nhãn) thuộc miền đơn hàng, chuyển sang `features/orders/domain` ở G10.30. `product.rules` có: đường dẫn, % giảm, nhãn, giá / tồn theo phân loại, trạng thái kho, mã phân loại trong liên kết chia sẻ, kiểm slug chuẩn (301). |
+| G08.03 | Mock chi tiết dùng đúng dữ liệu prototype cho mọi sản phẩm: phân loại COLORS/SIZES, 4 ảnh (ảnh chính + banner-tech, keyboard, speaker), bảng thông số và mô tả HTML mẫu của ProductDetail.jsx. Lọc / sắp xếp / phân trang chạy trong `product.mock.ts` (mô phỏng backend), có test `product.api.test.ts`. |
+| G08.10 | Prototype Home.jsx không có lưới ô danh mục; danh mục đã có ở hàng danh mục header (SSR) nên không dựng CategoryTiles để giữ đúng bố cục gốc. |
+| G08.14 | Theo DESIGN.md, Promise Strip nằm ở trang sản phẩm dưới hàng shop: đã dựng product/ui/PromiseStrip.astro (SSR), sẽ ghép vào trang sản phẩm ở G08.35; trang chủ giữ hero + Money Rail như prototype. |
+| G08.15 | Thêm features/<x>/server.ts làm API công khai cho component .astro (FlashBand, VerifiedShops, PromiseStrip), ESLint chặn .tsx import server.ts để island không kéo .astro vào bundle; env.d.ts khai báo module *.astro cho tsc thuần. |
+| G08.17 | Trạng thái lọc sống trong query string (parseFilters/serializeFilters/filtersHref); bộ lọc là form GET thật, sắp xếp / thẻ lọc / phân trang là liên kết — tắt JS vẫn dùng được. ProductQuery đổi brand/attribute đơn sang brands/attributes nhiều giá trị, thêm categoryIds, locations, hasVoucher; thêm getFacets(). |
+| G08.18 | Danh sách Thương hiệu / Nơi bán lấy theo phạm vi từ khóa (getFacets) thay vì toàn bộ sản phẩm như prototype, để không hiện lựa chọn cho ra 0 kết quả. Trang danh mục thêm nhóm thuộc tính ngành (UC-CAT-05) mà prototype chưa có. Khoảng giá ghi bằng formatVND ("5.000.000₫" thay cho "5 triệu"). |
+| G08.20 | /c/<danh-mục-con> chuyển 301 về /c/<gốc>?sub=<slug>; danh mục lạ trả 404. Bộ lọc Chính hãng gồm cả thương hiệu đã xác minh (giống Search.jsx) trên cả hai trang. |
+| G08.21 | Thêm khối "shop khớp từ khóa" theo plan (prototype Search.jsx chưa có); phân trang 20 sản phẩm / trang thay vì hiện hết. |
+| G08.22 | /discover mặc định trang 1 (prototype mở trang 2 vì trang chủ đã hiện trang 1) để URL gốc và canonical khớp nội dung; trang chủ "Xem thêm" dẫn sang /discover?page=N. |
 
 ## Nhật ký
 
@@ -754,3 +764,5 @@
 | 2026-11-11 | Lập plan và progress | |
 | 2026-11-11 | G00–G06: nhánh develop + feature/web-foundation, công cụ (Prettier, Vitest, Playwright, ESLint boundaries), token + Tailwind, tài sản thương hiệu, shared/lib (i18n, format, storage, seo), shared/api (http, mock, lỗi GNE-*), shared/ui (40+ component + bộ thống kê), thư viện /dev/ui | 46557a9 … f6095a3 |
 | 2026-11-11 | G07: CSS storefront tách 10 module, layout Storefront/Auth/AppShell, SeoHead, ThemeBoot, middleware (ngôn ngữ theo request), 404, Header/Footer + catalog/notifications/cart/search/auth/policies tối thiểu, 9 theme + font tự lưu trữ + ThemePicker | 4bcae11 … 3dda4a9 |
+| 2026-11-12 | Trang chủ storefront (G08 nhóm B) | a14191c |
+| 2026-11-13 | Danh mục, tìm kiếm, khám phá (G08 nhóm C) | 89fc8d3 |
