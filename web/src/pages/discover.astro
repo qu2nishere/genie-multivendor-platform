@@ -8,7 +8,7 @@ import { ResultGrid } from '@/features/search/server';
 import { env } from '@/shared/config/env';
 import { formatNumber } from '@/shared/lib/format';
 import { createT } from '@/shared/lib/i18n';
-import { breadcrumbLd, itemListLd } from '@/shared/lib/seo';
+import { breadcrumbLd, canonicalUrl, itemListLd } from '@/shared/lib/seo';
 import { Breadcrumbs } from '@/shared/ui';
 
 const PER_PAGE = 30;
@@ -32,7 +32,7 @@ const crumbs = [
 <StorefrontLayout
   title={state.page > 1 ? t('discover.meta.title_page', { page: state.page }) : title}
   description={t('discover.meta.description')}
-  canonical={state.page > 1 ? `${path}?page=${state.page}` : path}
+  canonical={canonicalUrl(path, Astro.url.searchParams)}
   jsonLd={[
     breadcrumbLd(
       crumbs.map((c) => ({ name: c.name, url: c.href })),

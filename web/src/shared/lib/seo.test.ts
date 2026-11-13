@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  canonicalUrl,
   breadcrumbLd,
   buildMeta,
   clampDescription,
@@ -72,5 +73,20 @@ describe('seo', () => {
 
   it('serializeJsonLd chặn thoát khỏi thẻ script', () => {
     expect(serializeJsonLd({ name: '</script><b>' })).not.toContain('</script>');
+  });
+});
+
+describe('canonicalUrl', () => {
+  it('bỏ tham số theo dõi, giữ trang > 1', () => {
+    expect(canonicalUrl('/c/dien-tu', 'utm_source=fb&page=2&fbclid=x')).toBe('/c/dien-tu?page=2');
+    expect(canonicalUrl('/c/dien-tu', 'page=1')).toBe('/c/dien-tu');
+    expect(canonicalUrl('/discover', 'page=abc')).toBe('/discover');
+  });
+  it('trang lọc / sắp xếp trỏ về trang gốc', () => {
+    expect(canonicalUrl('/c/dien-tu', 'brand=Sony&page=3')).toBe('/c/dien-tu');
+    expect(canonicalUrl('/c/dien-tu', new URLSearchParams('sort=hot'))).toBe('/c/dien-tu');
+  });
+  it('trang sản phẩm bỏ tham số chia sẻ', () => {
+    expect(canonicalUrl('/p/tai-nghe-1', 'v=0-1&src=share', [])).toBe('/p/tai-nghe-1');
   });
 });

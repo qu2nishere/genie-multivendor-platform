@@ -26,7 +26,7 @@ import { FilterChips, ResultGrid } from '@/features/search/server';
 import { env } from '@/shared/config/env';
 import { formatNumber } from '@/shared/lib/format';
 import { createT } from '@/shared/lib/i18n';
-import { breadcrumbLd, itemListLd } from '@/shared/lib/seo';
+import { breadcrumbLd, canonicalUrl, itemListLd } from '@/shared/lib/seo';
 import { Breadcrumbs, buttonClass, Icon, toIconName } from '@/shared/ui';
 
 const PAGE_SIZE = 12;
@@ -96,9 +96,7 @@ const title =
 <StorefrontLayout
   title={title}
   description={category.description}
-  canonical={state.page > 1 && !Astro.url.search.replace(/[?&]page=\d+/, '')
-    ? `${path}?page=${state.page}`
-    : path}
+  canonical={canonicalUrl(path, Astro.url.searchParams)}
   follow
   jsonLd={[
     breadcrumbLd(

@@ -71,8 +71,10 @@ function Lightbox({
       <img
         src={images[i]}
         alt={t('product.gallery.image_of', { title, n: i + 1, total: images.length })}
+        width={900}
+        height={900}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[84vh] max-w-[76vw] rounded-lg bg-white object-contain max-md:max-w-[72vw]"
+        className="h-auto max-h-[84vh] w-auto max-w-[76vw] rounded-lg bg-white object-contain max-md:max-w-[72vw]"
       />
       {images.length > 1 && (
         <button
