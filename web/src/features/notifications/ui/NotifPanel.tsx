@@ -36,9 +36,15 @@ export function NotifIcon({ n, size = 38 }: { n: AppNotification; size?: number 
 export function NotifPanel({
   items,
   onNavigate,
+  onSelect,
+  seeAllHref = '/account/notifications',
 }: {
   items: AppNotification[];
   onNavigate?: () => void;
+  /** Có thì mọi dòng là nút: đánh dấu đã đọc rồi gọi (Seller Center mở modal chi tiết). */
+  onSelect?: (n: AppNotification) => void;
+  /** null = ẩn dòng "Xem tất cả thông báo". */
+  seeAllHref?: string | null;
 }) {
   const { t, locale } = useT();
   const markAll = useMarkAllRead();
@@ -77,7 +83,18 @@ export function NotifPanel({
           }`;
           return (
             <li key={n.id}>
-              {n.href ? (
+              {onSelect ? (
+                <button
+                  type="button"
+                  className={`${cls} w-full text-left border-x-0 border-t-0 cursor-pointer`}
+                  onClick={() => {
+                    if (n.unread) markOne.mutate(n.id);
+                    onSelect(n);
+                  }}
+                >
+                  {inner}
+                </button>
+              ) : n.href ? (
                 <a
                   href={n.href}
                   className={cls}
@@ -98,13 +115,15 @@ export function NotifPanel({
           <li className="p-5 text-center text-muted">{t('notifications.panel.empty')}</li>
         )}
       </ul>
-      <a
-        href="/account/notifications"
-        onClick={onNavigate}
-        className="block px-4 py-[11px] text-center font-semibold text-sm text-brand-600 no-underline hover:underline"
-      >
-        {t('notifications.panel.see_all')}
-      </a>
+      {seeAllHref && (
+        <a
+          href={seeAllHref}
+          onClick={onNavigate}
+          className="block px-4 py-[11px] text-center font-semibold text-sm text-brand-600 no-underline hover:underline"
+        >
+          {t('notifications.panel.see_all')}
+        </a>
+      )}
     </div>
   );
 }

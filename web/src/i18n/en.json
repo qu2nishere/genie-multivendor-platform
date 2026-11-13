@@ -1807,5 +1807,79 @@
         }
       }
     }
+  },
+  "seller": {
+    "shell": {
+      "title": "Seller Center",
+      "home": "Seller Center — Overview",
+      "nav_label": "Seller Center navigation",
+      "nav": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "products": "Products",
+        "wallet": "Wallet & Escrow",
+        "kyc": "KYC profile",
+        "catalog": "Platform catalog",
+        "promo": "Promotions",
+        "chat": "Chat",
+        "reviews": "Reviews",
+        "stats": "Analytics",
+        "settings": "Settings"
+      },
+      "badge": "{count} items to handle",
+      "kyc": {
+        "VERIFIED": "Verified",
+        "WAITING": "KYC pending",
+        "NOT_SUBMITTED": "KYC not submitted",
+        "REJECTED": "KYC rejected",
+        "SUPPLEMENT": "KYC needs more documents"
+      },
+      "locked_toast": "Complete KYC verification to use this feature",
+      "sign_out": "Sign out",
+      "help": "Help",
+      "account": "Shop account",
+      "manage_shop": "Manage shop",
+      "buyer_channel": "Buyer channel",
+      "back_to_genie": "Back to Genie",
+      "search": "Search orders, products",
+      "search_placeholder": "Search orders, products…",
+      "search_empty": "No orders or products found.",
+      "search_orders": "Orders",
+      "search_products": "Products",
+      "notif_unread": "Notifications, {count} unread",
+      "notif_detail": "Notification details",
+      "notif_open": "Open related page",
+      "got_it": "Got it",
+      "pending": "This screen is being moved from the prototype to the app.",
+      "gate": {
+        "cta": "Go to KYC verification",
+        "locked": {
+          "title": "Feature locked — KYC not verified",
+          "desc": "Complete identity verification (KYC) before listing products, managing orders, the Escrow wallet and other Seller Center features."
+        },
+        "waiting": {
+          "title": "Your KYC is under review",
+          "desc": "Features unlock as soon as your file is approved — usually within 24 working hours. You can still open KYC profile and Settings."
+        },
+        "rejected": {
+          "title": "KYC rejected",
+          "desc": "Your documents did not meet the requirements. Check the rejection reason and resubmit to unlock all seller features."
+        },
+        "supplement": {
+          "title": "KYC needs more documents",
+          "desc": "We need more documents to approve your file. Add them as instructed to unlock all seller features."
+        }
+      },
+      "not_found": {
+        "title": "Page not found",
+        "desc": "This path does not exist in Seller Center.",
+        "back": "Back to Overview"
+      },
+      "no_shop": {
+        "title": "This account has no shop",
+        "desc": "Open a free shop to use Seller Center.",
+        "cta": "Open a shop"
+      }
+    }
   }
 }

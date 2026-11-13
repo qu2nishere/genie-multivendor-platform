@@ -9,11 +9,12 @@ export interface NotificationDto {
   body: string;
   created_at: string;
   read_at: string | null;
-  /** Đích kiểu ứng dụng: { action: 'track', order_code } | { action: 'view', view } | { action: 'home' }. */
+  /** Đích kiểu ứng dụng: { action: 'track', order_code } | { action: 'view', view } | { action: 'home' } | { action: 'open', path } (route Seller Center). */
   link:
     | { action: 'track'; order_code: string }
     | { action: 'view'; view: string }
     | { action: 'home' }
+    | { action: 'open'; path: string }
     | null;
   is_platform: boolean;
 }

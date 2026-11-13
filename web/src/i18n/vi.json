@@ -1807,5 +1807,79 @@
         }
       }
     }
+  },
+  "seller": {
+    "shell": {
+      "title": "Kênh Người bán",
+      "home": "Seller Center — Tổng quan",
+      "nav_label": "Điều hướng Seller Center",
+      "nav": {
+        "overview": "Tổng quan",
+        "orders": "Đơn hàng",
+        "products": "Sản phẩm",
+        "wallet": "Ví & Escrow",
+        "kyc": "Hồ sơ KYC",
+        "catalog": "Danh mục toàn sàn",
+        "promo": "Khuyến mãi",
+        "chat": "Chat",
+        "reviews": "Đánh giá",
+        "stats": "Phân tích",
+        "settings": "Cài đặt"
+      },
+      "badge": "{count} mục cần xử lý",
+      "kyc": {
+        "VERIFIED": "Đã xác minh",
+        "WAITING": "KYC đang chờ",
+        "NOT_SUBMITTED": "Chưa nộp KYC",
+        "REJECTED": "KYC bị từ chối",
+        "SUPPLEMENT": "KYC cần bổ sung"
+      },
+      "locked_toast": "Hoàn tất xác minh KYC để sử dụng tính năng này",
+      "sign_out": "Đăng xuất",
+      "help": "Trợ giúp",
+      "account": "Tài khoản shop",
+      "manage_shop": "Quản lý cửa hàng",
+      "buyer_channel": "Kênh người mua",
+      "back_to_genie": "Trở về Genie",
+      "search": "Tìm đơn, sản phẩm",
+      "search_placeholder": "Tìm đơn, sản phẩm…",
+      "search_empty": "Không tìm thấy đơn hay sản phẩm nào.",
+      "search_orders": "Đơn hàng",
+      "search_products": "Sản phẩm",
+      "notif_unread": "Thông báo, {count} chưa đọc",
+      "notif_detail": "Chi tiết thông báo",
+      "notif_open": "Mở trang liên quan",
+      "got_it": "Đã hiểu",
+      "pending": "Màn này đang được chuyển từ bản mẫu sang ứng dụng.",
+      "gate": {
+        "cta": "Đi đến Xác minh KYC",
+        "locked": {
+          "title": "Tính năng bị khoá — chưa xác minh KYC",
+          "desc": "Bạn cần hoàn tất xác minh danh tính (KYC) trước khi đăng bán, quản lý đơn hàng, ví Escrow và các tính năng khác của Seller Center."
+        },
+        "waiting": {
+          "title": "Hồ sơ KYC đang được thẩm định",
+          "desc": "Tính năng sẽ mở ngay khi hồ sơ được duyệt — thường trong 24 giờ làm việc. Bạn vẫn có thể xem Hồ sơ KYC và Cài đặt."
+        },
+        "rejected": {
+          "title": "Hồ sơ KYC bị từ chối",
+          "desc": "Hồ sơ của bạn chưa đạt yêu cầu. Vui lòng kiểm tra lý do từ chối và nộp lại hồ sơ để mở khoá đầy đủ tính năng người bán."
+        },
+        "supplement": {
+          "title": "Hồ sơ KYC cần bổ sung",
+          "desc": "Sàn cần thêm giấy tờ để duyệt hồ sơ của bạn. Bổ sung theo hướng dẫn để mở khoá đầy đủ tính năng người bán."
+        }
+      },
+      "not_found": {
+        "title": "Không tìm thấy trang",
+        "desc": "Đường dẫn này không có trong Seller Center.",
+        "back": "Về Tổng quan"
+      },
+      "no_shop": {
+        "title": "Tài khoản chưa có Shop",
+        "desc": "Mở Shop miễn phí để dùng Seller Center.",
+        "cta": "Đăng ký mở Shop"
+      }
+    }
   }
 }

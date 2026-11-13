@@ -13,6 +13,8 @@ export function linkHref(link: NotificationDto['link']): string | null {
       return `/account/${link.view}`;
     case 'home':
       return '/';
+    case 'open':
+      return link.path;
     default:
       return null;
   }
