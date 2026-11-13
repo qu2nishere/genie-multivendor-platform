@@ -1806,6 +1806,101 @@
           "desc": "Sau khi VERIFIED, đăng sản phẩm và bắt đầu bán ngay."
         }
       }
+    },
+    "kyc": {
+      "banner": {
+        "NOT_SUBMITTED": {
+          "title": "Chưa nộp hồ sơ KYC",
+          "chip": "Chưa nộp",
+          "desc": "Hoàn tất hồ sơ bên dưới để mở khóa đăng bán, đơn hàng và ví."
+        },
+        "PENDING": {
+          "title": "Hồ sơ đang chờ duyệt",
+          "chip": "Chờ duyệt",
+          "desc": "AI đang thẩm định; hồ sơ nghi ngờ do nhân viên xử lý trong 24 giờ làm việc. Bạn chưa thể đăng bán cho đến khi được duyệt."
+        },
+        "VERIFIED": {
+          "title": "Hồ sơ đã được xác minh",
+          "chip": "Đã xác minh",
+          "desc": "Tài khoản của bạn đã được xác minh, bạn có thể đăng bán sản phẩm và nhận thanh toán."
+        },
+        "REJECTED": {
+          "title": "Hồ sơ bị từ chối",
+          "chip": "Từ chối",
+          "desc": "Lý do: {reason}. Vui lòng tải lại và gửi duyệt."
+        },
+        "SUPPLEMENT_REQUESTED": {
+          "title": "Yêu cầu bổ sung hồ sơ",
+          "chip": "Cần bổ sung",
+          "desc": "Vui lòng bổ sung giấy tờ theo yêu cầu để chúng tôi xác minh danh tính của bạn.",
+          "deadline": "Hạn bổ sung: {date}"
+        }
+      },
+      "review": "Yêu cầu nhân viên xem xét",
+      "review_done": "Đã yêu cầu nhân viên xem xét",
+      "review_sent": "Đã gửi yêu cầu, nhân viên sẽ xem lại hồ sơ của bạn",
+      "info": "Thông tin người bán",
+      "cccd": "Số CCCD",
+      "cccd_placeholder": "12 chữ số",
+      "tax": "Mã số thuế (Doanh nghiệp / Hộ KD)",
+      "rep": "Người đại diện",
+      "hint_individual": "Cá nhân: nhập số CCCD để đối chiếu với mã QR và MRZ trên thẻ.",
+      "hint_business": "Doanh nghiệp / Hộ KD: nhập số CCCD của người đại diện và Mã số thuế (MST).",
+      "docs_title": "Giấy tờ định danh",
+      "docs_rule": "PDF / JPG / PNG · < 10MB",
+      "docs": {
+        "ID_FRONT": "CCCD mặt trước",
+        "ID_BACK": "CCCD mặt sau",
+        "BUSINESS_LICENSE": "Giấy chứng nhận đăng ký kinh doanh",
+        "SELFIE": "Ảnh chân dung (selfie)"
+      },
+      "docs_long": {
+        "ID_FRONT": "CCCD gắn chip — mặt trước (rõ mã QR và ảnh chân dung)",
+        "ID_BACK": "CCCD gắn chip — mặt sau (rõ 3 dòng MRZ)",
+        "BUSINESS_LICENSE": "Giấy chứng nhận đăng ký kinh doanh",
+        "SELFIE": "Ảnh chân dung (selfie)"
+      },
+      "pick_hint": "Bấm để tải lên",
+      "upload_for": "Tải lên {doc}",
+      "choose": "Chọn file",
+      "change": "Thay đổi",
+      "selfie_hint": "Chụp ảnh chân dung rõ mặt, đủ ánh sáng, không đội mũ / đeo kính đen",
+      "selfie_done": "Đã tải lên (mã hóa)",
+      "selfie_empty": "Tải ảnh lên hoặc chụp từ camera",
+      "consent": "Tôi đồng ý cho Genie xử lý dữ liệu sinh trắc học phục vụ KYC. Nếu không đồng ý, hệ thống bỏ qua so khớp khuôn mặt tự động và nhân viên sẽ đối chiếu ảnh trực tiếp.",
+      "save_draft": "Lưu nháp",
+      "draft_saved": "Đã lưu nháp hồ sơ",
+      "submit": "Gửi duyệt KYC",
+      "resubmit": "Gửi lại hồ sơ",
+      "sent": "Hồ sơ của bạn đã được tiếp nhận và đang được thẩm định tự động",
+      "sent_manual": "Hồ sơ của bạn đã được tiếp nhận. Vì bạn không đồng ý xử lý sinh trắc, nhân viên sẽ đối chiếu ảnh trực tiếp",
+      "sent_toast": "Đã gửi hồ sơ KYC",
+      "err": {
+        "cccd": "Số CCCD phải gồm 12 chữ số",
+        "tax": "Nhập Mã số thuế (10 số, hoặc 10 số + 3 số chi nhánh)",
+        "rep": "Nhập tên người đại diện",
+        "info": "Kiểm tra lại thông tin người bán",
+        "missing": "Hồ sơ chưa hoàn thiện: còn thiếu {list}.",
+        "file_type": "Sai định dạng. Chỉ nhận PDF, JPG, PNG (ảnh chân dung chỉ nhận JPG, PNG).",
+        "file_size": "File quá lớn (tối đa 10 MB)",
+        "file_blurry": "Ảnh quá mờ hoặc quá nhỏ, vui lòng chụp lại rõ nét."
+      },
+      "camera": {
+        "open": "Chụp ảnh",
+        "title": "Chụp ảnh chân dung",
+        "preview": "Hình từ camera",
+        "step": "Kiểm tra người thật {n}/{total}: {task}",
+        "tasks": {
+          "blink": "Nháy mắt 2 lần",
+          "left": "Quay đầu sang trái",
+          "right": "Quay đầu sang phải"
+        },
+        "did": "Đã làm xong",
+        "ready": "Đã kiểm tra xong, bấm Chụp để lưu ảnh chân dung.",
+        "shoot": "Chụp",
+        "err_denied": "Không thể truy cập camera. Vui lòng cấp quyền camera trong trình duyệt, hoặc tải ảnh lên.",
+        "err_none": "Không tìm thấy camera trên thiết bị. Vui lòng tải ảnh chân dung lên."
+      }
     }
   },
   "seller": {
@@ -2487,6 +2582,74 @@
         "reason": "Vui lòng nhập lý do đề xuất",
         "dup": "Danh mục \"{name}\" đã có sẵn, hãy dùng danh mục này."
       }
+    }
+  },
+  "seller-wallet": {
+    "balance": {
+      "available": "Số dư khả dụng",
+      "available_hint": "Có thể rút về ngân hàng",
+      "held": "Đang giữ (Escrow)",
+      "held_hint": "Chuyển vào số dư khi khách xác nhận nhận hàng, hoặc sau 7 ngày",
+      "held_auto": "Tự động giải ngân sau khi khách xác nhận",
+      "revenue": "Doanh thu 30 ngày qua",
+      "revenue_against": "so với 30 ngày trước",
+      "cod": "Chờ đối soát COD",
+      "cod_hint": "Vào ký quỹ khi hãng vận chuyển chuyển tiền thu hộ về sàn",
+      "pending": "Đang rút",
+      "pending_hint": "Lệnh rút đang chờ sàn chuyển khoản"
+    },
+    "how": {
+      "title": "Cách tính tiền về ví",
+      "rate": "Theo ngành của đơn gần nhất: {rate}%",
+      "gross": "Tổng tiền hàng (Gross)",
+      "commission": "Phí hoa hồng ({rate}%)",
+      "net": "Thực nhận (Net) → Escrow",
+      "release": "Giải ngân khi hoàn tất"
+    },
+    "ledger": {
+      "title": "Sổ giao dịch ví",
+      "append_only": "Chỉ ghi thêm",
+      "filter": "Lọc",
+      "export": "Xuất CSV",
+      "month": "Tháng",
+      "type": "Loại giao dịch",
+      "all": "Tất cả giao dịch",
+      "search": "Mã đơn, diễn giải...",
+      "empty": "Chưa có giao dịch nào trong tháng này",
+      "col": {
+        "time": "Thời gian",
+        "ref": "Mã tham chiếu",
+        "type": "Loại",
+        "desc": "Diễn giải",
+        "commission": "Hoa hồng",
+        "state": "Trạng thái"
+      }
+    },
+    "type": {
+      "SALE": "Bán hàng",
+      "RELEASE": "Giải ngân",
+      "PAYOUT": "Rút tiền",
+      "REFUND": "Hoàn tiền"
+    },
+    "state": {
+      "HELD": "Escrow",
+      "AVAILABLE": "Khả dụng",
+      "PAYOUT_PENDING": "Chờ duyệt",
+      "PAYOUT_DONE": "Đã rút",
+      "REFUNDED": "Hoàn"
+    },
+    "withdraw": {
+      "title": "Yêu cầu rút tiền",
+      "no_account": "Bạn chưa có tài khoản nhận tiền đã xác minh.",
+      "add_account": "Thêm ở Cài đặt trước khi rút.",
+      "verified": "Đã xác minh",
+      "amount": "Số tiền cần rút",
+      "placeholder": "Tối thiểu {min}",
+      "all": "Rút toàn bộ",
+      "next": "Tiếp tục",
+      "otp_for": "Nhập mã OTP để xác nhận rút {amount}.",
+      "confirm": "Xác nhận rút tiền",
+      "done": "Đã tạo lệnh rút {code}. Kế toán sàn phê duyệt giải ngân trong 24 giờ làm việc."
     }
   }
 }

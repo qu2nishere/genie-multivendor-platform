@@ -1806,6 +1806,101 @@
           "desc": "Once VERIFIED, list products and start selling."
         }
       }
+    },
+    "kyc": {
+      "banner": {
+        "NOT_SUBMITTED": {
+          "title": "KYC not submitted",
+          "chip": "Not submitted",
+          "desc": "Complete the form below to unlock listings, orders and your wallet."
+        },
+        "PENDING": {
+          "title": "Your KYC is under review",
+          "chip": "Pending",
+          "desc": "AI is checking your file; flagged files are handled by staff within 24 working hours. You cannot sell until it is approved."
+        },
+        "VERIFIED": {
+          "title": "Your KYC is verified",
+          "chip": "Verified",
+          "desc": "Your account is verified — you can list products and receive payments."
+        },
+        "REJECTED": {
+          "title": "KYC rejected",
+          "chip": "Rejected",
+          "desc": "Reason: {reason}. Please upload again and resubmit."
+        },
+        "SUPPLEMENT_REQUESTED": {
+          "title": "More documents needed",
+          "chip": "Needs documents",
+          "desc": "Please add the requested documents so we can verify your identity.",
+          "deadline": "Deadline: {date}"
+        }
+      },
+      "review": "Ask staff to review",
+      "review_done": "Staff review requested",
+      "review_sent": "Request sent — staff will review your file",
+      "info": "Seller information",
+      "cccd": "Citizen ID number",
+      "cccd_placeholder": "12 digits",
+      "tax": "Tax code (Company / Household)",
+      "rep": "Legal representative",
+      "hint_individual": "Individuals: enter your citizen ID to match the QR code and MRZ on the card.",
+      "hint_business": "Companies / households: enter the representative's citizen ID and the tax code.",
+      "docs_title": "Identity documents",
+      "docs_rule": "PDF / JPG / PNG · < 10MB",
+      "docs": {
+        "ID_FRONT": "Citizen ID front",
+        "ID_BACK": "Citizen ID back",
+        "BUSINESS_LICENSE": "Business registration certificate",
+        "SELFIE": "Portrait photo (selfie)"
+      },
+      "docs_long": {
+        "ID_FRONT": "Chip citizen ID — front (QR code and photo clearly visible)",
+        "ID_BACK": "Chip citizen ID — back (3 MRZ lines clearly visible)",
+        "BUSINESS_LICENSE": "Business registration certificate",
+        "SELFIE": "Portrait photo (selfie)"
+      },
+      "pick_hint": "Click to upload",
+      "upload_for": "Upload {doc}",
+      "choose": "Choose file",
+      "change": "Change",
+      "selfie_hint": "A clear, well-lit photo of your face, no hat or dark glasses",
+      "selfie_done": "Uploaded (encrypted)",
+      "selfie_empty": "Upload a photo or take one with your camera",
+      "consent": "I agree that Genie may process my biometric data for KYC. If I do not agree, automatic face matching is skipped and staff compare the photos manually.",
+      "save_draft": "Save draft",
+      "draft_saved": "Draft saved",
+      "submit": "Submit KYC",
+      "resubmit": "Resubmit",
+      "sent": "Your file was received and is being checked automatically",
+      "sent_manual": "Your file was received. Because you declined biometric processing, staff will compare the photos manually",
+      "sent_toast": "KYC submitted",
+      "err": {
+        "cccd": "The citizen ID must be 12 digits",
+        "tax": "Enter the tax code (10 digits, or 10 + 3 branch digits)",
+        "rep": "Enter the representative's name",
+        "info": "Check the seller information",
+        "missing": "Your file is incomplete: missing {list}.",
+        "file_type": "Wrong format. Only PDF, JPG, PNG (the selfie must be JPG or PNG).",
+        "file_size": "File too large (up to 10 MB)",
+        "file_blurry": "The image is too small or blurry — please take a sharper one."
+      },
+      "camera": {
+        "open": "Take photo",
+        "title": "Take a portrait photo",
+        "preview": "Camera preview",
+        "step": "Liveness check {n}/{total}: {task}",
+        "tasks": {
+          "blink": "Blink twice",
+          "left": "Turn your head left",
+          "right": "Turn your head right"
+        },
+        "did": "Done",
+        "ready": "Checks complete — press Capture to save your photo.",
+        "shoot": "Capture",
+        "err_denied": "Cannot access the camera. Allow camera access in your browser, or upload a photo.",
+        "err_none": "No camera found on this device. Please upload a portrait photo."
+      }
     }
   },
   "seller": {
@@ -2487,6 +2582,74 @@
         "reason": "Please explain why",
         "dup": "\"{name}\" already exists — use that category."
       }
+    }
+  },
+  "seller-wallet": {
+    "balance": {
+      "available": "Available balance",
+      "available_hint": "Can be withdrawn to your bank",
+      "held": "Held (Escrow)",
+      "held_hint": "Moves to your balance when the customer confirms receipt, or after 7 days",
+      "held_auto": "Released automatically after the customer confirms",
+      "revenue": "Revenue, last 30 days",
+      "revenue_against": "vs previous 30 days",
+      "cod": "COD awaiting reconciliation",
+      "cod_hint": "Goes into escrow when the carrier pays the collected cash to Genie",
+      "pending": "Withdrawing",
+      "pending_hint": "Withdrawals waiting for Genie's transfer"
+    },
+    "how": {
+      "title": "How your money is calculated",
+      "rate": "Category of the latest order: {rate}%",
+      "gross": "Order total (Gross)",
+      "commission": "Commission ({rate}%)",
+      "net": "You receive (Net) → Escrow",
+      "release": "Released on completion"
+    },
+    "ledger": {
+      "title": "Wallet ledger",
+      "append_only": "Append-only",
+      "filter": "Filter",
+      "export": "Export CSV",
+      "month": "Month",
+      "type": "Transaction type",
+      "all": "All transactions",
+      "search": "Order code, description...",
+      "empty": "No transactions this month",
+      "col": {
+        "time": "Time",
+        "ref": "Reference",
+        "type": "Type",
+        "desc": "Description",
+        "commission": "Commission",
+        "state": "Status"
+      }
+    },
+    "type": {
+      "SALE": "Sale",
+      "RELEASE": "Release",
+      "PAYOUT": "Withdrawal",
+      "REFUND": "Refund"
+    },
+    "state": {
+      "HELD": "Escrow",
+      "AVAILABLE": "Available",
+      "PAYOUT_PENDING": "Pending",
+      "PAYOUT_DONE": "Withdrawn",
+      "REFUNDED": "Refunded"
+    },
+    "withdraw": {
+      "title": "Request withdrawal",
+      "no_account": "You have no verified payout account yet.",
+      "add_account": "Add one in Settings before withdrawing.",
+      "verified": "Verified",
+      "amount": "Amount to withdraw",
+      "placeholder": "At least {min}",
+      "all": "Withdraw all",
+      "next": "Continue",
+      "otp_for": "Enter the OTP to confirm withdrawing {amount}.",
+      "confirm": "Confirm withdrawal",
+      "done": "Withdrawal {code} created. Genie's accountants approve it within 24 working hours."
     }
   }
 }

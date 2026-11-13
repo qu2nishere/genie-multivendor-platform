@@ -26,6 +26,12 @@ const Editor = lazy(() =>
 const Catalog = lazy(() =>
   import('@/features/seller-products').then((m) => ({ default: m.VendorCatalogPage })),
 );
+const Wallet = lazy(() =>
+  import('@/features/seller-wallet').then((m) => ({ default: m.WalletPage })),
+);
+const Kyc = lazy(() =>
+  import('@/features/seller-onboarding').then((m) => ({ default: m.KycPage })),
+);
 const Stats = lazy(() =>
   import('@/features/seller-analytics').then((m) => ({ default: m.StatsPage })),
 );
@@ -38,8 +44,8 @@ export const sellerRoutes: SellerRoute[] = [
   { path: '/products/new', screen: Editor },
   { path: '/products/:id/edit', screen: Editor },
   { path: '/catalog', screen: Catalog },
-  { path: '/wallet', screen: Pending },
-  { path: '/kyc', screen: Pending },
+  { path: '/wallet', screen: Wallet },
+  { path: '/kyc', screen: Kyc },
   { path: '/promotions', screen: Pending },
   { path: '/flash-sales', screen: Pending },
   { path: '/chat', screen: Pending },

@@ -4,6 +4,7 @@
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
 import {
+  sellerMoneyStore,
   sellerOrdersStore,
   sellerProductsStore,
   sellerRefundsStore,
@@ -62,9 +63,9 @@ function mockDashboard(): DashboardDto {
       unread_chats: 5,
     },
     money: {
-      available: 12_450_000,
+      available: sellerMoneyStore.get().available,
       held: 1_907_600,
-      pending_withdrawal: 5_000_000,
+      pending_withdrawal: sellerMoneyStore.get().pending_withdrawal,
       cod_pending: 1_950_000,
     },
     orders_30d: {

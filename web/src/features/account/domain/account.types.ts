@@ -51,7 +51,14 @@ export interface Device {
 }
 
 /** Mục đích OTP bước 2 (0.7) dùng trong khu tài khoản. */
-export type StepUpPurpose = 'PASSWORD_CHANGE' | 'ACCOUNT_DELETION' | 'EMAIL_CHANGE';
+/** Mục đích OTP bước 2 (API 0.7) — dùng cả ở Seller Center (rút tiền, tài khoản nhận tiền). */
+export type StepUpPurpose =
+  | 'PASSWORD_CHANGE'
+  | 'ACCOUNT_DELETION'
+  | 'EMAIL_CHANGE'
+  | 'WITHDRAWAL'
+  | 'PAYOUT_ACCOUNT_UPDATE'
+  | 'PAYOUT_ACCOUNT_DELETE';
 
 export interface StepUpChallenge {
   id: string;

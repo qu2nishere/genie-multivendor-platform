@@ -367,3 +367,9 @@ export const sellerRefundsStore = mockState<MockSellerRefund[]>('seller.refunds'
     evidence_requested: false,
   },
 ]);
+
+/** Số dư ví của shop (API 10.10) — Ví ghi khi rút tiền, Tổng quan (Tiền của shop) đọc. */
+export const sellerMoneyStore = mockState('seller.money', () => ({
+  available: 12_450_000,
+  pending_withdrawal: 5_000_000,
+}));
