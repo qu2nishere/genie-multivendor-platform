@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 nhóm A (giỏ hàng); đang G10 trên `feature/web-buyer` |
+| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 (trang người mua); trên nhánh `feature/web-buyer` |
 
 **Cách dùng**
 
@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 69 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **294 / 429** | | |
+| **Tổng** | | **379** | **50** | **300 / 429** | | |
 
 ---
 
@@ -457,12 +457,12 @@
 
 **Nhóm I — Chat & mở shop**
 
-- [ ] **G10.62** Miền chat
-- [ ] **G10.63** `ChatWidget`
-- [ ] **G10.64** `pages/chat.astro`
-- [ ] **G10.65** `BecomeSeller`
-- [ ] **G10.66** `pages/become-seller.astro` + khóa i18n `chat.*`, `seller-onboarding.landing.*`
-- [ ] **G10.C9** 🔖 COMMIT `feat(web): add buyer chat and become-seller landing` · hash: `_______`
+- [x] **G10.62** Miền chat
+- [x] **G10.63** `ChatWidget`
+- [x] **G10.64** `pages/chat.astro`
+- [x] **G10.65** `BecomeSeller`
+- [x] **G10.66** `pages/become-seller.astro` + khóa i18n `chat.*`, `seller-onboarding.landing.*`
+- [x] **G10.C9** 🔖 COMMIT `feat(web): add buyer chat and become-seller landing` · hash: `95fc810`
 
 ## G11 — Seller Center (SPA `/seller/*`)
 
@@ -811,6 +811,11 @@
 | G10.59 | `FollowsPanel` (shop/ui): con dấu shop, Chính hãng, đánh giá, số theo dõi, Vào shop, bỏ theo dõi có xác nhận; huy hiệu số shop ở menu tài khoản. |
 | G10.60 | `NotificationsPanel` (notifications/ui): tab Tất cả / Đơn hàng / Khuyến mãi / Hệ thống / Chat, đánh dấu tất cả đã đọc, mở = đánh dấu đã đọc rồi đi tới đích; thông báo toàn sàn → hộp chi tiết; "Xem thêm" 5 mục / lần. Sửa liên kết thông báo đơn: route theo dõi đơn dùng id nên lấy số thứ tự từ mã TR (API nên trả kèm order_id — ghi G13.20). |
 | G10.61 | Khóa `promotions.wallet.*`, `coins.*`, `notifications.page.*`, `product.wishlist.*`, `shop.follows.*` (vi + en). Khu tài khoản thêm `<h1>` (ẩn khỏi mắt, theo tên mục) trong `AccountShell` — trước đó /orders và /account/* chưa có h1 (R18). |
+| G10.62 | `features/chat`: kiểu, quy tắc (+test), dto/mock (4 hội thoại theo prototype) / api 8.1–8.5. Mock: shop tự trả lời sau ~1,1 giây kèm trạng thái "đang nhập". Chưa có WebSocket (mục 13) → luồng tin hỏi lại 2 giây khi đang mở, hộp thư 15 giây; nối WS sau ở G13. Gửi tin có bong bóng "Đang gửi…" (client_message_id = Idempotency-Key), lỗi → "Gửi lỗi". |
+| G10.63 | `ChatWidget` (client:only) gắn trong `StorefrontLayout` (tắt bằng `noChat`); khách bấm → LoginPrompt. Ảnh đại diện shop dùng `Seal` (con dấu shop chung toàn site) thay ô chữ cái của prototype. Ảnh gửi qua upload CHAT_IMAGE (nén trước); thẻ đơn chọn từ đơn với shop đó. |
+| G10.64 | `/chat` cần đăng nhập, noindex; `?shop=&product=&order=` mở hội thoại và tự gửi thẻ sản phẩm / thẻ đơn rồi bỏ tham số khỏi URL. Màn hẹp: danh sách → luồng tin có nút quay lại. |
+| G10.65 | `BecomeSeller` (seller-onboarding): form rhf + zod, điền sẵn họ tên / email / SĐT từ phiên, ngành hàng lấy danh mục gốc (SSR), loại hình INDIVIDUAL/HOUSEHOLD/BUSINESS → 9.1 → modal OTP → 9.2 → làm mới token → `/seller/kyc`. Tên shop trùng (GNE-VND-4094) báo ngay dưới ô. Mock bỏ kiểm GNE-VND-4093 (tài khoản mẫu vốn là chủ shop) để trình diễn được luồng. Điều khoản dẫn `/policies/seller-terms`, `/policies/commission-rates` (R16). |
+| G10.66 | `/become-seller` công khai, lập chỉ mục; phần giới thiệu / lợi ích / 3 bước render SSR, chỉ thẻ đăng ký là island. Ở 360px thẻ lợi ích xếp 1 cột (prototype 2 cột chữ bị bó hẹp). Khóa `chat.*`, `seller-onboarding.landing.*` (vi + en). |
 
 ## Nhật ký
 
@@ -834,3 +839,4 @@
 | 2026-11-13 | Trả hàng / hoàn tiền (modal, bằng chứng, khối trạng thái) + đánh giá sản phẩm, lớp tải tệp dùng chung (G10 nhóm F) | 7c90b73 |
 | 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
 | 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
+| 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |
