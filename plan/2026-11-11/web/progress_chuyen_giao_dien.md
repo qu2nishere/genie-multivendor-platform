@@ -40,13 +40,13 @@
 | G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
 | G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
-| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 26 / 61 |  |  |
+| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 |  |  |
 | G09 | Xác thực | 14 | 1 | 0 / 15 |  |  |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **175 / 429** | | |
+| **Tổng** | | **379** | **50** | **210 / 429** | | |
 
 ---
 
@@ -281,7 +281,7 @@
 - [x] **G08.14** Dải cam kết (Promise Strip trong `DESIGN.md`)
 - [x] **G08.15** `pages/index.astro`
 - [x] **G08.16** Khóa i18n `home.*`
-- [x] **G08.C2** 🔖 COMMIT `feat(web): build storefront home page` · hash: `a14191c`
+- [x] **G08.C2** 🔖 COMMIT `feat(web): build storefront home page` · hash: `7a87a36`
 
 **Nhóm C — Danh mục, tìm kiếm, khám phá**
 
@@ -292,54 +292,54 @@
 - [x] **G08.21** `pages/search.astro`
 - [x] **G08.22** `pages/discover.astro`
 - [x] **G08.23** Khóa i18n `catalog.*`, `search.*`, `discover.*`
-- [x] **G08.C3** 🔖 COMMIT `feat(web): build category, search and discover pages` · hash: `89fc8d3`
+- [x] **G08.C3** 🔖 COMMIT `feat(web): build category, search and discover pages` · hash: `5058a10`
 
 **Nhóm D — Chi tiết sản phẩm**
 
-- [ ] **G08.24** Thư viện ảnh
-- [ ] **G08.25** Khối mua
-- [ ] **G08.26** `AddToCartButton` + Mua ngay
-- [ ] **G08.27** Nút yêu thích & chia sẻ
-- [ ] **G08.28** Khối shop
-- [ ] **G08.29** `SpecsTable.astro`, `ProductDescription.astro`
-- [ ] **G08.30** Thanh mua dính đáy ở màn hẹp (`tr-root--bar`)
-- [ ] **G08.31** `ProductGone`
-- [ ] **G08.32** Miền đánh giá
-- [ ] **G08.33** `ReviewList`
-- [ ] **G08.34** Sản phẩm tương tự
-- [ ] **G08.35** `pages/p/[slug]-[id].astro`
-- [ ] **G08.36** Khóa i18n `product.*`, `reviews.*`
-- [ ] **G08.C4** 🔖 COMMIT `feat(web): build product detail page with reviews` · hash: `_______`
+- [x] **G08.24** Thư viện ảnh
+- [x] **G08.25** Khối mua
+- [x] **G08.26** `AddToCartButton` + Mua ngay
+- [x] **G08.27** Nút yêu thích & chia sẻ
+- [x] **G08.28** Khối shop
+- [x] **G08.29** `SpecsTable.astro`, `ProductDescription.astro`
+- [x] **G08.30** Thanh mua dính đáy ở màn hẹp (`tr-root--bar`)
+- [x] **G08.31** `ProductGone`
+- [x] **G08.32** Miền đánh giá
+- [x] **G08.33** `ReviewList`
+- [x] **G08.34** Sản phẩm tương tự
+- [x] **G08.35** `pages/p/[slug]-[id].astro`
+- [x] **G08.36** Khóa i18n `product.*`, `reviews.*`
+- [x] **G08.C4** 🔖 COMMIT `feat(web): build product detail page with reviews` · hash: `3f136be`
 
 **Nhóm E — Shop, Flash Sale, chiến dịch**
 
-- [ ] **G08.37** `pages/shop/[id].astro`
-- [ ] **G08.38** `pages/flash-sale.astro`
-- [ ] **G08.39** `pages/campaign/[slug].astro`
-- [ ] **G08.40** Khóa i18n `shop.*`, `promotions.flash.*`, `promotions.campaign.*`
-- [ ] **G08.C5** 🔖 COMMIT `feat(web): build shop, flash sale and campaign pages` · hash: `_______`
+- [x] **G08.37** `pages/shop/[id].astro`
+- [x] **G08.38** `pages/flash-sale.astro`
+- [x] **G08.39** `pages/campaign/[slug].astro`
+- [x] **G08.40** Khóa i18n `shop.*`, `promotions.flash.*`, `promotions.campaign.*`
+- [x] **G08.C5** 🔖 COMMIT `feat(web): build shop, flash sale and campaign pages` · hash: `65aa679`
 
 **Nhóm F — Trang chính sách & sitemap**
 
-- [ ] **G08.41** Dữ liệu chính sách
-- [ ] **G08.42** `PolicyPage.astro`
-- [ ] **G08.43** `pages/policies/[slug].astro`
-- [ ] **G08.44** `pages/sitemap.xml.ts`
-- [ ] **G08.45** `public/robots.txt`
-- [ ] **G08.C6** 🔖 COMMIT `feat(web): add policy pages and sitemap` · hash: `_______`
+- [x] **G08.41** Dữ liệu chính sách
+- [x] **G08.42** `PolicyPage.astro`
+- [x] **G08.43** `pages/policies/[slug].astro`
+- [x] **G08.44** `pages/sitemap.xml.ts`
+- [x] **G08.45** `public/robots.txt`
+- [x] **G08.C6** 🔖 COMMIT `feat(web): add policy pages and sitemap` · hash: `254fcc6`
 
 **Nhóm G — SEO kỹ thuật (rà toàn bộ trang công khai vừa dựng)**
 
-- [ ] **G08.46** URL chuẩn
-- [ ] **G08.47** Dữ liệu có cấu trúc trang chủ
-- [ ] **G08.48** Dữ liệu có cấu trúc trang danh sách
-- [ ] **G08.49** Dữ liệu có cấu trúc sản phẩm
-- [ ] **G08.50** Phân trang SSR
-- [ ] **G08.51** Ảnh
-- [ ] **G08.52** Cấu trúc tiêu đề & vùng
-- [ ] **G08.53** Mã trạng thái
-- [ ] **G08.54** Kiểm tự động
-- [ ] **G08.C7** 🔖 COMMIT `feat(web): add structured data, canonical urls and seo checks` · hash: `_______`
+- [x] **G08.46** URL chuẩn
+- [x] **G08.47** Dữ liệu có cấu trúc trang chủ
+- [x] **G08.48** Dữ liệu có cấu trúc trang danh sách
+- [x] **G08.49** Dữ liệu có cấu trúc sản phẩm
+- [x] **G08.50** Phân trang SSR
+- [x] **G08.51** Ảnh
+- [x] **G08.52** Cấu trúc tiêu đề & vùng
+- [x] **G08.53** Mã trạng thái
+- [x] **G08.54** Kiểm tự động
+- [x] **G08.C7** 🔖 COMMIT `feat(web): add structured data, canonical urls and seo checks` · hash: `aac0d8a`
 
 ## G09 — Xác thực
 
@@ -756,6 +756,17 @@
 | G08.20 | /c/<danh-mục-con> chuyển 301 về /c/<gốc>?sub=<slug>; danh mục lạ trả 404. Bộ lọc Chính hãng gồm cả thương hiệu đã xác minh (giống Search.jsx) trên cả hai trang. |
 | G08.21 | Thêm khối "shop khớp từ khóa" theo plan (prototype Search.jsx chưa có); phân trang 20 sản phẩm / trang thay vì hiện hết. |
 | G08.22 | /discover mặc định trang 1 (prototype mở trang 2 vì trang chủ đã hiện trang 1) để URL gốc và canonical khớp nội dung; trang chủ "Xem thêm" dẫn sang /discover?page=N. |
+| G08.26 | Thêm SKU (product_variant_id) cho mỗi tổ hợp phân loại vào Product (skus, skuOf). Khách: giỏ khách chỉ lưu SKU + số lượng (LUU_TRU 6.3), header hiện số dòng giỏ khách; hiển thị dòng giỏ khách và gộp sau đăng nhập làm ở G10. "Mua ngay" chuyển /cart?buy=<khóa dòng> (trang giỏ xử lý ở G10). |
+| G08.29 | Bỏ ô xám "Ảnh minh hoạ sản phẩm" trong mô tả prototype (phần trình diễn, D5); mô tả là HTML người bán, thu gọn 480px bằng script nhỏ, tắt JS hiện đầy đủ. |
+| G08.33 | Mock: mọi sản phẩm dùng 4 đánh giá của prototype; phân trang đánh giá có liên kết ?review_page=N#reviews thật. Huy hiệu sản phẩm "Chính hãng" lấy theo sản phẩm hoặc shop chính hãng (prototype dùng cờ của riêng sản phẩm). |
+| Commit | Theo yêu cầu người dùng 2026-11-13: commit bằng git config của người dùng, không thêm dòng Co-Authored-By; đã gỡ dòng này khỏi 3 commit local chưa push (hash mới 7a87a36, 5058a10, 3b3016d). |
+| G08.37 | Tab danh mục / Mới nhất / Bán chạy là liên kết ?tab= (có phân trang ?page=); tìm trong shop là form GET sang /search (scope=shop / scope=all). Nút Theo dõi tách thành FollowButton dùng chung với dải shop trang sản phẩm; thêm listShopVouchers(). |
+| G08.38 | Khung giờ Flash Sale 00/09/12/15/20 giờ (giờ Việt Nam, flash.rules + test), chọn khung bằng ?slot=HH; mock dùng cùng danh sách sản phẩm Flash Sale cho mọi khung. Countdown thêm prop label/prefix; thêm clockVN() vào format.ts. |
+| G08.39 | Chiến dịch lạ trả HTTP 404 kèm thông báo của prototype; thêm mã lỗi GNE-CMP-4041 (vi/en) và ProductQuery.minDiscount để lấy sản phẩm tham gia. |
+| G08.41 | Dữ liệu chính sách đã sinh sớm ở G07 (25 trang trong 5 nhóm như pages-data.js của prototype, không phải 28); mã cũ của prototype (legacy_id) chuyển 301 về slug chuẩn. |
+| G08.45 | robots.txt sinh động (pages/robots.txt.ts) thay cho public/robots.txt để dòng Sitemap là URL tuyệt đối theo tên miền; chặn thêm /cart, /orders, /chat, /auth, /dev ngoài /seller, /admin, /account, /checkout. |
+| G08.47–G08.53 | JSON-LD trang chủ / danh sách / sản phẩm, phân trang SSR, mã trạng thái đã làm cùng từng trang ở nhóm B–F; nhóm G thêm canonicalUrl() (bỏ tham số theo dõi, trang lọc / sắp xếp trỏ về gốc, giữ page), bổ sung width/height cho ảnh lightbox và ảnh bìa shop, kiểm tra một h1 mỗi trang bằng e2e. |
+| G08.54 | tests/e2e/seo.spec.ts chạy tắt JavaScript, 8 kịch bản, xanh trên cả mobile-360 và desktop-1440 (chạy tay bằng npx playwright test — npm run verify chỉ chạy Vitest). |
 
 ## Nhật ký
 
@@ -764,5 +775,9 @@
 | 2026-11-11 | Lập plan và progress | |
 | 2026-11-11 | G00–G06: nhánh develop + feature/web-foundation, công cụ (Prettier, Vitest, Playwright, ESLint boundaries), token + Tailwind, tài sản thương hiệu, shared/lib (i18n, format, storage, seo), shared/api (http, mock, lỗi GNE-*), shared/ui (40+ component + bộ thống kê), thư viện /dev/ui | 46557a9 … f6095a3 |
 | 2026-11-11 | G07: CSS storefront tách 10 module, layout Storefront/Auth/AppShell, SeoHead, ThemeBoot, middleware (ngôn ngữ theo request), 404, Header/Footer + catalog/notifications/cart/search/auth/policies tối thiểu, 9 theme + font tự lưu trữ + ThemePicker | 4bcae11 … 3dda4a9 |
-| 2026-11-12 | Trang chủ storefront (G08 nhóm B) | a14191c |
-| 2026-11-13 | Danh mục, tìm kiếm, khám phá (G08 nhóm C) | 89fc8d3 |
+| 2026-11-12 | Trang chủ storefront (G08 nhóm B) | 7a87a36 |
+| 2026-11-13 | Danh mục, tìm kiếm, khám phá (G08 nhóm C) | 5058a10 |
+| 2026-11-13 | Trang chi tiết sản phẩm + đánh giá (G08 nhóm D) | 3f136be |
+| 2026-11-13 | Trang shop, Flash Sale, chiến dịch (G08 nhóm E) | 65aa679 |
+| 2026-11-13 | Trang chính sách, sitemap, robots (G08 nhóm F) | 254fcc6 |
+| 2026-11-13 | SEO: canonical, dữ liệu có cấu trúc, kiểm tra không JS (G08 nhóm G) | aac0d8a |
