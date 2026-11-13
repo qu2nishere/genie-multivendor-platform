@@ -772,6 +772,84 @@
         "receive": "Bạn có 7 ngày kiểm tra và yêu cầu trả hàng nếu có lỗi.",
         "release": "Bạn xác nhận hoặc hết 7 ngày thì sàn mới chuyển tiền cho shop."
       }
+    },
+    "chip": {
+      "cod": "Trả tiền khi nhận hàng",
+      "released": "Genie đã chuyển tiền cho shop",
+      "return": "Genie giữ tiền trong lúc xử lý trả hàng",
+      "holding": "Genie đang giữ tiền"
+    },
+    "qr": {
+      "bank": "Ngân hàng",
+      "account": "Số tài khoản",
+      "holder": "Chủ tài khoản",
+      "amount": "Số tiền",
+      "content": "Nội dung CK",
+      "copy": "Sao chép {what}",
+      "valid": "Mã có hiệu lực trong",
+      "expired": "Mã QR đã hết hạn, đơn hàng được hủy và tồn kho được trả lại.",
+      "note": "Chuyển đúng số tiền và nội dung để hệ thống tự xác nhận qua SePay. Sai nội dung sẽ cần đối soát thủ công.",
+      "waiting": "Đang chờ SePay xác nhận đã nhận tiền…",
+      "change": "Đổi phương thức"
+    },
+    "modal": {
+      "pick_title": "Chọn phương thức thanh toán",
+      "qr_title": "Thanh toán VietQR",
+      "pay": "Thanh toán {amount}",
+      "cod": "Xác nhận COD {amount}",
+      "cod_meta": "Chờ shop xác nhận"
+    },
+    "gateway": {
+      "title": "Cổng thanh toán VNPAY (mô phỏng)",
+      "back": "Quay lại đơn hàng",
+      "moving": "Đang chuyển tiền...",
+      "payee": "Đơn vị nhận:",
+      "escrow": "Genie, tài khoản giữ tiền",
+      "orders": "{count} đơn",
+      "note": "Tiền chuyển vào tài khoản giữ tiền của Genie, chưa đến shop. Không có giao dịch thật nào xảy ra trong bản mẫu."
+    },
+    "result": {
+      "title": "Kết quả thanh toán"
+    },
+    "done": {
+      "title": "Thanh toán thành công!",
+      "title_cod": "Đặt hàng thành công!",
+      "text": "Cảm ơn bạn đã mua sắm tại Genie.",
+      "text_split": "Đơn hàng đã được tách theo từng nhà bán hàng.",
+      "text_cod": "Bạn thanh toán tiền mặt cho nhân viên giao hàng khi nhận hàng.",
+      "code": "Mã giao dịch",
+      "date": "Ngày đặt",
+      "order": "Đơn {code}",
+      "by": "Cung cấp bởi: {shop}",
+      "track": "Theo dõi",
+      "subtotal": "Tổng tiền hàng (Tạm tính)",
+      "shipping": "Phí vận chuyển",
+      "discount": "Giảm giá (Voucher & Khuyến mãi)",
+      "points": "Dùng Điểm Genie",
+      "collect": "Thu khi nhận hàng",
+      "home": "Về trang chủ",
+      "orders": "Xem đơn mua"
+    },
+    "failed": {
+      "title": "Thanh toán thất bại",
+      "text": "Ngân hàng hoặc cổng thanh toán chưa xác nhận giao dịch, có thể do thẻ bị từ chối hoặc quá thời gian chờ.",
+      "not_charged": "Bạn chưa bị trừ tiền.",
+      "waiting": "Đơn hàng {code} vẫn đang chờ bạn thanh toán.",
+      "hold_before": "Tồn kho vẫn được giữ thêm",
+      "hold_after": ". Hãy thử lại trước khi hết hạn để không mất hàng.",
+      "expired": "Đã hết thời gian giữ hàng 15 phút — đơn được hủy, tồn kho đã trả lại.",
+      "retry": "Thử thanh toán lại",
+      "change": "Đổi phương thức",
+      "cart": "Về giỏ hàng"
+    },
+    "pending": {
+      "title": "Đang chờ xác nhận thanh toán",
+      "text": "Giao dịch {code} đang chờ cổng thanh toán xác nhận. Trang sẽ tự cập nhật.",
+      "show_qr": "Xem lại mã QR"
+    },
+    "missing": {
+      "title": "Không tìm thấy giao dịch",
+      "text": "Đường dẫn thiếu mã giao dịch hoặc giao dịch không thuộc tài khoản của bạn. Xem trạng thái trong Đơn mua."
     }
   },
   "product": {

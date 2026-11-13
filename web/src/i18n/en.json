@@ -772,6 +772,84 @@
         "receive": "You have 7 days to check the item and request a return if something is wrong.",
         "release": "Once you confirm, or after 7 days, the marketplace pays the shop."
       }
+    },
+    "chip": {
+      "cod": "Pay on delivery",
+      "released": "Genie has paid the shop",
+      "return": "Genie holds the money while the return is processed",
+      "holding": "Genie is holding your money"
+    },
+    "qr": {
+      "bank": "Bank",
+      "account": "Account number",
+      "holder": "Account holder",
+      "amount": "Amount",
+      "content": "Transfer note",
+      "copy": "Copy {what}",
+      "valid": "Code valid for",
+      "expired": "The QR code has expired; the order was cancelled and stock released.",
+      "note": "Transfer the exact amount and note so SePay can confirm automatically. A wrong note needs manual reconciliation.",
+      "waiting": "Waiting for SePay to confirm the transfer…",
+      "change": "Change method"
+    },
+    "modal": {
+      "pick_title": "Choose a payment method",
+      "qr_title": "Pay with VietQR",
+      "pay": "Pay {amount}",
+      "cod": "Confirm COD {amount}",
+      "cod_meta": "Awaiting shop confirmation"
+    },
+    "gateway": {
+      "title": "VNPAY gateway (simulated)",
+      "back": "Back to order",
+      "moving": "Transferring...",
+      "payee": "Payee:",
+      "escrow": "Genie escrow account",
+      "orders": "{count} orders",
+      "note": "Money goes to Genie's escrow account, not to the shop yet. No real transaction happens in this prototype."
+    },
+    "result": {
+      "title": "Payment result"
+    },
+    "done": {
+      "title": "Payment successful!",
+      "title_cod": "Order placed!",
+      "text": "Thank you for shopping at Genie.",
+      "text_split": "Your order has been split by seller.",
+      "text_cod": "Pay the courier in cash when you receive your order.",
+      "code": "Transaction ID",
+      "date": "Order date",
+      "order": "Order {code}",
+      "by": "Sold by: {shop}",
+      "track": "Track",
+      "subtotal": "Goods total (subtotal)",
+      "shipping": "Shipping",
+      "discount": "Discounts (vouchers & promotions)",
+      "points": "Genie Points used",
+      "collect": "Collect on delivery",
+      "home": "Back to home",
+      "orders": "View my orders"
+    },
+    "failed": {
+      "title": "Payment failed",
+      "text": "The bank or payment gateway did not confirm the transaction — the card may have been declined or it timed out.",
+      "not_charged": "You have not been charged.",
+      "waiting": "Order {code} is still waiting for payment.",
+      "hold_before": "Stock is still held for",
+      "hold_after": ". Try again before it expires so you don't lose the items.",
+      "expired": "The 15-minute stock hold has expired — the order was cancelled and stock released.",
+      "retry": "Retry payment",
+      "change": "Change method",
+      "cart": "Back to cart"
+    },
+    "pending": {
+      "title": "Waiting for payment confirmation",
+      "text": "Transaction {code} is waiting for the gateway to confirm. This page updates automatically.",
+      "show_qr": "Show QR code again"
+    },
+    "missing": {
+      "title": "Transaction not found",
+      "text": "The link has no transaction ID or it does not belong to your account. Check its status in My orders."
     }
   },
   "product": {

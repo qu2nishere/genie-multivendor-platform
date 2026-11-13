@@ -38,6 +38,8 @@ export interface MockPlacedSession {
   status: 'INITIATED' | 'PAYMENT_PENDING' | 'COMPLETED' | 'FAILED' | 'EXPIRED';
   payment_method: 'VNPAY' | 'VIETQR' | 'COD';
   created_at: string;
+  /** Lần đổi phương thức gần nhất (thanh toán lại). */
+  updated_at?: string;
   reservation_expires_at: string;
   order_ids: number[];
   cart_item_ids: number[];

@@ -35,4 +35,5 @@ export {
   useSettleMockPayment,
 } from './application/useCheckout';
 export { MOCK_VNPAY_URL } from './infrastructure/checkout.api';
-export { default as CheckoutPage, type CheckoutPageProps } from './ui/CheckoutPage';
+export { default as CheckoutPage } from './ui/CheckoutPage';
+export { default as CheckoutResult, type CheckoutResultProps } from './ui/CheckoutResult';

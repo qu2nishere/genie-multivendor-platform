@@ -10,7 +10,14 @@ import type {
 } from '../domain/checkout.types';
 import type { CheckoutSessionDto, PaymentDto } from './checkout.dto';
 import { toCheckoutSession, toPayment, toPlaceOrderDto } from './checkout.mapper';
-import { mockPlace, mockRepay, mockSettle, MOCK_VNPAY_URL, sessionDto } from './checkout.mock';
+import {
+  MOCK_SEPAY_MS,
+  MOCK_VNPAY_URL,
+  mockPlace,
+  mockRepay,
+  mockSettle,
+  sessionDto,
+} from './checkout.mock';
 
 export { MOCK_VNPAY_URL };
 
@@ -44,8 +51,15 @@ export async function createCheckout(
 export async function getCheckoutSession(id: number): Promise<CheckoutSession> {
   if (USE_MOCK) {
     await mockDelay(150);
-    const s = placedStore.get().sessions.find((x) => x.id === id);
+    let s = placedStore.get().sessions.find((x) => x.id === id);
     if (!s) mockFail('GNE-ORD-4041');
+    // Mô phỏng SePay báo đã nhận tiền chuyển khoản sau ~12 giây (thật: webhook SePay → server)
+    if (
+      s.payment_method === 'VIETQR' &&
+      s.status === 'PAYMENT_PENDING' &&
+      Date.now() - Date.parse(s.updated_at ?? s.created_at) > MOCK_SEPAY_MS
+    )
+      s = mockSettle(id, true) ?? s;
     return toCheckoutSession(sessionDto(s, s.status === 'PAYMENT_PENDING'));
   }
   return toCheckoutSession(await api.get<CheckoutSessionDto>(`/me/checkout-sessions/${id}`));

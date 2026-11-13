@@ -7,6 +7,7 @@ import {
 } from '@/shared/api/idempotency';
 import type { CheckoutQuote, PaymentMethod, PlaceOrderInput } from '../domain/checkout.types';
 import {
+  MOCK_VNPAY_URL,
   createCheckout,
   getCheckoutSession,
   retryPayment,
@@ -52,3 +53,6 @@ export function useSettleMockPayment() {
     mutationFn: ({ id, ok }: { id: number; ok: boolean }) => settleMockPayment(id, ok),
   });
 }
+
+/** URL cổng VNPAY giả lập của mock (UI mở cổng mô phỏng thay vì chuyển trang). */
+export { MOCK_VNPAY_URL };

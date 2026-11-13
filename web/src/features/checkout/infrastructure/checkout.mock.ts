@@ -17,6 +17,8 @@ const BANK = {
 };
 /** VNPay mô phỏng: client nhận dạng tiền tố này để mở cổng giả lập thay vì chuyển trang. */
 export const MOCK_VNPAY_URL = 'mock:vnpay';
+/** SePay mô phỏng xác nhận chuyển khoản sau khoảng thời gian này. */
+export const MOCK_SEPAY_MS = 12_000;
 
 export function sessionDto(s: MockPlacedSession, withPayment: boolean): CheckoutSessionDto {
   const orders = placedStore.get().orders.filter((o) => s.order_ids.includes(o.id));
@@ -140,6 +142,7 @@ export function mockRepay(sessionId: number, method: MockPlacedSession['payment_
   const next: MockPlacedSession = {
     ...s,
     payment_method: method,
+    updated_at: new Date().toISOString(),
     status: method === 'COD' ? 'COMPLETED' : 'PAYMENT_PENDING',
   };
   placedStore.set({

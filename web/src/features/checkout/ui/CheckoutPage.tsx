@@ -34,16 +34,10 @@ import {
   PlatformVoucherCard,
   PointsCard,
 } from './CheckoutSections';
+import { PaymentFlow } from './PaymentFlow';
 import { orderTotal, ShopOrderCard } from './ShopOrderCard';
 
-export interface CheckoutPageProps {
-  /** Sau khi tạo phiên đặt hàng: chuyển sang cổng / trang kết quả (nhóm thanh toán gắn vào). */
-  onPlaced?: (s: CheckoutSession, method: PaymentMethod) => void;
-}
-
-const goResult = (s: CheckoutSession) => window.location.assign(`/checkout/result?session=${s.id}`);
-
-function CheckoutScreen({ onPlaced = goResult }: CheckoutPageProps) {
+function CheckoutScreen() {
   const { t, locale } = useT();
   const cart = useCart();
   // Nháp chỉ có ở trình duyệt → đọc sau khi mount để HTML SSR và lần hydrate trùng nhau
@@ -59,6 +53,8 @@ function CheckoutScreen({ onPlaced = goResult }: CheckoutPageProps) {
   const [address, setAddress] = useState<Address | null>(null);
   const addresses = useAddresses(cart.guest === false);
   const place = usePlaceOrder();
+  /** Phiên vừa tạo → bước thanh toán (cổng VNPAY / mã VietQR / COD). */
+  const [placed, setPlaced] = useState<CheckoutSession | null>(null);
 
   useEffect(() => {
     if (!address && addresses.data) setAddress(defaultAddress(addresses.data));
@@ -163,7 +159,7 @@ function CheckoutScreen({ onPlaced = goResult }: CheckoutPageProps) {
     place.mutate(
       { input, quote },
       {
-        onSuccess: (s) => onPlaced(s, method),
+        onSuccess: (s) => setPlaced(s),
         onError: (e) => {
           if (isApiError(e) && e.code === 'GNE-INV-4090') {
             const ids = outOfStockIds(e.details);
@@ -258,6 +254,7 @@ function CheckoutScreen({ onPlaced = goResult }: CheckoutPageProps) {
         </Button>
       </div>
 
+      {placed && <PaymentFlow session={placed} onClose={() => setPlaced(null)} />}
       <AddressModal
         open={addrOpen}
         onClose={() => setAddrOpen(false)}
@@ -300,10 +297,10 @@ function CheckoutSkeleton() {
   );
 }
 
-export default function CheckoutPage(props: CheckoutPageProps) {
+export default function CheckoutPage() {
   return (
     <Providers>
-      <CheckoutScreen {...props} />
+      <CheckoutScreen />
     </Providers>
   );
 }

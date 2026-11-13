@@ -1,7 +1,15 @@
 ---
+// Kết quả đặt hàng / thanh toán (plan G10.29) — return_url của VNPAY. Chỉ hiển thị theo trạng thái phiên
+// (TS 10.3), không đổi trạng thái đơn. Không bị middleware chặn: cổng trả về có thể chưa còn phiên.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { CheckoutResult } from '@/features/checkout';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const raw = Number(Astro.url.searchParams.get('session'));
+const sessionId = Number.isInteger(raw) && raw > 0 ? raw : null;
 ---
 
-<StorefrontLayout title="Kết quả thanh toán">
-  <!-- Return URL VNPay — chỉ hiển thị, không đổi trạng thái -->
+<StorefrontLayout title={t('payment.result.title')} noindex task>
+  <CheckoutResult client:load sessionId={sessionId} />
 </StorefrontLayout>
