@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 33 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 43 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **258 / 429** | | |
+| **Tổng** | | **379** | **50** | **268 / 429** | | |
 
 ---
 
@@ -409,16 +409,16 @@
 
 **Nhóm E — Đơn mua & theo dõi**
 
-- [ ] **G10.30** Miền đơn
-- [ ] **G10.31** Hạ tầng đơn
-- [ ] **G10.32** `OrdersPanel`
-- [ ] **G10.33** Hủy đơn có lý do
-- [ ] **G10.34** Xác nhận đã nhận hàng
-- [ ] **G10.35** `pages/orders/index.astro`
-- [ ] **G10.36** `OrderTracking`
-- [ ] **G10.37** Mua lại, chat với shop từ đơn
-- [ ] **G10.38** `pages/orders/[id].astro` + khóa i18n `orders.*`
-- [ ] **G10.C5** 🔖 COMMIT `feat(web): build order list and order tracking pages` · hash: `_______`
+- [x] **G10.30** Miền đơn
+- [x] **G10.31** Hạ tầng đơn
+- [x] **G10.32** `OrdersPanel`
+- [x] **G10.33** Hủy đơn có lý do
+- [x] **G10.34** Xác nhận đã nhận hàng
+- [x] **G10.35** `pages/orders/index.astro`
+- [x] **G10.36** `OrderTracking`
+- [x] **G10.37** Mua lại, chat với shop từ đơn
+- [x] **G10.38** `pages/orders/[id].astro` + khóa i18n `orders.*`
+- [x] **G10.C5** 🔖 COMMIT `feat(web): build order list and order tracking pages` · hash: `913f4d8`
 
 **Nhóm F — Trả hàng & đánh giá**
 
@@ -791,6 +791,10 @@
 | G10.22 | /checkout khớp sf-checkout-1440 / 360 (bố cục 2 cột → 1 cột, thanh trả tiền dính đáy màn hẹp, đơn con gập "Xem thêm"). Đã thử đặt COD thật: chuyển `/checkout/result?session=8801`; trang kết quả làm ở nhóm D. |
 | G10.23–G10.26 | `MoneyRail`, `HoldNote` có từ G08; thêm `MoneyChip` (hàm `moneyChip` + test), `PayModal` (chọn phương thức / bước QR), `VietQrPanel` (QR giữ chỗ, đếm ngược tới `expires_at`, sao chép số TK / nội dung `TR…`), `PayGateway`, `PaymentLogo` / `CodLogo` ở `payment/ui` — chỉ vẽ; `checkout/ui/PaymentFlow.tsx` ghép với hook checkout. VNPAY: thật → chuyển `payment_url`; mock (`mock:vnpay`) → cổng mô phỏng, "Thanh toán" → phiên COMPLETED, "Quay lại đơn hàng" = VNPAY trả về "khách hủy" → trang thất bại. VietQR: hỏi lại phiên mỗi 3 giây; mock tự coi SePay đã nhận tiền sau ~12 giây (thay nút "Mô phỏng: SePay báo đã nhận tiền" của prototype — D5). COD → kết quả ngay. |
 | G10.27–G10.29 | `/checkout/result?session=<id>` (island `CheckoutResult`): chỉ đọc GET 6.11 rồi hiện OrderDone (mã giao dịch, từng đơn con + Theo dõi → /orders/{id}, tổng; COD "Thu khi nhận hàng", không có đường tiền), PaymentFailed (giữ chỗ còn mm:ss đếm từng giây, Thử lại / Đổi phương thức → PayModal → 6.12, Về giỏ; hết giữ chỗ thì ẩn nút thử lại), hoặc "Đang chờ xác nhận" (tự hỏi lại). Thiếu / sai mã phiên → "Không tìm thấy giao dịch" (prototype mở thẳng thì hiện biên nhận mẫu — không làm). Đã thử thật 4 luồng: COD, VNPAY thành công, VNPAY hủy, VietQR (360px) — đều đúng trang. |
+| G10.30 | Miền đơn theo API_SPEC 7.1–7.4 + 16.3: `OrderStatus` đủ enum backend (gồm các trạng thái trả hàng), `statusGroupOf` (PAID của đơn COD đã giao thuộc "Chờ giao hàng"), `stepOf` / `STEPS`, `statusTone` (về đúng bộ tông của StatusBadge), `allowedActions` (server trả `allowed_actions`; mock tính bằng hàm này — hủy được tới PREPARING), `groupOrders` (đơn online cùng phiên chờ thanh toán / đã hủy → "Nhóm đơn hàng"), lý do hủy theo mã 16.4 + test. `badgeStatus` của G08.02 thành `statusTone` ở đây. |
+| G10.31 | Mock = 11 đơn của prototype (mã "TR-20260608-000044" → id 44, thời điểm đổi sang ISO giờ VN) + đơn vừa đặt ở checkout (kho `placed`), thay đổi giữ trong phiên tab. Nhóm chờ thanh toán mẫu (CS-8F21A) có hạn thanh toán tính từ lúc mở và một phiên mock tương ứng để "Thanh toán ngay" đi đúng 6.12. `product_slug` thêm vào $OrderItem (ghi G13.20). |
+| G10.32–G10.35 | `/orders` dùng khung tài khoản `AccountShell.astro` + island `AccountNav` (làm sớm phần khung của G10.44: menu liên kết thật, huy hiệu Thông báo / Kho Voucher, Đăng xuất có xác nhận, màn hẹp cuộn tới mục đang mở; đọc phiên sau khi mount tránh lệch hydrate). Tab là liên kết `?tab=<status_group>` (R16). Nút trên thẻ đơn vẽ theo `allowed_actions`; hộp hủy chọn lý do (OTHER bắt buộc ghi chú), hủy nhóm đơn gọi lần lượt từng đơn; "Đã nhận hàng" có hộp xác nhận chuyển tiền cho shop. Thêm lớp `lz-vendor__logo` cho VendorChip để `.tr-chip` ẩn ô chữ cái cạnh con dấu như prototype. Bỏ hộp "Mô phỏng cho buổi demo: kịch bản tài khoản" (D5). |
+| G10.36–G10.38 | `/orders/[id]` (id không phải số → 404 thật): thanh 7 bước, thẻ ĐVVC + sao chép mã vận đơn, ghi chú giữ tiền / ngày giải ngân, hành trình mới nhất trước, địa chỉ, sản phẩm + tiền, nút theo trạng thái. Mua lại = POST /me/cart/items/batch (6.6) rồi sang giỏ (báo khi có món bị bỏ qua); Chat dẫn `/chat?shop=&order=`. Nút Trả hàng / Đánh giá / khối yêu cầu trả hàng gắn ở nhóm F. Đã thử thật: Đã nhận hàng (đơn 41 → Hoàn thành), Hủy đơn 47 (toast hoàn tiền), Mua lại đơn đã hủy (cộng dồn vào giỏ). |
 
 ## Nhật ký
 
@@ -810,3 +814,4 @@
 | 2026-11-13 | Voucher xếp chồng, Voucher Picker, phí ship, công tắc Điểm ở giỏ (G10 nhóm B) | 37f2d0b |
 | 2026-11-13 | Trang Thanh toán gộp nhiều shop, sổ địa chỉ + RegionPicker, giữ hàng 15 phút, nháp checkout (G10 nhóm C) | 3bd8edb |
 | 2026-11-13 | Luồng thanh toán VNPAY / VietQR / COD, cổng mô phỏng, trang kết quả (G10 nhóm D) | ad830ca |
+| 2026-11-13 | Đơn mua (tab, nhóm đơn, hủy, đã nhận, mua lại, thanh toán lại) + theo dõi đơn + khung tài khoản (G10 nhóm E) | 913f4d8 |
