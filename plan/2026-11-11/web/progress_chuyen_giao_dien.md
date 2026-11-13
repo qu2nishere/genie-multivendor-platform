@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 49 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 61 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **274 / 429** | | |
+| **Tổng** | | **379** | **50** | **286 / 429** | | |
 
 ---
 
@@ -431,18 +431,18 @@
 
 **Nhóm G — Tài khoản**
 
-- [ ] **G10.44** Khung tài khoản
-- [ ] **G10.45** Miền & hạ tầng tài khoản
-- [ ] **G10.46** `ProfilePanel`
-- [ ] **G10.47** `EmailChangeModal`
-- [ ] **G10.48** `AddressPanel` + `AddressModal` + `AddressForm`
-- [ ] **G10.49** `RegionPicker`
-- [ ] **G10.50** `PasswordPanel`
-- [ ] **G10.51** `LoginsPanel`
-- [ ] **G10.52** `DevicesPanel`
-- [ ] **G10.53** Xóa tài khoản sau 30 ngày
-- [ ] **G10.54** Khóa i18n `account.*`
-- [ ] **G10.C7** 🔖 COMMIT `feat(web): build account profile, address and security sections` · hash: `_______`
+- [x] **G10.44** Khung tài khoản
+- [x] **G10.45** Miền & hạ tầng tài khoản
+- [x] **G10.46** `ProfilePanel`
+- [x] **G10.47** `EmailChangeModal`
+- [x] **G10.48** `AddressPanel` + `AddressModal` + `AddressForm`
+- [x] **G10.49** `RegionPicker`
+- [x] **G10.50** `PasswordPanel`
+- [x] **G10.51** `LoginsPanel`
+- [x] **G10.52** `DevicesPanel`
+- [x] **G10.53** Xóa tài khoản sau 30 ngày
+- [x] **G10.54** Khóa i18n `account.*`
+- [x] **G10.C7** 🔖 COMMIT `feat(web): build account profile, address and security sections` · hash: `a6334cd`
 
 **Nhóm H — Voucher, Điểm, yêu thích, theo dõi, thông báo**
 
@@ -799,6 +799,12 @@
 | G10.40 | Tải tệp qua `shared/api/upload.ts` (4.1: xin URL ký sẵn → PUT MinIO → object_key) + `shared/ui/MediaPicker.tsx` (kéo thả, xem trước, xóa). Ảnh nén bằng browser-image-compression nhưng ra **JPEG** thay vì WebP như plan ghi, vì REVIEW_IMAGE / REFUND_EVIDENCE / AVATAR chỉ nhận jpeg, png (bảng 4.1); giới hạn theo 4.1: bằng chứng 10 MB/tệp (plan ghi 5 MB), ảnh đánh giá 5 MB, video đánh giá 30 MB. Form tài khoản hoàn tiền dùng react-hook-form + zod. |
 | G10.41 | `RefundBlock` (id `#return`, thẻ đơn "Xem yêu cầu trả hàng" nhảy tới): phương án, số tiền, lý do, lời nhắn shop, hạn của bước, tài khoản nhận (đã che); hành động thật theo trạng thái (bổ sung bằng chứng 7.6, khiếu nại 7.7, chấp nhận từ chối 7.8). Bỏ các nút "Mô phỏng: Shop yêu cầu bổ sung / từ chối / đồng ý" của prototype (D5) — trạng thái đó do shop / sàn đổi ở G11 / G12. |
 | G10.42 | `ReviewModal` ở `features/reviews` + POST /me/reviews (7.9): lần lượt từng sản phẩm của đơn, RatingInput, nhận xét ≤ 1000 ký tự, ≤ 5 ảnh, 1 video, ẩn tên; có ảnh +50 Điểm (mock cộng vào ví Điểm, đơn đánh dấu đã đánh giá). Nút "Trả hàng" / "Đánh giá" trên thẻ đơn dẫn `/orders/{id}?return=1` / `?review=1` (liên kết thật), trang theo dõi mở hộp tương ứng khi đơn cho phép. Đã thử thật: gửi trả hàng đơn 41 (VietQR, có tài khoản hoàn) → RFN-0301 "Chờ shop phản hồi", tiền hoàn dự kiến 383.000₫; đánh giá đơn 33 có ảnh → "+50 Điểm". |
+| G10.44 | `/account/[...section]`: /account → /account/profile (302), /account/orders → /orders (301), mục lạ → 404 thật. Khung `AccountShell.astro` + `AccountNav` (làm ở nhóm E) — dòng phụ dưới tên ghi loại tài khoản (Email / Google / cả hai) theo GET /me/login-methods như prototype; nhãn "Thiết lập / Đổi mật khẩu" cũng theo đó. Mục mua sắm (thông báo, voucher, Điểm, yêu thích, theo dõi) gắn ở nhóm H. Bỏ hộp "Mô phỏng cho buổi demo: kịch bản tài khoản" (AcctDemo / SCENARIOS — D5). |
+| G10.45 | Miền `account.types` (Profile, LoginMethods, Device, OTP bước 2) + lược đồ zod hồ sơ / đổi email / mật khẩu (tài khoản chỉ Google không cần mật khẩu cũ) + test. Hạ tầng 3.2–3.7: thao tác 🔐 gửi header `X-OTP-Challenge-Id` + `X-OTP-Code` (0.7). Mock: OTP 123456, mật khẩu hiện tại Genie@123, tài khoản mẫu tạo bằng Google chưa có mật khẩu / SĐT / ngày sinh như prototype; đổi mật khẩu thu hồi các phiên khác như API. |
+| G10.46–G10.47 | ProfilePanel: react-hook-form + zod; đổi ngôn ngữ lưu vào hồ sơ rồi `switchLocale` (cookie lang); ảnh đại diện tải qua `uploadFile('AVATAR')` (nén JPEG, ≤ 1 MB). EmailChangeModal: email mới → mã gửi tới email MỚI → xác nhận; tài khoản chưa có mật khẩu hiện gợi ý "thiết lập mật khẩu" thay vì mở hộp (GNE-AUTH-4095). Ô OTP bước 2 dùng chung `StepUpOtp` (email đã che, gửi lại sau 60 giây). |
+| G10.48–G10.49 | `AddressPanel` (thêm / sửa trong hộp với `AddressForm`, xóa có xác nhận — địa chỉ mặc định không xóa được, đặt mặc định). `AddressModal`, `AddressForm`, `RegionPicker` đã làm ở nhóm C. |
+| G10.50–G10.52 | Mật khẩu: kiểm mật khẩu hiện tại khi đang gõ (POST /me/password/verify, chờ 500 ms), thanh độ mạnh, OTP bước 2; lần thiết lập đầu tải lại trang sau thông báo để menu (island khác) đổi nhãn như prototype. Liên kết Google: thật chuyển sang OAuth `intent=link`, mock liên kết ngay; không gỡ được khi là cách đăng nhập duy nhất (GNE-AUTH-4093). Thiết bị: icon theo loại, đăng xuất từng thiết bị / tất cả thiết bị khác, phiên hiện tại không có nút. |
+| G10.53 | Xóa tài khoản: POST /me/otp-challenges `ACCOUNT_DELETION` — còn đơn đang xử lý → hộp liệt kê mã đơn (GNE-USR-4091, mock đọc trạng thái đơn mock trong phiên); hết đơn → OTP → PUT /me/deletion-request → băng đỏ "ẩn danh vào …" + "Hủy yêu cầu xóa". Bỏ nút "Mô phỏng: đã hoàn tất các đơn" (D5). Đã thử thật: thiết lập mật khẩu (OTP) → thành công, xóa tài khoản bị chặn bởi 7 đơn đang xử lý. |
 
 ## Nhật ký
 
@@ -820,3 +826,4 @@
 | 2026-11-13 | Luồng thanh toán VNPAY / VietQR / COD, cổng mô phỏng, trang kết quả (G10 nhóm D) | ad830ca |
 | 2026-11-13 | Đơn mua (tab, nhóm đơn, hủy, đã nhận, mua lại, thanh toán lại) + theo dõi đơn + khung tài khoản (G10 nhóm E) | 913f4d8 |
 | 2026-11-13 | Trả hàng / hoàn tiền (modal, bằng chứng, khối trạng thái) + đánh giá sản phẩm, lớp tải tệp dùng chung (G10 nhóm F) | 7c90b73 |
+| 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
