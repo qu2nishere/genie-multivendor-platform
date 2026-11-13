@@ -1174,6 +1174,160 @@
         "line": "Enter the street address",
         "line_long": "Address can be at most 255 characters"
       }
+    },
+    "menu": {
+      "label": "Account",
+      "mine": "My account",
+      "profile": "Profile",
+      "address": "Addresses",
+      "password": "Change password",
+      "password_set": "Set a password",
+      "logins": "Linked logins",
+      "devices": "Signed-in devices",
+      "orders": "My orders",
+      "notifications": "Notifications",
+      "vouchers": "Voucher wallet",
+      "points": "Genie Points",
+      "wishlist": "Wishlist",
+      "following": "Followed shops",
+      "logout_confirm": "Log out of {name} on this device?"
+    }
+  },
+  "orders": {
+    "title": "My orders",
+    "empty": "No orders in this tab yet",
+    "tab": {
+      "TO_PAY": "To pay",
+      "SHIPPING": "Shipping",
+      "TO_RECEIVE": "To receive",
+      "COMPLETED": "Completed",
+      "RETURN": "Returns / Refunds",
+      "CANCELLED": "Cancelled"
+    },
+    "status": {
+      "PENDING_PAYMENT": "Awaiting payment",
+      "PAID": "Paid",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "READY_FOR_PICKUP": "Awaiting pickup",
+      "DELIVERING": "Delivering",
+      "DELIVERY_FAILED": "Delivery failed",
+      "DELIVERED": "Delivered",
+      "COMPLETED": "Completed",
+      "RETURN_REQUESTED": "Return / refund in progress",
+      "RETURN_APPROVED": "Return approved",
+      "RETURN_REJECTED": "Return rejected by shop",
+      "RETURNING": "Return in transit",
+      "RETURNED_TO_VENDOR": "Return received by shop",
+      "PARTIALLY_REFUNDED": "Partially refunded",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled",
+      "CANCELLED_BY_VENDOR": "Cancelled by shop",
+      "AUTO_CANCELLED": "Auto-cancelled (payment timeout)"
+    },
+    "pay": {
+      "VNPAY": "VNPay",
+      "VIETQR": "VietQR",
+      "COD": "COD"
+    },
+    "card": {
+      "label": "Order {code}",
+      "total": "Order total:",
+      "delivered": "Delivered"
+    },
+    "group": {
+      "pending": "Order group awaiting payment",
+      "cancelled": "Cancelled order group",
+      "goods": "Goods",
+      "shipping": "Shipping",
+      "discount": "Discount (vouchers + Points)",
+      "total": "Total ({count} orders):",
+      "again_all": "Buy all again",
+      "cancel": "Cancel group"
+    },
+    "action": {
+      "pay": "Pay now",
+      "await_shop": "Awaiting shop confirmation",
+      "cancel": "Cancel order",
+      "track": "Track order",
+      "chat": "Contact shop",
+      "again": "Buy again",
+      "received": "Order received",
+      "return": "Return",
+      "view_return": "View return request",
+      "review": "Review",
+      "reviewed": "Reviewed"
+    },
+    "again": {
+      "added": "Items added to your cart",
+      "partial": "Available items added; discontinued or sold-out items skipped",
+      "none": "These items are no longer available"
+    },
+    "cancel": {
+      "title": "Cancel order",
+      "text": "Are you sure you want to cancel this order? This cannot be undone; Points and vouchers (if any) will be returned.",
+      "text_group": "Are you sure you want to cancel this group of {count} orders? This cannot be undone; Points and vouchers (if any) will be returned.",
+      "refund_note": "The amount paid will be refunded to the original method.",
+      "reason": "Reason for cancelling",
+      "note": "More details",
+      "note_required": "Please describe your reason",
+      "confirm": "Cancel order",
+      "keep": "Keep order",
+      "done": "Order cancelled",
+      "done_group": "Order group cancelled",
+      "refund": ". The amount will be refunded to your payment method.",
+      "reasons": {
+        "CHANGE_OF_MIND": "Changed my mind",
+        "CHANGE_ADDRESS": "Want to change the delivery address",
+        "CHANGE_VARIANT": "Want a different product / variant",
+        "FOUND_BETTER_PRICE": "Found a better price",
+        "OTHER": "Other reason"
+      }
+    },
+    "receipt": {
+      "title": "Confirm you received the order?",
+      "text": "Genie will pay {amount} to {shop}. After confirming you can no longer request a return for this order.",
+      "confirm": "Received — pay the shop",
+      "done": "Thank you! The order is completed."
+    },
+    "step": {
+      "label": "Order progress",
+      "now": "Step {n}/{count}:",
+      "placed": "Placed",
+      "paid": "Paid",
+      "paid_cod": "Pay on delivery",
+      "confirmed": "Shop confirmed",
+      "prep": "Awaiting pickup",
+      "ship": "In transit",
+      "delivered": "Delivered",
+      "completed": "Completed"
+    },
+    "escrow": {
+      "done": "Order completed. Genie has paid the shop.",
+      "cod": "You pay the courier in cash. The carrier transfers it to Genie before Genie pays the shop.",
+      "delivered": "Genie is holding your money. Tap \"Order received\" to pay the shop, or it is paid automatically after 7 days ({date}) if there is no return request.",
+      "after_7": "after 7 days",
+      "holding": "Genie is holding your money and only pays the shop after you confirm receipt."
+    },
+    "carrier": {
+      "label": "Carrier",
+      "code": "Tracking no.:",
+      "eta": "Estimated delivery",
+      "delivered_at": "Delivered at",
+      "GHN": "Giao Hang Nhanh",
+      "GHTK": "Giao Hang Tiet Kiem",
+      "VIETTEL_POST": "ViettelPost",
+      "JNT_EXPRESS": "J&T Express",
+      "GENIE_EXPRESS": "Genie Express"
+    },
+    "journey": "Shipping journey",
+    "detail": {
+      "title": "Track order",
+      "code": "Order",
+      "discount": "Voucher discount",
+      "return_closed": "The 7-day protection period for this order has ended",
+      "on_the_way": "On its way to you",
+      "preparing": "The seller is preparing your order"
     }
   }
 }

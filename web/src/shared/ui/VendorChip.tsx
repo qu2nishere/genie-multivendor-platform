@@ -36,7 +36,7 @@ export function VendorChip({
       <span
         className={cn(
           box,
-          'rounded-sm bg-gray-100 grid place-items-center text-muted font-bold flex-none overflow-hidden',
+          'lz-vendor__logo rounded-sm bg-gray-100 grid place-items-center text-muted font-bold flex-none overflow-hidden',
         )}
       >
         {logo ? (

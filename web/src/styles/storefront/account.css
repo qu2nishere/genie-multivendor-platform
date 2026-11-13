@@ -27,7 +27,8 @@
     .tr-acct__menu > div > div {
       display: contents;
     }
-    .tr-acct__menu button {
+    .tr-acct__menu button,
+    .tr-acct__menu a {
       flex: none;
       width: auto !important;
       min-height: 44px;

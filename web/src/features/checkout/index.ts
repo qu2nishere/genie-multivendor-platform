@@ -37,3 +37,4 @@ export {
 export { MOCK_VNPAY_URL } from './infrastructure/checkout.api';
 export { default as CheckoutPage } from './ui/CheckoutPage';
 export { default as CheckoutResult, type CheckoutResultProps } from './ui/CheckoutResult';
+export { PaymentFlow, type PaymentFlowProps, resultHref } from './ui/PaymentFlow';

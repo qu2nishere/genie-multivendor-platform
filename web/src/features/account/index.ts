@@ -5,3 +5,9 @@ export { useAddresses, ADDRESSES_KEY } from './application/useAddresses';
 export { AddressModal, type AddressModalProps } from './ui/address/AddressModal';
 export { AddressForm, type AddressFormProps } from './ui/address/AddressForm';
 export { RegionPicker, type RegionPickerProps, type RegionValue } from './ui/address/RegionPicker';
+export {
+  ACCOUNT_MENU,
+  ACCOUNT_SECTIONS,
+  isAccountSection,
+  type AccountSection,
+} from './domain/account.menu';

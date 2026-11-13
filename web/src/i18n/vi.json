@@ -1174,6 +1174,160 @@
         "line": "Nhập địa chỉ cụ thể",
         "line_long": "Địa chỉ tối đa 255 ký tự"
       }
+    },
+    "menu": {
+      "label": "Tài khoản",
+      "mine": "Tài khoản của tôi",
+      "profile": "Hồ sơ",
+      "address": "Địa chỉ",
+      "password": "Đổi mật khẩu",
+      "password_set": "Thiết lập mật khẩu",
+      "logins": "Liên kết đăng nhập",
+      "devices": "Thiết bị đăng nhập",
+      "orders": "Đơn mua",
+      "notifications": "Thông báo",
+      "vouchers": "Kho Voucher",
+      "points": "Điểm Genie",
+      "wishlist": "Sản phẩm yêu thích",
+      "following": "Shop đang theo dõi",
+      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name} trên thiết bị này?"
+    }
+  },
+  "orders": {
+    "title": "Đơn mua",
+    "empty": "Chưa có đơn hàng nào ở mục này",
+    "tab": {
+      "TO_PAY": "Chờ thanh toán",
+      "SHIPPING": "Vận chuyển",
+      "TO_RECEIVE": "Chờ giao hàng",
+      "COMPLETED": "Hoàn thành",
+      "RETURN": "Trả hàng / Hoàn tiền",
+      "CANCELLED": "Đã hủy"
+    },
+    "status": {
+      "PENDING_PAYMENT": "Chờ thanh toán",
+      "PAID": "Đã thanh toán",
+      "CONFIRMED": "Đã xác nhận",
+      "PREPARING": "Đang chuẩn bị",
+      "READY_FOR_PICKUP": "Chờ lấy hàng",
+      "DELIVERING": "Đang giao",
+      "DELIVERY_FAILED": "Giao không thành công",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn thành",
+      "RETURN_REQUESTED": "Đang trả hàng / hoàn tiền",
+      "RETURN_APPROVED": "Đã chấp nhận trả hàng",
+      "RETURN_REJECTED": "Shop từ chối trả hàng",
+      "RETURNING": "Đang gửi hàng hoàn",
+      "RETURNED_TO_VENDOR": "Shop đã nhận hàng hoàn",
+      "PARTIALLY_REFUNDED": "Đã hoàn tiền một phần",
+      "REFUNDED": "Đã hoàn tiền",
+      "CANCELLED": "Đã hủy",
+      "CANCELLED_BY_VENDOR": "Shop đã hủy",
+      "AUTO_CANCELLED": "Tự hủy do quá hạn"
+    },
+    "pay": {
+      "VNPAY": "VNPay",
+      "VIETQR": "VietQR",
+      "COD": "COD"
+    },
+    "card": {
+      "label": "Đơn {code}",
+      "total": "Thành tiền:",
+      "delivered": "Giao thành công"
+    },
+    "group": {
+      "pending": "Nhóm đơn hàng chờ thanh toán",
+      "cancelled": "Nhóm đơn hàng đã hủy",
+      "goods": "Tiền hàng",
+      "shipping": "Phí vận chuyển",
+      "discount": "Giảm giá (Voucher + Điểm)",
+      "total": "Tổng thanh toán ({count} đơn):",
+      "again_all": "Mua lại tất cả",
+      "cancel": "Hủy nhóm đơn"
+    },
+    "action": {
+      "pay": "Thanh toán ngay",
+      "await_shop": "Chờ shop xác nhận",
+      "cancel": "Hủy đơn",
+      "track": "Theo dõi đơn",
+      "chat": "Liên hệ Shop",
+      "again": "Mua lại",
+      "received": "Đã nhận hàng",
+      "return": "Trả hàng",
+      "view_return": "Xem yêu cầu trả hàng",
+      "review": "Đánh giá",
+      "reviewed": "Đã đánh giá"
+    },
+    "again": {
+      "added": "Đã thêm sản phẩm vào giỏ hàng",
+      "partial": "Đã thêm sản phẩm còn bán, bỏ qua sản phẩm đã ngừng bán / hết hàng",
+      "none": "Các sản phẩm này hiện không còn bán"
+    },
+    "cancel": {
+      "title": "Xác nhận hủy đơn hàng",
+      "text": "Bạn có chắc muốn hủy đơn hàng này không? Quá trình này không thể hoàn tác, Điểm và voucher (nếu có) sẽ được hoàn lại.",
+      "text_group": "Bạn có chắc muốn hủy nhóm {count} đơn hàng này không? Quá trình này không thể hoàn tác, Điểm và voucher (nếu có) sẽ được hoàn lại.",
+      "refund_note": "Số tiền đã thanh toán được hoàn về phương thức gốc.",
+      "reason": "Lý do hủy đơn",
+      "note": "Ghi chú thêm",
+      "note_required": "Vui lòng ghi rõ lý do hủy đơn",
+      "confirm": "Xác nhận hủy",
+      "keep": "Không",
+      "done": "Hủy đơn hàng thành công",
+      "done_group": "Hủy nhóm đơn hàng thành công",
+      "refund": ". Tiền được hoàn về phương thức đã thanh toán.",
+      "reasons": {
+        "CHANGE_OF_MIND": "Đổi ý, không muốn mua nữa",
+        "CHANGE_ADDRESS": "Muốn đổi địa chỉ nhận hàng",
+        "CHANGE_VARIANT": "Muốn đổi sản phẩm / phân loại",
+        "FOUND_BETTER_PRICE": "Tìm được giá tốt hơn",
+        "OTHER": "Lý do khác"
+      }
+    },
+    "receipt": {
+      "title": "Xác nhận đã nhận hàng?",
+      "text": "Genie sẽ chuyển {amount} cho {shop}. Sau khi xác nhận, bạn không thể yêu cầu trả hàng cho đơn này nữa.",
+      "confirm": "Đã nhận, chuyển tiền cho shop",
+      "done": "Cảm ơn bạn! Đơn hàng đã hoàn thành."
+    },
+    "step": {
+      "label": "Tiến trình đơn hàng",
+      "now": "Bước {n}/{count}:",
+      "placed": "Đặt hàng",
+      "paid": "Đã thanh toán",
+      "paid_cod": "Thanh toán khi nhận",
+      "confirmed": "Shop xác nhận",
+      "prep": "Chờ lấy hàng",
+      "ship": "Đang vận chuyển",
+      "delivered": "Đã giao",
+      "completed": "Hoàn thành"
+    },
+    "escrow": {
+      "done": "Đơn đã hoàn thành. Genie đã chuyển tiền cho shop.",
+      "cod": "Bạn trả tiền mặt cho nhân viên giao hàng. Đơn vị vận chuyển chuyển khoản tiền này về Genie trước khi Genie trả cho shop.",
+      "delivered": "Genie đang giữ tiền của bạn. Bấm \"Đã nhận hàng\" để Genie chuyển tiền cho shop, hoặc tiền tự chuyển sau 7 ngày (vào {date}) nếu không có yêu cầu trả hàng.",
+      "after_7": "sau 7 ngày",
+      "holding": "Genie đang giữ tiền của bạn và chỉ chuyển cho shop sau khi bạn xác nhận đã nhận hàng."
+    },
+    "carrier": {
+      "label": "Đơn vị vận chuyển",
+      "code": "Mã vận đơn:",
+      "eta": "Dự kiến giao",
+      "delivered_at": "Đã giao lúc",
+      "GHN": "Giao Hàng Nhanh",
+      "GHTK": "Giao Hàng Tiết Kiệm",
+      "VIETTEL_POST": "ViettelPost",
+      "JNT_EXPRESS": "J&T Express",
+      "GENIE_EXPRESS": "Genie Express"
+    },
+    "journey": "Hành trình đơn hàng",
+    "detail": {
+      "title": "Theo dõi đơn hàng",
+      "code": "Mã đơn",
+      "discount": "Giảm giá voucher",
+      "return_closed": "Đơn hàng đã quá thời hạn 7 ngày bảo vệ khiếu nại",
+      "on_the_way": "Đang trên đường giao đến bạn",
+      "preparing": "Người bán đang chuẩn bị hàng"
     }
   }
 }
