@@ -1,12 +1,12 @@
 // Khung Seller Center: GET /seller/me (10.1), GET /seller/search (10.1b), tài khoản nhận tiền (10.11).
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
-import { sellerStore } from '@/shared/api/mock/seller';
+import { sellerOrdersStore, sellerProductsStore, sellerStore } from '@/shared/api/mock/seller';
 import { searchable } from '../domain/shop.rules';
 import type { PayoutAccount, SearchHit, SellerContext } from '../domain/shop.types';
 import type { PayoutAccountDto, SellerMeDto, SellerSearchDto } from './shop.dto';
 import { toPayoutAccount, toSearchHit, toSellerContext } from './shop.mapper';
-import { BADGES, PAYOUT_ACCOUNT, SEARCH_ORDERS, SEARCH_PRODUCTS } from './shop.mock';
+import { BADGES, PAYOUT_ACCOUNT } from './shop.mock';
 
 export async function getSellerMe(): Promise<SellerContext> {
   if (USE_MOCK) {
@@ -15,7 +15,10 @@ export async function getSellerMe(): Promise<SellerContext> {
     return toSellerContext({
       shop: { id: s.id, name: s.name, logo_url: null, is_mall: s.kyc_status === 'VERIFIED' },
       kyc_status: s.kyc_status,
-      badges: BADGES,
+      badges: {
+        ...BADGES,
+        orders_to_confirm: sellerOrdersStore.get().filter((o) => o.status === 'NEW').length,
+      },
     });
   }
   return toSellerContext(await api.get<SellerMeDto>('/seller/me'));
@@ -29,10 +32,16 @@ export async function searchSeller(q: string, limit = 5): Promise<SearchHit> {
     if (sellerStore.get().kyc_status !== 'VERIFIED') return empty;
     const n = q.trim().toLowerCase();
     return toSearchHit({
-      orders: SEARCH_ORDERS.filter((o) =>
-        `${o.code} ${o.customer_name}`.toLowerCase().includes(n),
-      ).slice(0, limit),
-      products: SEARCH_PRODUCTS.filter((p) => p.name.toLowerCase().includes(n)).slice(0, limit),
+      orders: sellerOrdersStore
+        .get()
+        .filter((o) => `${o.code} ${o.customer.name}`.toLowerCase().includes(n))
+        .slice(0, limit)
+        .map((o) => ({ id: o.id, code: o.code, customer_name: o.customer.name, status: o.status })),
+      products: sellerProductsStore
+        .get()
+        .filter((p) => p.name.toLowerCase().includes(n))
+        .slice(0, limit)
+        .map((p) => ({ id: p.id, name: p.name, image_url: p.image_url, status: p.status })),
     });
   }
   return toSearchHit(

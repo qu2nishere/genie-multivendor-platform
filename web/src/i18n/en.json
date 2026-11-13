@@ -1881,5 +1881,217 @@
         "cta": "Open a shop"
       }
     }
+  },
+  "seller-orders": {
+    "status": {
+      "NEW": "To confirm",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "shipment": {
+      "AWAITING_PICKUP": "Awaiting pickup",
+      "IN_TRANSIT": "In transit",
+      "OUT_FOR_DELIVERY": "Out for delivery",
+      "DELIVERY_FAILED": "Delivery failed",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "when": {
+      "today": "{time} today",
+      "yesterday": "Yesterday",
+      "days": "{count} days ago"
+    }
+  },
+  "seller-dashboard": {
+    "see_all": "See all",
+    "kyc": {
+      "waiting": {
+        "title": "Your KYC is awaiting review",
+        "desc": "Flagged files are handled by staff within 24 working hours.",
+        "cta": "View progress"
+      },
+      "rejected": {
+        "title": "KYC rejected",
+        "desc": "Please update your documents and resubmit.",
+        "cta": "Resubmit"
+      }
+    },
+    "work": {
+      "title": "To do",
+      "done": "You have cleared your backlog",
+      "new": "Orders to confirm",
+      "new_hint": "Confirm or reject orders",
+      "prep": "Orders to prepare",
+      "prep_hint": "Pack and hand over to the carrier",
+      "fail": "Failed deliveries",
+      "fail_hint": "Check and handle again",
+      "return": "Return requests",
+      "return_hint": "Nearest due in {hours} h",
+      "chat": "Unread messages",
+      "chat_hint": "Reply to customers"
+    },
+    "revenue": {
+      "title": {
+        "7d": "Revenue, last 7 days",
+        "30d": "Revenue, last 30 days",
+        "12m": "Revenue, last 12 closed months"
+      },
+      "ranges": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "12m": "12 months"
+      },
+      "against": {
+        "7d": "vs previous 7 days",
+        "30d": "vs previous 30 days",
+        "12m": "From 06/2025 to 05/2026"
+      },
+      "range": "Period",
+      "series": "Revenue"
+    },
+    "money": {
+      "title": "Shop money",
+      "available": "Withdrawable balance",
+      "withdraw": "Withdraw",
+      "parts": {
+        "available": "Withdrawable",
+        "held": "Held by Genie",
+        "held_note": "Released when the customer receives the order",
+        "payout": "Pending withdrawals",
+        "cod": "COD on the way",
+        "cod_note": "Held by the carrier"
+      }
+    },
+    "recent": {
+      "title": "Recent orders",
+      "code": "Order",
+      "customer": "Customer",
+      "items": "Items",
+      "total": "Value",
+      "time": "Time",
+      "status": "Status",
+      "action": "Action",
+      "confirm": "Confirm",
+      "detail": "Details"
+    },
+    "orders30": {
+      "title": "Orders, last 30 days",
+      "as_of": "As of {date}",
+      "analytics": "Analytics",
+      "count": "{count} orders",
+      "outcomes": "Order outcomes, last 30 days",
+      "visits": "Visits",
+      "conversion": "Conversion rate (orders per visit)"
+    },
+    "products": {
+      "title": "Products",
+      "manage": "Manage",
+      "PUBLISHED": "Live",
+      "PENDING_APPROVAL": "Pending review",
+      "DRAFT": "Draft",
+      "REJECTED": "Rejected"
+    }
+  },
+  "seller-analytics": {
+    "title": "Sales analytics",
+    "subtitle": "Shop performance {sub}",
+    "range": "Period",
+    "ranges": {
+      "today": "Today",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "custom": "Custom dates"
+    },
+    "range_sub": {
+      "today": "today",
+      "7d": "in the last 7 days",
+      "30d": "in the last 30 days",
+      "custom": "for the selected dates"
+    },
+    "against": {
+      "today": "vs yesterday",
+      "7d": "vs previous 7 days",
+      "30d": "vs previous 30 days",
+      "custom": "vs previous period"
+    },
+    "from": "From",
+    "to": "To",
+    "pick_dates": "Pick a start and an end date to see the figures.",
+    "export": "Export CSV",
+    "period": "Period",
+    "csv": {
+      "metric": "Metric",
+      "value": "Value"
+    },
+    "tiles": {
+      "gross": "Gross revenue",
+      "orders": "Orders",
+      "visits": "Visits",
+      "conversion": "Conversion rate"
+    },
+    "chart": {
+      "daily": "Revenue by day",
+      "hourly": "Revenue by hour",
+      "series": "Revenue"
+    },
+    "net": {
+      "title": "Money to the shop",
+      "hint": "Platform vouchers and Genie Points are paid by Genie, not deducted from the shop",
+      "net": "Net revenue",
+      "bar": "Gross revenue {sub}",
+      "to_shop": "To shop",
+      "commission": "Commission {rate}%",
+      "voucher": "Shop vouchers"
+    },
+    "outcome": {
+      "COMPLETED": "Completed",
+      "CANCELLED_BY_CUSTOMER": "Cancelled by customer",
+      "REJECTED_BY_SHOP": "Rejected by shop",
+      "REFUNDED": "Returned, refunded",
+      "IN_PROGRESS": "In progress"
+    },
+    "outcomes": {
+      "title": "How orders ended",
+      "sub": "{count} orders {sub}",
+      "bar": "Order outcomes {sub}"
+    },
+    "health": {
+      "shop_cancel": "Orders cancelled or rejected by the shop",
+      "lost_disputes": "Disputes lost (30 days)",
+      "auto_confirmed": "Orders auto-confirmed after 24 hours (30 days)"
+    },
+    "sources": {
+      "title": "Traffic sources",
+      "SEARCH": "Marketplace search",
+      "HOME": "Home / Recommendations",
+      "PROMOTION": "Promotions / Flash Sale",
+      "EXTERNAL": "External links / Shares",
+      "visits": "{visits} visits · {share}%",
+      "conversion": "Order rate {rate}"
+    },
+    "sentiment": {
+      "title": "Review sentiment",
+      "sub": "AI read {count} written reviews {sub}; uncertain reviews are not counted",
+      "see": "See reviews",
+      "bar": "Review sentiment {sub}",
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative",
+      "rate": "Positive rate",
+      "worst": "Most criticised product",
+      "worst_value": "{name} · {count} negative reviews"
+    },
+    "top": {
+      "title": "Best sellers, last 30 days",
+      "sub": "Share of {total} gross revenue",
+      "product": "Product",
+      "sold": "Sold",
+      "revenue": "Revenue",
+      "share": "Revenue share",
+      "conversion": "Conversion"
+    }
   }
 }

@@ -8,9 +8,15 @@ export interface SellerRoute {
 }
 
 const Pending = lazy(() => import('./Pending'));
+const Overview = lazy(() =>
+  import('@/features/seller-dashboard').then((m) => ({ default: m.OverviewPage })),
+);
+const Stats = lazy(() =>
+  import('@/features/seller-analytics').then((m) => ({ default: m.StatsPage })),
+);
 
 export const sellerRoutes: SellerRoute[] = [
-  { path: '/', screen: Pending },
+  { path: '/', screen: Overview },
   { path: '/orders', screen: Pending },
   { path: '/returns', screen: Pending },
   { path: '/products', screen: Pending },
@@ -23,6 +29,6 @@ export const sellerRoutes: SellerRoute[] = [
   { path: '/flash-sales', screen: Pending },
   { path: '/chat', screen: Pending },
   { path: '/reviews', screen: Pending },
-  { path: '/analytics', screen: Pending },
+  { path: '/analytics', screen: Stats },
   { path: '/settings', screen: Pending },
 ];

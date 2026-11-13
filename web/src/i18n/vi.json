@@ -1881,5 +1881,217 @@
         "cta": "Đăng ký mở Shop"
       }
     }
+  },
+  "seller-orders": {
+    "status": {
+      "NEW": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "PREPARING": "Đang chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "CANCELLED": "Đã hủy"
+    },
+    "shipment": {
+      "AWAITING_PICKUP": "Chờ lấy hàng",
+      "IN_TRANSIT": "Đang trung chuyển",
+      "OUT_FOR_DELIVERY": "Đang giao hàng",
+      "DELIVERY_FAILED": "Giao thất bại",
+      "DELIVERED": "Giao thành công",
+      "CANCELLED": "Đã hủy"
+    },
+    "when": {
+      "today": "{time} hôm nay",
+      "yesterday": "Hôm qua",
+      "days": "{count} ngày trước"
+    }
+  },
+  "seller-dashboard": {
+    "see_all": "Xem tất cả",
+    "kyc": {
+      "waiting": {
+        "title": "Hồ sơ KYC đang chờ duyệt",
+        "desc": "Hồ sơ nghi ngờ được nhân viên xử lý trong 24 giờ làm việc.",
+        "cta": "Xem tiến độ"
+      },
+      "rejected": {
+        "title": "KYC bị từ chối",
+        "desc": "Vui lòng cập nhật hồ sơ và nộp lại.",
+        "cta": "Nộp lại"
+      }
+    },
+    "work": {
+      "title": "Việc cần làm",
+      "done": "Bạn đã xử lý hết việc tồn",
+      "new": "Đơn chờ xác nhận",
+      "new_hint": "Xác nhận hoặc từ chối đơn",
+      "prep": "Đơn cần chuẩn bị",
+      "prep_hint": "Đóng gói và giao hãng vận chuyển",
+      "fail": "Đơn giao thất bại",
+      "fail_hint": "Kiểm tra và xử lý lại",
+      "return": "Yêu cầu trả hàng",
+      "return_hint": "Gần nhất còn {hours} giờ",
+      "chat": "Tin nhắn chưa đọc",
+      "chat_hint": "Trả lời khách hàng"
+    },
+    "revenue": {
+      "title": {
+        "7d": "Doanh thu 7 ngày qua",
+        "30d": "Doanh thu 30 ngày qua",
+        "12m": "Doanh thu 12 tháng đã chốt"
+      },
+      "ranges": {
+        "7d": "7 ngày",
+        "30d": "30 ngày",
+        "12m": "12 tháng"
+      },
+      "against": {
+        "7d": "so với 7 ngày trước",
+        "30d": "so với 30 ngày trước",
+        "12m": "Từ 06/2025 đến 05/2026"
+      },
+      "range": "Khoảng thời gian",
+      "series": "Doanh thu"
+    },
+    "money": {
+      "title": "Tiền của shop",
+      "available": "Số dư có thể rút",
+      "withdraw": "Rút tiền",
+      "parts": {
+        "available": "Có thể rút",
+        "held": "Sàn đang giữ",
+        "held_note": "Về ví khi khách nhận hàng",
+        "payout": "Lệnh rút chờ duyệt",
+        "cod": "COD chờ chuyển về",
+        "cod_note": "Hãng vận chuyển đang giữ"
+      }
+    },
+    "recent": {
+      "title": "Đơn hàng gần đây",
+      "code": "Mã đơn",
+      "customer": "Khách hàng",
+      "items": "Số SP",
+      "total": "Giá trị",
+      "time": "Thời gian",
+      "status": "Trạng thái",
+      "action": "Thao tác",
+      "confirm": "Xác nhận",
+      "detail": "Chi tiết"
+    },
+    "orders30": {
+      "title": "Đơn 30 ngày qua",
+      "as_of": "Đến {date}",
+      "analytics": "Phân tích",
+      "count": "{count} đơn",
+      "outcomes": "Kết quả đơn 30 ngày qua",
+      "visits": "Lượt truy cập",
+      "conversion": "Tỉ lệ chuyển đổi (đơn trên lượt truy cập)"
+    },
+    "products": {
+      "title": "Sản phẩm",
+      "manage": "Quản lý",
+      "PUBLISHED": "Đang bán",
+      "PENDING_APPROVAL": "Chờ duyệt",
+      "DRAFT": "Nháp",
+      "REJECTED": "Bị từ chối"
+    }
+  },
+  "seller-analytics": {
+    "title": "Phân tích bán hàng",
+    "subtitle": "Hiệu suất Shop {sub}",
+    "range": "Khoảng thời gian",
+    "ranges": {
+      "today": "Hôm nay",
+      "7d": "7 ngày qua",
+      "30d": "30 ngày qua",
+      "custom": "Tùy chọn ngày"
+    },
+    "range_sub": {
+      "today": "hôm nay",
+      "7d": "trong 7 ngày qua",
+      "30d": "trong 30 ngày qua",
+      "custom": "theo khoảng ngày đã chọn"
+    },
+    "against": {
+      "today": "so với hôm qua",
+      "7d": "so với 7 ngày trước",
+      "30d": "so với 30 ngày trước",
+      "custom": "so với kỳ trước"
+    },
+    "from": "Từ ngày",
+    "to": "Đến ngày",
+    "pick_dates": "Chọn ngày bắt đầu và ngày kết thúc để xem số liệu.",
+    "export": "Xuất CSV",
+    "period": "Kỳ",
+    "csv": {
+      "metric": "Chỉ số",
+      "value": "Giá trị"
+    },
+    "tiles": {
+      "gross": "Doanh thu gộp",
+      "orders": "Đơn hàng",
+      "visits": "Lượt truy cập",
+      "conversion": "Tỉ lệ chuyển đổi"
+    },
+    "chart": {
+      "daily": "Doanh thu theo ngày",
+      "hourly": "Doanh thu theo khung giờ",
+      "series": "Doanh thu"
+    },
+    "net": {
+      "title": "Tiền thực về shop",
+      "hint": "Voucher sàn và Điểm Genie do sàn chịu, không trừ vào tiền của shop",
+      "net": "Doanh thu thuần",
+      "bar": "Doanh thu gộp {sub}",
+      "to_shop": "Về shop",
+      "commission": "Hoa hồng {rate}%",
+      "voucher": "Voucher shop"
+    },
+    "outcome": {
+      "COMPLETED": "Hoàn tất",
+      "CANCELLED_BY_CUSTOMER": "Khách hủy",
+      "REJECTED_BY_SHOP": "Shop từ chối",
+      "REFUNDED": "Trả hàng, hoàn tiền",
+      "IN_PROGRESS": "Đang xử lý"
+    },
+    "outcomes": {
+      "title": "Đơn kết thúc thế nào",
+      "sub": "{count} đơn {sub}",
+      "bar": "Kết quả đơn {sub}"
+    },
+    "health": {
+      "shop_cancel": "Tỉ lệ shop tự hủy hoặc từ chối đơn",
+      "lost_disputes": "Khiếu nại shop thua (30 ngày)",
+      "auto_confirmed": "Đơn quá 24 giờ, sàn tự xác nhận (30 ngày)"
+    },
+    "sources": {
+      "title": "Nguồn truy cập",
+      "SEARCH": "Tìm kiếm trong sàn",
+      "HOME": "Trang chủ / Gợi ý",
+      "PROMOTION": "Khuyến mãi / Flash Sale",
+      "EXTERNAL": "Link ngoài / Chia sẻ",
+      "visits": "{visits} lượt · {share}%",
+      "conversion": "Tỉ lệ ra đơn {rate}"
+    },
+    "sentiment": {
+      "title": "Cảm xúc đánh giá",
+      "sub": "AI đọc nội dung {count} đánh giá có chữ {sub}; đánh giá chưa đủ chắc chắn không tính",
+      "see": "Xem đánh giá",
+      "bar": "Cảm xúc đánh giá {sub}",
+      "positive": "Tích cực",
+      "neutral": "Trung lập",
+      "negative": "Tiêu cực",
+      "rate": "Tỉ lệ tích cực",
+      "worst": "Sản phẩm bị chê nhiều nhất",
+      "worst_value": "{name} · {count} đánh giá tiêu cực"
+    },
+    "top": {
+      "title": "Sản phẩm bán chạy trong 30 ngày qua",
+      "sub": "Đóng góp tính trên {total} doanh thu gộp",
+      "product": "Sản phẩm",
+      "sold": "Đã bán",
+      "revenue": "Doanh thu",
+      "share": "Đóng góp doanh thu",
+      "conversion": "Chuyển đổi"
+    }
   }
 }
