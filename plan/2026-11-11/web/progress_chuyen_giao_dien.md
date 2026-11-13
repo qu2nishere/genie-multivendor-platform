@@ -40,7 +40,7 @@
 | G05 | `shared/api`, phiên đăng nhập, lớp mock | 10 | 1 | 11 / 11 | — | `feature/web-foundation` |
 | G06 | `shared/ui` (design system) | 37 | 5 | 42 / 42 | — | `feature/web-foundation` |
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
-| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 |  |  |
+| G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
