@@ -273,6 +273,9 @@
       "chart_aria": "{name}. Cao nhất {max} vào {at}. Dùng phím mũi tên để đọc từng mốc.",
       "as_table": "Xem dạng bảng",
       "point": "Mốc"
+    },
+    "breadcrumb": {
+      "label": "Đường dẫn"
     }
   },
   "layout": {
@@ -320,6 +323,9 @@
       "seller_center": "Kênh người bán",
       "app_soon": "Ứng dụng di động (sắp ra mắt)",
       "legal": "© 2026 Genie (tên tạm). Bản mẫu đồ án, dữ liệu minh họa. Giá hiển thị bằng VND (₫)."
+    },
+    "nav": {
+      "home": "Trang chủ"
     }
   },
   "notifications": {
@@ -364,6 +370,80 @@
       "trending": "Xu hướng",
       "category": "Danh mục",
       "shop": "Shop"
+    },
+    "meta": {
+      "title": "Kết quả tìm kiếm cho “{q}”",
+      "title_all": "Tìm kiếm sản phẩm",
+      "description": "Tìm sản phẩm, thương hiệu và shop đã xác minh trên Genie."
+    },
+    "result": {
+      "for": "Kết quả cho",
+      "products": "sản phẩm",
+      "list": "Kết quả tìm kiếm"
+    },
+    "scope": {
+      "label": "Phạm vi tìm",
+      "all": "Toàn sàn",
+      "shop": "Trong Shop",
+      "in_shop": "Trong {shop}"
+    },
+    "shop": {
+      "filtering": "Đang lọc trong shop này · {rating} sao · {followers} theo dõi",
+      "visit": "Vào shop",
+      "matched": "Shop khớp từ khóa"
+    },
+    "sort": {
+      "label": "Sắp xếp theo",
+      "rel": "Liên quan",
+      "hot": "Bán chạy",
+      "new": "Mới nhất",
+      "price": "Giá",
+      "price_asc": "tăng dần",
+      "price_desc": "giảm dần"
+    },
+    "band": {
+      "under": "Dưới {max}",
+      "over": "Trên {min}",
+      "from": "Từ {min}",
+      "to": "Đến {max}"
+    },
+    "filter": {
+      "title": "Bộ lọc tìm kiếm",
+      "button": "Bộ lọc",
+      "close": "Đóng bộ lọc",
+      "active": "Đang lọc",
+      "remove": "Bỏ lọc {label}",
+      "clear": "Xoá lọc",
+      "clear_all": "Xoá tất cả",
+      "apply": "Áp dụng",
+      "show_n": "Xem {n} sản phẩm",
+      "service": "Nơi bán & dịch vụ",
+      "service_more": "Dịch vụ & khác",
+      "category": "Theo danh mục",
+      "brand": "Thương hiệu",
+      "brand_verified": "Thương hiệu đã xác minh",
+      "place": "Nơi bán",
+      "price": "Khoảng giá",
+      "price_from": "TỪ",
+      "price_to": "ĐẾN",
+      "price_min": "Giá thấp nhất",
+      "price_max": "Giá cao nhất",
+      "rating": "Đánh giá",
+      "and_up": "trở lên",
+      "rating_up": "{n} sao trở lên",
+      "authentic": "Chính hãng",
+      "authentic_shop": "Shop Chính Hãng",
+      "freeship": "Freeship",
+      "freeship_long": "Miễn phí vận chuyển",
+      "voucher": "Shop có voucher"
+    },
+    "empty": {
+      "filtered": "Không có sản phẩm nào khớp bộ lọc",
+      "none": "Không tìm thấy sản phẩm phù hợp",
+      "in_shop": "trong shop này",
+      "hint": "Thử từ khóa ngắn hơn, kiểm tra chính tả hoặc bỏ bớt bộ lọc.",
+      "widen": "Mở rộng tìm toàn sàn",
+      "suggest": "Có thể bạn quan tâm"
     }
   },
   "theme": {
@@ -492,6 +572,27 @@
       "return_text": "Hàng lỗi hoặc sai mô tả, gửi ảnh và video bằng chứng ngay trong đơn.",
       "verified_title": "{shop} đã xác minh danh tính",
       "verified_text": "Bán trên Genie từ {year}, đánh giá shop {rating} sao."
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title_page": "{name} — Trang {page}"
+    },
+    "sub": {
+      "label": "Danh mục con"
+    },
+    "empty": {
+      "filtered": "Không có sản phẩm nào khớp bộ lọc",
+      "none": "Danh mục này chưa có sản phẩm"
+    }
+  },
+  "discover": {
+    "title": "Gợi ý hôm nay",
+    "lead": "Sản phẩm bán chạy và mới theo danh mục bạn xem gần đây · {n} sản phẩm",
+    "page_of": "Trang {page}/{total}",
+    "meta": {
+      "title_page": "Gợi ý hôm nay — Trang {page}",
+      "description": "Gợi ý hôm nay trên Genie: sản phẩm bán chạy và hàng mới từ các shop đã xác minh, Genie giữ tiền đến khi bạn nhận hàng."
     }
   }
 }

@@ -1,7 +1,276 @@
 ---
+// Kết quả tìm kiếm (prototype Search.jsx) — plan G08.21. Hai phạm vi: toàn sàn / trong một shop
+// (?scope=shop&shop=<id>). SSR theo `q` + bộ lọc trong query string; trang đặt noindex, follow (G08.46).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listAttributeFilters, listRootCategories, listVerifiedBrands } from '@/features/catalog';
+import { getFacets, listProducts, ProductGrid } from '@/features/product';
+import {
+  filtersHref,
+  FilterPanel,
+  parseFilters,
+  priceRange,
+  SEARCH_BANDS,
+  SEARCH_SORTS,
+  SortBar,
+  sortParam,
+} from '@/features/search';
+import { FilterChips, ResultGrid } from '@/features/search/server';
+import { getShop, listShops, shopHref, type Shop } from '@/features/shop';
+import { formatCompact, formatNumber } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { cn } from '@/shared/lib/cn';
+import { Badge, buttonClass, Icon, Seal } from '@/shared/ui';
+
+const PAGE_SIZE = 20;
+const path = '/search';
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const state = parseFilters(Astro.url.searchParams);
+
+let shop: Shop | null = null;
+if (state.shop) {
+  try {
+    shop = await getShop(state.shop);
+  } catch {
+    state.shop = null;
+    state.scope = 'all';
+  }
+}
+const inShop = state.scope === 'shop' && !!shop;
+
+const roots = (await listRootCategories()).slice(0, 8);
+const catIds = state.cats
+  .map((slug) => roots.find((c) => c.slug === slug)?.id)
+  .filter((id): id is number => id != null);
+const oneCat = catIds.length === 1 ? catIds[0] : null;
+const range = priceRange(state, SEARCH_BANDS);
+
+const [page, facets, attrs, verified, allShops] = await Promise.all([
+  listProducts({
+    q: state.q || undefined,
+    shopId: inShop ? shop?.id : undefined,
+    categoryIds: inShop ? undefined : catIds,
+    brands: inShop ? undefined : state.brands,
+    locations: inShop ? undefined : state.places,
+    attributes: oneCat ? state.attrs : undefined,
+    minPrice: range.min,
+    maxPrice: range.max,
+    authentic: state.authentic || undefined,
+    freeship: state.freeship || undefined,
+    hasVoucher: (!inShop && state.voucher) || undefined,
+    minRating: state.rating || undefined,
+    sort: sortParam(state),
+    page: state.page,
+    size: PAGE_SIZE,
+  }),
+  getFacets({ q: state.q || undefined, shopId: inShop ? shop?.id : undefined }),
+  oneCat ? listAttributeFilters(oneCat) : Promise.resolve([]),
+  listVerifiedBrands(),
+  inShop || !state.q ? Promise.resolve([]) : listShops(),
+]);
+
+// Khối shop khớp từ khóa (toàn sàn): tối đa 3 shop có tên chứa từ khóa
+const term = state.q.toLowerCase();
+const matchedShops = allShops.filter((s) => s.name.toLowerCase().includes(term)).slice(0, 3);
+// Rỗng: "Có thể bạn quan tâm" — 5 sản phẩm bán chạy (prototype)
+const suggestions =
+  page.items.length === 0 ? (await listProducts({ sort: 'hot', size: 5 })).items : [];
+
+const names: Record<string, string> = Object.fromEntries(roots.map((c) => [c.slug, c.name]));
+const hasFilters =
+  [state.cats, state.brands, state.places, state.attrs].some((x) => x.length > 0) ||
+  state.band != null ||
+  state.min != null ||
+  state.max != null ||
+  state.authentic ||
+  state.freeship ||
+  state.voucher ||
+  state.rating > 0;
+const qLabel = state.q || t('common.action.all');
+const scopeBtn =
+  'inline-flex h-9 max-w-[240px] items-center gap-[7px] rounded-pill px-4 text-sm no-underline hover:no-underline max-md:h-11';
 ---
 
-<StorefrontLayout title="Tìm kiếm">
-  <!-- Kết quả tìm kiếm — SSR -->
+<StorefrontLayout
+  title={state.q ? t('search.meta.title', { q: state.q }) : t('search.meta.title_all')}
+  description={t('search.meta.description')}
+  noindex
+  follow
+  query={state.q}
+>
+  <div class="mx-auto max-w-[1280px] px-6 pb-14 pt-2.5 max-md:px-3">
+    <div class="mb-4 flex flex-wrap items-center gap-3.5">
+      <h1 class="m-0 text-base font-normal text-muted">
+        {t('search.result.for')}
+        <b class="text-strong">“{qLabel}”</b>
+      </h1>
+      <nav
+        class="flex rounded-pill border border-solid border-line bg-surface-sunken p-[3px]"
+        aria-label={t('search.scope.label')}
+      >
+        <a
+          href={filtersHref(path, state, { scope: 'all' })}
+          aria-current={!inShop ? 'page' : undefined}
+          class={cn(
+            scopeBtn,
+            !inShop ? 'bg-primary font-semibold text-white' : 'text-body hover:text-primary',
+          )}
+        >
+          <Icon name="layout-grid" size={15} />
+          <span class="truncate">{t('search.scope.all')}</span>
+        </a>
+        {
+          shop ? (
+            <a
+              href={filtersHref(path, state, { scope: 'shop' })}
+              aria-current={inShop ? 'page' : undefined}
+              class={cn(
+                scopeBtn,
+                inShop ? 'bg-primary font-semibold text-white' : 'text-body hover:text-primary',
+              )}
+            >
+              <Icon name="store" size={15} />
+              <span class="truncate">{t('search.scope.in_shop', { shop: shop.name })}</span>
+            </a>
+          ) : (
+            <span
+              class={cn(scopeBtn, 'cursor-not-allowed text-disabled opacity-60')}
+              aria-disabled="true"
+            >
+              <Icon name="store" size={15} />
+              <span class="truncate">{t('search.scope.shop')}</span>
+            </span>
+          )
+        }
+      </nav>
+      <span class="ml-auto text-sm text-muted" role="status">
+        <b class="text-primary">{formatNumber(page.total_items, { locale: lang })}</b>
+        {t('search.result.products')}
+      </span>
+    </div>
+
+    {
+      inShop && shop && (
+        <div class="mb-3.5 flex items-center gap-3.5 rounded-lg border border-solid border-line-subtle bg-surface-card px-4 py-3 shadow-sm">
+          <div
+            class="grid h-11 w-11 flex-none place-items-center rounded-md text-[19px] font-extrabold text-white"
+            style={`background:${shop.logoBg}`}
+            aria-hidden="true"
+          >
+            {shop.name[0]}
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-strong">{shop.name}</span>
+              {shop.authentic && <Badge variant="primary">{t('search.filter.authentic')}</Badge>}
+            </div>
+            <div class="text-xs text-muted">
+              {t('search.shop.filtering', {
+                rating: formatNumber(shop.rating, { locale: lang }),
+                followers: formatCompact(shop.followerCount, { locale: lang }),
+              })}
+            </div>
+          </div>
+          <a href={shopHref(shop.id)} class={buttonClass({ variant: 'outline', size: 'sm' })}>
+            <Icon name="store" size={18} />
+            {t('search.shop.visit')}
+          </a>
+        </div>
+      )
+    }
+
+    {
+      matchedShops.length > 0 && (
+        <section class="mb-3.5" aria-labelledby="shops-match">
+          <h2 id="shops-match" class="sr-only">
+            {t('search.shop.matched')}
+          </h2>
+          <ul class="m-0 grid list-none gap-2.5 p-0 md:grid-cols-3">
+            {matchedShops.map((s) => (
+              <li>
+                <a
+                  href={shopHref(s.id)}
+                  class="flex items-center gap-3 rounded-lg border border-solid border-line-subtle bg-surface-card px-4 py-3 text-inherit no-underline shadow-sm hover:border-primary hover:no-underline"
+                >
+                  <Seal id={s.id} name={s.name} size={40} />
+                  <span class="min-w-0">
+                    <b class="block truncate text-sm text-strong">{s.name}</b>
+                    <small class="block text-xs text-muted">
+                      {t('home.shops.meta', {
+                        rating: formatNumber(s.rating, { locale: lang }),
+                        followers: formatCompact(s.followerCount, { locale: lang }),
+                        location: s.location,
+                      })}
+                    </small>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <div class="grid grid-cols-[232px_minmax(0,1fr)] items-start gap-[18px] max-md:grid-cols-1">
+      <FilterPanel
+        client:idle
+        path={path}
+        state={state}
+        variant="search"
+        categories={roots.map((c) => ({ slug: c.slug, name: c.name }))}
+        brands={facets.brands}
+        verifiedBrands={verified}
+        places={facets.locations}
+        attribute={attrs[0] ?? null}
+        inShop={inShop}
+        resultCount={page.total_items}
+      />
+
+      <div class="min-w-0">
+        <SortBar client:idle path={path} state={state} sorts={SEARCH_SORTS} total={null} />
+        <FilterChips path={path} state={state} bands={SEARCH_BANDS} categoryNames={names} />
+        <ResultGrid
+          path={path}
+          state={state}
+          items={page.items}
+          totalPages={page.total_pages}
+          shopLinks={!inShop}
+          label={t('search.result.list')}
+        >
+          <div
+            slot="empty"
+            class="grid place-items-center gap-3 rounded-lg border border-solid border-line-subtle bg-surface-card pb-5 pt-16 text-subtle"
+          >
+            <Icon name="package" size={46} />
+            <p class="m-0 px-4 text-center text-base text-muted">
+              {hasFilters ? t('search.empty.filtered') : t('search.empty.none')}
+              {inShop ? ` ${t('search.empty.in_shop')}` : ''}.
+            </p>
+            <p class="m-0 px-4 text-center text-sm text-subtle">{t('search.empty.hint')}</p>
+            {
+              inShop && (
+                <a
+                  href={filtersHref(path, state, { scope: 'all' })}
+                  class={buttonClass({ variant: 'outline' })}
+                >
+                  <Icon name="layout-grid" size={18} />
+                  {t('search.empty.widen')}
+                </a>
+              )
+            }
+            <div class="w-full px-[18px] pt-3">
+              <h2 class="m-0 mb-2.5 text-sm font-semibold text-strong">
+                {t('search.empty.suggest')}
+              </h2>
+              <ProductGrid
+                client:visible
+                items={suggestions}
+                className="min-[1101px]:grid-cols-5"
+              />
+            </div>
+          </div>
+        </ResultGrid>
+      </div>
+    </div>
+  </div>
 </StorefrontLayout>

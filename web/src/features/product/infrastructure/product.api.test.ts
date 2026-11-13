@@ -15,7 +15,9 @@ describe('product.api (mock)', () => {
     const prices = page.items.map((p) => p.price);
     expect(prices).toEqual([...prices].sort((a, b) => a - b));
     const auth = await listProducts({ authentic: true, size: 50 });
-    expect(auth.items.every((p) => p.authentic)).toBe(true);
+    // Chính hãng = shop / sản phẩm chính hãng hoặc thương hiệu đã xác minh (prototype Search.jsx mallOnly)
+    expect(auth.items.every((p) => p.authentic || p.brandVerified)).toBe(true);
+    expect(auth.items.some((p) => !p.authentic && p.brandVerified)).toBe(true);
   });
 
   it('phân trang số trang', async () => {

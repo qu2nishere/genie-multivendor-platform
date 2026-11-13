@@ -1,6 +1,11 @@
 // Sản phẩm mẫu dạng DTO (prototype data.jsx PRODUCTS + ProductDetail.jsx COLORS / SIZES / SpecsTable /
 // ProductDescription), dựng từ bộ seed chung. Lọc / sắp xếp ở đây mô phỏng việc backend làm.
-import { SEED_PRODUCTS, SEED_SHOPS, SEED_SUB_CATEGORIES } from '@/shared/api/mock/seed';
+import {
+  SEED_PRODUCTS,
+  SEED_ROOT_CATEGORIES,
+  SEED_SHOPS,
+  SEED_SUB_CATEGORIES,
+} from '@/shared/api/mock/seed';
 import { productImg } from '@/shared/lib/assets';
 import type { ProductQuery } from '../domain/product.types';
 import type { ProductDetailDto, ProductSummaryDto, VariantGroupDto } from './product.dto';
@@ -123,25 +128,38 @@ export function toDetailDto(p: SeedProduct): ProductDetailDto {
   };
 }
 
+/** Shop có voucher shop đang chạy (từ voucher mẫu của promotions: shop 1–5). */
+const SHOPS_WITH_VOUCHER: readonly number[] = [1, 2, 3, 4, 5];
+
 /** Lọc + sắp xếp như backend (prototype Category.jsx / Search.jsx). */
 export function queryProducts(q: ProductQuery): SeedProduct[] {
   let list: SeedProduct[] = [...SEED_PRODUCTS];
   const term = q.q?.trim().toLowerCase();
   if (q.categoryId) list = list.filter((p) => p.category_id === q.categoryId);
+  if (q.categoryIds?.length) list = list.filter((p) => q.categoryIds?.includes(p.category_id));
   if (q.subcategoryId) {
     const ids: readonly number[] =
       SEED_SUB_CATEGORIES.find((s) => s.id === q.subcategoryId)?.product_ids ?? [];
     list = list.filter((p) => ids.includes(p.id));
   }
   if (q.shopId) list = list.filter((p) => p.shop_id === q.shopId);
-  if (term) list = list.filter((p) => p.title.toLowerCase().includes(term));
+  if (term) {
+    // prototype: khớp tên sản phẩm hoặc tên danh mục
+    const catName = (id: number) => SEED_ROOT_CATEGORIES.find((c) => c.id === id)?.name ?? '';
+    list = list.filter((p) => `${p.title} ${catName(p.category_id)}`.toLowerCase().includes(term));
+  }
   if (q.minPrice != null) list = list.filter((p) => p.price >= (q.minPrice ?? 0));
   if (q.maxPrice != null) list = list.filter((p) => p.price <= (q.maxPrice ?? Infinity));
-  if (q.brand) list = list.filter((p) => p.brand === q.brand);
-  if (q.authentic) list = list.filter((p) => p.is_authentic || shopOf(p.shop_id).is_authentic);
+  if (q.brands?.length) list = list.filter((p) => q.brands?.includes(p.brand));
+  if (q.locations?.length)
+    list = list.filter((p) => q.locations?.includes(shopOf(p.shop_id).location));
+  if (q.authentic)
+    list = list.filter((p) => p.is_authentic || p.brand_verified || shopOf(p.shop_id).is_authentic);
   if (q.freeship) list = list.filter((p) => p.free_ship);
+  if (q.hasVoucher) list = list.filter((p) => SHOPS_WITH_VOUCHER.includes(p.shop_id));
   if (q.minRating) list = list.filter((p) => p.rating >= (q.minRating ?? 0));
-  if (q.attribute) list = list.filter((p) => p.attribute === q.attribute);
+  if (q.attributes?.length)
+    list = list.filter((p) => !!p.attribute && q.attributes?.includes(p.attribute));
   if (q.flash) list = list.filter((p) => p.is_flash);
   switch (q.sort) {
     case 'hot':
@@ -163,3 +181,12 @@ export function queryProducts(q: ProductQuery): SeedProduct[] {
 }
 
 export const findSeedProduct = (id: number) => SEED_PRODUCTS.find((p) => p.id === id);
+
+/** Thương hiệu / nơi bán có trong tập (prototype brandList, placeList: lấy trước khi lọc). */
+export function facetsOf(list: SeedProduct[]) {
+  return {
+    brands: Array.from(new Set(list.map((p) => p.brand))),
+    locations: Array.from(new Set(list.map((p) => shopOf(p.shop_id).location))),
+    total: list.length,
+  };
+}

@@ -94,3 +94,4 @@ export {
   type FormSectionProps,
   type DateInputProps,
 } from './FormSection';
+export { Breadcrumbs, type Crumb } from './Breadcrumbs';

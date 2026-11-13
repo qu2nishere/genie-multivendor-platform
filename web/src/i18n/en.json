@@ -273,6 +273,9 @@
       "chart_aria": "{name}. Peak {max} on {at}. Use the arrow keys to read each point.",
       "as_table": "View as table",
       "point": "Point"
+    },
+    "breadcrumb": {
+      "label": "Breadcrumb"
     }
   },
   "layout": {
@@ -320,6 +323,9 @@
       "seller_center": "Seller Center",
       "app_soon": "Mobile app (coming soon)",
       "legal": "© 2026 Genie (working name). Student project prototype with sample data. Prices in VND (₫)."
+    },
+    "nav": {
+      "home": "Home"
     }
   },
   "notifications": {
@@ -364,6 +370,80 @@
       "trending": "Trending",
       "category": "Category",
       "shop": "Shop"
+    },
+    "meta": {
+      "title": "Search results for “{q}”",
+      "title_all": "Search products",
+      "description": "Find products, brands and verified shops on Genie."
+    },
+    "result": {
+      "for": "Results for",
+      "products": "products",
+      "list": "Search results"
+    },
+    "scope": {
+      "label": "Search scope",
+      "all": "Whole marketplace",
+      "shop": "In shop",
+      "in_shop": "In {shop}"
+    },
+    "shop": {
+      "filtering": "Filtering in this shop · {rating} stars · {followers} followers",
+      "visit": "Visit shop",
+      "matched": "Shops matching your search"
+    },
+    "sort": {
+      "label": "Sort by",
+      "rel": "Relevance",
+      "hot": "Best selling",
+      "new": "Newest",
+      "price": "Price",
+      "price_asc": "low to high",
+      "price_desc": "high to low"
+    },
+    "band": {
+      "under": "Under {max}",
+      "over": "Over {min}",
+      "from": "From {min}",
+      "to": "Up to {max}"
+    },
+    "filter": {
+      "title": "Search filters",
+      "button": "Filters",
+      "close": "Close filters",
+      "active": "Active filters",
+      "remove": "Remove filter {label}",
+      "clear": "Clear filters",
+      "clear_all": "Clear all",
+      "apply": "Apply",
+      "show_n": "Show {n} products",
+      "service": "Seller & services",
+      "service_more": "Services & more",
+      "category": "By category",
+      "brand": "Brand",
+      "brand_verified": "Verified brand",
+      "place": "Ships from",
+      "price": "Price range",
+      "price_from": "FROM",
+      "price_to": "TO",
+      "price_min": "Minimum price",
+      "price_max": "Maximum price",
+      "rating": "Rating",
+      "and_up": "& up",
+      "rating_up": "{n} stars & up",
+      "authentic": "Authentic",
+      "authentic_shop": "Authentic shops",
+      "freeship": "Free shipping",
+      "freeship_long": "Free shipping",
+      "voucher": "Shops with vouchers"
+    },
+    "empty": {
+      "filtered": "No products match these filters",
+      "none": "No matching products found",
+      "in_shop": "in this shop",
+      "hint": "Try a shorter keyword, check the spelling or remove some filters.",
+      "widen": "Search the whole marketplace",
+      "suggest": "You may also like"
     }
   },
   "theme": {
@@ -492,6 +572,27 @@
       "return_text": "Faulty or not as described? Send photo and video evidence right in the order.",
       "verified_title": "{shop} has verified its identity",
       "verified_text": "Selling on Genie since {year}, shop rating {rating} stars."
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title_page": "{name} — Page {page}"
+    },
+    "sub": {
+      "label": "Subcategories"
+    },
+    "empty": {
+      "filtered": "No products match these filters",
+      "none": "This category has no products yet"
+    }
+  },
+  "discover": {
+    "title": "Today's picks",
+    "lead": "Best sellers and new arrivals from categories you viewed recently · {n} products",
+    "page_of": "Page {page}/{total}",
+    "meta": {
+      "title_page": "Today's picks — Page {page}",
+      "description": "Today's picks on Genie: best sellers and new arrivals from verified shops, with Genie holding your money until you receive your order."
     }
   }
 }

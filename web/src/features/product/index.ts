@@ -3,6 +3,7 @@ export type {
   Product,
   ProductSummary,
   ProductQuery,
+  ProductFacets,
   ProductSort,
   ProductBadge,
   ProductSpec,
@@ -34,6 +35,7 @@ export {
   listRelated,
   listProductsByIds,
   listFeed,
+  getFacets,
 } from './infrastructure/product.api';
 export { $wishlist, loadWishlist, toggleWishlist } from './application/wishlist.store';
 export { default as ProductGrid, ProductGridBody, type ProductGridProps } from './ui/ProductGrid';

@@ -1,7 +1,73 @@
 ---
+// "Gợi ý hôm nay" (prototype Discover.jsx) — plan G08.22. 30 sản phẩm / trang, 6 cột, phân trang số
+// bằng liên kết ?page=N thật (R16, G08.50). Trang ngoài phạm vi → 404 (R19).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listFeed, productHref } from '@/features/product';
+import { EMPTY_FILTERS, parseFilters } from '@/features/search';
+import { ResultGrid } from '@/features/search/server';
+import { env } from '@/shared/config/env';
+import { formatNumber } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { breadcrumbLd, itemListLd } from '@/shared/lib/seo';
+import { Breadcrumbs } from '@/shared/ui';
+
+const PER_PAGE = 30;
+const path = '/discover';
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+// Chỉ giữ tham số trang: mọi tham số khác bị bỏ khỏi liên kết phân trang
+const state = { ...EMPTY_FILTERS, page: parseFilters(Astro.url.searchParams).page };
+
+const feed = await listFeed({ page: state.page, size: PER_PAGE });
+if (state.page > feed.total_pages) return Astro.rewrite('/404');
+
+const title = t('discover.title');
+const crumbs = [
+  { name: t('layout.nav.home'), href: '/' },
+  { name: title, href: path },
+];
 ---
 
-<StorefrontLayout title="Khám phá">
-  <!-- Gợi ý hôm nay -->
+<StorefrontLayout
+  title={state.page > 1 ? t('discover.meta.title_page', { page: state.page }) : title}
+  description={t('discover.meta.description')}
+  canonical={state.page > 1 ? `${path}?page=${state.page}` : path}
+  jsonLd={[
+    breadcrumbLd(
+      crumbs.map((c) => ({ name: c.name, url: c.href })),
+      site,
+    ),
+    itemListLd(
+      feed.items.map((p) => ({ name: p.title, url: productHref(p) })),
+      site,
+    ),
+  ]}
+>
+  <div class="mx-auto max-w-[1280px] px-6 pb-14 pt-[18px] max-md:px-3">
+    <Breadcrumbs items={[crumbs[0], { name: title }]} />
+
+    <header
+      class="mb-[18px] flex items-end justify-between gap-4 border-0 border-l-4 border-solid border-primary pl-3.5"
+    >
+      <div>
+        <h1 class="m-0 text-[22px] font-bold leading-tight text-strong md:text-2xl">{title}</h1>
+        <p class="m-0 mt-1 text-sm text-muted">
+          {t('discover.lead', { n: formatNumber(feed.total_items, { locale: lang }) })}
+        </p>
+      </div>
+      <span class="flex-none text-sm text-subtle">
+        {t('discover.page_of', { page: state.page, total: feed.total_pages })}
+      </span>
+    </header>
+
+    <ResultGrid
+      path={path}
+      state={state}
+      items={feed.items}
+      totalPages={feed.total_pages}
+      columns={6}
+      label={title}
+    />
+  </div>
 </StorefrontLayout>

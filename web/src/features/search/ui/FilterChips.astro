@@ -1,0 +1,62 @@
+---
+// Thẻ "đang lọc" (prototype chips + "Xoá lọc") — mỗi thẻ là liên kết bỏ lọc đó (R16). SSR tĩnh.
+import { createT } from '@/shared/lib/i18n';
+import { Icon } from '@/shared/ui';
+import {
+  activeChips,
+  clearedFilters,
+  filtersHref,
+  withoutChip,
+  type FilterState,
+  type PriceBand,
+} from '../domain/filters';
+import { chipLabel } from './labels';
+
+interface Props {
+  path: string;
+  state: FilterState;
+  bands: readonly PriceBand[];
+  /** slug → tên danh mục (gốc và con). */
+  categoryNames: Record<string, string>;
+}
+
+const { path, state, bands, categoryNames } = Astro.props;
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const chips = activeChips(state);
+---
+
+{
+  chips.length > 0 && (
+    <ul
+      class="m-0 mb-3.5 flex list-none flex-wrap items-center gap-2 p-0"
+      aria-label={t('search.filter.active')}
+    >
+      {chips.map((c) => {
+        const label = chipLabel(c, state, { categories: categoryNames, bands }, t, lang);
+        return (
+          <li class="inline-flex h-[30px] items-center gap-1.5 rounded-pill bg-primary-tint pl-3 pr-1.5 text-xs font-semibold text-brand-700">
+            {label}
+            <a
+              href={filtersHref(path, state, withoutChip(state, c))}
+              rel="nofollow"
+              class="grid h-7 w-7 place-items-center rounded-full text-brand-600 hover:bg-brand-100"
+              aria-label={t('search.filter.remove', { label })}
+            >
+              <Icon name="x" size={13} />
+            </a>
+          </li>
+        );
+      })}
+      <li>
+        <a
+          href={filtersHref(path, clearedFilters(state))}
+          rel="nofollow"
+          class="text-sm text-muted no-underline hover:text-primary"
+        >
+          {t('search.filter.clear')}
+        </a>
+      </li>
+    </ul>
+  )
+}

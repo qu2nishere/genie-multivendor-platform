@@ -5,10 +5,16 @@ import { mockDelay, mockFail, mockOk, paginatePage, USE_MOCK } from '@/shared/ap
 import { env } from '@/shared/config/env';
 import type { Page } from '@/shared/api/types';
 import { isPagePagination } from '@/shared/api/types';
-import type { Product, ProductQuery, ProductSummary } from '../domain/product.types';
+import type { Product, ProductFacets, ProductQuery, ProductSummary } from '../domain/product.types';
 import type { ProductDetailDto, ProductSummaryDto } from './product.dto';
 import { toProduct, toProductSummary } from './product.mapper';
-import { findSeedProduct, queryProducts, toDetailDto, toSummaryDto } from './product.mock';
+import {
+  facetsOf,
+  findSeedProduct,
+  queryProducts,
+  toDetailDto,
+  toSummaryDto,
+} from './product.mock';
 
 const isServer = () => typeof window === 'undefined';
 
@@ -24,15 +30,18 @@ function get<T>(path: string, query?: Record<string, string | number | boolean |
 const toQuery = (q: ProductQuery) => ({
   q: q.q,
   category_id: q.categoryId,
+  category_ids: q.categoryIds?.join(','),
   subcategory_id: q.subcategoryId,
   shop_id: q.shopId,
   min_price: q.minPrice,
   max_price: q.maxPrice,
-  brand: q.brand,
+  brands: q.brands?.join(','),
+  locations: q.locations?.join(','),
   authentic: q.authentic,
   freeship: q.freeship,
+  has_voucher: q.hasVoucher,
   min_rating: q.minRating,
-  attribute: q.attribute,
+  attributes: q.attributes?.join(','),
   flash: q.flash,
   sort: q.sort,
   page: q.page ?? 1,
@@ -51,6 +60,20 @@ export async function listProducts(q: ProductQuery = {}): Promise<Page<ProductSu
     ? res.pagination
     : { page: 1, size: res.data.length, total_items: res.data.length, total_pages: 1 };
   return { items: res.data.map(toProductSummary), ...pg };
+}
+
+/**
+ * Giá trị lọc của một phạm vi (danh mục / từ khóa / shop) TRƯỚC khi áp bộ lọc chi tiết —
+ * để bộ lọc "Thương hiệu", "Nơi bán" không tự co lại khi đang chọn.
+ */
+export async function getFacets(
+  q: Pick<ProductQuery, 'q' | 'categoryId' | 'subcategoryId' | 'shopId'>,
+): Promise<ProductFacets> {
+  if (USE_MOCK) {
+    await mockDelay();
+    return facetsOf(queryProducts(q));
+  }
+  return (await get<ProductFacets>('/public/products/facets', toQuery(q))).data;
 }
 
 /** Chi tiết; không có / đã gỡ → ApiError GNE-CAT-4042 (trang trả 404). */

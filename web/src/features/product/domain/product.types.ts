@@ -75,19 +75,34 @@ export type ProductSort = 'rel' | 'hot' | 'new' | 'price_asc' | 'price_desc';
 export interface ProductQuery {
   q?: string;
   categoryId?: number;
+  /** Tìm kiếm: lọc nhiều danh mục gốc cùng lúc. */
+  categoryIds?: number[];
   /** Danh mục con (mock lọc theo nhóm ảnh như prototype). */
   subcategoryId?: number;
   shopId?: number;
   minPrice?: number;
   maxPrice?: number;
-  brand?: string;
+  brands?: string[];
+  /** Nơi bán (tỉnh / thành của shop). */
+  locations?: string[];
+  /** Chính hãng: shop Chính hãng hoặc thương hiệu đã xác minh. */
   authentic?: boolean;
   freeship?: boolean;
+  /** Chỉ shop đang có voucher. */
+  hasVoucher?: boolean;
   minRating?: number;
-  attribute?: string;
+  /** Giá trị thuộc tính lọc theo ngành (Bảo hành 12 tháng…). */
+  attributes?: string[];
   /** Chỉ sản phẩm đang Flash Sale. */
   flash?: boolean;
   sort?: ProductSort;
   page?: number;
   size?: number;
+}
+
+/** Giá trị lọc có trong một tập kết quả (thương hiệu, nơi bán) — backend trả kèm danh sách. */
+export interface ProductFacets {
+  brands: string[];
+  locations: string[];
+  total: number;
 }
