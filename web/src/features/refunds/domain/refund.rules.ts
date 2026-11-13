@@ -1,5 +1,5 @@
 // Quy tắc trả hàng — TS thuần (plan G10.39).
-import type { EvidenceRef, RefundStatus } from './refund.types';
+import type { RefundStatus } from './refund.types';
 
 /** Nhãn + tông của trạng thái yêu cầu (prototype REFUND_STATE). */
 export const REFUND_TONE: Record<string, 'warning' | 'primary' | 'danger' | 'success' | 'neutral'> =
@@ -20,7 +20,7 @@ export const isOpenRefund = (s: RefundStatus | string): boolean =>
 export const needsBank = (method: string): boolean => method !== 'VNPAY';
 
 /** Bằng chứng tối thiểu: ≥ 1 ảnh và ≥ 1 video (GNE-SUP-4221). */
-export function evidenceMissing(ev: Pick<EvidenceRef, 'mediaType'>[]): ('IMAGE' | 'VIDEO')[] {
+export function evidenceMissing(ev: { mediaType: string }[]): ('IMAGE' | 'VIDEO')[] {
   const miss: ('IMAGE' | 'VIDEO')[] = [];
   if (!ev.some((e) => e.mediaType === 'IMAGE')) miss.push('IMAGE');
   if (!ev.some((e) => e.mediaType === 'VIDEO')) miss.push('VIDEO');

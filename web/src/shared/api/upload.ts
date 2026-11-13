@@ -1,8 +1,11 @@
 // Tải tệp lên MinIO bằng URL ký sẵn (API_SPEC 4.1): nén ảnh (browser-image-compression) → kiểm MIME /
 // kích thước → POST /uploads/presigned-urls → PUT thẳng lên MinIO → trả object_key để gửi kèm yêu cầu.
-// Ảnh nén ra JPEG (không WebP) vì REVIEW_IMAGE / REFUND_EVIDENCE / AVATAR chỉ nhận jpeg, png.
+// Ảnh nén ra JPEG cho mục đích chỉ nhận jpeg/png (đánh giá, trả hàng, ảnh đại diện…), WebP cho ảnh sản
+// phẩm; giấy tờ sản phẩm và hồ sơ KYC giữ nguyên tệp gốc (không nén — TS 5.4).
 import {
+  compressionOf,
   isImage,
+  isVideo,
   uploadIssue,
   type UploadIssue,
   type UploadPurpose,
@@ -12,7 +15,7 @@ import { mockDelay, USE_MOCK } from './mock';
 
 export interface UploadedFile {
   objectKey: string;
-  mediaType: 'IMAGE' | 'VIDEO';
+  mediaType: 'IMAGE' | 'VIDEO' | 'DOCUMENT';
   name: string;
   /** URL xem trước trên máy (ảnh) — thu hồi bằng URL.revokeObjectURL khi bỏ. */
   previewUrl: string | null;
@@ -24,18 +27,20 @@ export class UploadError extends Error {
   }
 }
 
-/** Nén ảnh ≤ 1920px, ~1 MB, JPEG; ảnh nhỏ / tệp khác giữ nguyên. */
-async function compress(file: File): Promise<File> {
-  if (!isImage(file) || file.type === 'image/gif') return file;
+/** Nén ảnh ≤ 1920px, ~1 MB (JPEG hoặc WebP theo mục đích); tệp khác / mục đích không nén giữ nguyên. */
+async function compress(file: File, purpose: UploadPurpose): Promise<File> {
+  const to = compressionOf(purpose);
+  if (!to || !isImage(file) || file.type === 'image/gif') return file;
   const { default: imageCompression } = await import('browser-image-compression');
+  const type = to === 'webp' ? 'image/webp' : 'image/jpeg';
   const out = await imageCompression(file, {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
-    fileType: 'image/jpeg',
+    fileType: type,
     useWebWorker: true,
   });
-  const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
-  return new File([out], name, { type: 'image/jpeg' });
+  const name = file.name.replace(/\.[^.]+$/, '') + (to === 'webp' ? '.webp' : '.jpg');
+  return new File([out], name, { type });
 }
 
 interface PresignedDto {
@@ -47,10 +52,10 @@ interface PresignedDto {
 }
 
 export async function uploadFile(source: File, purpose: UploadPurpose): Promise<UploadedFile> {
-  const file = await compress(source);
+  const file = await compress(source, purpose);
   const issue = uploadIssue(file, purpose);
   if (issue) throw new UploadError(issue);
-  const mediaType = isImage(file) ? 'IMAGE' : 'VIDEO';
+  const mediaType = isImage(file) ? 'IMAGE' : isVideo(file) ? 'VIDEO' : 'DOCUMENT';
   const previewUrl = mediaType === 'IMAGE' ? URL.createObjectURL(file) : null;
   if (USE_MOCK) {
     await mockDelay(300);

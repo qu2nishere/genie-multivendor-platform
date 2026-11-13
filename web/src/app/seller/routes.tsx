@@ -17,6 +17,15 @@ const Fulfillment = lazy(() =>
 const Returns = lazy(() =>
   import('@/features/seller-orders').then((m) => ({ default: m.ReturnsPage })),
 );
+const Products = lazy(() =>
+  import('@/features/seller-products').then((m) => ({ default: m.ProductsPage })),
+);
+const Editor = lazy(() =>
+  import('@/features/seller-products').then((m) => ({ default: m.ProductEditor })),
+);
+const Catalog = lazy(() =>
+  import('@/features/seller-products').then((m) => ({ default: m.VendorCatalogPage })),
+);
 const Stats = lazy(() =>
   import('@/features/seller-analytics').then((m) => ({ default: m.StatsPage })),
 );
@@ -25,10 +34,10 @@ export const sellerRoutes: SellerRoute[] = [
   { path: '/', screen: Overview },
   { path: '/orders', screen: Fulfillment },
   { path: '/returns', screen: Returns },
-  { path: '/products', screen: Pending },
-  { path: '/products/new', screen: Pending },
-  { path: '/products/:id/edit', screen: Pending },
-  { path: '/catalog', screen: Pending },
+  { path: '/products', screen: Products },
+  { path: '/products/new', screen: Editor },
+  { path: '/products/:id/edit', screen: Editor },
+  { path: '/catalog', screen: Catalog },
   { path: '/wallet', screen: Pending },
   { path: '/kyc', screen: Pending },
   { path: '/promotions', screen: Pending },
