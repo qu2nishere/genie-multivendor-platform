@@ -2,3 +2,4 @@
 export { MONEY_STEPS, coinLeftPct, fillPct, type MoneyStep } from './domain/escrow';
 export { default as MoneyRail, type MoneyRailProps } from './ui/MoneyRail';
 export { HoldNote } from './ui/HoldNote';
+export { CodLogo, PaymentLogo } from './ui/PaymentLogos';

@@ -1,7 +1,19 @@
 ---
+// Thanh toán (plan G10.22; prototype Checkout.jsx) — khung SSR + island client:load, cần đăng nhập
+// (middleware), noindex. Dòng hàng lấy từ nháp checkout do trang Giỏ ghi.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { CheckoutPage } from '@/features/checkout';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
 ---
 
-<StorefrontLayout title="Thanh toán">
-  <!-- SSR khung + island client:load -->
+<StorefrontLayout
+  title={t('checkout.title')}
+  description={t('checkout.meta_description')}
+  noindex
+  variant="bar"
+  task
+>
+  <CheckoutPage client:load />
 </StorefrontLayout>

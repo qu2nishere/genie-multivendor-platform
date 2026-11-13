@@ -962,5 +962,140 @@
     "pager": "Trang trước và sau",
     "prev": "Trang trước",
     "next": "Trang sau"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "meta_description": "Thanh toán đơn hàng nhiều shop trên Genie — Genie giữ tiền đến khi bạn nhận hàng.",
+    "empty": {
+      "title": "Chưa có sản phẩm để thanh toán",
+      "text": "Hãy chọn sản phẩm trong giỏ hàng rồi bấm Mua hàng.",
+      "cta": "Về giỏ hàng"
+    },
+    "address": {
+      "title": "Địa chỉ nhận hàng",
+      "change": "Thay đổi",
+      "add": "Thêm địa chỉ",
+      "none": "Chưa có địa chỉ nhận hàng. Thêm địa chỉ để đặt hàng."
+    },
+    "order": {
+      "separate": "Đơn riêng",
+      "index": "Đơn {n}/{count}",
+      "oos": "Sản phẩm vừa hết hàng — đã gỡ khỏi đơn.",
+      "drop": "Bỏ món",
+      "edit_qty": "Sửa số lượng ở giỏ",
+      "more": "Xem thêm {count} sản phẩm",
+      "shop_voucher": "Chọn Voucher của Shop",
+      "shop_voucher_on": "Voucher Shop −{amount}",
+      "note": "Lời nhắn cho Shop…",
+      "note_label": "Lời nhắn cho {shop}",
+      "platform_cut": "Voucher Sàn phân bổ:",
+      "ship": "Giao nhanh",
+      "freeship": "Freeship −{amount}",
+      "total": "Tổng đơn ({count} SP):"
+    },
+    "voucher": {
+      "one_each": "Tối đa 1 mỗi loại",
+      "chosen": "Đã chọn Voucher Genie",
+      "choose": "Chọn mã giảm giá",
+      "platform": "Sàn",
+      "off": "giảm {amount}",
+      "ship_off": "giảm {amount} phí ship",
+      "extra": "Có bộ mã tiết kiệm thêm {amount}",
+      "apply_best": "Áp bộ mã tốt nhất",
+      "is_best": "Đang dùng bộ mã giảm nhiều nhất"
+    },
+    "points": {
+      "title": "Sử dụng Điểm Genie",
+      "rate": "1 Điểm = 1₫",
+      "have": "Đang có {points} Điểm",
+      "cap": "Dùng tối đa 50% tiền hàng ({amount})",
+      "applied": "Đã áp dụng {points} Điểm, giảm {amount} vào đơn hàng."
+    },
+    "pay": {
+      "title": "Phương thức thanh toán",
+      "note": "Với VNPAY và VietQR, Genie giữ tiền đến khi bạn nhận hàng rồi mới chuyển cho shop. Với COD, bạn trả tiền cho nhân viên giao hàng.",
+      "VNPAY": {
+        "name": "Cổng VNPAY",
+        "meta": "Thẻ ATM / QR Code"
+      },
+      "VIETQR": {
+        "name": "Chuyển khoản VietQR",
+        "meta": "Tự xác nhận qua SePay"
+      },
+      "COD": {
+        "name": "Thanh toán tiền mặt (COD)",
+        "meta": "Nhận hàng rồi thanh toán"
+      }
+    },
+    "hold": {
+      "left": "Tồn kho được giữ trong",
+      "expired": "Đã hết thời gian giữ hàng 15 phút.",
+      "renew": "Giữ lại"
+    },
+    "summary": {
+      "title": "Chi tiết thanh toán",
+      "subtotal": "Tổng tiền hàng",
+      "shipping": "Tổng phí vận chuyển",
+      "platform": "Voucher Sàn",
+      "freeship": "Giảm phí vận chuyển",
+      "shop": "Voucher Shop",
+      "points": "Sử dụng Điểm Genie",
+      "count": "{orders} đơn · {items} sản phẩm",
+      "hold": "Genie giữ {amount} đến khi bạn nhận hàng.",
+      "terms_before": "Nhấn \"Đặt hàng\" đồng nghĩa bạn đồng ý với",
+      "terms_link": "Điều khoản Genie"
+    },
+    "place": {
+      "vnpay": "Đặt hàng & thanh toán VNPAY",
+      "vietqr": "Đặt hàng & lấy mã QR",
+      "cod": "Đặt hàng",
+      "short": "Đặt hàng",
+      "processing": "Đang xử lý..."
+    }
+  },
+  "account": {
+    "address": {
+      "modal_title": "Địa chỉ của tôi",
+      "edit_title": "Cập nhật địa chỉ",
+      "add_title": "Thêm địa chỉ mới",
+      "add": "Thêm địa chỉ mới",
+      "default": "Mặc định",
+      "set_default": "Đặt làm mặc định",
+      "make_default": "Đặt làm địa chỉ mặc định",
+      "recipient": "Họ và tên",
+      "phone": "Số điện thoại",
+      "line": "Địa chỉ cụ thể (số nhà, tên đường)",
+      "label_type": "Loại địa chỉ",
+      "label": {
+        "HOME": "Nhà riêng",
+        "OFFICE": "Văn phòng"
+      },
+      "save": "Lưu địa chỉ",
+      "saved": "Đã lưu địa chỉ",
+      "gps": {
+        "idle": "Dùng vị trí hiện tại (GPS)",
+        "locating": "Đang định vị…",
+        "done": "Đã lấy vị trí hiện tại",
+        "hint": "Tự động điền địa chỉ từ định vị thiết bị.",
+        "done_hint": "Đã điền Tỉnh/Quận/Phường — bạn có thể chỉnh lại bên dưới."
+      },
+      "region": {
+        "label": "Tỉnh / Thành phố, Quận / Huyện, Phường / Xã",
+        "placeholder": "Chọn Tỉnh / Quận / Phường",
+        "province": "Tỉnh/Thành",
+        "district": "Quận/Huyện",
+        "ward": "Phường/Xã",
+        "search": "Tìm nhanh…",
+        "none": "Không tìm thấy"
+      },
+      "err": {
+        "recipient": "Nhập họ tên người nhận",
+        "recipient_long": "Họ tên tối đa 100 ký tự",
+        "phone": "Số điện thoại không hợp lệ",
+        "region": "Chọn đầy đủ Tỉnh / Quận / Phường",
+        "line": "Nhập địa chỉ cụ thể",
+        "line_long": "Địa chỉ tối đa 255 ký tự"
+      }
+    }
   }
 }

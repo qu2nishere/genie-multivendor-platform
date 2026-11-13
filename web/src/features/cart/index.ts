@@ -34,3 +34,4 @@ export { default as AddToCartButton, type AddToCartButtonProps } from './ui/AddT
 export { MiniCart } from './ui/MiniCart';
 export { default as CartPage, type CartPageProps } from './ui/CartPage';
 export { productHref as cartProductHref } from './ui/CartLineRow';
+export { useCartPricing, toPricingLine, type CartPricing } from './ui/useCartPricing';

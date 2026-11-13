@@ -962,5 +962,140 @@
     "pager": "Previous and next page",
     "prev": "Previous",
     "next": "Next"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "meta_description": "Check out a multi-shop order on Genie — Genie holds your money until you receive it.",
+    "empty": {
+      "title": "Nothing to check out",
+      "text": "Select items in your cart, then tap Check out.",
+      "cta": "Back to cart"
+    },
+    "address": {
+      "title": "Delivery address",
+      "change": "Change",
+      "add": "Add address",
+      "none": "No delivery address yet. Add one to place your order."
+    },
+    "order": {
+      "separate": "Separate order",
+      "index": "Order {n}/{count}",
+      "oos": "This item just sold out — removed from the order.",
+      "drop": "Remove",
+      "edit_qty": "Edit quantity in cart",
+      "more": "Show {count} more items",
+      "shop_voucher": "Choose a shop voucher",
+      "shop_voucher_on": "Shop voucher −{amount}",
+      "note": "Message to shop…",
+      "note_label": "Message to {shop}",
+      "platform_cut": "Platform voucher share:",
+      "ship": "Fast delivery",
+      "freeship": "Free shipping −{amount}",
+      "total": "Order total ({count} items):"
+    },
+    "voucher": {
+      "one_each": "Max 1 of each type",
+      "chosen": "Genie vouchers selected",
+      "choose": "Choose a discount code",
+      "platform": "Platform",
+      "off": "{amount} off",
+      "ship_off": "{amount} off shipping",
+      "extra": "A better combination saves {amount} more",
+      "apply_best": "Use best combination",
+      "is_best": "You are using the best combination"
+    },
+    "points": {
+      "title": "Use Genie Points",
+      "rate": "1 Point = ₫1",
+      "have": "You have {points} Points",
+      "cap": "Up to 50% of the goods amount ({amount})",
+      "applied": "{points} Points applied, {amount} off your order."
+    },
+    "pay": {
+      "title": "Payment method",
+      "note": "With VNPAY and VietQR, Genie holds your money until you receive your order before paying the shop. With COD, you pay the courier.",
+      "VNPAY": {
+        "name": "VNPAY gateway",
+        "meta": "ATM card / QR code"
+      },
+      "VIETQR": {
+        "name": "VietQR bank transfer",
+        "meta": "Auto-confirmed via SePay"
+      },
+      "COD": {
+        "name": "Cash on delivery (COD)",
+        "meta": "Pay when you receive it"
+      }
+    },
+    "hold": {
+      "left": "Stock is held for",
+      "expired": "The 15-minute stock hold has expired.",
+      "renew": "Hold again"
+    },
+    "summary": {
+      "title": "Payment details",
+      "subtotal": "Goods total",
+      "shipping": "Shipping total",
+      "platform": "Platform voucher",
+      "freeship": "Shipping discount",
+      "shop": "Shop vouchers",
+      "points": "Genie Points used",
+      "count": "{orders} orders · {items} items",
+      "hold": "Genie holds {amount} until you receive your order.",
+      "terms_before": "By tapping \"Place order\" you agree to the",
+      "terms_link": "Genie Terms"
+    },
+    "place": {
+      "vnpay": "Place order & pay with VNPAY",
+      "vietqr": "Place order & get QR code",
+      "cod": "Place order",
+      "short": "Place order",
+      "processing": "Processing..."
+    }
+  },
+  "account": {
+    "address": {
+      "modal_title": "My addresses",
+      "edit_title": "Edit address",
+      "add_title": "Add a new address",
+      "add": "Add a new address",
+      "default": "Default",
+      "set_default": "Set as default",
+      "make_default": "Set as default address",
+      "recipient": "Full name",
+      "phone": "Phone number",
+      "line": "Street address",
+      "label_type": "Address type",
+      "label": {
+        "HOME": "Home",
+        "OFFICE": "Office"
+      },
+      "save": "Save address",
+      "saved": "Address saved",
+      "gps": {
+        "idle": "Use current location (GPS)",
+        "locating": "Locating…",
+        "done": "Current location found",
+        "hint": "Fill in the address from your device location.",
+        "done_hint": "Province/District/Ward filled in — you can adjust below."
+      },
+      "region": {
+        "label": "Province / City, District, Ward",
+        "placeholder": "Choose Province / District / Ward",
+        "province": "Province",
+        "district": "District",
+        "ward": "Ward",
+        "search": "Quick search…",
+        "none": "No results"
+      },
+      "err": {
+        "recipient": "Enter the recipient's name",
+        "recipient_long": "Name can be at most 100 characters",
+        "phone": "Invalid phone number",
+        "region": "Choose Province, District and Ward",
+        "line": "Enter the street address",
+        "line_long": "Address can be at most 255 characters"
+      }
+    }
   }
 }

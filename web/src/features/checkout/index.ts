@@ -10,3 +10,29 @@ export {
   type ShipPolicy,
 } from './domain/shipping.rules';
 export { useShipPolicies } from './application/useShipping';
+export type {
+  PaymentMethod,
+  CheckoutSession,
+  CheckoutStatus,
+  CheckoutQuote,
+  PlaceOrderInput,
+  PaymentInstruction,
+  VietQrInfo,
+} from './domain/checkout.types';
+export { PAYMENT_METHODS, HOLD_MINUTES, NOTE_MAX } from './domain/checkout.types';
+export {
+  holdDeadline,
+  secondsLeft,
+  placeLabelKey,
+  isEscrowed,
+  outOfStockIds,
+  resultView,
+} from './domain/checkout.rules';
+export {
+  usePlaceOrder,
+  useCheckoutSession,
+  useRetryPayment,
+  useSettleMockPayment,
+} from './application/useCheckout';
+export { MOCK_VNPAY_URL } from './infrastructure/checkout.api';
+export { default as CheckoutPage, type CheckoutPageProps } from './ui/CheckoutPage';

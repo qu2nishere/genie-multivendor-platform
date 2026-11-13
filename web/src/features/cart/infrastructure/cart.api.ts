@@ -2,6 +2,7 @@
 // trong phiên tab (mockState) để sửa ở /cart còn nguyên khi sang /checkout.
 import { api } from '@/shared/api/http';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { placedStore } from '@/shared/api/mock/placed';
 import type { CartLine, CartLineInput, GuestCartItem, VariantChoice } from '../domain/cart.types';
 import type { BatchAddResultDto, CartDto, CartItemDto, VariantChoiceDto } from './cart.dto';
 import { toCartLines, toVariantChoice } from './cart.mapper';
@@ -13,8 +14,22 @@ import {
   type MockCartRow,
 } from './cart.mock';
 
-const db = mockState<MockCartRow[]>('cart', seedCartRows);
-const nextId = () => Math.max(7000, ...db.get().map((r) => r.item.id)) + 1;
+const store = mockState<MockCartRow[]>('cart', seedCartRows);
+/** Kho giỏ mock; dòng đã đặt hàng (checkout mock) bị bỏ như server xóa sau khi đặt (6.10). */
+const db = {
+  get: (): MockCartRow[] => {
+    const ordered = new Set(placedStore.get().sessions.flatMap((s) => s.cart_item_ids));
+    return store.get().filter((r) => !ordered.has(r.item.id));
+  },
+  set: (rows: MockCartRow[]) => store.set(rows),
+};
+// Mã dòng mới không trùng dòng còn trong giỏ lẫn dòng đã đặt
+const nextId = () =>
+  Math.max(
+    7000,
+    ...store.get().map((r) => r.item.id),
+    ...placedStore.get().sessions.flatMap((s) => s.cart_item_ids),
+  ) + 1;
 
 /** Mock: thêm SKU, cùng SKU cộng dồn và chặn ở tồn kho (6.3 / 6.6 / 6.7). */
 function mockAdd(variantId: number, qty: number): 'added' | 'merged' | 'skipped' {
