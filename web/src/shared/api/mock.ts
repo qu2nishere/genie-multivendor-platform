@@ -1,6 +1,7 @@
 // Lớp mock (plan G05.06; quyết định D3, D5): mọi *.api.ts kiểm USE_MOCK, trả dữ liệu từ *.mock.ts
 // qua các hàm dưới đây để có cùng hình dạng với API thật. Một bộ dữ liệu mặc định, không công tắc kịch bản.
 import { env } from '@/shared/config/env';
+import { readValue, writeValue } from '@/shared/lib/storage';
 import { ApiError } from './errors';
 import type { ApiErrorBody, ApiResponse, CursorPage, Page, Pagination } from './types';
 
@@ -97,4 +98,27 @@ export function paginatePage<T>(
   const page = Math.max(1, Math.floor(opts.page ?? 1));
   const start = (page - 1) * size;
   return { items: items.slice(start, start + size), page, size, total_items, total_pages };
+}
+
+/**
+ * Trạng thái mock có thể sửa (giỏ, đơn, địa chỉ…) giữ qua các lần chuyển trang trong cùng tab:
+ * trang storefront là MPA nên biến trong bộ nhớ mất khi tải trang mới. Lưu ở sessionStorage
+ * `genie.mock.<name>` — CHỈ dùng khi USE_MOCK, xóa cùng lớp mock khi nối backend (G13.20).
+ * SSR / test: chỉ giữ trong bộ nhớ.
+ */
+export function mockState<T>(name: string, init: () => T): { get: () => T; set: (v: T) => T } {
+  const key = `mock.${name}`;
+  let mem: T | null = null;
+  const get = (): T => {
+    if (mem !== null) return mem;
+    const saved = typeof window === 'undefined' || isTest() ? null : readValue<T>('session', key);
+    mem = saved ?? init();
+    return mem;
+  };
+  const set = (v: T): T => {
+    mem = v;
+    if (typeof window !== 'undefined' && !isTest()) writeValue('session', key, v);
+    return v;
+  };
+  return { get, set };
 }

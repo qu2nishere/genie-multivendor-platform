@@ -348,6 +348,64 @@
     "add": {
       "added": "Added to cart",
       "guest_full": "Your cart already has 50 items. Log in to add more."
+    },
+    "page": {
+      "title": "Cart",
+      "meta_description": "Your multi-shop cart on Genie: each shop ships as its own order, and Genie holds your money until you receive it.",
+      "count": "({count} items)",
+      "empty_title": "Your cart is empty",
+      "empty_text": "Discover millions of products at the best prices.",
+      "continue": "Continue shopping",
+      "guest_notice": "You are viewing a temporary cart saved in this browser. Log in to check out — it will be merged into your account."
+    },
+    "group": {
+      "select_all": "Select all items from {shop}",
+      "separate": "Separate order",
+      "ship_free": "Free shipping by shop",
+      "ship_fee": "Shipping {fee}",
+      "subtotal": "Subtotal ({count}):"
+    },
+    "line": {
+      "select": "Select {title}",
+      "variant": "Variant: {variant}",
+      "price_up": "Price went up since you added it",
+      "price_down": "Price went down since you added it",
+      "price_at_add": "Price when added",
+      "qty": "Quantity of {title}",
+      "remove": "Remove {title}",
+      "unavailable": {
+        "OUT_OF_STOCK": "Out of stock",
+        "SHOP_ON_VACATION": "Shop is on vacation",
+        "PRODUCT_UNAVAILABLE": "No longer available",
+        "FLASH_SALE_SOLD_OUT": "Flash Sale sold out"
+      }
+    },
+    "confirm": {
+      "remove_title": "Remove item",
+      "remove_one": "Are you sure you want to remove this item from your cart?",
+      "remove_zero": "Do you want to remove this item from your cart?",
+      "remove_many": "Are you sure you want to remove the {count} selected items from your cart?",
+      "over_title": "Quantity limit reached",
+      "over_text": "Only {stock} left in stock.",
+      "ok": "OK"
+    },
+    "bar": {
+      "select_all": "Select all ({count})",
+      "remove_selected": "Remove {count} items",
+      "hold": "Genie holds {amount} until you receive your order",
+      "hold_short": "Genie holds your money until you receive your order",
+      "orders": "{orders} orders",
+      "info": "{orders} orders · incl. {ship} shipping",
+      "info_discount": " · {amount} off",
+      "total": "Total",
+      "total_count": "({count} items):",
+      "checkout": "Check out ({count})"
+    },
+    "variant": {
+      "title": "Choose variant",
+      "stock": "Stock: {stock}",
+      "back": "Back",
+      "confirm": "Confirm"
     }
   },
   "auth": {
@@ -788,11 +846,11 @@
     "summary": "/ 5 · {n} reviews",
     "empty": "No reviews in this section yet",
     "filter": {
+      "3": "3 stars",
+      "4": "4 stars",
+      "5": "5 stars",
       "label": "Filter reviews",
       "all": "All",
-      "5": "5 stars",
-      "4": "4 stars",
-      "3": "3 stars",
       "img": "With photos",
       "buy": "Verified purchase"
     },

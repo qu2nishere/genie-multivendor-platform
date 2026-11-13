@@ -348,6 +348,64 @@
     "add": {
       "added": "Đã thêm vào giỏ hàng",
       "guest_full": "Giỏ hàng đã đủ 50 sản phẩm. Đăng nhập để thêm tiếp."
+    },
+    "page": {
+      "title": "Giỏ hàng",
+      "meta_description": "Giỏ hàng nhiều shop trên Genie: mỗi shop thành một đơn riêng, Genie giữ tiền đến khi bạn nhận hàng.",
+      "count": "({count} sản phẩm)",
+      "empty_title": "Giỏ hàng trống",
+      "empty_text": "Hãy khám phá hàng triệu sản phẩm với giá tốt nhất.",
+      "continue": "Tiếp tục mua sắm",
+      "guest_notice": "Bạn đang xem giỏ hàng tạm trên trình duyệt này. Đăng nhập để thanh toán — giỏ tạm sẽ được gộp vào tài khoản."
+    },
+    "group": {
+      "select_all": "Chọn tất cả sản phẩm của {shop}",
+      "separate": "Một đơn riêng",
+      "ship_free": "Shop miễn phí vận chuyển",
+      "ship_fee": "Phí ship {fee}",
+      "subtotal": "Tạm tính ({count}):"
+    },
+    "line": {
+      "select": "Chọn {title}",
+      "variant": "Phân loại: {variant}",
+      "price_up": "Giá đã tăng so với lúc thêm vào giỏ",
+      "price_down": "Giá đã giảm so với lúc thêm vào giỏ",
+      "price_at_add": "Giá lúc thêm",
+      "qty": "Số lượng {title}",
+      "remove": "Xóa {title}",
+      "unavailable": {
+        "OUT_OF_STOCK": "Hết hàng",
+        "SHOP_ON_VACATION": "Shop đang tạm nghỉ",
+        "PRODUCT_UNAVAILABLE": "Sản phẩm ngừng bán",
+        "FLASH_SALE_SOLD_OUT": "Hết suất Flash Sale"
+      }
+    },
+    "confirm": {
+      "remove_title": "Xóa sản phẩm",
+      "remove_one": "Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?",
+      "remove_zero": "Bạn có muốn xóa sản phẩm này ra khỏi giỏ hàng không?",
+      "remove_many": "Bạn có chắc muốn xóa {count} sản phẩm đã chọn khỏi giỏ hàng?",
+      "over_title": "Số lượng vượt giới hạn",
+      "over_text": "Sản phẩm này chỉ còn {stock} sản phẩm trong kho.",
+      "ok": "Đồng ý"
+    },
+    "bar": {
+      "select_all": "Chọn tất cả ({count})",
+      "remove_selected": "Xóa {count} sản phẩm",
+      "hold": "Genie giữ {amount} đến khi bạn nhận hàng",
+      "hold_short": "Genie giữ tiền đến khi bạn nhận hàng",
+      "orders": "{orders} đơn",
+      "info": "{orders} đơn · gồm phí ship {ship}",
+      "info_discount": " · giảm {amount}",
+      "total": "Tổng thanh toán",
+      "total_count": "({count} sản phẩm):",
+      "checkout": "Mua hàng ({count})"
+    },
+    "variant": {
+      "title": "Chọn phân loại",
+      "stock": "Kho: {stock}",
+      "back": "Trở lại",
+      "confirm": "Xác nhận"
     }
   },
   "auth": {
@@ -788,11 +846,11 @@
     "summary": "/ 5 · {n} đánh giá",
     "empty": "Chưa có đánh giá nào ở mục này",
     "filter": {
+      "3": "3 Sao",
+      "4": "4 Sao",
+      "5": "5 Sao",
       "label": "Lọc đánh giá",
       "all": "Tất cả",
-      "5": "5 Sao",
-      "4": "4 Sao",
-      "3": "3 Sao",
       "img": "Có hình ảnh",
       "buy": "Đã mua hàng"
     },

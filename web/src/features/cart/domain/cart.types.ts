@@ -1,13 +1,31 @@
-// Miền giỏ hàng (TS 2.4; prototype index.html seedCart / Cart.jsx). Mở rộng đầy đủ ở G10.01.
+// Miền giỏ hàng (plan G10.01; prototype index.html seedCart / Cart.jsx; API_SPEC 6.1).
+
+/** Lý do một dòng không mua được (API_SPEC 6.1 `unavailable_reason`). */
+export type UnavailableReason =
+  'OUT_OF_STOCK' | 'SHOP_ON_VACATION' | 'PRODUCT_UNAVAILABLE' | 'FLASH_SALE_SOLD_OUT';
+
+/** Shop của một nhóm dòng trong giỏ. */
+export interface CartShop {
+  id: number;
+  name: string;
+  /** Shop Chính hãng (is_mall). */
+  authentic: boolean;
+}
 
 export interface CartLine {
-  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn). */
+  /** Mã dòng giỏ (cart_item_id) — gửi lên API khi sửa / xóa / đặt hàng. */
+  id: number;
+  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn); dùng cho ?buy= và chọn dòng. */
   key: string;
   productId: number;
+  /** SKU (product_variant_id). */
+  variantId: number;
   productSlug: string;
-  shopId: number;
+  shop: CartShop;
   title: string;
   image: string;
+  /** Tên danh mục gốc ("Điện tử") — voucher chỉ áp / loại trừ theo ngành. */
+  category: string | null;
   /** Nhãn phân loại đã chọn ("Đen / 42"). */
   variantLabel: string;
   /** Giá hiện tại (VND). */
@@ -17,6 +35,14 @@ export interface CartLine {
   snapshotPrice: number | null;
   qty: number;
   stock: number;
+  available: boolean;
+  unavailableReason: UnavailableReason | null;
+}
+
+/** Các dòng của cùng một shop — mỗi nhóm thành một đơn riêng khi đặt (tách đơn theo shop). */
+export interface CartGroup {
+  shop: CartShop;
+  lines: CartLine[];
 }
 
 /** Giỏ khách vãng lai lưu ở trình duyệt (LUU_TRU_DU_LIEU 6.3) — chỉ id biến thể + số lượng. */
@@ -45,4 +71,17 @@ export interface CartLineInput {
   originalPrice: number | null;
   qty: number;
   stock: number;
+}
+
+/** Kết quả đổi số lượng một dòng (prototype Cart.jsx setQty). */
+export type QtyDecision =
+  { kind: 'set'; qty: number } | { kind: 'confirm_remove' } | { kind: 'over_stock'; stock: number };
+
+export type PriceChange = 'up' | 'down' | null;
+
+/** Phân loại để đổi trong giỏ (API_SPEC 5.10). */
+export interface VariantChoice {
+  groups: { name: string; values: string[] }[];
+  variants: { id: number; options: string[]; price: number; stock: number }[];
+  image: string;
 }
