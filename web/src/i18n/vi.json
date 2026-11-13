@@ -760,5 +760,12 @@
       "new": "Mới nhất",
       "hot": "Bán chạy"
     }
+  },
+  "policies": {
+    "menu": "Thông tin hỗ trợ",
+    "menu_mobile": "Thông tin hỗ trợ (danh sách trang)",
+    "pager": "Trang trước và sau",
+    "prev": "Trang trước",
+    "next": "Trang sau"
   }
 }

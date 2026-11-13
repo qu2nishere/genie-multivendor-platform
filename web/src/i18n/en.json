@@ -760,5 +760,12 @@
       "new": "Newest",
       "hot": "Best selling"
     }
+  },
+  "policies": {
+    "menu": "Help & policies",
+    "menu_mobile": "Help & policies (page list)",
+    "pager": "Previous and next page",
+    "prev": "Previous",
+    "next": "Next"
   }
 }

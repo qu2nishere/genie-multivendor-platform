@@ -1,7 +1,40 @@
 ---
+// Trang chính sách (plan G08.43) — SSR từ dữ liệu tĩnh; mã cũ của prototype → 301 về slug chuẩn;
+// slug lạ → 404 (R19).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { getPolicy, listPolicyGroups, policyHref } from '@/features/policies';
+import { PolicyPage } from '@/features/policies/server';
+import { env } from '@/shared/config/env';
+import { createT } from '@/shared/lib/i18n';
+import { breadcrumbLd } from '@/shared/lib/seo';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+const slug = Astro.params.slug ?? '';
+const page = getPolicy(slug);
+if (!page) return Astro.rewrite('/404');
+if (page.slug !== slug) return Astro.redirect(policyHref(page.slug), 301);
+
+const plain = page.html
+  .replace(/<[^>]+>/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
 ---
 
-<StorefrontLayout title="Chính sách">
-  <!-- Trang chính sách — SSR -->
+<StorefrontLayout
+  title={page.title}
+  description={plain}
+  canonical={policyHref(page.slug)}
+  type="article"
+  jsonLd={[
+    breadcrumbLd(
+      [
+        { name: t('layout.nav.home'), url: '/' },
+        { name: page.title, url: policyHref(page.slug) },
+      ],
+      site,
+    ),
+  ]}
+>
+  <PolicyPage page={page} groups={listPolicyGroups()} />
 </StorefrontLayout>

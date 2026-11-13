@@ -1,0 +1,148 @@
+---
+// Trang chính sách (prototype Pages.jsx) — plan G08.42. Menu bên trái theo nhóm (liên kết thật,
+// aria-current), nội dung HTML tĩnh trong repo, điều hướng trước / sau cuối trang. Màn hẹp: menu
+// thu vào một <details> phía trên nội dung.
+import { createT } from '@/shared/lib/i18n';
+import { Breadcrumbs, Icon } from '@/shared/ui';
+import { neighbours } from '../domain/policies.rules';
+import { policyHref, type PolicyGroup, type PolicyPage } from '../domain/policies.types';
+
+interface Props {
+  page: PolicyPage;
+  groups: PolicyGroup[];
+}
+
+const { page, groups } = Astro.props;
+const t = createT(Astro.locals.lang ?? 'vi');
+const { prev, next } = neighbours(groups, page.slug);
+const link = (on: boolean) =>
+  [
+    'block rounded-md px-2.5 py-2 text-sm no-underline hover:no-underline max-md:min-h-[44px] max-md:py-3',
+    on
+      ? 'bg-primary-tint font-semibold text-primary'
+      : 'text-body hover:bg-gray-50 hover:text-primary',
+  ].join(' ');
+---
+
+<div class="mx-auto max-w-[1280px] px-6 pb-[72px] pt-6 max-md:px-3 max-md:pt-4">
+  <Breadcrumbs
+    items={[{ name: t('layout.nav.home'), href: '/' }, { name: page.title }]}
+    className="md:hidden"
+  />
+  <div class="flex items-start gap-6 max-md:flex-col max-md:gap-3">
+    <aside
+      class="sticky top-[calc(var(--top-h,86px)+12px)] max-h-[calc(100vh-200px)] w-[280px] flex-none overflow-y-auto rounded-lg border border-solid border-line-subtle bg-surface-card px-[18px] py-6 shadow-sm max-md:hidden"
+    >
+      <h2 class="m-0 mb-[18px] ml-2.5 text-lg font-bold text-strong">{t('policies.menu')}</h2>
+      <nav aria-label={t('policies.menu')} class="flex flex-col gap-5">
+        {
+          groups.map((g) => (
+            <div>
+              <h3 class="m-0 mb-2 ml-2.5 text-xs font-bold uppercase tracking-[.05em] text-subtle">
+                {g.title}
+              </h3>
+              <ul class="m-0 list-none p-0">
+                {g.pages.map((p) => (
+                  <li>
+                    <a
+                      href={policyHref(p.slug)}
+                      class={link(p.slug === page.slug)}
+                      aria-current={p.slug === page.slug ? 'page' : undefined}
+                    >
+                      {p.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </aside>
+
+    <details
+      class="group w-full rounded-lg border border-solid border-line-subtle bg-surface-card shadow-sm md:hidden"
+    >
+      <summary
+        class="flex min-h-[48px] cursor-pointer list-none items-center justify-between px-4 text-sm font-semibold text-strong"
+      >
+        {t('policies.menu')}
+        <Icon
+          name="chevron-down"
+          size={18}
+          className="transition-transform group-open:rotate-180"
+        />
+      </summary>
+      <nav aria-label={t('policies.menu_mobile')} class="flex flex-col gap-4 px-2 pb-3">
+        {
+          groups.map((g) => (
+            <div>
+              <h3 class="m-0 mb-1 ml-2.5 text-xs font-bold uppercase tracking-[.05em] text-subtle">
+                {g.title}
+              </h3>
+              <ul class="m-0 list-none p-0">
+                {g.pages.map((p) => (
+                  <li>
+                    <a
+                      href={policyHref(p.slug)}
+                      class={link(p.slug === page.slug)}
+                      aria-current={p.slug === page.slug ? 'page' : undefined}
+                    >
+                      {p.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </details>
+
+    <article
+      class="min-w-0 flex-1 rounded-xl border border-solid border-line-subtle bg-surface-card p-10 shadow-sm max-md:w-full max-md:p-5"
+    >
+      <h1
+        class="m-0 mb-6 border-0 border-b-2 border-solid border-gray-100 pb-5 text-[32px] font-bold leading-tight text-strong max-md:text-2xl"
+      >
+        {page.title}
+      </h1>
+      <div class="tr-doc" set:html={page.html} />
+      {
+        (prev || next) && (
+          <nav
+            aria-label={t('policies.pager')}
+            class="mt-10 grid grid-cols-2 gap-3 border-0 border-t border-solid border-line-subtle pt-6 max-md:grid-cols-1"
+          >
+            {prev ? (
+              <a
+                href={policyHref(prev.slug)}
+                rel="prev"
+                class="flex flex-col rounded-md border border-solid border-line-subtle px-4 py-3 no-underline hover:border-primary hover:no-underline"
+              >
+                <small class="flex items-center gap-1 text-xs text-muted">
+                  <Icon name="chevron-left" size={14} /> {t('policies.prev')}
+                </small>
+                <span class="font-semibold text-strong">{prev.name}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {next && (
+              <a
+                href={policyHref(next.slug)}
+                rel="next"
+                class="flex flex-col items-end rounded-md border border-solid border-line-subtle px-4 py-3 text-right no-underline hover:border-primary hover:no-underline"
+              >
+                <small class="flex items-center gap-1 text-xs text-muted">
+                  {t('policies.next')} <Icon name="chevron-right" size={14} />
+                </small>
+                <span class="font-semibold text-strong">{next.name}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+    </article>
+  </div>
+</div>
