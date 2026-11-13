@@ -343,6 +343,22 @@
       "mark_all": "Mark all as read",
       "empty": "No notifications yet",
       "see_all": "See all notifications"
+    },
+    "page": {
+      "unread": "You have {count} unread notification(s)",
+      "all_read": "You're all caught up",
+      "mark_all": "Mark all as read",
+      "empty": "No notifications in this tab",
+      "more": "Load more",
+      "detail": "Notification details",
+      "new": "Unread",
+      "tab": {
+        "all": "All",
+        "order": "Orders",
+        "promo": "Promotions",
+        "system": "System",
+        "chat": "Chat"
+      }
     }
   },
   "cart": {
@@ -760,6 +776,43 @@
         "min_order": "Minimum order of {amount} not reached",
         "not_active": "This voucher is not active yet"
       }
+    },
+    "wallet": {
+      "sub": "You have {count} usable voucher(s)",
+      "history": "Voucher history",
+      "history_sub": "Used or expired vouchers",
+      "view_history": "View voucher history",
+      "code_placeholder": "Enter a voucher code",
+      "saved": "Voucher saved!",
+      "platform": "Platform vouchers",
+      "shop": "Shop vouchers",
+      "expired": "Expired",
+      "used": "Used",
+      "used_tag": "Used",
+      "expired_tag": "Expired",
+      "empty": "No vouchers in this tab yet",
+      "only": "Only for {list}",
+      "except": "Except {list}",
+      "from": "Valid from: {date}",
+      "not_yet": "Not started",
+      "use": "Use now",
+      "usage": "{used}/{limit} used",
+      "remove": "Remove voucher {label}",
+      "remove_title": "Confirm removal",
+      "remove_text": "Remove voucher {label} from your wallet?",
+      "removed": "Voucher removed from wallet",
+      "detail": "Voucher details",
+      "detail_of": "Details of voucher {label}",
+      "got_it": "Got it",
+      "field": {
+        "code": "Code",
+        "offer": "Offer",
+        "sponsor": "Sponsor",
+        "condition": "Condition",
+        "scope": "Scope",
+        "valid": "Valid",
+        "content": "Details"
+      }
     }
   },
   "payment": {
@@ -868,7 +921,13 @@
       "added": "Added to your wishlist",
       "removed": "Removed from your wishlist",
       "on": "In wishlist",
-      "off": "Wishlist"
+      "off": "Wishlist",
+      "title": "Wishlist ({count})",
+      "sub": "Tap the heart on a product to save it for later",
+      "empty": "Your wishlist is empty.",
+      "remove": "Unlike",
+      "add": "Add to cart",
+      "unavailable": "No variant of this product is in stock"
     },
     "promise": {
       "label": "When you buy on Genie",
@@ -1058,6 +1117,16 @@
       "all": "All products",
       "new": "Newest",
       "hot": "Best selling"
+    },
+    "follows": {
+      "title": "Followed shops ({count})",
+      "sub": "Get promotions from your favourite shops",
+      "empty": "You are not following any shop yet.",
+      "followers": "{count} followers",
+      "visit": "Visit shop",
+      "unfollow": "Unfollow",
+      "unfollow_title": "Unfollow shop?",
+      "unfollow_text": "You will no longer get promotions from {shop}."
     }
   },
   "policies": {
@@ -1584,6 +1653,28 @@
       "bank": "Choose a bank",
       "account": "Account number must be 6–20 digits",
       "holder": "Enter the account holder's name"
+    }
+  },
+  "coins": {
+    "balance": "Genie Points balance",
+    "balance_short": "Balance:",
+    "rule": "1 Point = ₫1 at checkout · Points expire after 12 months",
+    "expiring": "{amount} Points expire within {days} days",
+    "redeem": "Redeem",
+    "redeem_title": "Redeem Points for a voucher",
+    "voucher": "{amount} off voucher",
+    "cost": "{points} Points · Orders from {min}",
+    "swap": "Redeem",
+    "not_enough": "Not enough Points",
+    "redeemed": "Redeemed voucher {code} — see it in your Voucher wallet",
+    "history": "Points history",
+    "checkin": {
+      "title": "Daily check-in",
+      "cta": "Check in for Points",
+      "checked": "Checked in",
+      "again": "Next check-in in",
+      "day": "Day {n}",
+      "done": "Checked in! +{points} Points"
     }
   }
 }

@@ -28,7 +28,28 @@ export interface MockReview {
   created_at: string;
 }
 
-export const activityStore = mockState<{ refunds: MockRefund[]; reviews: MockReview[] }>(
-  'activity',
-  () => ({ refunds: [], reviews: [] }),
-);
+/** Voucher đổi từ Điểm (coins ghi, kho voucher của promotions đọc) — dạng VoucherDto snake_case. */
+export interface MockRedeemedVoucher {
+  id: string;
+  code: string;
+  value: number;
+  cost: number;
+  created_at: string;
+}
+
+/** Giao dịch Điểm phát sinh trong phiên (điểm danh, đổi quà). */
+export interface MockCoinTxn {
+  id: number;
+  type: string;
+  description: string;
+  amount: number;
+  created_at: string;
+}
+
+export const activityStore = mockState<{
+  refunds: MockRefund[];
+  reviews: MockReview[];
+  redeemed: MockRedeemedVoucher[];
+  coinTxns: MockCoinTxn[];
+  checkedInAt: string | null;
+}>('activity', () => ({ refunds: [], reviews: [], redeemed: [], coinTxns: [], checkedInAt: null }));

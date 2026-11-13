@@ -1,22 +1,58 @@
 // Voucher của người dùng: kho voucher, lưu voucher. Mock khi USE_MOCK; sau này /api/v1/me/vouchers.
 import { api, request } from '@/shared/api/http';
 import { env } from '@/shared/config/env';
-import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { activityStore } from '@/shared/api/mock/activity';
 import type { Voucher } from '../domain/voucher.types';
 import type { VoucherDto } from './voucher.dto';
 import { toVoucher } from './voucher.mapper';
 import { VOUCHER_DTOS } from './voucher.mock';
 
-// Mã đã lưu trong phiên mock
-const savedCodes = new Set(VOUCHER_DTOS.filter((v) => v.saved).map((v) => v.code));
+// Mã đã lưu trong phiên mock (giữ qua các trang trong tab)
+const savedDb = mockState<string[]>('vouchers.saved', () =>
+  VOUCHER_DTOS.filter((v) => v.saved).map((v) => v.code),
+);
+const savedCodes = {
+  has: (c: string) => savedDb.get().includes(c),
+  add: (c: string) => void savedDb.set([...savedDb.get().filter((x) => x !== c), c]),
+  delete: (c: string) => void savedDb.set(savedDb.get().filter((x) => x !== c)),
+};
 const withSaved = (d: VoucherDto): VoucherDto => ({ ...d, saved: savedCodes.has(d.code) });
+
+/** Voucher đổi từ Điểm trong phiên mock (coins ghi vào kho "hoạt động"). */
+function redeemedDtos(): VoucherDto[] {
+  return (activityStore.get().redeemed ?? []).map((r) => ({
+    id: r.id,
+    code: r.code,
+    kind: 'platform',
+    shop_id: null,
+    amount_label: `-${r.value / 1000}k`,
+    label: `Giảm ${r.value.toLocaleString('vi-VN')}₫`,
+    condition_label: 'Đơn từ 50.000₫',
+    type: 'FIXED',
+    value: r.value,
+    cap: null,
+    min_order: 50000,
+    categories: null,
+    excluded: null,
+    valid_from: r.created_at.slice(0, 10),
+    expires_at: '2026-12-31',
+    scope_label: 'Toàn sàn',
+    sponsor_label: 'Đổi từ Điểm Genie',
+    content: `Đổi từ ${r.cost.toLocaleString('vi-VN')} Điểm, dùng 1 lần.`,
+    saved: true,
+    status: 'active',
+    used_count: 0,
+    usage_limit: 1,
+  }));
+}
 
 export async function listMyVouchers(): Promise<Voucher[]> {
   if (USE_MOCK) {
     await mockDelay();
-    return VOUCHER_DTOS.map(withSaved)
-      .filter((v) => v.saved)
-      .map(toVoucher);
+    return [...redeemedDtos(), ...VOUCHER_DTOS.map(withSaved).filter((v) => v.saved)].map(
+      toVoucher,
+    );
   }
   return (await api.get<VoucherDto[]>('/me/vouchers')).map(toVoucher);
 }
@@ -80,4 +116,14 @@ export async function findVoucherByCode(code: string): Promise<Voucher> {
   });
   if (!list[0]) throw new Error('GNE-VCH-4041');
   return toVoucher(list[0].voucher);
+}
+
+/** DELETE /me/vouchers/{id} — xóa khỏi Kho Voucher. */
+export async function removeVoucher(v: Pick<Voucher, 'id' | 'code'>): Promise<void> {
+  if (USE_MOCK) {
+    await mockDelay(150);
+    savedCodes.delete(v.code);
+    return;
+  }
+  await api.delete(`/me/vouchers/${v.id}`);
 }

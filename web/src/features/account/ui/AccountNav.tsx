@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/react';
 import { useEffect, useRef, useState } from 'react';
 import { signOut } from '@/features/auth';
 import { useNotifications } from '@/features/notifications';
+import { useFollowedShops } from '@/features/shop';
 import { useMyVouchers } from '@/features/promotions';
 import { $session } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
@@ -34,9 +35,11 @@ function Nav({ active }: AccountNavProps) {
   const user = mounted && session.status === 'authenticated' ? session.user : null;
   const notifs = useNotifications(!!user);
   const vouchers = useMyVouchers(!!user);
+  const follows = useFollowedShops(!!user);
   const [logout, setLogout] = useState(false);
   const badge = (id: AccountSection): number => {
     if (id === 'notifications') return notifs.unread;
+    if (id === 'following') return follows.data?.length ?? 0;
     if (id === 'vouchers')
       return (vouchers.data ?? []).filter((v) => v.saved && v.status === 'active').length;
     return 0;

@@ -12,7 +12,7 @@ const tab = (STATUS_GROUPS as string[]).includes(raw) ? (raw as StatusGroup) : n
 ---
 
 <StorefrontLayout title={t('orders.title')} noindex task>
-  <AccountShell active="orders">
+  <AccountShell active="orders" title={t('orders.title')}>
     <OrdersPanel client:load tab={tab} />
   </AccountShell>
 </StorefrontLayout>

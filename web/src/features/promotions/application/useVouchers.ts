@@ -3,6 +3,7 @@ import {
   findVoucherByCode,
   getVouchersByCodes,
   listMyVouchers,
+  removeVoucher,
   saveVoucher,
 } from '../infrastructure/voucher.api';
 
@@ -40,4 +41,15 @@ export function useSaveVoucher(onSaved?: () => void, onFailed?: (e: unknown) => 
 /** Tra voucher theo mã (ô "Nhập mã voucher" của Voucher Picker). */
 export function useFindVoucher() {
   return useMutation({ mutationFn: findVoucherByCode });
+}
+
+export function useRemoveVoucher() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: removeVoucher,
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: MY_VOUCHERS_KEY });
+      void qc.invalidateQueries({ queryKey: ['vouchers'] });
+    },
+  });
 }

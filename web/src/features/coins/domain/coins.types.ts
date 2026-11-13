@@ -12,3 +12,28 @@ export interface CoinSummary {
     rewards: number[];
   };
 }
+
+export type CoinTxnType =
+  | 'CHECK_IN'
+  | 'ORDER_CASHBACK'
+  | 'REVIEW_BONUS'
+  | 'USED_AT_CHECKOUT'
+  | 'ORDER_REFUND'
+  | 'VOUCHER_REDEEM';
+
+export interface CoinTxn {
+  id: number;
+  type: CoinTxnType | string;
+  description: string;
+  /** Âm khi tiêu. */
+  amount: number;
+  createdAt: string;
+}
+
+/** Quà đổi Điểm (prototype XU_REWARDS → POINT_REWARDS; GET /public/coin-rewards). */
+export interface CoinReward {
+  id: number;
+  cost: number;
+  voucherValue: number;
+  minOrder: number;
+}

@@ -343,6 +343,22 @@
       "mark_all": "Đánh dấu đã đọc",
       "empty": "Chưa có thông báo nào",
       "see_all": "Xem tất cả thông báo"
+    },
+    "page": {
+      "unread": "Bạn có {count} thông báo chưa đọc",
+      "all_read": "Bạn đã đọc hết thông báo",
+      "mark_all": "Đánh dấu tất cả đã đọc",
+      "empty": "Không có thông báo nào ở mục này",
+      "more": "Xem thêm thông báo",
+      "detail": "Chi tiết thông báo",
+      "new": "Chưa đọc",
+      "tab": {
+        "all": "Tất cả",
+        "order": "Đơn hàng",
+        "promo": "Khuyến mãi",
+        "system": "Hệ thống",
+        "chat": "Chat"
+      }
     }
   },
   "cart": {
@@ -760,6 +776,43 @@
         "min_order": "Chưa đạt giá trị tối thiểu {amount}",
         "not_active": "Voucher chưa đến thời gian sử dụng"
       }
+    },
+    "wallet": {
+      "sub": "Bạn đang có {count} voucher khả dụng",
+      "history": "Lịch sử voucher",
+      "history_sub": "Voucher đã dùng hoặc đã hết hạn",
+      "view_history": "Xem lịch sử voucher",
+      "code_placeholder": "Nhập mã voucher tại đây",
+      "saved": "Lưu voucher thành công!",
+      "platform": "Voucher Sàn",
+      "shop": "Voucher Shop",
+      "expired": "Hết hiệu lực",
+      "used": "Đã sử dụng",
+      "used_tag": "Đã dùng",
+      "expired_tag": "Hết hạn",
+      "empty": "Chưa có voucher nào trong mục này",
+      "only": "Chỉ áp dụng danh mục {list}",
+      "except": "Ngoại trừ danh mục {list}",
+      "from": "Có hiệu lực: {date}",
+      "not_yet": "Chưa tới giờ",
+      "use": "Dùng ngay",
+      "usage": "{used}/{limit} lượt đã dùng",
+      "remove": "Xóa voucher {label}",
+      "remove_title": "Xác nhận xóa",
+      "remove_text": "Bạn có chắc chắn muốn xóa voucher {label} khỏi kho không?",
+      "removed": "Đã xóa voucher khỏi kho",
+      "detail": "Chi tiết voucher",
+      "detail_of": "Chi tiết voucher {label}",
+      "got_it": "Đã hiểu",
+      "field": {
+        "code": "Mã voucher",
+        "offer": "Ưu đãi",
+        "sponsor": "Nhà tài trợ",
+        "condition": "Điều kiện",
+        "scope": "Phạm vi",
+        "valid": "Hạn sử dụng",
+        "content": "Nội dung voucher"
+      }
     }
   },
   "payment": {
@@ -868,7 +921,13 @@
       "added": "Đã thêm vào danh sách yêu thích",
       "removed": "Đã bỏ khỏi danh sách yêu thích",
       "on": "Đã yêu thích",
-      "off": "Yêu thích"
+      "off": "Yêu thích",
+      "title": "Sản phẩm yêu thích ({count})",
+      "sub": "Bấm tim trên sản phẩm để lưu lại xem sau",
+      "empty": "Bạn chưa có sản phẩm yêu thích nào.",
+      "remove": "Bỏ thích",
+      "add": "Thêm vào giỏ",
+      "unavailable": "Sản phẩm hiện không còn phân loại nào còn hàng"
     },
     "promise": {
       "label": "Khi mua ở Genie",
@@ -1058,6 +1117,16 @@
       "all": "Tất cả sản phẩm",
       "new": "Mới nhất",
       "hot": "Bán chạy"
+    },
+    "follows": {
+      "title": "Shop đang theo dõi ({count})",
+      "sub": "Nhận thông báo khuyến mãi từ các shop yêu thích",
+      "empty": "Bạn chưa theo dõi shop nào.",
+      "followers": "{count} theo dõi",
+      "visit": "Vào shop",
+      "unfollow": "Hủy theo dõi",
+      "unfollow_title": "Hủy theo dõi Shop?",
+      "unfollow_text": "Bạn sẽ không nhận được khuyến mãi từ {shop} nữa."
     }
   },
   "policies": {
@@ -1584,6 +1653,28 @@
       "bank": "Chọn ngân hàng",
       "account": "Số tài khoản gồm 6–20 chữ số",
       "holder": "Nhập tên chủ tài khoản"
+    }
+  },
+  "coins": {
+    "balance": "Số dư Điểm Genie",
+    "balance_short": "Số dư:",
+    "rule": "1 Điểm = 1₫ khi thanh toán · Điểm hết hạn sau 12 tháng",
+    "expiring": "{amount} Điểm sắp hết hạn trong {days} ngày tới",
+    "redeem": "Đổi quà",
+    "redeem_title": "Đổi Điểm lấy voucher",
+    "voucher": "Voucher giảm {amount}",
+    "cost": "{points} Điểm · Đơn từ {min}",
+    "swap": "Đổi",
+    "not_enough": "Chưa đủ Điểm",
+    "redeemed": "Đã đổi voucher {code}, xem trong Kho Voucher",
+    "history": "Lịch sử Điểm",
+    "checkin": {
+      "title": "Điểm danh nhận Điểm",
+      "cta": "Điểm danh nhận Điểm",
+      "checked": "Đã điểm danh",
+      "again": "Điểm danh lại sau",
+      "day": "Ngày {n}",
+      "done": "Điểm danh thành công! +{points} Điểm"
     }
   }
 }

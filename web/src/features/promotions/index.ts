@@ -58,3 +58,5 @@ export {
 export { findVoucherByCode } from './infrastructure/voucher.api';
 export { useFindVoucher } from './application/useVouchers';
 export { VoucherPicker, type VoucherPickerProps } from './ui/VoucherPicker';
+export { default as VouchersPanel } from './ui/VouchersPanel';
+export { useRemoveVoucher } from './application/useVouchers';
