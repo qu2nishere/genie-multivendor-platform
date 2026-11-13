@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 61 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 69 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **286 / 429** | | |
+| **Tổng** | | **379** | **50** | **294 / 429** | | |
 
 ---
 
@@ -446,14 +446,14 @@
 
 **Nhóm H — Voucher, Điểm, yêu thích, theo dõi, thông báo**
 
-- [ ] **G10.55** `VouchersPanel`
-- [ ] **G10.56** Miền Điểm
-- [ ] **G10.57** `CoinsPanel`
-- [ ] **G10.58** `WishlistPanel`
-- [ ] **G10.59** `FollowsPanel`
-- [ ] **G10.60** `NotificationsPanel`
-- [ ] **G10.61** Khóa i18n `promotions.wallet.*`, `coins.*`, `notifications.*`
-- [ ] **G10.C8** 🔖 COMMIT `feat(web): add vouchers, points, wishlist and notification sections` · hash: `_______`
+- [x] **G10.55** `VouchersPanel`
+- [x] **G10.56** Miền Điểm
+- [x] **G10.57** `CoinsPanel`
+- [x] **G10.58** `WishlistPanel`
+- [x] **G10.59** `FollowsPanel`
+- [x] **G10.60** `NotificationsPanel`
+- [x] **G10.61** Khóa i18n `promotions.wallet.*`, `coins.*`, `notifications.*`
+- [x] **G10.C8** 🔖 COMMIT `feat(web): add vouchers, points, wishlist and notification sections` · hash: `488581b`
 
 **Nhóm I — Chat & mở shop**
 
@@ -805,6 +805,12 @@
 | G10.48–G10.49 | `AddressPanel` (thêm / sửa trong hộp với `AddressForm`, xóa có xác nhận — địa chỉ mặc định không xóa được, đặt mặc định). `AddressModal`, `AddressForm`, `RegionPicker` đã làm ở nhóm C. |
 | G10.50–G10.52 | Mật khẩu: kiểm mật khẩu hiện tại khi đang gõ (POST /me/password/verify, chờ 500 ms), thanh độ mạnh, OTP bước 2; lần thiết lập đầu tải lại trang sau thông báo để menu (island khác) đổi nhãn như prototype. Liên kết Google: thật chuyển sang OAuth `intent=link`, mock liên kết ngay; không gỡ được khi là cách đăng nhập duy nhất (GNE-AUTH-4093). Thiết bị: icon theo loại, đăng xuất từng thiết bị / tất cả thiết bị khác, phiên hiện tại không có nút. |
 | G10.53 | Xóa tài khoản: POST /me/otp-challenges `ACCOUNT_DELETION` — còn đơn đang xử lý → hộp liệt kê mã đơn (GNE-USR-4091, mock đọc trạng thái đơn mock trong phiên); hết đơn → OTP → PUT /me/deletion-request → băng đỏ "ẩn danh vào …" + "Hủy yêu cầu xóa". Bỏ nút "Mô phỏng: đã hoàn tất các đơn" (D5). Đã thử thật: thiết lập mật khẩu (OTP) → thành công, xóa tài khoản bị chặn bởi 7 đơn đang xử lý. |
+| G10.55 | `VouchersPanel` (promotions/ui, /account/vouchers): lưu bằng mã, tab theo loại có số đếm, thanh lượt đã dùng đổi màu theo %, xóa khỏi kho (DELETE /me/vouchers/{id}, mới thêm), chi tiết, lịch sử Hết hiệu lực / Đã dùng; "Dùng ngay" dẫn /cart. Danh sách chỉ gồm voucher đã lưu theo GET /me/vouchers (prototype hiện cả voucher chưa lưu với nút "Lưu"). Mock: mã đã lưu giữ trong phiên tab (trước chỉ trong bộ nhớ). |
+| G10.56–G10.57 | `features/coins` đủ 4 tầng: lịch sử (3.13 transactions), quà đổi (XU_REWARDS → `CoinReward` / /public/coin-rewards), điểm danh 7 ngày, đổi quà; `coins.rules` + test. `CoinsPanel` ở /account/points: đếm ngược tới nửa đêm giờ VN sau khi điểm danh. Mock: số dư = mẫu − Điểm dùng khi đặt + Điểm đánh giá có ảnh + giao dịch trong phiên; voucher đổi từ Điểm hiện ngay trong Kho Voucher. Đã thử: điểm danh +100, đổi quà → DIEM5K1 đứng đầu kho. |
+| G10.58 | `WishlistPanel` (product/ui) đọc store yêu thích dùng chung với nút tim; "Thêm vào giỏ" chọn tổ hợp phân loại đầu tiên còn hàng (lấy chi tiết sản phẩm), shop tạm nghỉ thì khóa. |
+| G10.59 | `FollowsPanel` (shop/ui): con dấu shop, Chính hãng, đánh giá, số theo dõi, Vào shop, bỏ theo dõi có xác nhận; huy hiệu số shop ở menu tài khoản. |
+| G10.60 | `NotificationsPanel` (notifications/ui): tab Tất cả / Đơn hàng / Khuyến mãi / Hệ thống / Chat, đánh dấu tất cả đã đọc, mở = đánh dấu đã đọc rồi đi tới đích; thông báo toàn sàn → hộp chi tiết; "Xem thêm" 5 mục / lần. Sửa liên kết thông báo đơn: route theo dõi đơn dùng id nên lấy số thứ tự từ mã TR (API nên trả kèm order_id — ghi G13.20). |
+| G10.61 | Khóa `promotions.wallet.*`, `coins.*`, `notifications.page.*`, `product.wishlist.*`, `shop.follows.*` (vi + en). Khu tài khoản thêm `<h1>` (ẩn khỏi mắt, theo tên mục) trong `AccountShell` — trước đó /orders và /account/* chưa có h1 (R18). |
 
 ## Nhật ký
 
@@ -827,3 +833,4 @@
 | 2026-11-13 | Đơn mua (tab, nhóm đơn, hủy, đã nhận, mua lại, thanh toán lại) + theo dõi đơn + khung tài khoản (G10 nhóm E) | 913f4d8 |
 | 2026-11-13 | Trả hàng / hoàn tiền (modal, bằng chứng, khối trạng thái) + đánh giá sản phẩm, lớp tải tệp dùng chung (G10 nhóm F) | 7c90b73 |
 | 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
+| 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
