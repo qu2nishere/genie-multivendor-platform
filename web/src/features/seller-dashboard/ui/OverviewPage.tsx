@@ -13,9 +13,9 @@ import {
 import {
   itemCount,
   orderBadge,
+  OrderWhen,
   sellerNow,
   useSellerOrders,
-  whenLabel,
   type SellerOrder,
 } from '@/features/seller-orders';
 import { kycGroup, useSellerMe } from '@/features/seller-settings';
@@ -153,15 +153,6 @@ function ShopMoney({ money }: { money: Dashboard['money'] }) {
   );
 }
 
-function When({ iso }: { iso: string }) {
-  const { t } = useT();
-  const w = whenLabel(iso, sellerNow());
-  if (w.kind === 'today') return <>{t('seller-orders.when.today', { time: w.time })}</>;
-  if (w.kind === 'yesterday') return <>{t('seller-orders.when.yesterday')}</>;
-  if (w.kind === 'days') return <>{t('seller-orders.when.days', { count: w.days })}</>;
-  return <>{isoToVnDate(iso.slice(0, 10))}</>;
-}
-
 function RecentOrders() {
   const { t, locale } = useT();
   const navigate = useNavigate();
@@ -206,7 +197,7 @@ function RecentOrders() {
                     <td>{itemCount(o)}</td>
                     <td className="num font-semibold">{formatVND(o.total, { locale })}</td>
                     <td className="text-muted">
-                      <When iso={o.createdAt} />
+                      <OrderWhen iso={o.createdAt} />
                     </td>
                     <td>
                       <StatusBadge status={b.tone} label={t(b.key)} />

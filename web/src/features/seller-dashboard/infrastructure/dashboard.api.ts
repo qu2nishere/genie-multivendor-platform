@@ -3,7 +3,11 @@
 // trả hàng, chat lấy từ bản mẫu (vendor/data.jsx WALLET, PERF, Fulfillment.jsx RETURNS).
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
-import { sellerOrdersStore, sellerProductsStore } from '@/shared/api/mock/seller';
+import {
+  sellerOrdersStore,
+  sellerProductsStore,
+  sellerRefundsStore,
+} from '@/shared/api/mock/seller';
 import type { Dashboard } from '../domain/dashboard.types';
 import type { DashboardDto } from './dashboard.dto';
 
@@ -39,6 +43,7 @@ function mockDashboard(): DashboardDto {
   const orders = sellerOrdersStore.get();
   const products = sellerProductsStore.get();
   const count = (s: string) => products.filter((p) => p.status === s).length;
+  const open = sellerRefundsStore.get().filter((r) => r.status === 'REQUESTED');
   return {
     as_of: '2026-06-08',
     work_queue: {
@@ -46,7 +51,14 @@ function mockDashboard(): DashboardDto {
       orders_to_prepare: orders.filter((o) => o.status === 'CONFIRMED' || o.status === 'PREPARING')
         .length,
       orders_delivery_failed: orders.filter((o) => o.shipment?.status === 'DELIVERY_FAILED').length,
-      return_requests: { count: 2, nearest_deadline_at: '2026-06-09T06:00:00+07:00' },
+      return_requests: {
+        count: open.length,
+        nearest_deadline_at:
+          open
+            .map((r) => r.deadline_at ?? '')
+            .filter(Boolean)
+            .sort()[0] ?? null,
+      },
       unread_chats: 5,
     },
     money: {

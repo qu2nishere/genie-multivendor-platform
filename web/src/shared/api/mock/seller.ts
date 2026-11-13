@@ -293,3 +293,77 @@ export const sellerProductsStore = mockState<MockSellerProduct[]>('seller.produc
   product(6, 'Bàn phím cơ RGB switch blue', 'keyboard', 'DRAFT', 459000, 54, 1900, 6),
   product(7, 'Camera Mirrorless X-100 (bản mới)', 'camera', 'DRAFT', 12990000, 8, 0, 1),
 ]);
+
+/** Yêu cầu trả hàng gửi tới shop (API 10.4; prototype Fulfillment.jsx RETURNS). */
+export interface MockSellerRefund {
+  id: number;
+  code: string;
+  order: { id: number; code: string };
+  customer_name: string;
+  items: { product_name: string; variant_name: string; quantity: number }[];
+  request_type: 'RETURN_AND_REFUND' | 'REFUND_ONLY';
+  reason_code: string;
+  evidence: { url: string; media_type: 'IMAGE' | 'VIDEO'; name: string }[];
+  refund_amount: number;
+  status:
+    | 'REQUESTED'
+    | 'AWAITING_EVIDENCE'
+    | 'AWAITING_RETURN_SHIPMENT'
+    | 'SHOP_REJECTED'
+    | 'DISPUTED'
+    | 'REFUNDED';
+  deadline_at: string | null;
+  evidence_requested: boolean;
+}
+
+const img = (n: string) => ({
+  url: `/img/products/${n}.jpg`,
+  media_type: 'IMAGE' as const,
+  name: `${n}.jpg`,
+});
+const video = { url: '', media_type: 'VIDEO' as const, name: 'mo-hop.mp4' };
+
+export const sellerRefundsStore = mockState<MockSellerRefund[]>('seller.refunds', () => [
+  {
+    id: 231,
+    code: 'RFN-0231',
+    order: { id: 129, code: 'TR-20260608-000129' },
+    customer_name: 'Hoàng Thu Trang',
+    items: [{ product_name: 'Tai nghe ANC Pro 5', variant_name: 'Trắng', quantity: 1 }],
+    request_type: 'RETURN_AND_REFUND',
+    reason_code: 'WRONG_SIZE_COLOR',
+    evidence: [img('headphones'), img('keyboard'), video],
+    refund_amount: 389000,
+    status: 'REQUESTED',
+    deadline_at: '2026-06-10T01:00:00+07:00',
+    evidence_requested: false,
+  },
+  {
+    id: 232,
+    code: 'RFN-0232',
+    order: { id: 127, code: 'TR-20260608-000127' },
+    customer_name: 'Mai Anh Tuấn',
+    items: [{ product_name: 'Sạc nhanh 65W', variant_name: 'Trắng', quantity: 1 }],
+    request_type: 'REFUND_ONLY',
+    reason_code: 'DAMAGED_IN_TRANSIT',
+    evidence: [img('phone'), video],
+    refund_amount: 178000,
+    status: 'REQUESTED',
+    deadline_at: '2026-06-09T06:00:00+07:00',
+    evidence_requested: false,
+  },
+  {
+    id: 229,
+    code: 'RFN-0229',
+    order: { id: 121, code: 'TR-20260608-000121' },
+    customer_name: 'Bùi Đức Anh',
+    items: [{ product_name: 'Loa bluetooth mini IPX7', variant_name: 'Đen', quantity: 1 }],
+    request_type: 'RETURN_AND_REFUND',
+    reason_code: 'DEFECTIVE',
+    evidence: [img('speaker'), video],
+    refund_amount: 320000,
+    status: 'AWAITING_RETURN_SHIPMENT',
+    deadline_at: null,
+    evidence_requested: false,
+  },
+]);

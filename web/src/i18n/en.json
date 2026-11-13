@@ -1903,6 +1903,154 @@
       "today": "{time} today",
       "yesterday": "Yesterday",
       "days": "{count} days ago"
+    },
+    "tabs": {
+      "label": "Filter orders by status",
+      "ALL": "All",
+      "NEW": "New",
+      "TO_PREPARE": "To prepare",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "RETURN": "Returns",
+      "CANCELLED": "Cancelled"
+    },
+    "search": "Search order code, customer",
+    "search_placeholder": "Search order, customer...",
+    "sort": {
+      "label": "Sort",
+      "NEWEST": "Newest",
+      "OLDEST": "Oldest"
+    },
+    "empty": "No orders found.",
+    "card": {
+      "note": "Customer note",
+      "rejected": "Rejected by shop: {reason}",
+      "detail": "Details",
+      "waybill": "Waybill: {code}",
+      "reprint": "Reprint waybill",
+      "total": "Order total:",
+      "reject": "Reject",
+      "confirm": "Confirm",
+      "confirmed": "Order confirmed. The customer has been notified",
+      "prepare": "Prepare",
+      "prepared": "Moved to Preparing",
+      "hand_over": "Ready for the carrier"
+    },
+    "reject": {
+      "title": "Reject order {code}",
+      "reason": "Reason",
+      "reasons": {
+        "OUT_OF_STOCK": "Out of stock",
+        "WRONG_PRICE": "Wrong listed price",
+        "UNSERVICEABLE_AREA": "Cannot deliver to this area",
+        "OTHER": "Other reason"
+      },
+      "note": "Describe the reason",
+      "note_placeholder": "Describe the reason...",
+      "hint": "Rejections count towards your cancellation rate. Orders not confirmed within 24 hours are auto-confirmed and flagged as late.",
+      "submit": "Reject order",
+      "done": "Order rejected. Stock, Points and vouchers were returned and the payment refunded",
+      "done_cod": "Order rejected. Stock, Points and vouchers were returned",
+      "err": {
+        "note": "Enter a reason",
+        "note_long": "Up to 500 characters"
+      }
+    },
+    "detail": {
+      "title": "Order {code}",
+      "loading": "Order details",
+      "placed": "Placed",
+      "recipient": "Recipient",
+      "items": "Items",
+      "paid": "Customer paid",
+      "shipping": "Shipping",
+      "carrier_status": "Carrier status"
+    },
+    "route": {
+      "title": "Request pickup (3PL)",
+      "intro_a": "Genie compares the carriers you enabled and picks the best one for order",
+      "intro_b": ":",
+      "days": "{count} days",
+      "selected": "Selected",
+      "settings_hint": "Turn carriers on or off in Settings → Shipping.",
+      "submit": "Confirm pickup (3PL)",
+      "placing": "Processing...",
+      "done": "Waybill created, the carrier will pick up the parcel"
+    },
+    "waybill": {
+      "title": "Shipping label",
+      "print": "Print label",
+      "partner": "Genie shipping partner",
+      "prepaid": "Prepaid",
+      "cod": "Cash on delivery",
+      "recipient": "Recipient",
+      "address": "Address",
+      "parcel": "Parcel",
+      "items": "{count} items",
+      "collect": "Collect",
+      "collect_none": "0 ₫ · Paid in advance"
+    },
+    "returns": {
+      "notice": "You have 48 hours to respond. After that, Genie accepts the option the customer chose.",
+      "empty": "No return requests yet.",
+      "status": {
+        "REQUESTED": "Awaiting your response",
+        "AWAITING_EVIDENCE": "Awaiting customer evidence",
+        "AWAITING_RETURN_SHIPMENT": "Awaiting returned item",
+        "REFUNDED": "Refunded",
+        "SHOP_REJECTED": "Rejected by shop",
+        "DISPUTED": "Under platform review"
+      },
+      "type": {
+        "RETURN_AND_REFUND": "Return and refund",
+        "REFUND_ONLY": "Refund only, no return"
+      },
+      "due_hours": "{hours} h left",
+      "due_return": "item on the way back",
+      "plan": "Option",
+      "reason": "Reason",
+      "evidence": "Evidence",
+      "amount": "Requested amount",
+      "act": {
+        "REQUEST_EVIDENCE": {
+          "btn": "Request more evidence",
+          "title": "Request more evidence",
+          "ask": "What should the customer add?",
+          "note": "You can only ask once. Your 48-hour clock pauses and the customer has 48 hours to submit.",
+          "done": "Request sent to the customer"
+        },
+        "REJECT": {
+          "btn": "Reject",
+          "title": "Reject request",
+          "ask": "Reason for rejecting",
+          "note": "The customer has 48 hours to accept or escalate to Genie.",
+          "done": "Request rejected"
+        },
+        "APPROVE_WITH_RETURN": {
+          "btn": "Accept return",
+          "title": "Accept return",
+          "note": "Genie creates a return waybill. If the customer does not hand over the item within 7 days, the request closes and the money is released to you.",
+          "done": "Return waybill created"
+        },
+        "APPROVE_REFUND_ONLY": {
+          "btn": "Approve refund",
+          "title": "Approve refund",
+          "note": "Refund right away without taking the item back. The money comes from the order's escrow.",
+          "done": "Refund approved"
+        },
+        "CONFIRM_RETURN_RECEIVED": {
+          "btn": "Item received",
+          "title": "Confirm returned item received",
+          "note": "The item is back in the expected condition. The customer is refunded from the order's escrow.",
+          "done": "Item received, the customer has been refunded"
+        },
+        "ESCALATE": {
+          "btn": "Ask Genie to decide",
+          "title": "Ask Genie to decide",
+          "note": "Genie staff review both sides' evidence and make the final decision.",
+          "done": "Escalated to Genie"
+        }
+      }
     }
   },
   "seller-dashboard": {

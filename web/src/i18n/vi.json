@@ -1903,6 +1903,154 @@
       "today": "{time} hôm nay",
       "yesterday": "Hôm qua",
       "days": "{count} ngày trước"
+    },
+    "tabs": {
+      "label": "Lọc đơn theo trạng thái",
+      "ALL": "Tất cả",
+      "NEW": "Mới",
+      "TO_PREPARE": "Chờ chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "RETURN": "Trả hàng",
+      "CANCELLED": "Đã hủy"
+    },
+    "search": "Tìm mã đơn, khách hàng",
+    "search_placeholder": "Tìm mã đơn, KH...",
+    "sort": {
+      "label": "Sắp xếp",
+      "NEWEST": "Mới nhất",
+      "OLDEST": "Cũ nhất"
+    },
+    "empty": "Không tìm thấy đơn hàng nào.",
+    "card": {
+      "note": "Lời nhắn của khách",
+      "rejected": "Shop đã từ chối: {reason}",
+      "detail": "Chi tiết",
+      "waybill": "Mã VĐ: {code}",
+      "reprint": "In lại vận đơn",
+      "total": "Tổng đơn:",
+      "reject": "Từ chối",
+      "confirm": "Xác nhận",
+      "confirmed": "Đã xác nhận đơn. Khách nhận thông báo \"Shop đã xác nhận đơn\"",
+      "prepare": "Chuẩn bị hàng",
+      "prepared": "Đã chuyển sang Đang chuẩn bị",
+      "hand_over": "Sẵn sàng giao cho ĐVVC"
+    },
+    "reject": {
+      "title": "Từ chối đơn {code}",
+      "reason": "Lý do từ chối",
+      "reasons": {
+        "OUT_OF_STOCK": "Hết hàng thực tế",
+        "WRONG_PRICE": "Sai giá niêm yết",
+        "UNSERVICEABLE_AREA": "Không giao tới khu vực này",
+        "OTHER": "Lý do khác"
+      },
+      "note": "Mô tả lý do",
+      "note_placeholder": "Mô tả lý do...",
+      "hint": "Từ chối đơn ảnh hưởng tỷ lệ hủy của shop. Đơn không xác nhận sau 24 giờ sẽ được tự xác nhận và ghi điểm chậm xác nhận.",
+      "submit": "Từ chối đơn",
+      "done": "Đã từ chối đơn. Tồn kho, Điểm và voucher được hoàn cho khách, tiền tự hoàn",
+      "done_cod": "Đã từ chối đơn. Tồn kho, Điểm và voucher được hoàn cho khách",
+      "err": {
+        "note": "Nhập lý do từ chối",
+        "note_long": "Tối đa 500 ký tự"
+      }
+    },
+    "detail": {
+      "title": "Đơn {code}",
+      "loading": "Chi tiết đơn",
+      "placed": "Đặt",
+      "recipient": "Người nhận",
+      "items": "Sản phẩm",
+      "paid": "Khách thanh toán",
+      "shipping": "Vận chuyển",
+      "carrier_status": "Trạng thái hãng"
+    },
+    "route": {
+      "title": "Yêu cầu lấy hàng (3PL)",
+      "intro_a": "Hệ thống so sánh các hãng shop đã bật và chọn hãng tốt nhất cho đơn",
+      "intro_b": ":",
+      "days": "{count} ngày",
+      "selected": "Đã chọn",
+      "settings_hint": "Bật hoặc tắt hãng ở Cài đặt → Vận chuyển.",
+      "submit": "Xác nhận lấy hàng (3PL)",
+      "placing": "Đang xử lý...",
+      "done": "Đã tạo vận đơn, hãng sẽ tới lấy hàng"
+    },
+    "waybill": {
+      "title": "Phiếu gửi hàng",
+      "print": "In phiếu gửi hàng",
+      "partner": "Đối tác vận chuyển của Genie",
+      "prepaid": "Đã thanh toán",
+      "cod": "Thu hộ COD",
+      "recipient": "Người nhận",
+      "address": "Địa chỉ",
+      "parcel": "Kiện hàng",
+      "items": "{count} sản phẩm",
+      "collect": "Thu hộ",
+      "collect_none": "0 ₫ · Đã thanh toán trước"
+    },
+    "returns": {
+      "notice": "Shop có 48 giờ để phản hồi. Quá hạn, hệ thống tự đồng ý theo phương án khách đã chọn.",
+      "empty": "Chưa có yêu cầu trả hàng nào.",
+      "status": {
+        "REQUESTED": "Chờ shop phản hồi",
+        "AWAITING_EVIDENCE": "Chờ khách bổ sung",
+        "AWAITING_RETURN_SHIPMENT": "Chờ hàng hoàn về",
+        "REFUNDED": "Đã hoàn tiền",
+        "SHOP_REJECTED": "Shop đã từ chối",
+        "DISPUTED": "Sàn đang phân xử"
+      },
+      "type": {
+        "RETURN_AND_REFUND": "Trả hàng và hoàn tiền",
+        "REFUND_ONLY": "Hoàn tiền ngay, không trả hàng"
+      },
+      "due_hours": "còn {hours} giờ",
+      "due_return": "hàng đang về kho",
+      "plan": "Phương án",
+      "reason": "Lý do",
+      "evidence": "Bằng chứng",
+      "amount": "Số tiền yêu cầu",
+      "act": {
+        "REQUEST_EVIDENCE": {
+          "btn": "Yêu cầu bổ sung",
+          "title": "Yêu cầu bổ sung bằng chứng",
+          "ask": "Cần khách bổ sung gì?",
+          "note": "Chỉ yêu cầu được 1 lần. Đồng hồ 48 giờ của shop tạm dừng, khách có 48 giờ để nộp.",
+          "done": "Đã gửi yêu cầu bổ sung cho khách"
+        },
+        "REJECT": {
+          "btn": "Từ chối",
+          "title": "Từ chối yêu cầu",
+          "ask": "Lý do từ chối",
+          "note": "Khách có 48 giờ để chấp nhận hoặc khiếu nại lên Sàn.",
+          "done": "Đã từ chối yêu cầu"
+        },
+        "APPROVE_WITH_RETURN": {
+          "btn": "Đồng ý nhận lại hàng",
+          "title": "Đồng ý nhận lại hàng",
+          "note": "Hệ thống tạo vận đơn chiều về. Quá 7 ngày khách chưa giao hàng cho ĐVVC thì yêu cầu tự đóng và tiền giải ngân cho shop.",
+          "done": "Đã tạo vận đơn chiều về"
+        },
+        "APPROVE_REFUND_ONLY": {
+          "btn": "Đồng ý hoàn tiền",
+          "title": "Đồng ý hoàn tiền",
+          "note": "Hoàn tiền ngay, không thu hồi hàng. Tiền được trừ từ escrow của đơn.",
+          "done": "Đã đồng ý hoàn tiền"
+        },
+        "CONFIRM_RETURN_RECEIVED": {
+          "btn": "Đã nhận hàng hoàn",
+          "title": "Xác nhận đã nhận hàng hoàn",
+          "note": "Hàng đã về kho đúng tình trạng. Tiền được hoàn cho khách từ escrow của đơn.",
+          "done": "Đã nhận hàng hoàn, tiền được hoàn cho khách"
+        },
+        "ESCALATE": {
+          "btn": "Nhờ Sàn phân xử",
+          "title": "Nhờ Sàn phân xử",
+          "note": "Nhân viên Genie xem bằng chứng của hai bên và ra quyết định cuối cùng.",
+          "done": "Đã chuyển sang Sàn phân xử"
+        }
+      }
     }
   },
   "seller-dashboard": {
