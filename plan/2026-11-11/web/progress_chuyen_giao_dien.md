@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 43 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 49 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **268 / 429** | | |
+| **Tổng** | | **379** | **50** | **274 / 429** | | |
 
 ---
 
@@ -422,12 +422,12 @@
 
 **Nhóm F — Trả hàng & đánh giá**
 
-- [ ] **G10.39** Miền hoàn tiền
-- [ ] **G10.40** `ReturnModal`
-- [ ] **G10.41** Hiển thị trạng thái trả hàng trong trang đơn
-- [ ] **G10.42** `ReviewModal`
-- [ ] **G10.43** Khóa i18n `refunds.*`, `reviews.form.*`
-- [ ] **G10.C6** 🔖 COMMIT `feat(web): add return request and review submission` · hash: `_______`
+- [x] **G10.39** Miền hoàn tiền
+- [x] **G10.40** `ReturnModal`
+- [x] **G10.41** Hiển thị trạng thái trả hàng trong trang đơn
+- [x] **G10.42** `ReviewModal`
+- [x] **G10.43** Khóa i18n `refunds.*`, `reviews.form.*`
+- [x] **G10.C6** 🔖 COMMIT `feat(web): add return request and review submission` · hash: `7c90b73`
 
 **Nhóm G — Tài khoản**
 
@@ -795,6 +795,10 @@
 | G10.31 | Mock = 11 đơn của prototype (mã "TR-20260608-000044" → id 44, thời điểm đổi sang ISO giờ VN) + đơn vừa đặt ở checkout (kho `placed`), thay đổi giữ trong phiên tab. Nhóm chờ thanh toán mẫu (CS-8F21A) có hạn thanh toán tính từ lúc mở và một phiên mock tương ứng để "Thanh toán ngay" đi đúng 6.12. `product_slug` thêm vào $OrderItem (ghi G13.20). |
 | G10.32–G10.35 | `/orders` dùng khung tài khoản `AccountShell.astro` + island `AccountNav` (làm sớm phần khung của G10.44: menu liên kết thật, huy hiệu Thông báo / Kho Voucher, Đăng xuất có xác nhận, màn hẹp cuộn tới mục đang mở; đọc phiên sau khi mount tránh lệch hydrate). Tab là liên kết `?tab=<status_group>` (R16). Nút trên thẻ đơn vẽ theo `allowed_actions`; hộp hủy chọn lý do (OTHER bắt buộc ghi chú), hủy nhóm đơn gọi lần lượt từng đơn; "Đã nhận hàng" có hộp xác nhận chuyển tiền cho shop. Thêm lớp `lz-vendor__logo` cho VendorChip để `.tr-chip` ẩn ô chữ cái cạnh con dấu như prototype. Bỏ hộp "Mô phỏng cho buổi demo: kịch bản tài khoản" (D5). |
 | G10.36–G10.38 | `/orders/[id]` (id không phải số → 404 thật): thanh 7 bước, thẻ ĐVVC + sao chép mã vận đơn, ghi chú giữ tiền / ngày giải ngân, hành trình mới nhất trước, địa chỉ, sản phẩm + tiền, nút theo trạng thái. Mua lại = POST /me/cart/items/batch (6.6) rồi sang giỏ (báo khi có món bị bỏ qua); Chat dẫn `/chat?shop=&order=`. Nút Trả hàng / Đánh giá / khối yêu cầu trả hàng gắn ở nhóm F. Đã thử thật: Đã nhận hàng (đơn 41 → Hoàn thành), Hủy đơn 47 (toast hoàn tiền), Mua lại đơn đã hủy (cộng dồn vào giỏ). |
+| G10.39 | `features/refunds` đủ 4 tầng: kiểu theo 7.5–7.8, lý do trả hàng theo mã 16.4, `refundEstimate` (theo `paid_unit_price`, thiếu thì chia giảm giá theo tỉ lệ như prototype), `evidenceMissing` (≥ 1 ảnh + 1 video — GNE-SUP-4221), `needsBank` (VietQR / COD hoàn bằng chuyển khoản), lược đồ zod tài khoản hoàn tiền + test. Danh sách ngân hàng GET /public/banks. Mock ghi vào kho dùng chung `shared/api/mock/activity.ts`; mock đơn đọc lại để đổi trạng thái (RETURN_REQUESTED / COMPLETED khi chấp nhận từ chối / REFUNDED). |
+| G10.40 | Tải tệp qua `shared/api/upload.ts` (4.1: xin URL ký sẵn → PUT MinIO → object_key) + `shared/ui/MediaPicker.tsx` (kéo thả, xem trước, xóa). Ảnh nén bằng browser-image-compression nhưng ra **JPEG** thay vì WebP như plan ghi, vì REVIEW_IMAGE / REFUND_EVIDENCE / AVATAR chỉ nhận jpeg, png (bảng 4.1); giới hạn theo 4.1: bằng chứng 10 MB/tệp (plan ghi 5 MB), ảnh đánh giá 5 MB, video đánh giá 30 MB. Form tài khoản hoàn tiền dùng react-hook-form + zod. |
+| G10.41 | `RefundBlock` (id `#return`, thẻ đơn "Xem yêu cầu trả hàng" nhảy tới): phương án, số tiền, lý do, lời nhắn shop, hạn của bước, tài khoản nhận (đã che); hành động thật theo trạng thái (bổ sung bằng chứng 7.6, khiếu nại 7.7, chấp nhận từ chối 7.8). Bỏ các nút "Mô phỏng: Shop yêu cầu bổ sung / từ chối / đồng ý" của prototype (D5) — trạng thái đó do shop / sàn đổi ở G11 / G12. |
+| G10.42 | `ReviewModal` ở `features/reviews` + POST /me/reviews (7.9): lần lượt từng sản phẩm của đơn, RatingInput, nhận xét ≤ 1000 ký tự, ≤ 5 ảnh, 1 video, ẩn tên; có ảnh +50 Điểm (mock cộng vào ví Điểm, đơn đánh dấu đã đánh giá). Nút "Trả hàng" / "Đánh giá" trên thẻ đơn dẫn `/orders/{id}?return=1` / `?review=1` (liên kết thật), trang theo dõi mở hộp tương ứng khi đơn cho phép. Đã thử thật: gửi trả hàng đơn 41 (VietQR, có tài khoản hoàn) → RFN-0301 "Chờ shop phản hồi", tiền hoàn dự kiến 383.000₫; đánh giá đơn 33 có ảnh → "+50 Điểm". |
 
 ## Nhật ký
 
@@ -815,3 +819,4 @@
 | 2026-11-13 | Trang Thanh toán gộp nhiều shop, sổ địa chỉ + RegionPicker, giữ hàng 15 phút, nháp checkout (G10 nhóm C) | 3bd8edb |
 | 2026-11-13 | Luồng thanh toán VNPAY / VietQR / COD, cổng mô phỏng, trang kết quả (G10 nhóm D) | ad830ca |
 | 2026-11-13 | Đơn mua (tab, nhóm đơn, hủy, đã nhận, mua lại, thanh toán lại) + theo dõi đơn + khung tài khoản (G10 nhóm E) | 913f4d8 |
+| 2026-11-13 | Trả hàng / hoàn tiền (modal, bằng chứng, khối trạng thái) + đánh giá sản phẩm, lớp tải tệp dùng chung (G10 nhóm F) | 7c90b73 |
