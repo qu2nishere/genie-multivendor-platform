@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 9 / 75 | — | `feature/web-buyer` |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 17 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **234 / 429** | | |
+| **Tổng** | | **379** | **50** | **242 / 429** | | |
 
 ---
 
@@ -376,14 +376,14 @@
 
 **Nhóm B — Voucher & Điểm**
 
-- [ ] **G10.09** Miền voucher
-- [ ] **G10.10** Tính xếp chồng
-- [ ] **G10.11** Phí vận chuyển hiển thị
-- [ ] **G10.12** Hạ tầng voucher
-- [ ] **G10.13** `VoucherPicker`
-- [ ] **G10.14** Voucher theo từng shop trong giỏ
-- [ ] **G10.15** Công tắc dùng Điểm Genie
-- [ ] **G10.C2** 🔖 COMMIT `feat(web): add stacked voucher and points pricing` · hash: `_______`
+- [x] **G10.09** Miền voucher
+- [x] **G10.10** Tính xếp chồng
+- [x] **G10.11** Phí vận chuyển hiển thị
+- [x] **G10.12** Hạ tầng voucher
+- [x] **G10.13** `VoucherPicker`
+- [x] **G10.14** Voucher theo từng shop trong giỏ
+- [x] **G10.15** Công tắc dùng Điểm Genie
+- [x] **G10.C2** 🔖 COMMIT `feat(web): add stacked voucher and points pricing` · hash: `37f2d0b`
 
 **Nhóm C — Thanh toán**
 
@@ -779,6 +779,10 @@
 | G10.04–G10.07 | Tên sản phẩm / ảnh / tên shop là `<a href>` thật; nút Chat dẫn `/chat?shop=` (G10.64). Dòng không mua được (hết hàng, shop nghỉ…) hiện nhãn lý do, không chọn được, khóa ô số lượng. Ô "chọn tất cả" của shop / thanh tổng có trạng thái một phần (indeterminate). Khách: xem giỏ tạm + thanh nhắc đăng nhập; bấm "Mua hàng" mở LoginPrompt (next=/cart, đăng nhập xong tự gộp giỏ). |
 | G10.06 | `CartSummary.astro` của khung cũ bỏ đi: thanh tổng phụ thuộc lựa chọn của người dùng nên là `CartBar.tsx` trong island (prototype .tr-cartbar, màn hẹp tách công cụ + thanh trả tiền dính đáy). Phí ship / voucher / Điểm nối ở nhóm B. "Mua hàng" ghi `genie.checkout.draft` (selected_item_ids…) rồi sang /checkout — phần nháp tạo sớm trong `features/checkout` (G10.21 hoàn thiện phần khôi phục). |
 | G10.08 | So ảnh /cart với sf-cart-1440 / sf-cart-360: khớp bố cục, nhóm shop, dòng đổi giá, thanh tổng dính đáy; phần voucher shop, Voucher Genie, Điểm, phí ship đối chiếu lại sau nhóm B. HTML SSR có đúng một `<h1>`. |
+| G10.09–G10.10 | Luật voucher + tính giá xếp chồng đặt ở `promotions/domain/pricing.rules.ts` (một bộ cho Giỏ và Thanh toán): voucherLines, eligibleBase, voucherCheck (lý do `no_items` / `min_order` / `not_active`), voucherDiscount, priceCart, bestVouchers, pruneVoucherSelection, extraSaving, đổi lựa chọn ⇄ mã để lưu nháp. Phí ship truyền vào bằng hàm `ShipFn` (domain không import feature khác). Thêm chặn tổng giảm Shop + Sàn ≤ 85% tiền hàng theo API_SPEC 6.8 / LLD 9.3 (prototype chưa có). Test 13 ca, gồm "bộ số vàng" của giỏ mẫu prototype: tổng 3.485.200₫, giảm 363.800₫, phân bổ voucher sàn 37.635 / 44.408 / 66.757₫. Đây là bản tính phía client cho mock; nối backend thì lấy từ POST /me/checkout/preview. |
+| G10.11 | `checkout/domain/shipping.rules.ts` (shipFee, shipOf, makeShipFn, isFreeByShop) + test. Chính sách phí ship lấy qua `useShipPolicies` — API_SPEC chỉ trả phí ship trong preview 6.8, tạm dùng `GET /public/shops/shipping-policies?ids=` (ghi G13.20). |
+| G10.12 | Kho voucher dùng lại `listMyVouchers` (G08); thêm `findVoucherByCode` cho ô nhập mã (6.9 có `code`, trả cả voucher chưa lưu; mã hết hạn / đã dùng → GNE-VCH-4041). Tạo sớm `features/coins` tối thiểu (GET /me/coins → số dư) cho công tắc Điểm; G10.56 mở rộng. |
+| G10.13–G10.15 | `VoucherPicker` ở promotions/ui (bám VoucherPicker.jsx; voucher không đủ điều kiện mờ + lý do; nhập mã). Ghép giá ở `cart/ui/useCartPricing.ts` (kho voucher + phí ship + số dư Điểm + nháp checkout) — sẽ dùng lại ở trang Thanh toán. Lựa chọn voucher / Điểm lưu `genie.checkout.draft` (voucher_codes, use_coins), tải lại trang vẫn giữ; chưa chọn lần nào → bộ mã giảm nhiều nhất như prototype. Khách vãng lai không hiện voucher / Điểm (cần tài khoản). Đã thử thật: bỏ voucher sàn → 3.634.000₫, bật Điểm → 3.632.750₫, tải lại giữ nguyên. |
 
 ## Nhật ký
 
@@ -795,3 +799,4 @@
 | 2026-11-13 | SEO: canonical, dữ liệu có cấu trúc, kiểm tra không JS (G08 nhóm G) | aac0d8a |
 | 2026-11-13 | Đăng nhập, đăng ký, quên mật khẩu, OAuth callback (G09) | 49bbf6f |
 | 2026-11-13 | Giỏ hàng nhiều shop: miền / hạ tầng / store giỏ, đổi phân loại, xóa nhiều, giỏ khách (G10 nhóm A) | 8a9c33e |
+| 2026-11-13 | Voucher xếp chồng, Voucher Picker, phí ship, công tắc Điểm ở giỏ (G10 nhóm B) | 37f2d0b |
