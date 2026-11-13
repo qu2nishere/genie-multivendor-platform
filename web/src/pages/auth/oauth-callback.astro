@@ -1,7 +1,12 @@
 ---
-import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+// Trả về sau Google / Apple (plan G09.12) — xử lý ở island (đọc code / state trên URL), noindex.
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import { OAuthCallback } from '@/features/auth';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
 ---
 
-<StorefrontLayout title="Đăng nhập">
-  <!-- Callback OAuth Google / Apple -->
-</StorefrontLayout>
+<AuthLayout title={t('auth.oauth.processing')}>
+  <OAuthCallback client:load />
+</AuthLayout>

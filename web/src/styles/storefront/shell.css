@@ -132,7 +132,8 @@
     .tr main [role='button'] {
       min-height: 44px;
     }
-    .tr main label {
+    /* nhãn chọn (checkbox / radio) — không áp cho nhãn của ô nhập (.lz-field) */
+    .tr main label:not(.lz-field > label) {
       min-height: 44px;
     }
     .tr .lz-check {

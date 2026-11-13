@@ -70,12 +70,18 @@ function HoverPanel({
 
 function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProps) {
   const { t } = useT();
-  const session = useStore($session);
+  // Lần render đầu phải khớp HTML server: island khác có thể đã khởi động phiên / nạp giỏ trước khi
+  // Header hydrate, nên chỉ đọc trạng thái thật sau khi mount (tránh lỗi hydration).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const liveSession = useStore($session);
+  const session = mounted ? liveSession : ({ status: 'unknown' } as const);
   const loggedIn =
     session.status === 'authenticated' || (session.status === 'unknown' && loggedInHint);
   const user = session.status === 'authenticated' ? session.user : null;
   const lines = useStore($cartLines);
-  const cartCount = useStore($cartCount);
+  const liveCount = useStore($cartCount);
+  const cartCount = mounted ? liveCount : 0;
   const notif = useNotifications(session.status === 'authenticated');
   const [drawer, setDrawer] = useState(false);
 

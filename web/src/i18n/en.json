@@ -363,6 +363,112 @@
       "seller": "Seller Center",
       "switch": "Switch to Seller Center",
       "logout_confirm": "Are you sure you want to sign out of {name}?"
+    },
+    "meta": {
+      "description": "Log in or create a Genie account — the marketplace that holds your money until you receive your order."
+    },
+    "err": {
+      "email_required": "Enter your email",
+      "email_invalid": "Invalid email address",
+      "password_required": "Enter your password",
+      "name_required": "Enter your full name",
+      "name_long": "Full name can be at most 100 characters",
+      "phone_invalid": "Invalid phone number",
+      "agree": "You need to accept the Terms of Service and Privacy Policy"
+    },
+    "field": {
+      "email": "Email",
+      "email_ph": "e.g. you@email.com",
+      "password": "Password",
+      "password_ph": "Your password",
+      "password_rule": "8+ characters with upper, lower, digit and symbol",
+      "password_min": "At least 8 characters",
+      "name": "Full name",
+      "name_ph": "Nguyen Van A",
+      "phone": "Phone number",
+      "phone_ph": "0901 234 567",
+      "confirm": "Confirm password",
+      "confirm_ph": "Re-enter password",
+      "new_password": "New password",
+      "confirm_new": "Confirm new password"
+    },
+    "login": {
+      "title": "Log in",
+      "lead_password": "Log in with your email and password.",
+      "lead_otp": "Enter your email to receive an OTP.",
+      "mode": "Login method",
+      "mode_password": "Password",
+      "mode_otp": "OTP code",
+      "submit": "Log in",
+      "send_otp": "Send OTP",
+      "remaining": "{n} attempts left.",
+      "demo": "Demo: password {password}",
+      "forgot": "Forgot password?",
+      "or": "OR",
+      "no_account": "No account yet?",
+      "register": "Sign up as a buyer",
+      "open_shop": "Open a shop"
+    },
+    "otp": {
+      "title": "Enter OTP",
+      "unlock_title": "Unlock your account",
+      "change_email": "Change email",
+      "sent_a": "A 6-digit code was sent to",
+      "demo": "(demo: {code})",
+      "expires_in": "Code expires in",
+      "expired": "The OTP has expired. Please request a new one.",
+      "resend_in": "Resend code in",
+      "resend": "Resend OTP"
+    },
+    "locked": {
+      "title": "Account temporarily locked",
+      "text_a": "You entered the wrong {by}",
+      "times": "5 times",
+      "text_b": "For your security, the account is locked for a while.",
+      "by_password": "password",
+      "by_otp": "OTP code",
+      "retry_in": "Try again in",
+      "unlock": "Verify by email",
+      "support": "Contact support"
+    },
+    "register": {
+      "title": "Create an account",
+      "lead": "Create a free Genie buyer account.",
+      "agree_a": "I agree to the",
+      "terms": "Terms of Service",
+      "agree_b": "and the",
+      "privacy": "Privacy Policy",
+      "submit": "Sign up",
+      "or": "Or sign up with",
+      "have_account": "Already have an account?",
+      "go_login": "Log in with this email",
+      "failed_title": "Sign-up failed",
+      "failed_text": "You entered the wrong OTP more than 5 times. Please sign up again."
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "lead": "Enter your registered email to get a verification code.",
+      "back": "Back to log in",
+      "send": "Send code",
+      "otp_title": "Verify your email",
+      "reset_title": "Set a new password",
+      "reset_lead": "At least 8 characters with an upper-case letter, a lower-case letter, a digit and a symbol.",
+      "update": "Update password",
+      "blocked_title": "Password recovery locked",
+      "blocked_text": "You entered the wrong OTP 5 times. Please try again in 30 minutes.",
+      "done_title": "Password reset",
+      "done_text": "You can now log in with your new password.",
+      "login_now": "Log in now"
+    },
+    "social": {
+      "title": "Continue with {provider}",
+      "continue": "Continue",
+      "text": "Simulated {provider} sign-in window. Genie will receive the name, email and profile picture of {email}. If the email has no account yet, a new one is created."
+    },
+    "oauth": {
+      "processing": "Finishing sign-in…",
+      "error_title": "Couldn't sign you in",
+      "denied": "Sign-in was cancelled or refused by the provider. Please try again."
     }
   },
   "search": {

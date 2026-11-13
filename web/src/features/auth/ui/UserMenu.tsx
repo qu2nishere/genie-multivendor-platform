@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { clearSession, type SessionUser } from '@/shared/auth/session';
+import type { SessionUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { Avatar, Button, ConfirmDialog, Dropdown, Icon } from '@/shared/ui';
+import { signOut } from '../application/useAuth';
 
 /**
  * Nút tài khoản trên header + menu (prototype Header.jsx UserMenu) — plan G07.16:
@@ -11,10 +12,7 @@ export function UserMenu({ user, shopName }: { user: SessionUser; shopName?: str
   const { t } = useT();
   const [confirm, setConfirm] = useState(false);
   const isVendor = user.roles.includes('VENDOR');
-  const logout = () => {
-    clearSession();
-    window.location.href = '/';
-  };
+  const logout = () => void signOut();
   return (
     <>
       <Dropdown

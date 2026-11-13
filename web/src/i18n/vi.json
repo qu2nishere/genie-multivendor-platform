@@ -363,6 +363,112 @@
       "seller": "Kênh người bán",
       "switch": "Chuyển sang Kênh người bán",
       "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name}?"
+    },
+    "meta": {
+      "description": "Đăng nhập hoặc tạo tài khoản Genie — sàn mua sắm giữ tiền của bạn đến khi bạn nhận hàng."
+    },
+    "err": {
+      "email_required": "Nhập email",
+      "email_invalid": "Email không đúng định dạng",
+      "password_required": "Nhập mật khẩu",
+      "name_required": "Nhập họ và tên",
+      "name_long": "Họ và tên tối đa 100 ký tự",
+      "phone_invalid": "Số điện thoại không hợp lệ",
+      "agree": "Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách bảo mật"
+    },
+    "field": {
+      "email": "Email",
+      "email_ph": "VD: ban@email.com",
+      "password": "Mật khẩu",
+      "password_ph": "Mật khẩu của bạn",
+      "password_rule": "8+ ký tự, có chữ hoa, thường, số, ký tự đặc biệt",
+      "password_min": "Tối thiểu 8 ký tự",
+      "name": "Họ và tên",
+      "name_ph": "Nguyễn Văn A",
+      "phone": "Số điện thoại",
+      "phone_ph": "0901 234 567",
+      "confirm": "Nhập lại mật khẩu",
+      "confirm_ph": "Nhập lại mật khẩu",
+      "new_password": "Mật khẩu mới",
+      "confirm_new": "Xác nhận mật khẩu mới"
+    },
+    "login": {
+      "title": "Đăng nhập",
+      "lead_password": "Đăng nhập bằng Email và mật khẩu.",
+      "lead_otp": "Nhập Email để nhận mã OTP.",
+      "mode": "Cách đăng nhập",
+      "mode_password": "Mật khẩu",
+      "mode_otp": "Mã OTP",
+      "submit": "Đăng nhập",
+      "send_otp": "Gửi mã OTP",
+      "remaining": "Còn {n} lần thử.",
+      "demo": "Demo: mật khẩu {password}",
+      "forgot": "Quên mật khẩu?",
+      "or": "HOẶC",
+      "no_account": "Chưa có tài khoản?",
+      "register": "Đăng ký người mua",
+      "open_shop": "Mở shop"
+    },
+    "otp": {
+      "title": "Nhập mã OTP",
+      "unlock_title": "Mở khóa tài khoản",
+      "change_email": "Đổi Email",
+      "sent_a": "Mã 6 số đã gửi tới địa chỉ email",
+      "demo": "(demo: {code})",
+      "expires_in": "Mã hết hạn sau",
+      "expired": "Mã OTP đã hết hiệu lực, vui lòng gửi lại mã.",
+      "resend_in": "Gửi lại mã sau",
+      "resend": "Gửi lại mã OTP"
+    },
+    "locked": {
+      "title": "Tài khoản tạm khoá",
+      "text_a": "Bạn đã nhập sai {by}",
+      "times": "5 lần",
+      "text_b": "Vì lý do bảo mật, tài khoản bị khoá tạm thời.",
+      "by_password": "mật khẩu",
+      "by_otp": "mã OTP",
+      "retry_in": "Thử lại sau",
+      "unlock": "Xác minh qua email",
+      "support": "Liên hệ hỗ trợ"
+    },
+    "register": {
+      "title": "Đăng ký tài khoản",
+      "lead": "Tạo tài khoản người mua Genie miễn phí.",
+      "agree_a": "Tôi đồng ý với",
+      "terms": "Điều khoản dịch vụ",
+      "agree_b": "và",
+      "privacy": "Chính sách bảo mật",
+      "submit": "Đăng ký",
+      "or": "Hoặc đăng ký với",
+      "have_account": "Đã có tài khoản?",
+      "go_login": "Đăng nhập bằng email này",
+      "failed_title": "Đăng Ký Thất Bại",
+      "failed_text": "Bạn đã nhập sai mã OTP quá 5 lần. Vui lòng đăng ký lại."
+    },
+    "forgot": {
+      "title": "Quên mật khẩu",
+      "lead": "Nhập email đăng ký để nhận mã xác thực đặt lại mật khẩu.",
+      "back": "Quay lại đăng nhập",
+      "send": "Gửi mã xác thực",
+      "otp_title": "Xác thực email",
+      "reset_title": "Đặt mật khẩu mới",
+      "reset_lead": "Mật khẩu tối thiểu 8 ký tự, có chữ hoa, chữ thường, chữ số và ký tự đặc biệt.",
+      "update": "Cập nhật mật khẩu",
+      "blocked_title": "Tạm khóa khôi phục mật khẩu",
+      "blocked_text": "Bạn đã nhập sai mã OTP 5 lần. Vui lòng thử lại sau 30 phút.",
+      "done_title": "Đặt lại mật khẩu thành công",
+      "done_text": "Bạn có thể đăng nhập bằng mật khẩu mới.",
+      "login_now": "Đăng nhập ngay"
+    },
+    "social": {
+      "title": "Tiếp tục với {provider}",
+      "continue": "Tiếp tục",
+      "text": "Mô phỏng cửa sổ đăng nhập {provider}. Genie sẽ nhận tên, email và ảnh đại diện từ tài khoản {email}. Email chưa có tài khoản thì hệ thống tự tạo tài khoản mới."
+    },
+    "oauth": {
+      "processing": "Đang hoàn tất đăng nhập…",
+      "error_title": "Không đăng nhập được",
+      "denied": "Bạn đã hủy hoặc nhà cung cấp từ chối đăng nhập. Vui lòng thử lại."
     }
   },
   "search": {
