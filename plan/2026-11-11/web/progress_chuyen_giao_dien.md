@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 36 / 51 | — | `feature/seller-ui` |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 44 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **336 / 429** | | |
+| **Tổng** | | **379** | **50** | **344 / 429** | | |
 
 ---
 
@@ -517,14 +517,14 @@
 
 **Nhóm E — Ví, KYC**
 
-- [ ] **G11.33** `seller-wallet` miền + hạ tầng
-- [ ] **G11.34** `WalletPage`
-- [ ] **G11.35** `WithdrawModal`
-- [ ] **G11.36** `seller-onboarding` miền + hạ tầng KYC
-- [ ] **G11.37** `OnboardingPage`
-- [ ] **G11.38** `CameraModal`
-- [ ] **G11.39** Khóa i18n `seller-wallet.*`, `seller-onboarding.kyc.*`
-- [ ] **G11.C5** 🔖 COMMIT `feat(seller-ui): add wallet and kyc onboarding screens` · hash: `_______`
+- [x] **G11.33** `seller-wallet` miền + hạ tầng
+- [x] **G11.34** `WalletPage`
+- [x] **G11.35** `WithdrawModal`
+- [x] **G11.36** `seller-onboarding` miền + hạ tầng KYC
+- [x] **G11.37** `OnboardingPage`
+- [x] **G11.38** `CameraModal`
+- [x] **G11.39** Khóa i18n `seller-wallet.*`, `seller-onboarding.kyc.*`
+- [x] **G11.C5** 🔖 COMMIT `feat(seller-ui): add wallet and kyc onboarding screens` · hash: `44c8537`
 
 **Nhóm F — Khuyến mãi, chat, đánh giá, cài đặt**
 
@@ -832,6 +832,11 @@
 | G11.22 | `ProductsPage`: tab trạng thái là route `?tab=` có số đếm, thêm ô tìm theo tên (prototype không có), tên sản phẩm là liên kết tới form, Xóa có hộp xác nhận. |
 | G11.23–G11.30 | `ProductEditor` (react-hook-form giữ cả 7 khối): `/products/new`, `/products/:id/edit`; chờ duyệt → chỉ xem; bị từ chối → hiện lý do; rời trang khi đang sửa → hỏi lại (cả `beforeunload`); lỗi gửi duyệt viền đỏ khối + cuộn tới khối đầu tiên. Ảnh: kéo thả + phím ← → / Delete. Mô tả: `contentEditable` như prototype; chèn liên kết dùng hộp nhập URL (thay `window.prompt`), chèn ảnh qua upload DESCRIPTION_IMAGE. Phân loại: ảnh theo giá trị qua VARIANT_IMAGE. Vận chuyển: "Gửi hàng từ" chỉ hiển thị (API lấy từ địa chỉ lấy hàng, không nhận từ client) — giá trị tạm cố định tới khi có Cài đặt (G11.43). |
 | G11.31 | `VendorCatalogPage`: cây 2 cấp + đề xuất; form đề xuất rhf + zod, trùng tên báo ngay dưới ô (GNE-CAT-4091), đủ 5 đề xuất chờ → GNE-CAT-4221. Kiểm thử e2e trên server dev riêng cổng 4330 vì server 4321 đang chạy giữ bản tối ưu dependency cũ (Vite 504 khi tải `browser-image-compression`). |
+| G11.33 | `seller-wallet`: miền (kiểm rút tiền tối thiểu / vượt số dư / chưa có tài khoản, huy hiệu loại + trạng thái theo API 10.10 — thêm `PAYOUT_DONE` thay cho đoán từ chữ "chờ duyệt" như prototype, lọc sổ) + hạ tầng (ví, sổ giao dịch có `available_months`, rút tiền 🔁 🔐). Số dư khả dụng / đang rút đưa vào kho mock dùng chung `sellerMoneyStore` để Tổng quan đổi theo sau khi rút (đã thử). |
+| G11.34 | `WalletPage` khớp bố cục prototype; ngày giờ theo `formatDateTime`; Xuất CSV tạo phía client từ dòng đang xem (cột đúng API export, tên `so-giao-dich-vi-06-2026.csv`); `?withdraw=1` từ nút "Rút tiền" ở Tổng quan mở ngay hộp rút. |
+| G11.35 | `WithdrawModal`: OTP dùng lại `StepUpOtp` + `useRequestStepUp` của feature account (xuất qua `account/index.ts`; `StepUpPurpose` thêm `WITHDRAWAL`, `PAYOUT_ACCOUNT_UPDATE`, `PAYOUT_ACCOUNT_DELETE`) thay ô nhập 6 số tự làm của prototype; có gửi lại mã. Chưa có tài khoản nhận → liên kết `/settings#payout`. |
+| G11.36–G11.37 | KYC trong `seller-onboarding`: miền (giấy tờ bắt buộc theo loại hình, gom PENDING/AI_PROCESSING/MANUAL_REVIEW, chỉ sửa khi chưa nộp / từ chối / cần bổ sung, kiểm tệp PDF/JPG/PNG ≤ 10 MB, ảnh ≥ 20 KB; zod CCCD 12 số + MST 10 số / 10-3 số); hạ tầng 10.12 (nháp, nộp chỉ gửi giấy tờ mới — giữ bản cũ, yêu cầu nhân viên xem xét). Tệp KYC tải bằng mục đích `KYC_DOCUMENT` — không nén. Nộp xong kho shop chuyển PENDING → khung đổi chip "KYC đang chờ", khóa các mục (đã thử từ shop mới mở). Bỏ bảng "Mô phỏng trạng thái KYC" (D5). Tài khoản nhận tiền (xác minh tên + OTP) theo API thuộc Cài đặt → làm ở G11.43 thay vì trong trang KYC như mô tả plan. |
+| G11.38 | `CameraModal`: `getUserMedia` (camera trước, xem trước lật gương), 3 bước hướng dẫn người thật rồi Chụp → JPEG → tải như ảnh selfie; bị chặn quyền / không có camera → báo lỗi cụ thể, gợi ý tải ảnh lên (đã thử nhánh bị chặn). Nút "Mô phỏng: đã làm xong" của prototype đổi thành "Đã làm xong" (người dùng tự xác nhận; liveness thật do AI Worker chấm). |
 
 ## Nhật ký
 
@@ -860,3 +865,4 @@
 | 2026-11-13 | Seller Center: Tổng quan (việc cần làm, doanh thu, tiền của shop, đơn gần đây, đơn 30 ngày, sản phẩm) + Phân tích (4 ô số, tiền thực về shop, kết quả đơn, nguồn truy cập, cảm xúc đánh giá, top sản phẩm, xuất CSV) (G11 nhóm B) | 428eaa8 |
 | 2026-11-13 | Seller Center: Đơn hàng (tab, tìm, sắp xếp, xác nhận / từ chối, chuẩn bị, bàn giao 3PL, phiếu gửi hàng, chi tiết) + Trả hàng (48 giờ, bằng chứng, 6 thao tác) (G11 nhóm C) | 93021af |
 | 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
+| 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
