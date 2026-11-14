@@ -7,8 +7,10 @@ import {
   formatDateTime,
   formatHhMmSs,
   formatMmSs,
+  formatMonthShort,
   formatRelative,
   formatVND,
+  isoDateVN,
   parseCompact,
   partsVND,
 } from './format';
@@ -45,6 +47,14 @@ describe('ngày & số', () => {
   it('formatDateTime', () => {
     expect(formatDateTime(d, { locale: 'vi' })).toBe('14:05 08/06/2026');
     expect(norm(formatDateTime(d, { locale: 'en' }))).toBe('06/08/2026, 2:05 PM');
+  });
+  it('isoDateVN lấy ngày theo giờ Việt Nam', () => {
+    expect(isoDateVN('2026-06-08T16:59:00Z')).toBe('2026-06-08');
+    expect(isoDateVN('2026-06-08T17:00:00Z')).toBe('2026-06-09');
+  });
+  it('formatMonthShort', () => {
+    expect(formatMonthShort(6, { locale: 'vi' })).toBe('T6');
+    expect(formatMonthShort(6, { locale: 'en' })).toBe('Jun');
   });
   it('formatRelative', () => {
     const now = Date.parse(d);

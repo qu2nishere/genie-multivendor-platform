@@ -7,6 +7,8 @@ import { atom } from 'nanostores';
 export const LOCALES = ['vi', 'en'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'vi';
+/** Tên ngôn ngữ viết bằng chính ngôn ngữ đó (không dịch) — ô chọn ngôn ngữ. */
+export const LOCALE_LABELS: Record<Locale, string> = { vi: 'Tiếng Việt', en: 'English' };
 /** Cookie thường, SameSite=Lax, 1 năm (LUU_TRU_DU_LIEU 6.2). */
 export const LANG_COOKIE = 'lang';
 

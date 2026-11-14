@@ -9,6 +9,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { errorMessage, isApiError } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
+import { isoDateVN } from '@/shared/lib/format';
 import { zodResolver } from '@/shared/lib/zodResolver';
 import {
   Button,
@@ -62,10 +63,6 @@ const dateCls =
   'flex-1 min-w-0 h-11 border-[1.5px] border-solid rounded-md px-3 text-base text-strong bg-surface-card outline-none focus:border-primary';
 const labCls = 'block font-semibold text-sm text-strong';
 
-/** Hôm nay theo giờ Việt Nam, dạng "YYYY-MM-DD". */
-const todayVN = (): string =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-
 export interface VoucherEditorProps {
   mode: VoucherFormMode;
   /** true = sửa (mã khóa lại); false = tạo mới / nhân bản. */
@@ -94,7 +91,7 @@ export function VoucherEditor({
   const { t } = useT();
   const platform = mode === 'platform';
   const schema = useMemo(
-    () => voucherSchemaFor(mode, { isNew: !editing, today: todayVN() }),
+    () => voucherSchemaFor(mode, { isNew: !editing, today: isoDateVN() }),
     [mode, editing],
   );
   const form = useForm<VoucherValues>({ resolver: zodResolver(schema), defaultValues: initial });

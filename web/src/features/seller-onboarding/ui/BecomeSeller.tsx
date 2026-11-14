@@ -127,7 +127,7 @@ function Card({ categories }: BecomeSellerProps) {
         <div className="grid grid-cols-2 gap-2.5 max-sm:grid-cols-1">
           <Input
             label={t('seller-onboarding.landing.owner')}
-            placeholder="Nguyễn Văn A"
+            placeholder={t('common.placeholder.person_name')}
             autoComplete="name"
             error={err(errors.ownerName?.message)}
             {...form.register('ownerName')}

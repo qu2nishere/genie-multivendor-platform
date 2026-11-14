@@ -4,6 +4,7 @@
 import { api, getPage, request } from '@/shared/api/http';
 import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
 import type { Page } from '@/shared/api/types';
+import { isoDateVN as todayVN } from '@/shared/lib/format';
 import {
   bannerStateOf,
   inVoucherTab,
@@ -59,10 +60,6 @@ import {
   vouchersStore,
   type BannerRow,
 } from './marketing.mock';
-
-/** Hôm nay theo giờ VN "YYYY-MM-DD". */
-const todayVN = (): string =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
 
 const nextId = (ids: number[]) => Math.max(0, ...ids) + 1;
 
