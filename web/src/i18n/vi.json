@@ -2961,7 +2961,6 @@
       "badge": "{count} mục đang chờ",
       "role_chip": "Quyền: {role}",
       "notif_unread": "Thông báo, {count} chưa đọc",
-      "pending": "Màn này đang được chuyển sang giao diện mới.",
       "forbidden": {
         "title": "Bạn không có quyền truy cập",
         "desc_before": "Màn “{screen}” yêu cầu quyền ",

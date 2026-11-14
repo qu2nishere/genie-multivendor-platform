@@ -2961,7 +2961,6 @@
       "badge": "{count} items waiting",
       "role_chip": "Role: {role}",
       "notif_unread": "Notifications, {count} unread",
-      "pending": "This screen is being moved to the new interface.",
       "forbidden": {
         "title": "You don't have access",
         "desc_before": "The “{screen}” screen requires the permission ",
