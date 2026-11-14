@@ -5,7 +5,7 @@ import { currentLocale } from '@/shared/lib/locale';
 import { getAccessToken, refreshAccessToken, clearSession } from '@/shared/auth/session';
 import { ApiError, toApiError } from './errors';
 import { IDEMPOTENCY_HEADER } from './idempotency';
-import type { ApiErrorBody, ApiResponse } from './types';
+import { isPagePagination, type ApiErrorBody, type ApiResponse, type Page } from './types';
 
 export type Query = Record<
   string,
@@ -131,6 +131,28 @@ export async function request<T>(
 /** Gọi API và chỉ lấy `data`. */
 export async function http<T>(path: string, options: RequestOptions = {}): Promise<T> {
   return (await request<T>(path, options)).data;
+}
+
+/**
+ * GET danh sách phân trang số (API_SPEC 0.4): bóc phong bì thành Page<T> kèm `summary` (đếm tab, tổng…).
+ * Dùng cho các bảng quản trị (Admin dùng page/size).
+ */
+export async function getPage<D, T>(
+  path: string,
+  map: (d: D) => T,
+  o?: Omit<RequestOptions, 'method' | 'body'>,
+): Promise<Page<T> & { summary: Record<string, unknown> }> {
+  const res = await request<D[]>(path, { ...o, method: 'GET' });
+  const p = isPagePagination(res.pagination) ? res.pagination : null;
+  const items = (res.data ?? []).map(map);
+  return {
+    items,
+    page: p?.page ?? 1,
+    size: p?.size ?? items.length,
+    total_items: p?.total_items ?? items.length,
+    total_pages: p?.total_pages ?? 1,
+    summary: res.summary ?? {},
+  };
 }
 
 export const api = {

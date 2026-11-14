@@ -285,6 +285,12 @@
       "type": "{name}: định dạng không được hỗ trợ",
       "size": "{name}: tối đa {mb} MB",
       "failed": "Không tải lên được {name}, vui lòng thử lại"
+    },
+    "pager": {
+      "showing": "Hiển thị {from} - {to} trong tổng số {total} {unit}",
+      "prev": "Trước",
+      "next": "Sau",
+      "page": "Trang {page} / {pages}"
     }
   },
   "layout": {
@@ -2737,8 +2743,21 @@
         "to": "Chọn ngày kết thúc",
         "end": "Ngày kết thúc phải sau ngày bắt đầu",
         "category": "Chọn ít nhất 1 danh mục",
-        "product": "Chọn ít nhất 1 sản phẩm"
-      }
+        "product": "Chọn ít nhất 1 sản phẩm",
+        "title": "Vui lòng nhập tên chương trình",
+        "title_long": "Tối đa 100 ký tự",
+        "scope_platform": "Voucher sàn chỉ áp dụng toàn sàn hoặc theo danh mục",
+        "share": "Nhập tỷ lệ sàn tài trợ từ 1 đến 100%",
+        "past": "Ngày bắt đầu không được ở quá khứ"
+      },
+      "title_new_platform": "Tạo Voucher Sàn",
+      "title": "Tên chương trình voucher",
+      "title_placeholder": "VD: Siêu Sale Giữa Tháng",
+      "sponsor": "Nhà tài trợ",
+      "sponsor_platform": "Genie",
+      "sponsor_co": "Đồng tài trợ với Shop",
+      "share": "Tỷ lệ sàn tài trợ (%)",
+      "scope_platform": "Toàn sàn"
     },
     "flash": {
       "banner": "{name} — Đăng ký gian hàng",
@@ -2904,6 +2923,1382 @@
       "manage": "Quản lý liên kết đăng nhập",
       "note": "Shop dùng chung tài khoản và mật khẩu với tài khoản mua hàng cùng email. Đổi mật khẩu yêu cầu OTP gửi tới email đăng ký để bảo vệ ví Escrow.",
       "note_set": "Tài khoản đang chỉ đăng nhập bằng Google nên chưa có mật khẩu. Sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google. Vẫn cần OTP gửi tới email đăng ký."
+    }
+  },
+  "admin": {
+    "shell": {
+      "title": "Admin Console",
+      "home": "Admin Console — trang đầu",
+      "nav_label": "Điều hướng Admin Console",
+      "nav": {
+        "overview": "Tổng quan",
+        "kyc": "Duyệt KYC",
+        "refunds": "Trả hàng & Hoàn tiền",
+        "reviews": "Kiểm duyệt đánh giá",
+        "withdrawals": "Xử lý rút tiền",
+        "cod": "Đối soát COD",
+        "commission": "Cấu hình hoa hồng",
+        "ledger": "Sổ cái tài chính",
+        "audit": "Nhật ký hệ thống",
+        "catalog": "Danh mục toàn sàn",
+        "product_moderation": "Duyệt Sản phẩm",
+        "users": "Người dùng",
+        "vouchers": "Voucher sàn",
+        "flash_sale": "Flash Sale",
+        "banners": "Banner trang chủ",
+        "notifications": "Thông báo sàn",
+        "rbac": "Phân quyền nhân viên",
+        "account": "Tài khoản"
+      },
+      "badge": "{count} mục đang chờ",
+      "role_chip": "Quyền: {role}",
+      "notif_unread": "Thông báo, {count} chưa đọc",
+      "pending": "Màn này đang được chuyển sang giao diện mới.",
+      "forbidden": {
+        "title": "Bạn không có quyền truy cập",
+        "desc_before": "Màn “{screen}” yêu cầu quyền ",
+        "desc_after": ". Liên hệ Admin để được cấp quyền."
+      },
+      "not_found": {
+        "title": "Không tìm thấy trang",
+        "desc": "Đường dẫn này không có trong Admin Console.",
+        "back": "Về trang đầu"
+      },
+      "not_staff": {
+        "title": "Tài khoản không phải nhân viên sàn",
+        "desc": "Admin Console chỉ dành cho nhân viên và quản trị viên Genie.",
+        "cta": "Về trang chủ Genie"
+      }
+    },
+    "perm": {
+      "VIEW_DASHBOARD": "Xem trang Tổng quan",
+      "REVIEW_KYC": "Duyệt / từ chối hồ sơ KYC người bán",
+      "MANAGE_CATALOG": "Danh mục, thuộc tính, duyệt sản phẩm, đề xuất danh mục",
+      "MODERATE_REVIEW": "Kiểm duyệt đánh giá",
+      "HANDLE_DISPUTE": "Trả hàng & hoàn tiền",
+      "PROCESS_PAYOUT": "Rút tiền, đối soát COD",
+      "UPDATE_COMMISSION": "Cấu hình hoa hồng",
+      "VIEW_FINANCE": "Xem sổ cái tài chính",
+      "MANAGE_VOUCHER": "Voucher sàn, Flash Sale, banner",
+      "MANAGE_PLATFORM_NOTIFICATION": "Thông báo sàn",
+      "VIEW_AUDIT_LOG": "Xem nhật ký hệ thống",
+      "MANAGE_USER": "Khóa / mở khóa khách hàng và shop",
+      "MANAGE_RBAC": "Nhân viên & phân quyền (chỉ Admin)",
+      "title": {
+        "ADMIN": "Admin",
+        "MODERATOR": "Moderator",
+        "CS_SPECIALIST": "CS Specialist",
+        "FINANCE_OFFICER": "Finance Officer",
+        "CUSTOM": "Tùy chỉnh"
+      }
+    }
+  },
+  "admin-dashboard": {
+    "jobs": {
+      "title": "Việc cần xử lý",
+      "done": "Không còn hàng đợi nào tồn",
+      "kyc": "Hồ sơ KYC",
+      "kyc_hint": "Chờ duyệt",
+      "products": "Sản phẩm",
+      "products_hint": "Chờ kiểm duyệt",
+      "disputes": "Trả hàng, khiếu nại",
+      "disputes_hint": "Đang mở",
+      "withdrawals": "Lệnh rút tiền",
+      "withdrawals_hint": "{count} lệnh bị chặn chờ hồ sơ KYC",
+      "cod": "Phiên đối soát COD",
+      "cod_hint": "Chờ đối chiếu"
+    },
+    "period": "Kỳ báo cáo",
+    "export": "Xuất báo cáo CSV",
+    "against": "so với {month}",
+    "against_none": "kỳ trước",
+    "tiles": {
+      "gmv": "GMV toàn sàn",
+      "commission": "Hoa hồng",
+      "voucher": "Chi phí voucher và freeship",
+      "net": "Lợi nhuận ròng",
+      "net_note": "Hoa hồng trừ voucher, điểm thưởng, phí cổng"
+    },
+    "split": {
+      "title": "Hoa hồng {month} đi về đâu",
+      "desc": "Sàn chỉ thu hoa hồng; voucher sàn, điểm thưởng và phí cổng thanh toán do sàn tự chịu, phần còn lại là lợi nhuận ròng.",
+      "total": "Tổng hoa hồng sàn thu trong kỳ (5% trên GMV)",
+      "net": "Lợi nhuận ròng",
+      "voucher": "Voucher sàn và freeship",
+      "coin": "Điểm Genie",
+      "gateway": "Phí cổng thanh toán"
+    },
+    "gmv": {
+      "title": "GMV toàn sàn",
+      "range": "Khoảng biểu đồ",
+      "series": "GMV",
+      "ranges": {
+        "7d": "7 ngày",
+        "weekly": "Theo tuần",
+        "6m": "6 tháng"
+      },
+      "chart": {
+        "LAST_7_DAYS": "7 ngày cuối tháng {month}",
+        "WEEKS_IN_MONTH": "Theo tuần trong tháng {month}",
+        "LAST_6_MONTHS": "6 tháng năm {year}"
+      }
+    },
+    "holding": {
+      "title": "Tiền sàn đang giữ cho shop",
+      "note": "Số dư hiện tại, không theo kỳ",
+      "escrow": "Giữ đến khi khách nhận hàng",
+      "escrow_note": "Chưa shop nào rút được",
+      "wallet": "Đã về ví shop",
+      "wallet_note": "Shop có thể rút"
+    },
+    "pending": {
+      "title": "Tiền đang chờ xử lý",
+      "payable": "Lệnh rút chờ chi",
+      "payable_note": "Shop đã xác minh",
+      "blocked": "Lệnh rút bị chặn",
+      "blocked_note": "Chờ hồ sơ KYC",
+      "cod": "COD chờ đối soát",
+      "cod_note": "Hãng vận chuyển đã chuyển",
+      "refunds": "Tiền chờ hoàn cho khách",
+      "refunds_note": "{count} yêu cầu đang mở"
+    },
+    "orders": {
+      "title": "Đơn đang chạy",
+      "sub": "{count} đơn chưa xong, theo thứ tự xử lý",
+      "AWAITING_PAYMENT": "Chờ thanh toán",
+      "PAID": "Đã thanh toán",
+      "PREPARING": "Đang chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn thành",
+      "CANCELLED": "Đã huỷ",
+      "RETURNED_REFUNDED": "Trả hàng, hoàn tiền"
+    },
+    "top": {
+      "shops": "Shop có GMV cao nhất",
+      "products": "Sản phẩm bán chạy"
+    },
+    "growing": {
+      "title": "Shop tăng trưởng nhanh",
+      "category": "Ngành hàng",
+      "all_categories": "Tất cả ngành hàng",
+      "search": "Tìm shop",
+      "search_placeholder": "Nhập tên shop",
+      "empty": "Không tìm thấy shop phù hợp. Thử đổi ngành hàng hoặc từ khoá.",
+      "shop": "Shop",
+      "sold": "Sản phẩm bán ra",
+      "rating": "Đánh giá",
+      "growth": "Tăng trưởng",
+      "unit": "shop"
+    },
+    "csv": {
+      "period": "Kỳ báo cáo",
+      "voucher": "Chi phí voucher",
+      "coin": "Chi phí điểm thưởng",
+      "gateway": "Phí cổng thanh toán",
+      "status": "Trạng thái đơn",
+      "count": "Số đơn",
+      "sold": "Đã bán"
+    }
+  },
+  "admin-kyc": {
+    "queue": "Hàng chờ hồ sơ KYC",
+    "tabs": {
+      "PENDING": "Chờ duyệt",
+      "SUPPLEMENT_REQUESTED": "Chờ bổ sung",
+      "VERIFIED": "Đã duyệt",
+      "REJECTED": "Từ chối",
+      "ALL": "Tất cả"
+    },
+    "status": {
+      "PENDING": "Chờ duyệt",
+      "SUPPLEMENT_REQUESTED": "Chờ bổ sung",
+      "VERIFIED": "Đã duyệt",
+      "REJECTED": "Từ chối"
+    },
+    "empty": "Không có hồ sơ nào ở mục này.",
+    "business": {
+      "INDIVIDUAL": "Cá nhân",
+      "HOUSEHOLD": "Hộ kinh doanh",
+      "BUSINESS": "Doanh nghiệp"
+    },
+    "risk": {
+      "LOW": "Rủi ro thấp",
+      "MEDIUM": "Rủi ro trung bình",
+      "HIGH": "Rủi ro cao"
+    },
+    "random_audit": "Hậu kiểm ngẫu nhiên",
+    "owner": "Chủ sở hữu:",
+    "type": "Loại hình:",
+    "submitted": "Nộp lúc {at}",
+    "uploaded": "Hồ sơ đã tải lên ({count})",
+    "docs": {
+      "ID_FRONT": "CCCD mặt trước",
+      "ID_BACK": "CCCD mặt sau",
+      "BUSINESS_LICENSE": "Giấy phép KD",
+      "BUSINESS_REGISTRATION": "ĐKKD doanh nghiệp",
+      "SELFIE": "Ảnh chân dung",
+      "TAX_NOTICE": "Thông báo thuế"
+    },
+    "supp_docs": {
+      "ID_FRONT": "CCCD / CMND mặt trước (ảnh mờ / thiếu)",
+      "ID_BACK": "CCCD / CMND mặt sau",
+      "BUSINESS_LICENSE": "Giấy phép kinh doanh (thiếu / hết hạn)",
+      "BUSINESS_REGISTRATION": "Đăng ký kinh doanh (doanh nghiệp)",
+      "SELFIE": "Ảnh chân dung chủ shop",
+      "TAX_NOTICE": "Thông báo thuế"
+    },
+    "ai": {
+      "title": "Kết quả xác thực tự động",
+      "PASS": "Đạt",
+      "PARTIAL": "Đạt một phần",
+      "FAIL": "Không đạt",
+      "none": "Chưa có kết quả",
+      "passed": "đạt",
+      "failed": "không đạt",
+      "errors": "Lỗi phát hiện",
+      "checks": {
+        "qr_code": "QR Code",
+        "national_emblem": "Quốc huy",
+        "mrz": "MRZ",
+        "fingerprint": "Vân tay",
+        "face_match": "Khớp khuôn mặt"
+      }
+    },
+    "face": {
+      "title": "So sánh khuôn mặt",
+      "score": "Độ khớp khuôn mặt {score}"
+    },
+    "declared": {
+      "title": "Dữ liệu kê khai",
+      "type": "Loại hình",
+      "id": "Số CCCD (kê khai)",
+      "rep": "Người đại diện",
+      "tax": "Mã số thuế",
+      "rate": "Hoa hồng riêng của shop",
+      "rate_placeholder": "Theo ngành",
+      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành."
+    },
+    "rejected_reason": "Lý do từ chối:",
+    "supplement_req": "Đã yêu cầu bổ sung:",
+    "due": "hạn {at}",
+    "notice_before": "Người bán ",
+    "notice_strong": "không thể đăng bán sản phẩm",
+    "notice_after": " cho đến khi hồ sơ được duyệt.",
+    "waiting_seller": "Đã gửi yêu cầu, chờ người bán nộp lại.",
+    "actions": {
+      "reject": "Từ chối",
+      "approve": "Phê duyệt KYC",
+      "supplement": "Yêu cầu bổ sung",
+      "requeue": "Đưa lại vào hàng chờ"
+    },
+    "approve": {
+      "done": "Đã phê duyệt KYC cho {shop}."
+    },
+    "requeue": {
+      "done": "Đã đưa hồ sơ {shop} lại vào hàng chờ."
+    },
+    "reasons": {
+      "BLURRY_DOCUMENT": "Ảnh giấy tờ mờ / không đọc được",
+      "INFO_MISMATCH": "Thông tin không khớp",
+      "EXPIRED_DOCUMENT": "Giấy tờ hết hạn",
+      "SUSPECTED_FORGERY": "Nghi ngờ giả mạo",
+      "MISSING_LICENSE": "Thiếu giấy phép kinh doanh",
+      "OTHER": "Lý do khác"
+    },
+    "reject": {
+      "title": "Từ chối hồ sơ {code}",
+      "desc_before": "Người bán ",
+      "desc_after": " sẽ nhận thông báo kèm lý do và có thể nộp lại hồ sơ.",
+      "reason": "Lý do chính",
+      "note": "Chi tiết thêm (bắt buộc khi chọn Lý do khác)",
+      "note_placeholder": "Mô tả cụ thể...",
+      "submit": "Xác nhận từ chối",
+      "done": "Đã từ chối hồ sơ của {shop}.",
+      "err": {
+        "note": "Nhập chi tiết lý do.",
+        "note_long": "Tối đa 500 ký tự."
+      }
+    },
+    "supplement": {
+      "title": "Yêu cầu bổ sung — {shop}",
+      "docs": "Chọn giấy tờ cần bổ sung:",
+      "note": "Ghi chú cho người bán",
+      "note_placeholder": "VD: Ảnh CCCD mặt trước bị mờ, vui lòng chụp lại rõ nét hơn.",
+      "hint": "Người bán sẽ nhận thông báo và có {days} ngày để bổ sung. Hồ sơ chuyển sang trạng thái Chờ bổ sung.",
+      "submit": "Gửi yêu cầu bổ sung",
+      "done": "Đã gửi yêu cầu bổ sung tới {shop}.",
+      "err": {
+        "docs": "Chọn ít nhất 1 giấy tờ cần bổ sung.",
+        "note_long": "Tối đa 500 ký tự."
+      }
+    },
+    "viewer": {
+      "title": "Trình xem tài liệu — {name}",
+      "zoom_in": "Phóng to",
+      "zoom_out": "Thu nhỏ",
+      "rotate": "Xoay",
+      "flip": "Lật"
+    }
+  },
+  "admin-disputes": {
+    "count": {
+      "OPEN": "{count} Đang mở",
+      "REFUNDED": "{count} Đã hoàn",
+      "DENIED": "{count} Từ chối"
+    },
+    "empty": "Chưa có tranh chấp nào.",
+    "state": {
+      "OPEN": "ĐANG TRANH CHẤP",
+      "AWAITING_RETURN": "Chờ hàng hoàn về",
+      "REFUNDED": "Đã hoàn tiền",
+      "DENIED": "Đã từ chối"
+    },
+    "frozen": "Ký quỹ đang phong tỏa",
+    "opened": "Mở {at}",
+    "buyer": "Người mua",
+    "seller": "Người bán",
+    "reason": "Lý do",
+    "customer_evidence": "Bằng chứng của khách ({images} ảnh, {videos} video)",
+    "shop_evidence": "Bằng chứng của shop",
+    "no_shop_evidence": "Shop chưa cung cấp",
+    "amount": "Số tiền tranh chấp",
+    "confirm_return": "Hàng đã về kho shop",
+    "return_done": "Đã xác nhận hàng về kho, tiến hành hoàn tiền.",
+    "reopen": "Mở lại",
+    "reopened": "Đã mở lại tranh chấp.",
+    "resolve": {
+      "action": "Phân xử",
+      "title": "Phân xử {code}",
+      "outcome": "Phán quyết",
+      "verdict": "Biên bản kết luận phân xử",
+      "verdict_placeholder": "Tóm tắt chứng cứ và lý do quyết định...",
+      "submit": "Thực thi phán quyết",
+      "done": {
+        "REFUND_NOW": "Đã phân xử: hoàn tiền cho người mua.",
+        "RETURN_THEN_REFUND": "Đã phân xử: chờ khách gửi trả hàng.",
+        "DENY": "Đã bác yêu cầu, giải ngân cho shop.",
+        "CARRIER_FAULT": "Đã phân xử lỗi vận chuyển: hoàn khách, đền bù shop."
+      },
+      "err": {
+        "verdict": "Nhập biên bản kết luận.",
+        "long": "Tối đa 2000 ký tự."
+      }
+    },
+    "outcomes": {
+      "REFUND_NOW": {
+        "label": "A. Người mua đúng: hoàn tiền ngay",
+        "note": "Hoàn tiền từ escrow về người mua. Khoản này được ghi vào sổ cái và tính vào số khiếu nại thua của shop."
+      },
+      "RETURN_THEN_REFUND": {
+        "label": "A. Người mua đúng: buộc gửi trả hàng rồi hoàn tiền",
+        "note": "Hệ thống tạo vận đơn chiều về. Khách có 7 ngày để giao hàng cho đơn vị vận chuyển; hàng về kho shop mới hoàn tiền."
+      },
+      "DENY": {
+        "label": "B. Người bán đúng: bác yêu cầu, giải ngân cho shop",
+        "note": "Bác yêu cầu hoàn tiền, mở khóa ký quỹ và gửi cảnh báo tới tài khoản khách hàng."
+      },
+      "CARRIER_FAULT": {
+        "label": "C. Lỗi vận chuyển: hoàn khách và đền bù shop",
+        "note": "Hoàn tiền cho khách, đền bù shop theo giá khai; sàn làm việc với hãng vận chuyển theo chính sách bồi thường."
+      }
+    },
+    "freeze": {
+      "action": "Phong tỏa ký quỹ",
+      "remove": "Gỡ phong tỏa",
+      "removed": "Đã gỡ phong tỏa ký quỹ.",
+      "title": "Phong tỏa ký quỹ đơn {order}",
+      "desc": "{amount} của {shop} bị giữ lại, không giải ngân kể cả khi hết 7 ngày, cho tới khi gỡ phong tỏa. Dùng khi nghi gian lận.",
+      "reason": "Lý do (ghi vào nhật ký)",
+      "submit": "Phong tỏa",
+      "done": "Đã phong tỏa ký quỹ.",
+      "err": {
+        "reason": "Nhập lý do phong tỏa.",
+        "long": "Tối đa 500 ký tự."
+      }
+    },
+    "gateway": {
+      "title": "Trạng thái hoàn tiền Gateway",
+      "status": {
+        "PENDING": "Đang xử lý",
+        "SUCCESS": "Thành công",
+        "FAILED": "Thất bại"
+      },
+      "manual_pending": "Chờ chuyển khoản thủ công",
+      "gateway": "Cổng thanh toán",
+      "bank_transfer": "Chuyển khoản",
+      "txn": "Mã GD gốc",
+      "refund_id": "Mã hoàn tiền GW",
+      "amount": "Số tiền hoàn",
+      "created": "Thời gian tạo",
+      "to": "Chuyển tới",
+      "content": "Nội dung bắt buộc",
+      "mark": "Đã chuyển khoản",
+      "marked": "Đã ghi nhận chuyển khoản hoàn tiền.",
+      "sync": "Đồng bộ trạng thái",
+      "syncing": "Đang đồng bộ…",
+      "synced": "Đã đồng bộ trạng thái hoàn tiền.",
+      "failed": "Hoàn tiền thất bại",
+      "failed_hint": "Vui lòng kiểm tra trên dashboard gateway hoặc thử lại.",
+      "retry": "Thử lại hoàn tiền",
+      "retried": "Đã gửi lại lệnh hoàn tiền."
+    }
+  },
+  "admin-moderation": {
+    "reviews": {
+      "notice": "Ẩn đánh giá vi phạm tiêu chuẩn cộng đồng. Thao tác được ghi log và có thể hoàn tác.",
+      "tabs_label": "Trạng thái báo cáo",
+      "tabs": {
+        "PENDING": "Chờ xử lý",
+        "HIDDEN": "Đã ẩn",
+        "RESOLVED": "Đã xử lý"
+      },
+      "state": {
+        "PENDING": "CHỜ DUYỆT",
+        "HIDDEN": "Đã ẩn",
+        "RESOLVED": "Đã giữ hiển thị"
+      },
+      "empty": "Không có đánh giá nào ở mục này.",
+      "ai_negative": "AI: Tiêu cực",
+      "ai_title": "PhoBERT · độ tin cậy {score}",
+      "reports": "{count} báo cáo",
+      "product": "Sản phẩm: {name}",
+      "flag": "Cờ: {reason}",
+      "by_vendor": "Báo cáo bởi người bán",
+      "reasons": {
+        "SPAM": "Spam / chuyển hướng giao dịch",
+        "OFFENSIVE": "Ngôn từ phản cảm",
+        "FAKE_PURCHASE": "Nghi không mua thật"
+      },
+      "keep": "Giữ hiển thị",
+      "hide": "Ẩn đánh giá",
+      "unhide": "Hiện lại",
+      "done": {
+        "keep": "Đã giữ hiển thị đánh giá.",
+        "hide": "Đã ẩn đánh giá.",
+        "unhide": "Đã hiện lại đánh giá."
+      }
+    },
+    "product": {
+      "search": "Tìm sản phẩm",
+      "search_placeholder": "Nhập tên sản phẩm hoặc tên nhà bán...",
+      "tabs_label": "Lọc hàng duyệt",
+      "views": {
+        "CONFIG": "Cấu hình nhân viên",
+        "PUBLISHED": "Đã duyệt",
+        "REJECTED": "Không duyệt",
+        "PENDING": "Chờ duyệt"
+      },
+      "label": {
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "FLAGGED": "AI nghi ngờ",
+        "REQUEUED": "Chờ duyệt lại",
+        "PUBLISHED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      },
+      "col": {
+        "product": "Sản phẩm",
+        "vendor": "Nhà bán (Vendor)",
+        "status": "Trạng thái",
+        "assignee": "Người duyệt",
+        "action": "Thao tác"
+      },
+      "empty": {
+        "title": "Hiện tại không có sản phẩm nào",
+        "desc": "Tất cả sản phẩm đã được kiểm duyệt xong. Hãy quay lại sau nhé!"
+      },
+      "ai_system": "AI Hệ thống",
+      "assignee_for": "Người duyệt cho {name}",
+      "unassigned": "-- Chưa phân công --",
+      "assigned": "Phân công thành công!",
+      "review": "Kiểm duyệt",
+      "unit": "sản phẩm",
+      "staff": {
+        "title": "Nhân viên duyệt sản phẩm",
+        "redistribute": "Phân phối lại",
+        "save": "Lưu cấu hình",
+        "saved": "Đã lưu cấu hình nhân viên!",
+        "waiting": "{count} sản phẩm đang chờ",
+        "toggle": "Nhận việc — {name}",
+        "on": "Đang nhận việc",
+        "off": "Tạm ngưng",
+        "confirm_title": "Xác nhận phân phối lại",
+        "confirm_desc": "Bạn có chắc muốn phân phối lại toàn bộ sản phẩm đang chờ duyệt cho các nhân viên đang nhận việc?",
+        "confirm_note": "Lưu ý: Các nhân viên đã tắt \"Đang nhận việc\" sẽ không được chia thêm sản phẩm mới. Lưu cấu hình trước nếu vừa đổi.",
+        "confirm": "Xác nhận phân phối",
+        "redistributed": "Đã phân phối lại {count} sản phẩm."
+      },
+      "back": "Quay lại danh sách",
+      "detail_title": "Duyệt Sản phẩm #{id}",
+      "meta": "Ngày tạo: {at} · Nhà bán: {shop}",
+      "not_found": "Không tìm thấy sản phẩm cần duyệt",
+      "risk": "Điểm rủi ro",
+      "no_violation": "Không phát hiện vi phạm",
+      "ai_rejected": "Lý do AI từ chối:",
+      "rejected_reason": "Lý do từ chối:",
+      "ai_flagged": "Phân tích từ AI (Nghi ngờ):",
+      "images": "Ảnh sản phẩm",
+      "zoom": "Phóng to ảnh",
+      "docs": "Hồ sơ pháp lý sản phẩm",
+      "no_docs": "Không có tệp đính kèm",
+      "view_doc": "Xem trực tiếp",
+      "doc_title": "Trình xem tài liệu — {name}",
+      "desc": "Mô tả sản phẩm",
+      "shipping": "Thông tin Vận chuyển & Kích thước",
+      "skus": "Phân loại hàng (SKU)",
+      "info": {
+        "category": "Danh mục",
+        "brand": "Thương hiệu",
+        "condition": "Tình trạng",
+        "origin": "Xuất xứ",
+        "weight": "Cân nặng",
+        "size": "Kích thước",
+        "ships_from": "Gửi hàng từ",
+        "payer": "Người trả phí ship"
+      },
+      "condition": {
+        "NEW": "Mới",
+        "USED": "Đã sử dụng",
+        "REFURBISHED": "Tân trang"
+      },
+      "payer": {
+        "BUYER": "Người mua",
+        "SELLER": "Shop"
+      },
+      "sku": {
+        "code": "Mã SKU",
+        "name": "Tên Phân Loại",
+        "price": "Giá bán",
+        "stock": "Tồn kho"
+      },
+      "reject_reason": "Lý do nếu từ chối",
+      "note": "Ghi chú cho người bán",
+      "note_placeholder": "Ghi chú thêm cho người bán...",
+      "reasons": {
+        "MISSING_SAFETY_CERT": "Thiếu chứng nhận an toàn",
+        "POLICY_VIOLATION": "Vi phạm chính sách",
+        "BAD_IMAGE": "Ảnh sản phẩm không đạt",
+        "MISLEADING_DESCRIPTION": "Mô tả sai / gây hiểu lầm",
+        "UNREASONABLE_PRICE": "Giá bất hợp lý",
+        "PROHIBITED_ITEM": "Hàng cấm / hạn chế"
+      },
+      "reject": "Từ chối",
+      "approve": "Duyệt lên sàn",
+      "requeue": "Chờ duyệt lại",
+      "confirm": {
+        "approve": {
+          "title": "Xác nhận duyệt sản phẩm",
+          "desc": "Bạn có chắc chắn muốn duyệt sản phẩm này lên sàn không?"
+        },
+        "reject": {
+          "title": "Xác nhận từ chối sản phẩm",
+          "desc": "Bạn có chắc chắn muốn từ chối sản phẩm này không?"
+        },
+        "reason": "Lý do: {reason}"
+      },
+      "done": {
+        "approve": "Đã duyệt sản phẩm thành công!",
+        "reject": "Đã từ chối sản phẩm!",
+        "requeue": "Đã đưa sản phẩm về hàng chờ duyệt lại"
+      },
+      "err": {
+        "note_long": "Tối đa 500 ký tự."
+      }
+    }
+  },
+  "admin-catalog": {
+    "back": "Quay lại danh mục",
+    "not_found": "Không tìm thấy danh mục",
+    "kpi": {
+      "roots": "Danh mục gốc",
+      "children": "Danh mục con",
+      "products": "Tổng sản phẩm",
+      "pending": "Chờ duyệt"
+    },
+    "tree": {
+      "title": "Cây danh mục",
+      "add": "Thêm",
+      "meta": "{subs} mục con · {products} SP",
+      "hidden": "Ẩn"
+    },
+    "detail": {
+      "meta": "{products} sản phẩm · {shops} shop · hoa hồng {rate}%",
+      "visible": "Hiển thị",
+      "hidden": "Đã ẩn danh mục khỏi sàn.",
+      "shown": "Đã hiển thị lại danh mục.",
+      "attributes": "Bộ thuộc tính",
+      "edit": "Sửa",
+      "sub": "Danh mục con",
+      "products": "Sản phẩm",
+      "rate": "Hoa hồng",
+      "action": "Thao tác",
+      "view_products": "Xem SP",
+      "no_sub": "Danh mục này chưa có danh mục con."
+    },
+    "proposals": {
+      "title": "Đề xuất danh mục từ người bán",
+      "empty": "Không có đề xuất nào.",
+      "meta": "Đề xuất bởi {shop} · {date} · Thuộc: {parent}",
+      "new_root": "— (danh mục gốc mới)",
+      "approve": "Duyệt",
+      "approved": "Đã duyệt danh mục “{name}”",
+      "reject": "Từ chối",
+      "reject_title": "Từ chối đề xuất",
+      "reject_desc": "Từ chối đề xuất danh mục “{name}” từ {shop}?",
+      "reason": "Lý do từ chối (bắt buộc)",
+      "reason_placeholder": "VD: Đã có danh mục tương tự",
+      "rejected": "Đã từ chối và gửi lý do cho người bán",
+      "err": {
+        "reason": "Nhập lý do từ chối.",
+        "long": "Tối đa 500 ký tự."
+      }
+    },
+    "cat": {
+      "add_title": "Thêm danh mục",
+      "edit_title": "Sửa danh mục — {name}",
+      "name": "Tên danh mục",
+      "name_placeholder": "Thú cưng",
+      "slug": "Slug (URL)",
+      "parent": "Danh mục cha",
+      "root": "— Danh mục gốc (root)",
+      "icon": "Biểu tượng",
+      "rate": "Hoa hồng mặc định (%)",
+      "visible": "Hiển thị",
+      "save": "Lưu danh mục",
+      "saved": "Đã lưu danh mục thành công",
+      "delete": "Xóa",
+      "delete_hint": "Chỉ xóa được khi không còn sản phẩm và danh mục con",
+      "delete_title": "Xác nhận xóa danh mục",
+      "delete_desc": "Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xóa danh mục",
+      "deleted": "Đã xóa danh mục",
+      "err": {
+        "name": "Nhập tên danh mục.",
+        "name_long": "Tối đa 100 ký tự.",
+        "slug": "Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.",
+        "rate": "Hoa hồng từ 0 đến 50%."
+      }
+    },
+    "attr": {
+      "title": "Bộ thuộc tính — {name}",
+      "desc": "Form đăng bán tự gợi ý theo bộ này; ngành con kế thừa thuộc tính của ngành cha.",
+      "add": "Thêm thuộc tính",
+      "add_title": "Thêm thuộc tính",
+      "edit_title": "Sửa thuộc tính",
+      "code": "Mã (code)",
+      "name": "Tên hiển thị",
+      "name_placeholder": "Bảo hành",
+      "type": "Kiểu dữ liệu",
+      "unit": "Đơn vị",
+      "unit_placeholder": "giờ",
+      "values": "Danh sách giá trị (cách nhau bằng dấu phẩy)",
+      "values_placeholder": "6 tháng, 12 tháng, 24 tháng",
+      "values_unit": "Giá trị / Đơn vị",
+      "required": "Bắt buộc",
+      "filterable": "Lọc được",
+      "filterable_long": "Dùng làm bộ lọc",
+      "axis": "Trục biến thể",
+      "status": "Trạng thái",
+      "action": "Thao tác",
+      "active": "Đang dùng",
+      "inactive": "Ngừng dùng",
+      "edit": "Sửa",
+      "deactivate": "Ngừng dùng",
+      "activate": "Dùng lại",
+      "empty": "Ngành này chưa có thuộc tính nào.",
+      "save": "Lưu thuộc tính",
+      "saved": "Đã lưu thuộc tính",
+      "saved_grace": "Đã lưu. Shop có {days} ngày bổ sung thuộc tính bắt buộc cho sản phẩm cũ",
+      "err": {
+        "code": "Mã chỉ gồm chữ thường, số và dấu gạch dưới, bắt đầu bằng chữ",
+        "name": "Nhập tên hiển thị (tối đa 100 ký tự)",
+        "values": "Nhập ít nhất một giá trị",
+        "duplicate": "Mã này đã có trong ngành này"
+      }
+    },
+    "products": {
+      "title": "Sản phẩm — {name}",
+      "tabs_label": "Lọc sản phẩm",
+      "tabs": {
+        "ALL": "Tất cả",
+        "PENDING": "Chờ duyệt",
+        "PUBLISHED": "Đang bán",
+        "HIDDEN_OR_LOCKED": "Đã ẩn"
+      },
+      "col": {
+        "product": "Sản phẩm",
+        "shop": "Shop",
+        "price": "Giá",
+        "stock": "Kho",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "status": {
+        "PUBLISHED": "Đang bán",
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "REJECTED": "Đã ẩn",
+        "HIDDEN": "Đã ẩn",
+        "LOCKED": "Đã khóa"
+      },
+      "empty": "Không có sản phẩm nào ở mục này.",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "lock": "Khóa sản phẩm",
+      "unlock": "Mở khóa",
+      "reject_title": "Từ chối sản phẩm",
+      "reject_reason": "Lý do từ chối",
+      "reject_confirm": "Xác nhận từ chối",
+      "lock_title": "Khóa sản phẩm vi phạm",
+      "lock_reason": "Lý do khóa",
+      "lock_confirm": "Xác nhận khóa",
+      "lock_hint": "Sản phẩm bị ẩn khỏi sàn và shop nhận thông báo kèm lý do. Shop phải sửa và gửi duyệt lại mới được bán.",
+      "done": {
+        "approve": "Đã duyệt sản phẩm.",
+        "reject": "Đã từ chối sản phẩm.",
+        "lock": "Đã khóa sản phẩm.",
+        "unlock": "Đã mở khóa sản phẩm."
+      }
+    }
+  },
+  "admin-finance": {
+    "withdrawals": {
+      "kpi": {
+        "pending": "Chờ xử lý",
+        "requests": "{count} yêu cầu",
+        "payable": "Có thể chi ngay",
+        "blocked": "Bị chặn chờ hồ sơ KYC"
+      },
+      "col": {
+        "code": "Mã",
+        "shop": "Người bán",
+        "account": "Tài khoản nhận",
+        "amount": "Số tiền",
+        "requested": "Yêu cầu",
+        "action": "Thao tác"
+      },
+      "kyc": {
+        "VERIFIED": "Đã duyệt",
+        "SUPPLEMENT_REQUESTED": "Cần bổ sung",
+        "PENDING": "Chờ duyệt",
+        "REJECTED": "Bị từ chối"
+      },
+      "verified_account": "Đã xác minh chính chủ",
+      "state": {
+        "completed": "Đã chi",
+        "rejected": "Đã từ chối, hoàn ví",
+        "awaiting": "Chờ chuyển khoản",
+        "blocked": "Chặn, hồ sơ KYC cần bổ sung"
+      },
+      "reject": "Từ chối",
+      "approve": "Duyệt chi",
+      "approve_title": "Duyệt chi lệnh {code}",
+      "approve_desc": "Chuyển {amount} cho {shop} vào tài khoản {account}. Lệnh đã duyệt không thể huỷ, hãy kiểm tra đúng số tiền và tài khoản.",
+      "approve_submit": "Duyệt và mở chuyển khoản",
+      "reject_title": "Từ chối lệnh {code}",
+      "reject_reason": "Lý do từ chối",
+      "reasons": {
+        "ACCOUNT_MISMATCH": "Tài khoản nhận không khớp hồ sơ",
+        "OPEN_DISPUTE": "Shop có khiếu nại đang mở",
+        "SUSPICIOUS": "Nghi ngờ giao dịch bất thường",
+        "OTHER": "Lý do khác"
+      },
+      "note": "Ghi chú cho shop (bắt buộc khi chọn Lý do khác)",
+      "reject_desc": "{amount} sẽ trả lại số dư khả dụng của {shop}.",
+      "reject_submit": "Từ chối & hoàn ví",
+      "rejected": "Đã từ chối lệnh {code}, tiền đã hoàn về ví shop.",
+      "transfer_title": "Chuyển khoản lệnh {code}",
+      "bank": "Tài khoản nhận",
+      "holder": "Chủ tài khoản",
+      "amount": "Số tiền",
+      "content": "Nội dung bắt buộc",
+      "qr_hint": "Quét mã bằng app ngân hàng của sàn. Hệ thống tự hoàn tất khi SePay báo tiền ra khỏi tài khoản.",
+      "manual_link": "Sau 24 giờ chưa thấy webhook? Xác nhận tay",
+      "bank_ref": "Mã giao dịch ngân hàng",
+      "manual_confirm": "Xác nhận tay",
+      "transferred": "Đã chuyển khoản",
+      "completed": "Đã hoàn tất chi lệnh {code}."
+    },
+    "commission": {
+      "default_title": "Phí hoa hồng mặc định",
+      "order": "Thứ tự áp dụng: hoa hồng riêng của shop → theo ngành hàng → mặc định.",
+      "default_label": "Phí sàn (%)",
+      "default_save": "Lưu mặc định",
+      "default_saved": "Đã lưu phí hoa hồng mặc định!",
+      "by_category": "Hoa hồng theo ngành hàng",
+      "use_default": "Đang dùng mặc định {rate}%",
+      "rate_for": "Hoa hồng ngành {name}",
+      "toggle": "Áp dụng hoa hồng riêng cho ngành {name}",
+      "save": "Lưu cấu hình",
+      "saved": "Đã lưu tất cả thay đổi cấu hình",
+      "err": "Tỷ lệ phải từ 0 đến 50%."
+    },
+    "ledger": {
+      "append_only": "Append-only · bất biến",
+      "desc": "Mỗi dòng là một bút toán không thể sửa/xoá. Điều chỉnh = thêm bút toán đảo.",
+      "export": "Xuất sổ cái",
+      "search": "Tìm bút toán",
+      "search_placeholder": "Mã tham chiếu, tài khoản...",
+      "event_filter": "Lọc sự kiện",
+      "all_events": "Tất cả sự kiện",
+      "col": {
+        "time": "Thời gian",
+        "event": "Sự kiện",
+        "ref": "Tham chiếu",
+        "account": "Tài khoản",
+        "debit": "Nợ",
+        "credit": "Có"
+      },
+      "empty": "Không có bút toán nào khớp bộ lọc.",
+      "more": "Tải thêm",
+      "events": {
+        "ESCROW_IN": "Tiền vào ký quỹ",
+        "COMMISSION": "Hoa hồng",
+        "PLATFORM_VOUCHER": "Voucher sàn",
+        "FREESHIP_COST": "Chi phí freeship",
+        "COIN_COST": "Chi phí Điểm",
+        "ESCROW_RELEASE": "Giải ngân ký quỹ",
+        "PAYOUT_ACCRUE": "Ghi có ví shop",
+        "PAYOUT_SETTLE": "Chi rút tiền",
+        "REFUND": "Hoàn tiền",
+        "GATEWAY_FEE": "Phí cổng thanh toán"
+      },
+      "accounts": {
+        "ESCROW_LIABILITY": "Escrow Liability",
+        "PLATFORM_REVENUE": "Platform Revenue",
+        "SELLER_PAYABLE": "Seller Payable",
+        "PLATFORM_EXPENSE": "Platform Expense",
+        "CASH": "Cash"
+      }
+    },
+    "cod": {
+      "sessions": "Phiên đối soát",
+      "sessions_sub": "{count} phiên chờ · {amount} đã về tài khoản sàn",
+      "status": {
+        "WAITING": "Chờ bảng kê",
+        "DONE": "Đã đối soát"
+      },
+      "received": "Đã nhận {amount} từ {carrier}",
+      "sepay": "SePay báo tiền vào lúc {at} · Mã giao dịch",
+      "sample": "Dùng bảng kê mẫu",
+      "upload": "Tải bảng kê CSV",
+      "no_statement": "Chưa có bảng kê. Tải tệp CSV của hãng với 3 cột: mã vận đơn, số tiền, phí thu hộ.",
+      "totals": "{file}: tổng {gross} − phí {fees} = {net}",
+      "balanced": "khớp số tiền đã nhận.",
+      "off": "lệch {diff} so với số tiền đã nhận.",
+      "col": {
+        "tracking": "Mã vận đơn",
+        "order": "Đơn hàng",
+        "statement": "Bảng kê",
+        "on_order": "Trên đơn",
+        "fee": "Phí",
+        "result": "Kết quả"
+      },
+      "result": {
+        "MATCH": "Khớp",
+        "AMOUNT_MISMATCH": "Lệch số tiền",
+        "NOT_FOUND": "Không tìm thấy vận đơn"
+      },
+      "done": "Đã nạp ký quỹ {count} đơn; đơn đã xác nhận hoặc quá 7 ngày được hoàn tất và giải ngân.",
+      "will_fund": "{count} dòng khớp sẽ chuyển ký quỹ sang giữ tiền.",
+      "flagged": "{count} dòng cần xử lý tay với hãng.",
+      "export": "Xuất kết quả",
+      "confirm": "Xác nhận đối soát",
+      "confirmed": "Đã đối soát, nạp ký quỹ {count} đơn.",
+      "err": {
+        "type": "Bảng kê phải là tệp CSV.",
+        "size": "Tệp quá lớn (tối đa 1 MB).",
+        "empty": "Không đọc được dòng nào. Cột cần có: mã vận đơn, số tiền, phí thu hộ.",
+        "rows": "Dòng sai định dạng: {rows}. Kiểm tra mã vận đơn và số tiền."
+      }
+    }
+  },
+  "admin-marketing": {
+    "vouchers": {
+      "kpi": {
+        "active": "Voucher đang chạy",
+        "usage": "Lượt dùng hệ thống",
+        "discount": "Tổng giảm giá đã dùng",
+        "scheduled": "Voucher sắp ra mắt",
+        "budget": "Ngân sách còn lại"
+      },
+      "tabs_label": "Lọc voucher sàn",
+      "tabs": {
+        "ALL": "Tất cả",
+        "ACTIVE": "Đang chạy",
+        "SCHEDULED": "Sắp diễn ra",
+        "ENDED": "Đã kết thúc"
+      },
+      "create": "Tạo voucher sàn",
+      "col": {
+        "code": "Mã",
+        "kind": "Loại",
+        "value": "Giá trị",
+        "min": "Đơn tối thiểu",
+        "cap": "Giảm tối đa",
+        "usage": "Sử dụng",
+        "period": "Thời gian",
+        "sponsor": "Nhà tài trợ",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "kind": {
+        "PERCENTAGE": "Giảm %",
+        "FIXED_AMOUNT": "Giảm tiền",
+        "FREESHIP": "Freeship"
+      },
+      "free_ship": "Miễn ship",
+      "status": {
+        "ACTIVE": "Đang chạy",
+        "SCHEDULED": "Sắp diễn ra",
+        "ENDED": "Đã kết thúc",
+        "DISABLED": "Đã tắt"
+      },
+      "empty": "Không có voucher nào ở mục này.",
+      "duplicate": "Nhân bản",
+      "edit": "Sửa",
+      "disable": "Tắt",
+      "cancel": "Huỷ",
+      "delete": "Xoá",
+      "disable_title": "Tắt voucher",
+      "cancel_title": "Huỷ voucher",
+      "disable_desc": "Ngừng voucher {code}? Khách hàng sẽ không thể dùng mã này nữa.",
+      "disabled": "Đã ngừng voucher.",
+      "delete_title": "Xoá voucher",
+      "delete_desc": "Bạn có chắc chắn muốn xoá vĩnh viễn voucher {code}? Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xoá vĩnh viễn",
+      "deleted": "Đã xoá voucher."
+    },
+    "flash": {
+      "campaigns": "Chiến dịch",
+      "create_short": "Tạo chiến dịch",
+      "create_title": "Tạo chiến dịch Flash Sale",
+      "create": "Tạo chiến dịch",
+      "created": "Đã tạo chiến dịch (Nháp).",
+      "name": "Tên chiến dịch",
+      "name_placeholder": "VD: FLASH SALE 12.12",
+      "window": "Khung giờ",
+      "start": "Bắt đầu",
+      "end": "Kết thúc",
+      "max": "Số sản phẩm tối đa / shop",
+      "deadline": "Hạn đăng ký",
+      "status": {
+        "DRAFT": "Nháp",
+        "SCHEDULED": "Đã lên lịch",
+        "ACTIVE": "Đang chạy",
+        "ENDED": "Đã kết thúc"
+      },
+      "meta": "{approved}/{max} sản phẩm · hạn đăng ký {deadline}",
+      "schedule": "Lên lịch",
+      "schedule_hint": "Cần ít nhất 1 sản phẩm đã duyệt",
+      "end_early": "Kết thúc sớm",
+      "done": {
+        "schedule": "Đã lên lịch chiến dịch.",
+        "end": "Đã kết thúc chiến dịch."
+      },
+      "items": "Sản phẩm shop đăng ký",
+      "no_items": "Chưa có shop nào đăng ký. Shop đăng ký ở mục Khuyến mãi của Seller Center.",
+      "col": {
+        "product": "Sản phẩm",
+        "shop": "Shop",
+        "ref": "Giá gốc 30 ngày",
+        "flash": "Giá Flash",
+        "off": "Giảm",
+        "stock": "Số suất",
+        "review": "Duyệt"
+      },
+      "min_off": "Phải giảm tối thiểu {pct}%",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "item_status": {
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      },
+      "err": {
+        "name": "Nhập tên chiến dịch",
+        "name_long": "Tối đa 100 ký tự",
+        "time": "Chọn khung giờ",
+        "order": "Giờ kết thúc phải sau giờ bắt đầu",
+        "max": "Từ 1 đến 100 sản phẩm",
+        "deadline": "Chọn hạn đăng ký",
+        "deadline_after": "Hạn đăng ký phải trước ngày mở bán"
+      }
+    },
+    "banner": {
+      "all": "Tất cả",
+      "add": "Thêm banner",
+      "add_title": "Thêm banner",
+      "edit_title": "Sửa banner",
+      "col": {
+        "banner": "Banner",
+        "position": "Vị trí",
+        "time": "Thời gian",
+        "views": "Hiển thị / Bấm",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "state": {
+        "LIVE": "Đang hiển thị",
+        "SCHEDULED": "Đã lên lịch",
+        "ENDED": "Đã kết thúc",
+        "OFF": "Đã tắt"
+      },
+      "empty": "Chưa có banner ở vị trí này.",
+      "view": "Xem",
+      "edit": "Sửa",
+      "off": "Tắt ngay",
+      "on": "Bật lại",
+      "turned_off": "Đã tắt banner.",
+      "turned_on": "Đã bật lại banner.",
+      "delete": "Xóa",
+      "delete_title": "Xóa banner",
+      "delete_desc": "Xóa banner {title}? Số liệu hiển thị / bấm của banner này cũng bị xóa.",
+      "delete_confirm": "Xóa banner",
+      "deleted": "Đã xóa banner.",
+      "positions": {
+        "HOME_TOP_CAROUSEL": {
+          "label": "Đầu trang chủ",
+          "where": "Băng chuyền dưới đường ray tiền, 6 giây một banner; chiếm hết chiều ngang khi không có banner cạnh băng chuyền"
+        },
+        "HOME_TOP_SIDE": {
+          "label": "Cạnh băng chuyền",
+          "where": "Hai ô bên phải băng chuyền: banner lẻ vào ô trên, chẵn vào ô dưới, mỗi ô tự lướt"
+        },
+        "HOME_MIDDLE": {
+          "label": "Giữa trang chủ",
+          "where": "Giữa \"Gợi ý cho bạn\" và Flash Sale: 1 banner chiếm hết, 2 chia đôi, từ 3 thì hai bên thay nhau lướt"
+        },
+        "CATEGORY_TOP": {
+          "label": "Đầu trang danh mục",
+          "where": "Trên đầu trang của danh mục đã chọn"
+        },
+        "FLASH_SALE_TOP": {
+          "label": "Khu Flash Sale",
+          "where": "Trong khối Flash Sale, trên danh sách sản phẩm; từ 2 banner thì lướt"
+        },
+        "POPUP": {
+          "label": "Popup",
+          "where": "Hộp nổi khi mở trang chủ, mỗi phiên một lần; nhiều banner xếp chồng như bộ bài, số nhỏ nằm trên cùng"
+        }
+      },
+      "title": "Tiêu đề",
+      "title_placeholder": "VD: SIÊU SALE 12.12",
+      "image": "Ảnh desktop (bắt buộc)",
+      "pick_image": "Bấm để chọn ảnh",
+      "mobile_add": "Thêm ảnh mobile (không bắt buộc)",
+      "mobile_change": "Đổi ảnh mobile",
+      "position": "Vị trí",
+      "category": "Danh mục",
+      "order": "Thứ tự",
+      "order_hint": "Đang có {count} banner ở ô này; số nhỏ hiện trước",
+      "order_first": "Banner đầu tiên ở vị trí này",
+      "period": "Thời gian hiển thị",
+      "start": "Ngày bắt đầu",
+      "end": "Ngày kết thúc",
+      "active": "Hiển thị khi đến ngày",
+      "save": "Lưu banner",
+      "saved": "Đã lưu banner.",
+      "link": {
+        "label": "Liên kết đích",
+        "types": {
+          "category": "Danh mục",
+          "product": "Sản phẩm",
+          "shop": "Cửa hàng",
+          "flash": "Flash Sale",
+          "discover": "Gợi ý hôm nay",
+          "campaign": "Trang chiến dịch"
+        },
+        "category": "Danh mục",
+        "pick_category": "Chọn danh mục",
+        "product": "Sản phẩm",
+        "product_placeholder": "Tên sản phẩm hoặc shop",
+        "shop": "Cửa hàng",
+        "all_shops": "Tất cả shop",
+        "pick_shop": "Chọn cửa hàng",
+        "no_product": "Không tìm thấy sản phẩm",
+        "change": "Đổi",
+        "flash_note": "Mở khu Flash Sale trên trang chủ",
+        "discover_note": "Mở trang Gợi ý hôm nay",
+        "path": "Đường dẫn trang"
+      },
+      "err": {
+        "title": "Nhập tiêu đề (tối đa 120 ký tự)",
+        "image": "Chọn ảnh desktop",
+        "link": "Chọn liên kết đích cho banner",
+        "link_domain": "Liên kết đích phải thuộc miền sàn",
+        "date": "Chọn thời gian hiển thị",
+        "date_order": "Ngày kết thúc phải sau ngày bắt đầu",
+        "category": "Chọn danh mục cho banner này",
+        "upload_type": "Ảnh phải là JPG, PNG hoặc WebP",
+        "upload_size": "Ảnh tối đa {mb} MB"
+      }
+    },
+    "notif": {
+      "heading": "Thông báo toàn sàn",
+      "sub": "Gửi và quản lý các thông báo broadcast tới người dùng",
+      "create": "Tạo thông báo",
+      "kpi": {
+        "sent": "Đã gửi tháng này",
+        "reach": "Lượt tiếp cận (Reach)",
+        "reads": "Tổng lượt đọc"
+      },
+      "search": "Tìm thông báo",
+      "search_placeholder": "Tìm kiếm theo tiêu đề hoặc nội dung...",
+      "filter": "Lọc đối tượng",
+      "all_targets": "Tất cả đối tượng",
+      "targets": {
+        "ALL": "Tất cả người dùng",
+        "VENDOR": "Chỉ Vendor",
+        "CUSTOMER": "Chỉ Customer",
+        "SPECIFIC_USERS": "Người dùng cụ thể"
+      },
+      "col": {
+        "code": "Mã TB",
+        "notification": "Thông báo",
+        "image": "Ảnh",
+        "target": "Đối tượng nhận",
+        "by": "Người gửi",
+        "time": "Thời gian gửi",
+        "read": "Đã đọc"
+      },
+      "empty": "Chưa có thông báo nào.",
+      "scheduled": "Đã hẹn giờ",
+      "unit": "thông báo",
+      "detail": "Chi tiết thông báo",
+      "read_of": "Đã đọc / đã gửi",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "delete_title": "Xác nhận xóa",
+      "delete_desc": "Bạn muốn xóa thông báo này? Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xóa thông báo",
+      "deleted": "Đã xóa thông báo.",
+      "compose_title": "Tạo thông báo toàn sàn (Broadcast)",
+      "edit_title": "Sửa thông báo toàn sàn",
+      "target": "Đối tượng nhận (Target Audience)",
+      "emails": "Email người nhận (cách nhau bằng dấu phẩy)",
+      "title": "Tiêu đề (Title)",
+      "title_placeholder": "Nhập tiêu đề thông báo (Tối đa 100 ký tự)",
+      "image": "Hình ảnh đính kèm (không bắt buộc)",
+      "image_preview": "Xem trước ảnh",
+      "remove_image": "Xóa ảnh",
+      "pick_image": "Bấm để chọn ảnh",
+      "image_hint": "JPG, PNG, WebP (tối đa {mb} MB)",
+      "content": "Nội dung chi tiết",
+      "send_at": "Hẹn giờ phát (không bắt buộc)",
+      "broadcast": "Phát thông báo",
+      "schedule": "Lưu & hẹn giờ",
+      "update": "Cập nhật",
+      "confirm_send": "Xác nhận phát thông báo",
+      "confirm_update": "Xác nhận cập nhật thông báo",
+      "confirm_desc": "Bạn đang chuẩn bị gửi thông báo đến {target}. Hành động này không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?",
+      "confirm_send_btn": "Xác nhận phát",
+      "confirm_update_btn": "Xác nhận cập nhật",
+      "back": "Quay lại",
+      "sent": "Đã phát thông báo.",
+      "scheduled_ok": "Đã lưu và hẹn giờ thông báo.",
+      "updated": "Đã cập nhật thông báo.",
+      "rich": {
+        "bold": "In đậm",
+        "italic": "In nghiêng",
+        "link": "Liên kết",
+        "link_title": "Chèn liên kết",
+        "insert": "Chèn"
+      },
+      "err": {
+        "title": "Nhập tiêu đề",
+        "title_long": "Tối đa 100 ký tự",
+        "content": "Nhập nội dung thông báo",
+        "emails": "Nhập ít nhất 1 email người nhận",
+        "email_format": "Có email sai định dạng",
+        "unknown": "Không tìm thấy tài khoản: {emails}",
+        "upload_type": "Ảnh phải là JPG, PNG hoặc WebP",
+        "upload_size": "Ảnh tối đa {mb} MB"
+      }
+    }
+  },
+  "admin-system": {
+    "common": {
+      "err": {
+        "reason": "Vui lòng nhập lý do",
+        "long": "Tối đa 500 ký tự"
+      }
+    },
+    "staff": {
+      "summary": "{count} nhân viên · 3 chức danh + Admin · {perms} mã quyền. Di chuột lên mã quyền để xem mô tả.",
+      "invite": "Mời nhân viên mới",
+      "search": "Tìm nhân viên",
+      "search_placeholder": "Tìm kiếm theo tên hoặc email...",
+      "col": {
+        "staff": "Nhân viên",
+        "title": "Chức danh",
+        "perms": "Quyền",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "status": {
+        "ACTIVE": "Hoạt động",
+        "LOCKED": "Tạm khoá",
+        "PENDING_ACTIVATION": "Chờ kích hoạt"
+      },
+      "all_perms": "Toàn quyền",
+      "all_perms_desc": "Có tất cả quyền trong hệ thống",
+      "yours": "Tài khoản của bạn",
+      "empty": "Không tìm thấy nhân viên nào.",
+      "resend": "Gửi lại lời mời",
+      "resent": "Đã gửi lại lời mời tới {email}",
+      "edit": "Sửa quyền",
+      "lock": "Khóa",
+      "unlock": "Mở khóa",
+      "unlocked": "Mở khóa tài khoản thành công!",
+      "delete": "Xóa",
+      "lock_title": "Khóa tài khoản — {name}",
+      "lock_reason": "Lý do khóa",
+      "lock_placeholder": "VD: Nhân viên đã chấm dứt hợp đồng lao động",
+      "lock_confirm": "Xác nhận khóa",
+      "locked": "Khóa tài khoản thành công!",
+      "lock_account": "Tạm khoá tài khoản",
+      "locked_note": "Tài khoản đang tạm khoá.",
+      "delete_title": "Xóa tài khoản nhân viên",
+      "warning": "CẢNH BÁO:",
+      "delete_desc": "Hành động này sẽ xoá hoàn toàn tài khoản và quyền của nhân viên {name}. Bạn có chắc chắn?",
+      "delete_confirm": "Xóa tài khoản",
+      "deleted": "Đã xóa tài khoản nhân viên.",
+      "invite_title": "Mời nhân viên mới",
+      "invite_note": "Nhân viên sẽ nhận email lời mời và kích hoạt tài khoản qua OTP. Trạng thái ban đầu là Chờ kích hoạt.",
+      "invite_send": "Gửi lời mời",
+      "invited": "Đã gửi lời mời tới {email}",
+      "name": "Họ và tên",
+      "title": "Chức danh",
+      "email": "Email công việc",
+      "perms_by_title": "Quyền cấp theo chức danh",
+      "perm_count": "{n}/{total} quyền",
+      "edit_title": "Chỉnh quyền — {name}",
+      "title_hint": "Chọn chức danh sẽ nạp bộ quyền mặc định — bạn có thể tuỳ chỉnh bên dưới.",
+      "perms": "Quyền chi tiết",
+      "segregation": "Một người giữ cả PROCESS_PAYOUT và UPDATE_COMMISSION vi phạm tách biệt nhiệm vụ. Vẫn lưu được và sẽ ghi log.",
+      "segregation_logged": "Đã ghi cảnh báo tách biệt nhiệm vụ vào nhật ký.",
+      "save": "Lưu",
+      "saved": "Đã lưu quyền nhân viên.",
+      "footnote": "Quyền MANAGE_RBAC chỉ dành cho Admin, không cấp cho nhân viên.",
+      "err": {
+        "name": "Nhập họ tên (tối đa 100 ký tự)",
+        "email": "Email công việc phải có đuôi @genie.example"
+      }
+    },
+    "users": {
+      "search": "Tìm tài khoản",
+      "search_placeholder": "Tìm theo email, số điện thoại, tên shop...",
+      "staff_note_before": "Khóa nhân viên ở mục ",
+      "tabs_label": "Lọc tài khoản",
+      "tabs": {
+        "ALL": "Tất cả",
+        "CUSTOMER": "Khách hàng",
+        "VENDOR": "Shop",
+        "LOCKED": "Đang khóa / đình chỉ"
+      },
+      "col": {
+        "account": "Tài khoản",
+        "type": "Loại",
+        "phone": "Số điện thoại",
+        "orders": "Số đơn",
+        "warnings": "Cảnh báo",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "roles": {
+        "CUSTOMER": "Khách hàng",
+        "VENDOR": "Shop"
+      },
+      "status": {
+        "ACTIVE": "Hoạt động",
+        "SUSPENDED": "Đình chỉ",
+        "LOCKED": "Đã khóa"
+      },
+      "warnings": "{count} cảnh báo",
+      "until": "đến {date}",
+      "empty": "Không tìm thấy tài khoản nào.",
+      "lock": "Khóa tài khoản",
+      "unlock": "Mở khóa",
+      "lock_title": "Khóa tài khoản — {name}",
+      "reason": "Lý do đình chỉ",
+      "reasons": {
+        "COUNTERFEIT_SELLER": "Người bán gian lận hàng giả",
+        "ABNORMAL_RETURNS": "Hoàn hàng bất thường nhiều lần",
+        "REVIEW_SPAM": "Spam đánh giá / mua giả",
+        "FRAUD": "Lừa đảo, chuyển hướng giao dịch",
+        "OTHER": "Lý do khác"
+      },
+      "duration": "Thời hạn",
+      "durations": {
+        "P7D": "7 ngày",
+        "P30D": "30 ngày",
+        "FOREVER": "Vô thời hạn"
+      },
+      "note": "Mô tả lý do",
+      "lock_hint": "Mọi phiên đăng nhập của tài khoản sẽ bị thu hồi ngay. Đình chỉ có thời hạn tự mở khi hết hạn; vô thời hạn chỉ mở thủ công.",
+      "lock_confirm": "Xác nhận khóa",
+      "suspended": "Đã khóa tài khoản {name}.",
+      "unlock_title": "Mở khóa — {name}",
+      "unlock_reason": "Lý do mở khóa (bắt buộc)",
+      "reactivated": "Đã mở khóa tài khoản {name}."
+    },
+    "audit": {
+      "append_only": "Append-only · bất biến",
+      "desc": "Nhật ký ghi nhận mọi hành động nhạy cảm. Bản ghi không thể sửa hoặc xoá — phục vụ điều tra & tuân thủ.",
+      "export": "Xuất nhật ký",
+      "range": "Khoảng thời gian",
+      "ranges": {
+        "TODAY": "Hôm nay",
+        "7D": "7 ngày qua",
+        "30D": "30 ngày qua",
+        "CUSTOM": "Tuỳ chọn…"
+      },
+      "from": "Từ ngày",
+      "to": "Đến ngày",
+      "category": "Loại hành động",
+      "all": "Tất cả",
+      "cats": {
+        "AUTH": "Đăng nhập",
+        "KYC": "KYC",
+        "FINANCE": "Tài chính",
+        "MODERATION": "Kiểm duyệt",
+        "SECURITY": "Bảo mật",
+        "CONFIG": "Cấu hình"
+      },
+      "search": "Tìm kiếm",
+      "search_placeholder": "User, IP, mã tham chiếu…",
+      "denied": "{count} lần truy cập bị từ chối",
+      "col": {
+        "time": "Thời gian",
+        "user": "User / Vai trò",
+        "role": "Vai trò",
+        "action": "Hành động",
+        "detail": "Chi tiết",
+        "result": "Kết quả"
+      },
+      "empty": "Không có bản ghi nào khớp bộ lọc.",
+      "footnote": "Hiển thị {count} bản ghi gần nhất · lưu trữ tối thiểu 12 tháng theo chính sách.",
+      "more": "Tải thêm"
+    },
+    "account": {
+      "change_avatar": "Đổi ảnh đại diện",
+      "avatar_saved": "Đã cập nhật ảnh đại diện.",
+      "name": "Họ và tên",
+      "edit": "Sửa",
+      "save": "Lưu",
+      "name_saved": "Đã cập nhật tên.",
+      "verified": "Xác minh",
+      "role": "Vai trò",
+      "perms": "Số quyền",
+      "status": "Trạng thái",
+      "password": "Đổi mật khẩu",
+      "otp_title": "Bắt buộc OTP",
+      "otp_desc": "Tài khoản quản trị bắt buộc xác thực OTP khi đổi mật khẩu để bảo vệ quyền truy cập hệ thống.",
+      "err": {
+        "name": "Nhập họ tên (tối đa 100 ký tự)",
+        "upload_type": "Ảnh phải là JPG hoặc PNG",
+        "upload_size": "Ảnh tối đa {mb} MB"
+      }
     }
   }
 }

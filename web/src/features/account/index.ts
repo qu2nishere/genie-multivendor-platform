@@ -22,6 +22,6 @@ export type {
 } from './domain/account.types';
 export { useRequestStepUp } from './application/useAccount';
 export { StepUpOtp, type StepUpOtpProps } from './ui/StepUpOtp';
-export { PasswordForm } from './ui/SecurityPanels';
+export { PasswordForm, DevicesPanel } from './ui/SecurityPanels';
 export { useProfile, useLoginMethods } from './application/useAccount';
 export { default as AccountSectionView, type AccountOwnSection } from './ui/AccountSectionView';

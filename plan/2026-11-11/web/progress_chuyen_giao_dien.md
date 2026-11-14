@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11; Seller Center trên `feature/seller-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G12; Admin Portal trên `feature/admin-ui` (chưa push) |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **351 / 429** | | |
+| **Tổng** | | **379** | **50** | **403 / 429** | | |
 
 ---
 
@@ -541,76 +541,76 @@
 
 **Nhóm A — Khung SPA & phân quyền**
 
-- [ ] **G12.01** Router
-- [ ] **G12.02** `AdminApp.tsx`
-- [ ] **G12.03** Layout Admin
-- [ ] **G12.04** Chặn route
-- [ ] **G12.05** Huy hiệu số việc chờ
-- [ ] **G12.06** `pages/admin/[...path].astro`
-- [ ] **G12.07** Khóa i18n `admin.shell.*`, tên 13 quyền `admin.perm.*`
-- [ ] **G12.C1** 🔖 COMMIT `feat(admin-ui): scaffold admin portal shell with permission gating` · hash: `_______`
+- [x] **G12.01** Router
+- [x] **G12.02** `AdminApp.tsx`
+- [x] **G12.03** Layout Admin
+- [x] **G12.04** Chặn route
+- [x] **G12.05** Huy hiệu số việc chờ
+- [x] **G12.06** `pages/admin/[...path].astro`
+- [x] **G12.07** Khóa i18n `admin.shell.*`, tên 13 quyền `admin.perm.*`
+- [x] **G12.C1** 🔖 COMMIT `feat(admin-ui): scaffold admin portal shell with permission gating` · hash: `68cc825`
 
 **Nhóm B — Tổng quan, KYC**
 
-- [ ] **G12.08** `admin-dashboard`
-- [ ] **G12.09** `admin-kyc` miền + hạ tầng
-- [ ] **G12.10** `KycReviewPage`
-- [ ] **G12.11** `DocViewer`
-- [ ] **G12.12** Quyết định KYC
-- [ ] **G12.13** Khóa i18n `admin-dashboard.*`, `admin-kyc.*`
-- [ ] **G12.C2** 🔖 COMMIT `feat(admin-ui): add dashboard and kyc review screens` · hash: `_______`
+- [x] **G12.08** `admin-dashboard`
+- [x] **G12.09** `admin-kyc` miền + hạ tầng
+- [x] **G12.10** `KycReviewPage`
+- [x] **G12.11** `DocViewer`
+- [x] **G12.12** Quyết định KYC
+- [x] **G12.13** Khóa i18n `admin-dashboard.*`, `admin-kyc.*`
+- [x] **G12.C2** 🔖 COMMIT `feat(admin-ui): add dashboard and kyc review screens` · hash: `b8bcfb5`
 
 **Nhóm C — Tranh chấp & kiểm duyệt**
 
-- [ ] **G12.14** `admin-disputes` miền + hạ tầng
-- [ ] **G12.15** `RefundsPage`
-- [ ] **G12.16** `admin-moderation` đánh giá
-- [ ] **G12.17** `admin-moderation` sản phẩm
-- [ ] **G12.18** `ProductModerationPage`
-- [ ] **G12.19** Khóa i18n `admin-disputes.*`, `admin-moderation.*`
-- [ ] **G12.C3** 🔖 COMMIT `feat(admin-ui): add dispute and moderation screens` · hash: `_______`
+- [x] **G12.14** `admin-disputes` miền + hạ tầng
+- [x] **G12.15** `RefundsPage`
+- [x] **G12.16** `admin-moderation` đánh giá
+- [x] **G12.17** `admin-moderation` sản phẩm
+- [x] **G12.18** `ProductModerationPage`
+- [x] **G12.19** Khóa i18n `admin-disputes.*`, `admin-moderation.*`
+- [x] **G12.C3** 🔖 COMMIT `feat(admin-ui): add dispute and moderation screens` · hash: `7045474`
 
 **Nhóm D — Danh mục**
 
-- [ ] **G12.20** `admin-catalog` miền + hạ tầng
-- [ ] **G12.21** `CatalogPage`
-- [ ] **G12.22** `CatModal`
-- [ ] **G12.23** `AttributePanel`
-- [ ] **G12.24** Duyệt đề xuất danh mục của shop; khóa i18n `admin-catalog.*`
-- [ ] **G12.C4** 🔖 COMMIT `feat(admin-ui): add catalog management screens` · hash: `_______`
+- [x] **G12.20** `admin-catalog` miền + hạ tầng
+- [x] **G12.21** `CatalogPage`
+- [x] **G12.22** `CatModal`
+- [x] **G12.23** `AttributePanel`
+- [x] **G12.24** Duyệt đề xuất danh mục của shop; khóa i18n `admin-catalog.*`
+- [x] **G12.C4** 🔖 COMMIT `feat(admin-ui): add catalog management screens` · hash: `93b53d5`
 
 **Nhóm E — Tài chính**
 
-- [ ] **G12.25** `admin-finance` miền + hạ tầng
-- [ ] **G12.26** `WithdrawalsPage`
-- [ ] **G12.27** `CommissionPage`
-- [ ] **G12.28** `LedgerPage`
-- [ ] **G12.29** Đối soát COD miền
-- [ ] **G12.30** `CodReconciliationPage`
-- [ ] **G12.31** Khóa i18n `admin-finance.*`
-- [ ] **G12.C5** 🔖 COMMIT `feat(admin-ui): add payout, commission, ledger and cod screens` · hash: `_______`
+- [x] **G12.25** `admin-finance` miền + hạ tầng
+- [x] **G12.26** `WithdrawalsPage`
+- [x] **G12.27** `CommissionPage`
+- [x] **G12.28** `LedgerPage`
+- [x] **G12.29** Đối soát COD miền
+- [x] **G12.30** `CodReconciliationPage`
+- [x] **G12.31** Khóa i18n `admin-finance.*`
+- [x] **G12.C5** 🔖 COMMIT `feat(admin-ui): add payout, commission, ledger and cod screens` · hash: `e35446a`
 
 **Nhóm F — Marketing**
 
-- [ ] **G12.32** `admin-marketing` voucher
-- [ ] **G12.33** `PlatformVouchersPage` + `PlatformVoucherModal`
-- [ ] **G12.34** `FlashSalePage`
-- [ ] **G12.35** Banner miền
-- [ ] **G12.36** `BannersPage`
-- [ ] **G12.37** `PlatformNotificationsPage`
-- [ ] **G12.38** Khóa i18n `admin-marketing.*`
-- [ ] **G12.C6** 🔖 COMMIT `feat(admin-ui): add voucher, flash sale, banner and notification screens` · hash: `_______`
+- [x] **G12.32** `admin-marketing` voucher
+- [x] **G12.33** `PlatformVouchersPage` + `PlatformVoucherModal`
+- [x] **G12.34** `FlashSalePage`
+- [x] **G12.35** Banner miền
+- [x] **G12.36** `BannersPage`
+- [x] **G12.37** `PlatformNotificationsPage`
+- [x] **G12.38** Khóa i18n `admin-marketing.*`
+- [x] **G12.C6** 🔖 COMMIT `feat(admin-ui): add voucher, flash sale, banner and notification screens` · hash: `c070b95`
 
 **Nhóm G — Hệ thống**
 
-- [ ] **G12.39** `admin-system` miền + hạ tầng
-- [ ] **G12.40** `StaffPage` (`Rbac`)
-- [ ] **G12.41** `InviteStaff`, `RbacEditor`
-- [ ] **G12.42** `UsersPage`
-- [ ] **G12.43** `AuditLogPage`
-- [ ] **G12.44** `AccountAdminPage`
-- [ ] **G12.45** Khóa i18n `admin-system.*`
-- [ ] **G12.C7** 🔖 COMMIT `feat(admin-ui): add staff, users, audit log and account screens` · hash: `_______`
+- [x] **G12.39** `admin-system` miền + hạ tầng
+- [x] **G12.40** `StaffPage` (`Rbac`)
+- [x] **G12.41** `InviteStaff`, `RbacEditor`
+- [x] **G12.42** `UsersPage`
+- [x] **G12.43** `AuditLogPage`
+- [x] **G12.44** `AccountAdminPage`
+- [x] **G12.45** Khóa i18n `admin-system.*`
+- [x] **G12.C7** 🔖 COMMIT `feat(admin-ui): add staff, users, audit log and account screens` · hash: `0b68d13`
 
 ## G13 — Hoàn thiện, kiểm thử, bàn giao
 
@@ -842,6 +842,36 @@
 | G11.42 | `seller-reviews`: điểm TB + phân bố, 3 tab có số đếm, phản hồi ≤ 500 ký tự chặn số điện thoại (GNE-SOC-4221), báo cáo dùng lại `reportReview` + lý do của feature reviews (hàm gửi truyền từ UI vào hook để tầng application không phụ thuộc feature khác). |
 | G11.43 | `SettingsPage` (seller-settings): ảnh bìa / logo (SHOP_COVER ≤ 2 MB, SHOP_LOGO ≤ 1 MB), tên đổi 1 lần / 30 ngày (GNE-VND-4091, đã thử), 5 hãng — chặn tắt hãng cuối, freeship; địa chỉ lấy hàng dùng `RegionPicker` của khu tài khoản → "Lưu và Đồng bộ với GHN"; tài khoản nhận tiền: xác minh tên khớp CCCD (GNE-WAL-4222) → OTP `PAYOUT_ACCOUNT_UPDATE` (dùng `StepUpOtp`), xóa có OTP `PAYOUT_ACCOUNT_DELETE`; tự trả lời + "Lưu tin nhắn"; chế độ nghỉ ≤ 30 ngày, còn đơn chưa bàn giao → liệt kê mã đơn (từ kho đơn chung). Bỏ nút "Mô phỏng: đã bàn giao hết" (D5). Sửa lỗi `Switch` dùng chung: khi không có chữ đi kèm vỏ là `<span>` nên bấm không bật / tắt được → luôn là `<label>`. |
 | G11.44 | `SecuritySection`: chip cách đăng nhập (email/mật khẩu, Google) + liên kết quản lý; form mật khẩu dùng lại `PasswordForm` của khu tài khoản (xuất qua index) vì shop chạy trên tài khoản mua hàng của chủ shop. |
+| G12.08 | `admin-dashboard`: miền + mock theo API 11.2 (`/admin/dashboard/finance`, `gmv-chart` 7d / weekly / 6m, `operations`, `growing-shops`), test lợi nhuận ròng 37.432.500₫ + nhãn trục. `DashboardPage` khớp ảnh `admin-1440/360`. "Tiền đang chờ xử lý" tính từ kho mock dùng chung (lệnh rút, phiên COD, tranh chấp) nên đổi theo các màn xử lý. Ngành hàng của "Shop tăng trưởng nhanh" lấy danh mục gốc của `catalog` (lọc theo `category_id`). Xuất CSV tạo phía client từ số đang xem (như Seller G11.11); API có `/admin/dashboard/export` — dùng khi nối backend (G13.20). Thêm `getPage()` ở `shared/api/http.ts` (bóc phong bì phân trang số + `summary`) và `TablePager` ở `shared/ui` (chân bảng "Hiển thị 1 - 5 trong tổng số 7 …") dùng cho các bảng Admin. |
+| G12.09 | `admin-kyc`: kiểu theo 11.3, quy tắc (tab Chờ duyệt gom AI_PROCESSING / MANUAL_REVIEW, rủi ro theo điểm, thao tác theo trạng thái, hoa hồng riêng 0–50%), zod từ chối (Lý do khác bắt buộc ghi chú) / bổ sung (≥ 1 giấy tờ) + test. Mock: trạng thái ở `adminKycStore` (huy hiệu nav, Tổng quan đổi theo — đã thử duyệt 3 → 2), chi tiết ở kho riêng. Ảnh giấy tờ mock là hình minh hoạ SVG `public/img/mock/kyc-*.svg` (không phải giấy tờ thật). |
+| G12.10 | `KycReviewPage`: tab (`?tab=`) + hồ sơ đang xem (`?id=`) trên URL; lý do từ chối / yêu cầu bổ sung đã gửi hiện ngay trong chi tiết. Màn hẹp: 2 cột → 1 cột, ảnh giấy tờ 2 cột. |
+| G12.11 | `DocViewer` (portal, giữ focus, Esc đóng, khóa cuộn): phóng to / thu nhỏ / xoay / lật, chặn kéo thả + chuột phải (URL ký sẵn 5 phút). Số CCCD chỉ hiện dạng server đã che ở "Dữ liệu kê khai" — không che trên ảnh vì vị trí số trên ảnh thật do AI Worker xác định. |
+| G12.12 | Phê duyệt (gửi hoa hồng riêng nếu nhập), Từ chối (mã lý do 16.4 + ghi chú), Yêu cầu bổ sung (giấy tờ theo `KycDocumentType`, hạn 7 ngày), Đưa lại vào hàng chờ — mỗi thao tác làm mới mọi truy vấn `['admin', …]`. |
+| G12.14–G12.15 | `admin-disputes`: kiểu theo 11.4, quy tắc (trạng thái sau phán quyết, thao tác theo trạng thái + phong tỏa / gỡ, khối hoàn tiền VNPay đồng bộ / thử lại hay chuyển khoản tay, nội dung `TRRF…`), zod biên bản + lý do phong tỏa + test. Mock ghi kho dùng chung `adminDisputesStore`: phán quyết hoàn tiền tạo lệnh hoàn VNPay (đồng bộ → SUCCESS) hoặc chuyển khoản tay tới tài khoản khách cho đơn VietQR / COD; huy hiệu nav + "Tiền chờ hoàn" ở Tổng quan đổi theo (đã thử RFN-0231: 2 → 1, hiện thẻ "Chờ chuyển khoản thủ công" TRRF0231). "Thử lại hoàn tiền" gửi Idempotency-Key. "Mở lại" chỉ cho tranh chấp đã bác (prototype cho cả đã hoàn — tiền đã rời escrow nên không mở lại). Video bằng chứng mock là liên kết tên tệp (chưa có tệp thật). |
+| G12.16 | `ReviewModerationPage`: thêm tab Chờ xử lý / Đã ẩn / Đã xử lý theo `state` của API 11.5 (prototype gộp một danh sách); tiêu cực mạnh (PhoBERT ≥ 0,85) lên đầu rồi theo số báo cáo; "Ẩn" gửi lý do = cờ báo cáo chính. |
+| G12.17–G12.18 | `admin-moderation` sản phẩm: kiểu / quy tắc theo 11.12 (tab, nhãn "Chờ duyệt lại", FLAGGED lên đầu, thanh quyết định theo trạng thái, màu điểm rủi ro, chia đều hàng chờ cho người đang nhận việc) + test. Danh sách `/admin/product-moderation` (?tab=, tìm, giao lại người duyệt, Cấu hình nhân viên: bật / tắt nhận việc, Lưu, Phân phối lại có xác nhận); chi tiết thành route riêng `/admin/product-moderation/:id` (prototype là màn con). Mô tả người bán chỉ hiện chữ (bỏ thẻ HTML) để không chạy HTML lạ trong trang quản trị; tài liệu pháp lý mock là SVG minh hoạ `public/img/mock/product-doc.svg`. Khung Admin: màn hẹp tự cuộn mục nav đang mở vào khung nhìn. |
+| G12.20 | `admin-catalog`: kiểu / quy tắc / zod theo 11.11 (tách giá trị thuộc tính, chỉ xóa danh mục rỗng, danh mục cha gốc + cấp 2 — cây 3 cấp, tab + thao tác sản phẩm, trùng mã thuộc tính, slug, hoa hồng 0–50%) + test. `slugify` đã có sẵn ở `shared/lib/slug.ts` từ G07 nên không tạo lại. Mock theo cây TREE / LEAVES của prototype, mã danh mục gốc trùng danh mục storefront (Điện tử = 1…); lỗi như server: trùng slug GNE-CAT-4091, còn sản phẩm GNE-CAT-4092, trùng mã thuộc tính GNE-CAT-4095 (đã thử). |
+| G12.21 | `CatalogPage`: danh mục gốc đang xem trên URL (`?id=`); công tắc "Hiển thị" gọi PATCH `is_active` ngay. "Bộ thuộc tính" và "Xem SP" là route thật `/admin/catalog/:id/attributes`, `/admin/catalog/sub/:id/products` (prototype là màn con trong state). Sản phẩm theo danh mục con: duyệt / từ chối dùng endpoint 11.12, khóa / mở khóa 11.11; mock dùng cùng 4 sản phẩm cho mọi danh mục con như prototype; lý do khóa / từ chối dùng bộ mã 16.4 (nhãn lấy chung khóa `admin-moderation.product.reasons.*`). |
+| G12.22 | `CatModal` rhf + zod: slug tự sinh khi thêm, nút Auto, danh mục cha chỉ chọn khi thêm (sửa chỉ đổi thông tin danh mục gốc như prototype), Xóa khi rỗng có hộp xác nhận. |
+| G12.23 | `AttributePanel`: thêm thuộc tính bắt buộc → toast "Shop có 14 ngày bổ sung" theo `grace_period_days` của API (mock trả 14 khi thuộc tính mới / vừa chuyển sang bắt buộc); mã không sửa được sau khi tạo (khóa trong URL PUT). |
+| G12.24 | Đề xuất danh mục: Duyệt (tạo danh mục dưới danh mục cha, hoa hồng theo cha) / Từ chối bắt buộc lý do (zod). Đã thử duyệt "Thú cưng (Pet)" → 7 danh mục gốc, chờ duyệt 2 → 1. Kho đề xuất của Seller (G11.31) là mock riêng, chưa nối với kho này — khi có backend cùng đọc `category_proposals`. |
+| G12.25 | `admin-finance`: kiểu theo 11.6–11.9, quy tắc (lý do từ chối rút 16.4, nội dung `TRWD…`, trạng thái hiển thị lệnh rút, 3 chỉ số 8.150.000₫ / 1.200.000₫ khớp prototype, tỷ lệ 0–50%, màu sự kiện sổ cái) + test. Lệnh rút / phiên COD ghi kho dùng chung (huy hiệu nav, "Tiền đang chờ xử lý" ở Tổng quan); sổ cái + hoa hồng ở mock riêng; duyệt chi xong ghi bút toán `PAYOUT_SETTLE`, đối soát xong ghi `ESCROW_IN` cho từng đơn khớp (đã thử: duyệt PAYOUT-0012 → huy hiệu 4 → 3, sổ cái có dòng #100483). |
+| G12.26 | `WithdrawalsPage`: Duyệt chi có hộp xác nhận → hộp chuyển khoản (QR mô phỏng dùng `QrPlaceholder`, tài khoản đầy đủ chỉ hiện sau duyệt theo API 11.6); "Xác nhận tay" bằng mã giao dịch ngân hàng. Nút "Mô phỏng: SePay báo tiền đã ra" (D5) đổi thành "Đã chuyển khoản" — thật thì webhook SePay tự hoàn tất. Lý do "Lý do khác" bắt buộc ghi chú. |
+| G12.27 | `CommissionPage`: tỷ lệ nhận số thập phân, ô sai (ngoài 0–50%) viền đỏ + khóa nút Lưu; ngành tắt công tắc hiện "Đang dùng mặc định x%". |
+| G12.28 | `LedgerPage`: tìm (debounce 300 ms) + lọc sự kiện theo enum 11.9, phân trang con trỏ 50 dòng với "Tải thêm" (`useInfiniteQuery`); Xuất sổ cái tạo CSV phía client từ mọi dòng khớp bộ lọc (API `/ledger-entries/export` dùng khi nối backend — G13.20). |
+| G12.29 | `domain/cod.rules.ts`: `parseCodCsv` (bỏ BOM, tiêu đề, dòng trống; trả số dòng sai định dạng), `matchLine`, `reconcile` (cân = tổng tiền − phí = số SePay đã nhận), `canConfirm` + test 2 phiên mẫu (GHN cân 2 dòng khớp; GHTK cân nhưng có dòng lệch / không tìm thấy). |
+| G12.30 | `CodReconciliationPage`: phiên đang xem trên URL (`?id=`); tải CSV (≤ 1 MB, chỉ .csv) đọc ở client rồi gọi preview 11.7, xác nhận gửi Idempotency-Key; phiên đã xác nhận hiện lại kết quả đã lưu. |
+| G12.32 | `admin-marketing`: kiểu theo 11.14–11.17, quy tắc (tab + thao tác voucher theo trạng thái, % lượt dùng; % giảm Flash + luật ≥ 15%, Lên lịch cần ≥ 1 SP duyệt; vị trí banner, đọc liên kết đích theo route mới, `sitePath` chặn liên kết ngoài miền / `//` / `/\` / `javascript:`, thứ tự kế tiếp theo ô, CTR, trạng thái; tách email, chữ thuần, tỷ lệ đọc) + zod Flash Sale / banner / thông báo + 10 test. `genCode` dùng chung của seller-promotions. |
+| G12.33 | `VoucherFormModal` (G11.40) tách thành `VoucherEditor` dùng chung: nơi gọi cấp dữ liệu + hàm lưu; chế độ `platform` thêm tên chương trình (bắt buộc), nhà tài trợ Genie / Đồng tài trợ + tỷ lệ sàn tài trợ, phạm vi chỉ Toàn sàn / Danh mục, ngày bắt đầu không ở quá khứ khi tạo (`voucherSchemaFor`, test cả 2 chế độ). Seller vẫn dùng `VoucherFormModal` như cũ. Trùng mã → báo dưới ô (đã thử GENIE50); Xoá vĩnh viễn chỉ khi kết thúc và chưa dùng (GNE-VCH-4093). Tổng giảm giá / ngân sách còn lại lấy từ `summary` (mock giữ số prototype). |
+| G12.34 | `FlashSalePage`: chiến dịch đang xem trên URL (`?id=`), tạo chiến dịch rhf + zod (hạn đăng ký phải trước ngày mở), bỏ "Mô phỏng: đến giờ mở bán" (D5 — cron server mở / đóng). |
+| G12.35 | Miền banner nằm ở `domain/marketing.rules.ts` (cùng các quy tắc marketing khác) thay vì file `banner.rules.ts` riêng; đích chuyển sang route mới (/c/…, /p/…-id, /shop/id, /#flash-sale, /discover, /campaign/…). Bộ banner mẫu chuyển sang kho chung `shared/api/mock/banners.ts` — storefront (promotions) và Admin cùng đọc; Admin sửa giữ trong phiên tab, storefront SSR vẫn đọc bộ gốc (khi có backend cùng một bảng). |
+| G12.36 | `BannersPage` + `BannerModal`: ảnh tải qua mục đích mới `BANNER_IMAGE` (thêm vào `upload.rules` cùng `NOTIFICATION_IMAGE` theo API 4.1, nén WebP ≤ 5 MB); ô chọn đích dùng danh mục (`catalog`), sản phẩm (`product.listProducts` + lọc shop), cửa hàng (`shop.listShops` — API thật là `/admin/shops`, ghi G13.20); đủ 8 banner đang hiển thị → lỗi dưới ô Vị trí (GNE-BNR-4221). Cột thao tác dính phải để không bị đẩy khỏi khung khi bảng cuộn ngang. |
+| G12.37 | `PlatformNotificationsPage`: `RichBox` (In đậm / In nghiêng / Liên kết qua hộp nhập URL thay `window.prompt`), `sanitizeHtml` chỉ giữ thẻ ô soạn tạo ra và href http/https — dùng khi lưu và khi hiển thị chi tiết; email người nhận cụ thể kiểm định dạng + email không tồn tại báo dưới ô (GNE-NOT-4221); chỉ sửa được khi còn hẹn giờ (GNE-NOT-4091). |
+| G12.39 | `admin-system`: kiểu / quy tắc theo 11.10 + 11.13 (chức danh nạp bộ quyền mặc định, chỉnh khác → Tùy chỉnh, không cấp MANAGE_RBAC cho nhân viên, thao tác theo trạng thái, tab + tìm người dùng theo SĐT có khoảng trắng, hạn đình chỉ 7 / 30 ngày / vô thời hạn, khoảng thời gian nhật ký theo giờ VN, màu hành động), zod mời (email `@genie.example`) / khóa / đình chỉ (Lý do khác bắt buộc mô tả) / mở khóa / tên + test. Mock nhân viên, người dùng, nhật ký theo prototype; nhật ký mẫu kết thúc 22/06/2026 nên "Hôm nay / 7 / 30 ngày" tính từ ngày đó. |
+| G12.40–G12.41 | `StaffPage`: mã quyền di chuột xem mô tả; Gửi lại lời mời / Sửa quyền / Khóa (lý do) / Mở khóa / Xóa (hộp xác nhận) theo trạng thái; tài khoản đang đăng nhập không tự thao tác. `RbacEditor` cảnh báo tách biệt nhiệm vụ (PROCESS_PAYOUT + UPDATE_COMMISSION) theo `warnings` của API — vẫn lưu được. Sửa lỗi tràn ngang ở 360: nhãn `sr-only` trong `th` thoát khung cuộn (thêm `relative` cho khung bảng). |
+| G12.42 | `UsersPage`: tab có số đếm, tìm theo email / SĐT / tên shop; khóa tài khoản = đình chỉ theo mã lý do + thời hạn (phiên đăng nhập bị thu hồi), mở khóa bắt buộc lý do. Khóa nhân viên chỉ ở Phân quyền nhân viên (có liên kết). |
+| G12.43 | `AuditLogPage`: lọc khoảng thời gian (có Tuỳ chọn từ / đến), loại hành động, tìm; phân trang con trỏ "Tải thêm"; ô "n lần truy cập bị từ chối" đếm theo bộ lọc (`denied_count` của API); Xuất nhật ký tạo CSV phía client từ toàn bộ kết quả lọc (API có export — dùng khi nối backend G13). Chỉ đọc, không có thao tác sửa / xóa. |
+| G12.44 | `AccountAdminPage`: ảnh đại diện (upload AVATAR) + sửa tên qua PATCH `/admin/me` (khung Admin đổi theo); đổi mật khẩu và thiết bị đăng nhập dùng lại `PasswordForm`, `DevicesPanel` của khu tài khoản (thêm prop `passwordHref`). Ghi chú "Bắt buộc OTP" đặt trên form (form đã có khối Mẹo bảo mật riêng). `PanelHead` (shared/ui) + dòng thiết bị tự xuống hàng khi hẹp — trang tài khoản khách ở 1440 không đổi. |
 
 ## Nhật ký
 
@@ -872,3 +902,10 @@
 | 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
 | 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
 | 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |
+| 2026-11-14 | Admin Portal: khung SPA (thanh bên lọc theo quyền, huy hiệu hàng chờ, chuông, 403, 404 nội bộ), `/admin/me`, `/admin/queues`, kho mock admin dùng chung (G12 nhóm A) | 68cc825 |
+| 2026-11-14 | Admin Portal: Tổng quan (việc cần xử lý, kỳ báo cáo, 4 ô tiền, hoa hồng đi về đâu, GMV, tiền giữ / chờ xử lý, đơn đang chạy, xếp hạng, shop tăng trưởng) + Duyệt KYC (hàng chờ, chi tiết, trình xem tài liệu, phê duyệt / từ chối / bổ sung) (G12 nhóm B) | b8bcfb5 |
+| 2026-11-14 | Admin Portal: Trả hàng & Hoàn tiền (phân xử 4 phán quyết, phong tỏa ký quỹ, hoàn tiền Gateway / chuyển khoản tay), Kiểm duyệt đánh giá, Duyệt sản phẩm (hàng chờ, giao người duyệt, cấu hình nhân viên, trang chi tiết + thanh quyết định) (G12 nhóm C) | 7045474 |
+| 2026-11-14 | Admin Portal: Danh mục toàn sàn (4 chỉ số, cây danh mục, chi tiết + hiển thị, thêm / sửa / xóa danh mục, bộ thuộc tính, sản phẩm theo danh mục con: duyệt / từ chối / khóa, đề xuất từ người bán) (G12 nhóm D) | 93b53d5 |
+| 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
+| 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
+| 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |

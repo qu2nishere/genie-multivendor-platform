@@ -1,8 +1,13 @@
 ---
+// Admin Portal (plan G12.06; TS 5.1): SPA dưới /admin/*, toàn bộ route xử lý phía client
+// (react-router, basename /admin). Middleware đã chặn khi chưa đăng nhập; luôn noindex.
 import AppShellLayout from '@/layouts/AppShellLayout.astro';
 import AdminApp from '@/app/admin/AdminApp';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
 ---
 
-<AppShellLayout title="Genie Admin">
+<AppShellLayout title={t('admin.shell.title')}>
   <AdminApp client:only="react" />
 </AppShellLayout>

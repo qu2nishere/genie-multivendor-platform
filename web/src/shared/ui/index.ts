@@ -55,6 +55,7 @@ export { Spinner, type SpinnerProps } from './Spinner';
 export { OtpInput, type OtpInputProps } from './OtpInput';
 export { Countdown, type CountdownProps } from './Countdown';
 export { Pagination, pageList, type PaginationProps } from './Pagination';
+export { TablePager, type TablePagerProps } from './TablePager';
 export {
   Card,
   PanelHead,
