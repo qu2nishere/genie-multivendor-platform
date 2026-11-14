@@ -47,3 +47,4 @@ export { toCardData } from './ui/toCard';
 export { default as ProductGallery, type ProductGalleryProps } from './ui/ProductGallery';
 export { default as WishShare, type WishShareProps } from './ui/WishShare';
 export { default as BuyBox, type BuyBoxProps } from './ui/BuyBox';
+export { default as WishlistPanel } from './ui/WishlistPanel';

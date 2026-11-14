@@ -1,7 +1,17 @@
 ---
+// Theo dõi đơn (plan G10.38; prototype OrderTracking.jsx) — khung SSR + island client:load, cần đăng nhập,
+// noindex. Mã đơn không phải số → 404 thật (R19); đơn không thuộc tài khoản → island báo không tìm thấy.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { OrderTracking } from '@/features/orders';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const id = Number(Astro.params.id);
+if (!Number.isInteger(id) || id <= 0) {
+  return Astro.rewrite('/404');
+}
 ---
 
-<StorefrontLayout title="Chi tiết đơn hàng">
-  <!-- SSR khung + island -->
+<StorefrontLayout title={t('orders.detail.title')} noindex variant="bar" task>
+  <OrderTracking client:load id={id} />
 </StorefrontLayout>

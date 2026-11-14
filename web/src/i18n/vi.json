@@ -277,6 +277,14 @@
     },
     "breadcrumb": {
       "label": "Đường dẫn"
+    },
+    "media": {
+      "drop": "Kéo thả hoặc bấm để tải lên",
+      "remove": "Xóa tệp {name}",
+      "too_many": "Tối đa {max} tệp",
+      "type": "{name}: định dạng không được hỗ trợ",
+      "size": "{name}: tối đa {mb} MB",
+      "failed": "Không tải lên được {name}, vui lòng thử lại"
     }
   },
   "layout": {
@@ -335,6 +343,22 @@
       "mark_all": "Đánh dấu đã đọc",
       "empty": "Chưa có thông báo nào",
       "see_all": "Xem tất cả thông báo"
+    },
+    "page": {
+      "unread": "Bạn có {count} thông báo chưa đọc",
+      "all_read": "Bạn đã đọc hết thông báo",
+      "mark_all": "Đánh dấu tất cả đã đọc",
+      "empty": "Không có thông báo nào ở mục này",
+      "more": "Xem thêm thông báo",
+      "detail": "Chi tiết thông báo",
+      "new": "Chưa đọc",
+      "tab": {
+        "all": "Tất cả",
+        "order": "Đơn hàng",
+        "promo": "Khuyến mãi",
+        "system": "Hệ thống",
+        "chat": "Chat"
+      }
     }
   },
   "cart": {
@@ -348,6 +372,73 @@
     "add": {
       "added": "Đã thêm vào giỏ hàng",
       "guest_full": "Giỏ hàng đã đủ 50 sản phẩm. Đăng nhập để thêm tiếp."
+    },
+    "page": {
+      "title": "Giỏ hàng",
+      "meta_description": "Giỏ hàng nhiều shop trên Genie: mỗi shop thành một đơn riêng, Genie giữ tiền đến khi bạn nhận hàng.",
+      "count": "({count} sản phẩm)",
+      "empty_title": "Giỏ hàng trống",
+      "empty_text": "Hãy khám phá hàng triệu sản phẩm với giá tốt nhất.",
+      "continue": "Tiếp tục mua sắm",
+      "guest_notice": "Bạn đang xem giỏ hàng tạm trên trình duyệt này. Đăng nhập để thanh toán — giỏ tạm sẽ được gộp vào tài khoản."
+    },
+    "group": {
+      "select_all": "Chọn tất cả sản phẩm của {shop}",
+      "separate": "Một đơn riêng",
+      "ship_free": "Shop miễn phí vận chuyển",
+      "ship_fee": "Phí ship {fee}",
+      "subtotal": "Tạm tính ({count}):",
+      "voucher": "Thêm voucher của Shop"
+    },
+    "line": {
+      "select": "Chọn {title}",
+      "variant": "Phân loại: {variant}",
+      "price_up": "Giá đã tăng so với lúc thêm vào giỏ",
+      "price_down": "Giá đã giảm so với lúc thêm vào giỏ",
+      "price_at_add": "Giá lúc thêm",
+      "qty": "Số lượng {title}",
+      "remove": "Xóa {title}",
+      "unavailable": {
+        "OUT_OF_STOCK": "Hết hàng",
+        "SHOP_ON_VACATION": "Shop đang tạm nghỉ",
+        "PRODUCT_UNAVAILABLE": "Sản phẩm ngừng bán",
+        "FLASH_SALE_SOLD_OUT": "Hết suất Flash Sale"
+      }
+    },
+    "confirm": {
+      "remove_title": "Xóa sản phẩm",
+      "remove_one": "Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?",
+      "remove_zero": "Bạn có muốn xóa sản phẩm này ra khỏi giỏ hàng không?",
+      "remove_many": "Bạn có chắc muốn xóa {count} sản phẩm đã chọn khỏi giỏ hàng?",
+      "over_title": "Số lượng vượt giới hạn",
+      "over_text": "Sản phẩm này chỉ còn {stock} sản phẩm trong kho.",
+      "ok": "Đồng ý"
+    },
+    "bar": {
+      "select_all": "Chọn tất cả ({count})",
+      "remove_selected": "Xóa {count} sản phẩm",
+      "hold": "Genie giữ {amount} đến khi bạn nhận hàng",
+      "hold_short": "Genie giữ tiền đến khi bạn nhận hàng",
+      "orders": "{orders} đơn",
+      "info": "{orders} đơn · gồm phí ship {ship}",
+      "info_discount": " · giảm {amount}",
+      "total": "Tổng thanh toán",
+      "total_count": "({count} sản phẩm):",
+      "checkout": "Mua hàng ({count})",
+      "voucher": "Voucher Genie",
+      "freeship": "+ Freeship",
+      "points": "Dùng {points} Điểm",
+      "points_toggle": "Dùng Điểm Genie để giảm giá"
+    },
+    "variant": {
+      "title": "Chọn phân loại",
+      "stock": "Kho: {stock}",
+      "back": "Trở lại",
+      "confirm": "Xác nhận"
+    },
+    "picker": {
+      "platform_title": "Chọn Voucher Genie",
+      "shop_title": "Chọn Voucher của Shop"
     }
   },
   "auth": {
@@ -663,6 +754,65 @@
       "count": "{n} sản phẩm tham gia",
       "gone_title": "Chiến dịch không tồn tại hoặc đã kết thúc",
       "gone_text": "Đường dẫn \"/{slug}\" không khớp chiến dịch nào đang chạy."
+    },
+    "picker": {
+      "code_label": "Mã Voucher",
+      "code_placeholder": "Nhập mã voucher",
+      "empty": "Chưa có mã giảm giá nào phù hợp",
+      "platform_group": "Mã Giảm Giá",
+      "freeship_group": "Miễn Phí Vận Chuyển",
+      "shop_group": "Voucher của Shop",
+      "only": "Chỉ áp dụng: {list}",
+      "except": "Ngoại trừ: {list}",
+      "expiry": "HSD: {date}",
+      "none": "Chưa chọn Voucher nào",
+      "chosen": "Đã chọn {count} Voucher.",
+      "saving": "Tiết kiệm",
+      "shipping_fee": "Phí vận chuyển",
+      "applied": "Áp dụng mã voucher thành công!",
+      "not_eligible": "Mã voucher chưa đủ điều kiện áp dụng cho đơn hàng này.",
+      "reason": {
+        "no_items": "Giỏ hàng chưa có sản phẩm phù hợp",
+        "min_order": "Chưa đạt giá trị tối thiểu {amount}",
+        "not_active": "Voucher chưa đến thời gian sử dụng"
+      }
+    },
+    "wallet": {
+      "sub": "Bạn đang có {count} voucher khả dụng",
+      "history": "Lịch sử voucher",
+      "history_sub": "Voucher đã dùng hoặc đã hết hạn",
+      "view_history": "Xem lịch sử voucher",
+      "code_placeholder": "Nhập mã voucher tại đây",
+      "saved": "Lưu voucher thành công!",
+      "platform": "Voucher Sàn",
+      "shop": "Voucher Shop",
+      "expired": "Hết hiệu lực",
+      "used": "Đã sử dụng",
+      "used_tag": "Đã dùng",
+      "expired_tag": "Hết hạn",
+      "empty": "Chưa có voucher nào trong mục này",
+      "only": "Chỉ áp dụng danh mục {list}",
+      "except": "Ngoại trừ danh mục {list}",
+      "from": "Có hiệu lực: {date}",
+      "not_yet": "Chưa tới giờ",
+      "use": "Dùng ngay",
+      "usage": "{used}/{limit} lượt đã dùng",
+      "remove": "Xóa voucher {label}",
+      "remove_title": "Xác nhận xóa",
+      "remove_text": "Bạn có chắc chắn muốn xóa voucher {label} khỏi kho không?",
+      "removed": "Đã xóa voucher khỏi kho",
+      "detail": "Chi tiết voucher",
+      "detail_of": "Chi tiết voucher {label}",
+      "got_it": "Đã hiểu",
+      "field": {
+        "code": "Mã voucher",
+        "offer": "Ưu đãi",
+        "sponsor": "Nhà tài trợ",
+        "condition": "Điều kiện",
+        "scope": "Phạm vi",
+        "valid": "Hạn sử dụng",
+        "content": "Nội dung voucher"
+      }
     }
   },
   "payment": {
@@ -683,6 +833,84 @@
         "receive": "Bạn có 7 ngày kiểm tra và yêu cầu trả hàng nếu có lỗi.",
         "release": "Bạn xác nhận hoặc hết 7 ngày thì sàn mới chuyển tiền cho shop."
       }
+    },
+    "chip": {
+      "cod": "Trả tiền khi nhận hàng",
+      "released": "Genie đã chuyển tiền cho shop",
+      "return": "Genie giữ tiền trong lúc xử lý trả hàng",
+      "holding": "Genie đang giữ tiền"
+    },
+    "qr": {
+      "bank": "Ngân hàng",
+      "account": "Số tài khoản",
+      "holder": "Chủ tài khoản",
+      "amount": "Số tiền",
+      "content": "Nội dung CK",
+      "copy": "Sao chép {what}",
+      "valid": "Mã có hiệu lực trong",
+      "expired": "Mã QR đã hết hạn, đơn hàng được hủy và tồn kho được trả lại.",
+      "note": "Chuyển đúng số tiền và nội dung để hệ thống tự xác nhận qua SePay. Sai nội dung sẽ cần đối soát thủ công.",
+      "waiting": "Đang chờ SePay xác nhận đã nhận tiền…",
+      "change": "Đổi phương thức"
+    },
+    "modal": {
+      "pick_title": "Chọn phương thức thanh toán",
+      "qr_title": "Thanh toán VietQR",
+      "pay": "Thanh toán {amount}",
+      "cod": "Xác nhận COD {amount}",
+      "cod_meta": "Chờ shop xác nhận"
+    },
+    "gateway": {
+      "title": "Cổng thanh toán VNPAY (mô phỏng)",
+      "back": "Quay lại đơn hàng",
+      "moving": "Đang chuyển tiền...",
+      "payee": "Đơn vị nhận:",
+      "escrow": "Genie, tài khoản giữ tiền",
+      "orders": "{count} đơn",
+      "note": "Tiền chuyển vào tài khoản giữ tiền của Genie, chưa đến shop. Không có giao dịch thật nào xảy ra trong bản mẫu."
+    },
+    "result": {
+      "title": "Kết quả thanh toán"
+    },
+    "done": {
+      "title": "Thanh toán thành công!",
+      "title_cod": "Đặt hàng thành công!",
+      "text": "Cảm ơn bạn đã mua sắm tại Genie.",
+      "text_split": "Đơn hàng đã được tách theo từng nhà bán hàng.",
+      "text_cod": "Bạn thanh toán tiền mặt cho nhân viên giao hàng khi nhận hàng.",
+      "code": "Mã giao dịch",
+      "date": "Ngày đặt",
+      "order": "Đơn {code}",
+      "by": "Cung cấp bởi: {shop}",
+      "track": "Theo dõi",
+      "subtotal": "Tổng tiền hàng (Tạm tính)",
+      "shipping": "Phí vận chuyển",
+      "discount": "Giảm giá (Voucher & Khuyến mãi)",
+      "points": "Dùng Điểm Genie",
+      "collect": "Thu khi nhận hàng",
+      "home": "Về trang chủ",
+      "orders": "Xem đơn mua"
+    },
+    "failed": {
+      "title": "Thanh toán thất bại",
+      "text": "Ngân hàng hoặc cổng thanh toán chưa xác nhận giao dịch, có thể do thẻ bị từ chối hoặc quá thời gian chờ.",
+      "not_charged": "Bạn chưa bị trừ tiền.",
+      "waiting": "Đơn hàng {code} vẫn đang chờ bạn thanh toán.",
+      "hold_before": "Tồn kho vẫn được giữ thêm",
+      "hold_after": ". Hãy thử lại trước khi hết hạn để không mất hàng.",
+      "expired": "Đã hết thời gian giữ hàng 15 phút — đơn được hủy, tồn kho đã trả lại.",
+      "retry": "Thử thanh toán lại",
+      "change": "Đổi phương thức",
+      "cart": "Về giỏ hàng"
+    },
+    "pending": {
+      "title": "Đang chờ xác nhận thanh toán",
+      "text": "Giao dịch {code} đang chờ cổng thanh toán xác nhận. Trang sẽ tự cập nhật.",
+      "show_qr": "Xem lại mã QR"
+    },
+    "missing": {
+      "title": "Không tìm thấy giao dịch",
+      "text": "Đường dẫn thiếu mã giao dịch hoặc giao dịch không thuộc tài khoản của bạn. Xem trạng thái trong Đơn mua."
     }
   },
   "product": {
@@ -693,7 +921,13 @@
       "added": "Đã thêm vào danh sách yêu thích",
       "removed": "Đã bỏ khỏi danh sách yêu thích",
       "on": "Đã yêu thích",
-      "off": "Yêu thích"
+      "off": "Yêu thích",
+      "title": "Sản phẩm yêu thích ({count})",
+      "sub": "Bấm tim trên sản phẩm để lưu lại xem sau",
+      "empty": "Bạn chưa có sản phẩm yêu thích nào.",
+      "remove": "Bỏ thích",
+      "add": "Thêm vào giỏ",
+      "unavailable": "Sản phẩm hiện không còn phân loại nào còn hàng"
     },
     "promise": {
       "label": "Khi mua ở Genie",
@@ -788,11 +1022,11 @@
     "summary": "/ 5 · {n} đánh giá",
     "empty": "Chưa có đánh giá nào ở mục này",
     "filter": {
+      "3": "3 Sao",
+      "4": "4 Sao",
+      "5": "5 Sao",
       "label": "Lọc đánh giá",
       "all": "Tất cả",
-      "5": "5 Sao",
-      "4": "4 Sao",
-      "3": "3 Sao",
       "img": "Có hình ảnh",
       "buy": "Đã mua hàng"
     },
@@ -818,6 +1052,24 @@
         "OFFENSIVE": "Ngôn từ thô tục, xúc phạm",
         "FAKE_BUYER": "Mua giả, không phải người mua thật"
       }
+    },
+    "form": {
+      "title": "Đánh giá sản phẩm",
+      "step": "Sản phẩm {n}/{count}",
+      "stars": "Số sao",
+      "content": "Nhận xét của bạn",
+      "placeholder": "Hãy chia sẻ nhận xét của bạn về sản phẩm này nhé...",
+      "images": "Hình ảnh đính kèm ({n}/5)",
+      "images_hint": "Đánh giá có ảnh được tặng 50 Điểm. JPG, PNG tối đa 5 MB.",
+      "video": "Video (tùy chọn)",
+      "video_hint": "1 video MP4, tối đa 30 MB.",
+      "name": "Hiển thị tên",
+      "public": "Hiển thị tên công khai",
+      "anonymous": "Đánh giá ẩn tên",
+      "submit": "Gửi đánh giá",
+      "submit_next": "Gửi và đánh giá sản phẩm tiếp theo",
+      "done": "Cảm ơn bạn đã đánh giá!",
+      "done_points": "Cảm ơn bạn đã đánh giá! Bạn được cộng {points} Điểm."
     }
   },
   "shop": {
@@ -865,6 +1117,16 @@
       "all": "Tất cả sản phẩm",
       "new": "Mới nhất",
       "hot": "Bán chạy"
+    },
+    "follows": {
+      "title": "Shop đang theo dõi ({count})",
+      "sub": "Nhận thông báo khuyến mãi từ các shop yêu thích",
+      "empty": "Bạn chưa theo dõi shop nào.",
+      "followers": "{count} theo dõi",
+      "visit": "Vào shop",
+      "unfollow": "Hủy theo dõi",
+      "unfollow_title": "Hủy theo dõi Shop?",
+      "unfollow_text": "Bạn sẽ không nhận được khuyến mãi từ {shop} nữa."
     }
   },
   "policies": {
@@ -873,5 +1135,677 @@
     "pager": "Trang trước và sau",
     "prev": "Trang trước",
     "next": "Trang sau"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "meta_description": "Thanh toán đơn hàng nhiều shop trên Genie — Genie giữ tiền đến khi bạn nhận hàng.",
+    "empty": {
+      "title": "Chưa có sản phẩm để thanh toán",
+      "text": "Hãy chọn sản phẩm trong giỏ hàng rồi bấm Mua hàng.",
+      "cta": "Về giỏ hàng"
+    },
+    "address": {
+      "title": "Địa chỉ nhận hàng",
+      "change": "Thay đổi",
+      "add": "Thêm địa chỉ",
+      "none": "Chưa có địa chỉ nhận hàng. Thêm địa chỉ để đặt hàng."
+    },
+    "order": {
+      "separate": "Đơn riêng",
+      "index": "Đơn {n}/{count}",
+      "oos": "Sản phẩm vừa hết hàng — đã gỡ khỏi đơn.",
+      "drop": "Bỏ món",
+      "edit_qty": "Sửa số lượng ở giỏ",
+      "more": "Xem thêm {count} sản phẩm",
+      "shop_voucher": "Chọn Voucher của Shop",
+      "shop_voucher_on": "Voucher Shop −{amount}",
+      "note": "Lời nhắn cho Shop…",
+      "note_label": "Lời nhắn cho {shop}",
+      "platform_cut": "Voucher Sàn phân bổ:",
+      "ship": "Giao nhanh",
+      "freeship": "Freeship −{amount}",
+      "total": "Tổng đơn ({count} SP):"
+    },
+    "voucher": {
+      "one_each": "Tối đa 1 mỗi loại",
+      "chosen": "Đã chọn Voucher Genie",
+      "choose": "Chọn mã giảm giá",
+      "platform": "Sàn",
+      "off": "giảm {amount}",
+      "ship_off": "giảm {amount} phí ship",
+      "extra": "Có bộ mã tiết kiệm thêm {amount}",
+      "apply_best": "Áp bộ mã tốt nhất",
+      "is_best": "Đang dùng bộ mã giảm nhiều nhất"
+    },
+    "points": {
+      "title": "Sử dụng Điểm Genie",
+      "rate": "1 Điểm = 1₫",
+      "have": "Đang có {points} Điểm",
+      "cap": "Dùng tối đa 50% tiền hàng ({amount})",
+      "applied": "Đã áp dụng {points} Điểm, giảm {amount} vào đơn hàng."
+    },
+    "pay": {
+      "title": "Phương thức thanh toán",
+      "note": "Với VNPAY và VietQR, Genie giữ tiền đến khi bạn nhận hàng rồi mới chuyển cho shop. Với COD, bạn trả tiền cho nhân viên giao hàng.",
+      "VNPAY": {
+        "name": "Cổng VNPAY",
+        "meta": "Thẻ ATM / QR Code"
+      },
+      "VIETQR": {
+        "name": "Chuyển khoản VietQR",
+        "meta": "Tự xác nhận qua SePay"
+      },
+      "COD": {
+        "name": "Thanh toán tiền mặt (COD)",
+        "meta": "Nhận hàng rồi thanh toán"
+      }
+    },
+    "hold": {
+      "left": "Tồn kho được giữ trong",
+      "expired": "Đã hết thời gian giữ hàng 15 phút.",
+      "renew": "Giữ lại"
+    },
+    "summary": {
+      "title": "Chi tiết thanh toán",
+      "subtotal": "Tổng tiền hàng",
+      "shipping": "Tổng phí vận chuyển",
+      "platform": "Voucher Sàn",
+      "freeship": "Giảm phí vận chuyển",
+      "shop": "Voucher Shop",
+      "points": "Sử dụng Điểm Genie",
+      "count": "{orders} đơn · {items} sản phẩm",
+      "hold": "Genie giữ {amount} đến khi bạn nhận hàng.",
+      "terms_before": "Nhấn \"Đặt hàng\" đồng nghĩa bạn đồng ý với",
+      "terms_link": "Điều khoản Genie"
+    },
+    "place": {
+      "vnpay": "Đặt hàng & thanh toán VNPAY",
+      "vietqr": "Đặt hàng & lấy mã QR",
+      "cod": "Đặt hàng",
+      "short": "Đặt hàng",
+      "processing": "Đang xử lý..."
+    }
+  },
+  "account": {
+    "address": {
+      "modal_title": "Địa chỉ của tôi",
+      "edit_title": "Cập nhật địa chỉ",
+      "add_title": "Thêm địa chỉ mới",
+      "add": "Thêm địa chỉ mới",
+      "default": "Mặc định",
+      "set_default": "Đặt làm mặc định",
+      "make_default": "Đặt làm địa chỉ mặc định",
+      "recipient": "Họ và tên",
+      "phone": "Số điện thoại",
+      "line": "Địa chỉ cụ thể (số nhà, tên đường)",
+      "label_type": "Loại địa chỉ",
+      "label": {
+        "HOME": "Nhà riêng",
+        "OFFICE": "Văn phòng"
+      },
+      "save": "Lưu địa chỉ",
+      "saved": "Đã lưu địa chỉ",
+      "gps": {
+        "idle": "Dùng vị trí hiện tại (GPS)",
+        "locating": "Đang định vị…",
+        "done": "Đã lấy vị trí hiện tại",
+        "hint": "Tự động điền địa chỉ từ định vị thiết bị.",
+        "done_hint": "Đã điền Tỉnh/Quận/Phường — bạn có thể chỉnh lại bên dưới."
+      },
+      "region": {
+        "label": "Tỉnh / Thành phố, Quận / Huyện, Phường / Xã",
+        "placeholder": "Chọn Tỉnh / Quận / Phường",
+        "province": "Tỉnh/Thành",
+        "district": "Quận/Huyện",
+        "ward": "Phường/Xã",
+        "search": "Tìm nhanh…",
+        "none": "Không tìm thấy"
+      },
+      "err": {
+        "recipient": "Nhập họ tên người nhận",
+        "recipient_long": "Họ tên tối đa 100 ký tự",
+        "phone": "Số điện thoại không hợp lệ",
+        "region": "Chọn đầy đủ Tỉnh / Quận / Phường",
+        "line": "Nhập địa chỉ cụ thể",
+        "line_long": "Địa chỉ tối đa 255 ký tự"
+      },
+      "book": "Sổ địa chỉ",
+      "book_sub": "Quản lý địa chỉ nhận hàng của bạn",
+      "empty": "Chưa có địa chỉ nào",
+      "remove_title": "Xóa địa chỉ",
+      "remove_text": "Bạn có chắc muốn xóa địa chỉ này?"
+    },
+    "menu": {
+      "label": "Tài khoản",
+      "mine": "Tài khoản của tôi",
+      "profile": "Hồ sơ",
+      "address": "Địa chỉ",
+      "password": "Đổi mật khẩu",
+      "password_set": "Thiết lập mật khẩu",
+      "logins": "Liên kết đăng nhập",
+      "devices": "Thiết bị đăng nhập",
+      "orders": "Đơn mua",
+      "notifications": "Thông báo",
+      "vouchers": "Kho Voucher",
+      "points": "Điểm Genie",
+      "wishlist": "Sản phẩm yêu thích",
+      "following": "Shop đang theo dõi",
+      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name} trên thiết bị này?",
+      "kind_both": "Email và Google",
+      "kind_google": "Tài khoản Google",
+      "kind_email": "Tài khoản Email"
+    },
+    "otp": {
+      "sent": "Mã xác nhận đã gửi đến {email}",
+      "demo": "mã thử: 123456",
+      "resend": "Gửi lại mã",
+      "resend_in": "Gửi lại mã sau {s}s",
+      "resent": "Đã gửi lại mã"
+    },
+    "profile": {
+      "title": "Hồ sơ của tôi",
+      "sub": "Quản lý thông tin để bảo mật tài khoản",
+      "verified": "Đã xác minh",
+      "linked_google": "Liên kết Google",
+      "email_need_password_before": "Đổi sang email khác yêu cầu",
+      "email_need_password_after": "trước. Sau đó bạn có thể đăng nhập bằng Google (email cũ) hoặc Email + mật khẩu (email mới).",
+      "phone_empty": "Chưa có số điện thoại",
+      "gender": "Giới tính",
+      "genders": {
+        "MALE": "Nam",
+        "FEMALE": "Nữ",
+        "OTHER": "Khác",
+        "PREFER_NOT_TO_SAY": "Không muốn nói"
+      },
+      "dob": "Ngày sinh",
+      "dob_empty": "Chưa thiết lập — chọn ngày để cập nhật.",
+      "bio": "Giới thiệu",
+      "language": "Ngôn ngữ",
+      "lang": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      },
+      "save": "Lưu thay đổi",
+      "saved": "Đã lưu hồ sơ",
+      "avatar_pick": "Chọn ảnh",
+      "avatar_hint": "Định dạng JPG, PNG. Tối đa 1 MB.",
+      "avatar_saved": "Đã cập nhật ảnh đại diện",
+      "avatar_invalid": "Ảnh phải là JPG / PNG và tối đa 1 MB.",
+      "err": {
+        "name": "Vui lòng nhập Họ và tên",
+        "name_long": "Họ tên tối đa 100 ký tự",
+        "dob": "Ngày sinh không hợp lệ",
+        "bio": "Giới thiệu tối đa 200 ký tự"
+      },
+      "change": "Thay đổi"
+    },
+    "email": {
+      "title": "Đổi email đăng nhập",
+      "current": "Email hiện tại:",
+      "new": "Email mới",
+      "note": "Genie gửi mã 6 số tới email mới. Sau khi đổi, bạn đăng nhập bằng email mới; liên kết Google vẫn giữ nguyên.",
+      "send": "Gửi mã xác nhận",
+      "other": "Đổi email khác",
+      "done": "Đã đổi email đăng nhập thành {email}",
+      "err": {
+        "same": "Email mới phải khác email hiện tại"
+      }
+    },
+    "delete": {
+      "open": "Xóa tài khoản",
+      "title": "Xóa tài khoản",
+      "text": "Hành động này không thể hoàn tác sau 30 ngày. Hồ sơ của {name} sẽ được ẩn danh, voucher và Điểm bị hủy. Trong 30 ngày, đăng nhập lại và bấm \"Hủy yêu cầu xóa\" để giữ tài khoản.",
+      "blocked": "Bạn còn đơn đang xử lý, cần hoàn tất trước khi xóa tài khoản:",
+      "send_otp": "Gửi mã OTP",
+      "confirm": "Xác nhận xóa",
+      "done": "Đã ghi nhận yêu cầu xóa tài khoản. Email xác nhận kèm hạn 30 ngày đã được gửi.",
+      "pending": "Tài khoản sẽ được ẩn danh vào {date}. Bạn có thể hủy yêu cầu trong thời gian này.",
+      "cancel": "Hủy yêu cầu xóa",
+      "cancelled": "Đã hủy yêu cầu xóa, tài khoản trở lại bình thường"
+    },
+    "password": {
+      "sub": "Bảo mật tài khoản bằng mật khẩu mạnh",
+      "sub_set": "Tài khoản đang chỉ có Google. Không cần mật khẩu cũ vì bạn đã đăng nhập bằng Google; sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google.",
+      "current": "Mật khẩu hiện tại",
+      "new": "Mật khẩu mới",
+      "confirm": "Nhập lại mật khẩu mới",
+      "hint": "Tối thiểu 8 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt",
+      "check": {
+        "checking": "Đang kiểm tra...",
+        "ok": "Chính xác",
+        "bad": "Không chính xác"
+      },
+      "submit": "Cập nhật mật khẩu",
+      "set_submit": "Thiết lập mật khẩu",
+      "confirm_otp": "Xác nhận đổi mật khẩu",
+      "changed": "Đổi mật khẩu thành công",
+      "set_done": "Thiết lập mật khẩu thành công",
+      "done_note": "Đã cập nhật mật khẩu. Các thiết bị khác đã được đăng xuất.",
+      "tips_title": "Mẹo bảo mật",
+      "tips": {
+        "1": "Không dùng mật khẩu giống nhau cho nhiều trang",
+        "2": "Kết hợp chữ hoa, số và ký tự đặc biệt",
+        "3": "Không dùng thông tin cá nhân (tên, ngày sinh)",
+        "4": "Đổi mật khẩu định kỳ 3–6 tháng"
+      },
+      "err": {
+        "current": "Nhập mật khẩu hiện tại",
+        "same": "Mật khẩu mới phải khác mật khẩu hiện tại",
+        "wrong": "Mật khẩu hiện tại không đúng"
+      }
+    },
+    "logins": {
+      "sub": "Các cách đăng nhập vào cùng một tài khoản",
+      "info": "Một tài khoản chỉ có một mật khẩu. Google chỉ là thêm một cách đăng nhập: dù vào bằng cách nào, bạn vẫn vào đúng tài khoản {email} với cùng đơn hàng, ví và Điểm.",
+      "password": "Email và mật khẩu",
+      "has_pw": "Đã có mật khẩu",
+      "no_pw": "Chưa có mật khẩu",
+      "linked": "Đã liên kết",
+      "not_linked": "Chưa liên kết",
+      "only_way": "Đây là cách đăng nhập duy nhất. Thiết lập mật khẩu trước nếu muốn gỡ liên kết.",
+      "link": "Liên kết Google",
+      "unlink": "Gỡ liên kết",
+      "keep": "Giữ liên kết",
+      "count": "{count} cách đăng nhập đang bật",
+      "since": "liên kết Google {when}",
+      "link_title": "Liên kết Google",
+      "link_text": "Genie sẽ mở trang đăng nhập Google. Tài khoản Google có email đã xác minh sẽ được gắn vào tài khoản {email} hiện tại, không tạo tài khoản mới.",
+      "unlink_title": "Gỡ liên kết Google?",
+      "unlink_text": "Sau khi gỡ, bấm \"Đăng nhập Google\" sẽ không vào tài khoản này nữa cho đến khi bạn liên kết lại. Bạn vẫn đăng nhập được bằng email và mật khẩu.",
+      "linked_toast": "Đã liên kết Google. Lần sau bấm \"Đăng nhập Google\" là vào tài khoản này",
+      "unlinked_toast": "Đã gỡ liên kết Google. Bạn đăng nhập bằng email và mật khẩu"
+    },
+    "devices": {
+      "sub": "Các phiên đang đăng nhập vào tài khoản của bạn",
+      "logout_others": "Đăng xuất tất cả thiết bị khác",
+      "tip_before": "Nếu thấy thiết bị lạ, hãy đăng xuất ngay và",
+      "tip_link": "đổi mật khẩu",
+      "count": "Bạn đang đăng nhập trên {count} thiết bị.",
+      "current": "Thiết bị hiện tại",
+      "active": "Đang hoạt động",
+      "this": "Phiên này",
+      "out_one": "Đã đăng xuất thiết bị",
+      "out_all": "Đã đăng xuất tất cả thiết bị khác"
+    }
+  },
+  "orders": {
+    "title": "Đơn mua",
+    "empty": "Chưa có đơn hàng nào ở mục này",
+    "tab": {
+      "TO_PAY": "Chờ thanh toán",
+      "SHIPPING": "Vận chuyển",
+      "TO_RECEIVE": "Chờ giao hàng",
+      "COMPLETED": "Hoàn thành",
+      "RETURN": "Trả hàng / Hoàn tiền",
+      "CANCELLED": "Đã hủy"
+    },
+    "status": {
+      "PENDING_PAYMENT": "Chờ thanh toán",
+      "PAID": "Đã thanh toán",
+      "CONFIRMED": "Đã xác nhận",
+      "PREPARING": "Đang chuẩn bị",
+      "READY_FOR_PICKUP": "Chờ lấy hàng",
+      "DELIVERING": "Đang giao",
+      "DELIVERY_FAILED": "Giao không thành công",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn thành",
+      "RETURN_REQUESTED": "Đang trả hàng / hoàn tiền",
+      "RETURN_APPROVED": "Đã chấp nhận trả hàng",
+      "RETURN_REJECTED": "Shop từ chối trả hàng",
+      "RETURNING": "Đang gửi hàng hoàn",
+      "RETURNED_TO_VENDOR": "Shop đã nhận hàng hoàn",
+      "PARTIALLY_REFUNDED": "Đã hoàn tiền một phần",
+      "REFUNDED": "Đã hoàn tiền",
+      "CANCELLED": "Đã hủy",
+      "CANCELLED_BY_VENDOR": "Shop đã hủy",
+      "AUTO_CANCELLED": "Tự hủy do quá hạn"
+    },
+    "pay": {
+      "VNPAY": "VNPay",
+      "VIETQR": "VietQR",
+      "COD": "COD"
+    },
+    "card": {
+      "label": "Đơn {code}",
+      "total": "Thành tiền:",
+      "delivered": "Giao thành công"
+    },
+    "group": {
+      "pending": "Nhóm đơn hàng chờ thanh toán",
+      "cancelled": "Nhóm đơn hàng đã hủy",
+      "goods": "Tiền hàng",
+      "shipping": "Phí vận chuyển",
+      "discount": "Giảm giá (Voucher + Điểm)",
+      "total": "Tổng thanh toán ({count} đơn):",
+      "again_all": "Mua lại tất cả",
+      "cancel": "Hủy nhóm đơn"
+    },
+    "action": {
+      "pay": "Thanh toán ngay",
+      "await_shop": "Chờ shop xác nhận",
+      "cancel": "Hủy đơn",
+      "track": "Theo dõi đơn",
+      "chat": "Liên hệ Shop",
+      "again": "Mua lại",
+      "received": "Đã nhận hàng",
+      "return": "Trả hàng",
+      "view_return": "Xem yêu cầu trả hàng",
+      "review": "Đánh giá",
+      "reviewed": "Đã đánh giá"
+    },
+    "again": {
+      "added": "Đã thêm sản phẩm vào giỏ hàng",
+      "partial": "Đã thêm sản phẩm còn bán, bỏ qua sản phẩm đã ngừng bán / hết hàng",
+      "none": "Các sản phẩm này hiện không còn bán"
+    },
+    "cancel": {
+      "title": "Xác nhận hủy đơn hàng",
+      "text": "Bạn có chắc muốn hủy đơn hàng này không? Quá trình này không thể hoàn tác, Điểm và voucher (nếu có) sẽ được hoàn lại.",
+      "text_group": "Bạn có chắc muốn hủy nhóm {count} đơn hàng này không? Quá trình này không thể hoàn tác, Điểm và voucher (nếu có) sẽ được hoàn lại.",
+      "refund_note": "Số tiền đã thanh toán được hoàn về phương thức gốc.",
+      "reason": "Lý do hủy đơn",
+      "note": "Ghi chú thêm",
+      "note_required": "Vui lòng ghi rõ lý do hủy đơn",
+      "confirm": "Xác nhận hủy",
+      "keep": "Không",
+      "done": "Hủy đơn hàng thành công",
+      "done_group": "Hủy nhóm đơn hàng thành công",
+      "refund": ". Tiền được hoàn về phương thức đã thanh toán.",
+      "reasons": {
+        "CHANGE_OF_MIND": "Đổi ý, không muốn mua nữa",
+        "CHANGE_ADDRESS": "Muốn đổi địa chỉ nhận hàng",
+        "CHANGE_VARIANT": "Muốn đổi sản phẩm / phân loại",
+        "FOUND_BETTER_PRICE": "Tìm được giá tốt hơn",
+        "OTHER": "Lý do khác"
+      }
+    },
+    "receipt": {
+      "title": "Xác nhận đã nhận hàng?",
+      "text": "Genie sẽ chuyển {amount} cho {shop}. Sau khi xác nhận, bạn không thể yêu cầu trả hàng cho đơn này nữa.",
+      "confirm": "Đã nhận, chuyển tiền cho shop",
+      "done": "Cảm ơn bạn! Đơn hàng đã hoàn thành."
+    },
+    "step": {
+      "label": "Tiến trình đơn hàng",
+      "now": "Bước {n}/{count}:",
+      "placed": "Đặt hàng",
+      "paid": "Đã thanh toán",
+      "paid_cod": "Thanh toán khi nhận",
+      "confirmed": "Shop xác nhận",
+      "prep": "Chờ lấy hàng",
+      "ship": "Đang vận chuyển",
+      "delivered": "Đã giao",
+      "completed": "Hoàn thành"
+    },
+    "escrow": {
+      "done": "Đơn đã hoàn thành. Genie đã chuyển tiền cho shop.",
+      "cod": "Bạn trả tiền mặt cho nhân viên giao hàng. Đơn vị vận chuyển chuyển khoản tiền này về Genie trước khi Genie trả cho shop.",
+      "delivered": "Genie đang giữ tiền của bạn. Bấm \"Đã nhận hàng\" để Genie chuyển tiền cho shop, hoặc tiền tự chuyển sau 7 ngày (vào {date}) nếu không có yêu cầu trả hàng.",
+      "after_7": "sau 7 ngày",
+      "holding": "Genie đang giữ tiền của bạn và chỉ chuyển cho shop sau khi bạn xác nhận đã nhận hàng."
+    },
+    "carrier": {
+      "label": "Đơn vị vận chuyển",
+      "code": "Mã vận đơn:",
+      "eta": "Dự kiến giao",
+      "delivered_at": "Đã giao lúc",
+      "GHN": "Giao Hàng Nhanh",
+      "GHTK": "Giao Hàng Tiết Kiệm",
+      "VIETTEL_POST": "ViettelPost",
+      "JNT_EXPRESS": "J&T Express",
+      "GENIE_EXPRESS": "Genie Express"
+    },
+    "journey": "Hành trình đơn hàng",
+    "detail": {
+      "title": "Theo dõi đơn hàng",
+      "code": "Mã đơn",
+      "discount": "Giảm giá voucher",
+      "return_closed": "Đơn hàng đã quá thời hạn 7 ngày bảo vệ khiếu nại",
+      "on_the_way": "Đang trên đường giao đến bạn",
+      "preparing": "Người bán đang chuẩn bị hàng",
+      "request_return": "Yêu cầu Trả hàng / Hoàn tiền",
+      "review": "Đánh giá sản phẩm"
+    }
+  },
+  "refunds": {
+    "form": {
+      "title": "Yêu cầu Trả hàng / Hoàn tiền",
+      "type": "Phương án bạn muốn",
+      "items": "Chọn sản phẩm cần trả",
+      "reason": "Lý do trả hàng",
+      "evidence": "Bằng chứng: ít nhất 1 ảnh rõ nhãn vận đơn và 1 video mở hộp",
+      "evidence_hint": "Tối đa 10 MB / tệp (JPG, PNG, MP4). Ảnh được nén trước khi tải lên.",
+      "missing": "Còn thiếu {what}.",
+      "missing_IMAGE": "1 ảnh",
+      "missing_VIDEO": "1 video mở hộp",
+      "bank": "Tài khoản ngân hàng nhận tiền hoàn",
+      "bank_hint": "Đơn {method} được hoàn bằng chuyển khoản, nhân viên sàn chuyển trong 3 ngày làm việc sau khi có kết quả.",
+      "bank_name": "Ngân hàng",
+      "account": "Số tài khoản",
+      "holder": "Tên chủ tài khoản",
+      "amount": "Số tiền hoàn dự kiến",
+      "note": "Shop có 48 giờ để phản hồi yêu cầu. Trong thời gian này, Genie vẫn giữ tiền và chưa chuyển cho shop.",
+      "submit": "Gửi yêu cầu",
+      "sent": "Đã gửi yêu cầu trả hàng. Shop có 48 giờ để phản hồi."
+    },
+    "type": {
+      "RETURN_AND_REFUND": "Trả hàng và Hoàn tiền",
+      "REFUND_ONLY": "Hoàn tiền ngay không cần trả hàng"
+    },
+    "type_hint": {
+      "RETURN_AND_REFUND": "Gửi hàng về shop rồi nhận lại tiền",
+      "REFUND_ONLY": "Khi hàng thiếu hoặc hư hỏng một phần"
+    },
+    "reason": {
+      "DAMAGED_IN_TRANSIT": "Hàng bể vỡ do vận chuyển",
+      "WRONG_SIZE_COLOR": "Hàng sai kích thước / màu sắc",
+      "COUNTERFEIT": "Hàng giả / nhái",
+      "MISSING_ACCESSORIES": "Hàng thiếu phụ kiện",
+      "NOT_RECEIVED": "Không nhận được hàng",
+      "NOT_AS_DESCRIBED": "Hàng không đúng mô tả",
+      "DEFECTIVE": "Sản phẩm lỗi"
+    },
+    "status": {
+      "REQUESTED": {
+        "label": "Chờ shop phản hồi",
+        "note": "Shop có 48 giờ để phản hồi. Quá hạn, hệ thống tự đồng ý theo phương án bạn chọn."
+      },
+      "AWAITING_EVIDENCE": {
+        "label": "Shop cần thêm bằng chứng",
+        "note": "Bạn có 48 giờ để bổ sung ảnh / video hoặc khiếu nại lên Sàn."
+      },
+      "SHOP_REJECTED": {
+        "label": "Shop đã từ chối",
+        "note": "Bạn có 48 giờ để chấp nhận hoặc khiếu nại lên Sàn. Quá hạn, yêu cầu tự đóng."
+      },
+      "AWAITING_RETURN_SHIPMENT": {
+        "label": "Chờ gửi hàng hoàn",
+        "note": "Shop đã đồng ý nhận lại hàng. Bạn có 7 ngày để giao hàng cho đơn vị vận chuyển, quá hạn yêu cầu tự đóng."
+      },
+      "DISPUTED": {
+        "label": "Sàn đang phân xử",
+        "note": "Nhân viên Genie đang xem xét bằng chứng của hai bên."
+      },
+      "REFUNDED": {
+        "label": "Đã hoàn tiền",
+        "note": "Tiền đã được hoàn về cho bạn."
+      },
+      "REJECTED": {
+        "label": "Đã đóng",
+        "note": "Bạn đã chấp nhận shop từ chối. Đơn hàng được hoàn thành."
+      }
+    },
+    "block": {
+      "title": "Yêu cầu {code}",
+      "plan": "Phương án:",
+      "reason": "Lý do:",
+      "shop_said": "Shop nhắn:",
+      "deadline": "Hạn của bước này: {date}",
+      "bank": "Đơn {method} không có giao dịch thẻ để hoàn: sau khi được duyệt, nhân viên sàn chuyển khoản về tài khoản ngân hàng bạn đã cung cấp.",
+      "resolved": "Xử lý xong lúc {date}",
+      "more": "Tải thêm ảnh / video",
+      "send_more": "Gửi bổ sung",
+      "more_sent": "Đã gửi bằng chứng bổ sung",
+      "escalate": "Khiếu nại lên Sàn",
+      "accept": "Chấp nhận"
+    },
+    "err": {
+      "bank": "Chọn ngân hàng",
+      "account": "Số tài khoản gồm 6–20 chữ số",
+      "holder": "Nhập tên chủ tài khoản"
+    }
+  },
+  "coins": {
+    "balance": "Số dư Điểm Genie",
+    "balance_short": "Số dư:",
+    "rule": "1 Điểm = 1₫ khi thanh toán · Điểm hết hạn sau 12 tháng",
+    "expiring": "{amount} Điểm sắp hết hạn trong {days} ngày tới",
+    "redeem": "Đổi quà",
+    "redeem_title": "Đổi Điểm lấy voucher",
+    "voucher": "Voucher giảm {amount}",
+    "cost": "{points} Điểm · Đơn từ {min}",
+    "swap": "Đổi",
+    "not_enough": "Chưa đủ Điểm",
+    "redeemed": "Đã đổi voucher {code}, xem trong Kho Voucher",
+    "history": "Lịch sử Điểm",
+    "checkin": {
+      "title": "Điểm danh nhận Điểm",
+      "cta": "Điểm danh nhận Điểm",
+      "checked": "Đã điểm danh",
+      "again": "Điểm danh lại sau",
+      "day": "Ngày {n}",
+      "done": "Điểm danh thành công! +{points} Điểm"
+    }
+  },
+  "chat": {
+    "title": "Chat với Shop",
+    "empty": "Chưa có cuộc trò chuyện nào. Bấm \"Chat ngay\" ở trang sản phẩm để hỏi Shop.",
+    "pick": "Chọn một cuộc trò chuyện để xem tin nhắn",
+    "preview": {
+      "image": "[Hình ảnh]",
+      "product": "[Sản phẩm]",
+      "order": "[Đơn hàng]"
+    },
+    "status": {
+      "SENDING": "Đang gửi…",
+      "SENT": "Đã gửi",
+      "DELIVERED": "Đã nhận",
+      "SEEN": "Đã xem",
+      "FAILED": "Gửi lỗi"
+    },
+    "quick": {
+      "stock": "Sản phẩm còn hàng không?",
+      "eta": "Khi nào giao tới?",
+      "discount": "Có giảm thêm không ạ?",
+      "photo": "Cho mình xem ảnh thật"
+    },
+    "order": "Đơn hàng",
+    "view_product": "Xem sản phẩm",
+    "image_alt": "Ảnh gửi trong cuộc trò chuyện",
+    "image_invalid": "Ảnh phải là JPG / PNG / WEBP, tối đa 5 MB.",
+    "typing": "Shop đang nhập…",
+    "send_image": "Gửi ảnh",
+    "send_order": "Gửi đơn hàng",
+    "no_orders": "Chưa có đơn với shop này",
+    "placeholder": "Nhập tin nhắn…",
+    "send": "Gửi",
+    "online": "Đang hoạt động",
+    "offline": "Không hoạt động",
+    "open_full": "Mở toàn trang",
+    "launcher": "Chat với shop",
+    "launcher_unread": "Chat với shop, {count} tin chưa đọc",
+    "response": "Phản hồi {rate}% · trong khoảng {minutes} phút"
+  },
+  "seller-onboarding": {
+    "landing": {
+      "page_title": "Trở thành Người bán",
+      "meta_description": "Mở Shop miễn phí trên Genie: thanh toán bảo chứng, vận chuyển tích hợp, công cụ marketing và báo cáo bán hàng.",
+      "badge": "Kênh người bán Genie",
+      "title": "Bắt đầu kinh doanh cùng hàng triệu khách hàng",
+      "lead": "Mở Shop miễn phí, quản lý đơn hàng, ví tiền của shop và rút tiền — tất cả trong một nơi.",
+      "stats": {
+        "fee": {
+          "value": "0₫",
+          "label": "Phí mở Shop"
+        },
+        "sellers": {
+          "value": "2,8tr+",
+          "label": "Người bán"
+        },
+        "commission": {
+          "value": "5%",
+          "label": "Hoa hồng từ"
+        }
+      },
+      "need_login_a": "Bạn cần",
+      "login": "đăng nhập",
+      "need_login_b": "trước khi mở Shop.",
+      "form_title": "Đăng ký mở Shop",
+      "form_sub": "Chỉ mất 2 phút để bắt đầu.",
+      "shop_name": "Tên Shop",
+      "owner": "Họ tên chủ Shop",
+      "phone": "Số điện thoại",
+      "category": "Ngành hàng",
+      "type": "Loại hình",
+      "types": {
+        "INDIVIDUAL": "Cá nhân",
+        "HOUSEHOLD": "Hộ kinh doanh",
+        "BUSINESS": "Doanh nghiệp"
+      },
+      "terms_a": "Tôi đồng ý với",
+      "terms_link": "Điều khoản Người bán",
+      "terms_b": "và",
+      "commission_link": "Chính sách hoa hồng",
+      "terms_c": "của Genie.",
+      "submit": "Đăng ký mở Shop",
+      "login_cta": "Đăng nhập để mở Shop",
+      "already": "Đã là Người bán?",
+      "seller_center": "Đăng nhập Seller Center",
+      "otp_title": "Xác minh Email mở Shop",
+      "otp_sent": "Mã 6 số đã gửi tới {email}",
+      "done": "Đã tạo Shop. Tiếp theo: xác minh KYC.",
+      "err": {
+        "shop": "Tên Shop cần ít nhất 3 ký tự",
+        "shop_long": "Tên Shop tối đa 60 ký tự",
+        "owner": "Nhập họ tên chủ Shop",
+        "category": "Chọn ngành hàng",
+        "terms": "Bạn cần đồng ý với Điều khoản Người bán"
+      },
+      "why_title": "Vì sao chọn bán trên Genie?",
+      "why_sub": "Hệ sinh thái đầy đủ để bạn vận hành Shop hiệu quả.",
+      "benefits": {
+        "escrow": {
+          "title": "Thanh toán bảo chứng (Escrow)",
+          "desc": "Tiền được giữ tạm an toàn và giải ngân về ví khi đơn hoàn tất."
+        },
+        "logistics": {
+          "title": "Đối tác vận chuyển 3PL",
+          "desc": "Tích hợp sẵn GHN, GHTK, ViettelPost, J&T Express — in vận đơn trong vài giây. Hỗ trợ thêm Genie Express cho đơn nội thành."
+        },
+        "marketing": {
+          "title": "Công cụ marketing",
+          "desc": "Tạo voucher Shop, tham gia Flash Sale & chiến dịch của sàn."
+        },
+        "analytics": {
+          "title": "Báo cáo & phân tích",
+          "desc": "Theo dõi doanh thu, đơn hàng, tỉ lệ chuyển đổi theo thời gian thực."
+        }
+      },
+      "steps_title": "3 bước để bắt đầu bán hàng",
+      "steps": {
+        "register": {
+          "title": "Đăng ký thông tin Shop",
+          "desc": "Điền tên shop, ngành hàng và thông tin liên hệ."
+        },
+        "kyc": {
+          "title": "Xác minh KYC",
+          "desc": "Tải CCCD / ĐKKD. AI thẩm định ngay, hồ sơ nghi ngờ được duyệt trong 24 giờ làm việc."
+        },
+        "sell": {
+          "title": "Đăng bán & nhận đơn",
+          "desc": "Sau khi VERIFIED, đăng sản phẩm và bắt đầu bán ngay."
+        }
+      }
+    }
   }
 }

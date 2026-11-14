@@ -95,3 +95,4 @@ export {
   type DateInputProps,
 } from './FormSection';
 export { Breadcrumbs, type Crumb } from './Breadcrumbs';
+export { MediaPicker, type MediaPickerProps } from './MediaPicker';

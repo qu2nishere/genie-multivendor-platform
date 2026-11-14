@@ -6,7 +6,9 @@ export function linkHref(link: NotificationDto['link']): string | null {
   if (!link) return null;
   switch (link.action) {
     case 'track':
-      return `/orders/${encodeURIComponent(link.order_code)}`;
+      // Trang theo dõi dùng id đơn; mã TR-yyyyMMdd-NNNNNN mang số thứ tự ở 6 chữ số cuối (mock) —
+      // API thật nên trả kèm order_id trong link (ghi G13.20)
+      return `/orders/${Number(link.order_code.slice(-6))}`;
     case 'view':
       return `/account/${link.view}`;
     case 'home':

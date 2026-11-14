@@ -21,3 +21,6 @@ export {
   REVIEW_PAGE_SIZE,
 } from './infrastructure/review.api';
 export { default as ReviewList, type ReviewListProps } from './ui/ReviewList';
+export { createReview, type ReviewInput } from './infrastructure/review.api';
+export { useCreateReview } from './application/useReviews';
+export { ReviewModal, type ReviewModalProps, type ReviewOrder } from './ui/ReviewModal';

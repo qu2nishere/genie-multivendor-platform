@@ -1,7 +1,13 @@
 // TanStack Query cho đánh giá: trang đầu SSR làm dữ liệu khởi tạo, đổi bộ lọc / trang thì tải lại.
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReportReason, ReviewFilter, ReviewPage } from '../domain/review.types';
-import { listReviews, reportReview, toggleHelpful } from '../infrastructure/review.api';
+import {
+  createReview,
+  listReviews,
+  reportReview,
+  toggleHelpful,
+  type ReviewInput,
+} from '../infrastructure/review.api';
 
 export const reviewsKey = (productId: number, filter: ReviewFilter, page: number) =>
   ['reviews', productId, filter, page] as const;
@@ -34,5 +40,17 @@ export function useReportReview() {
   return useMutation({
     mutationFn: (v: { reviewId: string; reason: ReportReason; note?: string }) =>
       reportReview(v.reviewId, v.reason, v.note),
+  });
+}
+
+/** Gửi đánh giá một dòng hàng (7.9); làm mới đơn (đã đánh giá) và ví Điểm (+50). */
+export function useCreateReview() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: ReviewInput) => createReview(input),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['me', 'orders'] });
+      void qc.invalidateQueries({ queryKey: ['me', 'coins'] });
+    },
   });
 }

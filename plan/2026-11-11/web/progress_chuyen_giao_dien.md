@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-11 — xong G00–G07 (nền tảng + layout, header, footer, 9 theme); đang G08 trên `feature/web-storefront-public` |
+| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 (trang người mua); trên nhánh `feature/web-buyer` |
 
 **Cách dùng**
 
@@ -42,11 +42,11 @@
 | G07 | Layout & khung trang | 26 | 4 | 30 / 30 | — | `feature/web-storefront-public` |
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
-| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 0 / 75 |  |  |
+| G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **225 / 429** | | |
+| **Tổng** | | **379** | **50** | **300 / 429** | | |
 
 ---
 
@@ -364,105 +364,105 @@
 
 **Nhóm A — Giỏ hàng**
 
-- [ ] **G10.01** Miền giỏ
-- [ ] **G10.02** Hạ tầng giỏ
-- [ ] **G10.03** Ứng dụng giỏ
-- [ ] **G10.04** `CartPage`
-- [ ] **G10.05** `VariantModal`
-- [ ] **G10.06** Tóm tắt giỏ
-- [ ] **G10.07** Giỏ rỗng & giỏ khách
-- [ ] **G10.08** `pages/cart.astro` + khóa i18n `cart.*`
-- [ ] **G10.C1** 🔖 COMMIT `feat(web): build multi-shop cart page` · hash: `_______`
+- [x] **G10.01** Miền giỏ
+- [x] **G10.02** Hạ tầng giỏ
+- [x] **G10.03** Ứng dụng giỏ
+- [x] **G10.04** `CartPage`
+- [x] **G10.05** `VariantModal`
+- [x] **G10.06** Tóm tắt giỏ
+- [x] **G10.07** Giỏ rỗng & giỏ khách
+- [x] **G10.08** `pages/cart.astro` + khóa i18n `cart.*`
+- [x] **G10.C1** 🔖 COMMIT `feat(web): build multi-shop cart page` · hash: `8a9c33e`
 
 **Nhóm B — Voucher & Điểm**
 
-- [ ] **G10.09** Miền voucher
-- [ ] **G10.10** Tính xếp chồng
-- [ ] **G10.11** Phí vận chuyển hiển thị
-- [ ] **G10.12** Hạ tầng voucher
-- [ ] **G10.13** `VoucherPicker`
-- [ ] **G10.14** Voucher theo từng shop trong giỏ
-- [ ] **G10.15** Công tắc dùng Điểm Genie
-- [ ] **G10.C2** 🔖 COMMIT `feat(web): add stacked voucher and points pricing` · hash: `_______`
+- [x] **G10.09** Miền voucher
+- [x] **G10.10** Tính xếp chồng
+- [x] **G10.11** Phí vận chuyển hiển thị
+- [x] **G10.12** Hạ tầng voucher
+- [x] **G10.13** `VoucherPicker`
+- [x] **G10.14** Voucher theo từng shop trong giỏ
+- [x] **G10.15** Công tắc dùng Điểm Genie
+- [x] **G10.C2** 🔖 COMMIT `feat(web): add stacked voucher and points pricing` · hash: `37f2d0b`
 
 **Nhóm C — Thanh toán**
 
-- [ ] **G10.16** Miền checkout
-- [ ] **G10.17** Hạ tầng checkout
-- [ ] **G10.18** `CheckoutPage`
-- [ ] **G10.19** Đếm ngược giữ chỗ 15 phút + xử lý dòng hết hàng (sửa số lượng / bỏ món)
-- [ ] **G10.20** Chọn / đổi địa chỉ tại checkout
-- [ ] **G10.21** Nháp checkout
-- [ ] **G10.22** `pages/checkout.astro` + khóa i18n `checkout.*`
-- [ ] **G10.C3** 🔖 COMMIT `feat(web): build consolidated checkout page` · hash: `_______`
+- [x] **G10.16** Miền checkout
+- [x] **G10.17** Hạ tầng checkout
+- [x] **G10.18** `CheckoutPage`
+- [x] **G10.19** Đếm ngược giữ chỗ 15 phút + xử lý dòng hết hàng (sửa số lượng / bỏ món)
+- [x] **G10.20** Chọn / đổi địa chỉ tại checkout
+- [x] **G10.21** Nháp checkout
+- [x] **G10.22** `pages/checkout.astro` + khóa i18n `checkout.*`
+- [x] **G10.C3** 🔖 COMMIT `feat(web): build consolidated checkout page` · hash: `3bd8edb`
 
 **Nhóm D — Thanh toán & kết quả**
 
-- [ ] **G10.23** `MoneyRail`, `MoneyChip`, `HoldNote`
-- [ ] **G10.24** `PayModal` + `PayGateway`
-- [ ] **G10.25** `VietQrPanel`
-- [ ] **G10.26** COD
-- [ ] **G10.27** `OrderDone`
-- [ ] **G10.28** `PaymentFailed`
-- [ ] **G10.29** `pages/checkout/result.astro`
-- [ ] **G10.C4** 🔖 COMMIT `feat(web): add payment flows and checkout result page` · hash: `_______`
+- [x] **G10.23** `MoneyRail`, `MoneyChip`, `HoldNote`
+- [x] **G10.24** `PayModal` + `PayGateway`
+- [x] **G10.25** `VietQrPanel`
+- [x] **G10.26** COD
+- [x] **G10.27** `OrderDone`
+- [x] **G10.28** `PaymentFailed`
+- [x] **G10.29** `pages/checkout/result.astro`
+- [x] **G10.C4** 🔖 COMMIT `feat(web): add payment flows and checkout result page` · hash: `ad830ca`
 
 **Nhóm E — Đơn mua & theo dõi**
 
-- [ ] **G10.30** Miền đơn
-- [ ] **G10.31** Hạ tầng đơn
-- [ ] **G10.32** `OrdersPanel`
-- [ ] **G10.33** Hủy đơn có lý do
-- [ ] **G10.34** Xác nhận đã nhận hàng
-- [ ] **G10.35** `pages/orders/index.astro`
-- [ ] **G10.36** `OrderTracking`
-- [ ] **G10.37** Mua lại, chat với shop từ đơn
-- [ ] **G10.38** `pages/orders/[id].astro` + khóa i18n `orders.*`
-- [ ] **G10.C5** 🔖 COMMIT `feat(web): build order list and order tracking pages` · hash: `_______`
+- [x] **G10.30** Miền đơn
+- [x] **G10.31** Hạ tầng đơn
+- [x] **G10.32** `OrdersPanel`
+- [x] **G10.33** Hủy đơn có lý do
+- [x] **G10.34** Xác nhận đã nhận hàng
+- [x] **G10.35** `pages/orders/index.astro`
+- [x] **G10.36** `OrderTracking`
+- [x] **G10.37** Mua lại, chat với shop từ đơn
+- [x] **G10.38** `pages/orders/[id].astro` + khóa i18n `orders.*`
+- [x] **G10.C5** 🔖 COMMIT `feat(web): build order list and order tracking pages` · hash: `913f4d8`
 
 **Nhóm F — Trả hàng & đánh giá**
 
-- [ ] **G10.39** Miền hoàn tiền
-- [ ] **G10.40** `ReturnModal`
-- [ ] **G10.41** Hiển thị trạng thái trả hàng trong trang đơn
-- [ ] **G10.42** `ReviewModal`
-- [ ] **G10.43** Khóa i18n `refunds.*`, `reviews.form.*`
-- [ ] **G10.C6** 🔖 COMMIT `feat(web): add return request and review submission` · hash: `_______`
+- [x] **G10.39** Miền hoàn tiền
+- [x] **G10.40** `ReturnModal`
+- [x] **G10.41** Hiển thị trạng thái trả hàng trong trang đơn
+- [x] **G10.42** `ReviewModal`
+- [x] **G10.43** Khóa i18n `refunds.*`, `reviews.form.*`
+- [x] **G10.C6** 🔖 COMMIT `feat(web): add return request and review submission` · hash: `7c90b73`
 
 **Nhóm G — Tài khoản**
 
-- [ ] **G10.44** Khung tài khoản
-- [ ] **G10.45** Miền & hạ tầng tài khoản
-- [ ] **G10.46** `ProfilePanel`
-- [ ] **G10.47** `EmailChangeModal`
-- [ ] **G10.48** `AddressPanel` + `AddressModal` + `AddressForm`
-- [ ] **G10.49** `RegionPicker`
-- [ ] **G10.50** `PasswordPanel`
-- [ ] **G10.51** `LoginsPanel`
-- [ ] **G10.52** `DevicesPanel`
-- [ ] **G10.53** Xóa tài khoản sau 30 ngày
-- [ ] **G10.54** Khóa i18n `account.*`
-- [ ] **G10.C7** 🔖 COMMIT `feat(web): build account profile, address and security sections` · hash: `_______`
+- [x] **G10.44** Khung tài khoản
+- [x] **G10.45** Miền & hạ tầng tài khoản
+- [x] **G10.46** `ProfilePanel`
+- [x] **G10.47** `EmailChangeModal`
+- [x] **G10.48** `AddressPanel` + `AddressModal` + `AddressForm`
+- [x] **G10.49** `RegionPicker`
+- [x] **G10.50** `PasswordPanel`
+- [x] **G10.51** `LoginsPanel`
+- [x] **G10.52** `DevicesPanel`
+- [x] **G10.53** Xóa tài khoản sau 30 ngày
+- [x] **G10.54** Khóa i18n `account.*`
+- [x] **G10.C7** 🔖 COMMIT `feat(web): build account profile, address and security sections` · hash: `a6334cd`
 
 **Nhóm H — Voucher, Điểm, yêu thích, theo dõi, thông báo**
 
-- [ ] **G10.55** `VouchersPanel`
-- [ ] **G10.56** Miền Điểm
-- [ ] **G10.57** `CoinsPanel`
-- [ ] **G10.58** `WishlistPanel`
-- [ ] **G10.59** `FollowsPanel`
-- [ ] **G10.60** `NotificationsPanel`
-- [ ] **G10.61** Khóa i18n `promotions.wallet.*`, `coins.*`, `notifications.*`
-- [ ] **G10.C8** 🔖 COMMIT `feat(web): add vouchers, points, wishlist and notification sections` · hash: `_______`
+- [x] **G10.55** `VouchersPanel`
+- [x] **G10.56** Miền Điểm
+- [x] **G10.57** `CoinsPanel`
+- [x] **G10.58** `WishlistPanel`
+- [x] **G10.59** `FollowsPanel`
+- [x] **G10.60** `NotificationsPanel`
+- [x] **G10.61** Khóa i18n `promotions.wallet.*`, `coins.*`, `notifications.*`
+- [x] **G10.C8** 🔖 COMMIT `feat(web): add vouchers, points, wishlist and notification sections` · hash: `488581b`
 
 **Nhóm I — Chat & mở shop**
 
-- [ ] **G10.62** Miền chat
-- [ ] **G10.63** `ChatWidget`
-- [ ] **G10.64** `pages/chat.astro`
-- [ ] **G10.65** `BecomeSeller`
-- [ ] **G10.66** `pages/become-seller.astro` + khóa i18n `chat.*`, `seller-onboarding.landing.*`
-- [ ] **G10.C9** 🔖 COMMIT `feat(web): add buyer chat and become-seller landing` · hash: `_______`
+- [x] **G10.62** Miền chat
+- [x] **G10.63** `ChatWidget`
+- [x] **G10.64** `pages/chat.astro`
+- [x] **G10.65** `BecomeSeller`
+- [x] **G10.66** `pages/become-seller.astro` + khóa i18n `chat.*`, `seller-onboarding.landing.*`
+- [x] **G10.C9** 🔖 COMMIT `feat(web): add buyer chat and become-seller landing` · hash: `95fc810`
 
 ## G11 — Seller Center (SPA `/seller/*`)
 
@@ -772,6 +772,50 @@
 | G09.10 | Mock: hộp "Tiếp tục với Google / Apple" rồi đăng nhập luôn; thật: chuyển sang /auth/oauth/{provider}/authorize, next đi kèm địa chỉ callback. Bỏ bảng mô phỏng GoogleFlow (D5). |
 | G09 (sửa kèm) | Header chỉ đọc phiên / số giỏ thật sau khi mount (hết lỗi hydration khi đã đăng nhập); giỏ khách hiện số dòng trên icon giỏ; quy tắc min-height 44px cho label ở màn hẹp không áp vào nhãn ô nhập (.lz-field). |
 | Nhánh | feature/web-auth tạo từ feature/web-storefront-public (các nhánh xếp chồng vì chưa mở PR / merge vào develop; vẫn local, chưa push). |
+| Nhánh (G10) | feature/web-buyer tạo từ feature/web-auth (xếp chồng, local, chưa push). |
+| G10.02 | DTO giỏ theo đúng API_SPEC 6.1 (nhóm theo shop, `id` dòng giỏ, `variant_id`, `is_available`, `unavailable_reason`); thêm 2 trường client cần mà spec chưa có: `product_slug` (liên kết /p/{slug}-{id}, R16) và `category_name` (voucher theo ngành khi tính ở mock) — ghi vào danh sách nối backend G13.20. Giỏ khách dựng dòng hiển thị qua `GET /public/variants?ids=` (spec chưa có endpoint tra SKU công khai — bổ sung G13.20). Đổi phân loại dùng API 5.10 `GET /public/products/{id}/variants` (`useVariantChoice`). |
+| G10.02 (mock) | Trang storefront là MPA nên mock trong bộ nhớ mất khi chuyển trang → thêm `mockState(name, init)` ở `shared/api/mock.ts`: giữ trạng thái mock có thể sửa (giỏ, sau này đơn, địa chỉ…) trong sessionStorage `genie.mock.<name>`, chỉ khi USE_MOCK; SSR / test giữ trong bộ nhớ. Xóa cùng lớp mock khi nối backend. |
+| G10.03 | `useCart` đọc store nanostores dùng chung (header ↔ trang giỏ) thay vì cache TanStack riêng; TanStack Query chỉ dùng tra dòng giỏ khách và phân loại. Thêm `setLineQty`, `setLineVariant`, `removeLines`, `buyAgain` (6.6, dùng ở G10.37), thao tác giỏ khách; test gộp giỏ khách `mergeGuestCart.test.ts`. |
+| G10.04–G10.07 | Tên sản phẩm / ảnh / tên shop là `<a href>` thật; nút Chat dẫn `/chat?shop=` (G10.64). Dòng không mua được (hết hàng, shop nghỉ…) hiện nhãn lý do, không chọn được, khóa ô số lượng. Ô "chọn tất cả" của shop / thanh tổng có trạng thái một phần (indeterminate). Khách: xem giỏ tạm + thanh nhắc đăng nhập; bấm "Mua hàng" mở LoginPrompt (next=/cart, đăng nhập xong tự gộp giỏ). |
+| G10.06 | `CartSummary.astro` của khung cũ bỏ đi: thanh tổng phụ thuộc lựa chọn của người dùng nên là `CartBar.tsx` trong island (prototype .tr-cartbar, màn hẹp tách công cụ + thanh trả tiền dính đáy). Phí ship / voucher / Điểm nối ở nhóm B. "Mua hàng" ghi `genie.checkout.draft` (selected_item_ids…) rồi sang /checkout — phần nháp tạo sớm trong `features/checkout` (G10.21 hoàn thiện phần khôi phục). |
+| G10.08 | So ảnh /cart với sf-cart-1440 / sf-cart-360: khớp bố cục, nhóm shop, dòng đổi giá, thanh tổng dính đáy; phần voucher shop, Voucher Genie, Điểm, phí ship đối chiếu lại sau nhóm B. HTML SSR có đúng một `<h1>`. |
+| G10.09–G10.10 | Luật voucher + tính giá xếp chồng đặt ở `promotions/domain/pricing.rules.ts` (một bộ cho Giỏ và Thanh toán): voucherLines, eligibleBase, voucherCheck (lý do `no_items` / `min_order` / `not_active`), voucherDiscount, priceCart, bestVouchers, pruneVoucherSelection, extraSaving, đổi lựa chọn ⇄ mã để lưu nháp. Phí ship truyền vào bằng hàm `ShipFn` (domain không import feature khác). Thêm chặn tổng giảm Shop + Sàn ≤ 85% tiền hàng theo API_SPEC 6.8 / LLD 9.3 (prototype chưa có). Test 13 ca, gồm "bộ số vàng" của giỏ mẫu prototype: tổng 3.485.200₫, giảm 363.800₫, phân bổ voucher sàn 37.635 / 44.408 / 66.757₫. Đây là bản tính phía client cho mock; nối backend thì lấy từ POST /me/checkout/preview. |
+| G10.11 | `checkout/domain/shipping.rules.ts` (shipFee, shipOf, makeShipFn, isFreeByShop) + test. Chính sách phí ship lấy qua `useShipPolicies` — API_SPEC chỉ trả phí ship trong preview 6.8, tạm dùng `GET /public/shops/shipping-policies?ids=` (ghi G13.20). |
+| G10.12 | Kho voucher dùng lại `listMyVouchers` (G08); thêm `findVoucherByCode` cho ô nhập mã (6.9 có `code`, trả cả voucher chưa lưu; mã hết hạn / đã dùng → GNE-VCH-4041). Tạo sớm `features/coins` tối thiểu (GET /me/coins → số dư) cho công tắc Điểm; G10.56 mở rộng. |
+| G10.13–G10.15 | `VoucherPicker` ở promotions/ui (bám VoucherPicker.jsx; voucher không đủ điều kiện mờ + lý do; nhập mã). Ghép giá ở `cart/ui/useCartPricing.ts` (kho voucher + phí ship + số dư Điểm + nháp checkout) — sẽ dùng lại ở trang Thanh toán. Lựa chọn voucher / Điểm lưu `genie.checkout.draft` (voucher_codes, use_coins), tải lại trang vẫn giữ; chưa chọn lần nào → bộ mã giảm nhiều nhất như prototype. Khách vãng lai không hiện voucher / Điểm (cần tài khoản). Đã thử thật: bỏ voucher sàn → 3.634.000₫, bật Điểm → 3.632.750₫, tải lại giữ nguyên. |
+| G10.16–G10.17 | Miền `checkout.types` (PaymentMethod VNPAY / VIETQR / COD, CheckoutSession, PaymentInstruction, PlaceOrderInput, HOLD_MINUTES, NOTE_MAX) + `checkout.rules` (đếm ngược giữ chỗ, nhãn nút theo phương thức, đọc `out_of_stock_cart_item_ids` của GNE-INV-4090, `resultView`, mã đơn TR-yyyyMMdd-NNNNNN theo giờ VN) + test. Hạ tầng 6.10–6.12 gửi Idempotency-Key (dùng lại `genie.checkout.idem` tới khi đặt thành công). Mock không có engine giá phía server → `createCheckout` nhận thêm `CheckoutQuote` (bảng giá client đã hiển thị) chỉ để dựng đơn mock; API thật bỏ qua. Kho mock dùng chung `shared/api/mock/placed.ts` ("đơn vừa đặt"): giỏ mock bỏ dòng đã đặt, ví Điểm mock trừ Điểm đã dùng, Đơn mua (G10.31) sẽ đọc đơn mới — thay cho transaction phía server. VNPay mock trả `payment_url = mock:vnpay` để client mở cổng giả lập (nhóm D). |
+| G10.18 | `CheckoutPage` dùng lại `useCartPricing` của giỏ (cùng lựa chọn voucher / Điểm qua nháp) → số liệu khớp prototype: tổng 3.485.200₫, tổng đơn từng shop 1.339.200 / 812.765 / 783.000 / 408.294 / 141.941₫. Thêm "Có bộ mã tiết kiệm thêm … / Áp bộ mã tốt nhất" (extraSaving). Bỏ hộp "Mô phỏng lỗi thanh toán và hết hàng" của prototype (D5). |
+| G10.19 | Đồng hồ giữ hàng 15 phút tính từ lúc vào trang (`HoldCountdown`), hết giờ cho "Giữ lại". Lỗi GNE-INV-4090 → dòng hết hàng bị gạch + nhãn "Hết hàng", nút "Bỏ món" (bỏ khỏi nháp) và "Sửa số lượng ở giỏ"; tổng tiền tính lại không gồm dòng đó. Dữ liệu mock mặc định không sinh lỗi này (không có công tắc kịch bản — D5); đường xử lý có test ở rules. |
+| G10.20 | Làm sớm phần sổ địa chỉ của nhóm G để checkout dùng: miền / lược đồ zod / hạ tầng 3.8–3.9 / hook TanStack, `AddressModal` (chọn, đặt mặc định, sửa, thêm), `AddressForm` (react-hook-form + zod qua `shared/lib/zodResolver.ts` — không thêm @hookform/resolvers), `RegionPicker` (3 tab + tìm nhanh, cây GHN rút gọn của prototype), GPS → reverse-geocode (từ chối định vị thì dùng tọa độ TP. HCM). G10.48 / G10.49 sẽ tick khi có `AddressPanel` ở trang Tài khoản. SĐT hiển thị nhóm "0901 234 567" (`formatPhone`). |
+| G10.21 | Nháp `genie.checkout.draft` đọc sau khi mount (tránh lệch hydrate); lời nhắn từng shop lưu nháp ngay khi gõ; đặt thành công thì xóa nháp + Idempotency-Key. Địa chỉ không lưu vào nháp (LUU_TRU 6.7). |
+| G10.22 | /checkout khớp sf-checkout-1440 / 360 (bố cục 2 cột → 1 cột, thanh trả tiền dính đáy màn hẹp, đơn con gập "Xem thêm"). Đã thử đặt COD thật: chuyển `/checkout/result?session=8801`; trang kết quả làm ở nhóm D. |
+| G10.23–G10.26 | `MoneyRail`, `HoldNote` có từ G08; thêm `MoneyChip` (hàm `moneyChip` + test), `PayModal` (chọn phương thức / bước QR), `VietQrPanel` (QR giữ chỗ, đếm ngược tới `expires_at`, sao chép số TK / nội dung `TR…`), `PayGateway`, `PaymentLogo` / `CodLogo` ở `payment/ui` — chỉ vẽ; `checkout/ui/PaymentFlow.tsx` ghép với hook checkout. VNPAY: thật → chuyển `payment_url`; mock (`mock:vnpay`) → cổng mô phỏng, "Thanh toán" → phiên COMPLETED, "Quay lại đơn hàng" = VNPAY trả về "khách hủy" → trang thất bại. VietQR: hỏi lại phiên mỗi 3 giây; mock tự coi SePay đã nhận tiền sau ~12 giây (thay nút "Mô phỏng: SePay báo đã nhận tiền" của prototype — D5). COD → kết quả ngay. |
+| G10.27–G10.29 | `/checkout/result?session=<id>` (island `CheckoutResult`): chỉ đọc GET 6.11 rồi hiện OrderDone (mã giao dịch, từng đơn con + Theo dõi → /orders/{id}, tổng; COD "Thu khi nhận hàng", không có đường tiền), PaymentFailed (giữ chỗ còn mm:ss đếm từng giây, Thử lại / Đổi phương thức → PayModal → 6.12, Về giỏ; hết giữ chỗ thì ẩn nút thử lại), hoặc "Đang chờ xác nhận" (tự hỏi lại). Thiếu / sai mã phiên → "Không tìm thấy giao dịch" (prototype mở thẳng thì hiện biên nhận mẫu — không làm). Đã thử thật 4 luồng: COD, VNPAY thành công, VNPAY hủy, VietQR (360px) — đều đúng trang. |
+| G10.30 | Miền đơn theo API_SPEC 7.1–7.4 + 16.3: `OrderStatus` đủ enum backend (gồm các trạng thái trả hàng), `statusGroupOf` (PAID của đơn COD đã giao thuộc "Chờ giao hàng"), `stepOf` / `STEPS`, `statusTone` (về đúng bộ tông của StatusBadge), `allowedActions` (server trả `allowed_actions`; mock tính bằng hàm này — hủy được tới PREPARING), `groupOrders` (đơn online cùng phiên chờ thanh toán / đã hủy → "Nhóm đơn hàng"), lý do hủy theo mã 16.4 + test. `badgeStatus` của G08.02 thành `statusTone` ở đây. |
+| G10.31 | Mock = 11 đơn của prototype (mã "TR-20260608-000044" → id 44, thời điểm đổi sang ISO giờ VN) + đơn vừa đặt ở checkout (kho `placed`), thay đổi giữ trong phiên tab. Nhóm chờ thanh toán mẫu (CS-8F21A) có hạn thanh toán tính từ lúc mở và một phiên mock tương ứng để "Thanh toán ngay" đi đúng 6.12. `product_slug` thêm vào $OrderItem (ghi G13.20). |
+| G10.32–G10.35 | `/orders` dùng khung tài khoản `AccountShell.astro` + island `AccountNav` (làm sớm phần khung của G10.44: menu liên kết thật, huy hiệu Thông báo / Kho Voucher, Đăng xuất có xác nhận, màn hẹp cuộn tới mục đang mở; đọc phiên sau khi mount tránh lệch hydrate). Tab là liên kết `?tab=<status_group>` (R16). Nút trên thẻ đơn vẽ theo `allowed_actions`; hộp hủy chọn lý do (OTHER bắt buộc ghi chú), hủy nhóm đơn gọi lần lượt từng đơn; "Đã nhận hàng" có hộp xác nhận chuyển tiền cho shop. Thêm lớp `lz-vendor__logo` cho VendorChip để `.tr-chip` ẩn ô chữ cái cạnh con dấu như prototype. Bỏ hộp "Mô phỏng cho buổi demo: kịch bản tài khoản" (D5). |
+| G10.36–G10.38 | `/orders/[id]` (id không phải số → 404 thật): thanh 7 bước, thẻ ĐVVC + sao chép mã vận đơn, ghi chú giữ tiền / ngày giải ngân, hành trình mới nhất trước, địa chỉ, sản phẩm + tiền, nút theo trạng thái. Mua lại = POST /me/cart/items/batch (6.6) rồi sang giỏ (báo khi có món bị bỏ qua); Chat dẫn `/chat?shop=&order=`. Nút Trả hàng / Đánh giá / khối yêu cầu trả hàng gắn ở nhóm F. Đã thử thật: Đã nhận hàng (đơn 41 → Hoàn thành), Hủy đơn 47 (toast hoàn tiền), Mua lại đơn đã hủy (cộng dồn vào giỏ). |
+| G10.39 | `features/refunds` đủ 4 tầng: kiểu theo 7.5–7.8, lý do trả hàng theo mã 16.4, `refundEstimate` (theo `paid_unit_price`, thiếu thì chia giảm giá theo tỉ lệ như prototype), `evidenceMissing` (≥ 1 ảnh + 1 video — GNE-SUP-4221), `needsBank` (VietQR / COD hoàn bằng chuyển khoản), lược đồ zod tài khoản hoàn tiền + test. Danh sách ngân hàng GET /public/banks. Mock ghi vào kho dùng chung `shared/api/mock/activity.ts`; mock đơn đọc lại để đổi trạng thái (RETURN_REQUESTED / COMPLETED khi chấp nhận từ chối / REFUNDED). |
+| G10.40 | Tải tệp qua `shared/api/upload.ts` (4.1: xin URL ký sẵn → PUT MinIO → object_key) + `shared/ui/MediaPicker.tsx` (kéo thả, xem trước, xóa). Ảnh nén bằng browser-image-compression nhưng ra **JPEG** thay vì WebP như plan ghi, vì REVIEW_IMAGE / REFUND_EVIDENCE / AVATAR chỉ nhận jpeg, png (bảng 4.1); giới hạn theo 4.1: bằng chứng 10 MB/tệp (plan ghi 5 MB), ảnh đánh giá 5 MB, video đánh giá 30 MB. Form tài khoản hoàn tiền dùng react-hook-form + zod. |
+| G10.41 | `RefundBlock` (id `#return`, thẻ đơn "Xem yêu cầu trả hàng" nhảy tới): phương án, số tiền, lý do, lời nhắn shop, hạn của bước, tài khoản nhận (đã che); hành động thật theo trạng thái (bổ sung bằng chứng 7.6, khiếu nại 7.7, chấp nhận từ chối 7.8). Bỏ các nút "Mô phỏng: Shop yêu cầu bổ sung / từ chối / đồng ý" của prototype (D5) — trạng thái đó do shop / sàn đổi ở G11 / G12. |
+| G10.42 | `ReviewModal` ở `features/reviews` + POST /me/reviews (7.9): lần lượt từng sản phẩm của đơn, RatingInput, nhận xét ≤ 1000 ký tự, ≤ 5 ảnh, 1 video, ẩn tên; có ảnh +50 Điểm (mock cộng vào ví Điểm, đơn đánh dấu đã đánh giá). Nút "Trả hàng" / "Đánh giá" trên thẻ đơn dẫn `/orders/{id}?return=1` / `?review=1` (liên kết thật), trang theo dõi mở hộp tương ứng khi đơn cho phép. Đã thử thật: gửi trả hàng đơn 41 (VietQR, có tài khoản hoàn) → RFN-0301 "Chờ shop phản hồi", tiền hoàn dự kiến 383.000₫; đánh giá đơn 33 có ảnh → "+50 Điểm". |
+| G10.44 | `/account/[...section]`: /account → /account/profile (302), /account/orders → /orders (301), mục lạ → 404 thật. Khung `AccountShell.astro` + `AccountNav` (làm ở nhóm E) — dòng phụ dưới tên ghi loại tài khoản (Email / Google / cả hai) theo GET /me/login-methods như prototype; nhãn "Thiết lập / Đổi mật khẩu" cũng theo đó. Mục mua sắm (thông báo, voucher, Điểm, yêu thích, theo dõi) gắn ở nhóm H. Bỏ hộp "Mô phỏng cho buổi demo: kịch bản tài khoản" (AcctDemo / SCENARIOS — D5). |
+| G10.45 | Miền `account.types` (Profile, LoginMethods, Device, OTP bước 2) + lược đồ zod hồ sơ / đổi email / mật khẩu (tài khoản chỉ Google không cần mật khẩu cũ) + test. Hạ tầng 3.2–3.7: thao tác 🔐 gửi header `X-OTP-Challenge-Id` + `X-OTP-Code` (0.7). Mock: OTP 123456, mật khẩu hiện tại Genie@123, tài khoản mẫu tạo bằng Google chưa có mật khẩu / SĐT / ngày sinh như prototype; đổi mật khẩu thu hồi các phiên khác như API. |
+| G10.46–G10.47 | ProfilePanel: react-hook-form + zod; đổi ngôn ngữ lưu vào hồ sơ rồi `switchLocale` (cookie lang); ảnh đại diện tải qua `uploadFile('AVATAR')` (nén JPEG, ≤ 1 MB). EmailChangeModal: email mới → mã gửi tới email MỚI → xác nhận; tài khoản chưa có mật khẩu hiện gợi ý "thiết lập mật khẩu" thay vì mở hộp (GNE-AUTH-4095). Ô OTP bước 2 dùng chung `StepUpOtp` (email đã che, gửi lại sau 60 giây). |
+| G10.48–G10.49 | `AddressPanel` (thêm / sửa trong hộp với `AddressForm`, xóa có xác nhận — địa chỉ mặc định không xóa được, đặt mặc định). `AddressModal`, `AddressForm`, `RegionPicker` đã làm ở nhóm C. |
+| G10.50–G10.52 | Mật khẩu: kiểm mật khẩu hiện tại khi đang gõ (POST /me/password/verify, chờ 500 ms), thanh độ mạnh, OTP bước 2; lần thiết lập đầu tải lại trang sau thông báo để menu (island khác) đổi nhãn như prototype. Liên kết Google: thật chuyển sang OAuth `intent=link`, mock liên kết ngay; không gỡ được khi là cách đăng nhập duy nhất (GNE-AUTH-4093). Thiết bị: icon theo loại, đăng xuất từng thiết bị / tất cả thiết bị khác, phiên hiện tại không có nút. |
+| G10.53 | Xóa tài khoản: POST /me/otp-challenges `ACCOUNT_DELETION` — còn đơn đang xử lý → hộp liệt kê mã đơn (GNE-USR-4091, mock đọc trạng thái đơn mock trong phiên); hết đơn → OTP → PUT /me/deletion-request → băng đỏ "ẩn danh vào …" + "Hủy yêu cầu xóa". Bỏ nút "Mô phỏng: đã hoàn tất các đơn" (D5). Đã thử thật: thiết lập mật khẩu (OTP) → thành công, xóa tài khoản bị chặn bởi 7 đơn đang xử lý. |
+| G10.55 | `VouchersPanel` (promotions/ui, /account/vouchers): lưu bằng mã, tab theo loại có số đếm, thanh lượt đã dùng đổi màu theo %, xóa khỏi kho (DELETE /me/vouchers/{id}, mới thêm), chi tiết, lịch sử Hết hiệu lực / Đã dùng; "Dùng ngay" dẫn /cart. Danh sách chỉ gồm voucher đã lưu theo GET /me/vouchers (prototype hiện cả voucher chưa lưu với nút "Lưu"). Mock: mã đã lưu giữ trong phiên tab (trước chỉ trong bộ nhớ). |
+| G10.56–G10.57 | `features/coins` đủ 4 tầng: lịch sử (3.13 transactions), quà đổi (XU_REWARDS → `CoinReward` / /public/coin-rewards), điểm danh 7 ngày, đổi quà; `coins.rules` + test. `CoinsPanel` ở /account/points: đếm ngược tới nửa đêm giờ VN sau khi điểm danh. Mock: số dư = mẫu − Điểm dùng khi đặt + Điểm đánh giá có ảnh + giao dịch trong phiên; voucher đổi từ Điểm hiện ngay trong Kho Voucher. Đã thử: điểm danh +100, đổi quà → DIEM5K1 đứng đầu kho. |
+| G10.58 | `WishlistPanel` (product/ui) đọc store yêu thích dùng chung với nút tim; "Thêm vào giỏ" chọn tổ hợp phân loại đầu tiên còn hàng (lấy chi tiết sản phẩm), shop tạm nghỉ thì khóa. |
+| G10.59 | `FollowsPanel` (shop/ui): con dấu shop, Chính hãng, đánh giá, số theo dõi, Vào shop, bỏ theo dõi có xác nhận; huy hiệu số shop ở menu tài khoản. |
+| G10.60 | `NotificationsPanel` (notifications/ui): tab Tất cả / Đơn hàng / Khuyến mãi / Hệ thống / Chat, đánh dấu tất cả đã đọc, mở = đánh dấu đã đọc rồi đi tới đích; thông báo toàn sàn → hộp chi tiết; "Xem thêm" 5 mục / lần. Sửa liên kết thông báo đơn: route theo dõi đơn dùng id nên lấy số thứ tự từ mã TR (API nên trả kèm order_id — ghi G13.20). |
+| G10.61 | Khóa `promotions.wallet.*`, `coins.*`, `notifications.page.*`, `product.wishlist.*`, `shop.follows.*` (vi + en). Khu tài khoản thêm `<h1>` (ẩn khỏi mắt, theo tên mục) trong `AccountShell` — trước đó /orders và /account/* chưa có h1 (R18). |
+| G10.62 | `features/chat`: kiểu, quy tắc (+test), dto/mock (4 hội thoại theo prototype) / api 8.1–8.5. Mock: shop tự trả lời sau ~1,1 giây kèm trạng thái "đang nhập". Chưa có WebSocket (mục 13) → luồng tin hỏi lại 2 giây khi đang mở, hộp thư 15 giây; nối WS sau ở G13. Gửi tin có bong bóng "Đang gửi…" (client_message_id = Idempotency-Key), lỗi → "Gửi lỗi". |
+| G10.63 | `ChatWidget` (client:only) gắn trong `StorefrontLayout` (tắt bằng `noChat`); khách bấm → LoginPrompt. Ảnh đại diện shop dùng `Seal` (con dấu shop chung toàn site) thay ô chữ cái của prototype. Ảnh gửi qua upload CHAT_IMAGE (nén trước); thẻ đơn chọn từ đơn với shop đó. |
+| G10.64 | `/chat` cần đăng nhập, noindex; `?shop=&product=&order=` mở hội thoại và tự gửi thẻ sản phẩm / thẻ đơn rồi bỏ tham số khỏi URL. Màn hẹp: danh sách → luồng tin có nút quay lại. |
+| G10.65 | `BecomeSeller` (seller-onboarding): form rhf + zod, điền sẵn họ tên / email / SĐT từ phiên, ngành hàng lấy danh mục gốc (SSR), loại hình INDIVIDUAL/HOUSEHOLD/BUSINESS → 9.1 → modal OTP → 9.2 → làm mới token → `/seller/kyc`. Tên shop trùng (GNE-VND-4094) báo ngay dưới ô. Mock bỏ kiểm GNE-VND-4093 (tài khoản mẫu vốn là chủ shop) để trình diễn được luồng. Điều khoản dẫn `/policies/seller-terms`, `/policies/commission-rates` (R16). |
+| G10.66 | `/become-seller` công khai, lập chỉ mục; phần giới thiệu / lợi ích / 3 bước render SSR, chỉ thẻ đăng ký là island. Ở 360px thẻ lợi ích xếp 1 cột (prototype 2 cột chữ bị bó hẹp). Khóa `chat.*`, `seller-onboarding.landing.*` (vi + en). |
 
 ## Nhật ký
 
@@ -787,3 +831,12 @@
 | 2026-11-13 | Trang chính sách, sitemap, robots (G08 nhóm F) | 254fcc6 |
 | 2026-11-13 | SEO: canonical, dữ liệu có cấu trúc, kiểm tra không JS (G08 nhóm G) | aac0d8a |
 | 2026-11-13 | Đăng nhập, đăng ký, quên mật khẩu, OAuth callback (G09) | 49bbf6f |
+| 2026-11-13 | Giỏ hàng nhiều shop: miền / hạ tầng / store giỏ, đổi phân loại, xóa nhiều, giỏ khách (G10 nhóm A) | 8a9c33e |
+| 2026-11-13 | Voucher xếp chồng, Voucher Picker, phí ship, công tắc Điểm ở giỏ (G10 nhóm B) | 37f2d0b |
+| 2026-11-13 | Trang Thanh toán gộp nhiều shop, sổ địa chỉ + RegionPicker, giữ hàng 15 phút, nháp checkout (G10 nhóm C) | 3bd8edb |
+| 2026-11-13 | Luồng thanh toán VNPAY / VietQR / COD, cổng mô phỏng, trang kết quả (G10 nhóm D) | ad830ca |
+| 2026-11-13 | Đơn mua (tab, nhóm đơn, hủy, đã nhận, mua lại, thanh toán lại) + theo dõi đơn + khung tài khoản (G10 nhóm E) | 913f4d8 |
+| 2026-11-13 | Trả hàng / hoàn tiền (modal, bằng chứng, khối trạng thái) + đánh giá sản phẩm, lớp tải tệp dùng chung (G10 nhóm F) | 7c90b73 |
+| 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
+| 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
+| 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |

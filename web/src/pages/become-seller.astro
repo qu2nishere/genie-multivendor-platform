@@ -1,0 +1,115 @@
+---
+// "Trở thành Người bán" (plan G10.66; prototype BecomeSeller.jsx) — trang công khai, lập chỉ mục được.
+// Phần giới thiệu, lợi ích, các bước render SSR; chỉ thẻ đăng ký là island (client:load).
+import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listRootCategories } from '@/features/catalog';
+import { BENEFITS, BecomeSeller, STEPS } from '@/features/seller-onboarding';
+import { createT } from '@/shared/lib/i18n';
+import { Badge, Icon } from '@/shared/ui';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const categories = (await listRootCategories()).map((c) => ({ id: c.id, name: c.name }));
+const stats = ['fee', 'sellers', 'commission'] as const;
+---
+
+<StorefrontLayout
+  title={t('seller-onboarding.landing.page_title')}
+  description={t('seller-onboarding.landing.meta_description')}
+>
+  <section
+    class="bg-[radial-gradient(40%_80%_at_96%_0%,rgba(255,192,46,.3),transparent_70%),linear-gradient(180deg,var(--sky-100),var(--paper-50))] text-brand-900"
+  >
+    <div
+      class="mx-auto max-w-[1280px] px-6 py-10 grid grid-cols-[minmax(0,1.2fr)_minmax(0,480px)] gap-10 items-center max-lg:grid-cols-1 max-sm:px-4 max-sm:py-7 max-sm:gap-6"
+    >
+      <div>
+        <Badge variant="solid" className="!bg-brand-900"
+          >{t('seller-onboarding.landing.badge')}</Badge
+        >
+        <h1
+          class="m-0 mt-3.5 mb-3 max-w-[520px] text-[38px] leading-[1.12] font-extrabold tracking-[-0.02em] max-sm:text-[28px]"
+        >
+          {t('seller-onboarding.landing.title')}
+        </h1>
+        <p class="m-0 mb-[22px] max-w-[460px] text-lg leading-normal text-gray-700">
+          {t('seller-onboarding.landing.lead')}
+        </p>
+        <div class="flex gap-[26px] flex-wrap">
+          {
+            stats.map((s) => (
+              <div>
+                <div class="text-[26px] font-extrabold">
+                  {t(`seller-onboarding.landing.stats.${s}.value`)}
+                </div>
+                <div class="text-sm text-gray-600">
+                  {t(`seller-onboarding.landing.stats.${s}.label`)}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <BecomeSeller client:load categories={categories} />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1280px] px-6 pt-10 pb-14 max-sm:px-4">
+    <h2 class="m-0 mb-1.5 text-2xl font-bold text-strong text-center">
+      {t('seller-onboarding.landing.why_title')}
+    </h2>
+    <p class="m-0 mb-7 text-base text-muted text-center">
+      {t('seller-onboarding.landing.why_sub')}
+    </p>
+    <div class="grid grid-cols-4 gap-4 mb-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
+      {
+        BENEFITS.map((b) => (
+          <div class="bg-surface-card rounded-lg border border-solid border-line-subtle shadow-sm p-5">
+            <div class={`w-12 h-12 rounded-md grid place-items-center mb-3 ${b.bg} ${b.tint}`}>
+              <Icon name={b.icon} size={24} />
+            </div>
+            <h3 class="m-0 mb-[5px] text-base font-bold text-strong">
+              {t(`seller-onboarding.landing.benefits.${b.key}.title`)}
+            </h3>
+            <p class="m-0 text-sm text-muted leading-normal">
+              {t(`seller-onboarding.landing.benefits.${b.key}.desc`)}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="bg-surface-card rounded-lg border border-solid border-line-subtle shadow-sm p-7 max-sm:p-5"
+    >
+      <h2 class="m-0 mb-[22px] text-xl font-bold text-strong text-center">
+        {t('seller-onboarding.landing.steps_title')}
+      </h2>
+      <ol class="m-0 p-0 list-none grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:gap-5">
+        {
+          STEPS.map((s, i) => (
+            <li class="flex gap-3.5 relative">
+              <span class="w-10 h-10 rounded-full bg-brand-500 text-white text-lg font-extrabold grid place-items-center flex-none">
+                {i + 1}
+              </span>
+              <div>
+                <h3 class="m-0 mb-1 text-base font-bold text-strong">
+                  {t(`seller-onboarding.landing.steps.${s}.title`)}
+                </h3>
+                <p class="m-0 text-sm text-muted leading-normal">
+                  {t(`seller-onboarding.landing.steps.${s}.desc`)}
+                </p>
+              </div>
+              {i < STEPS.length - 1 && (
+                <Icon
+                  name="arrow-right"
+                  size={20}
+                  className="absolute -right-3.5 top-2.5 text-line-strong max-md:hidden"
+                />
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</StorefrontLayout>

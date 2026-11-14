@@ -277,6 +277,14 @@
     },
     "breadcrumb": {
       "label": "Breadcrumb"
+    },
+    "media": {
+      "drop": "Drag & drop or click to upload",
+      "remove": "Remove file {name}",
+      "too_many": "Up to {max} files",
+      "type": "{name}: unsupported format",
+      "size": "{name}: max {mb} MB",
+      "failed": "Could not upload {name}, please try again"
     }
   },
   "layout": {
@@ -335,6 +343,22 @@
       "mark_all": "Mark all as read",
       "empty": "No notifications yet",
       "see_all": "See all notifications"
+    },
+    "page": {
+      "unread": "You have {count} unread notification(s)",
+      "all_read": "You're all caught up",
+      "mark_all": "Mark all as read",
+      "empty": "No notifications in this tab",
+      "more": "Load more",
+      "detail": "Notification details",
+      "new": "Unread",
+      "tab": {
+        "all": "All",
+        "order": "Orders",
+        "promo": "Promotions",
+        "system": "System",
+        "chat": "Chat"
+      }
     }
   },
   "cart": {
@@ -348,6 +372,73 @@
     "add": {
       "added": "Added to cart",
       "guest_full": "Your cart already has 50 items. Log in to add more."
+    },
+    "page": {
+      "title": "Cart",
+      "meta_description": "Your multi-shop cart on Genie: each shop ships as its own order, and Genie holds your money until you receive it.",
+      "count": "({count} items)",
+      "empty_title": "Your cart is empty",
+      "empty_text": "Discover millions of products at the best prices.",
+      "continue": "Continue shopping",
+      "guest_notice": "You are viewing a temporary cart saved in this browser. Log in to check out — it will be merged into your account."
+    },
+    "group": {
+      "select_all": "Select all items from {shop}",
+      "separate": "Separate order",
+      "ship_free": "Free shipping by shop",
+      "ship_fee": "Shipping {fee}",
+      "subtotal": "Subtotal ({count}):",
+      "voucher": "Add shop voucher"
+    },
+    "line": {
+      "select": "Select {title}",
+      "variant": "Variant: {variant}",
+      "price_up": "Price went up since you added it",
+      "price_down": "Price went down since you added it",
+      "price_at_add": "Price when added",
+      "qty": "Quantity of {title}",
+      "remove": "Remove {title}",
+      "unavailable": {
+        "OUT_OF_STOCK": "Out of stock",
+        "SHOP_ON_VACATION": "Shop is on vacation",
+        "PRODUCT_UNAVAILABLE": "No longer available",
+        "FLASH_SALE_SOLD_OUT": "Flash Sale sold out"
+      }
+    },
+    "confirm": {
+      "remove_title": "Remove item",
+      "remove_one": "Are you sure you want to remove this item from your cart?",
+      "remove_zero": "Do you want to remove this item from your cart?",
+      "remove_many": "Are you sure you want to remove the {count} selected items from your cart?",
+      "over_title": "Quantity limit reached",
+      "over_text": "Only {stock} left in stock.",
+      "ok": "OK"
+    },
+    "bar": {
+      "select_all": "Select all ({count})",
+      "remove_selected": "Remove {count} items",
+      "hold": "Genie holds {amount} until you receive your order",
+      "hold_short": "Genie holds your money until you receive your order",
+      "orders": "{orders} orders",
+      "info": "{orders} orders · incl. {ship} shipping",
+      "info_discount": " · {amount} off",
+      "total": "Total",
+      "total_count": "({count} items):",
+      "checkout": "Check out ({count})",
+      "voucher": "Genie voucher",
+      "freeship": "+ Free shipping",
+      "points": "Use {points} Points",
+      "points_toggle": "Use Genie Points for a discount"
+    },
+    "variant": {
+      "title": "Choose variant",
+      "stock": "Stock: {stock}",
+      "back": "Back",
+      "confirm": "Confirm"
+    },
+    "picker": {
+      "platform_title": "Choose a Genie voucher",
+      "shop_title": "Choose a shop voucher"
     }
   },
   "auth": {
@@ -663,6 +754,65 @@
       "count": "{n} products taking part",
       "gone_title": "This campaign doesn't exist or has ended",
       "gone_text": "The link \"/{slug}\" doesn't match any running campaign."
+    },
+    "picker": {
+      "code_label": "Voucher code",
+      "code_placeholder": "Enter voucher code",
+      "empty": "No matching vouchers yet",
+      "platform_group": "Discounts",
+      "freeship_group": "Free shipping",
+      "shop_group": "Shop vouchers",
+      "only": "Only for: {list}",
+      "except": "Except: {list}",
+      "expiry": "Expires: {date}",
+      "none": "No voucher selected",
+      "chosen": "{count} voucher(s) selected.",
+      "saving": "You save",
+      "shipping_fee": "shipping fee",
+      "applied": "Voucher applied!",
+      "not_eligible": "This voucher does not apply to this order yet.",
+      "reason": {
+        "no_items": "No matching items in your cart",
+        "min_order": "Minimum order of {amount} not reached",
+        "not_active": "This voucher is not active yet"
+      }
+    },
+    "wallet": {
+      "sub": "You have {count} usable voucher(s)",
+      "history": "Voucher history",
+      "history_sub": "Used or expired vouchers",
+      "view_history": "View voucher history",
+      "code_placeholder": "Enter a voucher code",
+      "saved": "Voucher saved!",
+      "platform": "Platform vouchers",
+      "shop": "Shop vouchers",
+      "expired": "Expired",
+      "used": "Used",
+      "used_tag": "Used",
+      "expired_tag": "Expired",
+      "empty": "No vouchers in this tab yet",
+      "only": "Only for {list}",
+      "except": "Except {list}",
+      "from": "Valid from: {date}",
+      "not_yet": "Not started",
+      "use": "Use now",
+      "usage": "{used}/{limit} used",
+      "remove": "Remove voucher {label}",
+      "remove_title": "Confirm removal",
+      "remove_text": "Remove voucher {label} from your wallet?",
+      "removed": "Voucher removed from wallet",
+      "detail": "Voucher details",
+      "detail_of": "Details of voucher {label}",
+      "got_it": "Got it",
+      "field": {
+        "code": "Code",
+        "offer": "Offer",
+        "sponsor": "Sponsor",
+        "condition": "Condition",
+        "scope": "Scope",
+        "valid": "Valid",
+        "content": "Details"
+      }
     }
   },
   "payment": {
@@ -683,6 +833,84 @@
         "receive": "You have 7 days to check the item and request a return if something is wrong.",
         "release": "Once you confirm, or after 7 days, the marketplace pays the shop."
       }
+    },
+    "chip": {
+      "cod": "Pay on delivery",
+      "released": "Genie has paid the shop",
+      "return": "Genie holds the money while the return is processed",
+      "holding": "Genie is holding your money"
+    },
+    "qr": {
+      "bank": "Bank",
+      "account": "Account number",
+      "holder": "Account holder",
+      "amount": "Amount",
+      "content": "Transfer note",
+      "copy": "Copy {what}",
+      "valid": "Code valid for",
+      "expired": "The QR code has expired; the order was cancelled and stock released.",
+      "note": "Transfer the exact amount and note so SePay can confirm automatically. A wrong note needs manual reconciliation.",
+      "waiting": "Waiting for SePay to confirm the transfer…",
+      "change": "Change method"
+    },
+    "modal": {
+      "pick_title": "Choose a payment method",
+      "qr_title": "Pay with VietQR",
+      "pay": "Pay {amount}",
+      "cod": "Confirm COD {amount}",
+      "cod_meta": "Awaiting shop confirmation"
+    },
+    "gateway": {
+      "title": "VNPAY gateway (simulated)",
+      "back": "Back to order",
+      "moving": "Transferring...",
+      "payee": "Payee:",
+      "escrow": "Genie escrow account",
+      "orders": "{count} orders",
+      "note": "Money goes to Genie's escrow account, not to the shop yet. No real transaction happens in this prototype."
+    },
+    "result": {
+      "title": "Payment result"
+    },
+    "done": {
+      "title": "Payment successful!",
+      "title_cod": "Order placed!",
+      "text": "Thank you for shopping at Genie.",
+      "text_split": "Your order has been split by seller.",
+      "text_cod": "Pay the courier in cash when you receive your order.",
+      "code": "Transaction ID",
+      "date": "Order date",
+      "order": "Order {code}",
+      "by": "Sold by: {shop}",
+      "track": "Track",
+      "subtotal": "Goods total (subtotal)",
+      "shipping": "Shipping",
+      "discount": "Discounts (vouchers & promotions)",
+      "points": "Genie Points used",
+      "collect": "Collect on delivery",
+      "home": "Back to home",
+      "orders": "View my orders"
+    },
+    "failed": {
+      "title": "Payment failed",
+      "text": "The bank or payment gateway did not confirm the transaction — the card may have been declined or it timed out.",
+      "not_charged": "You have not been charged.",
+      "waiting": "Order {code} is still waiting for payment.",
+      "hold_before": "Stock is still held for",
+      "hold_after": ". Try again before it expires so you don't lose the items.",
+      "expired": "The 15-minute stock hold has expired — the order was cancelled and stock released.",
+      "retry": "Retry payment",
+      "change": "Change method",
+      "cart": "Back to cart"
+    },
+    "pending": {
+      "title": "Waiting for payment confirmation",
+      "text": "Transaction {code} is waiting for the gateway to confirm. This page updates automatically.",
+      "show_qr": "Show QR code again"
+    },
+    "missing": {
+      "title": "Transaction not found",
+      "text": "The link has no transaction ID or it does not belong to your account. Check its status in My orders."
     }
   },
   "product": {
@@ -693,7 +921,13 @@
       "added": "Added to your wishlist",
       "removed": "Removed from your wishlist",
       "on": "In wishlist",
-      "off": "Wishlist"
+      "off": "Wishlist",
+      "title": "Wishlist ({count})",
+      "sub": "Tap the heart on a product to save it for later",
+      "empty": "Your wishlist is empty.",
+      "remove": "Unlike",
+      "add": "Add to cart",
+      "unavailable": "No variant of this product is in stock"
     },
     "promise": {
       "label": "When you buy on Genie",
@@ -788,11 +1022,11 @@
     "summary": "/ 5 · {n} reviews",
     "empty": "No reviews in this section yet",
     "filter": {
+      "3": "3 stars",
+      "4": "4 stars",
+      "5": "5 stars",
       "label": "Filter reviews",
       "all": "All",
-      "5": "5 stars",
-      "4": "4 stars",
-      "3": "3 stars",
       "img": "With photos",
       "buy": "Verified purchase"
     },
@@ -818,6 +1052,24 @@
         "OFFENSIVE": "Vulgar or abusive language",
         "FAKE_BUYER": "Fake purchase, not a real buyer"
       }
+    },
+    "form": {
+      "title": "Review products",
+      "step": "Product {n}/{count}",
+      "stars": "Rating",
+      "content": "Your review",
+      "placeholder": "Share what you think about this product...",
+      "images": "Photos ({n}/5)",
+      "images_hint": "Reviews with photos earn 50 Points. JPG, PNG up to 5 MB.",
+      "video": "Video (optional)",
+      "video_hint": "1 MP4 video, up to 30 MB.",
+      "name": "Name display",
+      "public": "Show my name",
+      "anonymous": "Review anonymously",
+      "submit": "Submit review",
+      "submit_next": "Submit and review next product",
+      "done": "Thanks for your review!",
+      "done_points": "Thanks for your review! You earned {points} Points."
     }
   },
   "shop": {
@@ -865,6 +1117,16 @@
       "all": "All products",
       "new": "Newest",
       "hot": "Best selling"
+    },
+    "follows": {
+      "title": "Followed shops ({count})",
+      "sub": "Get promotions from your favourite shops",
+      "empty": "You are not following any shop yet.",
+      "followers": "{count} followers",
+      "visit": "Visit shop",
+      "unfollow": "Unfollow",
+      "unfollow_title": "Unfollow shop?",
+      "unfollow_text": "You will no longer get promotions from {shop}."
     }
   },
   "policies": {
@@ -873,5 +1135,677 @@
     "pager": "Previous and next page",
     "prev": "Previous",
     "next": "Next"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "meta_description": "Check out a multi-shop order on Genie — Genie holds your money until you receive it.",
+    "empty": {
+      "title": "Nothing to check out",
+      "text": "Select items in your cart, then tap Check out.",
+      "cta": "Back to cart"
+    },
+    "address": {
+      "title": "Delivery address",
+      "change": "Change",
+      "add": "Add address",
+      "none": "No delivery address yet. Add one to place your order."
+    },
+    "order": {
+      "separate": "Separate order",
+      "index": "Order {n}/{count}",
+      "oos": "This item just sold out — removed from the order.",
+      "drop": "Remove",
+      "edit_qty": "Edit quantity in cart",
+      "more": "Show {count} more items",
+      "shop_voucher": "Choose a shop voucher",
+      "shop_voucher_on": "Shop voucher −{amount}",
+      "note": "Message to shop…",
+      "note_label": "Message to {shop}",
+      "platform_cut": "Platform voucher share:",
+      "ship": "Fast delivery",
+      "freeship": "Free shipping −{amount}",
+      "total": "Order total ({count} items):"
+    },
+    "voucher": {
+      "one_each": "Max 1 of each type",
+      "chosen": "Genie vouchers selected",
+      "choose": "Choose a discount code",
+      "platform": "Platform",
+      "off": "{amount} off",
+      "ship_off": "{amount} off shipping",
+      "extra": "A better combination saves {amount} more",
+      "apply_best": "Use best combination",
+      "is_best": "You are using the best combination"
+    },
+    "points": {
+      "title": "Use Genie Points",
+      "rate": "1 Point = ₫1",
+      "have": "You have {points} Points",
+      "cap": "Up to 50% of the goods amount ({amount})",
+      "applied": "{points} Points applied, {amount} off your order."
+    },
+    "pay": {
+      "title": "Payment method",
+      "note": "With VNPAY and VietQR, Genie holds your money until you receive your order before paying the shop. With COD, you pay the courier.",
+      "VNPAY": {
+        "name": "VNPAY gateway",
+        "meta": "ATM card / QR code"
+      },
+      "VIETQR": {
+        "name": "VietQR bank transfer",
+        "meta": "Auto-confirmed via SePay"
+      },
+      "COD": {
+        "name": "Cash on delivery (COD)",
+        "meta": "Pay when you receive it"
+      }
+    },
+    "hold": {
+      "left": "Stock is held for",
+      "expired": "The 15-minute stock hold has expired.",
+      "renew": "Hold again"
+    },
+    "summary": {
+      "title": "Payment details",
+      "subtotal": "Goods total",
+      "shipping": "Shipping total",
+      "platform": "Platform voucher",
+      "freeship": "Shipping discount",
+      "shop": "Shop vouchers",
+      "points": "Genie Points used",
+      "count": "{orders} orders · {items} items",
+      "hold": "Genie holds {amount} until you receive your order.",
+      "terms_before": "By tapping \"Place order\" you agree to the",
+      "terms_link": "Genie Terms"
+    },
+    "place": {
+      "vnpay": "Place order & pay with VNPAY",
+      "vietqr": "Place order & get QR code",
+      "cod": "Place order",
+      "short": "Place order",
+      "processing": "Processing..."
+    }
+  },
+  "account": {
+    "address": {
+      "modal_title": "My addresses",
+      "edit_title": "Edit address",
+      "add_title": "Add a new address",
+      "add": "Add a new address",
+      "default": "Default",
+      "set_default": "Set as default",
+      "make_default": "Set as default address",
+      "recipient": "Full name",
+      "phone": "Phone number",
+      "line": "Street address",
+      "label_type": "Address type",
+      "label": {
+        "HOME": "Home",
+        "OFFICE": "Office"
+      },
+      "save": "Save address",
+      "saved": "Address saved",
+      "gps": {
+        "idle": "Use current location (GPS)",
+        "locating": "Locating…",
+        "done": "Current location found",
+        "hint": "Fill in the address from your device location.",
+        "done_hint": "Province/District/Ward filled in — you can adjust below."
+      },
+      "region": {
+        "label": "Province / City, District, Ward",
+        "placeholder": "Choose Province / District / Ward",
+        "province": "Province",
+        "district": "District",
+        "ward": "Ward",
+        "search": "Quick search…",
+        "none": "No results"
+      },
+      "err": {
+        "recipient": "Enter the recipient's name",
+        "recipient_long": "Name can be at most 100 characters",
+        "phone": "Invalid phone number",
+        "region": "Choose Province, District and Ward",
+        "line": "Enter the street address",
+        "line_long": "Address can be at most 255 characters"
+      },
+      "book": "Address book",
+      "book_sub": "Manage your delivery addresses",
+      "empty": "No addresses yet",
+      "remove_title": "Delete address",
+      "remove_text": "Are you sure you want to delete this address?"
+    },
+    "menu": {
+      "label": "Account",
+      "mine": "My account",
+      "profile": "Profile",
+      "address": "Addresses",
+      "password": "Change password",
+      "password_set": "Set a password",
+      "logins": "Linked logins",
+      "devices": "Signed-in devices",
+      "orders": "My orders",
+      "notifications": "Notifications",
+      "vouchers": "Voucher wallet",
+      "points": "Genie Points",
+      "wishlist": "Wishlist",
+      "following": "Followed shops",
+      "logout_confirm": "Log out of {name} on this device?",
+      "kind_both": "Email and Google",
+      "kind_google": "Google account",
+      "kind_email": "Email account"
+    },
+    "otp": {
+      "sent": "A verification code was sent to {email}",
+      "demo": "test code: 123456",
+      "resend": "Resend code",
+      "resend_in": "Resend code in {s}s",
+      "resent": "Code resent"
+    },
+    "profile": {
+      "title": "My profile",
+      "sub": "Manage your details to keep your account secure",
+      "verified": "Verified",
+      "linked_google": "Linked to Google",
+      "email_need_password_before": "Changing to another email requires you to",
+      "email_need_password_after": "first. Then you can sign in with Google (old email) or Email + password (new email).",
+      "phone_empty": "No phone number yet",
+      "gender": "Gender",
+      "genders": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "OTHER": "Other",
+        "PREFER_NOT_TO_SAY": "Prefer not to say"
+      },
+      "dob": "Date of birth",
+      "dob_empty": "Not set — pick a date to update.",
+      "bio": "Bio",
+      "language": "Language",
+      "lang": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      },
+      "save": "Save changes",
+      "saved": "Profile saved",
+      "avatar_pick": "Choose photo",
+      "avatar_hint": "JPG, PNG. Max 1 MB.",
+      "avatar_saved": "Profile photo updated",
+      "avatar_invalid": "Photo must be JPG / PNG and at most 1 MB.",
+      "err": {
+        "name": "Please enter your full name",
+        "name_long": "Name can be at most 100 characters",
+        "dob": "Invalid date of birth",
+        "bio": "Bio can be at most 200 characters"
+      },
+      "change": "Change"
+    },
+    "email": {
+      "title": "Change login email",
+      "current": "Current email:",
+      "new": "New email",
+      "note": "Genie sends a 6-digit code to the new email. After the change you sign in with the new email; your Google link stays.",
+      "send": "Send code",
+      "other": "Use another email",
+      "done": "Login email changed to {email}",
+      "err": {
+        "same": "The new email must differ from the current one"
+      }
+    },
+    "delete": {
+      "open": "Delete account",
+      "title": "Delete account",
+      "text": "This cannot be undone after 30 days. {name}'s profile will be anonymised and vouchers and Points cancelled. Within 30 days, log in and tap \"Cancel deletion\" to keep the account.",
+      "blocked": "You still have orders in progress. Complete them before deleting your account:",
+      "send_otp": "Send OTP",
+      "confirm": "Confirm deletion",
+      "done": "Deletion request received. A confirmation email with the 30-day deadline has been sent.",
+      "pending": "Your account will be anonymised on {date}. You can cancel the request until then.",
+      "cancel": "Cancel deletion",
+      "cancelled": "Deletion cancelled, your account is back to normal"
+    },
+    "password": {
+      "sub": "Secure your account with a strong password",
+      "sub_set": "Your account only uses Google. No old password is needed because you signed in with Google; afterwards you can sign in with either email or Google.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "hint": "At least 8 characters with upper- and lowercase letters, a number and a symbol",
+      "check": {
+        "checking": "Checking...",
+        "ok": "Correct",
+        "bad": "Incorrect"
+      },
+      "submit": "Update password",
+      "set_submit": "Set password",
+      "confirm_otp": "Confirm password change",
+      "changed": "Password changed",
+      "set_done": "Password set",
+      "done_note": "Password updated. Other devices have been signed out.",
+      "tips_title": "Security tips",
+      "tips": {
+        "1": "Don't reuse the same password on many sites",
+        "2": "Mix uppercase letters, numbers and symbols",
+        "3": "Avoid personal info (name, birthday)",
+        "4": "Change your password every 3–6 months"
+      },
+      "err": {
+        "current": "Enter your current password",
+        "same": "The new password must differ from the current one",
+        "wrong": "Current password is incorrect"
+      }
+    },
+    "logins": {
+      "sub": "Ways to sign in to the same account",
+      "info": "An account has only one password. Google is just another way in: however you sign in, you reach the same account {email} with the same orders, wallet and Points.",
+      "password": "Email and password",
+      "has_pw": "Password set",
+      "no_pw": "No password",
+      "linked": "Linked",
+      "not_linked": "Not linked",
+      "only_way": "This is your only way to sign in. Set a password first if you want to unlink.",
+      "link": "Link Google",
+      "unlink": "Unlink",
+      "keep": "Keep linked",
+      "count": "{count} sign-in method(s) enabled",
+      "since": "Google linked {when}",
+      "link_title": "Link Google",
+      "link_text": "Genie will open Google sign-in. A Google account with a verified email will be attached to your current account {email}; no new account is created.",
+      "unlink_title": "Unlink Google?",
+      "unlink_text": "After unlinking, \"Sign in with Google\" will no longer open this account until you link it again. You can still sign in with email and password.",
+      "linked_toast": "Google linked. Next time \"Sign in with Google\" opens this account",
+      "unlinked_toast": "Google unlinked. Sign in with email and password"
+    },
+    "devices": {
+      "sub": "Sessions currently signed in to your account",
+      "logout_others": "Sign out all other devices",
+      "tip_before": "If you see an unknown device, sign it out right away and",
+      "tip_link": "change your password",
+      "count": "You are signed in on {count} device(s).",
+      "current": "This device",
+      "active": "Active now",
+      "this": "This session",
+      "out_one": "Device signed out",
+      "out_all": "All other devices signed out"
+    }
+  },
+  "orders": {
+    "title": "My orders",
+    "empty": "No orders in this tab yet",
+    "tab": {
+      "TO_PAY": "To pay",
+      "SHIPPING": "Shipping",
+      "TO_RECEIVE": "To receive",
+      "COMPLETED": "Completed",
+      "RETURN": "Returns / Refunds",
+      "CANCELLED": "Cancelled"
+    },
+    "status": {
+      "PENDING_PAYMENT": "Awaiting payment",
+      "PAID": "Paid",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "READY_FOR_PICKUP": "Awaiting pickup",
+      "DELIVERING": "Delivering",
+      "DELIVERY_FAILED": "Delivery failed",
+      "DELIVERED": "Delivered",
+      "COMPLETED": "Completed",
+      "RETURN_REQUESTED": "Return / refund in progress",
+      "RETURN_APPROVED": "Return approved",
+      "RETURN_REJECTED": "Return rejected by shop",
+      "RETURNING": "Return in transit",
+      "RETURNED_TO_VENDOR": "Return received by shop",
+      "PARTIALLY_REFUNDED": "Partially refunded",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled",
+      "CANCELLED_BY_VENDOR": "Cancelled by shop",
+      "AUTO_CANCELLED": "Auto-cancelled (payment timeout)"
+    },
+    "pay": {
+      "VNPAY": "VNPay",
+      "VIETQR": "VietQR",
+      "COD": "COD"
+    },
+    "card": {
+      "label": "Order {code}",
+      "total": "Order total:",
+      "delivered": "Delivered"
+    },
+    "group": {
+      "pending": "Order group awaiting payment",
+      "cancelled": "Cancelled order group",
+      "goods": "Goods",
+      "shipping": "Shipping",
+      "discount": "Discount (vouchers + Points)",
+      "total": "Total ({count} orders):",
+      "again_all": "Buy all again",
+      "cancel": "Cancel group"
+    },
+    "action": {
+      "pay": "Pay now",
+      "await_shop": "Awaiting shop confirmation",
+      "cancel": "Cancel order",
+      "track": "Track order",
+      "chat": "Contact shop",
+      "again": "Buy again",
+      "received": "Order received",
+      "return": "Return",
+      "view_return": "View return request",
+      "review": "Review",
+      "reviewed": "Reviewed"
+    },
+    "again": {
+      "added": "Items added to your cart",
+      "partial": "Available items added; discontinued or sold-out items skipped",
+      "none": "These items are no longer available"
+    },
+    "cancel": {
+      "title": "Cancel order",
+      "text": "Are you sure you want to cancel this order? This cannot be undone; Points and vouchers (if any) will be returned.",
+      "text_group": "Are you sure you want to cancel this group of {count} orders? This cannot be undone; Points and vouchers (if any) will be returned.",
+      "refund_note": "The amount paid will be refunded to the original method.",
+      "reason": "Reason for cancelling",
+      "note": "More details",
+      "note_required": "Please describe your reason",
+      "confirm": "Cancel order",
+      "keep": "Keep order",
+      "done": "Order cancelled",
+      "done_group": "Order group cancelled",
+      "refund": ". The amount will be refunded to your payment method.",
+      "reasons": {
+        "CHANGE_OF_MIND": "Changed my mind",
+        "CHANGE_ADDRESS": "Want to change the delivery address",
+        "CHANGE_VARIANT": "Want a different product / variant",
+        "FOUND_BETTER_PRICE": "Found a better price",
+        "OTHER": "Other reason"
+      }
+    },
+    "receipt": {
+      "title": "Confirm you received the order?",
+      "text": "Genie will pay {amount} to {shop}. After confirming you can no longer request a return for this order.",
+      "confirm": "Received — pay the shop",
+      "done": "Thank you! The order is completed."
+    },
+    "step": {
+      "label": "Order progress",
+      "now": "Step {n}/{count}:",
+      "placed": "Placed",
+      "paid": "Paid",
+      "paid_cod": "Pay on delivery",
+      "confirmed": "Shop confirmed",
+      "prep": "Awaiting pickup",
+      "ship": "In transit",
+      "delivered": "Delivered",
+      "completed": "Completed"
+    },
+    "escrow": {
+      "done": "Order completed. Genie has paid the shop.",
+      "cod": "You pay the courier in cash. The carrier transfers it to Genie before Genie pays the shop.",
+      "delivered": "Genie is holding your money. Tap \"Order received\" to pay the shop, or it is paid automatically after 7 days ({date}) if there is no return request.",
+      "after_7": "after 7 days",
+      "holding": "Genie is holding your money and only pays the shop after you confirm receipt."
+    },
+    "carrier": {
+      "label": "Carrier",
+      "code": "Tracking no.:",
+      "eta": "Estimated delivery",
+      "delivered_at": "Delivered at",
+      "GHN": "Giao Hang Nhanh",
+      "GHTK": "Giao Hang Tiet Kiem",
+      "VIETTEL_POST": "ViettelPost",
+      "JNT_EXPRESS": "J&T Express",
+      "GENIE_EXPRESS": "Genie Express"
+    },
+    "journey": "Shipping journey",
+    "detail": {
+      "title": "Track order",
+      "code": "Order",
+      "discount": "Voucher discount",
+      "return_closed": "The 7-day protection period for this order has ended",
+      "on_the_way": "On its way to you",
+      "preparing": "The seller is preparing your order",
+      "request_return": "Request return / refund",
+      "review": "Review products"
+    }
+  },
+  "refunds": {
+    "form": {
+      "title": "Request return / refund",
+      "type": "What would you like?",
+      "items": "Items to return",
+      "reason": "Reason",
+      "evidence": "Evidence: at least 1 photo showing the shipping label and 1 unboxing video",
+      "evidence_hint": "Max 10 MB per file (JPG, PNG, MP4). Photos are compressed before upload.",
+      "missing": "Still missing {what}.",
+      "missing_IMAGE": "1 photo",
+      "missing_VIDEO": "1 unboxing video",
+      "bank": "Bank account for the refund",
+      "bank_hint": "{method} orders are refunded by bank transfer; staff transfer it within 3 working days after the decision.",
+      "bank_name": "Bank",
+      "account": "Account number",
+      "holder": "Account holder",
+      "amount": "Estimated refund",
+      "note": "The shop has 48 hours to respond. Meanwhile Genie keeps holding the money.",
+      "submit": "Send request",
+      "sent": "Return request sent. The shop has 48 hours to respond."
+    },
+    "type": {
+      "RETURN_AND_REFUND": "Return and refund",
+      "REFUND_ONLY": "Refund only, no return"
+    },
+    "type_hint": {
+      "RETURN_AND_REFUND": "Ship the item back, then get your money back",
+      "REFUND_ONLY": "When items are missing or partly damaged"
+    },
+    "reason": {
+      "DAMAGED_IN_TRANSIT": "Damaged in transit",
+      "WRONG_SIZE_COLOR": "Wrong size / colour",
+      "COUNTERFEIT": "Counterfeit",
+      "MISSING_ACCESSORIES": "Missing accessories",
+      "NOT_RECEIVED": "Not received",
+      "NOT_AS_DESCRIBED": "Not as described",
+      "DEFECTIVE": "Defective"
+    },
+    "status": {
+      "REQUESTED": {
+        "label": "Awaiting shop response",
+        "note": "The shop has 48 hours to respond. If it doesn't, your request is approved automatically."
+      },
+      "AWAITING_EVIDENCE": {
+        "label": "Shop needs more evidence",
+        "note": "You have 48 hours to add photos / videos or escalate to Genie."
+      },
+      "SHOP_REJECTED": {
+        "label": "Rejected by shop",
+        "note": "You have 48 hours to accept or escalate to Genie. Otherwise the request closes."
+      },
+      "AWAITING_RETURN_SHIPMENT": {
+        "label": "Awaiting return shipment",
+        "note": "The shop accepted the return. Hand the parcel to the carrier within 7 days."
+      },
+      "DISPUTED": {
+        "label": "Under Genie review",
+        "note": "Genie staff are reviewing evidence from both sides."
+      },
+      "REFUNDED": {
+        "label": "Refunded",
+        "note": "The money has been refunded to you."
+      },
+      "REJECTED": {
+        "label": "Closed",
+        "note": "You accepted the shop's rejection. The order is completed."
+      }
+    },
+    "block": {
+      "title": "Request {code}",
+      "plan": "Option:",
+      "reason": "Reason:",
+      "shop_said": "Shop says:",
+      "deadline": "Deadline for this step: {date}",
+      "bank": "{method} orders have no card transaction to reverse: after approval, staff transfer the refund to the bank account you provided.",
+      "resolved": "Resolved at {date}",
+      "more": "Add photos / videos",
+      "send_more": "Send evidence",
+      "more_sent": "Additional evidence sent",
+      "escalate": "Escalate to Genie",
+      "accept": "Accept"
+    },
+    "err": {
+      "bank": "Choose a bank",
+      "account": "Account number must be 6–20 digits",
+      "holder": "Enter the account holder's name"
+    }
+  },
+  "coins": {
+    "balance": "Genie Points balance",
+    "balance_short": "Balance:",
+    "rule": "1 Point = ₫1 at checkout · Points expire after 12 months",
+    "expiring": "{amount} Points expire within {days} days",
+    "redeem": "Redeem",
+    "redeem_title": "Redeem Points for a voucher",
+    "voucher": "{amount} off voucher",
+    "cost": "{points} Points · Orders from {min}",
+    "swap": "Redeem",
+    "not_enough": "Not enough Points",
+    "redeemed": "Redeemed voucher {code} — see it in your Voucher wallet",
+    "history": "Points history",
+    "checkin": {
+      "title": "Daily check-in",
+      "cta": "Check in for Points",
+      "checked": "Checked in",
+      "again": "Next check-in in",
+      "day": "Day {n}",
+      "done": "Checked in! +{points} Points"
+    }
+  },
+  "chat": {
+    "title": "Chat with shops",
+    "empty": "No conversations yet. Tap \"Chat now\" on a product page to ask the shop.",
+    "pick": "Pick a conversation to view messages",
+    "preview": {
+      "image": "[Image]",
+      "product": "[Product]",
+      "order": "[Order]"
+    },
+    "status": {
+      "SENDING": "Sending…",
+      "SENT": "Sent",
+      "DELIVERED": "Delivered",
+      "SEEN": "Seen",
+      "FAILED": "Failed to send"
+    },
+    "quick": {
+      "stock": "Is this item in stock?",
+      "eta": "When will it arrive?",
+      "discount": "Any extra discount?",
+      "photo": "Can I see real photos?"
+    },
+    "order": "Order",
+    "view_product": "View product",
+    "image_alt": "Image sent in the conversation",
+    "image_invalid": "Images must be JPG / PNG / WEBP, up to 5 MB.",
+    "typing": "Shop is typing…",
+    "send_image": "Send image",
+    "send_order": "Send order",
+    "no_orders": "No orders with this shop yet",
+    "placeholder": "Type a message…",
+    "send": "Send",
+    "online": "Online",
+    "offline": "Offline",
+    "open_full": "Open full page",
+    "launcher": "Chat with shops",
+    "launcher_unread": "Chat with shops, {count} unread",
+    "response": "Replies {rate}% · within about {minutes} min"
+  },
+  "seller-onboarding": {
+    "landing": {
+      "page_title": "Become a seller",
+      "meta_description": "Open a free shop on Genie: escrow payments, built-in shipping, marketing tools and sales reports.",
+      "badge": "Genie seller channel",
+      "title": "Grow your business with millions of shoppers",
+      "lead": "Open a shop for free, manage orders, your shop wallet and payouts — all in one place.",
+      "stats": {
+        "fee": {
+          "value": "0₫",
+          "label": "Shop opening fee"
+        },
+        "sellers": {
+          "value": "2.8M+",
+          "label": "Sellers"
+        },
+        "commission": {
+          "value": "5%",
+          "label": "Commission from"
+        }
+      },
+      "need_login_a": "You need to",
+      "login": "sign in",
+      "need_login_b": "before opening a shop.",
+      "form_title": "Open your shop",
+      "form_sub": "It only takes 2 minutes.",
+      "shop_name": "Shop name",
+      "owner": "Owner's full name",
+      "phone": "Phone number",
+      "category": "Main category",
+      "type": "Business type",
+      "types": {
+        "INDIVIDUAL": "Individual",
+        "HOUSEHOLD": "Household business",
+        "BUSINESS": "Company"
+      },
+      "terms_a": "I agree to Genie's",
+      "terms_link": "Seller Terms",
+      "terms_b": "and",
+      "commission_link": "Commission Policy",
+      "terms_c": ".",
+      "submit": "Open my shop",
+      "login_cta": "Sign in to open a shop",
+      "already": "Already a seller?",
+      "seller_center": "Sign in to Seller Center",
+      "otp_title": "Verify your email",
+      "otp_sent": "A 6-digit code was sent to {email}",
+      "done": "Shop created. Next: KYC verification.",
+      "err": {
+        "shop": "Shop name needs at least 3 characters",
+        "shop_long": "Shop name can be at most 60 characters",
+        "owner": "Enter the owner's full name",
+        "category": "Choose a category",
+        "terms": "You need to accept the Seller Terms"
+      },
+      "why_title": "Why sell on Genie?",
+      "why_sub": "A complete ecosystem to run your shop efficiently.",
+      "benefits": {
+        "escrow": {
+          "title": "Escrow payments",
+          "desc": "Money is held safely and released to your wallet when the order completes."
+        },
+        "logistics": {
+          "title": "3PL shipping partners",
+          "desc": "GHN, GHTK, ViettelPost and J&T Express built in — print waybills in seconds. Genie Express for same-city orders."
+        },
+        "marketing": {
+          "title": "Marketing tools",
+          "desc": "Create shop vouchers, join Flash Sales and platform campaigns."
+        },
+        "analytics": {
+          "title": "Reports & analytics",
+          "desc": "Track revenue, orders and conversion rate in real time."
+        }
+      },
+      "steps_title": "3 steps to start selling",
+      "steps": {
+        "register": {
+          "title": "Register your shop",
+          "desc": "Enter your shop name, category and contact details."
+        },
+        "kyc": {
+          "title": "KYC verification",
+          "desc": "Upload your ID / business licence. AI reviews instantly; flagged files are reviewed within 24 working hours."
+        },
+        "sell": {
+          "title": "List & get orders",
+          "desc": "Once VERIFIED, list products and start selling."
+        }
+      }
+    }
   }
 }

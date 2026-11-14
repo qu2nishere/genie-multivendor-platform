@@ -1,7 +1,18 @@
 ---
+// Đơn mua (plan G10.35; prototype Account.jsx view=orders) — khung tài khoản SSR + island client:load,
+// cần đăng nhập (middleware), noindex. ?tab=<status_group> là liên kết thật của thanh tab.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { AccountShell } from '@/features/account/server';
+import { OrdersPanel, STATUS_GROUPS, type StatusGroup } from '@/features/orders';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const raw = (Astro.url.searchParams.get('tab') ?? '').toUpperCase();
+const tab = (STATUS_GROUPS as string[]).includes(raw) ? (raw as StatusGroup) : null;
 ---
 
-<StorefrontLayout title="Đơn hàng">
-  <!-- SSR khung + island -->
+<StorefrontLayout title={t('orders.title')} noindex task>
+  <AccountShell active="orders" title={t('orders.title')}>
+    <OrdersPanel client:load tab={tab} />
+  </AccountShell>
 </StorefrontLayout>

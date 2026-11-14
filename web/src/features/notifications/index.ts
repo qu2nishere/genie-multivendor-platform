@@ -8,3 +8,4 @@ export {
   NOTIFICATIONS_KEY,
 } from './application/useNotifications';
 export { NotifPanel, NotifIcon } from './ui/NotifPanel';
+export { default as NotificationsPanel } from './ui/NotificationsPanel';

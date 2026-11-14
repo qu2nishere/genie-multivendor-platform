@@ -1,7 +1,20 @@
 ---
+// Giỏ hàng (plan G10.08; prototype Cart.jsx) — khung SSR + island lớn client:load. Khách vãng lai xem
+// được giỏ tạm (middleware không chặn /cart), noindex. ?buy=<khóa dòng> từ nút "Mua ngay".
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { CartPage } from '@/features/cart';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const buyKey = Astro.url.searchParams.get('buy');
 ---
 
-<StorefrontLayout title="Giỏ hàng">
-  <!-- SSR khung + island client:load -->
+<StorefrontLayout
+  title={t('cart.page.title')}
+  description={t('cart.page.meta_description')}
+  noindex
+  variant="cart"
+  task
+>
+  <CartPage client:load buyKey={buyKey} />
 </StorefrontLayout>

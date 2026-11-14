@@ -12,3 +12,4 @@ export { useFollowedShops, useSetFollow, FOLLOWED_SHOPS_KEY } from './applicatio
 export { default as ShopStrip, type ShopStripProps } from './ui/ShopStrip';
 export { FollowButton, ChatButton, type FollowButtonProps } from './ui/FollowButton';
 export { default as ShopActions } from './ui/ShopActions';
+export { default as FollowsPanel } from './ui/FollowsPanel';
