@@ -535,6 +535,12 @@
     white-space: nowrap;
     overflow: hidden;
   }
+  /* Web (G13.07): chữ trắng 12px trên green-500 chỉ đạt 4,42:1 → các đoạn chữ trắng dùng sắc --tone-ink (AA ≥ 4,5:1) */
+  .dash-seg-bar__bar i[data-tone='ok'],
+  .dash-seg-bar__bar i[data-tone='bad'],
+  .dash-seg-bar__bar i[data-tone='ship'] {
+    background: var(--tone-ink, var(--tone));
+  }
   .dash-seg-bar__bar i[data-tone='held'],
   .dash-seg-bar__bar i[data-tone='info'],
   .dash-seg-bar__bar i[data-tone='wait'] {

@@ -1,6 +1,5 @@
 // Voucher mẫu — SINH TỰ ĐỘNG từ prototype data.jsx VOUCHERS (shop "techzone" → shop_id 1…).
 // Mã "XU50K" của prototype đổi thành "DIEM50K" (R11: không dùng "Xu").
-/* eslint-disable */
 import type { VoucherDto } from './voucher.dto';
 
 export const VOUCHER_DTOS: VoucherDto[] = [

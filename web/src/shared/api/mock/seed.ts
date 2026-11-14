@@ -2,7 +2,6 @@
 // SINH TỰ ĐỘNG từ prototype ui_kits/storefront/data.jsx (PRODUCTS, V, CATEGORIES, CATEGORY_META,
 // SUBCATEGORIES, ATTR_FILTERS, FLASH_SLOTS) — không sửa tay. Dạng snake_case như DTO của API.
 // Mã cũ của prototype: sản phẩm "p1" → id 1; shop "techzone" → id 1 (theo thứ tự trong V).
-/* eslint-disable */
 
 export const SEED_SHOPS = [
   {

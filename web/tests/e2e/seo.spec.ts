@@ -98,6 +98,37 @@ test.describe('SEO không JavaScript', () => {
     }
   });
 
+  test('trang cần đăng nhập, /auth/*, /seller/*, /admin/*, /dev/*: noindex, nofollow', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    for (const path of [
+      '/auth/login',
+      '/auth/register',
+      '/auth/forgot',
+      '/cart',
+      '/checkout/result',
+      '/dev/ui',
+    ]) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute(
+        'content',
+        /noindex,\s*nofollow/,
+      );
+    }
+    await context.addCookies([
+      { name: 'genie_logged_in', value: '1', url: baseURL ?? 'http://localhost:4321' },
+    ]);
+    for (const path of ['/seller', '/admin', '/orders', '/account/profile', '/chat', '/checkout']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveAttribute(
+        'content',
+        /noindex,\s*nofollow/,
+      );
+    }
+  });
+
   test('robots.txt và sitemap.xml', async ({ request }) => {
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toContain('Disallow: /seller');

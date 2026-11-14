@@ -157,9 +157,10 @@
   .tr-foot__group > summary::-webkit-details-marker {
     display: none;
   }
+  /* màu kế thừa từ .tr-foot__head để theme (genie, hoian, dongson, dongho) tô vàng tiêu đề nhóm */
   .tr-foot__head h2 {
     font: var(--weight-bold) 13px var(--font-sans);
-    color: var(--text-inverse);
+    color: inherit;
   }
   .tr-foot__group ul {
     margin: 0;

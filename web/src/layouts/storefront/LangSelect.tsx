@@ -17,12 +17,8 @@ export default function LangSelect() {
       aria-label={t('layout.header.language')}
       panelClassName="w-[168px] min-w-0 p-1 rounded-md shadow-xl"
       trigger={(p) => (
-        <button
-          type="button"
-          className="tr-textbtn"
-          aria-label={`${t('layout.header.language')}: ${cur.label}`}
-          {...p}
-        >
+        <button type="button" className="tr-textbtn" {...p}>
+          <span className="sr-only">{t('layout.header.language')}: </span>
           <span className="tr-lang-full">{cur.label}</span>
           <span className="tr-lang-code">{cur.id.toUpperCase()}</span>
           <Icon

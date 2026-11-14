@@ -49,12 +49,20 @@ function useCommand() {
 }
 
 function Evidence({ items, empty }: { items: Media[]; empty: string }) {
+  const { t } = useT();
   if (items.length === 0) return <span className="text-xs text-subtle">{empty}</span>;
   return (
     <span className="flex gap-1.5 mt-[5px] items-center flex-wrap">
       {items.map((m, i) =>
         m.type === 'IMAGE' ? (
-          <a key={i} href={m.url} target="_blank" rel="noreferrer" className="rounded-sm">
+          <a
+            key={i}
+            href={m.url}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-sm"
+            aria-label={t('admin-disputes.evidence_image', { n: i + 1 })}
+          >
             <img
               src={m.url}
               alt=""

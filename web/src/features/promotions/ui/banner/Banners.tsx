@@ -169,18 +169,35 @@ export function BannerCarousel({
 }
 
 /** Một ô: một banner thì đứng yên, nhiều banner thì xoay (carousel nhỏ, không mũi tên). */
-export function BannerSlot({ items, delay }: { items: Banner[]; delay?: number }) {
-  if (items.length === 1) return <BannerLink b={items[0]} />;
-  return <BannerCarousel items={items} compact delay={delay} />;
+export function BannerSlot({
+  items,
+  delay,
+  priority,
+}: {
+  items: Banner[];
+  delay?: number;
+  /** Nằm trong khung nhìn đầu tiên (ảnh LCP) → tải ngay, không lazy. */
+  priority?: boolean;
+}) {
+  if (items.length === 1) return <BannerLink b={items[0]} priority={priority} />;
+  return <BannerCarousel items={items} compact delay={delay} priority={priority} />;
 }
 
 /** Vị trí hai ô (bên phải băng đầu trang, giữa trang): chia xen kẽ, mỗi ô xoay riêng. */
-export function BannerPair({ items, className }: { items: Banner[]; className: string }) {
+export function BannerPair({
+  items,
+  className,
+  priority,
+}: {
+  items: Banner[];
+  className: string;
+  priority?: boolean;
+}) {
   const slots = dealTwo(items);
   return (
     <div className={cn(className, slots.length === 1 && `${className}--solo`)}>
       {slots.map((s, k) => (
-        <BannerSlot key={s[0].id} items={s} delay={(k * SLIDE_MS) / 2} />
+        <BannerSlot key={s[0].id} items={s} delay={(k * SLIDE_MS) / 2} priority={priority} />
       ))}
     </div>
   );
@@ -192,7 +209,7 @@ export default function HomeBanners({ top, side }: { top: Banner[]; side: Banner
   return (
     <div className={cn('tr-heroban', !(top.length && side.length) && 'tr-heroban--solo')}>
       {top.length > 0 && <BannerCarousel items={top} priority />}
-      {side.length > 0 && <BannerPair items={side} className="tr-heroban__side" />}
+      {side.length > 0 && <BannerPair items={side} className="tr-heroban__side" priority />}
     </div>
   );
 }

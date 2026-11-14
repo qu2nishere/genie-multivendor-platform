@@ -52,7 +52,7 @@ const stateLabel = (s: (typeof slots)[number]) =>
       <div class="tr-section__head tr-flash__head">
         <h1 id="flash-title">{t('home.flash.title')}</h1>
         <Countdown
-          client:load
+          client:idle
           seconds={seconds}
           format="hh:mm:ss"
           variant="clock"

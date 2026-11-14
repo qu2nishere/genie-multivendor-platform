@@ -7,6 +7,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { kycGroup, useSellerMe } from '@/features/seller-settings';
 import { errorMessage, isApiError } from '@/shared/api/errors';
+import { MQ } from '@/shared/hooks/useMediaQuery';
 import { useT } from '@/shared/hooks/useT';
 import { Button, ConfirmDialog, EmptyState, Icon, Skeleton, toast, buttonClass } from '@/shared/ui';
 import {
@@ -149,9 +150,10 @@ function Editor({ product }: { product: ProductDetail | null }) {
     setIssues(all);
     if (all.length) {
       toast.error(t('seller-products.editor.fix', { count: all.length }));
-      document
-        .getElementById(SECTION_OF[all[0]])
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(SECTION_OF[all[0]])?.scrollIntoView({
+        behavior: window.matchMedia(MQ.reducedMotion).matches ? 'auto' : 'smooth',
+        block: 'start',
+      });
       return;
     }
     if (!skip.zero && zeroVariants(f.variants) > 0) return setAsk('zero');

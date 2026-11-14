@@ -52,7 +52,7 @@ export function DataTable<T>({
   const align = (a?: Column<T>['align']) =>
     a === 'right' ? 'text-right' : a === 'center' ? 'text-center' : 'text-left';
   return (
-    <div className={cn('bg-surface-card rounded-lg shadow-sm overflow-x-auto', className)}>
+    <div className={cn('relative bg-surface-card rounded-lg shadow-sm overflow-x-auto', className)}>
       <table className="w-full border-collapse tabular-nums" style={{ minWidth }}>
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>

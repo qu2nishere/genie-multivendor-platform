@@ -64,7 +64,9 @@ export function QuantityStepper({
         inputMode="numeric"
         value={draft}
         disabled={disabled}
+        role="spinbutton"
         aria-label={ariaLabel ?? t('ui.qty.label')}
+        aria-valuenow={value}
         aria-valuemin={min}
         aria-valuemax={max}
         onChange={(e) => setDraft(e.target.value.replace(/\D/g, ''))}

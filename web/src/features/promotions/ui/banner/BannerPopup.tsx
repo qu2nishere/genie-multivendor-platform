@@ -83,10 +83,10 @@ export default function BannerPopup({ items }: { items: Banner[] }) {
                   style={{ '--d': depth } as CSSProperties}
                 >
                   {depth === 0 ? (
-                    <BannerLink b={b} />
+                    <BannerLink b={b} priority />
                   ) : (
                     <div className="tr-deck__peek" aria-hidden="true">
-                      <BannerPicture b={b} />
+                      <BannerPicture b={b} priority />
                     </div>
                   )}
                 </div>

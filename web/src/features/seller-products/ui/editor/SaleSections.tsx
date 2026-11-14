@@ -421,7 +421,7 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
               </Button>
             </div>
           )}
-          <div className="overflow-x-auto border border-solid border-line-subtle rounded-md">
+          <div className="relative overflow-x-auto border border-solid border-line-subtle rounded-md">
             <table className="w-full border-collapse min-w-[560px]">
               <thead>
                 <tr className="text-xs font-semibold text-muted text-left bg-gray-25">

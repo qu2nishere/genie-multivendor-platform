@@ -1,7 +1,6 @@
-// Trang chính sách tĩnh (28 trang) — SINH TỰ ĐỘNG từ prototype ui_kits/storefront/pages-data.js
+// Trang chính sách tĩnh (25 trang) — SINH TỰ ĐỘNG từ prototype ui_kits/storefront/pages-data.js
 // (plan G08.41). Nội dung giữ tiếng Việt như prototype; HTML là dữ liệu tĩnh trong repo (không nhận
 // đầu vào người dùng) nên render bằng set:html an toàn. Không sửa tay — chạy lại script nếu đổi nguồn.
-/* eslint-disable */
 import type { PolicyGroupDto } from './policies.dto';
 
 export const POLICY_GROUPS: PolicyGroupDto[] = [
