@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P07 (18 / 23 lượt); lượt kế: P08 |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P08 (19 / 23 lượt); lượt kế: P09 |
 
 ---
 
@@ -284,13 +284,13 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `RefundRequest` (L5054) | `support.refund.domain` | 22 | 16 | | Giữ `items`, `evidences`. 2 PT private (`applyApproval`, `requireStatus`). Đọc thêm bảng đồng bộ L5250 |
-| [ ] | `RefundRequestItem` (L5284) | `support.refund.domain` | 5 | 1 | | |
-| [ ] | `RefundEvidence` (L5319) | `support.refund.domain` | 7 | 2 | | |
+| [x] | `RefundRequest` (L5054) | `support.refund.domain` | 22 | 16 | | Giữ `items`, `evidences`. 2 PT private (`applyApproval`, `requireStatus`). Đọc thêm bảng đồng bộ L5250 |
+| [x] | `RefundRequestItem` (L5284) | `support.refund.domain` | 5 | 1 | | |
+| [x] | `RefundEvidence` (L5319) | `support.refund.domain` | 7 | 2 | | |
 
-- [ ] Enum: `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType` (support.refund).
-- [ ] 3 repository · migration · trả FK nợ ở cuối V8: `payment_refunds.refund_request_id` (V6) và `shipment_trackings.refund_request_id` (V7) → `refund_requests`.
-- [ ] Kiểm tra cuối Phase.
+- [x] Enum: `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType` (support.refund).
+- [x] 3 repository · migration · trả FK nợ ở cuối V8: `payment_refunds.refund_request_id` (V6) và `shipment_trackings.refund_request_id` (V7) → `refund_requests`.
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -356,8 +356,8 @@
 | [x] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
 | [x] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
 | [x] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
-| [ ] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
-| [ ] | `shipment_trackings.refund_request_id` (V7) | `refund_requests` | cuối V8 |
+| [x] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
+| [x] | `shipment_trackings.refund_request_id` (V7) | `refund_requests` | cuối V8 |
 | [ ] | *(bổ sung khi phát hiện thêm trong lúc làm)* | | |
 
 ---
@@ -417,7 +417,7 @@
 | [x] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
 | [x] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
 | [x] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
-| [ ] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
+| [x] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
 | [ ] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
 | [ ] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
 | [ ] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
@@ -448,4 +448,5 @@
 | 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | `a489e42` | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
 | 16 | 2026-11-14 | P06b | `feature/entity-p06b-wallet-cod` (từ `feature/entity-p06a-payment-escrow`) | `ac3ef65` | Entity `VendorWallet`, `WalletTransaction`, `WithdrawalRequest` (payment.wallet), `CodRemittance` (shipping.cod); enum `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus`, `CodRemittanceStatus`, `CarrierType` (tạo sớm ở shipping.shipment); 4 repository (đủ 8 của Phase 6) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 8/10/12/12, PT 6/3/4/1 khớp | Xong. `WithdrawalRequest` đặt ở `payment.wallet` theo checklist; `CarrierType` tạo ở lượt này vì `CodRemittance` dùng |
 | 17 | 2026-11-14 | P06c | `feature/entity-p06c-payment-migration` (từ `feature/entity-p06b-wallet-cod`) | `608dd32` | `V6__payment.sql`: 8 bảng, CHECK enum, CHECK XOR `order_id`/`checkout_session_id`, UNIQUE `gateway_transaction_id`, partial index escrow `HELD`, 10 FK; UNIQUE từ entity (`escrow_ledgers.order_id`, `vendor_wallets.vendor_id`, `cod_remittances.bank_reference`…) | V1–V6 trên `postgres:16` ✔ (47 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. FK mềm không tạo constraint: `withdrawal_requests.wallet_id`, `processed_by_admin_id`, `cod_remittances.reconciled_by_staff_id`. FK nợ `payment_refunds.refund_request_id` để V8 |
-| 18 | 2026-11-14 | P07 | `feature/entity-p07-shipping` (từ `feature/entity-p06c-payment-migration`) | (lượt sau điền) | Entity `ShipmentTracking`, `ShipmentEvent`, `VendorShippingConfig`; enum `ShipmentDirection`, `ShipmentTrackingStatus`; 3 repository; `V7__shipping.sql` (3 bảng, 3 FK, 2 partial unique index `uq_shipment_outbound` / `uq_shipment_return`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V7 trên `postgres:16` ✔ (50 bảng), `SchemaValidationIT` ✔; trường 11/7/8, PT 3/1/2 khớp | Xong. Sửa lệch ENTITY.md: `supports()` thiếu nhánh `JNT_EXPRESS` (mục 6). FK nợ `shipment_trackings.refund_request_id` để V8 |
+| 18 | 2026-11-14 | P07 | `feature/entity-p07-shipping` (từ `feature/entity-p06c-payment-migration`) | `acca3ec` | Entity `ShipmentTracking`, `ShipmentEvent`, `VendorShippingConfig`; enum `ShipmentDirection`, `ShipmentTrackingStatus`; 3 repository; `V7__shipping.sql` (3 bảng, 3 FK, 2 partial unique index `uq_shipment_outbound` / `uq_shipment_return`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V7 trên `postgres:16` ✔ (50 bảng), `SchemaValidationIT` ✔; trường 11/7/8, PT 3/1/2 khớp | Xong. Sửa lệch ENTITY.md: `supports()` thiếu nhánh `JNT_EXPRESS` (mục 6). FK nợ `shipment_trackings.refund_request_id` để V8 |
+| 19 | 2026-11-14 | P08 | `feature/entity-p08-refund` (từ `feature/entity-p07-shipping`) | (lượt sau điền) | Entity `RefundRequest`, `RefundRequestItem`, `RefundEvidence`; enum `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType`; 3 repository; `V8__refund.sql` (3 bảng, 5 FK) + trả 2 FK nợ `payment_refunds.refund_request_id`, `shipment_trackings.refund_request_id` | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V8 trên `postgres:16` ✔ (53 bảng), `SchemaValidationIT` ✔; trường 22/5/7, PT 16/1/2 khớp (kể cả `applyApproval`, `requireStatus` private) | Xong. Sổ FK nợ mục 5 đã trả hết |
