@@ -1,14 +1,17 @@
 package com.genie.auth.profile.domain;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.math.*;
+import java.time.*;
+import java.util.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 /**
- * Hồ sơ khách hàng — bảng customer_profiles (ENTITY.md 1.2).
+ * CustomerProfile — sinh từ ENTITY.md (nguồn sự thật), xem plan/2026-11-14/server-spring/implement-entity.md.
  */
 @Entity
 @Table(name = "customer_profiles")
@@ -18,7 +21,7 @@ public class CustomerProfile {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                          // Khoá chính
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;                      // FK → users.id — UNIQUE nên quan hệ là 1-1
 
     @Column(nullable = false, length = 255)

@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P01b (3 / 23 lượt); lượt kế: P01c |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P01c (4 / 23 lượt); lượt kế: P02a |
 
 ---
 
@@ -21,7 +21,7 @@
    - **Kết thúc lượt:** làm đúng mục 7.2 bước 4–7 (kiểm tra → **ghi nhật ký mục 8** → commit trên nhánh của lượt).
 2. Trước khi viết một entity: đọc **toàn bộ mục** của nó trong ENTITY.md — khối code **và** phần `💡 Kiến thức chuyên sâu` (thường chứa `CHECK`, `UNIQUE`, index, `ON DELETE` chỉ có trong lời văn).
 3. Chép **đủ 100%**: mọi trường, mọi annotation, mọi `@Builder.Default`, mọi phương thức nghiệp vụ (kể cả `private`, `static`, hằng `static final`), giữ nguyên chú thích tiếng Việt. Không tự thêm trường, không đổi tên, không rút gọn thân phương thức.
-4. Chỉ được sửa so với ENTITY.md ở đúng các điểm trong **mục 2 — Điều chỉnh bắt buộc**.
+4. Chỉ được sửa so với ENTITY.md ở đúng các điểm trong **mục 2 — Điều chỉnh bắt buộc** (D1–D8).
 5. Sau mỗi entity: tự đối chiếu với cột **Trường / PT** trong bảng của Phase (số khai báo `private` cấp class, tính cả trường quan hệ / số phương thức nghiệp vụ theo Phụ lục E). Lệch → đọc lại mục đó.
 6. Làm xong mục nào thì đổi `- [ ]` thành `- [x]` ngay trong file này. Gặp chỗ ENTITY.md mâu thuẫn hoặc không rõ → **không tự đoán**, ghi vào **mục 6 — Nhật ký sai lệch** và báo người dùng.
 7. Mỗi lượt (kể cả lượt `a`, `b` giữa Phase) đều phải `compile` + `ModuleBoundaryTest` xanh trước khi commit; lượt cuối Phase chạy thêm bước **Kiểm tra cuối Phase**. Chỉ tick lượt / Phase khi build xanh.
@@ -49,6 +49,7 @@
 | D4 | Tạo 5 class khóa gộp (ENTITY.md chỉ nhắc tên): `VoucherCategoryId`, `VoucherProductId`, `VoucherExcludedCategoryId`, `VoucherExcludedProductId`, `UserPlatformNotificationReadId` — cùng package với entity; `implements Serializable`; constructor không tham số public; đúng tên & kiểu các trường `@Id` của entity; `equals`/`hashCode` trên tất cả trường khóa. | `@IdClass` bắt buộc |
 | D5 | **Không** `extends BaseEntity`; khai báo `createdAt`/`updatedAt` đúng như từng class trong ENTITY.md (có bảng chỉ ghi thêm, không có `updatedAt`). | Giữ khớp 1-1 với ENTITY.md |
 | D6 | Mỗi entity một repository `XxxRepository extends JpaRepository<Xxx, KiểuId>` đặt cùng package `domain` (IdClass → kiểu id là class khóa gộp; `SystemLog` id là `String`). Chưa thêm query tùy biến. | Con được ghi qua `Long xxxId` riêng nên cũng cần repository |
+| D8 | Trường `Long xxxId` nào trùng cột với một `@JoinColumn(name = "xxx_id", insertable = false, updatable = false)` (kể cả `@OneToMany` của entity cha trỏ sang bảng con) → thêm `name = "xxx_id"` vào `@Column` của trường đó (thiếu `@Column` thì thêm `@Column(name = "xxx_id")`). Cột vật lý không đổi. | Hibernate 6 ném `DuplicateMappingException` khi một cột có 2 tên logic (`userId` vs `user_id`) — phát hiện ở P01c bằng `SchemaValidationIT` |
 | D7 | Phương thức trong ENTITY.md tham chiếu class thuộc module khác (tham số, kiểu trả về, thân hàm) → không tự sửa chữ ký, ghi mục 6 và hỏi. | Tránh lệch thiết kế |
 
 ---
@@ -105,11 +106,11 @@
 - [x] 8 repository (D6).
 
 **Lượt 1c — Migration `V1__identity.sql`** (giữ 2 dòng `CREATE EXTENSION` đã có)
-- [ ] Bảng theo thứ tự: `users` → `customer_profiles` → `addresses` → `refresh_tokens` → `vendor_profiles` → `kyc_results` → `admin_profiles` → `staff_permissions`.
-- [ ] `customer_profiles.default_address_id`: **FK mềm — không tạo constraint** (ENTITY.md L319, L364; mục chi tiết thắng ví dụ ở Quy ước 9).
-- [ ] FK nợ: `vendor_profiles.category_id` → `categories` (ghi mục 5, thêm ở V2).
-- [ ] Unique 1-1: `customer_profiles.user_id`, `vendor_profiles.user_id`, `admin_profiles.user_id`, `kyc_results.vendor_profile_id`.
-- [ ] Kiểm tra cuối Phase: compile + `./mvnw -q test -Dtest=ModuleBoundaryTest`.
+- [x] Bảng theo thứ tự: `users` → `customer_profiles` → `addresses` → `refresh_tokens` → `vendor_profiles` → `kyc_results` → `admin_profiles` → `staff_permissions`.
+- [x] `customer_profiles.default_address_id`: **FK mềm — không tạo constraint** (ENTITY.md L319, L364; mục chi tiết thắng ví dụ ở Quy ước 9).
+- [x] FK nợ: `vendor_profiles.category_id` → `categories` (ghi mục 5, thêm ở V2).
+- [x] Unique 1-1: `customer_profiles.user_id`, `vendor_profiles.user_id`, `admin_profiles.user_id`, `kyc_results.vendor_profile_id`.
+- [x] Kiểm tra cuối Phase: compile + `./mvnw -q test -Dtest=ModuleBoundaryTest`.
 
 ---
 
@@ -121,7 +122,7 @@
 |---|---|---|---|---|---|---|
 | [ ] | `Category` (L1189) | `catalog.category.domain` | 11 | 2 | | Giữ `children` (tự tham chiếu `parent_id`) |
 | [ ] | `Brand` (L1854) | `catalog.brand.domain` | 7 | 2 | | Có factory `static proposedBy` |
-| [ ] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendor` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
+| [ ] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendorProfile` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
 | [ ] | `ProductVariant` (L1509) | `catalog.product.domain` | 12 | 5 | ✔ | Giữ `product`. Xóa mềm bằng timestamp |
 | [ ] | `ProductImage` (L1635) | `catalog.product.domain` | 12 | 1 | | |
 | [ ] | `ProductDocument` (L1911) | `catalog.product.domain` | 10 | 1 | | Giữ `product`; `@Table indexes` |
@@ -156,7 +157,7 @@
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
 | [ ] | `Cart` (L2218) | `order.cart.domain` (stub) | 4 | 4 | | Giữ `items` |
-| [ ] | `CartItem` (L2269) | `order.cart.domain` (stub) | 7 | 2 | | Bỏ `productVariant` (→ catalog) |
+| [ ] | `CartItem` (L2269) | `order.cart.domain` (stub) | 7 | 2 | | Bỏ `variant` (→ catalog) |
 
 - [ ] Thay nội dung stub `Cart`, `CartItem`, `CartRepository`; tạo `CartItemRepository`.
 - [ ] Migration `carts` → `cart_items` (`cart_id` CASCADE; `product_variant_id` → `product_variants`).
@@ -207,7 +208,7 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Order` (L3287) | `order.order.domain` (stub) | 34 | 22 | ✔ | Bỏ `vendor` (L3303). Giữ `items`, `discounts`. Chép đủ hằng `ALLOWED` (L3409, mọi `Map.entry`) + `transitionTo`, `isCod` private |
+| [ ] | `Order` (L3287) | `order.order.domain` (stub) | 34 | 22 | ✔ | Bỏ `vendorProfile` (L3303). Giữ `items`, `discounts`. Chép đủ hằng `ALLOWED` (L3409, mọi `Map.entry`) + `transitionTo`, `isCod` private |
 
 - [ ] Enum: `OrderStatus` (stub, 19 giá trị), `FundingStatus` (order.order).
 
@@ -363,9 +364,12 @@
 
 ## 6. NHẬT KÝ SAI LỆCH / CÂU HỎI
 
-> Ghi mọi chỗ phải lệch khỏi ENTITY.md ngoài D1–D7, mọi mâu thuẫn tìm thấy, mọi quyết định cần người dùng chốt. Định dạng: `Phase · Entity · vấn đề · đề xuất · trạng thái`.
+> Ghi mọi chỗ phải lệch khỏi ENTITY.md ngoài D1–D8, mọi mâu thuẫn tìm thấy, mọi quyết định cần người dùng chốt. Định dạng: `Phase · Entity · vấn đề · đề xuất · trạng thái`.
 
 - P01b · `VendorProfile` · `common.domain.NameNormalizer` mới là stub rỗng, `verifyPayoutAccount` cần `normalize()` · hiện thực tối thiểu theo mô tả ENTITY.md 1.4 (bỏ dấu kể cả đ/Đ, viết hoa, gộp khoảng trắng) · đã làm
+- P01c · `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` · Hibernate `DuplicateMappingException` (cột FK có 2 tên logic) · thêm điều chỉnh D8, sửa 4 entity đã commit ở P01a/P01b · đã làm
+- P01c · checklist · tên trường D2 ghi sai: thật là `Product.vendorProfile`, `CartItem.variant`, `Order.vendorProfile` · đã sửa bảng Phase 2/3/5 · đã làm
+- P01c · `SchemaValidationIT` · viết sớm (chưa commit) để chạy ở mỗi lượt migration; commit ở P12 · JVM Windows mặc định `Asia/Saigon` PostgreSQL 16 không nhận → test đặt UTC · đã làm
 
 ---
 
@@ -397,7 +401,7 @@
 | [x] | P00 | `feature/entity-p00-shared-enums` | `feat(common): add shared enums for entity layer` |
 | [x] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
 | [x] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
-| [ ] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
+| [x] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
 | [ ] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
 | [ ] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
 | [ ] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
@@ -428,4 +432,5 @@
 |---|---|---|---|---|---|---|---|
 | 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | `6397563` | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
 | 2 | 2026-11-14 | P01a | `feature/entity-p01a-auth-entities` (từ `feature/entity-p00-shared-enums`) | `2ec68f7` | Entity `User`, `CustomerProfile`, `Address`, `RefreshToken`; enum `AccountStatus`, `Gender`, `AddressLabel`; 4 repository (`auth.profile` / `auth.address` / `auth.token`) | `compile` ✔, `ModuleBoundaryTest` ✔; đếm trường 18/14/16/9, phương thức 7/2/2/2 khớp | Xong. D2: `User` bỏ `vendorProfile`, `adminProfile` (18 trường thay vì 20). `User.addresses` / `refreshTokens` trỏ sang feature khác của cùng module `auth` nên giữ |
-| 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | (lượt sau điền) | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
+| 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | `b7f3611` | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
+| 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | (lượt sau điền) | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |

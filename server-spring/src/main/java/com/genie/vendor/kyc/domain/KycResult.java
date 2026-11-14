@@ -22,7 +22,7 @@ public class KycResult {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                          // Khoá chính
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "vendor_profile_id", unique = true, nullable = false)
     private Long vendorProfileId;             // FK → vendor_profiles.id, UNIQUE (mỗi shop 1 bản kết quả; TLCN chỉ KYC người bán)
 
     // ===== Dữ liệu bóc tách: QR mặt trước (nguồn chính) + MRZ mặt sau (đối chiếu) =====
