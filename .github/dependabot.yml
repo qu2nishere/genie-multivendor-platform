@@ -1,23 +1,53 @@
+# Dependabot — PR nâng phụ thuộc vào `develop` (TECH_STACK 13.1: PR tính năng / phụ thuộc gộp vào develop).
+# Tiêu đề dạng "build(deps): Bump x from a to b" / "build(deps-dev): …" — commitlint.config.cjs bỏ qua mẫu này.
+# Bỏ qua bản nâng MAJOR (Astro 7, Tailwind 4, Java 25…): đổi nền lớn làm riêng theo kế hoạch, không tự động.
 version: 2
 updates:
   - package-ecosystem: maven
     directory: /server-spring
+    target-branch: develop
     schedule: { interval: weekly }
-    commit-message: { prefix: build, include: scope }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
   - package-ecosystem: npm
     directory: /web
+    target-branch: develop
     schedule: { interval: weekly }
-    commit-message: { prefix: build, include: scope }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
   - package-ecosystem: npm
     directory: /
+    target-branch: develop
     schedule: { interval: monthly }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
   - package-ecosystem: pip
     directory: /server-python
+    target-branch: develop
     schedule: { interval: weekly }
-    commit-message: { prefix: build, include: scope }
+    commit-message: { prefix: build, prefix-development: build, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
   - package-ecosystem: docker
     directory: /server-spring
+    target-branch: develop
     schedule: { interval: monthly }
+    commit-message: { prefix: build, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
+    target-branch: develop
     schedule: { interval: monthly }
+    commit-message: { prefix: ci, include: scope }
+    ignore:
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
