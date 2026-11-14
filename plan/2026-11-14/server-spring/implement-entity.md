@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P10 (21 / 23 lượt); lượt kế: P11 |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P11 (22 / 23 lượt); lượt kế: P12 |
 
 ---
 
@@ -327,13 +327,13 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Conversation` (L6058) | `social.chat.domain` | 10 | 2 | | Giữ `messages`; `@Table` có unique constraint |
-| [ ] | `Message` (L6123) | `social.chat.domain` | 10 | 1 | | Index 13.1 `(conversation_id, created_at DESC)` |
-| [ ] | `SystemLog` (L6207) | `common.audit` (stub) | 12 | 2 (+`prePersist`) | | Id `String` UUID sinh ở `@PrePersist`; chỉ ghi thêm; index `(created_at, action_type)` |
+| [x] | `Conversation` (L6058) | `social.chat.domain` | 10 | 2 | | Giữ `messages`; `@Table` có unique constraint |
+| [x] | `Message` (L6123) | `social.chat.domain` | 10 | 1 | | Index 13.1 `(conversation_id, created_at DESC)` |
+| [x] | `SystemLog` (L6207) | `common.audit` (stub) | 12 | 2 (+`prePersist`) | | Id `String` UUID sinh ở `@PrePersist`; chỉ ghi thêm; index `(created_at, action_type)` |
 
-- [ ] Enum: `MessageType` (social.chat) · `AuditAction` (common.audit).
-- [ ] `ConversationRepository`, `MessageRepository`; thay stub `SystemLogRepository` (`JpaRepository<SystemLog, String>`).
-- [ ] Migration V11, V12 · Kiểm tra cuối Phase.
+- [x] Enum: `MessageType` (social.chat) · `AuditAction` (common.audit).
+- [x] `ConversationRepository`, `MessageRepository`; thay stub `SystemLogRepository` (`JpaRepository<SystemLog, String>`).
+- [x] Migration V11, V12 · Kiểm tra cuối Phase.
 
 ---
 
@@ -370,7 +370,9 @@
 - P01c · `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` · Hibernate `DuplicateMappingException` (cột FK có 2 tên logic) · thêm điều chỉnh D8, sửa 4 entity đã commit ở P01a/P01b · đã làm
 - P01c · checklist · tên trường D2 ghi sai: thật là `Product.vendorProfile`, `CartItem.variant`, `Order.vendorProfile` · đã sửa bảng Phase 2/3/5 · đã làm
 - P01c · `SchemaValidationIT` · viết sớm (chưa commit) để chạy ở mỗi lượt migration; commit ở P12 · JVM Windows mặc định `Asia/Saigon` PostgreSQL 16 không nhận → test đặt UTC · đã làm
-- P07 · `VendorShippingConfig.supports()` · `switch` không có nhánh `JNT_EXPRESS` (enum `CarrierType` có) → Java 21 báo lỗi biên dịch · thêm `case JNT_EXPRESS -> false` (cấu hình shop chưa có cờ bật J&T); nên bổ sung vào ENTITY.md · đã làm
+- P07 · `VendorShippingConfig.supports()` · `switch` không có nhánh `JNT_EXPRESS` (enum `CarrierType` có) → Java 21 báo lỗi biên dịch · P07 tạm thêm `case JNT_EXPRESS -> false`; **P11 sửa lại** thành `Boolean.TRUE.equals(this.jtEnabled)` vì entity có sẵn cờ `jtEnabled` · nên bổ sung vào ENTITY.md · đã làm
+- P11 · `Conversation.customerUnread` / `vendorUnread`, `UserCoin.balance`, 5 cờ `VendorShippingConfig.*Enabled` · cột NOT NULL có giá trị khởi tạo tự nhiên nhưng ENTITY.md thiếu `@Builder.Default` (vi phạm Quy ước 12; `onNewMessage()` / `earn()` dùng `+=` sẽ NPE) · thêm `@Builder.Default` (0 / theo chú thích "mặc định bật/tắt") + `DEFAULT` ở V4, V7, V11; sửa luôn 2 file entity đã commit ở P04b, P07 · đã làm
+- P11 · `SystemLog` · checklist ghi 12 trường, ENTITY.md thực có 11 (bảng đếm tự động đếm thừa) · giữ đúng ENTITY.md · đã làm
 
 ---
 
@@ -420,7 +422,7 @@
 | [x] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
 | [x] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
 | [x] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
-| [ ] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
+| [x] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
 | [ ] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
 
 ---
@@ -451,4 +453,5 @@
 | 18 | 2026-11-14 | P07 | `feature/entity-p07-shipping` (từ `feature/entity-p06c-payment-migration`) | `acca3ec` | Entity `ShipmentTracking`, `ShipmentEvent`, `VendorShippingConfig`; enum `ShipmentDirection`, `ShipmentTrackingStatus`; 3 repository; `V7__shipping.sql` (3 bảng, 3 FK, 2 partial unique index `uq_shipment_outbound` / `uq_shipment_return`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V7 trên `postgres:16` ✔ (50 bảng), `SchemaValidationIT` ✔; trường 11/7/8, PT 3/1/2 khớp | Xong. Sửa lệch ENTITY.md: `supports()` thiếu nhánh `JNT_EXPRESS` (mục 6). FK nợ `shipment_trackings.refund_request_id` để V8 |
 | 19 | 2026-11-14 | P08 | `feature/entity-p08-refund` (từ `feature/entity-p07-shipping`) | `3eb9b53` | Entity `RefundRequest`, `RefundRequestItem`, `RefundEvidence`; enum `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType`; 3 repository; `V8__refund.sql` (3 bảng, 5 FK) + trả 2 FK nợ `payment_refunds.refund_request_id`, `shipment_trackings.refund_request_id` | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V8 trên `postgres:16` ✔ (53 bảng), `SchemaValidationIT` ✔; trường 22/5/7, PT 16/1/2 khớp (kể cả `applyApproval`, `requireStatus` private) | Xong. Sổ FK nợ mục 5 đã trả hết |
 | 20 | 2026-11-14 | P09 | `feature/entity-p09-review` (từ `feature/entity-p08-refund`) | `9842965` | Entity `ProductReview`, `ReviewReport`, `ReviewHelpfulVote`, `ShopFollow`; enum `ReviewReportReason`; 4 repository; `V9__review.sql` (4 bảng, 10 FK, UNIQUE `order_item_id`, `(customer_id, vendor_id)`, `(review_id, user_id)`, 3 index: `(product_id, is_visible)`, `(vendor_id, created_at DESC)`, biểu thức `aspect_sentiment_json ->> 'overall'`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V9 trên `postgres:16` ✔ (57 bảng), `SchemaValidationIT` ✔; trường 16/6/4/4, PT 4/1/1/1 khớp | Xong. `ShopFollow` `@UniqueConstraint` dùng tên Java → SQL dùng `customer_id, vendor_id` |
-| 21 | 2026-11-14 | P10 | `feature/entity-p10-notification` (từ `feature/entity-p09-review`) | (lượt sau điền) | Entity `Notification`, `PlatformNotification`, `UserPlatformNotificationRead` (+ khóa gộp `UserPlatformNotificationReadId`), `AdminNotification`, `HomeBanner`; 6 enum; 5 repository; `V10__notification.sql` (5 bảng, PK gộp, 4 FK, index `idx_banner_position_time` + `notifications(user_id, is_read, created_at DESC)`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V10 trên `postgres:16` ✔ (62 bảng), `SchemaValidationIT` ✔; trường 16/12/3/9/17, PT 3/1/1/1/4 khớp | Xong. `home_banners.created_by_admin_id` không FK (dữ liệu kiểm toán, ENTITY.md 10.4) |
+| 21 | 2026-11-14 | P10 | `feature/entity-p10-notification` (từ `feature/entity-p09-review`) | `f6ddae5` | Entity `Notification`, `PlatformNotification`, `UserPlatformNotificationRead` (+ khóa gộp `UserPlatformNotificationReadId`), `AdminNotification`, `HomeBanner`; 6 enum; 5 repository; `V10__notification.sql` (5 bảng, PK gộp, 4 FK, index `idx_banner_position_time` + `notifications(user_id, is_read, created_at DESC)`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V10 trên `postgres:16` ✔ (62 bảng), `SchemaValidationIT` ✔; trường 16/12/3/9/17, PT 3/1/1/1/4 khớp | Xong. `home_banners.created_by_admin_id` không FK (dữ liệu kiểm toán, ENTITY.md 10.4) |
+| 22 | 2026-11-14 | P11 | `feature/entity-p11-chat-audit` (từ `feature/entity-p10-notification`) | (lượt sau điền) | Entity `Conversation`, `Message`, thay stub `SystemLog` + `SystemLogRepository` (`JpaRepository<SystemLog, String>`); enum `MessageType`, `AuditAction`; `V11__chat.sql` (2 bảng, 6 FK, index `(conversation_id, created_at DESC)`), `V12__audit.sql` (`system_logs` + index `(created_at, action_type)`); sửa thiếu `@Builder.Default` ở `Conversation`, `UserCoin`, `VendorShippingConfig` và nhánh J&T | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V12 trên `postgres:16` ✔ (**65 bảng**), `SchemaValidationIT` ✔ (65 entity); trường 10/10/11, PT 2/1/2 (+`prePersist`) khớp | Xong. Lệch ENTITY.md ghi ở mục 6 (mặc định bộ đếm / cờ, nhánh J&T, số trường `SystemLog`) |

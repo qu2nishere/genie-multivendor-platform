@@ -23,8 +23,9 @@ public class UserCoin {
     @Id
     private Long userId;                      // KHOÁ CHÍNH đồng thời là FK → users.id (KHÔNG tự tăng) — ví Điểm của khách hàng (1 Điểm = 1₫ khi thanh toán)
 
+    @Builder.Default   // sửa lệch ENTITY.md theo Quy ước 12 (implement-entity.md mục 6)
     @Column(nullable = false)
-    private Integer balance;                  // Số Điểm hiện có
+    private Integer balance = 0;                  // Số Điểm hiện có
 
     @Version
     @Column(nullable = false)

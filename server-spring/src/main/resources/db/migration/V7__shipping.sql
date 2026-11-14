@@ -39,11 +39,11 @@ CREATE TABLE shipment_events (
 CREATE TABLE vendor_shipping_config (
     id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
     vendor_id BIGINT NOT NULL UNIQUE,
-    ghn_enabled BOOLEAN NOT NULL,
-    ghtk_enabled BOOLEAN NOT NULL,
-    vtp_enabled BOOLEAN NOT NULL,
-    jt_enabled BOOLEAN NOT NULL,
-    genie_express_enabled BOOLEAN NOT NULL,
+    ghn_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    ghtk_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    vtp_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    jt_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    genie_express_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     freeship_threshold NUMERIC(15,2),
     CONSTRAINT pk_vendor_shipping_config PRIMARY KEY (id)
 );

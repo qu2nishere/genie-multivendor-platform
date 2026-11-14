@@ -24,20 +24,25 @@ public class VendorShippingConfig {
     @Column(unique = true, nullable = false)
     private Long vendorId;                    // FK → users.id, UNIQUE — mỗi shop 1 cấu hình
 
+    @Builder.Default   // sửa lệch ENTITY.md theo Quy ước 12 (implement-entity.md mục 6)
     @Column(name = "ghn_enabled", nullable = false)
-    private Boolean ghnEnabled;               // Bật/tắt Giao Hàng Nhanh (mặc định bật)
+    private Boolean ghnEnabled = true;               // Bật/tắt Giao Hàng Nhanh (mặc định bật)
 
+    @Builder.Default
     @Column(name = "ghtk_enabled", nullable = false)
-    private Boolean ghtkEnabled;              // Bật/tắt Giao Hàng Tiết Kiệm (mặc định bật)
+    private Boolean ghtkEnabled = true;              // Bật/tắt Giao Hàng Tiết Kiệm (mặc định bật)
 
+    @Builder.Default
     @Column(name = "vtp_enabled", nullable = false)
-    private Boolean vtpEnabled;               // Bật/tắt Viettel Post (mặc định tắt)
+    private Boolean vtpEnabled = false;               // Bật/tắt Viettel Post (mặc định tắt)
 
+    @Builder.Default
     @Column(name = "jt_enabled", nullable = false)
-    private Boolean jtEnabled;                // Bật/tắt J&T Express (mặc định tắt)
+    private Boolean jtEnabled = false;                // Bật/tắt J&T Express (mặc định tắt)
 
+    @Builder.Default
     @Column(name = "genie_express_enabled", nullable = false)
-    private Boolean genieExpressEnabled;    // Bật/tắt giao nội thành Genie Express (FBL) — TLCN chỉ là lựa chọn, không có app tài xế (mặc định tắt)
+    private Boolean genieExpressEnabled = false;    // Bật/tắt giao nội thành Genie Express (FBL) — TLCN chỉ là lựa chọn, không có app tài xế (mặc định tắt)
 
     @Column(precision = 15, scale = 2)
     private BigDecimal freeshipThreshold;     // NULLABLE — Ngưỡng đơn tối thiểu để shop MIỄN PHÍ ship
@@ -56,7 +61,7 @@ public class VendorShippingConfig {
             case GHTK -> Boolean.TRUE.equals(this.ghtkEnabled);
             case VIETTEL_POST -> Boolean.TRUE.equals(this.vtpEnabled);
             case GENIE_EXPRESS -> Boolean.TRUE.equals(this.genieExpressEnabled);
-            case JNT_EXPRESS -> false;   // sửa lệch ENTITY.md: CarrierType có J&T nhưng cấu hình shop chưa có cờ bật — switch Java 21 phải đủ nhánh
+            case JNT_EXPRESS -> Boolean.TRUE.equals(this.jtEnabled);   // sửa lệch ENTITY.md: switch thiếu nhánh J&T (Java 21 bắt buộc đủ nhánh)
         };
     }
 }
