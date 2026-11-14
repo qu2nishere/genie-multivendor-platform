@@ -13,7 +13,9 @@ export type UploadPurpose =
   | 'DESCRIPTION_IMAGE'
   | 'PRODUCT_VIDEO'
   | 'PRODUCT_DOCUMENT'
-  | 'KYC_DOCUMENT';
+  | 'KYC_DOCUMENT'
+  | 'BANNER_IMAGE'
+  | 'NOTIFICATION_IMAGE';
 
 const DOCS = [
   'application/pdf',
@@ -40,12 +42,21 @@ export const UPLOAD_LIMITS: Record<UploadPurpose, { mime: string[]; maxBytes: nu
   PRODUCT_VIDEO: { mime: ['video/mp4'], maxBytes: 30 * MB },
   PRODUCT_DOCUMENT: { mime: DOCS, maxBytes: 10 * MB },
   KYC_DOCUMENT: { mime: ['application/pdf', 'image/jpeg', 'image/png'], maxBytes: 10 * MB },
+  // Bucket content-assets (Admin: banner, thông báo sàn)
+  BANNER_IMAGE: { mime: MEDIA, maxBytes: 5 * MB },
+  NOTIFICATION_IMAGE: { mime: MEDIA, maxBytes: 5 * MB },
 };
 
 /** Ảnh sản phẩm lưu WebP (bucket product-media); KYC / giấy tờ không nén (TS 5.4). */
 export const compressionOf = (purpose: UploadPurpose): 'jpeg' | 'webp' | null => {
   if (purpose === 'KYC_DOCUMENT' || purpose === 'PRODUCT_DOCUMENT') return null;
-  if (purpose === 'PRODUCT_IMAGE' || purpose === 'VARIANT_IMAGE' || purpose === 'DESCRIPTION_IMAGE')
+  if (
+    purpose === 'PRODUCT_IMAGE' ||
+    purpose === 'VARIANT_IMAGE' ||
+    purpose === 'DESCRIPTION_IMAGE' ||
+    purpose === 'BANNER_IMAGE' ||
+    purpose === 'NOTIFICATION_IMAGE'
+  )
     return 'webp';
   return 'jpeg';
 };

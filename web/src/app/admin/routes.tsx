@@ -51,6 +51,19 @@ const Cod = lazy(() =>
   import('@/features/admin-finance').then((m) => ({ default: m.CodReconciliationPage })),
 );
 
+const Vouchers = lazy(() =>
+  import('@/features/admin-marketing').then((m) => ({ default: m.PlatformVouchersPage })),
+);
+const FlashSale = lazy(() =>
+  import('@/features/admin-marketing').then((m) => ({ default: m.FlashSalePage })),
+);
+const Banners = lazy(() =>
+  import('@/features/admin-marketing').then((m) => ({ default: m.BannersPage })),
+);
+const PlatformNotifs = lazy(() =>
+  import('@/features/admin-marketing').then((m) => ({ default: m.PlatformNotificationsPage })),
+);
+
 export const adminRoutes: AdminRoute[] = [
   { path: '/', section: 'overview', screen: Dashboard },
   { path: '/kyc', section: 'kyc', screen: Kyc },
@@ -67,10 +80,10 @@ export const adminRoutes: AdminRoute[] = [
   { path: '/product-moderation', section: 'product_moderation', screen: Moderation },
   { path: '/product-moderation/:id', section: 'product_moderation', screen: ModerationDetail },
   { path: '/users', section: 'users', screen: Pending },
-  { path: '/vouchers', section: 'vouchers', screen: Pending },
-  { path: '/flash-sales', section: 'flash_sale', screen: Pending },
-  { path: '/banners', section: 'banners', screen: Pending },
-  { path: '/notifications', section: 'notifications', screen: Pending },
+  { path: '/vouchers', section: 'vouchers', screen: Vouchers },
+  { path: '/flash-sales', section: 'flash_sale', screen: FlashSale },
+  { path: '/banners', section: 'banners', screen: Banners },
+  { path: '/notifications', section: 'notifications', screen: PlatformNotifs },
   { path: '/staff', section: 'rbac', screen: Pending },
   { path: '/account', section: 'account', screen: Pending },
 ];

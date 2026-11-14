@@ -2743,8 +2743,21 @@
         "to": "Choose an end date",
         "end": "The end date must be after the start date",
         "category": "Choose at least 1 category",
-        "product": "Choose at least 1 product"
-      }
+        "product": "Choose at least 1 product",
+        "title": "Enter the campaign name",
+        "title_long": "At most 100 characters",
+        "scope_platform": "Platform vouchers apply to the whole platform or to categories",
+        "share": "Enter a platform share from 1 to 100%",
+        "past": "Start date can't be in the past"
+      },
+      "title_new_platform": "Create platform voucher",
+      "title": "Voucher campaign name",
+      "title_placeholder": "E.g. Mid-month Mega Sale",
+      "sponsor": "Sponsor",
+      "sponsor_platform": "Genie",
+      "sponsor_co": "Co-sponsored with shops",
+      "share": "Platform share (%)",
+      "scope_platform": "Whole platform"
     },
     "flash": {
       "banner": "{name} — Register your products",
@@ -3796,6 +3809,310 @@
         "size": "File too large (1 MB max).",
         "empty": "No rows could be read. Columns needed: tracking code, amount, COD fee.",
         "rows": "Malformed rows: {rows}. Check the tracking code and amount."
+      }
+    }
+  },
+  "admin-marketing": {
+    "vouchers": {
+      "kpi": {
+        "active": "Active vouchers",
+        "usage": "Platform redemptions",
+        "discount": "Total discount used",
+        "scheduled": "Upcoming vouchers",
+        "budget": "Remaining budget"
+      },
+      "tabs_label": "Filter platform vouchers",
+      "tabs": {
+        "ALL": "All",
+        "ACTIVE": "Active",
+        "SCHEDULED": "Upcoming",
+        "ENDED": "Ended"
+      },
+      "create": "Create platform voucher",
+      "col": {
+        "code": "Code",
+        "kind": "Type",
+        "value": "Value",
+        "min": "Min. order",
+        "cap": "Max. discount",
+        "usage": "Usage",
+        "period": "Period",
+        "sponsor": "Sponsor",
+        "status": "Status",
+        "action": "Action"
+      },
+      "kind": {
+        "PERCENTAGE": "% off",
+        "FIXED_AMOUNT": "Amount off",
+        "FREESHIP": "Free shipping"
+      },
+      "free_ship": "Free shipping",
+      "status": {
+        "ACTIVE": "Active",
+        "SCHEDULED": "Upcoming",
+        "ENDED": "Ended",
+        "DISABLED": "Disabled"
+      },
+      "empty": "No vouchers in this tab.",
+      "duplicate": "Duplicate",
+      "edit": "Edit",
+      "disable": "Disable",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "disable_title": "Disable voucher",
+      "cancel_title": "Cancel voucher",
+      "disable_desc": "Stop voucher {code}? Customers will no longer be able to use it.",
+      "disabled": "Voucher stopped.",
+      "delete_title": "Delete voucher",
+      "delete_desc": "Permanently delete voucher {code}? This cannot be undone.",
+      "delete_confirm": "Delete permanently",
+      "deleted": "Voucher deleted."
+    },
+    "flash": {
+      "campaigns": "Campaigns",
+      "create_short": "New campaign",
+      "create_title": "Create Flash Sale campaign",
+      "create": "Create campaign",
+      "created": "Campaign created (Draft).",
+      "name": "Campaign name",
+      "name_placeholder": "E.g. FLASH SALE 12.12",
+      "window": "Time window",
+      "start": "Start",
+      "end": "End",
+      "max": "Max products per shop",
+      "deadline": "Registration deadline",
+      "status": {
+        "DRAFT": "Draft",
+        "SCHEDULED": "Scheduled",
+        "ACTIVE": "Live",
+        "ENDED": "Ended"
+      },
+      "meta": "{approved}/{max} products · register by {deadline}",
+      "schedule": "Schedule",
+      "schedule_hint": "Approve at least 1 product first",
+      "end_early": "End early",
+      "done": {
+        "schedule": "Campaign scheduled.",
+        "end": "Campaign ended."
+      },
+      "items": "Products registered by shops",
+      "no_items": "No shop has registered yet. Shops register under Promotions in the Seller Center.",
+      "col": {
+        "product": "Product",
+        "shop": "Shop",
+        "ref": "30-day price",
+        "flash": "Flash price",
+        "off": "Off",
+        "stock": "Units",
+        "review": "Review"
+      },
+      "min_off": "Must be at least {pct}% off",
+      "approve": "Approve",
+      "reject": "Reject",
+      "item_status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "err": {
+        "name": "Enter a campaign name",
+        "name_long": "At most 100 characters",
+        "time": "Choose the time window",
+        "order": "End must be after start",
+        "max": "1 to 100 products",
+        "deadline": "Choose a registration deadline",
+        "deadline_after": "The deadline must be before the sale starts"
+      }
+    },
+    "banner": {
+      "all": "All",
+      "add": "Add banner",
+      "add_title": "Add banner",
+      "edit_title": "Edit banner",
+      "col": {
+        "banner": "Banner",
+        "position": "Position",
+        "time": "Period",
+        "views": "Views / Clicks",
+        "status": "Status",
+        "action": "Action"
+      },
+      "state": {
+        "LIVE": "Live",
+        "SCHEDULED": "Scheduled",
+        "ENDED": "Ended",
+        "OFF": "Off"
+      },
+      "empty": "No banners in this position.",
+      "view": "View",
+      "edit": "Edit",
+      "off": "Turn off",
+      "on": "Turn on",
+      "turned_off": "Banner turned off.",
+      "turned_on": "Banner turned on.",
+      "delete": "Delete",
+      "delete_title": "Delete banner",
+      "delete_desc": "Delete banner {title}? Its view / click stats are deleted too.",
+      "delete_confirm": "Delete banner",
+      "deleted": "Banner deleted.",
+      "positions": {
+        "HOME_TOP_CAROUSEL": {
+          "label": "Home top",
+          "where": "Carousel under the money rail, 6 seconds per banner; full width when there are no side banners"
+        },
+        "HOME_TOP_SIDE": {
+          "label": "Beside carousel",
+          "where": "Two tiles right of the carousel: odd banners top, even bottom, each tile rotates"
+        },
+        "HOME_MIDDLE": {
+          "label": "Home middle",
+          "where": "Between \"For you\" and Flash Sale: 1 banner fills, 2 split, 3+ alternate on both sides"
+        },
+        "CATEGORY_TOP": {
+          "label": "Category top",
+          "where": "At the top of the chosen category page"
+        },
+        "FLASH_SALE_TOP": {
+          "label": "Flash Sale area",
+          "where": "Inside the Flash Sale block above the products; rotates from 2 banners"
+        },
+        "POPUP": {
+          "label": "Popup",
+          "where": "Popup when opening the home page, once per session; stacked like cards, lowest number on top"
+        }
+      },
+      "title": "Title",
+      "title_placeholder": "E.g. 12.12 MEGA SALE",
+      "image": "Desktop image (required)",
+      "pick_image": "Click to choose an image",
+      "mobile_add": "Add mobile image (optional)",
+      "mobile_change": "Change mobile image",
+      "position": "Position",
+      "category": "Category",
+      "order": "Order",
+      "order_hint": "{count} banners already in this slot; lower numbers show first",
+      "order_first": "First banner in this position",
+      "period": "Display period",
+      "start": "Start date",
+      "end": "End date",
+      "active": "Show when the date comes",
+      "save": "Save banner",
+      "saved": "Banner saved.",
+      "link": {
+        "label": "Target link",
+        "types": {
+          "category": "Category",
+          "product": "Product",
+          "shop": "Shop",
+          "flash": "Flash Sale",
+          "discover": "For you today",
+          "campaign": "Campaign page"
+        },
+        "category": "Category",
+        "pick_category": "Choose a category",
+        "product": "Product",
+        "product_placeholder": "Product or shop name",
+        "shop": "Shop",
+        "all_shops": "All shops",
+        "pick_shop": "Choose a shop",
+        "no_product": "No products found",
+        "change": "Change",
+        "flash_note": "Opens the Flash Sale area on the home page",
+        "discover_note": "Opens the For you today page",
+        "path": "Page path"
+      },
+      "err": {
+        "title": "Enter a title (up to 120 characters)",
+        "image": "Choose a desktop image",
+        "link": "Choose a target link",
+        "link_domain": "The target must be inside the platform domain",
+        "date": "Choose the display period",
+        "date_order": "End date must be after start date",
+        "category": "Choose a category for this banner",
+        "upload_type": "Image must be JPG, PNG or WebP",
+        "upload_size": "Image is at most {mb} MB"
+      }
+    },
+    "notif": {
+      "heading": "Platform notifications",
+      "sub": "Send and manage broadcast notifications to users",
+      "create": "New notification",
+      "kpi": {
+        "sent": "Sent this month",
+        "reach": "Reach",
+        "reads": "Total reads"
+      },
+      "search": "Search notifications",
+      "search_placeholder": "Search by title or content...",
+      "filter": "Filter by audience",
+      "all_targets": "All audiences",
+      "targets": {
+        "ALL": "All users",
+        "VENDOR": "Vendors only",
+        "CUSTOMER": "Customers only",
+        "SPECIFIC_USERS": "Specific users"
+      },
+      "col": {
+        "code": "Code",
+        "notification": "Notification",
+        "image": "Image",
+        "target": "Audience",
+        "by": "Sender",
+        "time": "Sent at",
+        "read": "Read"
+      },
+      "empty": "No notifications yet.",
+      "scheduled": "Scheduled",
+      "unit": "notifications",
+      "detail": "Notification details",
+      "read_of": "Read / delivered",
+      "edit": "Edit",
+      "delete": "Delete",
+      "delete_title": "Confirm deletion",
+      "delete_desc": "Delete this notification? This cannot be undone.",
+      "delete_confirm": "Delete notification",
+      "deleted": "Notification deleted.",
+      "compose_title": "New platform notification (Broadcast)",
+      "edit_title": "Edit platform notification",
+      "target": "Target audience",
+      "emails": "Recipient emails (comma separated)",
+      "title": "Title",
+      "title_placeholder": "Notification title (max 100 characters)",
+      "image": "Attached image (optional)",
+      "image_preview": "Image preview",
+      "remove_image": "Remove image",
+      "pick_image": "Click to choose an image",
+      "image_hint": "JPG, PNG, WebP (max {mb} MB)",
+      "content": "Content",
+      "send_at": "Schedule (optional)",
+      "broadcast": "Broadcast",
+      "schedule": "Save & schedule",
+      "update": "Update",
+      "confirm_send": "Confirm broadcast",
+      "confirm_update": "Confirm update",
+      "confirm_desc": "You are about to send this notification to {target}. This cannot be undone. Continue?",
+      "confirm_send_btn": "Broadcast",
+      "confirm_update_btn": "Update",
+      "back": "Back",
+      "sent": "Notification broadcast.",
+      "scheduled_ok": "Notification saved and scheduled.",
+      "updated": "Notification updated.",
+      "rich": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "link": "Link",
+        "link_title": "Insert link",
+        "insert": "Insert"
+      },
+      "err": {
+        "title": "Enter a title",
+        "title_long": "At most 100 characters",
+        "content": "Enter the notification content",
+        "emails": "Enter at least 1 recipient email",
+        "email_format": "Some emails are invalid",
+        "unknown": "No account found for: {emails}",
+        "upload_type": "Image must be JPG, PNG or WebP",
+        "upload_size": "Image is at most {mb} MB"
       }
     }
   }

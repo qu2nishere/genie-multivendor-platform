@@ -2743,8 +2743,21 @@
         "to": "Chọn ngày kết thúc",
         "end": "Ngày kết thúc phải sau ngày bắt đầu",
         "category": "Chọn ít nhất 1 danh mục",
-        "product": "Chọn ít nhất 1 sản phẩm"
-      }
+        "product": "Chọn ít nhất 1 sản phẩm",
+        "title": "Vui lòng nhập tên chương trình",
+        "title_long": "Tối đa 100 ký tự",
+        "scope_platform": "Voucher sàn chỉ áp dụng toàn sàn hoặc theo danh mục",
+        "share": "Nhập tỷ lệ sàn tài trợ từ 1 đến 100%",
+        "past": "Ngày bắt đầu không được ở quá khứ"
+      },
+      "title_new_platform": "Tạo Voucher Sàn",
+      "title": "Tên chương trình voucher",
+      "title_placeholder": "VD: Siêu Sale Giữa Tháng",
+      "sponsor": "Nhà tài trợ",
+      "sponsor_platform": "Genie",
+      "sponsor_co": "Đồng tài trợ với Shop",
+      "share": "Tỷ lệ sàn tài trợ (%)",
+      "scope_platform": "Toàn sàn"
     },
     "flash": {
       "banner": "{name} — Đăng ký gian hàng",
@@ -3796,6 +3809,310 @@
         "size": "Tệp quá lớn (tối đa 1 MB).",
         "empty": "Không đọc được dòng nào. Cột cần có: mã vận đơn, số tiền, phí thu hộ.",
         "rows": "Dòng sai định dạng: {rows}. Kiểm tra mã vận đơn và số tiền."
+      }
+    }
+  },
+  "admin-marketing": {
+    "vouchers": {
+      "kpi": {
+        "active": "Voucher đang chạy",
+        "usage": "Lượt dùng hệ thống",
+        "discount": "Tổng giảm giá đã dùng",
+        "scheduled": "Voucher sắp ra mắt",
+        "budget": "Ngân sách còn lại"
+      },
+      "tabs_label": "Lọc voucher sàn",
+      "tabs": {
+        "ALL": "Tất cả",
+        "ACTIVE": "Đang chạy",
+        "SCHEDULED": "Sắp diễn ra",
+        "ENDED": "Đã kết thúc"
+      },
+      "create": "Tạo voucher sàn",
+      "col": {
+        "code": "Mã",
+        "kind": "Loại",
+        "value": "Giá trị",
+        "min": "Đơn tối thiểu",
+        "cap": "Giảm tối đa",
+        "usage": "Sử dụng",
+        "period": "Thời gian",
+        "sponsor": "Nhà tài trợ",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "kind": {
+        "PERCENTAGE": "Giảm %",
+        "FIXED_AMOUNT": "Giảm tiền",
+        "FREESHIP": "Freeship"
+      },
+      "free_ship": "Miễn ship",
+      "status": {
+        "ACTIVE": "Đang chạy",
+        "SCHEDULED": "Sắp diễn ra",
+        "ENDED": "Đã kết thúc",
+        "DISABLED": "Đã tắt"
+      },
+      "empty": "Không có voucher nào ở mục này.",
+      "duplicate": "Nhân bản",
+      "edit": "Sửa",
+      "disable": "Tắt",
+      "cancel": "Huỷ",
+      "delete": "Xoá",
+      "disable_title": "Tắt voucher",
+      "cancel_title": "Huỷ voucher",
+      "disable_desc": "Ngừng voucher {code}? Khách hàng sẽ không thể dùng mã này nữa.",
+      "disabled": "Đã ngừng voucher.",
+      "delete_title": "Xoá voucher",
+      "delete_desc": "Bạn có chắc chắn muốn xoá vĩnh viễn voucher {code}? Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xoá vĩnh viễn",
+      "deleted": "Đã xoá voucher."
+    },
+    "flash": {
+      "campaigns": "Chiến dịch",
+      "create_short": "Tạo chiến dịch",
+      "create_title": "Tạo chiến dịch Flash Sale",
+      "create": "Tạo chiến dịch",
+      "created": "Đã tạo chiến dịch (Nháp).",
+      "name": "Tên chiến dịch",
+      "name_placeholder": "VD: FLASH SALE 12.12",
+      "window": "Khung giờ",
+      "start": "Bắt đầu",
+      "end": "Kết thúc",
+      "max": "Số sản phẩm tối đa / shop",
+      "deadline": "Hạn đăng ký",
+      "status": {
+        "DRAFT": "Nháp",
+        "SCHEDULED": "Đã lên lịch",
+        "ACTIVE": "Đang chạy",
+        "ENDED": "Đã kết thúc"
+      },
+      "meta": "{approved}/{max} sản phẩm · hạn đăng ký {deadline}",
+      "schedule": "Lên lịch",
+      "schedule_hint": "Cần ít nhất 1 sản phẩm đã duyệt",
+      "end_early": "Kết thúc sớm",
+      "done": {
+        "schedule": "Đã lên lịch chiến dịch.",
+        "end": "Đã kết thúc chiến dịch."
+      },
+      "items": "Sản phẩm shop đăng ký",
+      "no_items": "Chưa có shop nào đăng ký. Shop đăng ký ở mục Khuyến mãi của Seller Center.",
+      "col": {
+        "product": "Sản phẩm",
+        "shop": "Shop",
+        "ref": "Giá gốc 30 ngày",
+        "flash": "Giá Flash",
+        "off": "Giảm",
+        "stock": "Số suất",
+        "review": "Duyệt"
+      },
+      "min_off": "Phải giảm tối thiểu {pct}%",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "item_status": {
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      },
+      "err": {
+        "name": "Nhập tên chiến dịch",
+        "name_long": "Tối đa 100 ký tự",
+        "time": "Chọn khung giờ",
+        "order": "Giờ kết thúc phải sau giờ bắt đầu",
+        "max": "Từ 1 đến 100 sản phẩm",
+        "deadline": "Chọn hạn đăng ký",
+        "deadline_after": "Hạn đăng ký phải trước ngày mở bán"
+      }
+    },
+    "banner": {
+      "all": "Tất cả",
+      "add": "Thêm banner",
+      "add_title": "Thêm banner",
+      "edit_title": "Sửa banner",
+      "col": {
+        "banner": "Banner",
+        "position": "Vị trí",
+        "time": "Thời gian",
+        "views": "Hiển thị / Bấm",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "state": {
+        "LIVE": "Đang hiển thị",
+        "SCHEDULED": "Đã lên lịch",
+        "ENDED": "Đã kết thúc",
+        "OFF": "Đã tắt"
+      },
+      "empty": "Chưa có banner ở vị trí này.",
+      "view": "Xem",
+      "edit": "Sửa",
+      "off": "Tắt ngay",
+      "on": "Bật lại",
+      "turned_off": "Đã tắt banner.",
+      "turned_on": "Đã bật lại banner.",
+      "delete": "Xóa",
+      "delete_title": "Xóa banner",
+      "delete_desc": "Xóa banner {title}? Số liệu hiển thị / bấm của banner này cũng bị xóa.",
+      "delete_confirm": "Xóa banner",
+      "deleted": "Đã xóa banner.",
+      "positions": {
+        "HOME_TOP_CAROUSEL": {
+          "label": "Đầu trang chủ",
+          "where": "Băng chuyền dưới đường ray tiền, 6 giây một banner; chiếm hết chiều ngang khi không có banner cạnh băng chuyền"
+        },
+        "HOME_TOP_SIDE": {
+          "label": "Cạnh băng chuyền",
+          "where": "Hai ô bên phải băng chuyền: banner lẻ vào ô trên, chẵn vào ô dưới, mỗi ô tự lướt"
+        },
+        "HOME_MIDDLE": {
+          "label": "Giữa trang chủ",
+          "where": "Giữa \"Gợi ý cho bạn\" và Flash Sale: 1 banner chiếm hết, 2 chia đôi, từ 3 thì hai bên thay nhau lướt"
+        },
+        "CATEGORY_TOP": {
+          "label": "Đầu trang danh mục",
+          "where": "Trên đầu trang của danh mục đã chọn"
+        },
+        "FLASH_SALE_TOP": {
+          "label": "Khu Flash Sale",
+          "where": "Trong khối Flash Sale, trên danh sách sản phẩm; từ 2 banner thì lướt"
+        },
+        "POPUP": {
+          "label": "Popup",
+          "where": "Hộp nổi khi mở trang chủ, mỗi phiên một lần; nhiều banner xếp chồng như bộ bài, số nhỏ nằm trên cùng"
+        }
+      },
+      "title": "Tiêu đề",
+      "title_placeholder": "VD: SIÊU SALE 12.12",
+      "image": "Ảnh desktop (bắt buộc)",
+      "pick_image": "Bấm để chọn ảnh",
+      "mobile_add": "Thêm ảnh mobile (không bắt buộc)",
+      "mobile_change": "Đổi ảnh mobile",
+      "position": "Vị trí",
+      "category": "Danh mục",
+      "order": "Thứ tự",
+      "order_hint": "Đang có {count} banner ở ô này; số nhỏ hiện trước",
+      "order_first": "Banner đầu tiên ở vị trí này",
+      "period": "Thời gian hiển thị",
+      "start": "Ngày bắt đầu",
+      "end": "Ngày kết thúc",
+      "active": "Hiển thị khi đến ngày",
+      "save": "Lưu banner",
+      "saved": "Đã lưu banner.",
+      "link": {
+        "label": "Liên kết đích",
+        "types": {
+          "category": "Danh mục",
+          "product": "Sản phẩm",
+          "shop": "Cửa hàng",
+          "flash": "Flash Sale",
+          "discover": "Gợi ý hôm nay",
+          "campaign": "Trang chiến dịch"
+        },
+        "category": "Danh mục",
+        "pick_category": "Chọn danh mục",
+        "product": "Sản phẩm",
+        "product_placeholder": "Tên sản phẩm hoặc shop",
+        "shop": "Cửa hàng",
+        "all_shops": "Tất cả shop",
+        "pick_shop": "Chọn cửa hàng",
+        "no_product": "Không tìm thấy sản phẩm",
+        "change": "Đổi",
+        "flash_note": "Mở khu Flash Sale trên trang chủ",
+        "discover_note": "Mở trang Gợi ý hôm nay",
+        "path": "Đường dẫn trang"
+      },
+      "err": {
+        "title": "Nhập tiêu đề (tối đa 120 ký tự)",
+        "image": "Chọn ảnh desktop",
+        "link": "Chọn liên kết đích cho banner",
+        "link_domain": "Liên kết đích phải thuộc miền sàn",
+        "date": "Chọn thời gian hiển thị",
+        "date_order": "Ngày kết thúc phải sau ngày bắt đầu",
+        "category": "Chọn danh mục cho banner này",
+        "upload_type": "Ảnh phải là JPG, PNG hoặc WebP",
+        "upload_size": "Ảnh tối đa {mb} MB"
+      }
+    },
+    "notif": {
+      "heading": "Thông báo toàn sàn",
+      "sub": "Gửi và quản lý các thông báo broadcast tới người dùng",
+      "create": "Tạo thông báo",
+      "kpi": {
+        "sent": "Đã gửi tháng này",
+        "reach": "Lượt tiếp cận (Reach)",
+        "reads": "Tổng lượt đọc"
+      },
+      "search": "Tìm thông báo",
+      "search_placeholder": "Tìm kiếm theo tiêu đề hoặc nội dung...",
+      "filter": "Lọc đối tượng",
+      "all_targets": "Tất cả đối tượng",
+      "targets": {
+        "ALL": "Tất cả người dùng",
+        "VENDOR": "Chỉ Vendor",
+        "CUSTOMER": "Chỉ Customer",
+        "SPECIFIC_USERS": "Người dùng cụ thể"
+      },
+      "col": {
+        "code": "Mã TB",
+        "notification": "Thông báo",
+        "image": "Ảnh",
+        "target": "Đối tượng nhận",
+        "by": "Người gửi",
+        "time": "Thời gian gửi",
+        "read": "Đã đọc"
+      },
+      "empty": "Chưa có thông báo nào.",
+      "scheduled": "Đã hẹn giờ",
+      "unit": "thông báo",
+      "detail": "Chi tiết thông báo",
+      "read_of": "Đã đọc / đã gửi",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "delete_title": "Xác nhận xóa",
+      "delete_desc": "Bạn muốn xóa thông báo này? Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xóa thông báo",
+      "deleted": "Đã xóa thông báo.",
+      "compose_title": "Tạo thông báo toàn sàn (Broadcast)",
+      "edit_title": "Sửa thông báo toàn sàn",
+      "target": "Đối tượng nhận (Target Audience)",
+      "emails": "Email người nhận (cách nhau bằng dấu phẩy)",
+      "title": "Tiêu đề (Title)",
+      "title_placeholder": "Nhập tiêu đề thông báo (Tối đa 100 ký tự)",
+      "image": "Hình ảnh đính kèm (không bắt buộc)",
+      "image_preview": "Xem trước ảnh",
+      "remove_image": "Xóa ảnh",
+      "pick_image": "Bấm để chọn ảnh",
+      "image_hint": "JPG, PNG, WebP (tối đa {mb} MB)",
+      "content": "Nội dung chi tiết",
+      "send_at": "Hẹn giờ phát (không bắt buộc)",
+      "broadcast": "Phát thông báo",
+      "schedule": "Lưu & hẹn giờ",
+      "update": "Cập nhật",
+      "confirm_send": "Xác nhận phát thông báo",
+      "confirm_update": "Xác nhận cập nhật thông báo",
+      "confirm_desc": "Bạn đang chuẩn bị gửi thông báo đến {target}. Hành động này không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?",
+      "confirm_send_btn": "Xác nhận phát",
+      "confirm_update_btn": "Xác nhận cập nhật",
+      "back": "Quay lại",
+      "sent": "Đã phát thông báo.",
+      "scheduled_ok": "Đã lưu và hẹn giờ thông báo.",
+      "updated": "Đã cập nhật thông báo.",
+      "rich": {
+        "bold": "In đậm",
+        "italic": "In nghiêng",
+        "link": "Liên kết",
+        "link_title": "Chèn liên kết",
+        "insert": "Chèn"
+      },
+      "err": {
+        "title": "Nhập tiêu đề",
+        "title_long": "Tối đa 100 ký tự",
+        "content": "Nhập nội dung thông báo",
+        "emails": "Nhập ít nhất 1 email người nhận",
+        "email_format": "Có email sai định dạng",
+        "unknown": "Không tìm thấy tài khoản: {emails}",
+        "upload_type": "Ảnh phải là JPG, PNG hoặc WebP",
+        "upload_size": "Ảnh tối đa {mb} MB"
       }
     }
   }
