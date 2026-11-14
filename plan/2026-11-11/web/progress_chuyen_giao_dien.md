@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–B; Admin Portal trên `feature/admin-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–C; Admin Portal trên `feature/admin-ui` |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 15 / 52 | — | `feature/admin-ui` |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 22 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **366 / 429** | | |
+| **Tổng** | | **379** | **50** | **373 / 429** | | |
 
 ---
 
@@ -562,13 +562,13 @@
 
 **Nhóm C — Tranh chấp & kiểm duyệt**
 
-- [ ] **G12.14** `admin-disputes` miền + hạ tầng
-- [ ] **G12.15** `RefundsPage`
-- [ ] **G12.16** `admin-moderation` đánh giá
-- [ ] **G12.17** `admin-moderation` sản phẩm
-- [ ] **G12.18** `ProductModerationPage`
-- [ ] **G12.19** Khóa i18n `admin-disputes.*`, `admin-moderation.*`
-- [ ] **G12.C3** 🔖 COMMIT `feat(admin-ui): add dispute and moderation screens` · hash: `_______`
+- [x] **G12.14** `admin-disputes` miền + hạ tầng
+- [x] **G12.15** `RefundsPage`
+- [x] **G12.16** `admin-moderation` đánh giá
+- [x] **G12.17** `admin-moderation` sản phẩm
+- [x] **G12.18** `ProductModerationPage`
+- [x] **G12.19** Khóa i18n `admin-disputes.*`, `admin-moderation.*`
+- [x] **G12.C3** 🔖 COMMIT `feat(admin-ui): add dispute and moderation screens` · hash: `7045474`
 
 **Nhóm D — Danh mục**
 
@@ -847,6 +847,9 @@
 | G12.10 | `KycReviewPage`: tab (`?tab=`) + hồ sơ đang xem (`?id=`) trên URL; lý do từ chối / yêu cầu bổ sung đã gửi hiện ngay trong chi tiết. Màn hẹp: 2 cột → 1 cột, ảnh giấy tờ 2 cột. |
 | G12.11 | `DocViewer` (portal, giữ focus, Esc đóng, khóa cuộn): phóng to / thu nhỏ / xoay / lật, chặn kéo thả + chuột phải (URL ký sẵn 5 phút). Số CCCD chỉ hiện dạng server đã che ở "Dữ liệu kê khai" — không che trên ảnh vì vị trí số trên ảnh thật do AI Worker xác định. |
 | G12.12 | Phê duyệt (gửi hoa hồng riêng nếu nhập), Từ chối (mã lý do 16.4 + ghi chú), Yêu cầu bổ sung (giấy tờ theo `KycDocumentType`, hạn 7 ngày), Đưa lại vào hàng chờ — mỗi thao tác làm mới mọi truy vấn `['admin', …]`. |
+| G12.14–G12.15 | `admin-disputes`: kiểu theo 11.4, quy tắc (trạng thái sau phán quyết, thao tác theo trạng thái + phong tỏa / gỡ, khối hoàn tiền VNPay đồng bộ / thử lại hay chuyển khoản tay, nội dung `TRRF…`), zod biên bản + lý do phong tỏa + test. Mock ghi kho dùng chung `adminDisputesStore`: phán quyết hoàn tiền tạo lệnh hoàn VNPay (đồng bộ → SUCCESS) hoặc chuyển khoản tay tới tài khoản khách cho đơn VietQR / COD; huy hiệu nav + "Tiền chờ hoàn" ở Tổng quan đổi theo (đã thử RFN-0231: 2 → 1, hiện thẻ "Chờ chuyển khoản thủ công" TRRF0231). "Thử lại hoàn tiền" gửi Idempotency-Key. "Mở lại" chỉ cho tranh chấp đã bác (prototype cho cả đã hoàn — tiền đã rời escrow nên không mở lại). Video bằng chứng mock là liên kết tên tệp (chưa có tệp thật). |
+| G12.16 | `ReviewModerationPage`: thêm tab Chờ xử lý / Đã ẩn / Đã xử lý theo `state` của API 11.5 (prototype gộp một danh sách); tiêu cực mạnh (PhoBERT ≥ 0,85) lên đầu rồi theo số báo cáo; "Ẩn" gửi lý do = cờ báo cáo chính. |
+| G12.17–G12.18 | `admin-moderation` sản phẩm: kiểu / quy tắc theo 11.12 (tab, nhãn "Chờ duyệt lại", FLAGGED lên đầu, thanh quyết định theo trạng thái, màu điểm rủi ro, chia đều hàng chờ cho người đang nhận việc) + test. Danh sách `/admin/product-moderation` (?tab=, tìm, giao lại người duyệt, Cấu hình nhân viên: bật / tắt nhận việc, Lưu, Phân phối lại có xác nhận); chi tiết thành route riêng `/admin/product-moderation/:id` (prototype là màn con). Mô tả người bán chỉ hiện chữ (bỏ thẻ HTML) để không chạy HTML lạ trong trang quản trị; tài liệu pháp lý mock là SVG minh hoạ `public/img/mock/product-doc.svg`. Khung Admin: màn hẹp tự cuộn mục nav đang mở vào khung nhìn. |
 
 ## Nhật ký
 
@@ -879,3 +882,4 @@
 | 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |
 | 2026-11-14 | Admin Portal: khung SPA (thanh bên lọc theo quyền, huy hiệu hàng chờ, chuông, 403, 404 nội bộ), `/admin/me`, `/admin/queues`, kho mock admin dùng chung (G12 nhóm A) | 68cc825 |
 | 2026-11-14 | Admin Portal: Tổng quan (việc cần xử lý, kỳ báo cáo, 4 ô tiền, hoa hồng đi về đâu, GMV, tiền giữ / chờ xử lý, đơn đang chạy, xếp hạng, shop tăng trưởng) + Duyệt KYC (hàng chờ, chi tiết, trình xem tài liệu, phê duyệt / từ chối / bổ sung) (G12 nhóm B) | b8bcfb5 |
+| 2026-11-14 | Admin Portal: Trả hàng & Hoàn tiền (phân xử 4 phán quyết, phong tỏa ký quỹ, hoàn tiền Gateway / chuyển khoản tay), Kiểm duyệt đánh giá, Duyệt sản phẩm (hàng chờ, giao người duyệt, cấu hình nhân viên, trang chi tiết + thanh quyết định) (G12 nhóm C) | 7045474 |
