@@ -2905,5 +2905,73 @@
       "note": "Your shop shares the account and password of the buyer account with the same email. Changing it requires an OTP sent to your email to protect the Escrow wallet.",
       "note_set": "This account only signs in with Google, so it has no password yet. Once set, you can sign in with email or Google. An OTP to your email is still required."
     }
+  },
+  "admin": {
+    "shell": {
+      "title": "Admin Console",
+      "home": "Admin Console — home",
+      "nav_label": "Admin Console navigation",
+      "nav": {
+        "overview": "Overview",
+        "kyc": "KYC review",
+        "refunds": "Returns & Refunds",
+        "reviews": "Review moderation",
+        "withdrawals": "Payouts",
+        "cod": "COD reconciliation",
+        "commission": "Commission settings",
+        "ledger": "Financial ledger",
+        "audit": "System log",
+        "catalog": "Platform catalog",
+        "product_moderation": "Product review",
+        "users": "Users",
+        "vouchers": "Platform vouchers",
+        "flash_sale": "Flash Sale",
+        "banners": "Home banners",
+        "notifications": "Platform notifications",
+        "rbac": "Staff permissions",
+        "account": "Account"
+      },
+      "badge": "{count} items waiting",
+      "role_chip": "Role: {role}",
+      "notif_unread": "Notifications, {count} unread",
+      "pending": "This screen is being moved to the new interface.",
+      "forbidden": {
+        "title": "You don't have access",
+        "desc_before": "The “{screen}” screen requires the permission ",
+        "desc_after": ". Contact an Admin to be granted access."
+      },
+      "not_found": {
+        "title": "Page not found",
+        "desc": "This path doesn't exist in the Admin Console.",
+        "back": "Back to start"
+      },
+      "not_staff": {
+        "title": "This account is not platform staff",
+        "desc": "The Admin Console is only for Genie staff and administrators.",
+        "cta": "Back to Genie"
+      }
+    },
+    "perm": {
+      "VIEW_DASHBOARD": "View the Overview page",
+      "REVIEW_KYC": "Approve / reject seller KYC",
+      "MANAGE_CATALOG": "Categories, attributes, product review, category proposals",
+      "MODERATE_REVIEW": "Moderate reviews",
+      "HANDLE_DISPUTE": "Returns & refunds",
+      "PROCESS_PAYOUT": "Payouts, COD reconciliation",
+      "UPDATE_COMMISSION": "Commission settings",
+      "VIEW_FINANCE": "View the financial ledger",
+      "MANAGE_VOUCHER": "Platform vouchers, Flash Sale, banners",
+      "MANAGE_PLATFORM_NOTIFICATION": "Platform notifications",
+      "VIEW_AUDIT_LOG": "View the system log",
+      "MANAGE_USER": "Lock / unlock customers and shops",
+      "MANAGE_RBAC": "Staff & permissions (Admin only)",
+      "title": {
+        "ADMIN": "Admin",
+        "MODERATOR": "Moderator",
+        "CS_SPECIALIST": "CS Specialist",
+        "FINANCE_OFFICER": "Finance Officer",
+        "CUSTOM": "Custom"
+      }
+    }
   }
 }

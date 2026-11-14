@@ -2905,5 +2905,73 @@
       "note": "Shop dùng chung tài khoản và mật khẩu với tài khoản mua hàng cùng email. Đổi mật khẩu yêu cầu OTP gửi tới email đăng ký để bảo vệ ví Escrow.",
       "note_set": "Tài khoản đang chỉ đăng nhập bằng Google nên chưa có mật khẩu. Sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google. Vẫn cần OTP gửi tới email đăng ký."
     }
+  },
+  "admin": {
+    "shell": {
+      "title": "Admin Console",
+      "home": "Admin Console — trang đầu",
+      "nav_label": "Điều hướng Admin Console",
+      "nav": {
+        "overview": "Tổng quan",
+        "kyc": "Duyệt KYC",
+        "refunds": "Trả hàng & Hoàn tiền",
+        "reviews": "Kiểm duyệt đánh giá",
+        "withdrawals": "Xử lý rút tiền",
+        "cod": "Đối soát COD",
+        "commission": "Cấu hình hoa hồng",
+        "ledger": "Sổ cái tài chính",
+        "audit": "Nhật ký hệ thống",
+        "catalog": "Danh mục toàn sàn",
+        "product_moderation": "Duyệt Sản phẩm",
+        "users": "Người dùng",
+        "vouchers": "Voucher sàn",
+        "flash_sale": "Flash Sale",
+        "banners": "Banner trang chủ",
+        "notifications": "Thông báo sàn",
+        "rbac": "Phân quyền nhân viên",
+        "account": "Tài khoản"
+      },
+      "badge": "{count} mục đang chờ",
+      "role_chip": "Quyền: {role}",
+      "notif_unread": "Thông báo, {count} chưa đọc",
+      "pending": "Màn này đang được chuyển sang giao diện mới.",
+      "forbidden": {
+        "title": "Bạn không có quyền truy cập",
+        "desc_before": "Màn “{screen}” yêu cầu quyền ",
+        "desc_after": ". Liên hệ Admin để được cấp quyền."
+      },
+      "not_found": {
+        "title": "Không tìm thấy trang",
+        "desc": "Đường dẫn này không có trong Admin Console.",
+        "back": "Về trang đầu"
+      },
+      "not_staff": {
+        "title": "Tài khoản không phải nhân viên sàn",
+        "desc": "Admin Console chỉ dành cho nhân viên và quản trị viên Genie.",
+        "cta": "Về trang chủ Genie"
+      }
+    },
+    "perm": {
+      "VIEW_DASHBOARD": "Xem trang Tổng quan",
+      "REVIEW_KYC": "Duyệt / từ chối hồ sơ KYC người bán",
+      "MANAGE_CATALOG": "Danh mục, thuộc tính, duyệt sản phẩm, đề xuất danh mục",
+      "MODERATE_REVIEW": "Kiểm duyệt đánh giá",
+      "HANDLE_DISPUTE": "Trả hàng & hoàn tiền",
+      "PROCESS_PAYOUT": "Rút tiền, đối soát COD",
+      "UPDATE_COMMISSION": "Cấu hình hoa hồng",
+      "VIEW_FINANCE": "Xem sổ cái tài chính",
+      "MANAGE_VOUCHER": "Voucher sàn, Flash Sale, banner",
+      "MANAGE_PLATFORM_NOTIFICATION": "Thông báo sàn",
+      "VIEW_AUDIT_LOG": "Xem nhật ký hệ thống",
+      "MANAGE_USER": "Khóa / mở khóa khách hàng và shop",
+      "MANAGE_RBAC": "Nhân viên & phân quyền (chỉ Admin)",
+      "title": {
+        "ADMIN": "Admin",
+        "MODERATOR": "Moderator",
+        "CS_SPECIALIST": "CS Specialist",
+        "FINANCE_OFFICER": "Finance Officer",
+        "CUSTOM": "Tùy chỉnh"
+      }
+    }
   }
 }

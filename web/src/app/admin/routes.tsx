@@ -1,2 +1,33 @@
-// /admin/* — nav lọc theo quyền
-export const adminRoutes = []; // TODO
+// /admin/* → màn của features (plan mục 4.4, G12.01). Mỗi route gắn mục nav (mã quyền lấy từ nav)
+// và tải lười; màn chưa chuyển dùng tạm Pending (thay dần ở nhóm B–G).
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import type { AdminSection } from './nav';
+
+export interface AdminRoute {
+  path: string;
+  section: AdminSection;
+  screen: LazyExoticComponent<ComponentType>;
+}
+
+const Pending = lazy(() => import('./Pending'));
+
+export const adminRoutes: AdminRoute[] = [
+  { path: '/', section: 'overview', screen: Pending },
+  { path: '/kyc', section: 'kyc', screen: Pending },
+  { path: '/refunds', section: 'refunds', screen: Pending },
+  { path: '/reviews', section: 'reviews', screen: Pending },
+  { path: '/withdrawals', section: 'withdrawals', screen: Pending },
+  { path: '/cod-reconciliation', section: 'cod', screen: Pending },
+  { path: '/commission', section: 'commission', screen: Pending },
+  { path: '/ledger', section: 'ledger', screen: Pending },
+  { path: '/audit-logs', section: 'audit', screen: Pending },
+  { path: '/catalog', section: 'catalog', screen: Pending },
+  { path: '/product-moderation', section: 'product_moderation', screen: Pending },
+  { path: '/users', section: 'users', screen: Pending },
+  { path: '/vouchers', section: 'vouchers', screen: Pending },
+  { path: '/flash-sales', section: 'flash_sale', screen: Pending },
+  { path: '/banners', section: 'banners', screen: Pending },
+  { path: '/notifications', section: 'notifications', screen: Pending },
+  { path: '/staff', section: 'rbac', screen: Pending },
+  { path: '/account', section: 'account', screen: Pending },
+];

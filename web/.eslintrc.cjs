@@ -48,6 +48,8 @@ module.exports = {
       // .astro trong ui: frontmatter SSR được lấy dữ liệu qua infrastructure của chính feature (TS 5.2)
       { type: 'feature-ui-astro', pattern: 'src/features/*/ui/**/*.astro', mode: 'file', capture: ['feature'] },
       { type: 'feature-ui', pattern: 'src/features/*/ui/**', capture: ['feature'] },
+      // Bảng 13 mã quyền là TS thuần (không import gì) → domain dùng được như shared/lib (G12)
+      { type: 'shared-lib', pattern: 'src/shared/auth/permissions.ts', mode: 'file' },
       { type: 'shared-lib', pattern: 'src/shared/lib/**' },
       { type: 'shared-hooks', pattern: 'src/shared/hooks/**' },
       { type: 'shared', pattern: 'src/shared/**' },

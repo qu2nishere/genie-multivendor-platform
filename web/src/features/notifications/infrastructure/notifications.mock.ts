@@ -151,3 +151,46 @@ export const SELLER_NOTIFICATION_DTOS: NotificationDto[] = [
     is_platform: false,
   },
 ];
+
+/** Thông báo của nhân viên ở Admin Portal (prototype admin/data.jsx NOTIFS). */
+export const ADMIN_NOTIFICATION_DTOS: NotificationDto[] = [
+  {
+    id: 'an1',
+    type: 'system',
+    icon: 'user-check',
+    tint: 'var(--text-muted)',
+    bg: 'var(--surface-sunken)',
+    title: 'Hồ sơ KYC mới cần duyệt',
+    body: 'Boutique Sài Gòn vừa nộp hồ sơ KYC (Hộ kinh doanh).',
+    created_at: '2026-06-08T10:24:00+07:00',
+    read_at: null,
+    link: { action: 'open', path: '/admin/kyc' },
+    is_platform: false,
+  },
+  {
+    id: 'an2',
+    type: 'system',
+    icon: 'triangle-alert',
+    tint: 'var(--text-muted)',
+    bg: 'var(--surface-sunken)',
+    title: 'Sản phẩm AI nghi ngờ',
+    body: '"Nước hoa mini chính hãng 10ml" cần người kiểm tra giấy ủy quyền.',
+    created_at: '2026-06-08T11:05:00+07:00',
+    read_at: null,
+    link: { action: 'open', path: '/admin/product-moderation' },
+    is_platform: false,
+  },
+  {
+    id: 'an3',
+    type: 'system',
+    icon: 'hand-coins',
+    tint: 'var(--text-muted)',
+    bg: 'var(--surface-sunken)',
+    title: 'Yêu cầu rút tiền mới',
+    body: 'TechZone Official yêu cầu rút 5.000.000₫.',
+    created_at: '2026-06-07T16:40:00+07:00',
+    read_at: '2026-06-07T17:00:00+07:00',
+    link: { action: 'open', path: '/admin/withdrawals' },
+    is_platform: false,
+  },
+];
