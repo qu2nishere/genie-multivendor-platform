@@ -1,13 +1,17 @@
 package com.genie.auth.address.domain;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.math.*;
+import java.time.*;
+import java.util.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 /**
- * Địa chỉ giao hàng — bảng addresses (ENTITY.md 1.3). Xóa mềm qua isDeleted.
+ * Address — sinh từ ENTITY.md (nguồn sự thật), xem plan/2026-11-14/server-spring/implement-entity.md.
  */
 @Entity
 @Table(name = "addresses")
@@ -17,7 +21,7 @@ public class Address {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                          // Khoá chính
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;                      // FK → users.id — địa chỉ này thuộc về ai
 
     @Column(nullable = false, length = 255)

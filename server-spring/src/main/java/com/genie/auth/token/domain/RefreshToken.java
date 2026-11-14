@@ -1,12 +1,17 @@
 package com.genie.auth.token.domain;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.math.*;
+import java.time.*;
+import java.util.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 /**
- * Phiên đăng nhập — bảng refresh_tokens (ENTITY.md 1.7). Chỉ lưu băm của token, không lưu token gốc.
+ * RefreshToken — sinh từ ENTITY.md (nguồn sự thật), xem plan/2026-11-14/server-spring/implement-entity.md.
  */
 @Entity
 @Table(name = "refresh_tokens")
@@ -16,7 +21,7 @@ public class RefreshToken {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                          // Khoá chính
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;                      // FK → users.id — token này của ai
 
     @Column(unique = true, nullable = false, length = 255)
