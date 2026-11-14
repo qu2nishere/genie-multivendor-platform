@@ -3227,5 +3227,270 @@
       "rotate": "Xoay",
       "flip": "Lật"
     }
+  },
+  "admin-disputes": {
+    "count": {
+      "OPEN": "{count} Đang mở",
+      "REFUNDED": "{count} Đã hoàn",
+      "DENIED": "{count} Từ chối"
+    },
+    "empty": "Chưa có tranh chấp nào.",
+    "state": {
+      "OPEN": "ĐANG TRANH CHẤP",
+      "AWAITING_RETURN": "Chờ hàng hoàn về",
+      "REFUNDED": "Đã hoàn tiền",
+      "DENIED": "Đã từ chối"
+    },
+    "frozen": "Ký quỹ đang phong tỏa",
+    "opened": "Mở {at}",
+    "buyer": "Người mua",
+    "seller": "Người bán",
+    "reason": "Lý do",
+    "customer_evidence": "Bằng chứng của khách ({images} ảnh, {videos} video)",
+    "shop_evidence": "Bằng chứng của shop",
+    "no_shop_evidence": "Shop chưa cung cấp",
+    "amount": "Số tiền tranh chấp",
+    "confirm_return": "Hàng đã về kho shop",
+    "return_done": "Đã xác nhận hàng về kho, tiến hành hoàn tiền.",
+    "reopen": "Mở lại",
+    "reopened": "Đã mở lại tranh chấp.",
+    "resolve": {
+      "action": "Phân xử",
+      "title": "Phân xử {code}",
+      "outcome": "Phán quyết",
+      "verdict": "Biên bản kết luận phân xử",
+      "verdict_placeholder": "Tóm tắt chứng cứ và lý do quyết định...",
+      "submit": "Thực thi phán quyết",
+      "done": {
+        "REFUND_NOW": "Đã phân xử: hoàn tiền cho người mua.",
+        "RETURN_THEN_REFUND": "Đã phân xử: chờ khách gửi trả hàng.",
+        "DENY": "Đã bác yêu cầu, giải ngân cho shop.",
+        "CARRIER_FAULT": "Đã phân xử lỗi vận chuyển: hoàn khách, đền bù shop."
+      },
+      "err": {
+        "verdict": "Nhập biên bản kết luận.",
+        "long": "Tối đa 2000 ký tự."
+      }
+    },
+    "outcomes": {
+      "REFUND_NOW": {
+        "label": "A. Người mua đúng: hoàn tiền ngay",
+        "note": "Hoàn tiền từ escrow về người mua. Khoản này được ghi vào sổ cái và tính vào số khiếu nại thua của shop."
+      },
+      "RETURN_THEN_REFUND": {
+        "label": "A. Người mua đúng: buộc gửi trả hàng rồi hoàn tiền",
+        "note": "Hệ thống tạo vận đơn chiều về. Khách có 7 ngày để giao hàng cho đơn vị vận chuyển; hàng về kho shop mới hoàn tiền."
+      },
+      "DENY": {
+        "label": "B. Người bán đúng: bác yêu cầu, giải ngân cho shop",
+        "note": "Bác yêu cầu hoàn tiền, mở khóa ký quỹ và gửi cảnh báo tới tài khoản khách hàng."
+      },
+      "CARRIER_FAULT": {
+        "label": "C. Lỗi vận chuyển: hoàn khách và đền bù shop",
+        "note": "Hoàn tiền cho khách, đền bù shop theo giá khai; sàn làm việc với hãng vận chuyển theo chính sách bồi thường."
+      }
+    },
+    "freeze": {
+      "action": "Phong tỏa ký quỹ",
+      "remove": "Gỡ phong tỏa",
+      "removed": "Đã gỡ phong tỏa ký quỹ.",
+      "title": "Phong tỏa ký quỹ đơn {order}",
+      "desc": "{amount} của {shop} bị giữ lại, không giải ngân kể cả khi hết 7 ngày, cho tới khi gỡ phong tỏa. Dùng khi nghi gian lận.",
+      "reason": "Lý do (ghi vào nhật ký)",
+      "submit": "Phong tỏa",
+      "done": "Đã phong tỏa ký quỹ.",
+      "err": {
+        "reason": "Nhập lý do phong tỏa.",
+        "long": "Tối đa 500 ký tự."
+      }
+    },
+    "gateway": {
+      "title": "Trạng thái hoàn tiền Gateway",
+      "status": {
+        "PENDING": "Đang xử lý",
+        "SUCCESS": "Thành công",
+        "FAILED": "Thất bại"
+      },
+      "manual_pending": "Chờ chuyển khoản thủ công",
+      "gateway": "Cổng thanh toán",
+      "bank_transfer": "Chuyển khoản",
+      "txn": "Mã GD gốc",
+      "refund_id": "Mã hoàn tiền GW",
+      "amount": "Số tiền hoàn",
+      "created": "Thời gian tạo",
+      "to": "Chuyển tới",
+      "content": "Nội dung bắt buộc",
+      "mark": "Đã chuyển khoản",
+      "marked": "Đã ghi nhận chuyển khoản hoàn tiền.",
+      "sync": "Đồng bộ trạng thái",
+      "syncing": "Đang đồng bộ…",
+      "synced": "Đã đồng bộ trạng thái hoàn tiền.",
+      "failed": "Hoàn tiền thất bại",
+      "failed_hint": "Vui lòng kiểm tra trên dashboard gateway hoặc thử lại.",
+      "retry": "Thử lại hoàn tiền",
+      "retried": "Đã gửi lại lệnh hoàn tiền."
+    }
+  },
+  "admin-moderation": {
+    "reviews": {
+      "notice": "Ẩn đánh giá vi phạm tiêu chuẩn cộng đồng. Thao tác được ghi log và có thể hoàn tác.",
+      "tabs_label": "Trạng thái báo cáo",
+      "tabs": {
+        "PENDING": "Chờ xử lý",
+        "HIDDEN": "Đã ẩn",
+        "RESOLVED": "Đã xử lý"
+      },
+      "state": {
+        "PENDING": "CHỜ DUYỆT",
+        "HIDDEN": "Đã ẩn",
+        "RESOLVED": "Đã giữ hiển thị"
+      },
+      "empty": "Không có đánh giá nào ở mục này.",
+      "ai_negative": "AI: Tiêu cực",
+      "ai_title": "PhoBERT · độ tin cậy {score}",
+      "reports": "{count} báo cáo",
+      "product": "Sản phẩm: {name}",
+      "flag": "Cờ: {reason}",
+      "by_vendor": "Báo cáo bởi người bán",
+      "reasons": {
+        "SPAM": "Spam / chuyển hướng giao dịch",
+        "OFFENSIVE": "Ngôn từ phản cảm",
+        "FAKE_PURCHASE": "Nghi không mua thật"
+      },
+      "keep": "Giữ hiển thị",
+      "hide": "Ẩn đánh giá",
+      "unhide": "Hiện lại",
+      "done": {
+        "keep": "Đã giữ hiển thị đánh giá.",
+        "hide": "Đã ẩn đánh giá.",
+        "unhide": "Đã hiện lại đánh giá."
+      }
+    },
+    "product": {
+      "search": "Tìm sản phẩm",
+      "search_placeholder": "Nhập tên sản phẩm hoặc tên nhà bán...",
+      "tabs_label": "Lọc hàng duyệt",
+      "views": {
+        "CONFIG": "Cấu hình nhân viên",
+        "PUBLISHED": "Đã duyệt",
+        "REJECTED": "Không duyệt",
+        "PENDING": "Chờ duyệt"
+      },
+      "label": {
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "FLAGGED": "AI nghi ngờ",
+        "REQUEUED": "Chờ duyệt lại",
+        "PUBLISHED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      },
+      "col": {
+        "product": "Sản phẩm",
+        "vendor": "Nhà bán (Vendor)",
+        "status": "Trạng thái",
+        "assignee": "Người duyệt",
+        "action": "Thao tác"
+      },
+      "empty": {
+        "title": "Hiện tại không có sản phẩm nào",
+        "desc": "Tất cả sản phẩm đã được kiểm duyệt xong. Hãy quay lại sau nhé!"
+      },
+      "ai_system": "AI Hệ thống",
+      "assignee_for": "Người duyệt cho {name}",
+      "unassigned": "-- Chưa phân công --",
+      "assigned": "Phân công thành công!",
+      "review": "Kiểm duyệt",
+      "unit": "sản phẩm",
+      "staff": {
+        "title": "Nhân viên duyệt sản phẩm",
+        "redistribute": "Phân phối lại",
+        "save": "Lưu cấu hình",
+        "saved": "Đã lưu cấu hình nhân viên!",
+        "waiting": "{count} sản phẩm đang chờ",
+        "toggle": "Nhận việc — {name}",
+        "on": "Đang nhận việc",
+        "off": "Tạm ngưng",
+        "confirm_title": "Xác nhận phân phối lại",
+        "confirm_desc": "Bạn có chắc muốn phân phối lại toàn bộ sản phẩm đang chờ duyệt cho các nhân viên đang nhận việc?",
+        "confirm_note": "Lưu ý: Các nhân viên đã tắt \"Đang nhận việc\" sẽ không được chia thêm sản phẩm mới. Lưu cấu hình trước nếu vừa đổi.",
+        "confirm": "Xác nhận phân phối",
+        "redistributed": "Đã phân phối lại {count} sản phẩm."
+      },
+      "back": "Quay lại danh sách",
+      "detail_title": "Duyệt Sản phẩm #{id}",
+      "meta": "Ngày tạo: {at} · Nhà bán: {shop}",
+      "not_found": "Không tìm thấy sản phẩm cần duyệt",
+      "risk": "Điểm rủi ro",
+      "no_violation": "Không phát hiện vi phạm",
+      "ai_rejected": "Lý do AI từ chối:",
+      "rejected_reason": "Lý do từ chối:",
+      "ai_flagged": "Phân tích từ AI (Nghi ngờ):",
+      "images": "Ảnh sản phẩm",
+      "zoom": "Phóng to ảnh",
+      "docs": "Hồ sơ pháp lý sản phẩm",
+      "no_docs": "Không có tệp đính kèm",
+      "view_doc": "Xem trực tiếp",
+      "doc_title": "Trình xem tài liệu — {name}",
+      "desc": "Mô tả sản phẩm",
+      "shipping": "Thông tin Vận chuyển & Kích thước",
+      "skus": "Phân loại hàng (SKU)",
+      "info": {
+        "category": "Danh mục",
+        "brand": "Thương hiệu",
+        "condition": "Tình trạng",
+        "origin": "Xuất xứ",
+        "weight": "Cân nặng",
+        "size": "Kích thước",
+        "ships_from": "Gửi hàng từ",
+        "payer": "Người trả phí ship"
+      },
+      "condition": {
+        "NEW": "Mới",
+        "USED": "Đã sử dụng",
+        "REFURBISHED": "Tân trang"
+      },
+      "payer": {
+        "BUYER": "Người mua",
+        "SELLER": "Shop"
+      },
+      "sku": {
+        "code": "Mã SKU",
+        "name": "Tên Phân Loại",
+        "price": "Giá bán",
+        "stock": "Tồn kho"
+      },
+      "reject_reason": "Lý do nếu từ chối",
+      "note": "Ghi chú cho người bán",
+      "note_placeholder": "Ghi chú thêm cho người bán...",
+      "reasons": {
+        "MISSING_SAFETY_CERT": "Thiếu chứng nhận an toàn",
+        "POLICY_VIOLATION": "Vi phạm chính sách",
+        "BAD_IMAGE": "Ảnh sản phẩm không đạt",
+        "MISLEADING_DESCRIPTION": "Mô tả sai / gây hiểu lầm",
+        "UNREASONABLE_PRICE": "Giá bất hợp lý",
+        "PROHIBITED_ITEM": "Hàng cấm / hạn chế"
+      },
+      "reject": "Từ chối",
+      "approve": "Duyệt lên sàn",
+      "requeue": "Chờ duyệt lại",
+      "confirm": {
+        "approve": {
+          "title": "Xác nhận duyệt sản phẩm",
+          "desc": "Bạn có chắc chắn muốn duyệt sản phẩm này lên sàn không?"
+        },
+        "reject": {
+          "title": "Xác nhận từ chối sản phẩm",
+          "desc": "Bạn có chắc chắn muốn từ chối sản phẩm này không?"
+        },
+        "reason": "Lý do: {reason}"
+      },
+      "done": {
+        "approve": "Đã duyệt sản phẩm thành công!",
+        "reject": "Đã từ chối sản phẩm!",
+        "requeue": "Đã đưa sản phẩm về hàng chờ duyệt lại"
+      },
+      "err": {
+        "note_long": "Tối đa 500 ký tự."
+      }
+    }
   }
 }

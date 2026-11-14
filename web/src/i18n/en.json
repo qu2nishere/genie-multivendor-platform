@@ -3227,5 +3227,270 @@
       "rotate": "Rotate",
       "flip": "Flip"
     }
+  },
+  "admin-disputes": {
+    "count": {
+      "OPEN": "{count} Open",
+      "REFUNDED": "{count} Refunded",
+      "DENIED": "{count} Denied"
+    },
+    "empty": "No disputes yet.",
+    "state": {
+      "OPEN": "IN DISPUTE",
+      "AWAITING_RETURN": "Awaiting return",
+      "REFUNDED": "Refunded",
+      "DENIED": "Denied"
+    },
+    "frozen": "Escrow frozen",
+    "opened": "Opened {at}",
+    "buyer": "Buyer",
+    "seller": "Seller",
+    "reason": "Reason",
+    "customer_evidence": "Buyer evidence ({images} photos, {videos} videos)",
+    "shop_evidence": "Shop evidence",
+    "no_shop_evidence": "None provided by the shop",
+    "amount": "Disputed amount",
+    "confirm_return": "Item back at the shop",
+    "return_done": "Return confirmed, refund is being processed.",
+    "reopen": "Reopen",
+    "reopened": "Dispute reopened.",
+    "resolve": {
+      "action": "Arbitrate",
+      "title": "Arbitrate {code}",
+      "outcome": "Ruling",
+      "verdict": "Arbitration statement",
+      "verdict_placeholder": "Summarise the evidence and the reason for the decision...",
+      "submit": "Execute ruling",
+      "done": {
+        "REFUND_NOW": "Ruled: buyer refunded.",
+        "RETURN_THEN_REFUND": "Ruled: waiting for the buyer to return the item.",
+        "DENY": "Request denied, funds released to the shop.",
+        "CARRIER_FAULT": "Ruled carrier fault: buyer refunded, shop compensated."
+      },
+      "err": {
+        "verdict": "Enter the arbitration statement.",
+        "long": "At most 2000 characters."
+      }
+    },
+    "outcomes": {
+      "REFUND_NOW": {
+        "label": "A. Buyer is right: refund now",
+        "note": "Refund from escrow to the buyer. Recorded in the ledger and counted as a lost dispute for the shop."
+      },
+      "RETURN_THEN_REFUND": {
+        "label": "A. Buyer is right: return the item, then refund",
+        "note": "A return shipment is created. The buyer has 7 days to hand the item to the carrier; refund happens once it reaches the shop."
+      },
+      "DENY": {
+        "label": "B. Seller is right: deny and release to the shop",
+        "note": "Deny the refund, unlock escrow and warn the buyer's account."
+      },
+      "CARRIER_FAULT": {
+        "label": "C. Carrier fault: refund buyer and compensate shop",
+        "note": "Refund the buyer and compensate the shop at declared value; the platform claims against the carrier."
+      }
+    },
+    "freeze": {
+      "action": "Freeze escrow",
+      "remove": "Unfreeze",
+      "removed": "Escrow unfrozen.",
+      "title": "Freeze escrow for order {order}",
+      "desc": "{amount} owed to {shop} is held and not released even after 7 days, until unfrozen. Use when fraud is suspected.",
+      "reason": "Reason (written to the log)",
+      "submit": "Freeze",
+      "done": "Escrow frozen.",
+      "err": {
+        "reason": "Enter a reason.",
+        "long": "At most 500 characters."
+      }
+    },
+    "gateway": {
+      "title": "Gateway refund status",
+      "status": {
+        "PENDING": "Processing",
+        "SUCCESS": "Succeeded",
+        "FAILED": "Failed"
+      },
+      "manual_pending": "Awaiting manual transfer",
+      "gateway": "Payment gateway",
+      "bank_transfer": "Bank transfer",
+      "txn": "Original transaction",
+      "refund_id": "Gateway refund ID",
+      "amount": "Refund amount",
+      "created": "Created",
+      "to": "Transfer to",
+      "content": "Required reference",
+      "mark": "Transferred",
+      "marked": "Refund transfer recorded.",
+      "sync": "Sync status",
+      "syncing": "Syncing…",
+      "synced": "Refund status synced.",
+      "failed": "Refund failed",
+      "failed_hint": "Check the gateway dashboard or try again.",
+      "retry": "Retry refund",
+      "retried": "Refund resubmitted."
+    }
+  },
+  "admin-moderation": {
+    "reviews": {
+      "notice": "Hide reviews that break community standards. Actions are logged and can be undone.",
+      "tabs_label": "Report status",
+      "tabs": {
+        "PENDING": "To handle",
+        "HIDDEN": "Hidden",
+        "RESOLVED": "Resolved"
+      },
+      "state": {
+        "PENDING": "PENDING",
+        "HIDDEN": "Hidden",
+        "RESOLVED": "Kept visible"
+      },
+      "empty": "No reviews in this tab.",
+      "ai_negative": "AI: Negative",
+      "ai_title": "PhoBERT · confidence {score}",
+      "reports": "{count} reports",
+      "product": "Product: {name}",
+      "flag": "Flag: {reason}",
+      "by_vendor": "Reported by the seller",
+      "reasons": {
+        "SPAM": "Spam / off-platform deal",
+        "OFFENSIVE": "Offensive language",
+        "FAKE_PURCHASE": "Suspected fake purchase"
+      },
+      "keep": "Keep visible",
+      "hide": "Hide review",
+      "unhide": "Show again",
+      "done": {
+        "keep": "Review kept visible.",
+        "hide": "Review hidden.",
+        "unhide": "Review shown again."
+      }
+    },
+    "product": {
+      "search": "Search products",
+      "search_placeholder": "Product or seller name...",
+      "tabs_label": "Filter queue",
+      "views": {
+        "CONFIG": "Staff settings",
+        "PUBLISHED": "Approved",
+        "REJECTED": "Rejected",
+        "PENDING": "Pending"
+      },
+      "label": {
+        "PENDING_APPROVAL": "Pending",
+        "FLAGGED": "AI flagged",
+        "REQUEUED": "Re-review",
+        "PUBLISHED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "col": {
+        "product": "Product",
+        "vendor": "Seller",
+        "status": "Status",
+        "assignee": "Reviewer",
+        "action": "Action"
+      },
+      "empty": {
+        "title": "No products right now",
+        "desc": "Everything has been reviewed. Check back later!"
+      },
+      "ai_system": "AI system",
+      "assignee_for": "Reviewer for {name}",
+      "unassigned": "-- Unassigned --",
+      "assigned": "Reviewer assigned!",
+      "review": "Review",
+      "unit": "products",
+      "staff": {
+        "title": "Product reviewers",
+        "redistribute": "Redistribute",
+        "save": "Save settings",
+        "saved": "Staff settings saved!",
+        "waiting": "{count} products waiting",
+        "toggle": "Accepting work — {name}",
+        "on": "Accepting work",
+        "off": "Paused",
+        "confirm_title": "Confirm redistribution",
+        "confirm_desc": "Redistribute all pending products to reviewers who are accepting work?",
+        "confirm_note": "Note: reviewers with \"Accepting work\" off get no new products. Save settings first if you just changed them.",
+        "confirm": "Redistribute",
+        "redistributed": "{count} products redistributed."
+      },
+      "back": "Back to the list",
+      "detail_title": "Product review #{id}",
+      "meta": "Created: {at} · Seller: {shop}",
+      "not_found": "Product to review not found",
+      "risk": "Risk score",
+      "no_violation": "No violations found",
+      "ai_rejected": "AI rejection reason:",
+      "rejected_reason": "Rejection reason:",
+      "ai_flagged": "AI analysis (flagged):",
+      "images": "Product images",
+      "zoom": "Zoom image",
+      "docs": "Product legal documents",
+      "no_docs": "No attachments",
+      "view_doc": "View",
+      "doc_title": "Document viewer — {name}",
+      "desc": "Product description",
+      "shipping": "Shipping & dimensions",
+      "skus": "Variants (SKU)",
+      "info": {
+        "category": "Category",
+        "brand": "Brand",
+        "condition": "Condition",
+        "origin": "Origin",
+        "weight": "Weight",
+        "size": "Dimensions",
+        "ships_from": "Ships from",
+        "payer": "Shipping paid by"
+      },
+      "condition": {
+        "NEW": "New",
+        "USED": "Used",
+        "REFURBISHED": "Refurbished"
+      },
+      "payer": {
+        "BUYER": "Buyer",
+        "SELLER": "Shop"
+      },
+      "sku": {
+        "code": "SKU",
+        "name": "Variant",
+        "price": "Price",
+        "stock": "Stock"
+      },
+      "reject_reason": "Reason if rejecting",
+      "note": "Note to the seller",
+      "note_placeholder": "Extra note for the seller...",
+      "reasons": {
+        "MISSING_SAFETY_CERT": "Missing safety certificate",
+        "POLICY_VIOLATION": "Policy violation",
+        "BAD_IMAGE": "Images not acceptable",
+        "MISLEADING_DESCRIPTION": "Wrong / misleading description",
+        "UNREASONABLE_PRICE": "Unreasonable price",
+        "PROHIBITED_ITEM": "Prohibited / restricted item"
+      },
+      "reject": "Reject",
+      "approve": "Approve listing",
+      "requeue": "Send back to queue",
+      "confirm": {
+        "approve": {
+          "title": "Confirm approval",
+          "desc": "Approve this product for listing?"
+        },
+        "reject": {
+          "title": "Confirm rejection",
+          "desc": "Reject this product?"
+        },
+        "reason": "Reason: {reason}"
+      },
+      "done": {
+        "approve": "Product approved!",
+        "reject": "Product rejected!",
+        "requeue": "Product sent back for re-review"
+      },
+      "err": {
+        "note_long": "At most 500 characters."
+      }
+    }
   }
 }

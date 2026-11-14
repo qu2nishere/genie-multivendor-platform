@@ -2,7 +2,7 @@
 // huy hiệu hàng chờ (G12.05), chip quyền, thẻ tài khoản ở đáy; thanh trên (tiêu đề, "Staff RBAC",
 // ngôn ngữ, theme, chuông, Tài khoản). Màn hẹp: thanh bên thành dải trên, nav cuộn ngang (như Seller).
 // Bỏ ô "Xem với vai trò" (PREVIEW_ROLES — D5).
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { badgeLabel, useAdminQueues } from '@/features/admin-dashboard';
 import type { AdminMe } from '@/features/admin-system';
@@ -30,6 +30,14 @@ function Sidebar({ me, active }: { me: AdminMe; active: AdminNavItem | null }) {
   const queues = useAdminQueues();
   const role = useRoleLabel(me);
   const items = NAV.filter((n) => allowed(n, me.permissions));
+  const navRef = useRef<HTMLElement>(null);
+  // Màn hẹp: nav là dải cuộn ngang → đưa mục đang mở vào khung nhìn
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    navRef.current
+      ?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView({ inline: 'center', block: 'nearest' });
+  }, [active?.section]);
   return (
     <aside className="bg-[var(--side-bg,var(--ink-950))] flex flex-col sticky top-0 h-screen max-md:static max-md:h-auto">
       <div className="px-[18px] pt-4 pb-3.5">
@@ -44,6 +52,7 @@ function Sidebar({ me, active }: { me: AdminMe; active: AdminNavItem | null }) {
         </span>
       </div>
       <nav
+        ref={navRef}
         aria-label={t('admin.shell.nav_label')}
         className="flex-1 min-h-0 px-3 py-1 flex flex-col gap-0.5 overflow-y-auto [scrollbar-width:thin] max-md:flex-row max-md:flex-none max-md:overflow-x-auto"
       >
