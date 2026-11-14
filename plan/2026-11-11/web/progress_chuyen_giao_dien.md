@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A–B trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 5 / 26 | — | `feature/web-polish` |
-| **Tổng** | | **379** | **50** | **408 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 12 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **415 / 429** | | |
 
 ---
 
@@ -625,13 +625,13 @@
 
 **Nhóm B — Chất lượng giao diện**
 
-- [ ] **G13.05** So khớp hình storefront
-- [ ] **G13.06** So khớp hình Seller + Admin
-- [ ] **G13.07** Trợ năng
-- [ ] **G13.08** Rà chỉ thị hydrate
-- [ ] **G13.09** Rà SEO lần cuối
-- [ ] **G13.10** Rà kiến trúc
-- [ ] **G13.C2** 🔖 COMMIT `fix(web): resolve visual parity, accessibility and hydration issues` · hash: `_______`
+- [x] **G13.05** So khớp hình storefront
+- [x] **G13.06** So khớp hình Seller + Admin
+- [x] **G13.07** Trợ năng
+- [x] **G13.08** Rà chỉ thị hydrate
+- [x] **G13.09** Rà SEO lần cuối
+- [x] **G13.10** Rà kiến trúc
+- [x] **G13.C2** 🔖 COMMIT `fix(web): resolve visual parity, accessibility and hydration issues` · hash: `0914230`
 
 **Nhóm C — Kiểm thử**
 
@@ -702,7 +702,12 @@
 
 | Route | Khổ màn | Mô tả lệch | Đã sửa |
 |---|---|---|---|
-| | | | |
+| Mọi trang storefront | 360 / 768 / 1440 | Tiêu đề nhóm footer màu trắng; prototype (theme genie, hoian, dongson, dongho) tô vàng — `<h2>` trong `summary` đặt `color: var(--text-inverse)` đè màu theme của `.tr-foot__head` | ☑ `h2` kế thừa màu |
+| `/c/*`, `/search` | 360 | Nút sắp xếp "Liên quan / Bán chạy / Mới nhất" gãy 2 dòng; prototype 1 dòng cuộn ngang — liên kết nằm trong `<nav class="contents">` nên quy tắc `.tr-sortbar > *` không áp | ☑ thêm `.tr-sortbar > nav > *` + `nowrap` |
+| `/seller/products` | 360, 1024 | Trang tràn ngang (799 / 1047 px): nhãn `sr-only` trong `th` thoát khung cuộn bảng (cùng lỗi G12.40) | ☑ khung bảng `relative` (kèm `DataTable` dùng chung, bảng biến thể) |
+| `/policies/*` | 360 | Prototype hiện cả danh sách mục lục (dài) trước nội dung; web gập vào nút "Thông tin hỗ trợ" | Giữ — cải tiến có chủ đích từ G08 (nội dung lên trước) |
+| `/account/profile` | 360 | Ảnh đại diện lên đầu form (prototype để cuối) | Giữ — khối ảnh đọc trước khi sửa thông tin |
+| `/become-seller` | 768 | Form đăng ký 2 cột (prototype 1 cột ở 768) | Giữ — đủ rộng, ít cuộn hơn |
 
 ### Task bỏ qua / thay đổi so với plan
 
@@ -877,6 +882,12 @@
 | G13.02 | `en.json` đủ 3.246 khóa, `check-i18n` xanh; quét thêm mọi `t('…')` dạng chuỗi trong mã → 0 khóa thiếu. 8 giá trị en còn dấu tiếng Việt đều là tên riêng (Hội An, Đông Hồ, Đông Sơn, GHN — Giao Hàng Nhanh…). |
 | G13.03 | Không còn "Xu", "Mall", `LZD-`, `Lazadee`, `lz_` trong mã chạy và khóa lưu trữ; chỉ còn trong chú thích ghi nguồn prototype và `normalizeCode()` (đổi `LZD-` → `GNE-` phòng dữ liệu cũ, có test). "Xu hướng" (`search.trending`) là từ thường, không phải đơn vị Xu. |
 | G13.04 | Thêm `isoDateVN()` (ngày giờ VN "YYYY-MM-DD") và `formatMonthShort()` ("T6" / "Jun") vào `format.ts` + test; thay 3 bản `Intl.DateTimeFormat('en-CA')` tự viết (marketing, admin-system, VoucherFormModal), 2 bản nhãn tháng tự viết (admin-dashboard, seller-analytics), 2 `toLocaleString` trong mock voucher đổi từ Điểm. Không còn nối "₫"/"đ" ngoài `format.ts` (hậu tố `suffix="₫"` của ô nhập là ký hiệu đơn vị, không phải định dạng số). |
+| G13.05 | Chụp toàn trang bản build (mock) ở 360 / 768 / 1440 cho 16 màn có ảnh tham chiếu bằng Playwright rồi ghép cạnh ảnh prototype để so. Bố cục, thứ tự khối, số liệu khớp ở trang chủ, danh mục, tìm kiếm, khám phá, sản phẩm, shop, chính sách, trở thành người bán, giỏ, thanh toán (vào từ giỏ → "Mua hàng"), đơn mua, tài khoản, đăng nhập / đăng ký. Kiểm tự động mọi trang: không tràn ngang, đúng 1 `<h1>`, không lỗi JS. Ảnh danh mục prototype chụp "Điện thoại" rỗng nên chiều cao khác; ảnh gốc chụp khi đã đăng nhập + popup mở. Lệch tìm được ghi ở bảng "Lệch giao diện". |
+| G13.06 | Tổng quan Seller / Admin khớp ảnh `vendor-*`, `admin-*` (360 / 768 / 1440). Quét tự động **36 route** mục 4.3 + 4.4 ở 360 / 1024 / 1440 (108 lượt): chỉ `/seller/products` tràn ngang (đã sửa); xem lưới ảnh 1024 của 9 màn đại diện (đơn hàng, thêm sản phẩm, ví, cài đặt, duyệt KYC, rút tiền, danh mục, nhân viên, banner) — bảng rộng cuộn trong khung, không vỡ bố cục. |
+| G13.07 | Quét toàn bộ trang storefront + 36 route SPA ở 1440 và 360 (nút / liên kết không tên, ô nhập không nhãn, ảnh thiếu `alt`, id trùng, Tab 12 lần đo vòng focus): sửa liên kết ảnh bằng chứng ở `/admin/refunds` thiếu tên (`admin-disputes.evidence_image`); ô tìm kiếm header có vòng focus ở khung cha (`:focus-within`). Lighthouse báo thêm và đã sửa: `aria-label` trên `div` không role (logo footer → `role="img"`), chấm chuyển popup banner 10 px → nút 24 px (WCAG 2.5.8, chấm vẽ bằng `::after`), nhãn nút ngôn ngữ lệch chữ hiển thị (2.5.3 → chữ ẩn "Ngôn ngữ:" trong nút), ô số lượng `aria-valuemin/max` trên textbox → `role="spinbutton"` + `aria-valuenow`. Tương phản 9 theme × 6 trang (chủ, sản phẩm, giỏ, đăng nhập, Seller, Admin): nhãn % trắng trên thanh tỷ lệ Seller / Admin 4,42:1 → đoạn `ok` / `bad` / `ship` dùng `--tone-ink`; phiếu freeship theme polymer `#0E8C8C` 4,08:1 → `#0C7F7F` (≈ 4,8:1); các báo ~1,0 ở theme saigon / sleeve / dongho là báo nhầm (nền vẽ bằng lớp khác — đã chụp kiểm). `prefers-reduced-motion`: CSS đã có từ G02; thêm cho `scrollIntoView` của form sản phẩm. Luồng mua bằng bàn phím kiểm ở e2e G13.12–G13.13. |
+| G13.08 | Đối chiếu 63 chỉ thị với bảng TS 5.1: đúng ở hầu hết (Header / BuyBox / trang giỏ, checkout, đơn, tài khoản, form auth `load`; nút yêu thích / theo dõi / chia sẻ / bộ lọc `idle`; đánh giá, lưới sản phẩm, banner dưới màn `visible`; Seller / Admin / chat `only`). Chuyển 2 island sang `client:idle`: `AuthTools` (theme + ngôn ngữ góc trang đăng nhập) và `Countdown` trang Flash Sale (SSR đã in giờ, trang chủ cũng dùng `idle`). |
+| G13.09 | `seo.spec.ts` thêm kịch bản `noindex, nofollow` cho `/auth/*`, `/cart`, `/checkout/result`, `/dev/ui` và (có cookie đăng nhập) `/seller`, `/admin`, `/orders`, `/account/*`, `/chat`, `/checkout`: **18/18 xanh** (360 + 1440). Lighthouse 12.8 (Chromium của Playwright) trên bản build mock **sau proxy gzip cục bộ** (server Node của Astro không nén — production nén ở reverse proxy; đo thẳng không nén: hiệu năng mobile 57–58, LCP 11–13 s). Điểm (hiệu năng / trợ năng / thực hành tốt / SEO): **trang chủ** mobile 65 / 100 / 100 / 100 (LCP 8,0 s — là ảnh popup banner lần đầu, render sau hydrate), desktop 91 / 100 / 100 / 100; **danh mục** mobile 66 / 100 / 100 / 100, desktop 94 / 100 / 100 / 100; **sản phẩm** mobile 67 / 100 / 100 / 100, desktop 95 / 100 / 100 / 100. Đã sửa: banner phụ đầu trang + ảnh popup không còn `lazy`. Việc còn lại (ghi cho giai đoạn sau): (1) chunk chung 267 KB (88 KB gzip) chứa **cả hai** từ điển vi + en — tách theo ngôn ngữ cần `t()` bất đồng bộ; (2) CSS chặn render 186 KB (34 KB gzip, gồm themes.css của 9 theme) — tách CSS theme theo `data-theme`; (3) banner 1600 px JPEG cho mọi khổ — cần srcset / WebP từ pipeline ảnh MinIO. |
+| G13.10 | Không còn `/* eslint-disable */` toàn tệp ở 3 tệp sinh tự động (`seed.ts`, `voucher.mock.ts`, `policies.data.ts`) — bỏ đi vẫn sạch lint nên luật boundaries áp cho cả 3. Còn 17 dòng `eslint-disable-next-line react-hooks/exhaustive-deps` có chủ đích (chạy hiệu ứng 1 lần khi mở hộp / đổi khóa), không có cho boundaries. Không có `any` (luật `no-explicit-any: error` cả mã lẫn test). Override nới boundaries chỉ cho test / tệp cấu hình (G01.08). |
 
 ## Nhật ký
 
@@ -915,3 +926,4 @@
 | 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
 | 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |
 | 2026-11-14 | Hoàn thiện i18n + từ ngữ thương hiệu: chuỗi cứng còn lại sang `t()`, tên ngôn ngữ dùng chung, `isoDateVN` / `formatMonthShort` thay Intl tự viết (G13 nhóm A) | fc589e8 |
+| 2026-11-14 | So khớp hình storefront / Seller / Admin (16 màn × 3 khổ + quét 36 route SPA), sửa màu footer theo theme, thanh sắp xếp màn hẹp, tràn ngang bảng; trợ năng (Lighthouse a11y 100), tương phản 9 theme, 2 island sang `idle`, `noindex` có e2e, bỏ `eslint-disable` toàn tệp (G13 nhóm B) | 0914230 |
