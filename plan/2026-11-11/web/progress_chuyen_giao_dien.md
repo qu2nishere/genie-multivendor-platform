@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A–C trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G13.01–G13.21 trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push); G13.22 (mở PR) chờ chủ dự án xác nhận |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 19 / 26 | — | `feature/web-polish` |
-| **Tổng** | | **379** | **50** | **422 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 25 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **428 / 429** | | |
 
 ---
 
@@ -645,13 +645,13 @@
 
 **Nhóm D — Dọn dẹp & bàn giao**
 
-- [ ] **G13.17** Xóa `.gitkeep` ở thư mục đã có file; xóa stub không dùng
-- [ ] **G13.18** Tài liệu
-- [ ] **G13.19** ADR
-- [ ] **G13.20** Danh sách việc nối backend
-- [ ] **G13.21** CI
+- [x] **G13.17** Xóa `.gitkeep` ở thư mục đã có file; xóa stub không dùng
+- [x] **G13.18** Tài liệu
+- [x] **G13.19** ADR
+- [x] **G13.20** Danh sách việc nối backend
+- [x] **G13.21** CI
 - [ ] **G13.22** Mở PR vào `develop`
-- [ ] **G13.C4** 🔖 COMMIT `docs(web): document mock mode, ui gallery and backend handoff` · hash: `_______`
+- [x] **G13.C4** 🔖 COMMIT `docs(web): document mock mode, ui gallery and backend handoff` · hash: `9228a94`
 
 ---
 
@@ -895,6 +895,11 @@
 | G13.14 | `orders.spec.ts`: danh sách → Theo dõi đơn 44 (mã đơn, sao chép mã vận đơn, chưa có Trả hàng); trả hàng đơn 41 (VietQR): tải 1 ảnh + 1 video, tài khoản hoàn tiền → toast + khối `#return`; đánh giá đơn 33 bằng phím mũi tên. **Sửa kèm (trợ năng):** `RatingInput` đổi sao bằng ← → nhưng focus đứng yên ở sao cũ → nay focus đi theo sao được chọn (mẫu radiogroup WAI-ARIA). |
 | G13.15 | `kyc-onboarding.spec.ts` (thay stub): /become-seller → OTP 123456 → `/seller/kyc` → Số CCCD + Người đại diện + CCCD 2 mặt + selfie (PNG ≥ 20 KB) → "Gửi duyệt KYC" → "Hồ sơ đang chờ duyệt", mục Sản phẩm trên nav bị khóa. Shop đã xác minh: tạo sản phẩm (Lưu nháp — chỉ cần tên) → có ở tab Nháp; đơn tab Mới → Xác nhận → tab Chờ chuẩn bị → Chuẩn bị hàng. |
 | G13.16 | `admin.spec.ts`: thêm cơ chế mock `genie.mock.staff_title` (sessionStorage, `shared/auth/session.ts`) đăng nhập /admin bằng nhân viên theo chức danh MODERATOR / FINANCE_OFFICER / CS_SPECIALIST với bộ quyền `TITLE_PRESETS` — chỉ cho e2e, không có nút đổi vai (D5). Kiểm: Kiểm duyệt viên thấy đúng 4 mục, không thấy Rút tiền / Sổ cái / Phân quyền / Voucher, mở `/admin/withdrawals` → "Bạn không có quyền truy cập"; Tài chính thấy Rút tiền, không thấy Duyệt KYC; Admin phê duyệt KYC; Admin Duyệt chi → hộp chuyển khoản có nội dung `TRWD…` → Đã chuyển khoản → hoàn tất. |
+| G13.17 | Xóa 28 `.gitkeep` ở thư mục `web/` đã có tệp; giữ 4 ở tầng còn trống (`catalog/application`, `catalog/ui`, `payment/application`, `payment/infrastructure`). `.gitkeep` của `server-spring` / `server-python` ngoài phạm vi (plan mục 8). Stub không dùng: barrel `shared/hooks/index.ts` (mọi nơi import thẳng `@/shared/hooks/useT`…) và khóa i18n `admin.shell.pending` ("Màn này đang được chuyển…") còn sót từ màn tạm G12 — đã xóa; không còn TODO / FIXME trong `web/src`. Commit C4 làm sau G13.21 vì G13.22 chờ xác nhận. |
+| G13.18 | README gốc thêm mục "Frontend `web/` — chạy riêng ở chế độ mock": lệnh chạy, bảng biến môi trường (mặc định lấy từ `shared/config/env.ts`), tài khoản / OTP mẫu, nhân viên mock theo chức danh, `?theme=`, thư viện `/dev/ui` (chỉ ở dev), bảng lệnh `verify` / `test` / `test:e2e` (`E2E_DEV`, `E2E_PORT`), liên kết tài liệu bàn giao + ADR. |
+| G13.19 | `docs/adr/`: README (mục lục, mẫu Trạng thái · Bối cảnh · Quyết định · Hệ quả) + 6 ADR: 0001 chín theme, 0002 CSS lai, 0003 mock trước, 0004 bảng icon, 0005 bỏ phần trình diễn (kèm ngoại lệ `genie.mock.staff_title` cho e2e), 0006 thư mục bổ sung — viết theo cây **thực tế** (34 feature, `features/*/server.ts`, `app/{seller,admin}`, `shared/api/mock/`, `tests/e2e/`…), không chép nguyên plan mục 3. |
+| G13.20 | `docs/web-backend-handoff.md`: bảng 237 hàm có nhánh mock / 33 nhóm, sinh tự động từ mã (endpoint ở nhánh gọi thật), rồi đối chiếu tự động với `API_SPEC.md` → **21 endpoint lệch**: 11 đặt khác tên spec (sửa mã khi nối — vd. `/me/wishlist/ids` → `/me/wishlist/product-ids`, `/public/feed` → `/public/recommendations`, `/me/shop-follows` → `/me/following`), 5 spec chưa có (chiến dịch, bộ lọc thuộc tính, thương hiệu xác minh, tra SKU công khai, chính sách phí ship). Kèm trường DTO thiếu (`product_slug`, `order_id` trong thông báo), chức năng thay tạm (WebSocket chat, xuất CSV server, PDF A6, `/admin/shops`…), 3 hàm chỉ có ở mock, các bước nối. |
+| G13.21 | `ci.yml` job `web` đã có lint, Vitest, build, check-i18n, lọc đường dẫn `web/**` + `scripts/check-i18n.mjs`, chạy trên PR vào `develop` / `main`. Sửa: `npx astro check` → `npm run check` (thêm `tsc --noEmit`, cùng cổng với `npm run verify` ở máy dev). E2E Playwright chưa đưa vào CI (cần cài trình duyệt + build, ~1 phút) — đề xuất thêm job riêng khi nhóm cần. |
 
 ## Nhật ký
 
@@ -935,3 +940,4 @@
 | 2026-11-14 | Hoàn thiện i18n + từ ngữ thương hiệu: chuỗi cứng còn lại sang `t()`, tên ngôn ngữ dùng chung, `isoDateVN` / `formatMonthShort` thay Intl tự viết (G13 nhóm A) | fc589e8 |
 | 2026-11-14 | So khớp hình storefront / Seller / Admin (16 màn × 3 khổ + quét 36 route SPA), sửa màu footer theo theme, thanh sắp xếp màn hẹp, tràn ngang bảng; trợ năng (Lighthouse a11y 100), tương phản 9 theme, 2 island sang `idle`, `noindex` có e2e, bỏ `eslint-disable` toàn tệp (G13 nhóm B) | 0914230 |
 | 2026-11-14 | Vitest bổ sung 3 tệp miền; E2E 6 spec / 22 kịch bản × 2 khổ màn (khách vãng lai bằng bàn phím, mua hàng VNPay + voucher 3 tầng + Điểm, đơn hàng / trả hàng / đánh giá, KYC + sản phẩm + xử lý đơn, phân quyền Admin + duyệt KYC + rút tiền), chạy trên bản build production; sửa focus của ô chọn sao (G13 nhóm C) | 7254e9f |
+| 2026-11-14 | Dọn `.gitkeep` / stub thừa, README chế độ mock, 6 ADR, tài liệu bàn giao backend (237 hàm, 21 endpoint lệch API_SPEC), CI dùng `npm run check` (G13 nhóm D, trừ G13.22 chờ xác nhận) | 9228a94 |
