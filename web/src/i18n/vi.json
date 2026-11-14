@@ -1,7 +1,278 @@
 {
+  "_meta": {
+    "convention": "Khóa: <feature>.<màn>.<ý nghĩa> (TS 11). Dùng chung: common.action.*, common.state.*, common.label.*; lỗi API: errors.GNE-*; khung trang: layout.*. Thêm khóa ở vi.json thì thêm cùng khóa ở en.json (scripts/check-i18n.mjs)."
+  },
   "common": {
     "app_name": "Genie",
     "points": "Điểm Genie",
-    "authentic": "Chính hãng"
+    "points_short": "Điểm",
+    "authentic": "Chính hãng",
+    "authentic_shops": "Shop Chính Hãng",
+    "action": {
+      "all": "Tất cả",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "close": "Đóng",
+      "confirm": "Xác nhận",
+      "add": "Thêm",
+      "detail": "Chi tiết",
+      "back": "Quay lại",
+      "next": "Tiếp tục",
+      "submit": "Gửi",
+      "search": "Tìm kiếm",
+      "apply": "Áp dụng",
+      "reset": "Đặt lại",
+      "retry": "Thử lại",
+      "view_all": "Xem tất cả",
+      "view_more": "Xem thêm",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "show": "Hiện",
+      "hide": "Ẩn",
+      "select_all": "Chọn tất cả",
+      "upload": "Tải lên",
+      "download": "Tải về",
+      "export_csv": "Xuất CSV",
+      "send": "Gửi",
+      "share": "Chia sẻ",
+      "follow": "Theo dõi",
+      "following": "Đang theo dõi",
+      "chat": "Chat",
+      "login": "Đăng nhập",
+      "register": "Đăng ký",
+      "logout": "Đăng xuất"
+    },
+    "state": {
+      "loading": "Đang tải...",
+      "saving": "Đang lưu...",
+      "empty": "Chưa có dữ liệu",
+      "error": "Đã có lỗi xảy ra",
+      "no_results": "Không tìm thấy kết quả phù hợp",
+      "out_of_stock": "Hết hàng",
+      "preorder": "Đặt trước",
+      "required": "Bắt buộc",
+      "optional": "Không bắt buộc"
+    },
+    "label": {
+      "page": "Trang {page}",
+      "prev_page": "Trang trước",
+      "next_page": "Trang sau",
+      "sold": "Đã bán {count}",
+      "free_ship": "Miễn phí vận chuyển",
+      "quantity": "Số lượng",
+      "price": "Giá",
+      "total": "Tổng cộng",
+      "skip_to_content": "Bỏ qua tới nội dung chính"
+    }
+  },
+  "errors": {
+    "unknown": "Có lỗi xảy ra, vui lòng thử lại.",
+    "network": "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",
+    "timeout": "Máy chủ phản hồi quá lâu. Vui lòng thử lại.",
+    "not_found": "Không tìm thấy nội dung bạn cần.",
+    "GNE-SEC-4010": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    "GNE-SEC-4030": "Bạn không có quyền thực hiện thao tác này.",
+    "GNE-SEC-4031": "Không thể cấp quyền này (quyền phân quyền chỉ dành cho Admin).",
+    "GNE-VAL-4220": "Dữ liệu chưa hợp lệ, vui lòng kiểm tra các ô được đánh dấu.",
+    "GNE-INV-4090": "Sản phẩm vừa hết hàng. Giỏ hàng đã được tải lại.",
+    "GNE-INV-4091": "Suất Flash Sale đã hết, bạn vẫn có thể mua với giá thường.",
+    "GNE-INV-4093": "Thời gian giữ hàng 15 phút đã hết. Vui lòng kiểm tra lại giỏ hàng.",
+    "GNE-INV-4094": "Số lượng vượt quá tồn kho hiện có.",
+    "GNE-ORD-4041": "Không tìm thấy đơn hàng.",
+    "GNE-ORD-4092": "Đơn hàng đã được xử lý, không thể hủy.",
+    "GNE-ORD-4093": "Shop đang tạm nghỉ hoặc đã từ chối đơn.",
+    "GNE-ORD-4094": "Bạn không thể mua sản phẩm của chính shop mình.",
+    "GNE-ORD-4095": "Đơn chưa được giao, chưa thể xác nhận đã nhận hàng.",
+    "GNE-WAL-4001": "Số dư khả dụng không đủ cho lệnh rút này.",
+    "GNE-WAL-4032": "Tài khoản nhận tiền chưa được xác minh chính chủ.",
+    "GNE-WAL-4091": "Còn lệnh rút đang chờ, chưa thể xóa tài khoản nhận tiền.",
+    "GNE-WAL-4092": "Shop chưa được xác minh, chưa thể duyệt chi.",
+    "GNE-WAL-4221": "Số tiền rút tối thiểu là 100.000₫.",
+    "GNE-WAL-4222": "Tên chủ tài khoản không khớp với CCCD.",
+    "GNE-RAT-4290": "Bạn thao tác quá nhanh. Vui lòng thử lại sau ít phút.",
+    "GNE-AUTH-4001": "Phiên đăng nhập mạng xã hội không hợp lệ. Vui lòng thử lại.",
+    "GNE-AUTH-4011": "Email hoặc mật khẩu không đúng.",
+    "GNE-AUTH-4031": "Tài khoản đang bị tạm khóa.",
+    "GNE-AUTH-4032": "Email của tài khoản Google/Apple chưa được xác minh.",
+    "GNE-AUTH-4091": "Email này đã được đăng ký. Hãy đăng nhập hoặc lấy lại mật khẩu.",
+    "GNE-AUTH-4092": "Tài khoản Google này đã gắn với người dùng khác.",
+    "GNE-AUTH-4093": "Không thể gỡ cách đăng nhập duy nhất của tài khoản.",
+    "GNE-AUTH-4094": "Email mới đã thuộc về tài khoản khác.",
+    "GNE-AUTH-4101": "Mã OTP đã hết hạn. Vui lòng gửi lại mã.",
+    "GNE-AUTH-4102": "Liên kết đặt lại mật khẩu đã hết hạn.",
+    "GNE-AUTH-4103": "Lời mời nhân viên đã hết hạn.",
+    "GNE-AUTH-4221": "Bạn đã nhập sai OTP quá 5 lần. Vui lòng gửi lại mã mới.",
+    "GNE-AUTH-4222": "Mã OTP không đúng. Còn {remaining_attempts} lần thử.",
+    "GNE-AUTH-4223": "Mật khẩu mới không được trùng mật khẩu gần đây.",
+    "GNE-AUTH-4230": "Đăng nhập tạm khóa 15 phút do nhập sai mật khẩu 5 lần.",
+    "GNE-PAY-4021": "Cổng thanh toán từ chối giao dịch. Hãy thử lại hoặc chọn COD.",
+    "GNE-PAY-4092": "Giao dịch đã được xử lý trước đó.",
+    "GNE-VCH-4041": "Mã voucher không tồn tại hoặc đã hết hạn.",
+    "GNE-VCH-4091": "Bạn đã lưu voucher này.",
+    "GNE-VCH-4092": "Mã voucher đã tồn tại.",
+    "GNE-VCH-4093": "Voucher đã có lượt dùng, không thể xóa.",
+    "GNE-VCH-4221": "Voucher không áp dụng được cho đơn này.",
+    "GNE-USR-4091": "Còn đơn đang xử lý, chưa thể xóa tài khoản.",
+    "GNE-USR-4092": "Không thể xóa địa chỉ mặc định.",
+    "GNE-CAT-4041": "Danh mục không tồn tại hoặc đã ẩn.",
+    "GNE-CAT-4042": "Sản phẩm không còn được bán.",
+    "GNE-CAT-4091": "Tên hoặc đường dẫn danh mục đã tồn tại.",
+    "GNE-CAT-4092": "Danh mục còn sản phẩm hoặc danh mục con.",
+    "GNE-CAT-4093": "Sản phẩm đang bị sàn khóa.",
+    "GNE-CAT-4094": "Sản phẩm còn đơn đang xử lý.",
+    "GNE-CAT-4095": "Mã thuộc tính đã có trong ngành này.",
+    "GNE-CAT-4221": "Bạn đã có 5 đề xuất danh mục đang chờ duyệt.",
+    "GNE-CAT-4222": "Ngành hàng này bắt buộc giấy tờ chứng thực.",
+    "GNE-CAT-4223": "Còn thiếu thông số bắt buộc của ngành hàng.",
+    "GNE-PRO-4091": "Hôm nay bạn đã điểm danh rồi.",
+    "GNE-PRO-4221": "Giá Flash Sale phải thấp hơn ít nhất 15% và số suất phải hợp lệ.",
+    "GNE-PRO-4222": "Bạn không đủ Điểm.",
+    "GNE-PRO-4223": "Vượt số sản phẩm tối đa hoặc đã quá hạn đăng ký Flash Sale.",
+    "GNE-PRO-4224": "Chưa có sản phẩm được duyệt để lên lịch Flash Sale.",
+    "GNE-SUP-4091": "Đã yêu cầu bổ sung bằng chứng một lần.",
+    "GNE-SUP-4092": "Đã quá hạn 7 ngày hoặc đơn đã có yêu cầu trả hàng đang mở.",
+    "GNE-SUP-4221": "Cần ảnh hoặc video làm bằng chứng.",
+    "GNE-SOC-4031": "Thẻ đơn hàng hoặc sản phẩm không thuộc cuộc trò chuyện này.",
+    "GNE-SOC-4091": "Bạn đã đánh giá sản phẩm này.",
+    "GNE-SOC-4092": "Đơn chưa hoàn thành, chưa thể đánh giá.",
+    "GNE-SOC-4093": "Bạn đã báo cáo đánh giá này.",
+    "GNE-SOC-4094": "Shop đã phản hồi đánh giá này.",
+    "GNE-SOC-4221": "Phản hồi không được chứa số điện thoại.",
+    "GNE-VND-4031": "Shop chưa được xác minh (KYC).",
+    "GNE-VND-4091": "Chỉ được đổi tên shop 1 lần trong 30 ngày.",
+    "GNE-VND-4092": "Còn đơn chưa bàn giao, chưa thể bật chế độ nghỉ.",
+    "GNE-VND-4093": "Tài khoản đã có shop.",
+    "GNE-VND-4094": "Tên shop đã được dùng.",
+    "GNE-VND-4095": "Hồ sơ KYC đang được xử lý hoặc đã được duyệt.",
+    "GNE-VND-4096": "Bạn đã gửi yêu cầu xem xét hồ sơ KYC.",
+    "GNE-VND-4221": "Phải bật ít nhất 1 hãng vận chuyển.",
+    "GNE-VND-4222": "Bật tự trả lời thì cần có nội dung.",
+    "GNE-VND-4223": "Hồ sơ KYC còn thiếu giấy tờ.",
+    "GNE-VND-4224": "Ngày mở lại phải trong 30 ngày tới.",
+    "GNE-LOG-4221": "Bảng kê COD không cân.",
+    "GNE-LOG-5021": "Hãng vận chuyển đang lỗi khi tạo vận đơn. Vui lòng thử lại.",
+    "GNE-LOG-5022": "GHN đang lỗi khi đồng bộ kho lấy hàng. Vui lòng thử lại.",
+    "GNE-BNR-4221": "Vị trí này đã đủ 8 banner đang hiển thị.",
+    "GNE-BNR-4222": "Liên kết banner phải thuộc miền của sàn.",
+    "GNE-NOT-4091": "Thông báo đã phát, không thể sửa.",
+    "GNE-NOT-4221": "Danh sách người nhận rỗng hoặc có email không tồn tại.",
+    "GNE-ADM-4091": "Email nhân viên đã được dùng.",
+    "GNE-ADM-4092": "Bạn không thể xóa chính mình.",
+    "GNE-ADM-4221": "Email nhân viên phải có đuôi @genie.example.",
+    "GNE-SYS-5030": "Hệ thống đang bận. Vui lòng thử lại sau.",
+    "GNE-DB-5002": "Hệ thống đang bận. Vui lòng thử lại sau vài giây.",
+    "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại."
+  },
+  "ui": {
+    "close": "Đóng",
+    "remove": "Gỡ bỏ",
+    "required_mark": "bắt buộc",
+    "qty": {
+      "decrease": "Giảm",
+      "increase": "Tăng",
+      "label": "Số lượng"
+    },
+    "password": {
+      "show": "Hiện mật khẩu",
+      "hide": "Ẩn mật khẩu",
+      "strength": {
+        "0": "Rất yếu",
+        "1": "Yếu",
+        "2": "Trung bình",
+        "3": "Mạnh",
+        "4": "Rất mạnh"
+      },
+      "match": "Mật khẩu khớp",
+      "mismatch": "Mật khẩu không khớp",
+      "issue": {
+        "length": "Mật khẩu tối thiểu 8 ký tự",
+        "upper": "Cần ít nhất 1 chữ hoa",
+        "lower": "Cần ít nhất 1 chữ thường",
+        "digit": "Cần ít nhất 1 chữ số",
+        "special": "Cần ít nhất 1 ký tự đặc biệt"
+      }
+    },
+    "select": {
+      "placeholder": "Chọn..."
+    },
+    "status": {
+      "PENDING": "Chờ xử lý",
+      "PAID": "Đã thanh toán",
+      "SHIPPED": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn tất",
+      "CANCELLED": "Đã hủy",
+      "ERROR": "Lỗi",
+      "VERIFIED": "Đã xác minh",
+      "REJECTED": "Từ chối",
+      "HELD": "Đang giữ",
+      "AVAILABLE": "Khả dụng"
+    },
+    "char_count": "{count}/{max}",
+    "otp": {
+      "group": "Mã xác thực {length} chữ số",
+      "digit": "Chữ số thứ {n}"
+    },
+    "countdown": {
+      "ends_in": "Kết thúc sau",
+      "ends_midnight": "Kết thúc lúc 24:00 hôm nay"
+    },
+    "pagination": {
+      "label": "Phân trang",
+      "prev": "Trước",
+      "next": "Sau"
+    },
+    "price": {
+      "original": "giá gốc"
+    },
+    "rating": {
+      "value": "Đánh giá {value} trên 5 sao",
+      "choose": "Chọn số sao",
+      "stars": "{n} sao"
+    },
+    "seal": {
+      "label": "Con dấu xác minh của {name}"
+    },
+    "voucher": {
+      "kind": {
+        "platform": "Genie",
+        "shop": "Shop",
+        "freeship": "Freeship"
+      },
+      "ticket": {
+        "platform": "Voucher Genie",
+        "shop": "Voucher của shop",
+        "freeship": "Freeship"
+      },
+      "save": "Lưu",
+      "save_aria": "Lưu voucher {label}",
+      "saved_aria": "Đã lưu {label} vào Kho Voucher",
+      "saved_title": "Đã lưu vào Kho Voucher"
+    },
+    "qr": {
+      "mock": "Mã QR mô phỏng"
+    },
+    "flash": {
+      "progress": "Tiến độ Flash Sale",
+      "sold": "Đã bán {sold}/{total}",
+      "sold_out": "Đã hết suất"
+    },
+    "wishlist": {
+      "add": "Yêu thích",
+      "remove": "Bỏ yêu thích"
+    },
+    "dash": {
+      "no_data": "Chưa có dữ liệu so sánh",
+      "no_data_against": "Chưa có dữ liệu {against}",
+      "waiting": "{count} việc đang chờ bạn",
+      "no_backlog": "Không có việc tồn",
+      "moving": "{count} đơn đang xử lý",
+      "outcomes": "Kết quả các đơn đã xong",
+      "chart_aria": "{name}. Cao nhất {max} vào {at}. Dùng phím mũi tên để đọc từng mốc.",
+      "as_table": "Xem dạng bảng",
+      "point": "Mốc"
+    }
   }
 }

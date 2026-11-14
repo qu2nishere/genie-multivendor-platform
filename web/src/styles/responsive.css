@@ -1,0 +1,39 @@
+/* ===========================================================================
+   Genie — lớp responsive 360–1440 px (plan G02.13)
+   Prototype (genie/responsive.css) khớp style inline bằng bộ chọn [style*=…].
+   Bản này KHÔNG mang các bộ chọn đó sang: mỗi component tự dùng tiền tố
+   Tailwind sm: / md: / lg: (bảng đối chiếu bên dưới). Chỉ giữ quy tắc toàn cục.
+
+   Đối chiếu quy tắc prototype → cách làm trong component:
+   - lưới repeat(6|5|4) ≤1100px → 4|3|2 cột      : grid-cols-2 md:grid-cols-4 lg:grid-cols-6 …
+   - lưới 2 cột (440px 1fr, 340px, 320px, 1fr 380px) xếp 1 cột ≤1100px : grid-cols-1 lg:grid-cols-[…]
+   - ≤768px mọi lưới 1 cột, lưới thẻ giữ 2 cột   : grid-cols-2 cho lưới sản phẩm
+   - hàng flex tự xuống dòng ≤768px               : flex-wrap md:flex-nowrap
+   - min-width cứng về 0 ≤768px                   : min-w-0 md:min-w-[…]
+   - khung max-width 1280/1180/1100 đệm 12px      : container / px-3 md:px-4
+   - bảng rộng cuộn ngang trong thẻ               : DataTable (overflow-x-auto)
+   - thanh bên Seller/Admin thành thanh cuộn ngang: layout SPA (G11.03, G12.03)
+   - trang đăng nhập ẩn cột thương hiệu           : AuthLayout (hidden md:flex)
+   - lớp phủ / modal vừa màn hình                 : Modal (max-w-[calc(100vw-16px)])
+   - sticky thành static ≤768px                   : static md:sticky
+   - số tiền lớn thu còn 16px ở thẻ KPI           : text-lg md:text-2xl (StatTile)
+   =========================================================================== */
+
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+}

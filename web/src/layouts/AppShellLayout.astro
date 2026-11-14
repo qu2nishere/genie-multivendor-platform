@@ -3,8 +3,9 @@
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
-const { title, description } = Astro.props;
+const { title, description, noindex = true } = Astro.props;
 const lang = Astro.locals.lang ?? 'vi';
 ---
 
@@ -15,6 +16,7 @@ const lang = Astro.locals.lang ?? 'vi';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
@@ -23,4 +25,5 @@ const lang = Astro.locals.lang ?? 'vi';
 </html>
 <style is:global>
   @import '../styles/global.css';
+  @import '../styles/dash.css';
 </style>

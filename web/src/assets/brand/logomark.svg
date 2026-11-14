@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Genie">
+  <path d="M57.5 18.5c-4.5-2.5-3.5-7 .5-9.5s4-6.5-.5-9" stroke="#E9B23C" stroke-width="4" stroke-linecap="round" transform="translate(0 2)"/>
+  <path d="M5 33h38c0 8.6-8.5 14.5-19 14.5S5 41.6 5 33Z" fill="#1F7356"/>
+  <path d="M40 38.5c6.5-.5 11-4.5 14.5-10.5l2.6-4.4c.9-1.5 3-.8 2.6.9L56.5 34C53.6 41 47.5 45 40.5 45.5Z" fill="#1F7356"/>
+  <path d="M13 33a11 8 0 0 1 22 0Z" fill="#1F7356"/>
+  <circle cx="24" cy="23" r="3.2" fill="#E9B23C"/>
+  <path d="M6.5 36.5c-6 .5-6 9.5 2.5 9.5" stroke="#1F7356" stroke-width="4" stroke-linecap="round"/>
+  <path d="M19 47h10v5H19z" fill="#1F7356"/>
+  <rect x="12" y="52" width="24" height="6" rx="3" fill="#1F7356"/>
+</svg>

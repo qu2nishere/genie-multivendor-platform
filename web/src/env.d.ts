@@ -8,9 +8,11 @@ declare namespace App {
 }
 
 interface ImportMetaEnv {
-  readonly PUBLIC_API_URL: string;
-  readonly PUBLIC_S3_URL: string;
-  readonly INTERNAL_API_URL: string;
+  readonly PUBLIC_WEB_URL?: string;
+  readonly PUBLIC_API_URL?: string;
+  readonly PUBLIC_S3_URL?: string;
+  readonly INTERNAL_API_URL?: string;
+  readonly PUBLIC_USE_MOCK?: string;
 }
 
 interface ImportMeta {

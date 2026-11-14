@@ -1,5 +1,11 @@
+/* Thứ tự (plan G02.08): tokens → base → Tailwind → CSS component → responsive.
+   CSS chuẩn bắt buộc @import đứng trước mọi quy tắc, nên các file CSS thường (component,
+   responsive) được import ngay ở đây; quy tắc của chúng nằm trong @layer components hoặc
+   là bộ chọn phần tử nên không đè utility của Tailwind. */
+@import './tokens.css';
+@import './base.css';
+@import './responsive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './tokens.css';
