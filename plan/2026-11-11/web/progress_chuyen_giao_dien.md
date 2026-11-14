@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–D; Admin Portal trên `feature/admin-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–E; Admin Portal trên `feature/admin-ui` |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 28 / 52 | — | `feature/admin-ui` |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 36 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **379 / 429** | | |
+| **Tổng** | | **379** | **50** | **387 / 429** | | |
 
 ---
 
@@ -581,14 +581,14 @@
 
 **Nhóm E — Tài chính**
 
-- [ ] **G12.25** `admin-finance` miền + hạ tầng
-- [ ] **G12.26** `WithdrawalsPage`
-- [ ] **G12.27** `CommissionPage`
-- [ ] **G12.28** `LedgerPage`
-- [ ] **G12.29** Đối soát COD miền
-- [ ] **G12.30** `CodReconciliationPage`
-- [ ] **G12.31** Khóa i18n `admin-finance.*`
-- [ ] **G12.C5** 🔖 COMMIT `feat(admin-ui): add payout, commission, ledger and cod screens` · hash: `_______`
+- [x] **G12.25** `admin-finance` miền + hạ tầng
+- [x] **G12.26** `WithdrawalsPage`
+- [x] **G12.27** `CommissionPage`
+- [x] **G12.28** `LedgerPage`
+- [x] **G12.29** Đối soát COD miền
+- [x] **G12.30** `CodReconciliationPage`
+- [x] **G12.31** Khóa i18n `admin-finance.*`
+- [x] **G12.C5** 🔖 COMMIT `feat(admin-ui): add payout, commission, ledger and cod screens` · hash: `e35446a`
 
 **Nhóm F — Marketing**
 
@@ -855,6 +855,12 @@
 | G12.22 | `CatModal` rhf + zod: slug tự sinh khi thêm, nút Auto, danh mục cha chỉ chọn khi thêm (sửa chỉ đổi thông tin danh mục gốc như prototype), Xóa khi rỗng có hộp xác nhận. |
 | G12.23 | `AttributePanel`: thêm thuộc tính bắt buộc → toast "Shop có 14 ngày bổ sung" theo `grace_period_days` của API (mock trả 14 khi thuộc tính mới / vừa chuyển sang bắt buộc); mã không sửa được sau khi tạo (khóa trong URL PUT). |
 | G12.24 | Đề xuất danh mục: Duyệt (tạo danh mục dưới danh mục cha, hoa hồng theo cha) / Từ chối bắt buộc lý do (zod). Đã thử duyệt "Thú cưng (Pet)" → 7 danh mục gốc, chờ duyệt 2 → 1. Kho đề xuất của Seller (G11.31) là mock riêng, chưa nối với kho này — khi có backend cùng đọc `category_proposals`. |
+| G12.25 | `admin-finance`: kiểu theo 11.6–11.9, quy tắc (lý do từ chối rút 16.4, nội dung `TRWD…`, trạng thái hiển thị lệnh rút, 3 chỉ số 8.150.000₫ / 1.200.000₫ khớp prototype, tỷ lệ 0–50%, màu sự kiện sổ cái) + test. Lệnh rút / phiên COD ghi kho dùng chung (huy hiệu nav, "Tiền đang chờ xử lý" ở Tổng quan); sổ cái + hoa hồng ở mock riêng; duyệt chi xong ghi bút toán `PAYOUT_SETTLE`, đối soát xong ghi `ESCROW_IN` cho từng đơn khớp (đã thử: duyệt PAYOUT-0012 → huy hiệu 4 → 3, sổ cái có dòng #100483). |
+| G12.26 | `WithdrawalsPage`: Duyệt chi có hộp xác nhận → hộp chuyển khoản (QR mô phỏng dùng `QrPlaceholder`, tài khoản đầy đủ chỉ hiện sau duyệt theo API 11.6); "Xác nhận tay" bằng mã giao dịch ngân hàng. Nút "Mô phỏng: SePay báo tiền đã ra" (D5) đổi thành "Đã chuyển khoản" — thật thì webhook SePay tự hoàn tất. Lý do "Lý do khác" bắt buộc ghi chú. |
+| G12.27 | `CommissionPage`: tỷ lệ nhận số thập phân, ô sai (ngoài 0–50%) viền đỏ + khóa nút Lưu; ngành tắt công tắc hiện "Đang dùng mặc định x%". |
+| G12.28 | `LedgerPage`: tìm (debounce 300 ms) + lọc sự kiện theo enum 11.9, phân trang con trỏ 50 dòng với "Tải thêm" (`useInfiniteQuery`); Xuất sổ cái tạo CSV phía client từ mọi dòng khớp bộ lọc (API `/ledger-entries/export` dùng khi nối backend — G13.20). |
+| G12.29 | `domain/cod.rules.ts`: `parseCodCsv` (bỏ BOM, tiêu đề, dòng trống; trả số dòng sai định dạng), `matchLine`, `reconcile` (cân = tổng tiền − phí = số SePay đã nhận), `canConfirm` + test 2 phiên mẫu (GHN cân 2 dòng khớp; GHTK cân nhưng có dòng lệch / không tìm thấy). |
+| G12.30 | `CodReconciliationPage`: phiên đang xem trên URL (`?id=`); tải CSV (≤ 1 MB, chỉ .csv) đọc ở client rồi gọi preview 11.7, xác nhận gửi Idempotency-Key; phiên đã xác nhận hiện lại kết quả đã lưu. |
 
 ## Nhật ký
 
@@ -889,3 +895,4 @@
 | 2026-11-14 | Admin Portal: Tổng quan (việc cần xử lý, kỳ báo cáo, 4 ô tiền, hoa hồng đi về đâu, GMV, tiền giữ / chờ xử lý, đơn đang chạy, xếp hạng, shop tăng trưởng) + Duyệt KYC (hàng chờ, chi tiết, trình xem tài liệu, phê duyệt / từ chối / bổ sung) (G12 nhóm B) | b8bcfb5 |
 | 2026-11-14 | Admin Portal: Trả hàng & Hoàn tiền (phân xử 4 phán quyết, phong tỏa ký quỹ, hoàn tiền Gateway / chuyển khoản tay), Kiểm duyệt đánh giá, Duyệt sản phẩm (hàng chờ, giao người duyệt, cấu hình nhân viên, trang chi tiết + thanh quyết định) (G12 nhóm C) | 7045474 |
 | 2026-11-14 | Admin Portal: Danh mục toàn sàn (4 chỉ số, cây danh mục, chi tiết + hiển thị, thêm / sửa / xóa danh mục, bộ thuộc tính, sản phẩm theo danh mục con: duyệt / từ chối / khóa, đề xuất từ người bán) (G12 nhóm D) | 93b53d5 |
+| 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
