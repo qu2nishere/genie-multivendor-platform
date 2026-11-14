@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P01c (4 / 23 lượt); lượt kế: P02a |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P02a (5 / 23 lượt); lượt kế: P02b |
 
 ---
 
@@ -120,14 +120,14 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Category` (L1189) | `catalog.category.domain` | 11 | 2 | | Giữ `children` (tự tham chiếu `parent_id`) |
-| [ ] | `Brand` (L1854) | `catalog.brand.domain` | 7 | 2 | | Có factory `static proposedBy` |
-| [ ] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendorProfile` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
-| [ ] | `ProductVariant` (L1509) | `catalog.product.domain` | 12 | 5 | ✔ | Giữ `product`. Xóa mềm bằng timestamp |
-| [ ] | `ProductImage` (L1635) | `catalog.product.domain` | 12 | 1 | | |
-| [ ] | `ProductDocument` (L1911) | `catalog.product.domain` | 10 | 1 | | Giữ `product`; `@Table indexes` |
+| [x] | `Category` (L1189) | `catalog.category.domain` | 11 | 2 | | Giữ `children` (tự tham chiếu `parent_id`) |
+| [x] | `Brand` (L1854) | `catalog.brand.domain` | 7 | 2 | | Có factory `static proposedBy` |
+| [x] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendorProfile` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
+| [x] | `ProductVariant` (L1509) | `catalog.product.domain` | 12 | 5 | ✔ | Giữ `product`. Xóa mềm bằng timestamp |
+| [x] | `ProductImage` (L1635) | `catalog.product.domain` | 12 | 1 | | |
+| [x] | `ProductDocument` (L1911) | `catalog.product.domain` | 10 | 1 | | Giữ `product`; `@Table indexes` |
 
-- [ ] Enum: `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType` (catalog.product).
+- [x] Enum: `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType` (catalog.product).
 
 **Lượt 2b — Phụ trợ catalog**
 
@@ -402,7 +402,7 @@
 | [x] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
 | [x] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
 | [x] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
-| [ ] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
+| [x] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
 | [ ] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
 | [ ] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
 | [ ] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
@@ -433,4 +433,5 @@
 | 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | `6397563` | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
 | 2 | 2026-11-14 | P01a | `feature/entity-p01a-auth-entities` (từ `feature/entity-p00-shared-enums`) | `2ec68f7` | Entity `User`, `CustomerProfile`, `Address`, `RefreshToken`; enum `AccountStatus`, `Gender`, `AddressLabel`; 4 repository (`auth.profile` / `auth.address` / `auth.token`) | `compile` ✔, `ModuleBoundaryTest` ✔; đếm trường 18/14/16/9, phương thức 7/2/2/2 khớp | Xong. D2: `User` bỏ `vendorProfile`, `adminProfile` (18 trường thay vì 20). `User.addresses` / `refreshTokens` trỏ sang feature khác của cùng module `auth` nên giữ |
 | 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | `b7f3611` | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
-| 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | (lượt sau điền) | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |
+| 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | `42e10b1` | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |
+| 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | (lượt sau điền) | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
