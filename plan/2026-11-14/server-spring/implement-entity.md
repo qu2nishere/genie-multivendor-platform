@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P09 (20 / 23 lượt); lượt kế: P10 |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P10 (21 / 23 lượt); lượt kế: P11 |
 
 ---
 
@@ -312,14 +312,14 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Notification` (L5670) | `notification.inbox.domain` | 16 | 3 | | Index 13.1 `(user_id, is_read, created_at DESC)` |
-| [ ] | `PlatformNotification` (L5774) | `notification.platform.domain` | 12 | 1 | | |
-| [ ] | `UserPlatformNotificationRead` (L5833) | `notification.platform.domain` | 3 | 1 | | `@IdClass` → tạo `UserPlatformNotificationReadId` (D4) |
-| [ ] | `AdminNotification` (L5994) | `notification.admin.domain` | 9 | 1 | | |
-| [ ] | `HomeBanner` (L5893) | `admin.banner.domain` | 17 | 4 | | `@Table indexes` |
+| [x] | `Notification` (L5670) | `notification.inbox.domain` | 16 | 3 | | Index 13.1 `(user_id, is_read, created_at DESC)` |
+| [x] | `PlatformNotification` (L5774) | `notification.platform.domain` | 12 | 1 | | |
+| [x] | `UserPlatformNotificationRead` (L5833) | `notification.platform.domain` | 3 | 1 | | `@IdClass` → tạo `UserPlatformNotificationReadId` (D4) |
+| [x] | `AdminNotification` (L5994) | `notification.admin.domain` | 9 | 1 | | |
+| [x] | `HomeBanner` (L5893) | `admin.banner.domain` | 17 | 4 | | `@Table indexes` |
 
-- [ ] Enum: `NotificationType`, `NotificationChannel`, `NotificationDeliveryStatus` (notification.inbox) · `PlatformNotificationTarget` (notification.platform) · `AdminNotificationType` (notification.admin) · `BannerPosition` (admin.banner).
-- [ ] 5 repository · migration · Kiểm tra cuối Phase.
+- [x] Enum: `NotificationType`, `NotificationChannel`, `NotificationDeliveryStatus` (notification.inbox) · `PlatformNotificationTarget` (notification.platform) · `AdminNotificationType` (notification.admin) · `BannerPosition` (admin.banner).
+- [x] 5 repository · migration · Kiểm tra cuối Phase.
 
 ---
 
@@ -419,7 +419,7 @@
 | [x] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
 | [x] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
 | [x] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
-| [ ] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
+| [x] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
 | [ ] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
 | [ ] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
 
@@ -450,4 +450,5 @@
 | 17 | 2026-11-14 | P06c | `feature/entity-p06c-payment-migration` (từ `feature/entity-p06b-wallet-cod`) | `608dd32` | `V6__payment.sql`: 8 bảng, CHECK enum, CHECK XOR `order_id`/`checkout_session_id`, UNIQUE `gateway_transaction_id`, partial index escrow `HELD`, 10 FK; UNIQUE từ entity (`escrow_ledgers.order_id`, `vendor_wallets.vendor_id`, `cod_remittances.bank_reference`…) | V1–V6 trên `postgres:16` ✔ (47 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. FK mềm không tạo constraint: `withdrawal_requests.wallet_id`, `processed_by_admin_id`, `cod_remittances.reconciled_by_staff_id`. FK nợ `payment_refunds.refund_request_id` để V8 |
 | 18 | 2026-11-14 | P07 | `feature/entity-p07-shipping` (từ `feature/entity-p06c-payment-migration`) | `acca3ec` | Entity `ShipmentTracking`, `ShipmentEvent`, `VendorShippingConfig`; enum `ShipmentDirection`, `ShipmentTrackingStatus`; 3 repository; `V7__shipping.sql` (3 bảng, 3 FK, 2 partial unique index `uq_shipment_outbound` / `uq_shipment_return`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V7 trên `postgres:16` ✔ (50 bảng), `SchemaValidationIT` ✔; trường 11/7/8, PT 3/1/2 khớp | Xong. Sửa lệch ENTITY.md: `supports()` thiếu nhánh `JNT_EXPRESS` (mục 6). FK nợ `shipment_trackings.refund_request_id` để V8 |
 | 19 | 2026-11-14 | P08 | `feature/entity-p08-refund` (từ `feature/entity-p07-shipping`) | `3eb9b53` | Entity `RefundRequest`, `RefundRequestItem`, `RefundEvidence`; enum `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType`; 3 repository; `V8__refund.sql` (3 bảng, 5 FK) + trả 2 FK nợ `payment_refunds.refund_request_id`, `shipment_trackings.refund_request_id` | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V8 trên `postgres:16` ✔ (53 bảng), `SchemaValidationIT` ✔; trường 22/5/7, PT 16/1/2 khớp (kể cả `applyApproval`, `requireStatus` private) | Xong. Sổ FK nợ mục 5 đã trả hết |
-| 20 | 2026-11-14 | P09 | `feature/entity-p09-review` (từ `feature/entity-p08-refund`) | (lượt sau điền) | Entity `ProductReview`, `ReviewReport`, `ReviewHelpfulVote`, `ShopFollow`; enum `ReviewReportReason`; 4 repository; `V9__review.sql` (4 bảng, 10 FK, UNIQUE `order_item_id`, `(customer_id, vendor_id)`, `(review_id, user_id)`, 3 index: `(product_id, is_visible)`, `(vendor_id, created_at DESC)`, biểu thức `aspect_sentiment_json ->> 'overall'`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V9 trên `postgres:16` ✔ (57 bảng), `SchemaValidationIT` ✔; trường 16/6/4/4, PT 4/1/1/1 khớp | Xong. `ShopFollow` `@UniqueConstraint` dùng tên Java → SQL dùng `customer_id, vendor_id` |
+| 20 | 2026-11-14 | P09 | `feature/entity-p09-review` (từ `feature/entity-p08-refund`) | `9842965` | Entity `ProductReview`, `ReviewReport`, `ReviewHelpfulVote`, `ShopFollow`; enum `ReviewReportReason`; 4 repository; `V9__review.sql` (4 bảng, 10 FK, UNIQUE `order_item_id`, `(customer_id, vendor_id)`, `(review_id, user_id)`, 3 index: `(product_id, is_visible)`, `(vendor_id, created_at DESC)`, biểu thức `aspect_sentiment_json ->> 'overall'`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V9 trên `postgres:16` ✔ (57 bảng), `SchemaValidationIT` ✔; trường 16/6/4/4, PT 4/1/1/1 khớp | Xong. `ShopFollow` `@UniqueConstraint` dùng tên Java → SQL dùng `customer_id, vendor_id` |
+| 21 | 2026-11-14 | P10 | `feature/entity-p10-notification` (từ `feature/entity-p09-review`) | (lượt sau điền) | Entity `Notification`, `PlatformNotification`, `UserPlatformNotificationRead` (+ khóa gộp `UserPlatformNotificationReadId`), `AdminNotification`, `HomeBanner`; 6 enum; 5 repository; `V10__notification.sql` (5 bảng, PK gộp, 4 FK, index `idx_banner_position_time` + `notifications(user_id, is_read, created_at DESC)`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V10 trên `postgres:16` ✔ (62 bảng), `SchemaValidationIT` ✔; trường 16/12/3/9/17, PT 3/1/1/1/4 khớp | Xong. `home_banners.created_by_admin_id` không FK (dữ liệu kiểm toán, ENTITY.md 10.4) |
