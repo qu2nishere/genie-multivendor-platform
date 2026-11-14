@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G10; đang G11 (Seller Center) trên `feature/seller-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11; Seller Center trên `feature/seller-ui` |
 
 **Cách dùng**
 
@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 44 / 51 | — | `feature/seller-ui` |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **344 / 429** | | |
+| **Tổng** | | **379** | **50** | **351 / 429** | | |
 
 ---
 
@@ -528,13 +528,13 @@
 
 **Nhóm F — Khuyến mãi, chat, đánh giá, cài đặt**
 
-- [ ] **G11.40** `seller-promotions`
-- [ ] **G11.41** `SellerChatPage`
-- [ ] **G11.42** `seller-reviews`
-- [ ] **G11.43** `seller-settings`
-- [ ] **G11.44** `SecuritySection`
-- [ ] **G11.45** Khóa i18n `seller-promotions.*`, `seller-reviews.*`, `seller-settings.*`
-- [ ] **G11.C6** 🔖 COMMIT `feat(seller-ui): add promotions, chat, reviews and settings screens` · hash: `_______`
+- [x] **G11.40** `seller-promotions`
+- [x] **G11.41** `SellerChatPage`
+- [x] **G11.42** `seller-reviews`
+- [x] **G11.43** `seller-settings`
+- [x] **G11.44** `SecuritySection`
+- [x] **G11.45** Khóa i18n `seller-promotions.*`, `seller-reviews.*`, `seller-settings.*`
+- [x] **G11.C6** 🔖 COMMIT `feat(seller-ui): add promotions, chat, reviews and settings screens` · hash: `543719a`
 
 ## G12 — Admin Portal (SPA `/admin/*`)
 
@@ -837,6 +837,11 @@
 | G11.35 | `WithdrawModal`: OTP dùng lại `StepUpOtp` + `useRequestStepUp` của feature account (xuất qua `account/index.ts`; `StepUpPurpose` thêm `WITHDRAWAL`, `PAYOUT_ACCOUNT_UPDATE`, `PAYOUT_ACCOUNT_DELETE`) thay ô nhập 6 số tự làm của prototype; có gửi lại mã. Chưa có tài khoản nhận → liên kết `/settings#payout`. |
 | G11.36–G11.37 | KYC trong `seller-onboarding`: miền (giấy tờ bắt buộc theo loại hình, gom PENDING/AI_PROCESSING/MANUAL_REVIEW, chỉ sửa khi chưa nộp / từ chối / cần bổ sung, kiểm tệp PDF/JPG/PNG ≤ 10 MB, ảnh ≥ 20 KB; zod CCCD 12 số + MST 10 số / 10-3 số); hạ tầng 10.12 (nháp, nộp chỉ gửi giấy tờ mới — giữ bản cũ, yêu cầu nhân viên xem xét). Tệp KYC tải bằng mục đích `KYC_DOCUMENT` — không nén. Nộp xong kho shop chuyển PENDING → khung đổi chip "KYC đang chờ", khóa các mục (đã thử từ shop mới mở). Bỏ bảng "Mô phỏng trạng thái KYC" (D5). Tài khoản nhận tiền (xác minh tên + OTP) theo API thuộc Cài đặt → làm ở G11.43 thay vì trong trang KYC như mô tả plan. |
 | G11.38 | `CameraModal`: `getUserMedia` (camera trước, xem trước lật gương), 3 bước hướng dẫn người thật rồi Chụp → JPEG → tải như ảnh selfie; bị chặn quyền / không có camera → báo lỗi cụ thể, gợi ý tải ảnh lên (đã thử nhánh bị chặn). Nút "Mô phỏng: đã làm xong" của prototype đổi thành "Đã làm xong" (người dùng tự xác nhận; liveness thật do AI Worker chấm). |
+| G11.40 | `seller-promotions`: voucher shop (danh sách + summary 3 chỉ số, tạo / sửa / nhân bản / tắt có xác nhận) theo 10.7; `VoucherFormModal` rhf + zod (mã 6–12 A-Z0-9, % ≤ 100, số lượng, ngày, phạm vi danh mục / sản phẩm + ngoại trừ) — xuất qua index để G12 (voucher sàn) dùng lại. Trùng mã báo dưới ô (GNE-VCH-4092). Đăng ký Flash Sale: sản phẩm đủ điều kiện, giá ≤ 85% giá 30 ngày, suất 1..tồn, danh sách chờ duyệt; `/seller/flash-sales` mở sẵn hộp đăng ký. 3 ô chỉ số dùng `StatTile` như `MiniStat` của prototype. |
+| G11.41 | `SellerChatPage` trong `features/chat`: API `/seller/conversations/**` (bên kia là khách), mock 3 hội thoại prototype; `Bubble` tách ra dùng chung với phía khách (truyền ảnh đại diện + đường dẫn thẻ đơn). Gửi thẻ đơn lấy từ đơn của chính khách đó (`useSellerOrders`). Số tin chưa đọc vào kho dùng chung `sellerChatUnreadStore` → huy hiệu nav + Tổng quan giảm khi đọc (đã thử 5 → 3). Hỏi lại 2 giây thay WebSocket như phía khách. |
+| G11.42 | `seller-reviews`: điểm TB + phân bố, 3 tab có số đếm, phản hồi ≤ 500 ký tự chặn số điện thoại (GNE-SOC-4221), báo cáo dùng lại `reportReview` + lý do của feature reviews (hàm gửi truyền từ UI vào hook để tầng application không phụ thuộc feature khác). |
+| G11.43 | `SettingsPage` (seller-settings): ảnh bìa / logo (SHOP_COVER ≤ 2 MB, SHOP_LOGO ≤ 1 MB), tên đổi 1 lần / 30 ngày (GNE-VND-4091, đã thử), 5 hãng — chặn tắt hãng cuối, freeship; địa chỉ lấy hàng dùng `RegionPicker` của khu tài khoản → "Lưu và Đồng bộ với GHN"; tài khoản nhận tiền: xác minh tên khớp CCCD (GNE-WAL-4222) → OTP `PAYOUT_ACCOUNT_UPDATE` (dùng `StepUpOtp`), xóa có OTP `PAYOUT_ACCOUNT_DELETE`; tự trả lời + "Lưu tin nhắn"; chế độ nghỉ ≤ 30 ngày, còn đơn chưa bàn giao → liệt kê mã đơn (từ kho đơn chung). Bỏ nút "Mô phỏng: đã bàn giao hết" (D5). Sửa lỗi `Switch` dùng chung: khi không có chữ đi kèm vỏ là `<span>` nên bấm không bật / tắt được → luôn là `<label>`. |
+| G11.44 | `SecuritySection`: chip cách đăng nhập (email/mật khẩu, Google) + liên kết quản lý; form mật khẩu dùng lại `PasswordForm` của khu tài khoản (xuất qua index) vì shop chạy trên tài khoản mua hàng của chủ shop. |
 
 ## Nhật ký
 
@@ -866,3 +871,4 @@
 | 2026-11-13 | Seller Center: Đơn hàng (tab, tìm, sắp xếp, xác nhận / từ chối, chuẩn bị, bàn giao 3PL, phiếu gửi hàng, chi tiết) + Trả hàng (48 giờ, bằng chứng, 6 thao tác) (G11 nhóm C) | 93021af |
 | 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
 | 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
+| 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |
