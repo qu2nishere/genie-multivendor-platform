@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P06b (16 / 23 lượt); lượt kế: P06c |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P06c (17 / 23 lượt); lượt kế: P07 |
 
 ---
 
@@ -258,10 +258,10 @@
 - [x] 8 repository.
 
 **Lượt 6c — Migration `V6__payment.sql`**
-- [ ] Thứ tự: `payment_transactions` → `payment_refunds` → `escrow_ledgers` → `vendor_wallets` → `wallet_transactions` → `withdrawal_requests` → `financial_ledger` → `cod_remittances`.
-- [ ] Index 13.1: `UNIQUE payment_transactions(idempotency_key)`, `UNIQUE (gateway_transaction_id)`, partial `escrow_ledgers(status, release_eligible_at) WHERE status = 'HELD'`.
-- [ ] FK nợ: `payment_refunds.refund_request_id` → `refund_requests` (để lại cho V8 — mục 5).
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `payment_transactions` → `payment_refunds` → `escrow_ledgers` → `vendor_wallets` → `wallet_transactions` → `withdrawal_requests` → `financial_ledger` → `cod_remittances`.
+- [x] Index 13.1: `UNIQUE payment_transactions(idempotency_key)`, `UNIQUE (gateway_transaction_id)`, partial `escrow_ledgers(status, release_eligible_at) WHERE status = 'HELD'`.
+- [x] FK nợ: `payment_refunds.refund_request_id` → `refund_requests` (để lại cho V8 — mục 5).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -414,7 +414,7 @@
 | [x] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
 | [x] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
 | [x] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
-| [ ] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
+| [x] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
 | [ ] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
 | [ ] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
 | [ ] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
@@ -445,4 +445,5 @@
 | 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | `edb5958` | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
 | 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | `4b21972` | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
 | 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | `a489e42` | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
-| 16 | 2026-11-14 | P06b | `feature/entity-p06b-wallet-cod` (từ `feature/entity-p06a-payment-escrow`) | (lượt sau điền) | Entity `VendorWallet`, `WalletTransaction`, `WithdrawalRequest` (payment.wallet), `CodRemittance` (shipping.cod); enum `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus`, `CodRemittanceStatus`, `CarrierType` (tạo sớm ở shipping.shipment); 4 repository (đủ 8 của Phase 6) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 8/10/12/12, PT 6/3/4/1 khớp | Xong. `WithdrawalRequest` đặt ở `payment.wallet` theo checklist; `CarrierType` tạo ở lượt này vì `CodRemittance` dùng |
+| 16 | 2026-11-14 | P06b | `feature/entity-p06b-wallet-cod` (từ `feature/entity-p06a-payment-escrow`) | `ac3ef65` | Entity `VendorWallet`, `WalletTransaction`, `WithdrawalRequest` (payment.wallet), `CodRemittance` (shipping.cod); enum `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus`, `CodRemittanceStatus`, `CarrierType` (tạo sớm ở shipping.shipment); 4 repository (đủ 8 của Phase 6) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 8/10/12/12, PT 6/3/4/1 khớp | Xong. `WithdrawalRequest` đặt ở `payment.wallet` theo checklist; `CarrierType` tạo ở lượt này vì `CodRemittance` dùng |
+| 17 | 2026-11-14 | P06c | `feature/entity-p06c-payment-migration` (từ `feature/entity-p06b-wallet-cod`) | (lượt sau điền) | `V6__payment.sql`: 8 bảng, CHECK enum, CHECK XOR `order_id`/`checkout_session_id`, UNIQUE `gateway_transaction_id`, partial index escrow `HELD`, 10 FK; UNIQUE từ entity (`escrow_ledgers.order_id`, `vendor_wallets.vendor_id`, `cod_remittances.bank_reference`…) | V1–V6 trên `postgres:16` ✔ (47 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. FK mềm không tạo constraint: `withdrawal_requests.wallet_id`, `processed_by_admin_id`, `cod_remittances.reconciled_by_staff_id`. FK nợ `payment_refunds.refund_request_id` để V8 |
