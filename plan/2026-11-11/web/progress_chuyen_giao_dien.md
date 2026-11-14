@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11; Seller Center trên `feature/seller-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A; Admin Portal trên `feature/admin-ui` |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 8 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **351 / 429** | | |
+| **Tổng** | | **379** | **50** | **359 / 429** | | |
 
 ---
 
@@ -541,14 +541,14 @@
 
 **Nhóm A — Khung SPA & phân quyền**
 
-- [ ] **G12.01** Router
-- [ ] **G12.02** `AdminApp.tsx`
-- [ ] **G12.03** Layout Admin
-- [ ] **G12.04** Chặn route
-- [ ] **G12.05** Huy hiệu số việc chờ
-- [ ] **G12.06** `pages/admin/[...path].astro`
-- [ ] **G12.07** Khóa i18n `admin.shell.*`, tên 13 quyền `admin.perm.*`
-- [ ] **G12.C1** 🔖 COMMIT `feat(admin-ui): scaffold admin portal shell with permission gating` · hash: `_______`
+- [x] **G12.01** Router
+- [x] **G12.02** `AdminApp.tsx`
+- [x] **G12.03** Layout Admin
+- [x] **G12.04** Chặn route
+- [x] **G12.05** Huy hiệu số việc chờ
+- [x] **G12.06** `pages/admin/[...path].astro`
+- [x] **G12.07** Khóa i18n `admin.shell.*`, tên 13 quyền `admin.perm.*`
+- [x] **G12.C1** 🔖 COMMIT `feat(admin-ui): scaffold admin portal shell with permission gating` · hash: `68cc825`
 
 **Nhóm B — Tổng quan, KYC**
 
@@ -872,3 +872,4 @@
 | 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
 | 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
 | 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |
+| 2026-11-14 | Admin Portal: khung SPA (thanh bên lọc theo quyền, huy hiệu hàng chờ, chuông, 403, 404 nội bộ), `/admin/me`, `/admin/queues`, kho mock admin dùng chung (G12 nhóm A) | 68cc825 |
