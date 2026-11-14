@@ -6,7 +6,7 @@
 import { atom } from 'nanostores';
 import { env } from '@/shared/config/env';
 import { clearUserData } from '@/shared/lib/storage';
-import { PERMISSIONS, type PermissionCode, type Role } from './permissions';
+import { PERMISSIONS, TITLE_PRESETS, type PermissionCode, type Role } from './permissions';
 
 export const LOGGED_IN_COOKIE = 'genie_logged_in';
 
@@ -92,9 +92,41 @@ export const MOCK_STAFF: SessionUser = {
   has_password: true,
 };
 
+/** Nhân viên mẫu theo chức danh (trùng danh sách Phân quyền nhân viên của mock Admin). */
+const MOCK_STAFF_BY_TITLE = {
+  MODERATOR: { id: 7, name: 'Ngô Tấn Phát', email: 'phat.nt@genie.example' },
+  FINANCE_OFFICER: { id: 8, name: 'Trịnh Mỹ Linh', email: 'linh.tm@genie.example' },
+  CS_SPECIALIST: { id: 10, name: 'Hồ Thanh Trúc', email: 'truc.ht@genie.example' },
+} as const;
+type MockStaffTitle = keyof typeof MOCK_STAFF_BY_TITLE;
+
+/**
+ * Mock: đăng nhập /admin bằng nhân viên có chức danh (sessionStorage `genie.mock.staff_title`).
+ * Chỉ dùng cho e2e kiểm phân quyền (G13.16) — không có nút đổi vai trên giao diện (D5).
+ */
+export const MOCK_STAFF_TITLE_KEY = 'genie.mock.staff_title';
+
+function mockStaff(): SessionUser {
+  let title: string | null = null;
+  try {
+    title = sessionStorage.getItem(MOCK_STAFF_TITLE_KEY);
+  } catch {
+    // trình duyệt chặn storage → dùng Admin mẫu
+  }
+  if (!title || !(title in MOCK_STAFF_BY_TITLE)) return MOCK_STAFF;
+  const p = MOCK_STAFF_BY_TITLE[title as MockStaffTitle];
+  return {
+    ...p,
+    avatar_url: null,
+    roles: ['STAFF'],
+    permissions: [...TITLE_PRESETS[title as MockStaffTitle]],
+    has_password: true,
+  };
+}
+
 /** Mock: tài khoản nhân viên tách khỏi tài khoản người mua, chọn theo bề mặt đang mở. */
 export const mockUserFor = (pathname: string): SessionUser =>
-  pathname.startsWith('/admin') ? MOCK_STAFF : MOCK_USER;
+  pathname.startsWith('/admin') ? mockStaff() : MOCK_USER;
 
 let refreshing: Promise<boolean> | null = null;
 

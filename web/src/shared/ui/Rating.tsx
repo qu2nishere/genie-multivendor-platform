@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatNumber } from '@/shared/lib/format';
@@ -89,6 +89,12 @@ export function RatingInput({
   const { t } = useT();
   const [hover, setHover] = useState(0);
   const shown = hover || value;
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  // Phím mũi tên: đổi sao VÀ chuyển focus sang sao mới (mẫu radiogroup WAI-ARIA, G13.14)
+  const move = (n: number) => {
+    onChange(n);
+    refs.current[n - 1]?.focus();
+  };
   return (
     <div
       role="radiogroup"
@@ -99,6 +105,9 @@ export function RatingInput({
       {[1, 2, 3, 4, 5].map((n) => (
         <button
           key={n}
+          ref={(el) => {
+            refs.current[n - 1] = el;
+          }}
           type="button"
           role="radio"
           aria-checked={value === n}
@@ -110,11 +119,11 @@ export function RatingInput({
           onKeyDown={(e) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
               e.preventDefault();
-              onChange(Math.min(5, (value || 0) + 1));
+              move(Math.min(5, (value || 0) + 1));
             }
             if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
               e.preventDefault();
-              onChange(Math.max(1, (value || 2) - 1));
+              move(Math.max(1, (value || 2) - 1));
             }
           }}
           className="p-0.5 rounded-sm bg-transparent border-0 cursor-pointer focus-visible:outline-none focus-visible:shadow-focus disabled:cursor-not-allowed"
