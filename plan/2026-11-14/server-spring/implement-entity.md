@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P06a (15 / 23 lượt); lượt kế: P06b |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P06b (16 / 23 lượt); lượt kế: P06c |
 
 ---
 
@@ -249,13 +249,13 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `VendorWallet` (L4333) | `payment.wallet.domain` | 8 | 6 | ✔ | |
-| [ ] | `WalletTransaction` (L4447) | `payment.wallet.domain` | 10 | 3 | | 2 factory `static debit/credit(VendorWallet …)` |
-| [ ] | `WithdrawalRequest` (L4544) | `payment.wallet.domain` | 12 | 4 | | Đặt ở `payment` (sở hữu tiền); `admin.payout` gọi qua facade. Ghi mục 6 nếu muốn đổi |
-| [ ] | `CodRemittance` (L4772) | `shipping.cod.domain` | 12 | 1 | | Dùng `CarrierType` của `shipping.shipment.domain` (cùng module) — nếu Phase 7 chưa làm, tạo enum đó ngay ở đây |
+| [x] | `VendorWallet` (L4333) | `payment.wallet.domain` | 8 | 6 | ✔ | |
+| [x] | `WalletTransaction` (L4447) | `payment.wallet.domain` | 10 | 3 | | 2 factory `static debit/credit(VendorWallet …)` |
+| [x] | `WithdrawalRequest` (L4544) | `payment.wallet.domain` | 12 | 4 | | Đặt ở `payment` (sở hữu tiền); `admin.payout` gọi qua facade. Ghi mục 6 nếu muốn đổi |
+| [x] | `CodRemittance` (L4772) | `shipping.cod.domain` | 12 | 1 | | Dùng `CarrierType` của `shipping.shipment.domain` (cùng module) — nếu Phase 7 chưa làm, tạo enum đó ngay ở đây |
 
-- [ ] Enum: `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus` (payment.wallet) · `CodRemittanceStatus` (shipping.cod).
-- [ ] 8 repository.
+- [x] Enum: `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus` (payment.wallet) · `CodRemittanceStatus` (shipping.cod).
+- [x] 8 repository.
 
 **Lượt 6c — Migration `V6__payment.sql`**
 - [ ] Thứ tự: `payment_transactions` → `payment_refunds` → `escrow_ledgers` → `vendor_wallets` → `wallet_transactions` → `withdrawal_requests` → `financial_ledger` → `cod_remittances`.
@@ -413,7 +413,7 @@
 | [x] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
 | [x] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
 | [x] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
-| [ ] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
+| [x] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
 | [ ] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
 | [ ] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
 | [ ] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
@@ -444,4 +444,5 @@
 | 12 | 2026-11-14 | P05a | `feature/entity-p05a-order-aggregate` (từ `feature/entity-p04c-promotion-migration`) | `563b3b9` | Thay stub `Order`, `OrderStatus`, `OrderRepository`; thêm enum `FundingStatus` | `compile` ✔, `ModuleBoundaryTest` ✔; 33 trường, 22 PT (kể cả `transitionTo`, `isCod` private), hằng `ALLOWED` 14/14 entry khớp ENTITY.md | Xong. D2: bỏ `vendorProfile` (→ `vendor`). `paymentMethod` / `paymentStatus` dùng enum ở `common.domain` (D3) |
 | 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | `edb5958` | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
 | 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | `4b21972` | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
-| 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | (lượt sau điền) | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
+| 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | `a489e42` | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
+| 16 | 2026-11-14 | P06b | `feature/entity-p06b-wallet-cod` (từ `feature/entity-p06a-payment-escrow`) | (lượt sau điền) | Entity `VendorWallet`, `WalletTransaction`, `WithdrawalRequest` (payment.wallet), `CodRemittance` (shipping.cod); enum `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus`, `CodRemittanceStatus`, `CarrierType` (tạo sớm ở shipping.shipment); 4 repository (đủ 8 của Phase 6) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 8/10/12/12, PT 6/3/4/1 khớp | Xong. `WithdrawalRequest` đặt ở `payment.wallet` theo checklist; `CarrierType` tạo ở lượt này vì `CodRemittance` dùng |
