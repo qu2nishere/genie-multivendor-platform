@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–E; Admin Portal trên `feature/admin-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–F; Admin Portal trên `feature/admin-ui` |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 36 / 52 | — | `feature/admin-ui` |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 44 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **387 / 429** | | |
+| **Tổng** | | **379** | **50** | **395 / 429** | | |
 
 ---
 
@@ -592,14 +592,14 @@
 
 **Nhóm F — Marketing**
 
-- [ ] **G12.32** `admin-marketing` voucher
-- [ ] **G12.33** `PlatformVouchersPage` + `PlatformVoucherModal`
-- [ ] **G12.34** `FlashSalePage`
-- [ ] **G12.35** Banner miền
-- [ ] **G12.36** `BannersPage`
-- [ ] **G12.37** `PlatformNotificationsPage`
-- [ ] **G12.38** Khóa i18n `admin-marketing.*`
-- [ ] **G12.C6** 🔖 COMMIT `feat(admin-ui): add voucher, flash sale, banner and notification screens` · hash: `_______`
+- [x] **G12.32** `admin-marketing` voucher
+- [x] **G12.33** `PlatformVouchersPage` + `PlatformVoucherModal`
+- [x] **G12.34** `FlashSalePage`
+- [x] **G12.35** Banner miền
+- [x] **G12.36** `BannersPage`
+- [x] **G12.37** `PlatformNotificationsPage`
+- [x] **G12.38** Khóa i18n `admin-marketing.*`
+- [x] **G12.C6** 🔖 COMMIT `feat(admin-ui): add voucher, flash sale, banner and notification screens` · hash: `c070b95`
 
 **Nhóm G — Hệ thống**
 
@@ -861,6 +861,12 @@
 | G12.28 | `LedgerPage`: tìm (debounce 300 ms) + lọc sự kiện theo enum 11.9, phân trang con trỏ 50 dòng với "Tải thêm" (`useInfiniteQuery`); Xuất sổ cái tạo CSV phía client từ mọi dòng khớp bộ lọc (API `/ledger-entries/export` dùng khi nối backend — G13.20). |
 | G12.29 | `domain/cod.rules.ts`: `parseCodCsv` (bỏ BOM, tiêu đề, dòng trống; trả số dòng sai định dạng), `matchLine`, `reconcile` (cân = tổng tiền − phí = số SePay đã nhận), `canConfirm` + test 2 phiên mẫu (GHN cân 2 dòng khớp; GHTK cân nhưng có dòng lệch / không tìm thấy). |
 | G12.30 | `CodReconciliationPage`: phiên đang xem trên URL (`?id=`); tải CSV (≤ 1 MB, chỉ .csv) đọc ở client rồi gọi preview 11.7, xác nhận gửi Idempotency-Key; phiên đã xác nhận hiện lại kết quả đã lưu. |
+| G12.32 | `admin-marketing`: kiểu theo 11.14–11.17, quy tắc (tab + thao tác voucher theo trạng thái, % lượt dùng; % giảm Flash + luật ≥ 15%, Lên lịch cần ≥ 1 SP duyệt; vị trí banner, đọc liên kết đích theo route mới, `sitePath` chặn liên kết ngoài miền / `//` / `/\` / `javascript:`, thứ tự kế tiếp theo ô, CTR, trạng thái; tách email, chữ thuần, tỷ lệ đọc) + zod Flash Sale / banner / thông báo + 10 test. `genCode` dùng chung của seller-promotions. |
+| G12.33 | `VoucherFormModal` (G11.40) tách thành `VoucherEditor` dùng chung: nơi gọi cấp dữ liệu + hàm lưu; chế độ `platform` thêm tên chương trình (bắt buộc), nhà tài trợ Genie / Đồng tài trợ + tỷ lệ sàn tài trợ, phạm vi chỉ Toàn sàn / Danh mục, ngày bắt đầu không ở quá khứ khi tạo (`voucherSchemaFor`, test cả 2 chế độ). Seller vẫn dùng `VoucherFormModal` như cũ. Trùng mã → báo dưới ô (đã thử GENIE50); Xoá vĩnh viễn chỉ khi kết thúc và chưa dùng (GNE-VCH-4093). Tổng giảm giá / ngân sách còn lại lấy từ `summary` (mock giữ số prototype). |
+| G12.34 | `FlashSalePage`: chiến dịch đang xem trên URL (`?id=`), tạo chiến dịch rhf + zod (hạn đăng ký phải trước ngày mở), bỏ "Mô phỏng: đến giờ mở bán" (D5 — cron server mở / đóng). |
+| G12.35 | Miền banner nằm ở `domain/marketing.rules.ts` (cùng các quy tắc marketing khác) thay vì file `banner.rules.ts` riêng; đích chuyển sang route mới (/c/…, /p/…-id, /shop/id, /#flash-sale, /discover, /campaign/…). Bộ banner mẫu chuyển sang kho chung `shared/api/mock/banners.ts` — storefront (promotions) và Admin cùng đọc; Admin sửa giữ trong phiên tab, storefront SSR vẫn đọc bộ gốc (khi có backend cùng một bảng). |
+| G12.36 | `BannersPage` + `BannerModal`: ảnh tải qua mục đích mới `BANNER_IMAGE` (thêm vào `upload.rules` cùng `NOTIFICATION_IMAGE` theo API 4.1, nén WebP ≤ 5 MB); ô chọn đích dùng danh mục (`catalog`), sản phẩm (`product.listProducts` + lọc shop), cửa hàng (`shop.listShops` — API thật là `/admin/shops`, ghi G13.20); đủ 8 banner đang hiển thị → lỗi dưới ô Vị trí (GNE-BNR-4221). Cột thao tác dính phải để không bị đẩy khỏi khung khi bảng cuộn ngang. |
+| G12.37 | `PlatformNotificationsPage`: `RichBox` (In đậm / In nghiêng / Liên kết qua hộp nhập URL thay `window.prompt`), `sanitizeHtml` chỉ giữ thẻ ô soạn tạo ra và href http/https — dùng khi lưu và khi hiển thị chi tiết; email người nhận cụ thể kiểm định dạng + email không tồn tại báo dưới ô (GNE-NOT-4221); chỉ sửa được khi còn hẹn giờ (GNE-NOT-4091). |
 
 ## Nhật ký
 
@@ -896,3 +902,4 @@
 | 2026-11-14 | Admin Portal: Trả hàng & Hoàn tiền (phân xử 4 phán quyết, phong tỏa ký quỹ, hoàn tiền Gateway / chuyển khoản tay), Kiểm duyệt đánh giá, Duyệt sản phẩm (hàng chờ, giao người duyệt, cấu hình nhân viên, trang chi tiết + thanh quyết định) (G12 nhóm C) | 7045474 |
 | 2026-11-14 | Admin Portal: Danh mục toàn sàn (4 chỉ số, cây danh mục, chi tiết + hiển thị, thêm / sửa / xóa danh mục, bộ thuộc tính, sản phẩm theo danh mục con: duyệt / từ chối / khóa, đề xuất từ người bán) (G12 nhóm D) | 93b53d5 |
 | 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
+| 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
