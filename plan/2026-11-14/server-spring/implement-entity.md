@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P02a (5 / 23 lượt); lượt kế: P02b |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P02b (6 / 23 lượt); lượt kế: P02c |
 
 ---
 
@@ -133,15 +133,15 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `CategoryAttribute` (L1749) | `catalog.attribute.domain` | 15 | 2 | | Giữ `category` (cùng module) |
-| [ ] | `UserWishlist` (L1716) | `catalog.wishlist.domain` | 4 | 0 | | Chỉ unique constraint |
-| [ ] | `CategoryProposal` (L1972) | `catalog.proposal.domain` | 11 | 2 | | |
-| [ ] | `ProductModerationResult` (L2041) | `catalog.moderation.domain` | 11 | 2 | | Giữ `product`; factory `static fallback` |
-| [ ] | `SearchKeywordStat` (L2116) | `catalog.search.domain` | 6 | 1 | | |
-| [ ] | `ProductViewStat` (L2162) | `catalog.stats.domain` | 8 | 1 | | |
+| [x] | `CategoryAttribute` (L1749) | `catalog.attribute.domain` | 15 | 2 | | Giữ `category` (cùng module) |
+| [x] | `UserWishlist` (L1716) | `catalog.wishlist.domain` | 4 | 0 | | Chỉ unique constraint |
+| [x] | `CategoryProposal` (L1972) | `catalog.proposal.domain` | 11 | 2 | | |
+| [x] | `ProductModerationResult` (L2041) | `catalog.moderation.domain` | 11 | 2 | | Giữ `product`; factory `static fallback` |
+| [x] | `SearchKeywordStat` (L2116) | `catalog.search.domain` | 6 | 1 | | |
+| [x] | `ProductViewStat` (L2162) | `catalog.stats.domain` | 8 | 1 | | |
 
-- [ ] Enum: `AttributeDataType` (catalog.attribute) · `CategoryProposalStatus` (catalog.proposal) · `ModerationDecision` (catalog.moderation) · `TrafficSource` (catalog.stats).
-- [ ] 12 repository.
+- [x] Enum: `AttributeDataType` (catalog.attribute) · `CategoryProposalStatus` (catalog.proposal) · `ModerationDecision` (catalog.moderation) · `TrafficSource` (catalog.stats).
+- [x] 12 repository.
 
 **Lượt 2c — Migration `V2__catalog.sql`**
 - [ ] Thứ tự: `categories` → `category_attributes` → `brands` → `products` → `product_variants` → `product_images` → `product_documents` → `category_proposals` → `product_moderation_results` → `search_keyword_stats` → `product_view_stats` → `user_wishlists`.
@@ -403,7 +403,7 @@
 | [x] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
 | [x] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
 | [x] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
-| [ ] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
+| [x] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
 | [ ] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
 | [ ] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
 | [ ] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
@@ -434,4 +434,5 @@
 | 2 | 2026-11-14 | P01a | `feature/entity-p01a-auth-entities` (từ `feature/entity-p00-shared-enums`) | `2ec68f7` | Entity `User`, `CustomerProfile`, `Address`, `RefreshToken`; enum `AccountStatus`, `Gender`, `AddressLabel`; 4 repository (`auth.profile` / `auth.address` / `auth.token`) | `compile` ✔, `ModuleBoundaryTest` ✔; đếm trường 18/14/16/9, phương thức 7/2/2/2 khớp | Xong. D2: `User` bỏ `vendorProfile`, `adminProfile` (18 trường thay vì 20). `User.addresses` / `refreshTokens` trỏ sang feature khác của cùng module `auth` nên giữ |
 | 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | `b7f3611` | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
 | 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | `42e10b1` | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |
-| 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | (lượt sau điền) | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
+| 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | `a69b974` | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
+| 6 | 2026-11-14 | P02b | `feature/entity-p02b-catalog-support` (từ `feature/entity-p02a-catalog-core`) | (lượt sau điền) | Entity `CategoryAttribute`, `UserWishlist`, `CategoryProposal`, `ProductModerationResult`, `SearchKeywordStat`, `ProductViewStat`; enum `AttributeDataType`, `CategoryProposalStatus`, `ModerationDecision`, `TrafficSource`; 6 repository (đủ 12 repository của Phase 2) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 15/4/11/11/6/8, PT 2/0/2/2/1/1 khớp | Xong. Không có quan hệ chéo module trong lượt này |
