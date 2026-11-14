@@ -124,7 +124,7 @@ CREATE TABLE flash_sale_items (
 -- UserCoin
 CREATE TABLE user_coins (
     user_id BIGINT NOT NULL,
-    balance INT NOT NULL,
+    balance INT NOT NULL DEFAULT 0,
     version BIGINT NOT NULL DEFAULT 0,
     balance_hash VARCHAR(255) NOT NULL,
     last_updated TIMESTAMPTZ NOT NULL,
