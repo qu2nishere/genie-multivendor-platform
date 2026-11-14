@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P05b (13 / 23 lượt); lượt kế: P05c |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P05c (14 / 23 lượt); lượt kế: P06a |
 
 ---
 
@@ -225,10 +225,10 @@
 - [x] Thay nội dung stub repository + tạo `OrderItemRepository`, `OrderDiscountRepository`.
 
 **Lượt 5c — Migration `V5__order.sql`**
-- [ ] Thứ tự: `checkout_sessions` → `orders` → `order_items` → `order_discounts` → `stock_reservations`.
-- [ ] Index 13.1: `orders(customer_id, created_at DESC)`, `orders(vendor_id, status, created_at DESC)`, partial `orders(status, delivered_at) WHERE status = 'DELIVERED'`, partial `stock_reservations(status, expires_at) WHERE status = 'ACTIVE'`.
-- [ ] Trả FK nợ từ V4.
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `checkout_sessions` → `orders` → `order_items` → `order_discounts` → `stock_reservations`.
+- [x] Index 13.1: `orders(customer_id, created_at DESC)`, `orders(vendor_id, status, created_at DESC)`, partial `orders(status, delivered_at) WHERE status = 'DELIVERED'`, partial `stock_reservations(status, expires_at) WHERE status = 'ACTIVE'`.
+- [x] Trả FK nợ từ V4.
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -354,8 +354,8 @@
 | ✓ | Cột (file tạo cột) | Bảng đích | Thêm `ALTER TABLE` ở |
 |---|---|---|---|
 | [x] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
-| [ ] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
-| [ ] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
+| [x] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
+| [x] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
 | [ ] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
 | [ ] | `shipment_trackings.refund_request_id` (V7) | `refund_requests` | cuối V8 |
 | [ ] | *(bổ sung khi phát hiện thêm trong lúc làm)* | | |
@@ -411,7 +411,7 @@
 | [x] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
 | [x] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
 | [x] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
-| [ ] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
+| [x] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
 | [ ] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
 | [ ] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
 | [ ] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
@@ -442,4 +442,5 @@
 | 10 | 2026-11-14 | P04b | `feature/entity-p04b-flashsale-coin` (từ `feature/entity-p04a-voucher`) | `1949682` | Entity `FlashSaleCampaign`, `FlashSaleItem`, `UserCoin`, `CoinTransaction`, `DailyCheckin`; enum `FlashSaleStatus`, `FlashSaleItemStatus`, `CoinTransactionType`; 5 repository (đủ 12 repository của Phase 4) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/9/5/8/4, PT 4/5/3/2/1 khớp | Xong. `UserCoin.verifyHash` cần import `MessageDigest`, `StandardCharsets` (ENTITY.md lược import) |
 | 11 | 2026-11-14 | P04c | `feature/entity-p04c-promotion-migration` (từ `feature/entity-p04b-flashsale-coin`) | `8c924bd` | `V4__promotion.sql`: 12 bảng (4 bảng nối PK gộp, `user_coins` PK = `user_id`), CHECK enum, UNIQUE `(voucher_id, checkout_session_id)`, `(user_id, voucher_id)`, 19 FK (bảng nối CASCADE theo voucher) | V1–V4 trên `postgres:16` ✔ (34 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. 2 FK nợ `voucher_usages.checkout_session_id`, `voucher_usages.order_id` để V5 |
 | 12 | 2026-11-14 | P05a | `feature/entity-p05a-order-aggregate` (từ `feature/entity-p04c-promotion-migration`) | `563b3b9` | Thay stub `Order`, `OrderStatus`, `OrderRepository`; thêm enum `FundingStatus` | `compile` ✔, `ModuleBoundaryTest` ✔; 33 trường, 22 PT (kể cả `transitionTo`, `isCod` private), hằng `ALLOWED` 14/14 entry khớp ENTITY.md | Xong. D2: bỏ `vendorProfile` (→ `vendor`). `paymentMethod` / `paymentStatus` dùng enum ở `common.domain` (D3) |
-| 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | (lượt sau điền) | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
+| 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | `edb5958` | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
+| 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | (lượt sau điền) | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
