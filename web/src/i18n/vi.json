@@ -3646,5 +3646,157 @@
         "unlock": "Đã mở khóa sản phẩm."
       }
     }
+  },
+  "admin-finance": {
+    "withdrawals": {
+      "kpi": {
+        "pending": "Chờ xử lý",
+        "requests": "{count} yêu cầu",
+        "payable": "Có thể chi ngay",
+        "blocked": "Bị chặn chờ hồ sơ KYC"
+      },
+      "col": {
+        "code": "Mã",
+        "shop": "Người bán",
+        "account": "Tài khoản nhận",
+        "amount": "Số tiền",
+        "requested": "Yêu cầu",
+        "action": "Thao tác"
+      },
+      "kyc": {
+        "VERIFIED": "Đã duyệt",
+        "SUPPLEMENT_REQUESTED": "Cần bổ sung",
+        "PENDING": "Chờ duyệt",
+        "REJECTED": "Bị từ chối"
+      },
+      "verified_account": "Đã xác minh chính chủ",
+      "state": {
+        "completed": "Đã chi",
+        "rejected": "Đã từ chối, hoàn ví",
+        "awaiting": "Chờ chuyển khoản",
+        "blocked": "Chặn, hồ sơ KYC cần bổ sung"
+      },
+      "reject": "Từ chối",
+      "approve": "Duyệt chi",
+      "approve_title": "Duyệt chi lệnh {code}",
+      "approve_desc": "Chuyển {amount} cho {shop} vào tài khoản {account}. Lệnh đã duyệt không thể huỷ, hãy kiểm tra đúng số tiền và tài khoản.",
+      "approve_submit": "Duyệt và mở chuyển khoản",
+      "reject_title": "Từ chối lệnh {code}",
+      "reject_reason": "Lý do từ chối",
+      "reasons": {
+        "ACCOUNT_MISMATCH": "Tài khoản nhận không khớp hồ sơ",
+        "OPEN_DISPUTE": "Shop có khiếu nại đang mở",
+        "SUSPICIOUS": "Nghi ngờ giao dịch bất thường",
+        "OTHER": "Lý do khác"
+      },
+      "note": "Ghi chú cho shop (bắt buộc khi chọn Lý do khác)",
+      "reject_desc": "{amount} sẽ trả lại số dư khả dụng của {shop}.",
+      "reject_submit": "Từ chối & hoàn ví",
+      "rejected": "Đã từ chối lệnh {code}, tiền đã hoàn về ví shop.",
+      "transfer_title": "Chuyển khoản lệnh {code}",
+      "bank": "Tài khoản nhận",
+      "holder": "Chủ tài khoản",
+      "amount": "Số tiền",
+      "content": "Nội dung bắt buộc",
+      "qr_hint": "Quét mã bằng app ngân hàng của sàn. Hệ thống tự hoàn tất khi SePay báo tiền ra khỏi tài khoản.",
+      "manual_link": "Sau 24 giờ chưa thấy webhook? Xác nhận tay",
+      "bank_ref": "Mã giao dịch ngân hàng",
+      "manual_confirm": "Xác nhận tay",
+      "transferred": "Đã chuyển khoản",
+      "completed": "Đã hoàn tất chi lệnh {code}."
+    },
+    "commission": {
+      "default_title": "Phí hoa hồng mặc định",
+      "order": "Thứ tự áp dụng: hoa hồng riêng của shop → theo ngành hàng → mặc định.",
+      "default_label": "Phí sàn (%)",
+      "default_save": "Lưu mặc định",
+      "default_saved": "Đã lưu phí hoa hồng mặc định!",
+      "by_category": "Hoa hồng theo ngành hàng",
+      "use_default": "Đang dùng mặc định {rate}%",
+      "rate_for": "Hoa hồng ngành {name}",
+      "toggle": "Áp dụng hoa hồng riêng cho ngành {name}",
+      "save": "Lưu cấu hình",
+      "saved": "Đã lưu tất cả thay đổi cấu hình",
+      "err": "Tỷ lệ phải từ 0 đến 50%."
+    },
+    "ledger": {
+      "append_only": "Append-only · bất biến",
+      "desc": "Mỗi dòng là một bút toán không thể sửa/xoá. Điều chỉnh = thêm bút toán đảo.",
+      "export": "Xuất sổ cái",
+      "search": "Tìm bút toán",
+      "search_placeholder": "Mã tham chiếu, tài khoản...",
+      "event_filter": "Lọc sự kiện",
+      "all_events": "Tất cả sự kiện",
+      "col": {
+        "time": "Thời gian",
+        "event": "Sự kiện",
+        "ref": "Tham chiếu",
+        "account": "Tài khoản",
+        "debit": "Nợ",
+        "credit": "Có"
+      },
+      "empty": "Không có bút toán nào khớp bộ lọc.",
+      "more": "Tải thêm",
+      "events": {
+        "ESCROW_IN": "Tiền vào ký quỹ",
+        "COMMISSION": "Hoa hồng",
+        "PLATFORM_VOUCHER": "Voucher sàn",
+        "FREESHIP_COST": "Chi phí freeship",
+        "COIN_COST": "Chi phí Điểm",
+        "ESCROW_RELEASE": "Giải ngân ký quỹ",
+        "PAYOUT_ACCRUE": "Ghi có ví shop",
+        "PAYOUT_SETTLE": "Chi rút tiền",
+        "REFUND": "Hoàn tiền",
+        "GATEWAY_FEE": "Phí cổng thanh toán"
+      },
+      "accounts": {
+        "ESCROW_LIABILITY": "Escrow Liability",
+        "PLATFORM_REVENUE": "Platform Revenue",
+        "SELLER_PAYABLE": "Seller Payable",
+        "PLATFORM_EXPENSE": "Platform Expense",
+        "CASH": "Cash"
+      }
+    },
+    "cod": {
+      "sessions": "Phiên đối soát",
+      "sessions_sub": "{count} phiên chờ · {amount} đã về tài khoản sàn",
+      "status": {
+        "WAITING": "Chờ bảng kê",
+        "DONE": "Đã đối soát"
+      },
+      "received": "Đã nhận {amount} từ {carrier}",
+      "sepay": "SePay báo tiền vào lúc {at} · Mã giao dịch",
+      "sample": "Dùng bảng kê mẫu",
+      "upload": "Tải bảng kê CSV",
+      "no_statement": "Chưa có bảng kê. Tải tệp CSV của hãng với 3 cột: mã vận đơn, số tiền, phí thu hộ.",
+      "totals": "{file}: tổng {gross} − phí {fees} = {net}",
+      "balanced": "khớp số tiền đã nhận.",
+      "off": "lệch {diff} so với số tiền đã nhận.",
+      "col": {
+        "tracking": "Mã vận đơn",
+        "order": "Đơn hàng",
+        "statement": "Bảng kê",
+        "on_order": "Trên đơn",
+        "fee": "Phí",
+        "result": "Kết quả"
+      },
+      "result": {
+        "MATCH": "Khớp",
+        "AMOUNT_MISMATCH": "Lệch số tiền",
+        "NOT_FOUND": "Không tìm thấy vận đơn"
+      },
+      "done": "Đã nạp ký quỹ {count} đơn; đơn đã xác nhận hoặc quá 7 ngày được hoàn tất và giải ngân.",
+      "will_fund": "{count} dòng khớp sẽ chuyển ký quỹ sang giữ tiền.",
+      "flagged": "{count} dòng cần xử lý tay với hãng.",
+      "export": "Xuất kết quả",
+      "confirm": "Xác nhận đối soát",
+      "confirmed": "Đã đối soát, nạp ký quỹ {count} đơn.",
+      "err": {
+        "type": "Bảng kê phải là tệp CSV.",
+        "size": "Tệp quá lớn (tối đa 1 MB).",
+        "empty": "Không đọc được dòng nào. Cột cần có: mã vận đơn, số tiền, phí thu hộ.",
+        "rows": "Dòng sai định dạng: {rows}. Kiểm tra mã vận đơn và số tiền."
+      }
+    }
   }
 }

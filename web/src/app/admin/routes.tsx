@@ -38,15 +38,28 @@ const CatProducts = lazy(() =>
   import('@/features/admin-catalog').then((m) => ({ default: m.CategoryProducts })),
 );
 
+const Withdrawals = lazy(() =>
+  import('@/features/admin-finance').then((m) => ({ default: m.WithdrawalsPage })),
+);
+const Commission = lazy(() =>
+  import('@/features/admin-finance').then((m) => ({ default: m.CommissionPage })),
+);
+const Ledger = lazy(() =>
+  import('@/features/admin-finance').then((m) => ({ default: m.LedgerPage })),
+);
+const Cod = lazy(() =>
+  import('@/features/admin-finance').then((m) => ({ default: m.CodReconciliationPage })),
+);
+
 export const adminRoutes: AdminRoute[] = [
   { path: '/', section: 'overview', screen: Dashboard },
   { path: '/kyc', section: 'kyc', screen: Kyc },
   { path: '/refunds', section: 'refunds', screen: Refunds },
   { path: '/reviews', section: 'reviews', screen: Reviews },
-  { path: '/withdrawals', section: 'withdrawals', screen: Pending },
-  { path: '/cod-reconciliation', section: 'cod', screen: Pending },
-  { path: '/commission', section: 'commission', screen: Pending },
-  { path: '/ledger', section: 'ledger', screen: Pending },
+  { path: '/withdrawals', section: 'withdrawals', screen: Withdrawals },
+  { path: '/cod-reconciliation', section: 'cod', screen: Cod },
+  { path: '/commission', section: 'commission', screen: Commission },
+  { path: '/ledger', section: 'ledger', screen: Ledger },
   { path: '/audit-logs', section: 'audit', screen: Pending },
   { path: '/catalog', section: 'catalog', screen: Catalog },
   { path: '/catalog/:id/attributes', section: 'catalog', screen: Attributes },

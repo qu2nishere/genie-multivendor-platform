@@ -3646,5 +3646,157 @@
         "unlock": "Product unlocked."
       }
     }
+  },
+  "admin-finance": {
+    "withdrawals": {
+      "kpi": {
+        "pending": "Pending",
+        "requests": "{count} requests",
+        "payable": "Ready to pay",
+        "blocked": "Blocked pending KYC"
+      },
+      "col": {
+        "code": "Code",
+        "shop": "Seller",
+        "account": "Payout account",
+        "amount": "Amount",
+        "requested": "Requested",
+        "action": "Action"
+      },
+      "kyc": {
+        "VERIFIED": "Approved",
+        "SUPPLEMENT_REQUESTED": "Needs documents",
+        "PENDING": "Pending",
+        "REJECTED": "Rejected"
+      },
+      "verified_account": "Ownership verified",
+      "state": {
+        "completed": "Paid",
+        "rejected": "Rejected, refunded to wallet",
+        "awaiting": "Awaiting transfer",
+        "blocked": "Blocked, KYC needs documents"
+      },
+      "reject": "Reject",
+      "approve": "Approve payout",
+      "approve_title": "Approve payout {code}",
+      "approve_desc": "Transfer {amount} to {shop} at {account}. Approved payouts cannot be cancelled, check the amount and account.",
+      "approve_submit": "Approve and open transfer",
+      "reject_title": "Reject payout {code}",
+      "reject_reason": "Rejection reason",
+      "reasons": {
+        "ACCOUNT_MISMATCH": "Payout account doesn't match the dossier",
+        "OPEN_DISPUTE": "Shop has an open dispute",
+        "SUSPICIOUS": "Suspicious transaction",
+        "OTHER": "Other reason"
+      },
+      "note": "Note to the shop (required for Other reason)",
+      "reject_desc": "{amount} will return to {shop}'s available balance.",
+      "reject_submit": "Reject & refund wallet",
+      "rejected": "Payout {code} rejected, money returned to the shop wallet.",
+      "transfer_title": "Transfer for {code}",
+      "bank": "Payout account",
+      "holder": "Account holder",
+      "amount": "Amount",
+      "content": "Required reference",
+      "qr_hint": "Scan with the platform's banking app. It completes automatically when SePay reports the money left the account.",
+      "manual_link": "No webhook after 24 hours? Confirm manually",
+      "bank_ref": "Bank transaction reference",
+      "manual_confirm": "Confirm manually",
+      "transferred": "Transferred",
+      "completed": "Payout {code} completed."
+    },
+    "commission": {
+      "default_title": "Default commission",
+      "order": "Applied in order: shop-specific rate → category rate → default.",
+      "default_label": "Platform fee (%)",
+      "default_save": "Save default",
+      "default_saved": "Default commission saved!",
+      "by_category": "Commission by category",
+      "use_default": "Using the default {rate}%",
+      "rate_for": "Commission for {name}",
+      "toggle": "Use a specific rate for {name}",
+      "save": "Save settings",
+      "saved": "All settings saved",
+      "err": "Rate must be between 0 and 50%."
+    },
+    "ledger": {
+      "append_only": "Append-only · immutable",
+      "desc": "Every row is an entry that can't be edited or deleted. Adjust by adding a reversing entry.",
+      "export": "Export ledger",
+      "search": "Search entries",
+      "search_placeholder": "Reference, account...",
+      "event_filter": "Filter by event",
+      "all_events": "All events",
+      "col": {
+        "time": "Time",
+        "event": "Event",
+        "ref": "Reference",
+        "account": "Account",
+        "debit": "Debit",
+        "credit": "Credit"
+      },
+      "empty": "No entries match the filters.",
+      "more": "Load more",
+      "events": {
+        "ESCROW_IN": "Escrow in",
+        "COMMISSION": "Commission",
+        "PLATFORM_VOUCHER": "Platform voucher",
+        "FREESHIP_COST": "Free-shipping cost",
+        "COIN_COST": "Points cost",
+        "ESCROW_RELEASE": "Escrow release",
+        "PAYOUT_ACCRUE": "Shop wallet credit",
+        "PAYOUT_SETTLE": "Payout settled",
+        "REFUND": "Refund",
+        "GATEWAY_FEE": "Gateway fee"
+      },
+      "accounts": {
+        "ESCROW_LIABILITY": "Escrow Liability",
+        "PLATFORM_REVENUE": "Platform Revenue",
+        "SELLER_PAYABLE": "Seller Payable",
+        "PLATFORM_EXPENSE": "Platform Expense",
+        "CASH": "Cash"
+      }
+    },
+    "cod": {
+      "sessions": "Reconciliation sessions",
+      "sessions_sub": "{count} pending · {amount} received in the platform account",
+      "status": {
+        "WAITING": "Awaiting statement",
+        "DONE": "Reconciled"
+      },
+      "received": "Received {amount} from {carrier}",
+      "sepay": "SePay reported the deposit at {at} · Transaction",
+      "sample": "Use sample statement",
+      "upload": "Upload CSV statement",
+      "no_statement": "No statement yet. Upload the carrier's CSV with 3 columns: tracking code, amount, COD fee.",
+      "totals": "{file}: total {gross} − fees {fees} = {net}",
+      "balanced": "matches the amount received.",
+      "off": "off by {diff} from the amount received.",
+      "col": {
+        "tracking": "Tracking code",
+        "order": "Order",
+        "statement": "Statement",
+        "on_order": "On order",
+        "fee": "Fee",
+        "result": "Result"
+      },
+      "result": {
+        "MATCH": "Match",
+        "AMOUNT_MISMATCH": "Amount mismatch",
+        "NOT_FOUND": "Shipment not found"
+      },
+      "done": "Escrow funded for {count} orders; confirmed or 7-day-old orders are completed and released.",
+      "will_fund": "{count} matched rows will move escrow to held.",
+      "flagged": "{count} rows need manual follow-up with the carrier.",
+      "export": "Export result",
+      "confirm": "Confirm reconciliation",
+      "confirmed": "Reconciled, escrow funded for {count} orders.",
+      "err": {
+        "type": "The statement must be a CSV file.",
+        "size": "File too large (1 MB max).",
+        "empty": "No rows could be read. Columns needed: tracking code, amount, COD fee.",
+        "rows": "Malformed rows: {rows}. Check the tracking code and amount."
+      }
+    }
   }
 }
