@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-13 — xong G00–G09 và G10 (trang người mua); trên nhánh `feature/web-buyer` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11; Seller Center trên `feature/seller-ui` |
 
 **Cách dùng**
 
@@ -43,10 +43,10 @@
 | G08 | Storefront công khai (SSR + islands) | 54 | 7 | 61 / 61 | — | `feature/web-storefront-public` |
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
-| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 0 / 51 |  |  |
+| G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 0 / 52 |  |  |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **300 / 429** | | |
+| **Tổng** | | **379** | **50** | **351 / 429** | | |
 
 ---
 
@@ -469,72 +469,72 @@
 
 **Nhóm A — Khung SPA**
 
-- [ ] **G11.01** Router
-- [ ] **G11.02** `SellerApp.tsx`
-- [ ] **G11.03** Layout Seller
-- [ ] **G11.04** `NotifBell`, `AccountMenu`, `SellerSearch`
-- [ ] **G11.05** `KycGate`
-- [ ] **G11.06** `pages/seller/[...path].astro`
-- [ ] **G11.07** Hạ tầng shop người bán
-- [ ] **G11.08** Khóa i18n `seller.shell.*`
-- [ ] **G11.C1** 🔖 COMMIT `feat(seller-ui): scaffold seller center shell and routing` · hash: `_______`
+- [x] **G11.01** Router
+- [x] **G11.02** `SellerApp.tsx`
+- [x] **G11.03** Layout Seller
+- [x] **G11.04** `NotifBell`, `AccountMenu`, `SellerSearch`
+- [x] **G11.05** `KycGate`
+- [x] **G11.06** `pages/seller/[...path].astro`
+- [x] **G11.07** Hạ tầng shop người bán
+- [x] **G11.08** Khóa i18n `seller.shell.*`
+- [x] **G11.C1** 🔖 COMMIT `feat(seller-ui): scaffold seller center shell and routing` · hash: `e1de77b`
 
 **Nhóm B — Tổng quan & phân tích**
 
-- [ ] **G11.09** `seller-dashboard` miền + mock
-- [ ] **G11.10** `OverviewPage`
-- [ ] **G11.11** `seller-analytics`
-- [ ] **G11.12** Khóa i18n `seller-dashboard.*`, `seller-analytics.*`
-- [ ] **G11.C2** 🔖 COMMIT `feat(seller-ui): add overview and analytics screens` · hash: `_______`
+- [x] **G11.09** `seller-dashboard` miền + mock
+- [x] **G11.10** `OverviewPage`
+- [x] **G11.11** `seller-analytics`
+- [x] **G11.12** Khóa i18n `seller-dashboard.*`, `seller-analytics.*`
+- [x] **G11.C2** 🔖 COMMIT `feat(seller-ui): add overview and analytics screens` · hash: `428eaa8`
 
 **Nhóm C — Đơn hàng & trả hàng**
 
-- [ ] **G11.13** `seller-orders` miền
-- [ ] **G11.14** Hạ tầng
-- [ ] **G11.15** `FulfillmentPage`
-- [ ] **G11.16** Xác nhận / từ chối đơn có lý do
-- [ ] **G11.17** Đóng gói & tạo vận đơn
-- [ ] **G11.18** `ReturnsPage`
-- [ ] **G11.19** Khóa i18n `seller-orders.*`
-- [ ] **G11.C3** 🔖 COMMIT `feat(seller-ui): add order fulfillment and returns screens` · hash: `_______`
+- [x] **G11.13** `seller-orders` miền
+- [x] **G11.14** Hạ tầng
+- [x] **G11.15** `FulfillmentPage`
+- [x] **G11.16** Xác nhận / từ chối đơn có lý do
+- [x] **G11.17** Đóng gói & tạo vận đơn
+- [x] **G11.18** `ReturnsPage`
+- [x] **G11.19** Khóa i18n `seller-orders.*`
+- [x] **G11.C3** 🔖 COMMIT `feat(seller-ui): add order fulfillment and returns screens` · hash: `93021af`
 
 **Nhóm D — Sản phẩm**
 
-- [ ] **G11.20** `seller-products` miền
-- [ ] **G11.21** Hạ tầng
-- [ ] **G11.22** `ProductsPage`
-- [ ] **G11.23** `ProductEditor` khung
-- [ ] **G11.24** `ImageUpload`
-- [ ] **G11.25** `BasicInfo`
-- [ ] **G11.26** `SpecsTable`
-- [ ] **G11.27** `RichDescription`
-- [ ] **G11.28** `VariantSection`
-- [ ] **G11.29** `ShippingInfo`
-- [ ] **G11.30** `LegalDocs`
-- [ ] **G11.31** `VendorCatalogPage`
-- [ ] **G11.32** Khóa i18n `seller-products.*`
-- [ ] **G11.C4** 🔖 COMMIT `feat(seller-ui): add product list, editor and catalog screens` · hash: `_______`
+- [x] **G11.20** `seller-products` miền
+- [x] **G11.21** Hạ tầng
+- [x] **G11.22** `ProductsPage`
+- [x] **G11.23** `ProductEditor` khung
+- [x] **G11.24** `ImageUpload`
+- [x] **G11.25** `BasicInfo`
+- [x] **G11.26** `SpecsTable`
+- [x] **G11.27** `RichDescription`
+- [x] **G11.28** `VariantSection`
+- [x] **G11.29** `ShippingInfo`
+- [x] **G11.30** `LegalDocs`
+- [x] **G11.31** `VendorCatalogPage`
+- [x] **G11.32** Khóa i18n `seller-products.*`
+- [x] **G11.C4** 🔖 COMMIT `feat(seller-ui): add product list, editor and catalog screens` · hash: `2a33c6b`
 
 **Nhóm E — Ví, KYC**
 
-- [ ] **G11.33** `seller-wallet` miền + hạ tầng
-- [ ] **G11.34** `WalletPage`
-- [ ] **G11.35** `WithdrawModal`
-- [ ] **G11.36** `seller-onboarding` miền + hạ tầng KYC
-- [ ] **G11.37** `OnboardingPage`
-- [ ] **G11.38** `CameraModal`
-- [ ] **G11.39** Khóa i18n `seller-wallet.*`, `seller-onboarding.kyc.*`
-- [ ] **G11.C5** 🔖 COMMIT `feat(seller-ui): add wallet and kyc onboarding screens` · hash: `_______`
+- [x] **G11.33** `seller-wallet` miền + hạ tầng
+- [x] **G11.34** `WalletPage`
+- [x] **G11.35** `WithdrawModal`
+- [x] **G11.36** `seller-onboarding` miền + hạ tầng KYC
+- [x] **G11.37** `OnboardingPage`
+- [x] **G11.38** `CameraModal`
+- [x] **G11.39** Khóa i18n `seller-wallet.*`, `seller-onboarding.kyc.*`
+- [x] **G11.C5** 🔖 COMMIT `feat(seller-ui): add wallet and kyc onboarding screens` · hash: `44c8537`
 
 **Nhóm F — Khuyến mãi, chat, đánh giá, cài đặt**
 
-- [ ] **G11.40** `seller-promotions`
-- [ ] **G11.41** `SellerChatPage`
-- [ ] **G11.42** `seller-reviews`
-- [ ] **G11.43** `seller-settings`
-- [ ] **G11.44** `SecuritySection`
-- [ ] **G11.45** Khóa i18n `seller-promotions.*`, `seller-reviews.*`, `seller-settings.*`
-- [ ] **G11.C6** 🔖 COMMIT `feat(seller-ui): add promotions, chat, reviews and settings screens` · hash: `_______`
+- [x] **G11.40** `seller-promotions`
+- [x] **G11.41** `SellerChatPage`
+- [x] **G11.42** `seller-reviews`
+- [x] **G11.43** `seller-settings`
+- [x] **G11.44** `SecuritySection`
+- [x] **G11.45** Khóa i18n `seller-promotions.*`, `seller-reviews.*`, `seller-settings.*`
+- [x] **G11.C6** 🔖 COMMIT `feat(seller-ui): add promotions, chat, reviews and settings screens` · hash: `543719a`
 
 ## G12 — Admin Portal (SPA `/admin/*`)
 
@@ -816,6 +816,32 @@
 | G10.64 | `/chat` cần đăng nhập, noindex; `?shop=&product=&order=` mở hội thoại và tự gửi thẻ sản phẩm / thẻ đơn rồi bỏ tham số khỏi URL. Màn hẹp: danh sách → luồng tin có nút quay lại. |
 | G10.65 | `BecomeSeller` (seller-onboarding): form rhf + zod, điền sẵn họ tên / email / SĐT từ phiên, ngành hàng lấy danh mục gốc (SSR), loại hình INDIVIDUAL/HOUSEHOLD/BUSINESS → 9.1 → modal OTP → 9.2 → làm mới token → `/seller/kyc`. Tên shop trùng (GNE-VND-4094) báo ngay dưới ô. Mock bỏ kiểm GNE-VND-4093 (tài khoản mẫu vốn là chủ shop) để trình diễn được luồng. Điều khoản dẫn `/policies/seller-terms`, `/policies/commission-rates` (R16). |
 | G10.66 | `/become-seller` công khai, lập chỉ mục; phần giới thiệu / lợi ích / 3 bước render SSR, chỉ thẻ đăng ký là island. Ở 360px thẻ lợi ích xếp 1 cột (prototype 2 cột chữ bị bó hẹp). Khóa `chat.*`, `seller-onboarding.landing.*` (vi + en). |
+| G11.01–G11.02 | Nhánh `feature/seller-ui` tách từ `feature/web-buyer` (xếp chồng, chưa push). `app/seller/routes.tsx`: bảng route mục 4.3, mỗi màn `lazy`; màn chưa chuyển dùng tạm `Pending` (thay dần ở nhóm B–F); đường dẫn lạ → 404 nội bộ. `SellerApp`: `BrowserRouter basename="/seller"` (bật cờ v7), tải `GET /seller/me` trước — lỗi 403 (chưa có shop) → mời "Đăng ký mở Shop". |
+| G11.03–G11.04 | Khung theo `VendorShell`: mục nav là `NavLink` thật, mục bị khóa là nút `aria-disabled` + toast. Màn hẹp: thanh bên thành dải trên, nav cuộn ngang (như responsive.css prototype). Bỏ bảng "Mô phỏng KYC" (D5). Chuông dùng lại `NotifPanel` (thêm `onSelect`, `seeAllHref`) + modal chi tiết có nút "Mở trang liên quan"; mock chọn bộ thông báo của shop khi đang ở `/seller`. Tìm nhanh debounce 250 ms, từ 2 ký tự (10.1b): bấm đơn → `/seller/orders?q=<mã>`, sản phẩm → form sửa. Ngôn ngữ dùng `<select>` như prototype. |
+| G11.05 | `KycGate`: thông điệp riêng cho chưa nộp / đang chờ (gom PENDING · AI_PROCESSING · MANUAL_REVIEW) / bị từ chối / cần bổ sung; chỉ mở Hồ sơ KYC + Cài đặt (API 0.9). |
+| G11.07 | Ngữ cảnh shop (10.1, 10.1b, tài khoản nhận tiền) đặt ở `features/seller-settings` (feature sở hữu thông tin shop) thay vì một feature mới. Kho mock dùng chung `shared/api/mock/seller.ts` giữ tên shop + trạng thái KYC: mở shop ở `/become-seller` đặt NOT_SUBMITTED → vào Seller Center thấy cổng KYC. |
+| G11.09 | `seller-dashboard`: GET /seller/dashboard (10.2). Mock: hàng "Việc cần làm" + số sản phẩm đếm từ kho dùng chung `shared/api/mock/seller.ts` (thêm `sellerOrdersStore`, `sellerProductsStore` theo prototype) nên xác nhận đơn ở màn Đơn hàng sẽ đổi số ở Tổng quan và huy hiệu nav; tìm nhanh cũng đọc kho này. Đồng hồ mock đứng ở ngày chốt số liệu của bản mẫu (08/06/2026) để "hôm nay / hôm qua" và "còn 12 giờ" khớp prototype. |
+| G11.10 | `OverviewPage` khớp ảnh `vendor-1440/360`. Doanh thu dùng `seller-analytics` (endpoint 10.2 revenue nằm dưới /seller/analytics). "Đơn hàng gần đây" dùng `useSellerOrders({ size: 5 })` của `seller-orders` (đã dựng sớm phần miền + danh sách: kiểu, huy hiệu, tab, mốc thời gian — nhóm C dùng tiếp). Ô việc / nút dẫn route SPA thật (`/orders?tab=NEW`, `/returns`, `/chat`, `/wallet?withdraw=1`). `KycBanner` có làm nhưng thực tế không hiện vì cổng KYC khóa Tổng quan khi chưa VERIFIED (API 0.9). |
+| G11.11 | `StatsPage`: chọn Hôm nay / 7 ngày / 30 ngày / Tùy chọn ngày (chưa đủ ngày → lời nhắc, không giữ số cũ). Prototype không có nút xuất ở màn này; thêm "Xuất CSV" (chỉ số kỳ + kết quả đơn + top sản phẩm) theo plan, dùng `shared/lib/csv.ts` (+test). Tiêu đề khối dùng `<h2>` vì `<h1>` đã ở thanh trên (R18). Mock "Tùy chọn ngày" trả số 30 ngày như prototype. |
+| G11.13–G11.14 | `seller-orders`: miền + danh sách đã dựng sớm ở nhóm B, nhóm này thêm `fulfillment.rules` (thao tác theo trạng thái = `allowed_actions`, lý do từ chối, chọn hãng, thu hộ COD), `fulfillment.schema` (zod), miền trả hàng `refund.*`; test chuyển trạng thái NEW → CONFIRMED → PREPARING → giao hãng và các nút trả hàng. Trạng thái vận đơn dùng bộ chuẩn hóa của API (`IN_TRANSIT`, `DELIVERY_FAILED`…) thay mã GHN thô của prototype (`ghnStatus`). Kho mock thêm `sellerRefundsStore`; mọi thao tác ghi kho chung rồi làm mới mọi truy vấn `['seller', …]` (Tổng quan, huy hiệu nav, tìm nhanh đổi theo — đã thử). |
+| G11.15 | `FulfillmentPage`: tab là `Tabs` điều hướng route SPA (`/orders?tab=`; "Trả hàng" → `/returns`), mặc định "Tất cả" (prototype mở tab "Mới"; nút "Xem tất cả" ở Tổng quan cần tab Tất cả). `?q=` từ tìm nhanh / Tổng quan điền sẵn ô tìm. Có phân trang 10 đơn / trang. Màn hẹp: tab đang chọn tự cuộn vào khung nhìn. |
+| G11.16–G11.17 | Từ chối: react-hook-form + zod, "Lý do khác" bắt buộc ghi chú (nút khóa tới khi nhập). Bàn giao ĐVVC: báo giá từ API (10.3), hãng được chọn đánh dấu, gửi kèm Idempotency-Key, xong mở ngay Phiếu gửi hàng; "In" dùng `window.print()` như prototype (PDF A6 của hãng để G13). |
+| G11.18 | `ReturnsPage`: lý do trả hàng dùng lại khóa `refunds.reason.*` của phía khách; ảnh bằng chứng là liên kết mở ảnh gốc; "Yêu cầu bổ sung" chỉ 1 lần (ẩn sau khi dùng, mock trả GNE-SUP-4091 nếu gọi lại). Thêm hộp xác nhận cho "Đã nhận hàng hoàn" / "Nhờ Sàn phân xử" (prototype bấm là đổi ngay). |
+| G11.20 | `seller-products` miền: kiểu theo 10.5 (`$ProductInput`), quy tắc ma trận phân loại (`combos` / `syncVariants` giữ giá-tồn-SKU khi sửa nhóm), giới hạn (8 ảnh, 2 nhóm, 50 biến thể, 4 giấy tờ, mô tả 10.000 ký tự, đặt trước 7–30 ngày), `missingSpecs`, `publishIssues`, `requiresReview` (chỉ đổi giá / tồn thì không duyệt lại); zod cho các ô nhập tay + form đề xuất danh mục; 9 test. Thông số bắt buộc / gợi ý và "bắt buộc giấy tờ" lấy từ luật ngành (10.5 listing-rules) thay vì hằng số trong UI như prototype. |
+| G11.21 | Hạ tầng đủ 10.5–10.6 (danh sách có `summary.counts`, chi tiết, lưu nháp / gửi duyệt, ẩn / hiện, xóa, luật ngành, thương hiệu tìm + thêm mới, cây danh mục, đề xuất). Mock: hàng danh sách ở kho dùng chung `sellerProductsStore`, chi tiết form ở kho riêng; gửi duyệt khi shop chưa VERIFIED → GNE-VND-4031, thiếu giấy tờ / thông số → GNE-CAT-4222 / 4223; xóa sản phẩm còn đơn đang xử lý → GNE-CAT-4094 (đã thử với "Tai nghe ANC"). Lớp tải tệp thêm mục đích sản phẩm / shop / KYC theo API 4.1: ảnh sản phẩm nén WebP, giấy tờ sản phẩm + KYC giữ nguyên tệp; `UploadedFile.mediaType` thêm `DOCUMENT`. |
+| G11.22 | `ProductsPage`: tab trạng thái là route `?tab=` có số đếm, thêm ô tìm theo tên (prototype không có), tên sản phẩm là liên kết tới form, Xóa có hộp xác nhận. |
+| G11.23–G11.30 | `ProductEditor` (react-hook-form giữ cả 7 khối): `/products/new`, `/products/:id/edit`; chờ duyệt → chỉ xem; bị từ chối → hiện lý do; rời trang khi đang sửa → hỏi lại (cả `beforeunload`); lỗi gửi duyệt viền đỏ khối + cuộn tới khối đầu tiên. Ảnh: kéo thả + phím ← → / Delete. Mô tả: `contentEditable` như prototype; chèn liên kết dùng hộp nhập URL (thay `window.prompt`), chèn ảnh qua upload DESCRIPTION_IMAGE. Phân loại: ảnh theo giá trị qua VARIANT_IMAGE. Vận chuyển: "Gửi hàng từ" chỉ hiển thị (API lấy từ địa chỉ lấy hàng, không nhận từ client) — giá trị tạm cố định tới khi có Cài đặt (G11.43). |
+| G11.31 | `VendorCatalogPage`: cây 2 cấp + đề xuất; form đề xuất rhf + zod, trùng tên báo ngay dưới ô (GNE-CAT-4091), đủ 5 đề xuất chờ → GNE-CAT-4221. Kiểm thử e2e trên server dev riêng cổng 4330 vì server 4321 đang chạy giữ bản tối ưu dependency cũ (Vite 504 khi tải `browser-image-compression`). |
+| G11.33 | `seller-wallet`: miền (kiểm rút tiền tối thiểu / vượt số dư / chưa có tài khoản, huy hiệu loại + trạng thái theo API 10.10 — thêm `PAYOUT_DONE` thay cho đoán từ chữ "chờ duyệt" như prototype, lọc sổ) + hạ tầng (ví, sổ giao dịch có `available_months`, rút tiền 🔁 🔐). Số dư khả dụng / đang rút đưa vào kho mock dùng chung `sellerMoneyStore` để Tổng quan đổi theo sau khi rút (đã thử). |
+| G11.34 | `WalletPage` khớp bố cục prototype; ngày giờ theo `formatDateTime`; Xuất CSV tạo phía client từ dòng đang xem (cột đúng API export, tên `so-giao-dich-vi-06-2026.csv`); `?withdraw=1` từ nút "Rút tiền" ở Tổng quan mở ngay hộp rút. |
+| G11.35 | `WithdrawModal`: OTP dùng lại `StepUpOtp` + `useRequestStepUp` của feature account (xuất qua `account/index.ts`; `StepUpPurpose` thêm `WITHDRAWAL`, `PAYOUT_ACCOUNT_UPDATE`, `PAYOUT_ACCOUNT_DELETE`) thay ô nhập 6 số tự làm của prototype; có gửi lại mã. Chưa có tài khoản nhận → liên kết `/settings#payout`. |
+| G11.36–G11.37 | KYC trong `seller-onboarding`: miền (giấy tờ bắt buộc theo loại hình, gom PENDING/AI_PROCESSING/MANUAL_REVIEW, chỉ sửa khi chưa nộp / từ chối / cần bổ sung, kiểm tệp PDF/JPG/PNG ≤ 10 MB, ảnh ≥ 20 KB; zod CCCD 12 số + MST 10 số / 10-3 số); hạ tầng 10.12 (nháp, nộp chỉ gửi giấy tờ mới — giữ bản cũ, yêu cầu nhân viên xem xét). Tệp KYC tải bằng mục đích `KYC_DOCUMENT` — không nén. Nộp xong kho shop chuyển PENDING → khung đổi chip "KYC đang chờ", khóa các mục (đã thử từ shop mới mở). Bỏ bảng "Mô phỏng trạng thái KYC" (D5). Tài khoản nhận tiền (xác minh tên + OTP) theo API thuộc Cài đặt → làm ở G11.43 thay vì trong trang KYC như mô tả plan. |
+| G11.38 | `CameraModal`: `getUserMedia` (camera trước, xem trước lật gương), 3 bước hướng dẫn người thật rồi Chụp → JPEG → tải như ảnh selfie; bị chặn quyền / không có camera → báo lỗi cụ thể, gợi ý tải ảnh lên (đã thử nhánh bị chặn). Nút "Mô phỏng: đã làm xong" của prototype đổi thành "Đã làm xong" (người dùng tự xác nhận; liveness thật do AI Worker chấm). |
+| G11.40 | `seller-promotions`: voucher shop (danh sách + summary 3 chỉ số, tạo / sửa / nhân bản / tắt có xác nhận) theo 10.7; `VoucherFormModal` rhf + zod (mã 6–12 A-Z0-9, % ≤ 100, số lượng, ngày, phạm vi danh mục / sản phẩm + ngoại trừ) — xuất qua index để G12 (voucher sàn) dùng lại. Trùng mã báo dưới ô (GNE-VCH-4092). Đăng ký Flash Sale: sản phẩm đủ điều kiện, giá ≤ 85% giá 30 ngày, suất 1..tồn, danh sách chờ duyệt; `/seller/flash-sales` mở sẵn hộp đăng ký. 3 ô chỉ số dùng `StatTile` như `MiniStat` của prototype. |
+| G11.41 | `SellerChatPage` trong `features/chat`: API `/seller/conversations/**` (bên kia là khách), mock 3 hội thoại prototype; `Bubble` tách ra dùng chung với phía khách (truyền ảnh đại diện + đường dẫn thẻ đơn). Gửi thẻ đơn lấy từ đơn của chính khách đó (`useSellerOrders`). Số tin chưa đọc vào kho dùng chung `sellerChatUnreadStore` → huy hiệu nav + Tổng quan giảm khi đọc (đã thử 5 → 3). Hỏi lại 2 giây thay WebSocket như phía khách. |
+| G11.42 | `seller-reviews`: điểm TB + phân bố, 3 tab có số đếm, phản hồi ≤ 500 ký tự chặn số điện thoại (GNE-SOC-4221), báo cáo dùng lại `reportReview` + lý do của feature reviews (hàm gửi truyền từ UI vào hook để tầng application không phụ thuộc feature khác). |
+| G11.43 | `SettingsPage` (seller-settings): ảnh bìa / logo (SHOP_COVER ≤ 2 MB, SHOP_LOGO ≤ 1 MB), tên đổi 1 lần / 30 ngày (GNE-VND-4091, đã thử), 5 hãng — chặn tắt hãng cuối, freeship; địa chỉ lấy hàng dùng `RegionPicker` của khu tài khoản → "Lưu và Đồng bộ với GHN"; tài khoản nhận tiền: xác minh tên khớp CCCD (GNE-WAL-4222) → OTP `PAYOUT_ACCOUNT_UPDATE` (dùng `StepUpOtp`), xóa có OTP `PAYOUT_ACCOUNT_DELETE`; tự trả lời + "Lưu tin nhắn"; chế độ nghỉ ≤ 30 ngày, còn đơn chưa bàn giao → liệt kê mã đơn (từ kho đơn chung). Bỏ nút "Mô phỏng: đã bàn giao hết" (D5). Sửa lỗi `Switch` dùng chung: khi không có chữ đi kèm vỏ là `<span>` nên bấm không bật / tắt được → luôn là `<label>`. |
+| G11.44 | `SecuritySection`: chip cách đăng nhập (email/mật khẩu, Google) + liên kết quản lý; form mật khẩu dùng lại `PasswordForm` của khu tài khoản (xuất qua index) vì shop chạy trên tài khoản mua hàng của chủ shop. |
 
 ## Nhật ký
 
@@ -840,3 +866,9 @@
 | 2026-11-13 | Tài khoản: hồ sơ, đổi email, sổ địa chỉ, mật khẩu (OTP bước 2), liên kết Google, thiết bị, xóa tài khoản (G10 nhóm G) | a6334cd |
 | 2026-11-13 | Kho Voucher, Điểm Genie (điểm danh, đổi quà), yêu thích, shop theo dõi, trung tâm thông báo (G10 nhóm H) | 488581b |
 | 2026-11-13 | Chat với shop (khung chat nổi + trang /chat, hỏi lại định kỳ thay WebSocket) + trang Trở thành Người bán (form, OTP → /seller/kyc) (G10 nhóm I) | 95fc810 |
+| 2026-11-13 | Seller Center: khung SPA (thanh bên, thanh trên, chuông, tìm nhanh, menu tài khoản), router lazy, cổng KYC, 404 nội bộ (G11 nhóm A) | e1de77b |
+| 2026-11-13 | Seller Center: Tổng quan (việc cần làm, doanh thu, tiền của shop, đơn gần đây, đơn 30 ngày, sản phẩm) + Phân tích (4 ô số, tiền thực về shop, kết quả đơn, nguồn truy cập, cảm xúc đánh giá, top sản phẩm, xuất CSV) (G11 nhóm B) | 428eaa8 |
+| 2026-11-13 | Seller Center: Đơn hàng (tab, tìm, sắp xếp, xác nhận / từ chối, chuẩn bị, bàn giao 3PL, phiếu gửi hàng, chi tiết) + Trả hàng (48 giờ, bằng chứng, 6 thao tác) (G11 nhóm C) | 93021af |
+| 2026-11-13 | Seller Center: Sản phẩm (danh sách, form đăng bán 7 khối, ẩn / xóa) + Danh mục toàn sàn (cây, đề xuất); lớp tải tệp thêm mục đích sản phẩm / KYC (G11 nhóm D) | 2a33c6b |
+| 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
+| 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |

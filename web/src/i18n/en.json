@@ -1806,6 +1806,1104 @@
           "desc": "Once VERIFIED, list products and start selling."
         }
       }
+    },
+    "kyc": {
+      "banner": {
+        "NOT_SUBMITTED": {
+          "title": "KYC not submitted",
+          "chip": "Not submitted",
+          "desc": "Complete the form below to unlock listings, orders and your wallet."
+        },
+        "PENDING": {
+          "title": "Your KYC is under review",
+          "chip": "Pending",
+          "desc": "AI is checking your file; flagged files are handled by staff within 24 working hours. You cannot sell until it is approved."
+        },
+        "VERIFIED": {
+          "title": "Your KYC is verified",
+          "chip": "Verified",
+          "desc": "Your account is verified — you can list products and receive payments."
+        },
+        "REJECTED": {
+          "title": "KYC rejected",
+          "chip": "Rejected",
+          "desc": "Reason: {reason}. Please upload again and resubmit."
+        },
+        "SUPPLEMENT_REQUESTED": {
+          "title": "More documents needed",
+          "chip": "Needs documents",
+          "desc": "Please add the requested documents so we can verify your identity.",
+          "deadline": "Deadline: {date}"
+        }
+      },
+      "review": "Ask staff to review",
+      "review_done": "Staff review requested",
+      "review_sent": "Request sent — staff will review your file",
+      "info": "Seller information",
+      "cccd": "Citizen ID number",
+      "cccd_placeholder": "12 digits",
+      "tax": "Tax code (Company / Household)",
+      "rep": "Legal representative",
+      "hint_individual": "Individuals: enter your citizen ID to match the QR code and MRZ on the card.",
+      "hint_business": "Companies / households: enter the representative's citizen ID and the tax code.",
+      "docs_title": "Identity documents",
+      "docs_rule": "PDF / JPG / PNG · < 10MB",
+      "docs": {
+        "ID_FRONT": "Citizen ID front",
+        "ID_BACK": "Citizen ID back",
+        "BUSINESS_LICENSE": "Business registration certificate",
+        "SELFIE": "Portrait photo (selfie)"
+      },
+      "docs_long": {
+        "ID_FRONT": "Chip citizen ID — front (QR code and photo clearly visible)",
+        "ID_BACK": "Chip citizen ID — back (3 MRZ lines clearly visible)",
+        "BUSINESS_LICENSE": "Business registration certificate",
+        "SELFIE": "Portrait photo (selfie)"
+      },
+      "pick_hint": "Click to upload",
+      "upload_for": "Upload {doc}",
+      "choose": "Choose file",
+      "change": "Change",
+      "selfie_hint": "A clear, well-lit photo of your face, no hat or dark glasses",
+      "selfie_done": "Uploaded (encrypted)",
+      "selfie_empty": "Upload a photo or take one with your camera",
+      "consent": "I agree that Genie may process my biometric data for KYC. If I do not agree, automatic face matching is skipped and staff compare the photos manually.",
+      "save_draft": "Save draft",
+      "draft_saved": "Draft saved",
+      "submit": "Submit KYC",
+      "resubmit": "Resubmit",
+      "sent": "Your file was received and is being checked automatically",
+      "sent_manual": "Your file was received. Because you declined biometric processing, staff will compare the photos manually",
+      "sent_toast": "KYC submitted",
+      "err": {
+        "cccd": "The citizen ID must be 12 digits",
+        "tax": "Enter the tax code (10 digits, or 10 + 3 branch digits)",
+        "rep": "Enter the representative's name",
+        "info": "Check the seller information",
+        "missing": "Your file is incomplete: missing {list}.",
+        "file_type": "Wrong format. Only PDF, JPG, PNG (the selfie must be JPG or PNG).",
+        "file_size": "File too large (up to 10 MB)",
+        "file_blurry": "The image is too small or blurry — please take a sharper one."
+      },
+      "camera": {
+        "open": "Take photo",
+        "title": "Take a portrait photo",
+        "preview": "Camera preview",
+        "step": "Liveness check {n}/{total}: {task}",
+        "tasks": {
+          "blink": "Blink twice",
+          "left": "Turn your head left",
+          "right": "Turn your head right"
+        },
+        "did": "Done",
+        "ready": "Checks complete — press Capture to save your photo.",
+        "shoot": "Capture",
+        "err_denied": "Cannot access the camera. Allow camera access in your browser, or upload a photo.",
+        "err_none": "No camera found on this device. Please upload a portrait photo."
+      }
+    }
+  },
+  "seller": {
+    "shell": {
+      "title": "Seller Center",
+      "home": "Seller Center — Overview",
+      "nav_label": "Seller Center navigation",
+      "nav": {
+        "overview": "Overview",
+        "orders": "Orders",
+        "products": "Products",
+        "wallet": "Wallet & Escrow",
+        "kyc": "KYC profile",
+        "catalog": "Platform catalog",
+        "promo": "Promotions",
+        "chat": "Chat",
+        "reviews": "Reviews",
+        "stats": "Analytics",
+        "settings": "Settings"
+      },
+      "badge": "{count} items to handle",
+      "kyc": {
+        "VERIFIED": "Verified",
+        "WAITING": "KYC pending",
+        "NOT_SUBMITTED": "KYC not submitted",
+        "REJECTED": "KYC rejected",
+        "SUPPLEMENT": "KYC needs more documents"
+      },
+      "locked_toast": "Complete KYC verification to use this feature",
+      "sign_out": "Sign out",
+      "help": "Help",
+      "account": "Shop account",
+      "manage_shop": "Manage shop",
+      "buyer_channel": "Buyer channel",
+      "back_to_genie": "Back to Genie",
+      "search": "Search orders, products",
+      "search_placeholder": "Search orders, products…",
+      "search_empty": "No orders or products found.",
+      "search_orders": "Orders",
+      "search_products": "Products",
+      "notif_unread": "Notifications, {count} unread",
+      "notif_detail": "Notification details",
+      "notif_open": "Open related page",
+      "got_it": "Got it",
+      "gate": {
+        "cta": "Go to KYC verification",
+        "locked": {
+          "title": "Feature locked — KYC not verified",
+          "desc": "Complete identity verification (KYC) before listing products, managing orders, the Escrow wallet and other Seller Center features."
+        },
+        "waiting": {
+          "title": "Your KYC is under review",
+          "desc": "Features unlock as soon as your file is approved — usually within 24 working hours. You can still open KYC profile and Settings."
+        },
+        "rejected": {
+          "title": "KYC rejected",
+          "desc": "Your documents did not meet the requirements. Check the rejection reason and resubmit to unlock all seller features."
+        },
+        "supplement": {
+          "title": "KYC needs more documents",
+          "desc": "We need more documents to approve your file. Add them as instructed to unlock all seller features."
+        }
+      },
+      "not_found": {
+        "title": "Page not found",
+        "desc": "This path does not exist in Seller Center.",
+        "back": "Back to Overview"
+      },
+      "no_shop": {
+        "title": "This account has no shop",
+        "desc": "Open a free shop to use Seller Center.",
+        "cta": "Open a shop"
+      }
+    }
+  },
+  "seller-orders": {
+    "status": {
+      "NEW": "To confirm",
+      "CONFIRMED": "Confirmed",
+      "PREPARING": "Preparing",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "shipment": {
+      "AWAITING_PICKUP": "Awaiting pickup",
+      "IN_TRANSIT": "In transit",
+      "OUT_FOR_DELIVERY": "Out for delivery",
+      "DELIVERY_FAILED": "Delivery failed",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    },
+    "when": {
+      "today": "{time} today",
+      "yesterday": "Yesterday",
+      "days": "{count} days ago"
+    },
+    "tabs": {
+      "label": "Filter orders by status",
+      "ALL": "All",
+      "NEW": "New",
+      "TO_PREPARE": "To prepare",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "RETURN": "Returns",
+      "CANCELLED": "Cancelled"
+    },
+    "search": "Search order code, customer",
+    "search_placeholder": "Search order, customer...",
+    "sort": {
+      "label": "Sort",
+      "NEWEST": "Newest",
+      "OLDEST": "Oldest"
+    },
+    "empty": "No orders found.",
+    "card": {
+      "note": "Customer note",
+      "rejected": "Rejected by shop: {reason}",
+      "detail": "Details",
+      "waybill": "Waybill: {code}",
+      "reprint": "Reprint waybill",
+      "total": "Order total:",
+      "reject": "Reject",
+      "confirm": "Confirm",
+      "confirmed": "Order confirmed. The customer has been notified",
+      "prepare": "Prepare",
+      "prepared": "Moved to Preparing",
+      "hand_over": "Ready for the carrier"
+    },
+    "reject": {
+      "title": "Reject order {code}",
+      "reason": "Reason",
+      "reasons": {
+        "OUT_OF_STOCK": "Out of stock",
+        "WRONG_PRICE": "Wrong listed price",
+        "UNSERVICEABLE_AREA": "Cannot deliver to this area",
+        "OTHER": "Other reason"
+      },
+      "note": "Describe the reason",
+      "note_placeholder": "Describe the reason...",
+      "hint": "Rejections count towards your cancellation rate. Orders not confirmed within 24 hours are auto-confirmed and flagged as late.",
+      "submit": "Reject order",
+      "done": "Order rejected. Stock, Points and vouchers were returned and the payment refunded",
+      "done_cod": "Order rejected. Stock, Points and vouchers were returned",
+      "err": {
+        "note": "Enter a reason",
+        "note_long": "Up to 500 characters"
+      }
+    },
+    "detail": {
+      "title": "Order {code}",
+      "loading": "Order details",
+      "placed": "Placed",
+      "recipient": "Recipient",
+      "items": "Items",
+      "paid": "Customer paid",
+      "shipping": "Shipping",
+      "carrier_status": "Carrier status"
+    },
+    "route": {
+      "title": "Request pickup (3PL)",
+      "intro_a": "Genie compares the carriers you enabled and picks the best one for order",
+      "intro_b": ":",
+      "days": "{count} days",
+      "selected": "Selected",
+      "settings_hint": "Turn carriers on or off in Settings → Shipping.",
+      "submit": "Confirm pickup (3PL)",
+      "placing": "Processing...",
+      "done": "Waybill created, the carrier will pick up the parcel"
+    },
+    "waybill": {
+      "title": "Shipping label",
+      "print": "Print label",
+      "partner": "Genie shipping partner",
+      "prepaid": "Prepaid",
+      "cod": "Cash on delivery",
+      "recipient": "Recipient",
+      "address": "Address",
+      "parcel": "Parcel",
+      "items": "{count} items",
+      "collect": "Collect",
+      "collect_none": "0 ₫ · Paid in advance"
+    },
+    "returns": {
+      "notice": "You have 48 hours to respond. After that, Genie accepts the option the customer chose.",
+      "empty": "No return requests yet.",
+      "status": {
+        "REQUESTED": "Awaiting your response",
+        "AWAITING_EVIDENCE": "Awaiting customer evidence",
+        "AWAITING_RETURN_SHIPMENT": "Awaiting returned item",
+        "REFUNDED": "Refunded",
+        "SHOP_REJECTED": "Rejected by shop",
+        "DISPUTED": "Under platform review"
+      },
+      "type": {
+        "RETURN_AND_REFUND": "Return and refund",
+        "REFUND_ONLY": "Refund only, no return"
+      },
+      "due_hours": "{hours} h left",
+      "due_return": "item on the way back",
+      "plan": "Option",
+      "reason": "Reason",
+      "evidence": "Evidence",
+      "amount": "Requested amount",
+      "act": {
+        "REQUEST_EVIDENCE": {
+          "btn": "Request more evidence",
+          "title": "Request more evidence",
+          "ask": "What should the customer add?",
+          "note": "You can only ask once. Your 48-hour clock pauses and the customer has 48 hours to submit.",
+          "done": "Request sent to the customer"
+        },
+        "REJECT": {
+          "btn": "Reject",
+          "title": "Reject request",
+          "ask": "Reason for rejecting",
+          "note": "The customer has 48 hours to accept or escalate to Genie.",
+          "done": "Request rejected"
+        },
+        "APPROVE_WITH_RETURN": {
+          "btn": "Accept return",
+          "title": "Accept return",
+          "note": "Genie creates a return waybill. If the customer does not hand over the item within 7 days, the request closes and the money is released to you.",
+          "done": "Return waybill created"
+        },
+        "APPROVE_REFUND_ONLY": {
+          "btn": "Approve refund",
+          "title": "Approve refund",
+          "note": "Refund right away without taking the item back. The money comes from the order's escrow.",
+          "done": "Refund approved"
+        },
+        "CONFIRM_RETURN_RECEIVED": {
+          "btn": "Item received",
+          "title": "Confirm returned item received",
+          "note": "The item is back in the expected condition. The customer is refunded from the order's escrow.",
+          "done": "Item received, the customer has been refunded"
+        },
+        "ESCALATE": {
+          "btn": "Ask Genie to decide",
+          "title": "Ask Genie to decide",
+          "note": "Genie staff review both sides' evidence and make the final decision.",
+          "done": "Escalated to Genie"
+        }
+      }
+    }
+  },
+  "seller-dashboard": {
+    "see_all": "See all",
+    "kyc": {
+      "waiting": {
+        "title": "Your KYC is awaiting review",
+        "desc": "Flagged files are handled by staff within 24 working hours.",
+        "cta": "View progress"
+      },
+      "rejected": {
+        "title": "KYC rejected",
+        "desc": "Please update your documents and resubmit.",
+        "cta": "Resubmit"
+      }
+    },
+    "work": {
+      "title": "To do",
+      "done": "You have cleared your backlog",
+      "new": "Orders to confirm",
+      "new_hint": "Confirm or reject orders",
+      "prep": "Orders to prepare",
+      "prep_hint": "Pack and hand over to the carrier",
+      "fail": "Failed deliveries",
+      "fail_hint": "Check and handle again",
+      "return": "Return requests",
+      "return_hint": "Nearest due in {hours} h",
+      "chat": "Unread messages",
+      "chat_hint": "Reply to customers"
+    },
+    "revenue": {
+      "title": {
+        "7d": "Revenue, last 7 days",
+        "30d": "Revenue, last 30 days",
+        "12m": "Revenue, last 12 closed months"
+      },
+      "ranges": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "12m": "12 months"
+      },
+      "against": {
+        "7d": "vs previous 7 days",
+        "30d": "vs previous 30 days",
+        "12m": "From 06/2025 to 05/2026"
+      },
+      "range": "Period",
+      "series": "Revenue"
+    },
+    "money": {
+      "title": "Shop money",
+      "available": "Withdrawable balance",
+      "withdraw": "Withdraw",
+      "parts": {
+        "available": "Withdrawable",
+        "held": "Held by Genie",
+        "held_note": "Released when the customer receives the order",
+        "payout": "Pending withdrawals",
+        "cod": "COD on the way",
+        "cod_note": "Held by the carrier"
+      }
+    },
+    "recent": {
+      "title": "Recent orders",
+      "code": "Order",
+      "customer": "Customer",
+      "items": "Items",
+      "total": "Value",
+      "time": "Time",
+      "status": "Status",
+      "action": "Action",
+      "confirm": "Confirm",
+      "detail": "Details"
+    },
+    "orders30": {
+      "title": "Orders, last 30 days",
+      "as_of": "As of {date}",
+      "analytics": "Analytics",
+      "count": "{count} orders",
+      "outcomes": "Order outcomes, last 30 days",
+      "visits": "Visits",
+      "conversion": "Conversion rate (orders per visit)"
+    },
+    "products": {
+      "title": "Products",
+      "manage": "Manage",
+      "PUBLISHED": "Live",
+      "PENDING_APPROVAL": "Pending review",
+      "DRAFT": "Draft",
+      "REJECTED": "Rejected"
+    }
+  },
+  "seller-analytics": {
+    "title": "Sales analytics",
+    "subtitle": "Shop performance {sub}",
+    "range": "Period",
+    "ranges": {
+      "today": "Today",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "custom": "Custom dates"
+    },
+    "range_sub": {
+      "today": "today",
+      "7d": "in the last 7 days",
+      "30d": "in the last 30 days",
+      "custom": "for the selected dates"
+    },
+    "against": {
+      "today": "vs yesterday",
+      "7d": "vs previous 7 days",
+      "30d": "vs previous 30 days",
+      "custom": "vs previous period"
+    },
+    "from": "From",
+    "to": "To",
+    "pick_dates": "Pick a start and an end date to see the figures.",
+    "export": "Export CSV",
+    "period": "Period",
+    "csv": {
+      "metric": "Metric",
+      "value": "Value"
+    },
+    "tiles": {
+      "gross": "Gross revenue",
+      "orders": "Orders",
+      "visits": "Visits",
+      "conversion": "Conversion rate"
+    },
+    "chart": {
+      "daily": "Revenue by day",
+      "hourly": "Revenue by hour",
+      "series": "Revenue"
+    },
+    "net": {
+      "title": "Money to the shop",
+      "hint": "Platform vouchers and Genie Points are paid by Genie, not deducted from the shop",
+      "net": "Net revenue",
+      "bar": "Gross revenue {sub}",
+      "to_shop": "To shop",
+      "commission": "Commission {rate}%",
+      "voucher": "Shop vouchers"
+    },
+    "outcome": {
+      "COMPLETED": "Completed",
+      "CANCELLED_BY_CUSTOMER": "Cancelled by customer",
+      "REJECTED_BY_SHOP": "Rejected by shop",
+      "REFUNDED": "Returned, refunded",
+      "IN_PROGRESS": "In progress"
+    },
+    "outcomes": {
+      "title": "How orders ended",
+      "sub": "{count} orders {sub}",
+      "bar": "Order outcomes {sub}"
+    },
+    "health": {
+      "shop_cancel": "Orders cancelled or rejected by the shop",
+      "lost_disputes": "Disputes lost (30 days)",
+      "auto_confirmed": "Orders auto-confirmed after 24 hours (30 days)"
+    },
+    "sources": {
+      "title": "Traffic sources",
+      "SEARCH": "Marketplace search",
+      "HOME": "Home / Recommendations",
+      "PROMOTION": "Promotions / Flash Sale",
+      "EXTERNAL": "External links / Shares",
+      "visits": "{visits} visits · {share}%",
+      "conversion": "Order rate {rate}"
+    },
+    "sentiment": {
+      "title": "Review sentiment",
+      "sub": "AI read {count} written reviews {sub}; uncertain reviews are not counted",
+      "see": "See reviews",
+      "bar": "Review sentiment {sub}",
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative",
+      "rate": "Positive rate",
+      "worst": "Most criticised product",
+      "worst_value": "{name} · {count} negative reviews"
+    },
+    "top": {
+      "title": "Best sellers, last 30 days",
+      "sub": "Share of {total} gross revenue",
+      "product": "Product",
+      "sold": "Sold",
+      "revenue": "Revenue",
+      "share": "Revenue share",
+      "conversion": "Conversion"
+    }
+  },
+  "seller-products": {
+    "list": {
+      "tabs": "Filter products by status",
+      "tab": {
+        "ALL": "All",
+        "PUBLISHED": "Live",
+        "DRAFT": "Drafts",
+        "PENDING_APPROVAL": "Pending review",
+        "REJECTED": "Rejected",
+        "HIDDEN": "Hidden"
+      },
+      "status": {
+        "PUBLISHED": "Live",
+        "DRAFT": "Draft",
+        "PENDING_APPROVAL": "Pending review",
+        "REJECTED": "Rejected",
+        "HIDDEN": "Hidden"
+      },
+      "add": "Add product",
+      "search": "Search by product name",
+      "empty": "No products here yet.",
+      "col": {
+        "product": "Product",
+        "price": "Price",
+        "stock": "Stock",
+        "sold": "Sold",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "skus": "{count} variants",
+      "out": "Out",
+      "view": "View",
+      "edit": "Edit",
+      "hide": "Hide",
+      "show": "Show",
+      "hidden": "Product hidden from the marketplace",
+      "shown": "Product is live again",
+      "delete": "Delete",
+      "delete_title": "Delete product?",
+      "delete_body": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+      "delete_ok": "Delete product",
+      "deleted": "Product deleted"
+    },
+    "editor": {
+      "title_new": "Add a new product",
+      "title_edit": "Edit: {name}",
+      "back": "Back to list",
+      "not_found": "Product not found",
+      "read_only": "This product is pending review. You can view it but not edit it.",
+      "rejected": "Product rejected",
+      "rejected_reason": "Reason: {reason}. Fix it and submit again for review.",
+      "save_draft": "Save draft",
+      "publish": "Publish",
+      "save_submit": "Save & submit",
+      "saved_draft": "Draft saved",
+      "saved_live": "Saved. The product stays live (price / stock only).",
+      "submitted": "Submitted. Gemini screens it, then staff review it.",
+      "fix": "{count} items need fixing before you submit",
+      "kyc_ok": "Your shop is verified and can publish",
+      "kyc_wait": "KYC under review — you cannot publish yet",
+      "kyc_bad": "KYC not approved — please resubmit",
+      "review_title": "This product will be reviewed again",
+      "review_body": "The live product goes back to review because you changed its name, images, description, category, brand or documents. Price and stock changes do not need review.",
+      "review_ok": "Continue",
+      "zero_title": "Variants without price and stock",
+      "zero_body": "{count} variants have a 0₫ price and 0 stock. Save anyway?",
+      "zero_back": "Go back",
+      "zero_ok": "Submit anyway",
+      "leave_title": "Discard changes?",
+      "leave_body": "Unsaved changes will be lost.",
+      "leave_stay": "Keep editing",
+      "leave_ok": "Discard"
+    },
+    "images": {
+      "title": "Product images",
+      "min": "At least 1 image",
+      "rule": "JPG/PNG/WEBP · ≤ 5MB · 1:1",
+      "list": "Product images — drag or use ← → to reorder, Delete to remove",
+      "slot_main": "Image {n} (main)",
+      "slot": "Image {n}",
+      "main": "Main image",
+      "remove": "Remove image",
+      "add": "Add image",
+      "hint": "Up to 8 images · 1:1 recommended. The first image is shown in search results. Drag to reorder.",
+      "video_add": "Add 1 video",
+      "video_change": "Change video",
+      "video_rule": "MP4, up to 30 MB",
+      "video_remove": "Remove video",
+      "err": "Images must be JPG, PNG or WEBP, up to 5 MB.",
+      "video_err": "Video must be MP4, up to 30 MB."
+    },
+    "docs": {
+      "title": "Supporting documents",
+      "required": "Required for this category",
+      "optional": "Optional",
+      "rule": "PDF/DOC/XLS · ≤ 10 MB · Up to 4 files",
+      "add": "Add document",
+      "remove": "Remove document {name}",
+      "err_image": "Only document files (PDF, DOC, XLS) are accepted, not images.",
+      "err": "Each file must be PDF, DOC or XLS, up to 10 MB.",
+      "hint": "Purchase invoices, brand authorisations or inspection certificates. Moderators see them in the product's legal file."
+    },
+    "basic": {
+      "title": "Basic information",
+      "name": "Product name",
+      "name_hint": "Brand + product type + key feature. E.g. Samsung Galaxy S24 Ultra 256GB Titanium",
+      "category": "Category",
+      "category_none": "No category selected",
+      "change": "Change",
+      "level": "Category level {n}",
+      "category_hint": "Pick from parent to child. The last category sets the commission and suggested specs. Nothing fits?",
+      "propose": "Propose a new category",
+      "brand": "Brand",
+      "brand_placeholder": "Search or type a brand…",
+      "brand_new": "Add \"{name}\" as a new brand",
+      "condition": "Condition",
+      "conditions": {
+        "NEW": "New",
+        "USED": "Used",
+        "REFURBISHED": "Refurbished"
+      },
+      "origin": "Origin",
+      "origin_placeholder": "E.g. Vietnam, China, Korea"
+    },
+    "specs": {
+      "title": "Specifications",
+      "suggest": "Suggested:",
+      "name": "Name",
+      "value": "Value",
+      "name_n": "Specification name, row {n}",
+      "value_n": "Value, row {n}",
+      "name_placeholder": "Enter a name…",
+      "value_placeholder": "Enter a value…",
+      "remove": "Remove {name}",
+      "required": "Required for this category: {list}",
+      "missing": "(missing {list})",
+      "hint": "Specifications appear under \"Product details\" on the product page."
+    },
+    "desc": {
+      "title": "Product description",
+      "toolbar": "Description formatting",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "h1": "Large heading",
+      "h2": "Small heading",
+      "ul": "Bulleted list",
+      "ol": "Numbered list",
+      "link": "Insert link",
+      "link_insert": "Insert",
+      "image": "Insert image",
+      "count": "Entered: {count} / {max} characters",
+      "hint": "A good description sells more — add photos, materials and guarantees."
+    },
+    "variants": {
+      "title": "Variants & price",
+      "max_groups": "Up to {n} groups",
+      "add_group": "Add group",
+      "group_n": "Group {n}",
+      "group_name": "Name of group {n}",
+      "group_placeholder": "Pick / type a group name…",
+      "custom_name": "Use custom name: \"{name}\"",
+      "remove_group": "Remove group",
+      "values_of": "Add a value to group {name}",
+      "value_placeholder": "Type a value…",
+      "remove_value": "Remove value {value}",
+      "images_by": "Images by variant",
+      "image_for": "Choose an image for {value}",
+      "over": "Up to {max} variants per product ({count} now).",
+      "single_hint": "Add variant groups if the product comes in several options (colour, size…). Or enter a single price & stock:",
+      "price": "Price (₫)",
+      "price_short": "Price",
+      "stock": "Stock",
+      "bulk": "Apply to all:",
+      "apply": "Apply",
+      "price_of": "Price of {name}",
+      "stock_of": "Stock of {name}"
+    },
+    "shipping": {
+      "title": "Shipping",
+      "weight": "Packed weight (g)",
+      "dims": "Packed size (cm)",
+      "dim": {
+        "length": "Length (cm)",
+        "width": "Width (cm)",
+        "height": "Height (cm)"
+      },
+      "dim_short": {
+        "length": "L",
+        "width": "W",
+        "height": "H"
+      },
+      "hint": "Used to calculate shipping. Leave blank and the carrier will weigh and measure it.",
+      "from": "Ships from",
+      "from_value": "Ho Chi Minh City",
+      "from_hint": "Taken from your shop's pickup address — change it in Settings.",
+      "payer": "Shipping paid by",
+      "buyer": "Buyer (default)",
+      "seller": "Shop offers free shipping on orders from",
+      "threshold": "Free-shipping minimum (₫)",
+      "pre_order": "Pre-order",
+      "pre_days": "Preparation days",
+      "pre_days_hint": "preparation days ({min}–{max})"
+    },
+    "err": {
+      "name": "The name needs at least 5 characters",
+      "name_long": "The name can be at most 120 characters",
+      "origin": "Origin can be at most 60 characters",
+      "weight": "Enter the packed weight (grams)",
+      "weight_max": "Weight can be at most 50,000 g",
+      "pre_order": "Preparation days must be between 7 and 30",
+      "free_ship": "Enter the free-shipping minimum",
+      "price": "Enter a price above 0",
+      "price_short": "Price > 0",
+      "description": "Description can be at most 10,000 characters"
+    },
+    "catalog": {
+      "tree": "Category tree",
+      "tree_hint": "A product's final category sets its commission and suggested specs.",
+      "count": "{count} products",
+      "rate": "Commission {rate}%",
+      "proposals": "Your proposals",
+      "propose": "Propose a new category",
+      "none": "You have not sent any proposals.",
+      "under": "Under {parent} · {date}",
+      "root": "top level",
+      "state": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "name": "Category name",
+      "name_placeholder": "E.g. Wearables",
+      "parent": "Parent category",
+      "new_root": "— New top-level category",
+      "reason": "Why do you need it?",
+      "reason_placeholder": "Your products do not fit any category?",
+      "send": "Send proposal",
+      "sent": "Proposal sent. Genie will review it.",
+      "err": {
+        "name": "Enter a category name",
+        "name_long": "Up to 60 characters",
+        "reason": "Please explain why",
+        "dup": "\"{name}\" already exists — use that category."
+      }
+    }
+  },
+  "seller-wallet": {
+    "balance": {
+      "available": "Available balance",
+      "available_hint": "Can be withdrawn to your bank",
+      "held": "Held (Escrow)",
+      "held_hint": "Moves to your balance when the customer confirms receipt, or after 7 days",
+      "held_auto": "Released automatically after the customer confirms",
+      "revenue": "Revenue, last 30 days",
+      "revenue_against": "vs previous 30 days",
+      "cod": "COD awaiting reconciliation",
+      "cod_hint": "Goes into escrow when the carrier pays the collected cash to Genie",
+      "pending": "Withdrawing",
+      "pending_hint": "Withdrawals waiting for Genie's transfer"
+    },
+    "how": {
+      "title": "How your money is calculated",
+      "rate": "Category of the latest order: {rate}%",
+      "gross": "Order total (Gross)",
+      "commission": "Commission ({rate}%)",
+      "net": "You receive (Net) → Escrow",
+      "release": "Released on completion"
+    },
+    "ledger": {
+      "title": "Wallet ledger",
+      "append_only": "Append-only",
+      "filter": "Filter",
+      "export": "Export CSV",
+      "month": "Month",
+      "type": "Transaction type",
+      "all": "All transactions",
+      "search": "Order code, description...",
+      "empty": "No transactions this month",
+      "col": {
+        "time": "Time",
+        "ref": "Reference",
+        "type": "Type",
+        "desc": "Description",
+        "commission": "Commission",
+        "state": "Status"
+      }
+    },
+    "type": {
+      "SALE": "Sale",
+      "RELEASE": "Release",
+      "PAYOUT": "Withdrawal",
+      "REFUND": "Refund"
+    },
+    "state": {
+      "HELD": "Escrow",
+      "AVAILABLE": "Available",
+      "PAYOUT_PENDING": "Pending",
+      "PAYOUT_DONE": "Withdrawn",
+      "REFUNDED": "Refunded"
+    },
+    "withdraw": {
+      "title": "Request withdrawal",
+      "no_account": "You have no verified payout account yet.",
+      "add_account": "Add one in Settings before withdrawing.",
+      "verified": "Verified",
+      "amount": "Amount to withdraw",
+      "placeholder": "At least {min}",
+      "all": "Withdraw all",
+      "next": "Continue",
+      "otp_for": "Enter the OTP to confirm withdrawing {amount}.",
+      "confirm": "Confirm withdrawal",
+      "done": "Withdrawal {code} created. Genie's accountants approve it within 24 working hours."
+    }
+  },
+  "seller-chat": {
+    "inbox": "Messages",
+    "empty": "No customer has messaged your shop yet.",
+    "orders": "Orders",
+    "no_orders": "This customer has no orders with you",
+    "send_card": "Send {code}"
+  },
+  "seller-promotions": {
+    "title": "Shop promotions",
+    "sub": "Create vouchers and join Genie campaigns",
+    "create": "Create voucher",
+    "kind": {
+      "PERCENTAGE": "% off",
+      "FIXED": "Amount off",
+      "FREESHIP": "Free shipping"
+    },
+    "status": {
+      "ACTIVE": "Running",
+      "SCHEDULED": "Scheduled",
+      "ENDED": "Ended",
+      "DISABLED": "Turned off"
+    },
+    "stats": {
+      "active": "Running vouchers",
+      "usage": "Uses this month",
+      "revenue": "Revenue from promotions"
+    },
+    "table": {
+      "title": "Shop vouchers",
+      "code": "Code",
+      "type": "Type",
+      "cond": "Condition",
+      "used": "Used",
+      "status": "Status",
+      "ends": "Ends",
+      "actions": "Actions",
+      "cap": "Up to {value}",
+      "ship": "Shipping fee",
+      "min": "Orders from {value}",
+      "any": "Any order",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "disable": "Turn off"
+    },
+    "off": {
+      "title": "Turn off voucher",
+      "body": "Turn off voucher {code}? Customers will no longer be able to use it.",
+      "ok": "Turn off",
+      "done": "Voucher {code} turned off"
+    },
+    "form": {
+      "title_new": "Create shop voucher",
+      "title_edit": "Edit voucher {code}",
+      "code": "Voucher code",
+      "gen": "Generate",
+      "code_hint": "6–12 characters, UPPERCASE letters and digits only.",
+      "kind": "Discount type",
+      "freeship_note": "Free shipping on qualifying orders.",
+      "value": "Value",
+      "cap": "Maximum discount (₫)",
+      "min": "Minimum order (₫)",
+      "total": "Quantity issued",
+      "per_user": "Limit per customer",
+      "budget": "Maximum budget (₫, optional)",
+      "period": "Valid period",
+      "from": "Start date",
+      "to": "End date",
+      "scope": "Applies to",
+      "scope_all": "All shop products",
+      "scope_cat": "Specific categories",
+      "scope_product": "Specific products",
+      "exclude": "Exclude (no discount)",
+      "exclude_none": "No exclusion",
+      "create": "Create voucher",
+      "save": "Save changes",
+      "created": "Voucher {code} created",
+      "saved": "Voucher {code} saved",
+      "err": {
+        "code": "6–12 characters, UPPERCASE letters and digits only",
+        "value": "Value must be > 0",
+        "percent": "Percentage must be ≤ 100",
+        "total": "Quantity must be > 0",
+        "from": "Choose a start date",
+        "to": "Choose an end date",
+        "end": "The end date must be after the start date",
+        "category": "Choose at least 1 category",
+        "product": "Choose at least 1 product"
+      }
+    },
+    "flash": {
+      "banner": "{name} — Register your products",
+      "banner_sub": "Registration deadline: {date} · Up to {max} products in the golden hours.",
+      "register": "Register now",
+      "registered_n": "{count} products registered",
+      "title": "Register for {name}",
+      "product": "Product",
+      "price": "Flash Sale price (₫)",
+      "price_hint": "At most {max} (at least 15% below the 30-day price)",
+      "stock": "Slots (stock {stock})",
+      "err_price": "The Flash price must be at least 15% below the 30-day price (max {max})",
+      "err_stock": "Slots must be between 1 and {max}",
+      "add": "Add product",
+      "added": "{name} registered",
+      "registered": "Registered, awaiting approval",
+      "row": "{price} · {stock} slots",
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      }
+    }
+  },
+  "seller-reviews": {
+    "title": "Product reviews",
+    "sub": "Reply to reviews to build trust in your shop",
+    "summary": "Review summary",
+    "count": "{count} reviews",
+    "tabs": "Filter reviews",
+    "tab": {
+      "ALL": "All ({count})",
+      "UNREPLIED": "Not replied ({count})",
+      "LOW_RATING": "Needs attention (≤3★)"
+    },
+    "empty": "No reviews here.",
+    "variant": "Variant: {name}",
+    "photo": "Customer photo",
+    "reply_from": "Shop reply:",
+    "reply": "Reply",
+    "reply_label": "Your reply",
+    "reply_placeholder": "Write a reply (up to {max} characters)…",
+    "send": "Send reply",
+    "replied": "Reply sent",
+    "report": "Report",
+    "reported": "Reported",
+    "report_title": "Report a review",
+    "report_reason": "Reason",
+    "report_note": "Additional note (optional)",
+    "report_hint": "A report is only a priority signal. Genie moderators decide whether to hide the review.",
+    "report_send": "Send report",
+    "report_sent": "Report sent"
+  },
+  "seller-settings": {
+    "title": "Shop settings",
+    "sub": "Shop profile, shipping and payments",
+    "save": "Save settings",
+    "saved": "Settings saved",
+    "reset": "Unsaved changes discarded",
+    "profile": {
+      "title": "Shop profile",
+      "cover": "Shop cover image",
+      "cover_upload": "Upload cover",
+      "cover_hint": "Recommended 1200×300px (4:1), JPG/PNG, up to 2 MB. Shown at the top of your shop page.",
+      "logo": "Change logo",
+      "logo_alt": "Shop logo",
+      "name": "Shop name (can change once every 30 days)",
+      "rename_at": "You can rename again from {date}",
+      "desc": "Shop description",
+      "err_cover": "The cover must be JPG/PNG, up to 2 MB",
+      "err_logo": "The logo must be JPG/PNG, up to 1 MB"
+    },
+    "shipping": {
+      "title": "Shipping",
+      "carriers": {
+        "GHN": {
+          "name": "GHN — Giao Hàng Nhanh",
+          "desc": "Default carrier"
+        },
+        "GHTK": {
+          "name": "GHTK — Giao Hàng Tiết Kiệm",
+          "desc": "3PL partner"
+        },
+        "VIETTEL_POST": {
+          "name": "ViettelPost",
+          "desc": "3PL partner"
+        },
+        "JNT_EXPRESS": {
+          "name": "J&T Express",
+          "desc": "3PL partner"
+        },
+        "GENIE_EXPRESS": {
+          "name": "Genie Express",
+          "desc": "Same-city delivery"
+        }
+      },
+      "free": "Free shipping",
+      "free_desc": "The shop pays shipping when an order reaches the amount below",
+      "free_from": "Free shipping on orders from (₫)"
+    },
+    "pickup": {
+      "title": "Pickup address (GHN)",
+      "phone": "Warehouse phone",
+      "region": "Province / District / Ward",
+      "line": "Street address",
+      "save": "Save and sync with GHN",
+      "saved": "Pickup address saved and synced with GHN",
+      "ghn": "GHN Shop ID:"
+    },
+    "payout": {
+      "section": "Payout account",
+      "holder_short": "Holder: {name}",
+      "change": "Change",
+      "delete": "Delete",
+      "add": "Add payout account",
+      "title": "Update payout account",
+      "bank": "Bank",
+      "holder": "Account holder",
+      "holder_hint": "Must match the name on your verified citizen ID",
+      "number": "Account number",
+      "verify": "Verify ownership",
+      "confirm": "Confirm & save",
+      "matched": "The holder name matches your profile. Enter the OTP sent to your email.",
+      "saved": "Payout account saved",
+      "err_fill": "Please fill in all fields",
+      "err_name": "The holder name does not match your citizen ID ({name})",
+      "delete_title": "Delete account",
+      "delete_body": "Delete this bank account? You can only delete it when no withdrawal is pending.",
+      "deleted": "Payout account deleted"
+    },
+    "prefs": {
+      "title": "Operations",
+      "auto": "Auto-reply in chat",
+      "auto_desc": "Send a greeting when a customer messages you",
+      "greeting": "Greeting",
+      "greeting_placeholder": "E.g. Hi, how can we help you?",
+      "away": "Away message",
+      "away_placeholder": "E.g. We are busy right now and will reply as soon as we can.",
+      "save_msg": "Save messages",
+      "auto_saved": "Auto-reply saved",
+      "pre_order": "Allow pre-orders",
+      "pre_order_desc": "Sell products that are not in stock yet"
+    },
+    "vacation": {
+      "label": "Vacation mode",
+      "desc": "Products stay visible but customers cannot buy",
+      "active": "On vacation until {date}. Products show \"Shop on vacation\" and cannot be bought.",
+      "title": "Turn on vacation mode",
+      "until": "Reopen on (within 30 days)",
+      "msg": "Automatic message while away",
+      "default_msg": "We are on a short break and will reply when we are back!",
+      "hint": "This message replaces the auto-reply greeting while you are away.",
+      "turn_on": "Turn on vacation mode",
+      "pending": "Some orders are not handed over yet — handle them first:",
+      "on": "Vacation mode on",
+      "off": "Vacation mode off, your shop is open again"
+    },
+    "security": {
+      "change": "Change password",
+      "set": "Set a password",
+      "login_with": "Sign in with:",
+      "email": "Email and password",
+      "manage": "Manage sign-in methods",
+      "note": "Your shop shares the account and password of the buyer account with the same email. Changing it requires an OTP sent to your email to protect the Escrow wallet.",
+      "note_set": "This account only signs in with Google, so it has no password yet. Once set, you can sign in with email or Google. An OTP to your email is still required."
     }
   }
 }

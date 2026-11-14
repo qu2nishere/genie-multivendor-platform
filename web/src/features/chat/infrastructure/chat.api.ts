@@ -29,7 +29,7 @@ interface ConversationDto {
   last_message: { type: MessageType; preview: string | null; sent_at: string } | null;
   unread_count: number;
 }
-interface MessageDto {
+export interface MessageDto {
   id: number;
   sender: 'ME' | 'THEM';
   type: MessageType;
@@ -58,7 +58,7 @@ const toConversation = (d: ConversationDto): Conversation => ({
   },
   unread: d.unread_count,
 });
-const toMessage = (d: MessageDto): ChatMessage => ({
+export const toMessage = (d: MessageDto): ChatMessage => ({
   id: d.id,
   mine: d.sender === 'ME',
   type: d.type,

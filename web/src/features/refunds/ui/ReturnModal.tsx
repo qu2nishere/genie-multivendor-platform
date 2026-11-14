@@ -88,7 +88,10 @@ export function ReturnModal({ open, order, onClose, onDone }: ReturnModalProps) 
           requestType: type,
           reasonCode: reason,
           items: lines.map((l) => ({ orderItemId: l.id, qty: l.qty })),
-          evidence: files.map((f) => ({ objectKey: f.objectKey, mediaType: f.mediaType })),
+          evidence: files.map((f) => ({
+            objectKey: f.objectKey,
+            mediaType: f.mediaType === 'VIDEO' ? 'VIDEO' : 'IMAGE',
+          })),
           bank: bank && { code: bank.code, accountNumber: bank.accountNumber, holder: bank.holder },
         },
         amount,

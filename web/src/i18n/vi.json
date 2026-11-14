@@ -1806,6 +1806,1104 @@
           "desc": "Sau khi VERIFIED, đăng sản phẩm và bắt đầu bán ngay."
         }
       }
+    },
+    "kyc": {
+      "banner": {
+        "NOT_SUBMITTED": {
+          "title": "Chưa nộp hồ sơ KYC",
+          "chip": "Chưa nộp",
+          "desc": "Hoàn tất hồ sơ bên dưới để mở khóa đăng bán, đơn hàng và ví."
+        },
+        "PENDING": {
+          "title": "Hồ sơ đang chờ duyệt",
+          "chip": "Chờ duyệt",
+          "desc": "AI đang thẩm định; hồ sơ nghi ngờ do nhân viên xử lý trong 24 giờ làm việc. Bạn chưa thể đăng bán cho đến khi được duyệt."
+        },
+        "VERIFIED": {
+          "title": "Hồ sơ đã được xác minh",
+          "chip": "Đã xác minh",
+          "desc": "Tài khoản của bạn đã được xác minh, bạn có thể đăng bán sản phẩm và nhận thanh toán."
+        },
+        "REJECTED": {
+          "title": "Hồ sơ bị từ chối",
+          "chip": "Từ chối",
+          "desc": "Lý do: {reason}. Vui lòng tải lại và gửi duyệt."
+        },
+        "SUPPLEMENT_REQUESTED": {
+          "title": "Yêu cầu bổ sung hồ sơ",
+          "chip": "Cần bổ sung",
+          "desc": "Vui lòng bổ sung giấy tờ theo yêu cầu để chúng tôi xác minh danh tính của bạn.",
+          "deadline": "Hạn bổ sung: {date}"
+        }
+      },
+      "review": "Yêu cầu nhân viên xem xét",
+      "review_done": "Đã yêu cầu nhân viên xem xét",
+      "review_sent": "Đã gửi yêu cầu, nhân viên sẽ xem lại hồ sơ của bạn",
+      "info": "Thông tin người bán",
+      "cccd": "Số CCCD",
+      "cccd_placeholder": "12 chữ số",
+      "tax": "Mã số thuế (Doanh nghiệp / Hộ KD)",
+      "rep": "Người đại diện",
+      "hint_individual": "Cá nhân: nhập số CCCD để đối chiếu với mã QR và MRZ trên thẻ.",
+      "hint_business": "Doanh nghiệp / Hộ KD: nhập số CCCD của người đại diện và Mã số thuế (MST).",
+      "docs_title": "Giấy tờ định danh",
+      "docs_rule": "PDF / JPG / PNG · < 10MB",
+      "docs": {
+        "ID_FRONT": "CCCD mặt trước",
+        "ID_BACK": "CCCD mặt sau",
+        "BUSINESS_LICENSE": "Giấy chứng nhận đăng ký kinh doanh",
+        "SELFIE": "Ảnh chân dung (selfie)"
+      },
+      "docs_long": {
+        "ID_FRONT": "CCCD gắn chip — mặt trước (rõ mã QR và ảnh chân dung)",
+        "ID_BACK": "CCCD gắn chip — mặt sau (rõ 3 dòng MRZ)",
+        "BUSINESS_LICENSE": "Giấy chứng nhận đăng ký kinh doanh",
+        "SELFIE": "Ảnh chân dung (selfie)"
+      },
+      "pick_hint": "Bấm để tải lên",
+      "upload_for": "Tải lên {doc}",
+      "choose": "Chọn file",
+      "change": "Thay đổi",
+      "selfie_hint": "Chụp ảnh chân dung rõ mặt, đủ ánh sáng, không đội mũ / đeo kính đen",
+      "selfie_done": "Đã tải lên (mã hóa)",
+      "selfie_empty": "Tải ảnh lên hoặc chụp từ camera",
+      "consent": "Tôi đồng ý cho Genie xử lý dữ liệu sinh trắc học phục vụ KYC. Nếu không đồng ý, hệ thống bỏ qua so khớp khuôn mặt tự động và nhân viên sẽ đối chiếu ảnh trực tiếp.",
+      "save_draft": "Lưu nháp",
+      "draft_saved": "Đã lưu nháp hồ sơ",
+      "submit": "Gửi duyệt KYC",
+      "resubmit": "Gửi lại hồ sơ",
+      "sent": "Hồ sơ của bạn đã được tiếp nhận và đang được thẩm định tự động",
+      "sent_manual": "Hồ sơ của bạn đã được tiếp nhận. Vì bạn không đồng ý xử lý sinh trắc, nhân viên sẽ đối chiếu ảnh trực tiếp",
+      "sent_toast": "Đã gửi hồ sơ KYC",
+      "err": {
+        "cccd": "Số CCCD phải gồm 12 chữ số",
+        "tax": "Nhập Mã số thuế (10 số, hoặc 10 số + 3 số chi nhánh)",
+        "rep": "Nhập tên người đại diện",
+        "info": "Kiểm tra lại thông tin người bán",
+        "missing": "Hồ sơ chưa hoàn thiện: còn thiếu {list}.",
+        "file_type": "Sai định dạng. Chỉ nhận PDF, JPG, PNG (ảnh chân dung chỉ nhận JPG, PNG).",
+        "file_size": "File quá lớn (tối đa 10 MB)",
+        "file_blurry": "Ảnh quá mờ hoặc quá nhỏ, vui lòng chụp lại rõ nét."
+      },
+      "camera": {
+        "open": "Chụp ảnh",
+        "title": "Chụp ảnh chân dung",
+        "preview": "Hình từ camera",
+        "step": "Kiểm tra người thật {n}/{total}: {task}",
+        "tasks": {
+          "blink": "Nháy mắt 2 lần",
+          "left": "Quay đầu sang trái",
+          "right": "Quay đầu sang phải"
+        },
+        "did": "Đã làm xong",
+        "ready": "Đã kiểm tra xong, bấm Chụp để lưu ảnh chân dung.",
+        "shoot": "Chụp",
+        "err_denied": "Không thể truy cập camera. Vui lòng cấp quyền camera trong trình duyệt, hoặc tải ảnh lên.",
+        "err_none": "Không tìm thấy camera trên thiết bị. Vui lòng tải ảnh chân dung lên."
+      }
+    }
+  },
+  "seller": {
+    "shell": {
+      "title": "Kênh Người bán",
+      "home": "Seller Center — Tổng quan",
+      "nav_label": "Điều hướng Seller Center",
+      "nav": {
+        "overview": "Tổng quan",
+        "orders": "Đơn hàng",
+        "products": "Sản phẩm",
+        "wallet": "Ví & Escrow",
+        "kyc": "Hồ sơ KYC",
+        "catalog": "Danh mục toàn sàn",
+        "promo": "Khuyến mãi",
+        "chat": "Chat",
+        "reviews": "Đánh giá",
+        "stats": "Phân tích",
+        "settings": "Cài đặt"
+      },
+      "badge": "{count} mục cần xử lý",
+      "kyc": {
+        "VERIFIED": "Đã xác minh",
+        "WAITING": "KYC đang chờ",
+        "NOT_SUBMITTED": "Chưa nộp KYC",
+        "REJECTED": "KYC bị từ chối",
+        "SUPPLEMENT": "KYC cần bổ sung"
+      },
+      "locked_toast": "Hoàn tất xác minh KYC để sử dụng tính năng này",
+      "sign_out": "Đăng xuất",
+      "help": "Trợ giúp",
+      "account": "Tài khoản shop",
+      "manage_shop": "Quản lý cửa hàng",
+      "buyer_channel": "Kênh người mua",
+      "back_to_genie": "Trở về Genie",
+      "search": "Tìm đơn, sản phẩm",
+      "search_placeholder": "Tìm đơn, sản phẩm…",
+      "search_empty": "Không tìm thấy đơn hay sản phẩm nào.",
+      "search_orders": "Đơn hàng",
+      "search_products": "Sản phẩm",
+      "notif_unread": "Thông báo, {count} chưa đọc",
+      "notif_detail": "Chi tiết thông báo",
+      "notif_open": "Mở trang liên quan",
+      "got_it": "Đã hiểu",
+      "gate": {
+        "cta": "Đi đến Xác minh KYC",
+        "locked": {
+          "title": "Tính năng bị khoá — chưa xác minh KYC",
+          "desc": "Bạn cần hoàn tất xác minh danh tính (KYC) trước khi đăng bán, quản lý đơn hàng, ví Escrow và các tính năng khác của Seller Center."
+        },
+        "waiting": {
+          "title": "Hồ sơ KYC đang được thẩm định",
+          "desc": "Tính năng sẽ mở ngay khi hồ sơ được duyệt — thường trong 24 giờ làm việc. Bạn vẫn có thể xem Hồ sơ KYC và Cài đặt."
+        },
+        "rejected": {
+          "title": "Hồ sơ KYC bị từ chối",
+          "desc": "Hồ sơ của bạn chưa đạt yêu cầu. Vui lòng kiểm tra lý do từ chối và nộp lại hồ sơ để mở khoá đầy đủ tính năng người bán."
+        },
+        "supplement": {
+          "title": "Hồ sơ KYC cần bổ sung",
+          "desc": "Sàn cần thêm giấy tờ để duyệt hồ sơ của bạn. Bổ sung theo hướng dẫn để mở khoá đầy đủ tính năng người bán."
+        }
+      },
+      "not_found": {
+        "title": "Không tìm thấy trang",
+        "desc": "Đường dẫn này không có trong Seller Center.",
+        "back": "Về Tổng quan"
+      },
+      "no_shop": {
+        "title": "Tài khoản chưa có Shop",
+        "desc": "Mở Shop miễn phí để dùng Seller Center.",
+        "cta": "Đăng ký mở Shop"
+      }
+    }
+  },
+  "seller-orders": {
+    "status": {
+      "NEW": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "PREPARING": "Đang chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "CANCELLED": "Đã hủy"
+    },
+    "shipment": {
+      "AWAITING_PICKUP": "Chờ lấy hàng",
+      "IN_TRANSIT": "Đang trung chuyển",
+      "OUT_FOR_DELIVERY": "Đang giao hàng",
+      "DELIVERY_FAILED": "Giao thất bại",
+      "DELIVERED": "Giao thành công",
+      "CANCELLED": "Đã hủy"
+    },
+    "when": {
+      "today": "{time} hôm nay",
+      "yesterday": "Hôm qua",
+      "days": "{count} ngày trước"
+    },
+    "tabs": {
+      "label": "Lọc đơn theo trạng thái",
+      "ALL": "Tất cả",
+      "NEW": "Mới",
+      "TO_PREPARE": "Chờ chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "RETURN": "Trả hàng",
+      "CANCELLED": "Đã hủy"
+    },
+    "search": "Tìm mã đơn, khách hàng",
+    "search_placeholder": "Tìm mã đơn, KH...",
+    "sort": {
+      "label": "Sắp xếp",
+      "NEWEST": "Mới nhất",
+      "OLDEST": "Cũ nhất"
+    },
+    "empty": "Không tìm thấy đơn hàng nào.",
+    "card": {
+      "note": "Lời nhắn của khách",
+      "rejected": "Shop đã từ chối: {reason}",
+      "detail": "Chi tiết",
+      "waybill": "Mã VĐ: {code}",
+      "reprint": "In lại vận đơn",
+      "total": "Tổng đơn:",
+      "reject": "Từ chối",
+      "confirm": "Xác nhận",
+      "confirmed": "Đã xác nhận đơn. Khách nhận thông báo \"Shop đã xác nhận đơn\"",
+      "prepare": "Chuẩn bị hàng",
+      "prepared": "Đã chuyển sang Đang chuẩn bị",
+      "hand_over": "Sẵn sàng giao cho ĐVVC"
+    },
+    "reject": {
+      "title": "Từ chối đơn {code}",
+      "reason": "Lý do từ chối",
+      "reasons": {
+        "OUT_OF_STOCK": "Hết hàng thực tế",
+        "WRONG_PRICE": "Sai giá niêm yết",
+        "UNSERVICEABLE_AREA": "Không giao tới khu vực này",
+        "OTHER": "Lý do khác"
+      },
+      "note": "Mô tả lý do",
+      "note_placeholder": "Mô tả lý do...",
+      "hint": "Từ chối đơn ảnh hưởng tỷ lệ hủy của shop. Đơn không xác nhận sau 24 giờ sẽ được tự xác nhận và ghi điểm chậm xác nhận.",
+      "submit": "Từ chối đơn",
+      "done": "Đã từ chối đơn. Tồn kho, Điểm và voucher được hoàn cho khách, tiền tự hoàn",
+      "done_cod": "Đã từ chối đơn. Tồn kho, Điểm và voucher được hoàn cho khách",
+      "err": {
+        "note": "Nhập lý do từ chối",
+        "note_long": "Tối đa 500 ký tự"
+      }
+    },
+    "detail": {
+      "title": "Đơn {code}",
+      "loading": "Chi tiết đơn",
+      "placed": "Đặt",
+      "recipient": "Người nhận",
+      "items": "Sản phẩm",
+      "paid": "Khách thanh toán",
+      "shipping": "Vận chuyển",
+      "carrier_status": "Trạng thái hãng"
+    },
+    "route": {
+      "title": "Yêu cầu lấy hàng (3PL)",
+      "intro_a": "Hệ thống so sánh các hãng shop đã bật và chọn hãng tốt nhất cho đơn",
+      "intro_b": ":",
+      "days": "{count} ngày",
+      "selected": "Đã chọn",
+      "settings_hint": "Bật hoặc tắt hãng ở Cài đặt → Vận chuyển.",
+      "submit": "Xác nhận lấy hàng (3PL)",
+      "placing": "Đang xử lý...",
+      "done": "Đã tạo vận đơn, hãng sẽ tới lấy hàng"
+    },
+    "waybill": {
+      "title": "Phiếu gửi hàng",
+      "print": "In phiếu gửi hàng",
+      "partner": "Đối tác vận chuyển của Genie",
+      "prepaid": "Đã thanh toán",
+      "cod": "Thu hộ COD",
+      "recipient": "Người nhận",
+      "address": "Địa chỉ",
+      "parcel": "Kiện hàng",
+      "items": "{count} sản phẩm",
+      "collect": "Thu hộ",
+      "collect_none": "0 ₫ · Đã thanh toán trước"
+    },
+    "returns": {
+      "notice": "Shop có 48 giờ để phản hồi. Quá hạn, hệ thống tự đồng ý theo phương án khách đã chọn.",
+      "empty": "Chưa có yêu cầu trả hàng nào.",
+      "status": {
+        "REQUESTED": "Chờ shop phản hồi",
+        "AWAITING_EVIDENCE": "Chờ khách bổ sung",
+        "AWAITING_RETURN_SHIPMENT": "Chờ hàng hoàn về",
+        "REFUNDED": "Đã hoàn tiền",
+        "SHOP_REJECTED": "Shop đã từ chối",
+        "DISPUTED": "Sàn đang phân xử"
+      },
+      "type": {
+        "RETURN_AND_REFUND": "Trả hàng và hoàn tiền",
+        "REFUND_ONLY": "Hoàn tiền ngay, không trả hàng"
+      },
+      "due_hours": "còn {hours} giờ",
+      "due_return": "hàng đang về kho",
+      "plan": "Phương án",
+      "reason": "Lý do",
+      "evidence": "Bằng chứng",
+      "amount": "Số tiền yêu cầu",
+      "act": {
+        "REQUEST_EVIDENCE": {
+          "btn": "Yêu cầu bổ sung",
+          "title": "Yêu cầu bổ sung bằng chứng",
+          "ask": "Cần khách bổ sung gì?",
+          "note": "Chỉ yêu cầu được 1 lần. Đồng hồ 48 giờ của shop tạm dừng, khách có 48 giờ để nộp.",
+          "done": "Đã gửi yêu cầu bổ sung cho khách"
+        },
+        "REJECT": {
+          "btn": "Từ chối",
+          "title": "Từ chối yêu cầu",
+          "ask": "Lý do từ chối",
+          "note": "Khách có 48 giờ để chấp nhận hoặc khiếu nại lên Sàn.",
+          "done": "Đã từ chối yêu cầu"
+        },
+        "APPROVE_WITH_RETURN": {
+          "btn": "Đồng ý nhận lại hàng",
+          "title": "Đồng ý nhận lại hàng",
+          "note": "Hệ thống tạo vận đơn chiều về. Quá 7 ngày khách chưa giao hàng cho ĐVVC thì yêu cầu tự đóng và tiền giải ngân cho shop.",
+          "done": "Đã tạo vận đơn chiều về"
+        },
+        "APPROVE_REFUND_ONLY": {
+          "btn": "Đồng ý hoàn tiền",
+          "title": "Đồng ý hoàn tiền",
+          "note": "Hoàn tiền ngay, không thu hồi hàng. Tiền được trừ từ escrow của đơn.",
+          "done": "Đã đồng ý hoàn tiền"
+        },
+        "CONFIRM_RETURN_RECEIVED": {
+          "btn": "Đã nhận hàng hoàn",
+          "title": "Xác nhận đã nhận hàng hoàn",
+          "note": "Hàng đã về kho đúng tình trạng. Tiền được hoàn cho khách từ escrow của đơn.",
+          "done": "Đã nhận hàng hoàn, tiền được hoàn cho khách"
+        },
+        "ESCALATE": {
+          "btn": "Nhờ Sàn phân xử",
+          "title": "Nhờ Sàn phân xử",
+          "note": "Nhân viên Genie xem bằng chứng của hai bên và ra quyết định cuối cùng.",
+          "done": "Đã chuyển sang Sàn phân xử"
+        }
+      }
+    }
+  },
+  "seller-dashboard": {
+    "see_all": "Xem tất cả",
+    "kyc": {
+      "waiting": {
+        "title": "Hồ sơ KYC đang chờ duyệt",
+        "desc": "Hồ sơ nghi ngờ được nhân viên xử lý trong 24 giờ làm việc.",
+        "cta": "Xem tiến độ"
+      },
+      "rejected": {
+        "title": "KYC bị từ chối",
+        "desc": "Vui lòng cập nhật hồ sơ và nộp lại.",
+        "cta": "Nộp lại"
+      }
+    },
+    "work": {
+      "title": "Việc cần làm",
+      "done": "Bạn đã xử lý hết việc tồn",
+      "new": "Đơn chờ xác nhận",
+      "new_hint": "Xác nhận hoặc từ chối đơn",
+      "prep": "Đơn cần chuẩn bị",
+      "prep_hint": "Đóng gói và giao hãng vận chuyển",
+      "fail": "Đơn giao thất bại",
+      "fail_hint": "Kiểm tra và xử lý lại",
+      "return": "Yêu cầu trả hàng",
+      "return_hint": "Gần nhất còn {hours} giờ",
+      "chat": "Tin nhắn chưa đọc",
+      "chat_hint": "Trả lời khách hàng"
+    },
+    "revenue": {
+      "title": {
+        "7d": "Doanh thu 7 ngày qua",
+        "30d": "Doanh thu 30 ngày qua",
+        "12m": "Doanh thu 12 tháng đã chốt"
+      },
+      "ranges": {
+        "7d": "7 ngày",
+        "30d": "30 ngày",
+        "12m": "12 tháng"
+      },
+      "against": {
+        "7d": "so với 7 ngày trước",
+        "30d": "so với 30 ngày trước",
+        "12m": "Từ 06/2025 đến 05/2026"
+      },
+      "range": "Khoảng thời gian",
+      "series": "Doanh thu"
+    },
+    "money": {
+      "title": "Tiền của shop",
+      "available": "Số dư có thể rút",
+      "withdraw": "Rút tiền",
+      "parts": {
+        "available": "Có thể rút",
+        "held": "Sàn đang giữ",
+        "held_note": "Về ví khi khách nhận hàng",
+        "payout": "Lệnh rút chờ duyệt",
+        "cod": "COD chờ chuyển về",
+        "cod_note": "Hãng vận chuyển đang giữ"
+      }
+    },
+    "recent": {
+      "title": "Đơn hàng gần đây",
+      "code": "Mã đơn",
+      "customer": "Khách hàng",
+      "items": "Số SP",
+      "total": "Giá trị",
+      "time": "Thời gian",
+      "status": "Trạng thái",
+      "action": "Thao tác",
+      "confirm": "Xác nhận",
+      "detail": "Chi tiết"
+    },
+    "orders30": {
+      "title": "Đơn 30 ngày qua",
+      "as_of": "Đến {date}",
+      "analytics": "Phân tích",
+      "count": "{count} đơn",
+      "outcomes": "Kết quả đơn 30 ngày qua",
+      "visits": "Lượt truy cập",
+      "conversion": "Tỉ lệ chuyển đổi (đơn trên lượt truy cập)"
+    },
+    "products": {
+      "title": "Sản phẩm",
+      "manage": "Quản lý",
+      "PUBLISHED": "Đang bán",
+      "PENDING_APPROVAL": "Chờ duyệt",
+      "DRAFT": "Nháp",
+      "REJECTED": "Bị từ chối"
+    }
+  },
+  "seller-analytics": {
+    "title": "Phân tích bán hàng",
+    "subtitle": "Hiệu suất Shop {sub}",
+    "range": "Khoảng thời gian",
+    "ranges": {
+      "today": "Hôm nay",
+      "7d": "7 ngày qua",
+      "30d": "30 ngày qua",
+      "custom": "Tùy chọn ngày"
+    },
+    "range_sub": {
+      "today": "hôm nay",
+      "7d": "trong 7 ngày qua",
+      "30d": "trong 30 ngày qua",
+      "custom": "theo khoảng ngày đã chọn"
+    },
+    "against": {
+      "today": "so với hôm qua",
+      "7d": "so với 7 ngày trước",
+      "30d": "so với 30 ngày trước",
+      "custom": "so với kỳ trước"
+    },
+    "from": "Từ ngày",
+    "to": "Đến ngày",
+    "pick_dates": "Chọn ngày bắt đầu và ngày kết thúc để xem số liệu.",
+    "export": "Xuất CSV",
+    "period": "Kỳ",
+    "csv": {
+      "metric": "Chỉ số",
+      "value": "Giá trị"
+    },
+    "tiles": {
+      "gross": "Doanh thu gộp",
+      "orders": "Đơn hàng",
+      "visits": "Lượt truy cập",
+      "conversion": "Tỉ lệ chuyển đổi"
+    },
+    "chart": {
+      "daily": "Doanh thu theo ngày",
+      "hourly": "Doanh thu theo khung giờ",
+      "series": "Doanh thu"
+    },
+    "net": {
+      "title": "Tiền thực về shop",
+      "hint": "Voucher sàn và Điểm Genie do sàn chịu, không trừ vào tiền của shop",
+      "net": "Doanh thu thuần",
+      "bar": "Doanh thu gộp {sub}",
+      "to_shop": "Về shop",
+      "commission": "Hoa hồng {rate}%",
+      "voucher": "Voucher shop"
+    },
+    "outcome": {
+      "COMPLETED": "Hoàn tất",
+      "CANCELLED_BY_CUSTOMER": "Khách hủy",
+      "REJECTED_BY_SHOP": "Shop từ chối",
+      "REFUNDED": "Trả hàng, hoàn tiền",
+      "IN_PROGRESS": "Đang xử lý"
+    },
+    "outcomes": {
+      "title": "Đơn kết thúc thế nào",
+      "sub": "{count} đơn {sub}",
+      "bar": "Kết quả đơn {sub}"
+    },
+    "health": {
+      "shop_cancel": "Tỉ lệ shop tự hủy hoặc từ chối đơn",
+      "lost_disputes": "Khiếu nại shop thua (30 ngày)",
+      "auto_confirmed": "Đơn quá 24 giờ, sàn tự xác nhận (30 ngày)"
+    },
+    "sources": {
+      "title": "Nguồn truy cập",
+      "SEARCH": "Tìm kiếm trong sàn",
+      "HOME": "Trang chủ / Gợi ý",
+      "PROMOTION": "Khuyến mãi / Flash Sale",
+      "EXTERNAL": "Link ngoài / Chia sẻ",
+      "visits": "{visits} lượt · {share}%",
+      "conversion": "Tỉ lệ ra đơn {rate}"
+    },
+    "sentiment": {
+      "title": "Cảm xúc đánh giá",
+      "sub": "AI đọc nội dung {count} đánh giá có chữ {sub}; đánh giá chưa đủ chắc chắn không tính",
+      "see": "Xem đánh giá",
+      "bar": "Cảm xúc đánh giá {sub}",
+      "positive": "Tích cực",
+      "neutral": "Trung lập",
+      "negative": "Tiêu cực",
+      "rate": "Tỉ lệ tích cực",
+      "worst": "Sản phẩm bị chê nhiều nhất",
+      "worst_value": "{name} · {count} đánh giá tiêu cực"
+    },
+    "top": {
+      "title": "Sản phẩm bán chạy trong 30 ngày qua",
+      "sub": "Đóng góp tính trên {total} doanh thu gộp",
+      "product": "Sản phẩm",
+      "sold": "Đã bán",
+      "revenue": "Doanh thu",
+      "share": "Đóng góp doanh thu",
+      "conversion": "Chuyển đổi"
+    }
+  },
+  "seller-products": {
+    "list": {
+      "tabs": "Lọc sản phẩm theo trạng thái",
+      "tab": {
+        "ALL": "Tất cả",
+        "PUBLISHED": "Đang bán",
+        "DRAFT": "Bản nháp",
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "REJECTED": "Không hợp lệ",
+        "HIDDEN": "Đã ẩn"
+      },
+      "status": {
+        "PUBLISHED": "Đang bán",
+        "DRAFT": "Nháp",
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "REJECTED": "Không hợp lệ",
+        "HIDDEN": "Đã ẩn"
+      },
+      "add": "Thêm sản phẩm",
+      "search": "Tìm theo tên sản phẩm",
+      "empty": "Chưa có sản phẩm nào ở mục này.",
+      "col": {
+        "product": "Sản phẩm",
+        "price": "Giá",
+        "stock": "Kho",
+        "sold": "Đã bán",
+        "status": "Trạng thái",
+        "actions": "Thao tác"
+      },
+      "skus": "{count} loại",
+      "out": "Hết",
+      "view": "Xem",
+      "edit": "Sửa",
+      "hide": "Ẩn",
+      "show": "Hiện",
+      "hidden": "Đã tạm ẩn sản phẩm khỏi sàn",
+      "shown": "Đã mở bán lại sản phẩm",
+      "delete": "Xóa",
+      "delete_title": "Xác nhận xóa sản phẩm",
+      "delete_body": "Bạn có chắc chắn muốn xóa sản phẩm \"{name}\"? Hành động này không thể hoàn tác.",
+      "delete_ok": "Xóa sản phẩm",
+      "deleted": "Đã xóa sản phẩm"
+    },
+    "editor": {
+      "title_new": "Thêm sản phẩm mới",
+      "title_edit": "Sửa: {name}",
+      "back": "Quay lại danh sách",
+      "not_found": "Không tìm thấy sản phẩm",
+      "read_only": "Sản phẩm đang chờ duyệt. Bạn chỉ có thể xem thông tin, không sửa được.",
+      "rejected": "Sản phẩm bị từ chối",
+      "rejected_reason": "Lý do: {reason}. Sửa rồi gửi lại để được duyệt.",
+      "save_draft": "Lưu nháp",
+      "publish": "Đăng bán",
+      "save_submit": "Lưu & gửi duyệt",
+      "saved_draft": "Đã lưu nháp sản phẩm",
+      "saved_live": "Đã lưu. Sản phẩm vẫn đang bán (chỉ đổi giá / tồn kho).",
+      "submitted": "Đã gửi duyệt. Gemini sàng lọc rồi chuyển nhân viên kiểm duyệt.",
+      "fix": "Còn {count} mục cần sửa trước khi gửi duyệt",
+      "kyc_ok": "Shop đã được xác minh, được phép đăng bán",
+      "kyc_wait": "KYC đang chờ duyệt — chưa thể đăng bán",
+      "kyc_bad": "KYC chưa đạt — vui lòng nộp lại hồ sơ",
+      "review_title": "Sản phẩm sẽ được kiểm duyệt lại",
+      "review_body": "Sản phẩm đang bán sẽ chuyển sang chờ duyệt lại vì bạn đã đổi tên, ảnh, mô tả, danh mục, thương hiệu hoặc giấy tờ. Thay đổi giá và tồn kho không cần kiểm duyệt.",
+      "review_ok": "Tiếp tục lưu",
+      "zero_title": "Phân loại chưa có giá và tồn kho",
+      "zero_body": "Có {count} phân loại đang có giá 0₫ và tồn kho 0. Bạn có chắc muốn lưu?",
+      "zero_back": "Quay lại sửa",
+      "zero_ok": "Vẫn gửi duyệt",
+      "leave_title": "Hủy thay đổi?",
+      "leave_body": "Các thay đổi chưa lưu sẽ bị mất.",
+      "leave_stay": "Tiếp tục sửa",
+      "leave_ok": "Đồng ý hủy"
+    },
+    "images": {
+      "title": "Hình ảnh sản phẩm",
+      "min": "Tối thiểu 1 ảnh",
+      "rule": "JPG/PNG/WEBP · ≤ 5MB · 1:1",
+      "list": "Ảnh sản phẩm — kéo thả hoặc dùng phím ← → để sắp xếp, Delete để xóa",
+      "slot_main": "Ảnh {n} (ảnh chính)",
+      "slot": "Ảnh {n}",
+      "main": "Ảnh chính",
+      "remove": "Xóa ảnh",
+      "add": "Thêm ảnh",
+      "hint": "Tối đa 8 ảnh · Tỉ lệ 1:1 khuyến nghị. Ảnh đầu tiên là ảnh chính hiển thị trên kết quả tìm kiếm. Kéo thả để sắp xếp.",
+      "video_add": "Thêm 1 video",
+      "video_change": "Đổi video",
+      "video_rule": "MP4, tối đa 30 MB",
+      "video_remove": "Bỏ video",
+      "err": "Ảnh phải là JPG, PNG, WEBP và tối đa 5 MB.",
+      "video_err": "Video phải là MP4, tối đa 30 MB."
+    },
+    "docs": {
+      "title": "Giấy tờ chứng thực",
+      "required": "Bắt buộc với ngành này",
+      "optional": "Không bắt buộc",
+      "rule": "PDF/DOC/XLS · ≤ 10 MB · Tối đa 4 file",
+      "add": "Thêm giấy tờ",
+      "remove": "Xóa giấy tờ {name}",
+      "err_image": "Chỉ chấp nhận file tài liệu (PDF, DOC, XLS), không hỗ trợ file ảnh.",
+      "err": "Mỗi tệp phải là PDF, DOC, XLS và tối đa 10 MB.",
+      "hint": "Hóa đơn nhập hàng, giấy ủy quyền thương hiệu hoặc giấy kiểm định. Nhân viên kiểm duyệt xem tại mục Hồ sơ pháp lý sản phẩm."
+    },
+    "basic": {
+      "title": "Thông tin cơ bản",
+      "name": "Tên sản phẩm",
+      "name_hint": "Tên gồm: Thương hiệu + Loại sản phẩm + Đặc điểm nổi bật. VD: Samsung Galaxy S24 Ultra 256GB Titanium",
+      "category": "Danh mục",
+      "category_none": "Chưa chọn danh mục",
+      "change": "Thay đổi",
+      "level": "Danh mục cấp {n}",
+      "category_hint": "Chọn dần từ danh mục cha đến danh mục con. Danh mục cuối cùng xác định phí hoa hồng & thông số gợi ý. Không có danh mục phù hợp?",
+      "propose": "Đề xuất danh mục mới",
+      "brand": "Thương hiệu",
+      "brand_placeholder": "Tìm hoặc nhập thương hiệu…",
+      "brand_new": "Thêm \"{name}\" làm thương hiệu mới",
+      "condition": "Tình trạng",
+      "conditions": {
+        "NEW": "Mới",
+        "USED": "Đã qua sử dụng",
+        "REFURBISHED": "Tân trang (Refurbished)"
+      },
+      "origin": "Xuất xứ",
+      "origin_placeholder": "VD: Việt Nam, Trung Quốc, Hàn Quốc"
+    },
+    "specs": {
+      "title": "Thông số kỹ thuật",
+      "suggest": "Gợi ý:",
+      "name": "Tên thông số",
+      "value": "Giá trị",
+      "name_n": "Tên thông số dòng {n}",
+      "value_n": "Giá trị dòng {n}",
+      "name_placeholder": "Nhập tên thông số…",
+      "value_placeholder": "Nhập giá trị…",
+      "remove": "Xóa thông số {name}",
+      "required": "Bắt buộc với ngành này: {list}",
+      "missing": "(còn thiếu {list})",
+      "hint": "Thông số sẽ hiển thị trong mục \"Chi tiết sản phẩm\" trên trang sản phẩm cho khách hàng xem."
+    },
+    "desc": {
+      "title": "Mô tả chi tiết sản phẩm",
+      "toolbar": "Định dạng mô tả",
+      "bold": "In đậm",
+      "italic": "In nghiêng",
+      "underline": "Gạch chân",
+      "h1": "Tiêu đề lớn",
+      "h2": "Tiêu đề nhỏ",
+      "ul": "Danh sách chấm",
+      "ol": "Danh sách số",
+      "link": "Chèn liên kết",
+      "link_insert": "Chèn",
+      "image": "Chèn ảnh",
+      "count": "Đã nhập: {count} / {max} ký tự",
+      "hint": "Mô tả tốt giúp tăng tỷ lệ mua hàng — nên có ảnh minh hoạ, chất liệu, cam kết."
+    },
+    "variants": {
+      "title": "Phân loại hàng & Giá",
+      "max_groups": "Tối đa {n} nhóm",
+      "add_group": "Thêm nhóm",
+      "group_n": "Nhóm {n}",
+      "group_name": "Tên nhóm {n}",
+      "group_placeholder": "Chọn / nhập tên nhóm…",
+      "custom_name": "Tự đặt tên: \"{name}\"",
+      "remove_group": "Xoá nhóm",
+      "values_of": "Thêm giá trị cho nhóm {name}",
+      "value_placeholder": "Nhập giá trị…",
+      "remove_value": "Xóa giá trị {value}",
+      "images_by": "Ảnh theo phân loại",
+      "image_for": "Chọn ảnh cho {value}",
+      "over": "Mỗi sản phẩm tối đa {max} phân loại (đang có {count}).",
+      "single_hint": "Thêm phân loại hàng nếu sản phẩm có nhiều biến thể (màu, size…). Hoặc nhập giá & tồn kho đơn lẻ:",
+      "price": "Giá (₫)",
+      "price_short": "Giá",
+      "stock": "Tồn kho",
+      "bulk": "Áp dụng nhanh:",
+      "apply": "Áp dụng",
+      "price_of": "Giá {name}",
+      "stock_of": "Tồn kho {name}"
+    },
+    "shipping": {
+      "title": "Thông tin vận chuyển",
+      "weight": "Cân nặng đóng gói (g)",
+      "dims": "Kích thước đóng gói (cm)",
+      "dim": {
+        "length": "Chiều dài (cm)",
+        "width": "Chiều rộng (cm)",
+        "height": "Chiều cao (cm)"
+      },
+      "dim_short": {
+        "length": "D",
+        "width": "R",
+        "height": "C"
+      },
+      "hint": "Dùng để tính phí vận chuyển. Nếu bỏ trống, hãng vận chuyển sẽ cân/đo thực tế.",
+      "from": "Gửi hàng từ",
+      "from_value": "TP. Hồ Chí Minh",
+      "from_hint": "Lấy theo địa chỉ lấy hàng của shop — đổi ở Cài đặt.",
+      "payer": "Phí ship do",
+      "buyer": "Người mua chịu (mặc định)",
+      "seller": "Shop hỗ trợ freeship đơn từ",
+      "threshold": "Mức đơn được freeship (₫)",
+      "pre_order": "Đặt trước (Pre-order)",
+      "pre_days": "Số ngày chuẩn bị",
+      "pre_days_hint": "ngày chuẩn bị ({min}–{max} ngày)"
+    },
+    "err": {
+      "name": "Tên sản phẩm cần ít nhất 5 ký tự",
+      "name_long": "Tên sản phẩm tối đa 120 ký tự",
+      "origin": "Xuất xứ tối đa 60 ký tự",
+      "weight": "Nhập cân nặng đóng gói (gram)",
+      "weight_max": "Cân nặng tối đa 50.000 g",
+      "pre_order": "Số ngày chuẩn bị phải từ 7 đến 30",
+      "free_ship": "Nhập mức đơn được freeship",
+      "price": "Nhập giá lớn hơn 0",
+      "price_short": "Giá > 0",
+      "description": "Mô tả tối đa 10.000 ký tự"
+    },
+    "catalog": {
+      "tree": "Cây danh mục",
+      "tree_hint": "Danh mục cuối cùng của sản phẩm quyết định phí hoa hồng và thông số gợi ý.",
+      "count": "{count} SP",
+      "rate": "Hoa hồng {rate}%",
+      "proposals": "Đề xuất của Shop",
+      "propose": "Đề xuất danh mục mới",
+      "none": "Shop chưa gửi đề xuất nào.",
+      "under": "Thuộc {parent} · {date}",
+      "root": "danh mục gốc",
+      "state": {
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      },
+      "name": "Tên danh mục",
+      "name_placeholder": "VD: Thiết bị đeo thông minh",
+      "parent": "Danh mục cha",
+      "new_root": "— Danh mục gốc mới",
+      "reason": "Lý do đề xuất",
+      "reason_placeholder": "Sản phẩm của bạn chưa khớp danh mục nào?",
+      "send": "Gửi đề xuất",
+      "sent": "Đã gửi đề xuất. Sàn sẽ xem xét và phản hồi.",
+      "err": {
+        "name": "Nhập tên danh mục",
+        "name_long": "Tên danh mục tối đa 60 ký tự",
+        "reason": "Vui lòng nhập lý do đề xuất",
+        "dup": "Danh mục \"{name}\" đã có sẵn, hãy dùng danh mục này."
+      }
+    }
+  },
+  "seller-wallet": {
+    "balance": {
+      "available": "Số dư khả dụng",
+      "available_hint": "Có thể rút về ngân hàng",
+      "held": "Đang giữ (Escrow)",
+      "held_hint": "Chuyển vào số dư khi khách xác nhận nhận hàng, hoặc sau 7 ngày",
+      "held_auto": "Tự động giải ngân sau khi khách xác nhận",
+      "revenue": "Doanh thu 30 ngày qua",
+      "revenue_against": "so với 30 ngày trước",
+      "cod": "Chờ đối soát COD",
+      "cod_hint": "Vào ký quỹ khi hãng vận chuyển chuyển tiền thu hộ về sàn",
+      "pending": "Đang rút",
+      "pending_hint": "Lệnh rút đang chờ sàn chuyển khoản"
+    },
+    "how": {
+      "title": "Cách tính tiền về ví",
+      "rate": "Theo ngành của đơn gần nhất: {rate}%",
+      "gross": "Tổng tiền hàng (Gross)",
+      "commission": "Phí hoa hồng ({rate}%)",
+      "net": "Thực nhận (Net) → Escrow",
+      "release": "Giải ngân khi hoàn tất"
+    },
+    "ledger": {
+      "title": "Sổ giao dịch ví",
+      "append_only": "Chỉ ghi thêm",
+      "filter": "Lọc",
+      "export": "Xuất CSV",
+      "month": "Tháng",
+      "type": "Loại giao dịch",
+      "all": "Tất cả giao dịch",
+      "search": "Mã đơn, diễn giải...",
+      "empty": "Chưa có giao dịch nào trong tháng này",
+      "col": {
+        "time": "Thời gian",
+        "ref": "Mã tham chiếu",
+        "type": "Loại",
+        "desc": "Diễn giải",
+        "commission": "Hoa hồng",
+        "state": "Trạng thái"
+      }
+    },
+    "type": {
+      "SALE": "Bán hàng",
+      "RELEASE": "Giải ngân",
+      "PAYOUT": "Rút tiền",
+      "REFUND": "Hoàn tiền"
+    },
+    "state": {
+      "HELD": "Escrow",
+      "AVAILABLE": "Khả dụng",
+      "PAYOUT_PENDING": "Chờ duyệt",
+      "PAYOUT_DONE": "Đã rút",
+      "REFUNDED": "Hoàn"
+    },
+    "withdraw": {
+      "title": "Yêu cầu rút tiền",
+      "no_account": "Bạn chưa có tài khoản nhận tiền đã xác minh.",
+      "add_account": "Thêm ở Cài đặt trước khi rút.",
+      "verified": "Đã xác minh",
+      "amount": "Số tiền cần rút",
+      "placeholder": "Tối thiểu {min}",
+      "all": "Rút toàn bộ",
+      "next": "Tiếp tục",
+      "otp_for": "Nhập mã OTP để xác nhận rút {amount}.",
+      "confirm": "Xác nhận rút tiền",
+      "done": "Đã tạo lệnh rút {code}. Kế toán sàn phê duyệt giải ngân trong 24 giờ làm việc."
+    }
+  },
+  "seller-chat": {
+    "inbox": "Tin nhắn",
+    "empty": "Chưa có khách nào nhắn tin cho shop.",
+    "orders": "Đơn hàng",
+    "no_orders": "Khách chưa có đơn với shop",
+    "send_card": "Gửi thẻ {code}"
+  },
+  "seller-promotions": {
+    "title": "Khuyến mãi của Shop",
+    "sub": "Tạo voucher và tham gia chiến dịch của sàn",
+    "create": "Tạo voucher",
+    "kind": {
+      "PERCENTAGE": "Giảm %",
+      "FIXED": "Giảm tiền",
+      "FREESHIP": "Freeship"
+    },
+    "status": {
+      "ACTIVE": "Đang chạy",
+      "SCHEDULED": "Đã lên lịch",
+      "ENDED": "Đã kết thúc",
+      "DISABLED": "Đã tắt"
+    },
+    "stats": {
+      "active": "Voucher đang chạy",
+      "usage": "Lượt dùng tháng này",
+      "revenue": "Doanh thu từ KM"
+    },
+    "table": {
+      "title": "Mã giảm giá của Shop",
+      "code": "Mã",
+      "type": "Loại",
+      "cond": "Điều kiện",
+      "used": "Đã dùng",
+      "status": "Trạng thái",
+      "ends": "Kết thúc",
+      "actions": "Thao tác",
+      "cap": "Tối đa {value}",
+      "ship": "Phí ship",
+      "min": "Đơn từ {value}",
+      "any": "Mọi đơn",
+      "edit": "Chỉnh sửa",
+      "duplicate": "Nhân bản",
+      "disable": "Tắt"
+    },
+    "off": {
+      "title": "Tắt voucher",
+      "body": "Tắt voucher {code}? Khách hàng sẽ không thể dùng mã này nữa.",
+      "ok": "Tắt voucher",
+      "done": "Đã tắt voucher {code}"
+    },
+    "form": {
+      "title_new": "Tạo Voucher Shop",
+      "title_edit": "Chỉnh sửa voucher {code}",
+      "code": "Mã voucher",
+      "gen": "Tự tạo",
+      "code_hint": "6–12 ký tự, chỉ chữ HOA và số.",
+      "kind": "Loại giảm giá",
+      "freeship_note": "Miễn phí vận chuyển cho đơn đủ điều kiện.",
+      "value": "Giá trị",
+      "cap": "Giảm tối đa (₫)",
+      "min": "Đơn tối thiểu (₫)",
+      "total": "Số lượng phát hành",
+      "per_user": "Giới hạn / người",
+      "budget": "Ngân sách tối đa (₫, không bắt buộc)",
+      "period": "Thời gian hiệu lực",
+      "from": "Ngày bắt đầu",
+      "to": "Ngày kết thúc",
+      "scope": "Sản phẩm áp dụng",
+      "scope_all": "Tất cả sản phẩm shop",
+      "scope_cat": "Danh mục cụ thể",
+      "scope_product": "Sản phẩm cụ thể",
+      "exclude": "Ngoại trừ (Không áp dụng giảm giá)",
+      "exclude_none": "Không loại trừ",
+      "create": "Tạo voucher",
+      "save": "Lưu thay đổi",
+      "created": "Đã tạo voucher {code}",
+      "saved": "Đã lưu voucher {code}",
+      "err": {
+        "code": "Mã 6–12 ký tự, chỉ chữ HOA và số",
+        "value": "Giá trị phải > 0",
+        "percent": "Phần trăm ≤ 100",
+        "total": "Số lượng phải > 0",
+        "from": "Chọn ngày bắt đầu",
+        "to": "Chọn ngày kết thúc",
+        "end": "Ngày kết thúc phải sau ngày bắt đầu",
+        "category": "Chọn ít nhất 1 danh mục",
+        "product": "Chọn ít nhất 1 sản phẩm"
+      }
+    },
+    "flash": {
+      "banner": "{name} — Đăng ký gian hàng",
+      "banner_sub": "Hạn đăng ký: {date} · Chọn tối đa {max} sản phẩm tham gia khung giờ vàng.",
+      "register": "Đăng ký ngay",
+      "registered_n": "Đã đăng ký {count} SP",
+      "title": "Đăng ký {name}",
+      "product": "Sản phẩm",
+      "price": "Giá Flash Sale (₫)",
+      "price_hint": "Tối đa {max} (thấp hơn giá 30 ngày ít nhất 15%)",
+      "stock": "Số suất (tồn {stock})",
+      "err_price": "Giá Flash phải thấp hơn giá bán 30 ngày ít nhất 15% (tối đa {max})",
+      "err_stock": "Số suất phải từ 1 đến {max}",
+      "add": "Thêm sản phẩm",
+      "added": "Đã đăng ký {name}",
+      "registered": "Đã đăng ký, chờ sàn duyệt",
+      "row": "{price} · {stock} suất",
+      "status": {
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      }
+    }
+  },
+  "seller-reviews": {
+    "title": "Đánh giá sản phẩm",
+    "sub": "Phản hồi đánh giá để tăng uy tín Shop",
+    "summary": "Tổng quan đánh giá",
+    "count": "{count} đánh giá",
+    "tabs": "Lọc đánh giá",
+    "tab": {
+      "ALL": "Tất cả ({count})",
+      "UNREPLIED": "Chưa phản hồi ({count})",
+      "LOW_RATING": "Cần chú ý (≤3★)"
+    },
+    "empty": "Không có đánh giá nào ở mục này.",
+    "variant": "Phân loại: {name}",
+    "photo": "Ảnh khách gửi",
+    "reply_from": "Phản hồi từ Shop:",
+    "reply": "Phản hồi",
+    "reply_label": "Nội dung phản hồi",
+    "reply_placeholder": "Nhập phản hồi (tối đa {max} ký tự)…",
+    "send": "Gửi phản hồi",
+    "replied": "Đã gửi phản hồi",
+    "report": "Báo cáo",
+    "reported": "Đã báo cáo",
+    "report_title": "Báo cáo đánh giá vi phạm",
+    "report_reason": "Lý do",
+    "report_note": "Ghi chú thêm (không bắt buộc)",
+    "report_hint": "Báo cáo chỉ là tín hiệu ưu tiên. Quyết định ẩn đánh giá do nhân viên kiểm duyệt của sàn đưa ra.",
+    "report_send": "Gửi báo cáo",
+    "report_sent": "Đã gửi báo cáo"
+  },
+  "seller-settings": {
+    "title": "Cài đặt Shop",
+    "sub": "Thông tin gian hàng, vận chuyển và thanh toán",
+    "save": "Lưu cài đặt",
+    "saved": "Đã lưu cài đặt",
+    "reset": "Đã hoàn tác các thay đổi chưa lưu",
+    "profile": {
+      "title": "Thông tin gian hàng",
+      "cover": "Ảnh bìa Shop",
+      "cover_upload": "Tải ảnh bìa",
+      "cover_hint": "Khuyến nghị 1200×300px (tỉ lệ 4:1), JPG/PNG, tối đa 2 MB. Ảnh bìa hiển thị ở đầu trang Shop.",
+      "logo": "Đổi logo",
+      "logo_alt": "Logo shop",
+      "name": "Tên Shop (đổi tối đa 1 lần / 30 ngày)",
+      "rename_at": "Được đổi tên lại từ {date}",
+      "desc": "Mô tả Shop",
+      "err_cover": "Ảnh bìa phải là JPG/PNG, tối đa 2 MB",
+      "err_logo": "Logo phải là JPG/PNG, tối đa 1 MB"
+    },
+    "shipping": {
+      "title": "Vận chuyển",
+      "carriers": {
+        "GHN": {
+          "name": "GHN — Giao Hàng Nhanh",
+          "desc": "Hãng mặc định"
+        },
+        "GHTK": {
+          "name": "GHTK — Giao Hàng Tiết Kiệm",
+          "desc": "Đối tác 3PL"
+        },
+        "VIETTEL_POST": {
+          "name": "ViettelPost",
+          "desc": "Đối tác 3PL"
+        },
+        "JNT_EXPRESS": {
+          "name": "J&T Express",
+          "desc": "Đối tác 3PL"
+        },
+        "GENIE_EXPRESS": {
+          "name": "Genie Express",
+          "desc": "Giao nội thành"
+        }
+      },
+      "free": "Miễn phí vận chuyển",
+      "free_desc": "Shop tự chịu phí ship khi đơn đạt mức dưới đây",
+      "free_from": "Miễn phí vận chuyển cho đơn từ (₫)"
+    },
+    "pickup": {
+      "title": "Địa chỉ lấy hàng (GHN)",
+      "phone": "Số điện thoại kho",
+      "region": "Tỉnh / Quận / Phường",
+      "line": "Địa chỉ chi tiết",
+      "save": "Lưu và Đồng bộ với GHN",
+      "saved": "Đã lưu địa chỉ lấy hàng và đồng bộ với GHN",
+      "ghn": "GHN Shop ID:"
+    },
+    "payout": {
+      "section": "Tài khoản nhận tiền (Payout)",
+      "holder_short": "CTK: {name}",
+      "change": "Thay đổi",
+      "delete": "Xóa",
+      "add": "Thêm tài khoản nhận tiền",
+      "title": "Cập nhật tài khoản nhận tiền",
+      "bank": "Ngân hàng",
+      "holder": "Tên chủ tài khoản",
+      "holder_hint": "Trùng với họ tên trên CCCD đã xác minh",
+      "number": "Số tài khoản",
+      "verify": "Xác minh chính chủ",
+      "confirm": "Xác nhận & lưu",
+      "matched": "Tên chủ tài khoản khớp hồ sơ. Nhập OTP gửi tới email để xác nhận.",
+      "saved": "Lưu tài khoản thành công",
+      "err_fill": "Vui lòng điền đủ thông tin",
+      "err_name": "Tên chủ tài khoản không khớp họ tên trên CCCD ({name})",
+      "delete_title": "Xóa tài khoản",
+      "delete_body": "Bạn có chắc chắn muốn xóa tài khoản ngân hàng này không? Chỉ xóa được khi không có lệnh rút đang chờ.",
+      "deleted": "Xóa tài khoản thành công"
+    },
+    "prefs": {
+      "title": "Tuỳ chọn vận hành",
+      "auto": "Tự động trả lời chat",
+      "auto_desc": "Gửi lời chào khi khách nhắn tin",
+      "greeting": "Lời chào",
+      "greeting_placeholder": "VD: Chào bạn, shop có thể giúp gì cho bạn?",
+      "away": "Tin nhắn khi vắng mặt",
+      "away_placeholder": "VD: Hiện tại shop đang bận, sẽ trả lời bạn sớm nhất có thể.",
+      "save_msg": "Lưu tin nhắn",
+      "auto_saved": "Đã lưu cấu hình tự động trả lời",
+      "pre_order": "Cho phép đặt trước (Pre-order)",
+      "pre_order_desc": "Bán sản phẩm chưa có sẵn hàng"
+    },
+    "vacation": {
+      "label": "Chế độ nghỉ (Vacation)",
+      "desc": "Sản phẩm vẫn hiển thị nhưng khách không mua được",
+      "active": "Đang nghỉ, mở lại ngày {date}. Sản phẩm hiện nhãn \"Shop đang tạm nghỉ\" và khóa nút mua.",
+      "title": "Bật chế độ nghỉ",
+      "until": "Mở lại ngày (tối đa 30 ngày)",
+      "msg": "Tin nhắn tự động khi nghỉ",
+      "default_msg": "Shop đang tạm nghỉ, sẽ trả lời bạn khi mở lại nhé!",
+      "hint": "Tin nhắn này thay cho lời chào tự động trong thời gian nghỉ.",
+      "turn_on": "Bật chế độ nghỉ",
+      "pending": "Còn đơn chưa bàn giao, cần xử lý trước khi nghỉ:",
+      "on": "Đã bật chế độ nghỉ",
+      "off": "Đã tắt chế độ nghỉ, shop mở bán lại"
+    },
+    "security": {
+      "change": "Đổi mật khẩu",
+      "set": "Thiết lập mật khẩu",
+      "login_with": "Đăng nhập bằng:",
+      "email": "Email và mật khẩu",
+      "manage": "Quản lý liên kết đăng nhập",
+      "note": "Shop dùng chung tài khoản và mật khẩu với tài khoản mua hàng cùng email. Đổi mật khẩu yêu cầu OTP gửi tới email đăng ký để bảo vệ ví Escrow.",
+      "note_set": "Tài khoản đang chỉ đăng nhập bằng Google nên chưa có mật khẩu. Sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google. Vẫn cần OTP gửi tới email đăng ký."
     }
   }
 }

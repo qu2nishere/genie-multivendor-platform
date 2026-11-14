@@ -5,7 +5,7 @@ import type { CursorPage } from '@/shared/api/types';
 import type { AppNotification } from '../domain/notifications.types';
 import type { NotificationDto } from './notifications.dto';
 import { toNotification } from './notifications.mapper';
-import { NOTIFICATION_DTOS } from './notifications.mock';
+import { NOTIFICATION_DTOS, SELLER_NOTIFICATION_DTOS } from './notifications.mock';
 
 // Trạng thái đã đọc trong phiên mock (thay cho server)
 let mockReadAll = false;
@@ -17,7 +17,9 @@ export async function listNotifications(
 ): Promise<CursorPage<AppNotification>> {
   if (USE_MOCK) {
     await mockDelay();
-    const rows = NOTIFICATION_DTOS.map((d) =>
+    // Một endpoint cho mọi vai trò (3.12): mock chọn bộ thông báo theo bề mặt đang mở
+    const seller = typeof window !== 'undefined' && window.location.pathname.startsWith('/seller');
+    const rows = (seller ? SELLER_NOTIFICATION_DTOS : NOTIFICATION_DTOS).map((d) =>
       mockReadAll || mockRead.has(d.id)
         ? { ...d, read_at: d.read_at ?? new Date().toISOString() }
         : d,

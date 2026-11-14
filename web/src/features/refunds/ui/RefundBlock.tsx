@@ -91,7 +91,10 @@ export function RefundBlock({ refund: r, paymentMethod }: RefundBlockProps) {
                 add.mutate(
                   {
                     r,
-                    evidence: more.map((f) => ({ objectKey: f.objectKey, mediaType: f.mediaType })),
+                    evidence: more.map((f) => ({
+                      objectKey: f.objectKey,
+                      mediaType: f.mediaType === 'VIDEO' ? 'VIDEO' : 'IMAGE',
+                    })),
                   },
                   {
                     onSuccess: () => {

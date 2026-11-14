@@ -2,13 +2,18 @@
 // Tài khoản mẫu vốn là chủ shop — mock bỏ kiểm GNE-VND-4093 để trình diễn được luồng người mua mở shop.
 import { api } from '@/shared/api/http';
 import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { sellerStore } from '@/shared/api/mock/seller';
 import { maskEmail } from '@/shared/lib/mask';
 import type { RegistrationChallenge, ShopRegistration } from '../domain/registration.types';
+
+/** Mock: tên shop chờ xác nhận OTP. */
+let pendingShopName = '';
 
 export async function registerShop(r: ShopRegistration): Promise<RegistrationChallenge> {
   if (USE_MOCK) {
     await mockDelay(400);
     if (r.shopName.trim().toLowerCase() === 'techzone official') mockFail('GNE-VND-4094');
+    pendingShopName = r.shopName.trim();
     return { id: `reg_${Date.now()}`, maskedTarget: maskEmail(r.email) };
   }
   const d = await api.post<{ challenge_id: string; masked_target: string }>(
@@ -34,6 +39,8 @@ export async function confirmShopRegistration(
   if (USE_MOCK) {
     await mockDelay(400);
     if (otp !== '123456') mockFail('GNE-AUTH-4222', { details: { remaining_attempts: 4 } });
+    // Shop mới: KYC chưa nộp → Seller Center chỉ mở Hồ sơ KYC + Cài đặt
+    sellerStore.set({ id: 1, name: pendingShopName || 'Shop mới', kyc_status: 'NOT_SUBMITTED' });
     return { shopId: 1 };
   }
   const d = await api.post<{ shop_id: number; kyc_status: string }>(

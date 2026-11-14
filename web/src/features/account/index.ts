@@ -11,6 +11,17 @@ export {
   isAccountSection,
   type AccountSection,
 } from './domain/account.menu';
-export type { Profile, LoginMethods, Device, Gender } from './domain/account.types';
+export type {
+  Profile,
+  LoginMethods,
+  Device,
+  Gender,
+  StepUpChallenge,
+  StepUpProof,
+  StepUpPurpose,
+} from './domain/account.types';
+export { useRequestStepUp } from './application/useAccount';
+export { StepUpOtp, type StepUpOtpProps } from './ui/StepUpOtp';
+export { PasswordForm } from './ui/SecurityPanels';
 export { useProfile, useLoginMethods } from './application/useAccount';
 export { default as AccountSectionView, type AccountOwnSection } from './ui/AccountSectionView';
