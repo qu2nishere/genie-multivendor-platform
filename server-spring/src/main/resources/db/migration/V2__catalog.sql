@@ -253,3 +253,7 @@ CREATE INDEX idx_products_category_status_created ON products (category_id, stat
 CREATE INDEX idx_products_vendor_status ON products (vendor_id, status);                   -- UC-CAT-16, kênh người bán
 CREATE INDEX idx_products_specs_json ON products USING GIN (specs_json jsonb_path_ops);    -- bộ lọc thuộc tính (2.6)
 -- product_variants.sku UNIQUE: đã có ở cột (unique = true)
+
+-- Bổ sung ở P12 (đối chiếu Phụ lục B.1 #17, #18): chú thích trường UserWishlist không ghi dạng "FK → bảng.id"
+ALTER TABLE user_wishlists ADD CONSTRAINT fk_user_wishlists_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE user_wishlists ADD CONSTRAINT fk_user_wishlists_products FOREIGN KEY (product_id) REFERENCES products(id);
