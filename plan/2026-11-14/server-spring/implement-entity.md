@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P03 (8 / 23 lượt); lượt kế: P04a |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P04a (9 / 23 lượt); lượt kế: P04b |
 
 ---
 
@@ -171,16 +171,16 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Voucher` (L2345) | `promotion.voucher.domain` | 27 | 5 | ✔ | Giữ 4 `@OneToMany` tới bảng nối |
-| [ ] | `VoucherUsage` (L2539) | `promotion.voucher.domain` | 7 | 1 | | Giữ `voucher`; factory `static of` |
-| [ ] | `UserVoucher` (L2604) | `promotion.voucher.domain` | 7 | 1 | | Bỏ `user` (→ auth). Giữ `voucher` |
-| [ ] | `VoucherCategory` (L2676) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` (→ catalog) |
-| [ ] | `VoucherProduct` (L2705) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
-| [ ] | `VoucherExcludedCategory` (L2734) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` |
-| [ ] | `VoucherExcludedProduct` (L2763) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
+| [x] | `Voucher` (L2345) | `promotion.voucher.domain` | 27 | 5 | ✔ | Giữ 4 `@OneToMany` tới bảng nối |
+| [x] | `VoucherUsage` (L2539) | `promotion.voucher.domain` | 7 | 1 | | Giữ `voucher`; factory `static of` |
+| [x] | `UserVoucher` (L2604) | `promotion.voucher.domain` | 7 | 1 | | Bỏ `user` (→ auth). Giữ `voucher` |
+| [x] | `VoucherCategory` (L2676) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` (→ catalog) |
+| [x] | `VoucherProduct` (L2705) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
+| [x] | `VoucherExcludedCategory` (L2734) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` |
+| [x] | `VoucherExcludedProduct` (L2763) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
 
-- [ ] 4 class khóa gộp (D4).
-- [ ] Enum: `VoucherScope`, `DiscountType` (promotion.voucher). (`VoucherType`, `FundingParty` ở common.)
+- [x] 4 class khóa gộp (D4).
+- [x] Enum: `VoucherScope`, `DiscountType` (promotion.voucher). (`VoucherType`, `FundingParty` ở common.)
 
 **Lượt 4b — Flash Sale & Điểm**
 
@@ -406,7 +406,7 @@
 | [x] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
 | [x] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
 | [x] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
-| [ ] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
+| [x] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
 | [ ] | P04b | `feature/entity-p04b-flashsale-coin` | `feat(promotion): add flash sale and coin entities` |
 | [ ] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
 | [ ] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
@@ -437,4 +437,5 @@
 | 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | `a69b974` | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
 | 6 | 2026-11-14 | P02b | `feature/entity-p02b-catalog-support` (từ `feature/entity-p02a-catalog-core`) | `a20cb56` | Entity `CategoryAttribute`, `UserWishlist`, `CategoryProposal`, `ProductModerationResult`, `SearchKeywordStat`, `ProductViewStat`; enum `AttributeDataType`, `CategoryProposalStatus`, `ModerationDecision`, `TrafficSource`; 6 repository (đủ 12 repository của Phase 2) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 15/4/11/11/6/8, PT 2/0/2/2/1/1 khớp | Xong. Không có quan hệ chéo module trong lượt này |
 | 7 | 2026-11-14 | P02c | `feature/entity-p02c-catalog-migration` (từ `feature/entity-p02b-catalog-support`) | `feaa6dc` | `V2__catalog.sql`: 12 bảng, CHECK enum, unique/index từ `@Table`, 15 FK + FK tự tham chiếu `categories.parent_id`; trả FK nợ `vendor_profiles.category_id` (SET NULL); hàm `immutable_unaccent`, cột sinh `products.search_vector` + 5 index mục 13.1 | V1+V2 chạy trên `postgres:16` ✔, `SchemaValidationIT` ✔ (24 entity), `ModuleBoundaryTest` ✔ | Xong. `@UniqueConstraint(columnNames = {"userId", "productId"})` của `UserWishlist` dùng tên Java → SQL dùng `user_id, product_id`. Full-text dùng cấu hình `simple` + unaccent (PostgreSQL không có cấu hình tiếng Việt) |
-| 8 | 2026-11-14 | P03 | `feature/entity-p03-cart` (từ `feature/entity-p02c-catalog-migration`) | (lượt sau điền) | Thay stub `Cart`, `CartItem`, `CartRepository`; thêm `CartItemRepository`; `V3__cart.sql` (2 bảng, 3 FK: `carts.user_id`, `cart_items.cart_id` CASCADE, `cart_items.product_variant_id`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V3 trên `postgres:16` ✔ (22 bảng), `SchemaValidationIT` ✔; trường 4/6, PT 4/2 khớp | Xong. D2: `CartItem` bỏ `variant` (6 trường thay vì 7) |
+| 8 | 2026-11-14 | P03 | `feature/entity-p03-cart` (từ `feature/entity-p02c-catalog-migration`) | `c0c1f13` | Thay stub `Cart`, `CartItem`, `CartRepository`; thêm `CartItemRepository`; `V3__cart.sql` (2 bảng, 3 FK: `carts.user_id`, `cart_items.cart_id` CASCADE, `cart_items.product_variant_id`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V3 trên `postgres:16` ✔ (22 bảng), `SchemaValidationIT` ✔; trường 4/6, PT 4/2 khớp | Xong. D2: `CartItem` bỏ `variant` (6 trường thay vì 7) |
+| 9 | 2026-11-14 | P04a | `feature/entity-p04a-voucher` (từ `feature/entity-p03-cart`) | (lượt sau điền) | Entity `Voucher`, `VoucherUsage`, `UserVoucher`, 4 bảng nối phạm vi; 4 class khóa gộp `*Id`; enum `VoucherScope`, `DiscountType`; 7 repository (bảng nối dùng kiểu id gộp) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 27/7/6/3/3/3/3, PT 5/1/1/1/1/1/1 khớp | Xong. D2: `UserVoucher` bỏ `user`; 4 bảng nối bỏ `category` / `product` |
