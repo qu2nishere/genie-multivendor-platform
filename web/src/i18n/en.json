@@ -285,6 +285,12 @@
       "type": "{name}: unsupported format",
       "size": "{name}: max {mb} MB",
       "failed": "Could not upload {name}, please try again"
+    },
+    "pager": {
+      "showing": "Showing {from} - {to} of {total} {unit}",
+      "prev": "Previous",
+      "next": "Next",
+      "page": "Page {page} / {pages}"
     }
   },
   "layout": {
@@ -2972,6 +2978,254 @@
         "FINANCE_OFFICER": "Finance Officer",
         "CUSTOM": "Custom"
       }
+    }
+  },
+  "admin-dashboard": {
+    "jobs": {
+      "title": "To do",
+      "done": "No queues are waiting",
+      "kyc": "KYC dossiers",
+      "kyc_hint": "Awaiting review",
+      "products": "Products",
+      "products_hint": "Awaiting moderation",
+      "disputes": "Returns, disputes",
+      "disputes_hint": "Open",
+      "withdrawals": "Payout requests",
+      "withdrawals_hint": "{count} blocked pending KYC",
+      "cod": "COD reconciliation sessions",
+      "cod_hint": "Awaiting matching"
+    },
+    "period": "Reporting period",
+    "export": "Export CSV report",
+    "against": "vs {month}",
+    "against_none": "previous period",
+    "tiles": {
+      "gmv": "Platform GMV",
+      "commission": "Commission",
+      "voucher": "Voucher and free-shipping cost",
+      "net": "Net profit",
+      "net_note": "Commission minus vouchers, rewards and gateway fees"
+    },
+    "split": {
+      "title": "Where commission for {month} goes",
+      "desc": "The platform only earns commission; platform vouchers, rewards and payment gateway fees are paid by the platform, the rest is net profit.",
+      "total": "Total commission earned in the period (5% of GMV)",
+      "net": "Net profit",
+      "voucher": "Platform vouchers and free shipping",
+      "coin": "Genie Points",
+      "gateway": "Payment gateway fees"
+    },
+    "gmv": {
+      "title": "Platform GMV",
+      "range": "Chart range",
+      "series": "GMV",
+      "ranges": {
+        "7d": "7 days",
+        "weekly": "Weekly",
+        "6m": "6 months"
+      },
+      "chart": {
+        "LAST_7_DAYS": "Last 7 days of {month}",
+        "WEEKS_IN_MONTH": "By week in {month}",
+        "LAST_6_MONTHS": "6 months of {year}"
+      }
+    },
+    "holding": {
+      "title": "Money held for shops",
+      "note": "Current balance, not per period",
+      "escrow": "Held until the buyer receives",
+      "escrow_note": "No shop can withdraw yet",
+      "wallet": "In shop wallets",
+      "wallet_note": "Shops can withdraw"
+    },
+    "pending": {
+      "title": "Money awaiting action",
+      "payable": "Payouts ready to pay",
+      "payable_note": "Verified shops",
+      "blocked": "Blocked payouts",
+      "blocked_note": "Pending KYC",
+      "cod": "COD awaiting reconciliation",
+      "cod_note": "Sent by carriers",
+      "refunds": "Refunds owed to buyers",
+      "refunds_note": "{count} open requests"
+    },
+    "orders": {
+      "title": "Orders in progress",
+      "sub": "{count} unfinished orders, in processing order",
+      "AWAITING_PAYMENT": "Awaiting payment",
+      "PAID": "Paid",
+      "PREPARING": "Preparing",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "RETURNED_REFUNDED": "Returned, refunded"
+    },
+    "top": {
+      "shops": "Top shops by GMV",
+      "products": "Best-selling products"
+    },
+    "growing": {
+      "title": "Fast-growing shops",
+      "category": "Category",
+      "all_categories": "All categories",
+      "search": "Search shops",
+      "search_placeholder": "Enter shop name",
+      "empty": "No matching shops. Try another category or keyword.",
+      "shop": "Shop",
+      "sold": "Products sold",
+      "rating": "Rating",
+      "growth": "Growth",
+      "unit": "shops"
+    },
+    "csv": {
+      "period": "Reporting period",
+      "voucher": "Voucher cost",
+      "coin": "Rewards cost",
+      "gateway": "Gateway fees",
+      "status": "Order status",
+      "count": "Orders",
+      "sold": "Sold"
+    }
+  },
+  "admin-kyc": {
+    "queue": "KYC dossier queue",
+    "tabs": {
+      "PENDING": "Awaiting review",
+      "SUPPLEMENT_REQUESTED": "Awaiting documents",
+      "VERIFIED": "Approved",
+      "REJECTED": "Rejected",
+      "ALL": "All"
+    },
+    "status": {
+      "PENDING": "Awaiting review",
+      "SUPPLEMENT_REQUESTED": "Awaiting documents",
+      "VERIFIED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "empty": "No dossiers in this tab.",
+    "business": {
+      "INDIVIDUAL": "Individual",
+      "HOUSEHOLD": "Household business",
+      "BUSINESS": "Company"
+    },
+    "risk": {
+      "LOW": "Low risk",
+      "MEDIUM": "Medium risk",
+      "HIGH": "High risk"
+    },
+    "random_audit": "Random audit",
+    "owner": "Owner:",
+    "type": "Type:",
+    "submitted": "Submitted {at}",
+    "uploaded": "Uploaded documents ({count})",
+    "docs": {
+      "ID_FRONT": "ID card front",
+      "ID_BACK": "ID card back",
+      "BUSINESS_LICENSE": "Business licence",
+      "BUSINESS_REGISTRATION": "Company registration",
+      "SELFIE": "Portrait photo",
+      "TAX_NOTICE": "Tax notice"
+    },
+    "supp_docs": {
+      "ID_FRONT": "ID card front (blurry / missing)",
+      "ID_BACK": "ID card back",
+      "BUSINESS_LICENSE": "Business licence (missing / expired)",
+      "BUSINESS_REGISTRATION": "Company registration",
+      "SELFIE": "Owner portrait photo",
+      "TAX_NOTICE": "Tax notice"
+    },
+    "ai": {
+      "title": "Automatic verification result",
+      "PASS": "Passed",
+      "PARTIAL": "Partially passed",
+      "FAIL": "Failed",
+      "none": "No result yet",
+      "passed": "passed",
+      "failed": "failed",
+      "errors": "Issues found",
+      "checks": {
+        "qr_code": "QR code",
+        "national_emblem": "National emblem",
+        "mrz": "MRZ",
+        "fingerprint": "Fingerprint",
+        "face_match": "Face match"
+      }
+    },
+    "face": {
+      "title": "Face comparison",
+      "score": "Face match {score}"
+    },
+    "declared": {
+      "title": "Declared data",
+      "type": "Type",
+      "id": "ID number (declared)",
+      "rep": "Representative",
+      "tax": "Tax code",
+      "rate": "Shop-specific commission",
+      "rate_placeholder": "By category",
+      "rate_err": "Enter 0 to 50%, or leave empty to use the category rate."
+    },
+    "rejected_reason": "Rejection reason:",
+    "supplement_req": "Documents requested:",
+    "due": "due {at}",
+    "notice_before": "The seller ",
+    "notice_strong": "cannot list products",
+    "notice_after": " until the dossier is approved.",
+    "waiting_seller": "Request sent, waiting for the seller to resubmit.",
+    "actions": {
+      "reject": "Reject",
+      "approve": "Approve KYC",
+      "supplement": "Request documents",
+      "requeue": "Return to queue"
+    },
+    "approve": {
+      "done": "KYC approved for {shop}."
+    },
+    "requeue": {
+      "done": "{shop}'s dossier is back in the queue."
+    },
+    "reasons": {
+      "BLURRY_DOCUMENT": "Blurry / unreadable document",
+      "INFO_MISMATCH": "Information mismatch",
+      "EXPIRED_DOCUMENT": "Expired document",
+      "SUSPECTED_FORGERY": "Suspected forgery",
+      "MISSING_LICENSE": "Missing business licence",
+      "OTHER": "Other reason"
+    },
+    "reject": {
+      "title": "Reject dossier {code}",
+      "desc_before": "The seller ",
+      "desc_after": " will be notified with the reason and can resubmit.",
+      "reason": "Main reason",
+      "note": "Details (required for Other reason)",
+      "note_placeholder": "Describe the problem...",
+      "submit": "Confirm rejection",
+      "done": "{shop}'s dossier was rejected.",
+      "err": {
+        "note": "Enter the reason details.",
+        "note_long": "At most 500 characters."
+      }
+    },
+    "supplement": {
+      "title": "Request documents — {shop}",
+      "docs": "Choose the documents to resubmit:",
+      "note": "Note to the seller",
+      "note_placeholder": "E.g. The ID front photo is blurry, please retake it.",
+      "hint": "The seller will be notified and has {days} days to resubmit. The dossier moves to Awaiting documents.",
+      "submit": "Send request",
+      "done": "Document request sent to {shop}.",
+      "err": {
+        "docs": "Choose at least one document.",
+        "note_long": "At most 500 characters."
+      }
+    },
+    "viewer": {
+      "title": "Document viewer — {name}",
+      "zoom_in": "Zoom in",
+      "zoom_out": "Zoom out",
+      "rotate": "Rotate",
+      "flip": "Flip"
     }
   }
 }

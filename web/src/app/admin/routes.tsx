@@ -10,10 +10,14 @@ export interface AdminRoute {
 }
 
 const Pending = lazy(() => import('./Pending'));
+const Dashboard = lazy(() =>
+  import('@/features/admin-dashboard').then((m) => ({ default: m.DashboardPage })),
+);
+const Kyc = lazy(() => import('@/features/admin-kyc').then((m) => ({ default: m.KycReviewPage })));
 
 export const adminRoutes: AdminRoute[] = [
-  { path: '/', section: 'overview', screen: Pending },
-  { path: '/kyc', section: 'kyc', screen: Pending },
+  { path: '/', section: 'overview', screen: Dashboard },
+  { path: '/kyc', section: 'kyc', screen: Kyc },
   { path: '/refunds', section: 'refunds', screen: Pending },
   { path: '/reviews', section: 'reviews', screen: Pending },
   { path: '/withdrawals', section: 'withdrawals', screen: Pending },

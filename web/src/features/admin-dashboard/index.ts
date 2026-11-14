@@ -3,3 +3,4 @@
 export type { AdminQueues, QueueKey } from './domain/queues.types';
 export { totalJobs, badgeLabel, JOB_KEYS } from './domain/queues.rules';
 export { useAdminQueues, ADMIN_QUEUES_KEY } from './application/useAdminQueues';
+export { default as DashboardPage } from './ui/DashboardPage';

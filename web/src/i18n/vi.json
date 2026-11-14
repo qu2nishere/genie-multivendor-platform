@@ -285,6 +285,12 @@
       "type": "{name}: định dạng không được hỗ trợ",
       "size": "{name}: tối đa {mb} MB",
       "failed": "Không tải lên được {name}, vui lòng thử lại"
+    },
+    "pager": {
+      "showing": "Hiển thị {from} - {to} trong tổng số {total} {unit}",
+      "prev": "Trước",
+      "next": "Sau",
+      "page": "Trang {page} / {pages}"
     }
   },
   "layout": {
@@ -2972,6 +2978,254 @@
         "FINANCE_OFFICER": "Finance Officer",
         "CUSTOM": "Tùy chỉnh"
       }
+    }
+  },
+  "admin-dashboard": {
+    "jobs": {
+      "title": "Việc cần xử lý",
+      "done": "Không còn hàng đợi nào tồn",
+      "kyc": "Hồ sơ KYC",
+      "kyc_hint": "Chờ duyệt",
+      "products": "Sản phẩm",
+      "products_hint": "Chờ kiểm duyệt",
+      "disputes": "Trả hàng, khiếu nại",
+      "disputes_hint": "Đang mở",
+      "withdrawals": "Lệnh rút tiền",
+      "withdrawals_hint": "{count} lệnh bị chặn chờ hồ sơ KYC",
+      "cod": "Phiên đối soát COD",
+      "cod_hint": "Chờ đối chiếu"
+    },
+    "period": "Kỳ báo cáo",
+    "export": "Xuất báo cáo CSV",
+    "against": "so với {month}",
+    "against_none": "kỳ trước",
+    "tiles": {
+      "gmv": "GMV toàn sàn",
+      "commission": "Hoa hồng",
+      "voucher": "Chi phí voucher và freeship",
+      "net": "Lợi nhuận ròng",
+      "net_note": "Hoa hồng trừ voucher, điểm thưởng, phí cổng"
+    },
+    "split": {
+      "title": "Hoa hồng {month} đi về đâu",
+      "desc": "Sàn chỉ thu hoa hồng; voucher sàn, điểm thưởng và phí cổng thanh toán do sàn tự chịu, phần còn lại là lợi nhuận ròng.",
+      "total": "Tổng hoa hồng sàn thu trong kỳ (5% trên GMV)",
+      "net": "Lợi nhuận ròng",
+      "voucher": "Voucher sàn và freeship",
+      "coin": "Điểm Genie",
+      "gateway": "Phí cổng thanh toán"
+    },
+    "gmv": {
+      "title": "GMV toàn sàn",
+      "range": "Khoảng biểu đồ",
+      "series": "GMV",
+      "ranges": {
+        "7d": "7 ngày",
+        "weekly": "Theo tuần",
+        "6m": "6 tháng"
+      },
+      "chart": {
+        "LAST_7_DAYS": "7 ngày cuối tháng {month}",
+        "WEEKS_IN_MONTH": "Theo tuần trong tháng {month}",
+        "LAST_6_MONTHS": "6 tháng năm {year}"
+      }
+    },
+    "holding": {
+      "title": "Tiền sàn đang giữ cho shop",
+      "note": "Số dư hiện tại, không theo kỳ",
+      "escrow": "Giữ đến khi khách nhận hàng",
+      "escrow_note": "Chưa shop nào rút được",
+      "wallet": "Đã về ví shop",
+      "wallet_note": "Shop có thể rút"
+    },
+    "pending": {
+      "title": "Tiền đang chờ xử lý",
+      "payable": "Lệnh rút chờ chi",
+      "payable_note": "Shop đã xác minh",
+      "blocked": "Lệnh rút bị chặn",
+      "blocked_note": "Chờ hồ sơ KYC",
+      "cod": "COD chờ đối soát",
+      "cod_note": "Hãng vận chuyển đã chuyển",
+      "refunds": "Tiền chờ hoàn cho khách",
+      "refunds_note": "{count} yêu cầu đang mở"
+    },
+    "orders": {
+      "title": "Đơn đang chạy",
+      "sub": "{count} đơn chưa xong, theo thứ tự xử lý",
+      "AWAITING_PAYMENT": "Chờ thanh toán",
+      "PAID": "Đã thanh toán",
+      "PREPARING": "Đang chuẩn bị",
+      "DELIVERING": "Đang giao",
+      "DELIVERED": "Đã giao",
+      "COMPLETED": "Hoàn thành",
+      "CANCELLED": "Đã huỷ",
+      "RETURNED_REFUNDED": "Trả hàng, hoàn tiền"
+    },
+    "top": {
+      "shops": "Shop có GMV cao nhất",
+      "products": "Sản phẩm bán chạy"
+    },
+    "growing": {
+      "title": "Shop tăng trưởng nhanh",
+      "category": "Ngành hàng",
+      "all_categories": "Tất cả ngành hàng",
+      "search": "Tìm shop",
+      "search_placeholder": "Nhập tên shop",
+      "empty": "Không tìm thấy shop phù hợp. Thử đổi ngành hàng hoặc từ khoá.",
+      "shop": "Shop",
+      "sold": "Sản phẩm bán ra",
+      "rating": "Đánh giá",
+      "growth": "Tăng trưởng",
+      "unit": "shop"
+    },
+    "csv": {
+      "period": "Kỳ báo cáo",
+      "voucher": "Chi phí voucher",
+      "coin": "Chi phí điểm thưởng",
+      "gateway": "Phí cổng thanh toán",
+      "status": "Trạng thái đơn",
+      "count": "Số đơn",
+      "sold": "Đã bán"
+    }
+  },
+  "admin-kyc": {
+    "queue": "Hàng chờ hồ sơ KYC",
+    "tabs": {
+      "PENDING": "Chờ duyệt",
+      "SUPPLEMENT_REQUESTED": "Chờ bổ sung",
+      "VERIFIED": "Đã duyệt",
+      "REJECTED": "Từ chối",
+      "ALL": "Tất cả"
+    },
+    "status": {
+      "PENDING": "Chờ duyệt",
+      "SUPPLEMENT_REQUESTED": "Chờ bổ sung",
+      "VERIFIED": "Đã duyệt",
+      "REJECTED": "Từ chối"
+    },
+    "empty": "Không có hồ sơ nào ở mục này.",
+    "business": {
+      "INDIVIDUAL": "Cá nhân",
+      "HOUSEHOLD": "Hộ kinh doanh",
+      "BUSINESS": "Doanh nghiệp"
+    },
+    "risk": {
+      "LOW": "Rủi ro thấp",
+      "MEDIUM": "Rủi ro trung bình",
+      "HIGH": "Rủi ro cao"
+    },
+    "random_audit": "Hậu kiểm ngẫu nhiên",
+    "owner": "Chủ sở hữu:",
+    "type": "Loại hình:",
+    "submitted": "Nộp lúc {at}",
+    "uploaded": "Hồ sơ đã tải lên ({count})",
+    "docs": {
+      "ID_FRONT": "CCCD mặt trước",
+      "ID_BACK": "CCCD mặt sau",
+      "BUSINESS_LICENSE": "Giấy phép KD",
+      "BUSINESS_REGISTRATION": "ĐKKD doanh nghiệp",
+      "SELFIE": "Ảnh chân dung",
+      "TAX_NOTICE": "Thông báo thuế"
+    },
+    "supp_docs": {
+      "ID_FRONT": "CCCD / CMND mặt trước (ảnh mờ / thiếu)",
+      "ID_BACK": "CCCD / CMND mặt sau",
+      "BUSINESS_LICENSE": "Giấy phép kinh doanh (thiếu / hết hạn)",
+      "BUSINESS_REGISTRATION": "Đăng ký kinh doanh (doanh nghiệp)",
+      "SELFIE": "Ảnh chân dung chủ shop",
+      "TAX_NOTICE": "Thông báo thuế"
+    },
+    "ai": {
+      "title": "Kết quả xác thực tự động",
+      "PASS": "Đạt",
+      "PARTIAL": "Đạt một phần",
+      "FAIL": "Không đạt",
+      "none": "Chưa có kết quả",
+      "passed": "đạt",
+      "failed": "không đạt",
+      "errors": "Lỗi phát hiện",
+      "checks": {
+        "qr_code": "QR Code",
+        "national_emblem": "Quốc huy",
+        "mrz": "MRZ",
+        "fingerprint": "Vân tay",
+        "face_match": "Khớp khuôn mặt"
+      }
+    },
+    "face": {
+      "title": "So sánh khuôn mặt",
+      "score": "Độ khớp khuôn mặt {score}"
+    },
+    "declared": {
+      "title": "Dữ liệu kê khai",
+      "type": "Loại hình",
+      "id": "Số CCCD (kê khai)",
+      "rep": "Người đại diện",
+      "tax": "Mã số thuế",
+      "rate": "Hoa hồng riêng của shop",
+      "rate_placeholder": "Theo ngành",
+      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành."
+    },
+    "rejected_reason": "Lý do từ chối:",
+    "supplement_req": "Đã yêu cầu bổ sung:",
+    "due": "hạn {at}",
+    "notice_before": "Người bán ",
+    "notice_strong": "không thể đăng bán sản phẩm",
+    "notice_after": " cho đến khi hồ sơ được duyệt.",
+    "waiting_seller": "Đã gửi yêu cầu, chờ người bán nộp lại.",
+    "actions": {
+      "reject": "Từ chối",
+      "approve": "Phê duyệt KYC",
+      "supplement": "Yêu cầu bổ sung",
+      "requeue": "Đưa lại vào hàng chờ"
+    },
+    "approve": {
+      "done": "Đã phê duyệt KYC cho {shop}."
+    },
+    "requeue": {
+      "done": "Đã đưa hồ sơ {shop} lại vào hàng chờ."
+    },
+    "reasons": {
+      "BLURRY_DOCUMENT": "Ảnh giấy tờ mờ / không đọc được",
+      "INFO_MISMATCH": "Thông tin không khớp",
+      "EXPIRED_DOCUMENT": "Giấy tờ hết hạn",
+      "SUSPECTED_FORGERY": "Nghi ngờ giả mạo",
+      "MISSING_LICENSE": "Thiếu giấy phép kinh doanh",
+      "OTHER": "Lý do khác"
+    },
+    "reject": {
+      "title": "Từ chối hồ sơ {code}",
+      "desc_before": "Người bán ",
+      "desc_after": " sẽ nhận thông báo kèm lý do và có thể nộp lại hồ sơ.",
+      "reason": "Lý do chính",
+      "note": "Chi tiết thêm (bắt buộc khi chọn Lý do khác)",
+      "note_placeholder": "Mô tả cụ thể...",
+      "submit": "Xác nhận từ chối",
+      "done": "Đã từ chối hồ sơ của {shop}.",
+      "err": {
+        "note": "Nhập chi tiết lý do.",
+        "note_long": "Tối đa 500 ký tự."
+      }
+    },
+    "supplement": {
+      "title": "Yêu cầu bổ sung — {shop}",
+      "docs": "Chọn giấy tờ cần bổ sung:",
+      "note": "Ghi chú cho người bán",
+      "note_placeholder": "VD: Ảnh CCCD mặt trước bị mờ, vui lòng chụp lại rõ nét hơn.",
+      "hint": "Người bán sẽ nhận thông báo và có {days} ngày để bổ sung. Hồ sơ chuyển sang trạng thái Chờ bổ sung.",
+      "submit": "Gửi yêu cầu bổ sung",
+      "done": "Đã gửi yêu cầu bổ sung tới {shop}.",
+      "err": {
+        "docs": "Chọn ít nhất 1 giấy tờ cần bổ sung.",
+        "note_long": "Tối đa 500 ký tự."
+      }
+    },
+    "viewer": {
+      "title": "Trình xem tài liệu — {name}",
+      "zoom_in": "Phóng to",
+      "zoom_out": "Thu nhỏ",
+      "rotate": "Xoay",
+      "flip": "Lật"
     }
   }
 }
