@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong P00 (1 / 23 lượt); lượt kế: P01a |
+| **Cập nhật gần nhất** | 2026-11-14 — xong P00, P01a (2 / 23 lượt); lượt kế: P01b |
 
 ---
 
@@ -85,12 +85,12 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `User` (L124) | `auth.profile.domain` | 20 | 7 | ✔ | Bỏ `vendorProfile`, `adminProfile`. Giữ `customerProfile`, `addresses`, `refreshTokens`. `@UniqueConstraint uk_users_oauth` |
-| [ ] | `CustomerProfile` (L290) | `auth.profile.domain` | 14 | 2 | | Giữ `user` |
-| [ ] | `Address` (L375) | `auth.address.domain` | 16 | 2 | | Xóa mềm `isDeleted` |
-| [ ] | `RefreshToken` (L1029) | `auth.token.domain` | 9 | 2 | | |
+| [x] | `User` (L124) | `auth.profile.domain` | 20 | 7 | ✔ | Bỏ `vendorProfile`, `adminProfile`. Giữ `customerProfile`, `addresses`, `refreshTokens`. `@UniqueConstraint uk_users_oauth` |
+| [x] | `CustomerProfile` (L290) | `auth.profile.domain` | 14 | 2 | | Giữ `user` |
+| [x] | `Address` (L375) | `auth.address.domain` | 16 | 2 | | Xóa mềm `isDeleted` |
+| [x] | `RefreshToken` (L1029) | `auth.token.domain` | 9 | 2 | | |
 
-- [ ] Enum: `AccountStatus`, `Gender` (auth.profile) · `AddressLabel` (auth.address). (`UserRole` đã ở Phase 0.)
+- [x] Enum: `AccountStatus`, `Gender` (auth.profile) · `AddressLabel` (auth.address). (`UserRole` đã ở Phase 0.)
 
 **Lượt 1b — Entity còn lại**
 
@@ -376,6 +376,7 @@
 - **Mỗi lượt một nhánh mới, một commit.** Tên nhánh: `feature/entity-p<NN><lượt>-<mo-ta>` — chữ thường, gạch nối. Chưa có mã Jira nên bỏ phần `GNE-<số>` khỏi tên nhánh và commit (giống tiền lệ `plan/2026-11-11/web`, quyết định D6); có mã thì thêm ` [#GNE-<số>]` cuối commit.
 - **Nhánh xếp chồng:** lượt sau phụ thuộc code lượt trước (vd. 1c cần entity của 1a, 1b) ⇒ nhánh lượt đầu tiên (P00) tách từ `develop`; **mỗi lượt sau tách từ nhánh của lượt ngay trước**. Nếu nhánh lượt trước đã được merge vào `develop` thì tách từ `develop` mới nhất (`git switch develop && git pull`).
 - **Commit:** đúng `commitlint.config.cjs` — `<type>(<scope>): <subject>`, subject tiếng Anh, chữ thường, không dấu chấm cuối, dòng đầu ≤ 100 ký tự; body tiếng Việt nếu cần. Dùng thông điệp ghi sẵn ở bảng 7.3. Không `--no-verify`, không `--author`; hook commitlint / lint-staged lỗi thì sửa nguyên nhân.
+- **Không có collaborator:** thông điệp commit **không** có dòng `Co-Authored-By:` (cũng không có dòng "Generated with Claude Code"). Commit chỉ mang danh tính git của chủ repo (`git config user.name` / `user.email`). Quy tắc này thắng mọi hướng dẫn tự động thêm dòng attribution. Chỉ viết `-m "<subject>"` (+ body tiếng Việt nếu cần). Trước khi commit, kiểm `git log -1 --format=%B` không chứa `Co-Authored-By`.
 - Commit gồm: code của lượt **+** file này (đã tick checklist và ghi nhật ký mục 8). Lượt P00 commit thêm chính file plan này lần đầu.
 - **Không tự `git push`, không mở PR** — chỉ làm khi người dùng yêu cầu (khi đó mở PR xếp chồng: PR của lượt N có base là nhánh lượt N−1, PR P00 base `develop`).
 
@@ -394,7 +395,7 @@
 | ✓ | Lượt | Nhánh | Thông điệp commit |
 |---|---|---|---|
 | [x] | P00 | `feature/entity-p00-shared-enums` | `feat(common): add shared enums for entity layer` |
-| [ ] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
+| [x] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
 | [ ] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
 | [ ] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
 | [ ] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
@@ -425,4 +426,5 @@
 
 | # | Ngày | Lượt | Nhánh (tách từ) | Commit | Đã làm (entity / enum / repo / migration) | Kiểm tra | Kết quả & ghi chú |
 |---|---|---|---|---|---|---|---|
-| 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | (lượt sau điền) | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
+| 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | `6397563` | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
+| 2 | 2026-11-14 | P01a | `feature/entity-p01a-auth-entities` (từ `feature/entity-p00-shared-enums`) | (lượt sau điền) | Entity `User`, `CustomerProfile`, `Address`, `RefreshToken`; enum `AccountStatus`, `Gender`, `AddressLabel`; 4 repository (`auth.profile` / `auth.address` / `auth.token`) | `compile` ✔, `ModuleBoundaryTest` ✔; đếm trường 18/14/16/9, phương thức 7/2/2/2 khớp | Xong. D2: `User` bỏ `vendorProfile`, `adminProfile` (18 trường thay vì 20). `User.addresses` / `refreshTokens` trỏ sang feature khác của cùng module `auth` nên giữ |
