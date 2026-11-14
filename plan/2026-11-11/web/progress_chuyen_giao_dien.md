@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A; Admin Portal trên `feature/admin-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–B; Admin Portal trên `feature/admin-ui` |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 8 / 52 | — | `feature/admin-ui` |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 15 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **359 / 429** | | |
+| **Tổng** | | **379** | **50** | **366 / 429** | | |
 
 ---
 
@@ -552,13 +552,13 @@
 
 **Nhóm B — Tổng quan, KYC**
 
-- [ ] **G12.08** `admin-dashboard`
-- [ ] **G12.09** `admin-kyc` miền + hạ tầng
-- [ ] **G12.10** `KycReviewPage`
-- [ ] **G12.11** `DocViewer`
-- [ ] **G12.12** Quyết định KYC
-- [ ] **G12.13** Khóa i18n `admin-dashboard.*`, `admin-kyc.*`
-- [ ] **G12.C2** 🔖 COMMIT `feat(admin-ui): add dashboard and kyc review screens` · hash: `_______`
+- [x] **G12.08** `admin-dashboard`
+- [x] **G12.09** `admin-kyc` miền + hạ tầng
+- [x] **G12.10** `KycReviewPage`
+- [x] **G12.11** `DocViewer`
+- [x] **G12.12** Quyết định KYC
+- [x] **G12.13** Khóa i18n `admin-dashboard.*`, `admin-kyc.*`
+- [x] **G12.C2** 🔖 COMMIT `feat(admin-ui): add dashboard and kyc review screens` · hash: `b8bcfb5`
 
 **Nhóm C — Tranh chấp & kiểm duyệt**
 
@@ -842,6 +842,11 @@
 | G11.42 | `seller-reviews`: điểm TB + phân bố, 3 tab có số đếm, phản hồi ≤ 500 ký tự chặn số điện thoại (GNE-SOC-4221), báo cáo dùng lại `reportReview` + lý do của feature reviews (hàm gửi truyền từ UI vào hook để tầng application không phụ thuộc feature khác). |
 | G11.43 | `SettingsPage` (seller-settings): ảnh bìa / logo (SHOP_COVER ≤ 2 MB, SHOP_LOGO ≤ 1 MB), tên đổi 1 lần / 30 ngày (GNE-VND-4091, đã thử), 5 hãng — chặn tắt hãng cuối, freeship; địa chỉ lấy hàng dùng `RegionPicker` của khu tài khoản → "Lưu và Đồng bộ với GHN"; tài khoản nhận tiền: xác minh tên khớp CCCD (GNE-WAL-4222) → OTP `PAYOUT_ACCOUNT_UPDATE` (dùng `StepUpOtp`), xóa có OTP `PAYOUT_ACCOUNT_DELETE`; tự trả lời + "Lưu tin nhắn"; chế độ nghỉ ≤ 30 ngày, còn đơn chưa bàn giao → liệt kê mã đơn (từ kho đơn chung). Bỏ nút "Mô phỏng: đã bàn giao hết" (D5). Sửa lỗi `Switch` dùng chung: khi không có chữ đi kèm vỏ là `<span>` nên bấm không bật / tắt được → luôn là `<label>`. |
 | G11.44 | `SecuritySection`: chip cách đăng nhập (email/mật khẩu, Google) + liên kết quản lý; form mật khẩu dùng lại `PasswordForm` của khu tài khoản (xuất qua index) vì shop chạy trên tài khoản mua hàng của chủ shop. |
+| G12.08 | `admin-dashboard`: miền + mock theo API 11.2 (`/admin/dashboard/finance`, `gmv-chart` 7d / weekly / 6m, `operations`, `growing-shops`), test lợi nhuận ròng 37.432.500₫ + nhãn trục. `DashboardPage` khớp ảnh `admin-1440/360`. "Tiền đang chờ xử lý" tính từ kho mock dùng chung (lệnh rút, phiên COD, tranh chấp) nên đổi theo các màn xử lý. Ngành hàng của "Shop tăng trưởng nhanh" lấy danh mục gốc của `catalog` (lọc theo `category_id`). Xuất CSV tạo phía client từ số đang xem (như Seller G11.11); API có `/admin/dashboard/export` — dùng khi nối backend (G13.20). Thêm `getPage()` ở `shared/api/http.ts` (bóc phong bì phân trang số + `summary`) và `TablePager` ở `shared/ui` (chân bảng "Hiển thị 1 - 5 trong tổng số 7 …") dùng cho các bảng Admin. |
+| G12.09 | `admin-kyc`: kiểu theo 11.3, quy tắc (tab Chờ duyệt gom AI_PROCESSING / MANUAL_REVIEW, rủi ro theo điểm, thao tác theo trạng thái, hoa hồng riêng 0–50%), zod từ chối (Lý do khác bắt buộc ghi chú) / bổ sung (≥ 1 giấy tờ) + test. Mock: trạng thái ở `adminKycStore` (huy hiệu nav, Tổng quan đổi theo — đã thử duyệt 3 → 2), chi tiết ở kho riêng. Ảnh giấy tờ mock là hình minh hoạ SVG `public/img/mock/kyc-*.svg` (không phải giấy tờ thật). |
+| G12.10 | `KycReviewPage`: tab (`?tab=`) + hồ sơ đang xem (`?id=`) trên URL; lý do từ chối / yêu cầu bổ sung đã gửi hiện ngay trong chi tiết. Màn hẹp: 2 cột → 1 cột, ảnh giấy tờ 2 cột. |
+| G12.11 | `DocViewer` (portal, giữ focus, Esc đóng, khóa cuộn): phóng to / thu nhỏ / xoay / lật, chặn kéo thả + chuột phải (URL ký sẵn 5 phút). Số CCCD chỉ hiện dạng server đã che ở "Dữ liệu kê khai" — không che trên ảnh vì vị trí số trên ảnh thật do AI Worker xác định. |
+| G12.12 | Phê duyệt (gửi hoa hồng riêng nếu nhập), Từ chối (mã lý do 16.4 + ghi chú), Yêu cầu bổ sung (giấy tờ theo `KycDocumentType`, hạn 7 ngày), Đưa lại vào hàng chờ — mỗi thao tác làm mới mọi truy vấn `['admin', …]`. |
 
 ## Nhật ký
 
@@ -873,3 +878,4 @@
 | 2026-11-13 | Seller Center: Ví & Escrow (số dư, cách tính tiền, sổ giao dịch, xuất CSV, rút tiền + OTP) + Hồ sơ KYC (giấy tờ, selfie / camera, nộp, yêu cầu xem xét) (G11 nhóm E) | 44c8537 |
 | 2026-11-14 | Seller Center: Khuyến mãi (voucher + Flash Sale), Chat của shop, Đánh giá (phản hồi, báo cáo), Cài đặt (gian hàng, vận chuyển, lấy hàng GHN, tài khoản nhận tiền + OTP, chế độ nghỉ, bảo mật) — xong G11 (G11 nhóm F) | 543719a |
 | 2026-11-14 | Admin Portal: khung SPA (thanh bên lọc theo quyền, huy hiệu hàng chờ, chuông, 403, 404 nội bộ), `/admin/me`, `/admin/queues`, kho mock admin dùng chung (G12 nhóm A) | 68cc825 |
+| 2026-11-14 | Admin Portal: Tổng quan (việc cần xử lý, kỳ báo cáo, 4 ô tiền, hoa hồng đi về đâu, GMV, tiền giữ / chờ xử lý, đơn đang chạy, xếp hạng, shop tăng trưởng) + Duyệt KYC (hàng chờ, chi tiết, trình xem tài liệu, phê duyệt / từ chối / bổ sung) (G12 nhóm B) | b8bcfb5 |
