@@ -4,6 +4,7 @@
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
 import {
+  sellerChatUnreadStore,
   sellerMoneyStore,
   sellerOrdersStore,
   sellerProductsStore,
@@ -60,7 +61,7 @@ function mockDashboard(): DashboardDto {
             .filter(Boolean)
             .sort()[0] ?? null,
       },
-      unread_chats: 5,
+      unread_chats: sellerChatUnreadStore.get().count,
     },
     money: {
       available: sellerMoneyStore.get().available,

@@ -373,3 +373,6 @@ export const sellerMoneyStore = mockState('seller.money', () => ({
   available: 12_450_000,
   pending_withdrawal: 5_000_000,
 }));
+
+/** Số tin chat chưa đọc của shop (API 10.1 badges.unread_chats) — chat của shop ghi, khung + Tổng quan đọc. */
+export const sellerChatUnreadStore = mockState('seller.chatUnread', () => ({ count: 5 }));

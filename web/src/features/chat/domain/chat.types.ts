@@ -45,3 +45,17 @@ export interface OpenedConversation {
   responseRate: number | null;
   avgResponseMinutes: number | null;
 }
+
+/** Hội thoại phía shop (8.1 `GET /seller/conversations` — bên kia là khách hàng). */
+export interface SellerConversation {
+  id: number;
+  customer: {
+    id: number;
+    name: string;
+    avatarUrl: string | null;
+    online: boolean;
+    lastActiveAt: string | null;
+  };
+  lastMessage: { type: MessageType; preview: string | null; sentAt: string } | null;
+  unread: number;
+}

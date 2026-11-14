@@ -1,7 +1,12 @@
 // Khung Seller Center: GET /seller/me (10.1), GET /seller/search (10.1b), tài khoản nhận tiền (10.11).
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
-import { sellerOrdersStore, sellerProductsStore, sellerStore } from '@/shared/api/mock/seller';
+import {
+  sellerChatUnreadStore,
+  sellerOrdersStore,
+  sellerProductsStore,
+  sellerStore,
+} from '@/shared/api/mock/seller';
 import { searchable } from '../domain/shop.rules';
 import type { PayoutAccount, SearchHit, SellerContext } from '../domain/shop.types';
 import type { PayoutAccountDto, SellerMeDto, SellerSearchDto } from './shop.dto';
@@ -18,6 +23,7 @@ export async function getSellerMe(): Promise<SellerContext> {
       badges: {
         ...BADGES,
         orders_to_confirm: sellerOrdersStore.get().filter((o) => o.status === 'NEW').length,
+        unread_chats: sellerChatUnreadStore.get().count,
       },
     });
   }

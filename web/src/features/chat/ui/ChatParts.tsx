@@ -1,7 +1,7 @@
 // Phần dùng chung của chat (prototype ChatWidget.jsx): hộp thư, bong bóng (chữ, ảnh, thẻ sản phẩm, thẻ
 // đơn), chấm "đang gõ", tin nhanh, ô soạn (gửi ảnh ≤ 5 MB, gửi đơn với shop). Dùng cho khung chat nổi và
 // trang /chat.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useOrders } from '@/features/orders';
 import { errorMessage } from '@/shared/api/errors';
 import { UploadError, uploadFile } from '@/shared/api/upload';
@@ -89,14 +89,24 @@ export function ConversationList({
   );
 }
 
-function Bubble({ m, shop }: { m: ChatMessage; shop: Conversation['shop'] }) {
+/** Một tin trong luồng — dùng chung cho chat của khách (khung nổi, /chat) và của shop (/seller/chat). */
+export function Bubble({
+  m,
+  avatar,
+  orderHref = (o) => `/orders/${o.id}`,
+}: {
+  m: ChatMessage;
+  /** Ảnh đại diện bên kia (con dấu shop / avatar khách). */
+  avatar: ReactNode;
+  orderHref?: (o: { id: number; code: string }) => string;
+}) {
   const { t, locale } = useT();
   const st = statusKey(m);
   const base = 'max-w-[232px] rounded-lg px-3 py-2 text-sm leading-snug';
   return (
     <div className={cn('flex flex-col mb-2.5', m.mine ? 'items-end' : 'items-start')}>
       <div className={cn('flex items-end gap-[7px]', m.mine && 'flex-row-reverse')}>
-        {!m.mine && <Seal id={shop.id} name={shop.name} size={26} />}
+        {!m.mine && avatar}
         {m.type === 'TEXT' && (
           <div
             className={cn(
@@ -121,7 +131,7 @@ function Bubble({ m, shop }: { m: ChatMessage; shop: Conversation['shop'] }) {
         )}
         {m.type === 'ORDER_CARD' && m.order && (
           <a
-            href={`/orders/${m.order.id}`}
+            href={orderHref(m.order)}
             className="w-[210px] bg-surface-card border border-solid border-line rounded-lg p-2.5 no-underline"
           >
             <span className="flex items-center gap-1.5 font-semibold text-sm text-strong">
@@ -236,7 +246,11 @@ export function Thread({
           </div>
         )}
         {list.map((m) => (
-          <Bubble key={String(m.id)} m={m} shop={c.shop} />
+          <Bubble
+            key={String(m.id)}
+            m={m}
+            avatar={<Seal id={c.shop.id} name={c.shop.name} size={26} />}
+          />
         ))}
         {typing && (
           <div className="flex items-center gap-[7px] mb-2.5" aria-label={t('chat.typing')}>

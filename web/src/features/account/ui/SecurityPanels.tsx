@@ -35,7 +35,8 @@ import type { StepUpChallenge } from '../domain/account.types';
 import { panelClass } from './ProfilePanel';
 import { StepUpOtp } from './StepUpOtp';
 
-function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
+/** Form đặt / đổi mật khẩu (dùng ở Tài khoản và Cài đặt Seller Center — cùng tài khoản đăng nhập). */
+export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
   const { t } = useT();
   const verify = useVerifyPassword();
   const step = useRequestStepUp();

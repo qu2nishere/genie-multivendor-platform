@@ -100,9 +100,10 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
   { children, className, ...rest },
   ref,
 ) {
-  const Tag = children ? 'label' : 'span';
+  // Luôn là <label>: bấm vào rãnh / nút gạt (span hiển thị) bật tắt ô input ẩn, kể cả khi không có chữ
+  // đi kèm (khi đó tên đọc cho trình đọc màn hình lấy từ aria-label của input).
   return (
-    <Tag className={cn('lz-switch', WRAP, 'gap-2.5', className)}>
+    <label className={cn('lz-switch', WRAP, 'gap-2.5', className)}>
       <input ref={ref} type="checkbox" role="switch" className="peer sr-only" {...rest} />
       <span
         aria-hidden="true"
@@ -114,6 +115,6 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
         )}
       />
       {children && <span className="peer-disabled:opacity-[.45]">{children}</span>}
-    </Tag>
+    </label>
   );
 });

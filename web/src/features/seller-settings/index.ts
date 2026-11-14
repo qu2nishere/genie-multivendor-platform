@@ -21,3 +21,5 @@ export {
   useSellerSearch,
   SELLER_ME_KEY,
 } from './application/useSellerShop';
+export type { ShopSettings } from './domain/settings.types';
+export { default as SettingsPage } from './ui/SettingsPage';

@@ -1945,7 +1945,6 @@
       "notif_detail": "Chi tiết thông báo",
       "notif_open": "Mở trang liên quan",
       "got_it": "Đã hiểu",
-      "pending": "Màn này đang được chuyển từ bản mẫu sang ứng dụng.",
       "gate": {
         "cta": "Đi đến Xác minh KYC",
         "locked": {
@@ -2650,6 +2649,261 @@
       "otp_for": "Nhập mã OTP để xác nhận rút {amount}.",
       "confirm": "Xác nhận rút tiền",
       "done": "Đã tạo lệnh rút {code}. Kế toán sàn phê duyệt giải ngân trong 24 giờ làm việc."
+    }
+  },
+  "seller-chat": {
+    "inbox": "Tin nhắn",
+    "empty": "Chưa có khách nào nhắn tin cho shop.",
+    "orders": "Đơn hàng",
+    "no_orders": "Khách chưa có đơn với shop",
+    "send_card": "Gửi thẻ {code}"
+  },
+  "seller-promotions": {
+    "title": "Khuyến mãi của Shop",
+    "sub": "Tạo voucher và tham gia chiến dịch của sàn",
+    "create": "Tạo voucher",
+    "kind": {
+      "PERCENTAGE": "Giảm %",
+      "FIXED": "Giảm tiền",
+      "FREESHIP": "Freeship"
+    },
+    "status": {
+      "ACTIVE": "Đang chạy",
+      "SCHEDULED": "Đã lên lịch",
+      "ENDED": "Đã kết thúc",
+      "DISABLED": "Đã tắt"
+    },
+    "stats": {
+      "active": "Voucher đang chạy",
+      "usage": "Lượt dùng tháng này",
+      "revenue": "Doanh thu từ KM"
+    },
+    "table": {
+      "title": "Mã giảm giá của Shop",
+      "code": "Mã",
+      "type": "Loại",
+      "cond": "Điều kiện",
+      "used": "Đã dùng",
+      "status": "Trạng thái",
+      "ends": "Kết thúc",
+      "actions": "Thao tác",
+      "cap": "Tối đa {value}",
+      "ship": "Phí ship",
+      "min": "Đơn từ {value}",
+      "any": "Mọi đơn",
+      "edit": "Chỉnh sửa",
+      "duplicate": "Nhân bản",
+      "disable": "Tắt"
+    },
+    "off": {
+      "title": "Tắt voucher",
+      "body": "Tắt voucher {code}? Khách hàng sẽ không thể dùng mã này nữa.",
+      "ok": "Tắt voucher",
+      "done": "Đã tắt voucher {code}"
+    },
+    "form": {
+      "title_new": "Tạo Voucher Shop",
+      "title_edit": "Chỉnh sửa voucher {code}",
+      "code": "Mã voucher",
+      "gen": "Tự tạo",
+      "code_hint": "6–12 ký tự, chỉ chữ HOA và số.",
+      "kind": "Loại giảm giá",
+      "freeship_note": "Miễn phí vận chuyển cho đơn đủ điều kiện.",
+      "value": "Giá trị",
+      "cap": "Giảm tối đa (₫)",
+      "min": "Đơn tối thiểu (₫)",
+      "total": "Số lượng phát hành",
+      "per_user": "Giới hạn / người",
+      "budget": "Ngân sách tối đa (₫, không bắt buộc)",
+      "period": "Thời gian hiệu lực",
+      "from": "Ngày bắt đầu",
+      "to": "Ngày kết thúc",
+      "scope": "Sản phẩm áp dụng",
+      "scope_all": "Tất cả sản phẩm shop",
+      "scope_cat": "Danh mục cụ thể",
+      "scope_product": "Sản phẩm cụ thể",
+      "exclude": "Ngoại trừ (Không áp dụng giảm giá)",
+      "exclude_none": "Không loại trừ",
+      "create": "Tạo voucher",
+      "save": "Lưu thay đổi",
+      "created": "Đã tạo voucher {code}",
+      "saved": "Đã lưu voucher {code}",
+      "err": {
+        "code": "Mã 6–12 ký tự, chỉ chữ HOA và số",
+        "value": "Giá trị phải > 0",
+        "percent": "Phần trăm ≤ 100",
+        "total": "Số lượng phải > 0",
+        "from": "Chọn ngày bắt đầu",
+        "to": "Chọn ngày kết thúc",
+        "end": "Ngày kết thúc phải sau ngày bắt đầu",
+        "category": "Chọn ít nhất 1 danh mục",
+        "product": "Chọn ít nhất 1 sản phẩm"
+      }
+    },
+    "flash": {
+      "banner": "{name} — Đăng ký gian hàng",
+      "banner_sub": "Hạn đăng ký: {date} · Chọn tối đa {max} sản phẩm tham gia khung giờ vàng.",
+      "register": "Đăng ký ngay",
+      "registered_n": "Đã đăng ký {count} SP",
+      "title": "Đăng ký {name}",
+      "product": "Sản phẩm",
+      "price": "Giá Flash Sale (₫)",
+      "price_hint": "Tối đa {max} (thấp hơn giá 30 ngày ít nhất 15%)",
+      "stock": "Số suất (tồn {stock})",
+      "err_price": "Giá Flash phải thấp hơn giá bán 30 ngày ít nhất 15% (tối đa {max})",
+      "err_stock": "Số suất phải từ 1 đến {max}",
+      "add": "Thêm sản phẩm",
+      "added": "Đã đăng ký {name}",
+      "registered": "Đã đăng ký, chờ sàn duyệt",
+      "row": "{price} · {stock} suất",
+      "status": {
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối"
+      }
+    }
+  },
+  "seller-reviews": {
+    "title": "Đánh giá sản phẩm",
+    "sub": "Phản hồi đánh giá để tăng uy tín Shop",
+    "summary": "Tổng quan đánh giá",
+    "count": "{count} đánh giá",
+    "tabs": "Lọc đánh giá",
+    "tab": {
+      "ALL": "Tất cả ({count})",
+      "UNREPLIED": "Chưa phản hồi ({count})",
+      "LOW_RATING": "Cần chú ý (≤3★)"
+    },
+    "empty": "Không có đánh giá nào ở mục này.",
+    "variant": "Phân loại: {name}",
+    "photo": "Ảnh khách gửi",
+    "reply_from": "Phản hồi từ Shop:",
+    "reply": "Phản hồi",
+    "reply_label": "Nội dung phản hồi",
+    "reply_placeholder": "Nhập phản hồi (tối đa {max} ký tự)…",
+    "send": "Gửi phản hồi",
+    "replied": "Đã gửi phản hồi",
+    "report": "Báo cáo",
+    "reported": "Đã báo cáo",
+    "report_title": "Báo cáo đánh giá vi phạm",
+    "report_reason": "Lý do",
+    "report_note": "Ghi chú thêm (không bắt buộc)",
+    "report_hint": "Báo cáo chỉ là tín hiệu ưu tiên. Quyết định ẩn đánh giá do nhân viên kiểm duyệt của sàn đưa ra.",
+    "report_send": "Gửi báo cáo",
+    "report_sent": "Đã gửi báo cáo"
+  },
+  "seller-settings": {
+    "title": "Cài đặt Shop",
+    "sub": "Thông tin gian hàng, vận chuyển và thanh toán",
+    "save": "Lưu cài đặt",
+    "saved": "Đã lưu cài đặt",
+    "reset": "Đã hoàn tác các thay đổi chưa lưu",
+    "profile": {
+      "title": "Thông tin gian hàng",
+      "cover": "Ảnh bìa Shop",
+      "cover_upload": "Tải ảnh bìa",
+      "cover_hint": "Khuyến nghị 1200×300px (tỉ lệ 4:1), JPG/PNG, tối đa 2 MB. Ảnh bìa hiển thị ở đầu trang Shop.",
+      "logo": "Đổi logo",
+      "logo_alt": "Logo shop",
+      "name": "Tên Shop (đổi tối đa 1 lần / 30 ngày)",
+      "rename_at": "Được đổi tên lại từ {date}",
+      "desc": "Mô tả Shop",
+      "err_cover": "Ảnh bìa phải là JPG/PNG, tối đa 2 MB",
+      "err_logo": "Logo phải là JPG/PNG, tối đa 1 MB"
+    },
+    "shipping": {
+      "title": "Vận chuyển",
+      "carriers": {
+        "GHN": {
+          "name": "GHN — Giao Hàng Nhanh",
+          "desc": "Hãng mặc định"
+        },
+        "GHTK": {
+          "name": "GHTK — Giao Hàng Tiết Kiệm",
+          "desc": "Đối tác 3PL"
+        },
+        "VIETTEL_POST": {
+          "name": "ViettelPost",
+          "desc": "Đối tác 3PL"
+        },
+        "JNT_EXPRESS": {
+          "name": "J&T Express",
+          "desc": "Đối tác 3PL"
+        },
+        "GENIE_EXPRESS": {
+          "name": "Genie Express",
+          "desc": "Giao nội thành"
+        }
+      },
+      "free": "Miễn phí vận chuyển",
+      "free_desc": "Shop tự chịu phí ship khi đơn đạt mức dưới đây",
+      "free_from": "Miễn phí vận chuyển cho đơn từ (₫)"
+    },
+    "pickup": {
+      "title": "Địa chỉ lấy hàng (GHN)",
+      "phone": "Số điện thoại kho",
+      "region": "Tỉnh / Quận / Phường",
+      "line": "Địa chỉ chi tiết",
+      "save": "Lưu và Đồng bộ với GHN",
+      "saved": "Đã lưu địa chỉ lấy hàng và đồng bộ với GHN",
+      "ghn": "GHN Shop ID:"
+    },
+    "payout": {
+      "section": "Tài khoản nhận tiền (Payout)",
+      "holder_short": "CTK: {name}",
+      "change": "Thay đổi",
+      "delete": "Xóa",
+      "add": "Thêm tài khoản nhận tiền",
+      "title": "Cập nhật tài khoản nhận tiền",
+      "bank": "Ngân hàng",
+      "holder": "Tên chủ tài khoản",
+      "holder_hint": "Trùng với họ tên trên CCCD đã xác minh",
+      "number": "Số tài khoản",
+      "verify": "Xác minh chính chủ",
+      "confirm": "Xác nhận & lưu",
+      "matched": "Tên chủ tài khoản khớp hồ sơ. Nhập OTP gửi tới email để xác nhận.",
+      "saved": "Lưu tài khoản thành công",
+      "err_fill": "Vui lòng điền đủ thông tin",
+      "err_name": "Tên chủ tài khoản không khớp họ tên trên CCCD ({name})",
+      "delete_title": "Xóa tài khoản",
+      "delete_body": "Bạn có chắc chắn muốn xóa tài khoản ngân hàng này không? Chỉ xóa được khi không có lệnh rút đang chờ.",
+      "deleted": "Xóa tài khoản thành công"
+    },
+    "prefs": {
+      "title": "Tuỳ chọn vận hành",
+      "auto": "Tự động trả lời chat",
+      "auto_desc": "Gửi lời chào khi khách nhắn tin",
+      "greeting": "Lời chào",
+      "greeting_placeholder": "VD: Chào bạn, shop có thể giúp gì cho bạn?",
+      "away": "Tin nhắn khi vắng mặt",
+      "away_placeholder": "VD: Hiện tại shop đang bận, sẽ trả lời bạn sớm nhất có thể.",
+      "save_msg": "Lưu tin nhắn",
+      "auto_saved": "Đã lưu cấu hình tự động trả lời",
+      "pre_order": "Cho phép đặt trước (Pre-order)",
+      "pre_order_desc": "Bán sản phẩm chưa có sẵn hàng"
+    },
+    "vacation": {
+      "label": "Chế độ nghỉ (Vacation)",
+      "desc": "Sản phẩm vẫn hiển thị nhưng khách không mua được",
+      "active": "Đang nghỉ, mở lại ngày {date}. Sản phẩm hiện nhãn \"Shop đang tạm nghỉ\" và khóa nút mua.",
+      "title": "Bật chế độ nghỉ",
+      "until": "Mở lại ngày (tối đa 30 ngày)",
+      "msg": "Tin nhắn tự động khi nghỉ",
+      "default_msg": "Shop đang tạm nghỉ, sẽ trả lời bạn khi mở lại nhé!",
+      "hint": "Tin nhắn này thay cho lời chào tự động trong thời gian nghỉ.",
+      "turn_on": "Bật chế độ nghỉ",
+      "pending": "Còn đơn chưa bàn giao, cần xử lý trước khi nghỉ:",
+      "on": "Đã bật chế độ nghỉ",
+      "off": "Đã tắt chế độ nghỉ, shop mở bán lại"
+    },
+    "security": {
+      "change": "Đổi mật khẩu",
+      "set": "Thiết lập mật khẩu",
+      "login_with": "Đăng nhập bằng:",
+      "email": "Email và mật khẩu",
+      "manage": "Quản lý liên kết đăng nhập",
+      "note": "Shop dùng chung tài khoản và mật khẩu với tài khoản mua hàng cùng email. Đổi mật khẩu yêu cầu OTP gửi tới email đăng ký để bảo vệ ví Escrow.",
+      "note_set": "Tài khoản đang chỉ đăng nhập bằng Google nên chưa có mật khẩu. Sau khi đặt, bạn đăng nhập được bằng cả email lẫn Google. Vẫn cần OTP gửi tới email đăng ký."
     }
   }
 }

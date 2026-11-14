@@ -1945,7 +1945,6 @@
       "notif_detail": "Notification details",
       "notif_open": "Open related page",
       "got_it": "Got it",
-      "pending": "This screen is being moved from the prototype to the app.",
       "gate": {
         "cta": "Go to KYC verification",
         "locked": {
@@ -2650,6 +2649,261 @@
       "otp_for": "Enter the OTP to confirm withdrawing {amount}.",
       "confirm": "Confirm withdrawal",
       "done": "Withdrawal {code} created. Genie's accountants approve it within 24 working hours."
+    }
+  },
+  "seller-chat": {
+    "inbox": "Messages",
+    "empty": "No customer has messaged your shop yet.",
+    "orders": "Orders",
+    "no_orders": "This customer has no orders with you",
+    "send_card": "Send {code}"
+  },
+  "seller-promotions": {
+    "title": "Shop promotions",
+    "sub": "Create vouchers and join Genie campaigns",
+    "create": "Create voucher",
+    "kind": {
+      "PERCENTAGE": "% off",
+      "FIXED": "Amount off",
+      "FREESHIP": "Free shipping"
+    },
+    "status": {
+      "ACTIVE": "Running",
+      "SCHEDULED": "Scheduled",
+      "ENDED": "Ended",
+      "DISABLED": "Turned off"
+    },
+    "stats": {
+      "active": "Running vouchers",
+      "usage": "Uses this month",
+      "revenue": "Revenue from promotions"
+    },
+    "table": {
+      "title": "Shop vouchers",
+      "code": "Code",
+      "type": "Type",
+      "cond": "Condition",
+      "used": "Used",
+      "status": "Status",
+      "ends": "Ends",
+      "actions": "Actions",
+      "cap": "Up to {value}",
+      "ship": "Shipping fee",
+      "min": "Orders from {value}",
+      "any": "Any order",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "disable": "Turn off"
+    },
+    "off": {
+      "title": "Turn off voucher",
+      "body": "Turn off voucher {code}? Customers will no longer be able to use it.",
+      "ok": "Turn off",
+      "done": "Voucher {code} turned off"
+    },
+    "form": {
+      "title_new": "Create shop voucher",
+      "title_edit": "Edit voucher {code}",
+      "code": "Voucher code",
+      "gen": "Generate",
+      "code_hint": "6–12 characters, UPPERCASE letters and digits only.",
+      "kind": "Discount type",
+      "freeship_note": "Free shipping on qualifying orders.",
+      "value": "Value",
+      "cap": "Maximum discount (₫)",
+      "min": "Minimum order (₫)",
+      "total": "Quantity issued",
+      "per_user": "Limit per customer",
+      "budget": "Maximum budget (₫, optional)",
+      "period": "Valid period",
+      "from": "Start date",
+      "to": "End date",
+      "scope": "Applies to",
+      "scope_all": "All shop products",
+      "scope_cat": "Specific categories",
+      "scope_product": "Specific products",
+      "exclude": "Exclude (no discount)",
+      "exclude_none": "No exclusion",
+      "create": "Create voucher",
+      "save": "Save changes",
+      "created": "Voucher {code} created",
+      "saved": "Voucher {code} saved",
+      "err": {
+        "code": "6–12 characters, UPPERCASE letters and digits only",
+        "value": "Value must be > 0",
+        "percent": "Percentage must be ≤ 100",
+        "total": "Quantity must be > 0",
+        "from": "Choose a start date",
+        "to": "Choose an end date",
+        "end": "The end date must be after the start date",
+        "category": "Choose at least 1 category",
+        "product": "Choose at least 1 product"
+      }
+    },
+    "flash": {
+      "banner": "{name} — Register your products",
+      "banner_sub": "Registration deadline: {date} · Up to {max} products in the golden hours.",
+      "register": "Register now",
+      "registered_n": "{count} products registered",
+      "title": "Register for {name}",
+      "product": "Product",
+      "price": "Flash Sale price (₫)",
+      "price_hint": "At most {max} (at least 15% below the 30-day price)",
+      "stock": "Slots (stock {stock})",
+      "err_price": "The Flash price must be at least 15% below the 30-day price (max {max})",
+      "err_stock": "Slots must be between 1 and {max}",
+      "add": "Add product",
+      "added": "{name} registered",
+      "registered": "Registered, awaiting approval",
+      "row": "{price} · {stock} slots",
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      }
+    }
+  },
+  "seller-reviews": {
+    "title": "Product reviews",
+    "sub": "Reply to reviews to build trust in your shop",
+    "summary": "Review summary",
+    "count": "{count} reviews",
+    "tabs": "Filter reviews",
+    "tab": {
+      "ALL": "All ({count})",
+      "UNREPLIED": "Not replied ({count})",
+      "LOW_RATING": "Needs attention (≤3★)"
+    },
+    "empty": "No reviews here.",
+    "variant": "Variant: {name}",
+    "photo": "Customer photo",
+    "reply_from": "Shop reply:",
+    "reply": "Reply",
+    "reply_label": "Your reply",
+    "reply_placeholder": "Write a reply (up to {max} characters)…",
+    "send": "Send reply",
+    "replied": "Reply sent",
+    "report": "Report",
+    "reported": "Reported",
+    "report_title": "Report a review",
+    "report_reason": "Reason",
+    "report_note": "Additional note (optional)",
+    "report_hint": "A report is only a priority signal. Genie moderators decide whether to hide the review.",
+    "report_send": "Send report",
+    "report_sent": "Report sent"
+  },
+  "seller-settings": {
+    "title": "Shop settings",
+    "sub": "Shop profile, shipping and payments",
+    "save": "Save settings",
+    "saved": "Settings saved",
+    "reset": "Unsaved changes discarded",
+    "profile": {
+      "title": "Shop profile",
+      "cover": "Shop cover image",
+      "cover_upload": "Upload cover",
+      "cover_hint": "Recommended 1200×300px (4:1), JPG/PNG, up to 2 MB. Shown at the top of your shop page.",
+      "logo": "Change logo",
+      "logo_alt": "Shop logo",
+      "name": "Shop name (can change once every 30 days)",
+      "rename_at": "You can rename again from {date}",
+      "desc": "Shop description",
+      "err_cover": "The cover must be JPG/PNG, up to 2 MB",
+      "err_logo": "The logo must be JPG/PNG, up to 1 MB"
+    },
+    "shipping": {
+      "title": "Shipping",
+      "carriers": {
+        "GHN": {
+          "name": "GHN — Giao Hàng Nhanh",
+          "desc": "Default carrier"
+        },
+        "GHTK": {
+          "name": "GHTK — Giao Hàng Tiết Kiệm",
+          "desc": "3PL partner"
+        },
+        "VIETTEL_POST": {
+          "name": "ViettelPost",
+          "desc": "3PL partner"
+        },
+        "JNT_EXPRESS": {
+          "name": "J&T Express",
+          "desc": "3PL partner"
+        },
+        "GENIE_EXPRESS": {
+          "name": "Genie Express",
+          "desc": "Same-city delivery"
+        }
+      },
+      "free": "Free shipping",
+      "free_desc": "The shop pays shipping when an order reaches the amount below",
+      "free_from": "Free shipping on orders from (₫)"
+    },
+    "pickup": {
+      "title": "Pickup address (GHN)",
+      "phone": "Warehouse phone",
+      "region": "Province / District / Ward",
+      "line": "Street address",
+      "save": "Save and sync with GHN",
+      "saved": "Pickup address saved and synced with GHN",
+      "ghn": "GHN Shop ID:"
+    },
+    "payout": {
+      "section": "Payout account",
+      "holder_short": "Holder: {name}",
+      "change": "Change",
+      "delete": "Delete",
+      "add": "Add payout account",
+      "title": "Update payout account",
+      "bank": "Bank",
+      "holder": "Account holder",
+      "holder_hint": "Must match the name on your verified citizen ID",
+      "number": "Account number",
+      "verify": "Verify ownership",
+      "confirm": "Confirm & save",
+      "matched": "The holder name matches your profile. Enter the OTP sent to your email.",
+      "saved": "Payout account saved",
+      "err_fill": "Please fill in all fields",
+      "err_name": "The holder name does not match your citizen ID ({name})",
+      "delete_title": "Delete account",
+      "delete_body": "Delete this bank account? You can only delete it when no withdrawal is pending.",
+      "deleted": "Payout account deleted"
+    },
+    "prefs": {
+      "title": "Operations",
+      "auto": "Auto-reply in chat",
+      "auto_desc": "Send a greeting when a customer messages you",
+      "greeting": "Greeting",
+      "greeting_placeholder": "E.g. Hi, how can we help you?",
+      "away": "Away message",
+      "away_placeholder": "E.g. We are busy right now and will reply as soon as we can.",
+      "save_msg": "Save messages",
+      "auto_saved": "Auto-reply saved",
+      "pre_order": "Allow pre-orders",
+      "pre_order_desc": "Sell products that are not in stock yet"
+    },
+    "vacation": {
+      "label": "Vacation mode",
+      "desc": "Products stay visible but customers cannot buy",
+      "active": "On vacation until {date}. Products show \"Shop on vacation\" and cannot be bought.",
+      "title": "Turn on vacation mode",
+      "until": "Reopen on (within 30 days)",
+      "msg": "Automatic message while away",
+      "default_msg": "We are on a short break and will reply when we are back!",
+      "hint": "This message replaces the auto-reply greeting while you are away.",
+      "turn_on": "Turn on vacation mode",
+      "pending": "Some orders are not handed over yet — handle them first:",
+      "on": "Vacation mode on",
+      "off": "Vacation mode off, your shop is open again"
+    },
+    "security": {
+      "change": "Change password",
+      "set": "Set a password",
+      "login_with": "Sign in with:",
+      "email": "Email and password",
+      "manage": "Manage sign-in methods",
+      "note": "Your shop shares the account and password of the buyer account with the same email. Changing it requires an OTP sent to your email to protect the Escrow wallet.",
+      "note_set": "This account only signs in with Google, so it has no password yet. Once set, you can sign in with email or Google. An OTP to your email is still required."
     }
   }
 }
