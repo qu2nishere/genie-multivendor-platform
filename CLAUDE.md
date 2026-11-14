@@ -1,7 +1,7 @@
 # CLAUDE.md — Ngữ cảnh làm việc cho repo `genie-multivendor-platform`
 
 > Đọc file này trước khi làm bất cứ việc gì. Mục tiêu: không phải đọc lại toàn bộ codebase / tài liệu.
-> Cập nhật lần cuối: 2026-11-14 (sau khi gộp PR #20–#27 vào `develop`).
+> Cập nhật lần cuối: 2026-11-14 (sau khi gộp loạt entity PR #28–#51 vào `develop`; đang ở nhánh `feature/auth`).
 > Khi thay đổi lớn (xong một plan, đổi quy ước, thêm ADR) → **cập nhật mục 2 và mục 9 của file này**.
 
 ## 0. Dự án là gì
@@ -29,17 +29,17 @@ Tài liệu tham chiếu trong code ghi kiểu `TECH_STACK mục 8`, `TS 5.2`, `
 | Phần | Trạng thái |
 |---|---|
 | `web/` | **Xong giao diện** (plan G00–G13): 34 feature, storefront + auth + buyer + Seller + Admin, chạy trên **lớp mock** (`PUBLIC_USE_MOCK=true`). 237 hàm `*.api.ts` có nhánh mock; **21 endpoint lệch `API_SPEC.md`** — danh sách ở `docs/web-backend-handoff.md`. Vitest + 6 spec Playwright (22 kịch bản × 2 khổ). |
-| `server-spring/` | **Chỉ là khung.** Có thật: `common/api` (ApiResponse, ErrorResponse, GlobalExceptionHandler, CursorPage), `common/error` (ErrorCode mới 6 mã, BusinessException, NotFoundException), `BaseEntity`, `JacksonConfig` (snake_case), `ClockConfig`, `ModuleBoundaryTest` (ArchUnit), pom, application*.yml. Còn lại là class rỗng 7 dòng `// TODO: hiện thực` (module `order`) hoặc thư mục `.gitkeep` (10 module kia). Migration `V1…V13`, `R__seed_demo.sql` mới có **header + TODO**. |
+| `server-spring/` | **Entity xong, nghiệp vụ chưa.** 65 entity + 55 enum + 65 repository (rỗng) khớp 1-1 ENTITY.md, migration `V1…V12` thật, `SchemaValidationIT` xanh (plan `plan/2026-11-14/server-spring/implement-entity.md`, PR #28–#51). Có thật ở `common`: `ApiResponse`, `ErrorResponse`, `GlobalExceptionHandler`, `ErrorCode` (6 mã), `BaseEntity`, `JacksonConfig`, `ClockConfig`, `NameNormalizer`, `SystemLog`/`AuditAction`. **Còn stub:** security (`SecurityConfig`, `JwtService`, `JwtAuthFilter`, `CurrentUser`, `RateLimiter`, `InternalTokenFilter`), `AuditLogger`, `ObjectStorage`/`UploadController`, `Money`, `Haversine`; mọi service / controller; `V13__bootstrap_admin.sql`, `R__seed_demo.sql`. Entity theo ENTITY.md đặt ở `<module>/<feature>/domain` (vd `User` ở `auth/profile/domain`), quan hệ JPA sang module khác đã bỏ, chỉ giữ `Long xxxId`. |
 | `server-python/` | **Khung.** Có `main.py`, `health.py`, `core/config.py`, `core/security.py`; `kyc/*`, `sentiment/*` là `# TODO`. |
 | `deploy/` | Đã viết: compose local + VPS, nginx 3 conf, minio init, redis/postgres conf, backup/restore, deploy.sh (chưa chạy thử thật). |
 | `.github/` | `ci.yml` (paths-filter backend / web / ai-worker + commitlint tiêu đề PR + SonarCloud), `release.yml`, `deploy.yml`, dependabot (đích `develop`), CODEOWNERS (tên team còn là placeholder `@genie-team/...`). |
 
-**Việc kế tiếp hợp lý:** dựng backend theo `HOÀN CHỈNH /kien-thuc/TECH_STACK_VA_QUY_UOC.md` mục 17 (checklist S1)
-→ migration từ `ENTITY.md` → nối web bằng `docs/web-backend-handoff.md`. Plan mới đặt ở `plan/<yyyy-mm-dd>/<thể loại>/`
+**Việc kế tiếp hợp lý:** phần nền `common` (security, audit, mail) rồi nghiệp vụ từng phân hệ, bắt đầu từ AUTH
+→ nối web bằng `docs/web-backend-handoff.md`. Đổi schema từ giờ chỉ bằng migration mới `V14+` (ENTITY.md sửa trước). Plan mới đặt ở `plan/<yyyy-mm-dd>/<thể loại>/`
 (mẫu: `plan/2026-11-11/web/plan_chuyen_giao_dien.md` + `progress_chuyen_giao_dien.md` — plan có mã task `Gxx.yy`,
 progress là bảng tick + nhật ký có mã commit).
 
-**Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D1–D19 phải chốt trước; tick task + ghi commit vào mục 10 của file).
+**Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file).
 
 ## 3. Lệnh hay dùng
 
