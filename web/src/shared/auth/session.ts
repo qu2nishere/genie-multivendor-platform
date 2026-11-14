@@ -23,6 +23,7 @@ export interface SessionUser {
   /** Mã quyền của STAFF / ADMIN (trống với người mua / người bán). */
   permissions: PermissionCode[];
   shop_id?: number;
+  shop_name?: string;
   kyc_status?: KycStatus;
   has_password?: boolean;
 }
@@ -74,7 +75,8 @@ export const MOCK_USER: SessionUser = {
   avatar_url: null,
   roles: ['CUSTOMER', 'VENDOR'],
   permissions: [],
-  shop_id: 15,
+  shop_id: 1,
+  shop_name: 'TechZone Official',
   kyc_status: 'VERIFIED',
   has_password: false,
 };

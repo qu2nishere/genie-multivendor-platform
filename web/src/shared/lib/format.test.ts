@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { cn } from './cn';
 import {
+  clockVN,
   formatCompact,
   formatDate,
   formatDateTime,
@@ -88,5 +89,12 @@ describe('che dữ liệu', () => {
 describe('cn', () => {
   it('ghép lớp có điều kiện', () => {
     expect(cn('a', false, null, undefined, '', ['b', { c: true, d: false }], 0)).toBe('a b c 0');
+  });
+});
+
+describe('clockVN', () => {
+  it('quy đổi sang giờ Việt Nam', () => {
+    expect(clockVN(Date.parse('2026-11-13T03:04:05Z'))).toEqual({ hour: 10, minute: 4, second: 5 });
+    expect(clockVN(Date.parse('2026-11-13T17:00:00Z'))).toEqual({ hour: 0, minute: 0, second: 0 });
   });
 });

@@ -1,0 +1,41 @@
+---
+// Dải cam kết "Khi mua ở Genie" (DESIGN.md Promise Strip; prototype ProductDetail.jsx .tr-promise) —
+// plan G08.14. Khối tĩnh SSR: ba thẻ, icon nét Action Blue, tiêu đề đậm + một dòng phụ.
+// Dùng ở trang sản phẩm dưới hàng shop (G08.35).
+import { createT } from '@/shared/lib/i18n';
+import { formatNumber } from '@/shared/lib/format';
+import { Icon } from '@/shared/ui';
+
+interface Props {
+  shopName: string;
+  joinedYear: number;
+  rating: number;
+}
+
+const { shopName, joinedYear, rating } = Astro.props;
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+---
+
+<section class="tr-promise" aria-label={t('product.promise.label')}>
+  <div>
+    <Icon name="shield-check" size={22} />
+    <span><b>{t('product.promise.hold_title')}</b>{t('product.promise.hold_text')}</span>
+  </div>
+  <div>
+    <Icon name="undo-2" size={22} />
+    <span><b>{t('product.promise.return_title')}</b>{t('product.promise.return_text')}</span>
+  </div>
+  <div>
+    <Icon name="badge-check" size={22} />
+    <span>
+      <b>{t('product.promise.verified_title', { shop: shopName })}</b>
+      {
+        t('product.promise.verified_text', {
+          year: joinedYear,
+          rating: formatNumber(rating, { locale: lang }),
+        })
+      }
+    </span>
+  </div>
+</section>

@@ -1,7 +1,218 @@
 ---
+// Trang danh mục (prototype Category.jsx) — plan G08.20. SSR theo query string: banner đầu danh mục,
+// đầu trang (icon, tên, mô tả, số sản phẩm), danh mục con, bộ lọc, sắp xếp, lưới + phân trang thật.
+// Danh mục không tồn tại → 404 (R19). /c/<danh-mục-con> → 301 về danh mục gốc ?sub=<slug>.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import {
+  categoryHref,
+  getCategoryBySlug,
+  listAttributeFilters,
+  listCategories,
+  listVerifiedBrands,
+} from '@/features/catalog';
+import { getFacets, listProducts, productHref } from '@/features/product';
+import { BannerCarousel, listLiveBanners } from '@/features/promotions';
+import {
+  CATEGORY_BANDS,
+  CATEGORY_SORTS,
+  FilterPanel,
+  filtersHref,
+  parseFilters,
+  priceRange,
+  SortBar,
+  sortParam,
+} from '@/features/search';
+import { FilterChips, ResultGrid } from '@/features/search/server';
+import { env } from '@/shared/config/env';
+import { formatNumber } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { breadcrumbLd, canonicalUrl, itemListLd } from '@/shared/lib/seo';
+import { Breadcrumbs, buttonClass, Icon, toIconName } from '@/shared/ui';
+
+const PAGE_SIZE = 12;
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+const slug = Astro.params.slug ?? '';
+
+let category;
+try {
+  category = await getCategoryBySlug(slug);
+} catch {
+  return Astro.rewrite('/404');
+}
+
+const all = await listCategories();
+if (category.parentId !== null) {
+  const parent = all.find((c) => c.id === category.parentId);
+  if (parent)
+    return Astro.redirect(
+      `${categoryHref(parent.slug)}?sub=${encodeURIComponent(category.slug)}`,
+      301,
+    );
+}
+
+const path = categoryHref(category.slug);
+const state = parseFilters(Astro.url.searchParams);
+const subs = all.filter((c) => c.parentId === category.id);
+const sub = subs.find((s) => s.slug === state.sub) ?? null;
+if (state.sub && !sub) state.sub = null;
+
+const range = priceRange(state, CATEGORY_BANDS);
+const [page, facets, scopeFacets, banners, attrs, verified] = await Promise.all([
+  listProducts({
+    categoryId: category.id,
+    subcategoryId: sub?.id,
+    brands: state.brands.slice(0, 1),
+    minPrice: range.min,
+    maxPrice: range.max,
+    authentic: state.authentic || undefined,
+    freeship: state.freeship || undefined,
+    minRating: state.rating || undefined,
+    attributes: state.attrs,
+    sort: sortParam(state),
+    page: state.page,
+    size: PAGE_SIZE,
+  }),
+  getFacets({ categoryId: category.id }),
+  getFacets({ categoryId: category.id, subcategoryId: sub?.id }),
+  listLiveBanners('CATEGORY_TOP', category.slug),
+  listAttributeFilters(category.id),
+  listVerifiedBrands(),
+]);
+
+const names: Record<string, string> = Object.fromEntries(subs.map((s) => [s.slug, s.name]));
+const filtered = Astro.url.search.length > 0;
+const crumbs = [
+  { name: t('layout.nav.home'), href: '/' },
+  { name: category.name, href: path },
+];
+const title =
+  state.page > 1
+    ? t('catalog.meta.title_page', { name: category.name, page: state.page })
+    : category.name;
 ---
 
-<StorefrontLayout title="Danh mục">
-  <!-- Trang danh mục — SSR -->
+<StorefrontLayout
+  title={title}
+  description={category.description}
+  canonical={canonicalUrl(path, Astro.url.searchParams)}
+  follow
+  jsonLd={[
+    breadcrumbLd(
+      crumbs.map((c) => ({ name: c.name, url: c.href })),
+      site,
+    ),
+    itemListLd(
+      page.items.map((p) => ({ name: p.title, url: productHref(p) })),
+      site,
+    ),
+  ]}
+>
+  <div class="mx-auto max-w-[1280px] px-6 pb-14 pt-2.5 max-md:px-3">
+    <Breadcrumbs items={[crumbs[0], { name: category.name }]} />
+
+    {
+      banners.length > 0 && (
+        <div class="tr-catban mb-3.5">
+          <BannerCarousel client:visible items={banners} priority />
+        </div>
+      )
+    }
+
+    <header
+      class="tr-cathead mb-[18px] flex items-center gap-[22px] rounded-lg bg-brand-50 px-7 py-6 shadow-sm"
+    >
+      <div
+        class="grid h-[68px] w-[68px] flex-none place-items-center rounded-lg bg-surface-card shadow-sm"
+      >
+        <Icon name={toIconName(category.icon)} size={32} className="text-primary" />
+      </div>
+      <div class="min-w-0 flex-1">
+        <h1 class="m-0 text-[26px] font-extrabold leading-[1.15] text-strong">{category.name}</h1>
+        <p class="tr-wide-only m-0 mt-1.5 text-base text-muted">{category.description}</p>
+      </div>
+      <div class="flex-none text-right">
+        <div class="text-[26px] font-extrabold text-primary">
+          {formatNumber(facets.total, { locale: lang })}
+        </div>
+        <div class="text-xs text-muted">{t('search.result.products')}</div>
+      </div>
+    </header>
+
+    {
+      subs.length > 0 && (
+        <nav
+          class="tr-scrollrow mb-[18px] flex flex-wrap gap-2"
+          aria-label={t('catalog.sub.label')}
+        >
+          {[null, ...subs].map((s) => {
+            const on = (s?.slug ?? null) === state.sub;
+            return (
+              <a
+                href={filtersHref(path, state, { sub: s?.slug ?? null })}
+                aria-current={on ? 'page' : undefined}
+                class:list={[
+                  'inline-flex h-9 items-center whitespace-nowrap rounded-pill border-[1.5px] border-solid px-[18px] text-sm font-semibold no-underline hover:no-underline max-md:h-11',
+                  on
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-line bg-surface-card text-body hover:border-primary hover:text-primary',
+                ]}
+              >
+                {s?.name ?? t('common.action.all')}
+              </a>
+            );
+          })}
+        </nav>
+      )
+    }
+
+    <div class="grid grid-cols-[232px_minmax(0,1fr)] items-start gap-5 max-md:grid-cols-1">
+      <FilterPanel
+        client:idle
+        path={path}
+        state={state}
+        variant="category"
+        brands={scopeFacets.brands}
+        verifiedBrands={verified}
+        attribute={attrs[0] ?? null}
+        resultCount={page.total_items}
+      />
+
+      <div class="min-w-0">
+        <SortBar
+          client:idle
+          path={path}
+          state={state}
+          sorts={CATEGORY_SORTS}
+          total={page.total_items}
+        />
+        <FilterChips path={path} state={state} bands={CATEGORY_BANDS} categoryNames={names} />
+        <ResultGrid
+          path={path}
+          state={state}
+          items={page.items}
+          totalPages={page.total_pages}
+          label={category.name}
+        >
+          <div
+            slot="empty"
+            class="grid place-items-center gap-2.5 rounded-lg bg-surface-card py-16 text-subtle"
+          >
+            <Icon name="search" size={40} />
+            <p class="m-0 text-base text-muted">
+              {filtered ? t('catalog.empty.filtered') : t('catalog.empty.none')}
+            </p>
+            {
+              filtered && (
+                <a href={path} class={buttonClass({ variant: 'outline' })}>
+                  {t('search.filter.clear')}
+                </a>
+              )
+            }
+          </div>
+        </ResultGrid>
+      </div>
+    </div>
+  </div>
 </StorefrontLayout>

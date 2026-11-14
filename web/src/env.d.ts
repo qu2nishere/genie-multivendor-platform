@@ -18,3 +18,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// tsc thuần (npm run check) không đọc được .astro; astro check vẫn dùng kiểu thật của từng file.
+declare module '*.astro' {
+  const Component: (props: Record<string, unknown>) => unknown;
+  export default Component;
+}

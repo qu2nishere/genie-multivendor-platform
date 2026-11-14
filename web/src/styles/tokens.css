@@ -571,3 +571,11 @@
   --z-modal: 900; /* @kind other */
   --z-toast: 1000; /* @kind other */
 }
+
+/* ---- Storefront extras (G07.02: màu cứng trong storefront.css → token) ------------- */
+:root {
+  --foot-ink: #c9d6ee; /* chữ footer trên nền brand-900 */
+  --foot-legal: #afc0e0; /* dòng pháp lý footer */
+  --camp-ink: #fff6ec; /* chữ đầu trang chiến dịch */
+  --camp-sub: #ffe9d6; /* mô tả đầu trang chiến dịch */
+}

@@ -1,0 +1,144 @@
+/* ===========================================================================
+   Genie storefront — Trang sản phẩm: thư viện ảnh, thanh mua dính đáy, dải shop.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  .tr-buybar {
+    display: flex;
+    gap: 12px;
+  }
+  .tr-vstrip {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .tr-vstrip__act {
+    display: flex;
+    gap: 10px;
+  }
+  @media (max-width: 768px) {
+    .tr-review {
+      flex-wrap: nowrap !important;
+    }
+    .tr-gallery {
+      aspect-ratio: 3 / 2 !important;
+    }
+    .tr-gallery + div {
+      margin-top: 8px !important;
+    }
+    .tr-gallery + div button {
+      width: 48px !important;
+      height: 48px !important;
+    }
+    .tr-buybar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 800;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      background: rgba(255, 255, 255, 0.86);
+      -webkit-backdrop-filter: blur(14px) saturate(130%);
+      backdrop-filter: blur(14px) saturate(130%);
+      box-shadow: 0 -6px 20px rgba(11, 31, 75, 0.12);
+    }
+    .tr-buybar .lz-btn {
+      flex: 1;
+      min-width: 0;
+      padding: 0 10px;
+      font-size: var(--text-base);
+      min-height: 52px;
+    }
+    .tr-vstrip {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .tr-vstrip__act {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .tr-vstrip__act > :first-child {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+/* Mô tả sản phẩm (prototype ProductDescription): HTML người bán, thu gọn 480px kèm lớp mờ. */
+@layer components {
+  .tr-desc {
+    font: var(--type-body);
+    line-height: 1.8;
+    color: var(--text-body);
+  }
+  .tr-desc p {
+    margin: 0 0 16px;
+  }
+  .tr-desc .lead {
+    margin-bottom: 6px;
+    font: var(--weight-bold) 15px var(--font-sans);
+    color: var(--text-strong);
+  }
+  .tr-desc h3 {
+    margin: 16px 0 8px;
+    font: var(--weight-semibold) 14px var(--font-sans);
+    color: var(--text-strong);
+  }
+  .tr-desc ul {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    list-style: disc;
+  }
+  .tr-desc ul.checks {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tr-desc ul.checks li::before {
+    content: '✅ ';
+  }
+  .tr-desc hr {
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
+    margin: 16px 0;
+  }
+  .tr-descbox[data-clamp]:not([data-open]) .tr-desc {
+    max-height: 480px;
+    overflow: hidden;
+  }
+  .tr-desc__fade {
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+  }
+  .tr-descbox[data-clamp]:not([data-open]) .tr-desc__fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 80px;
+    align-items: flex-end;
+    padding: 0 0 16px;
+    background: linear-gradient(transparent, var(--surface-card));
+  }
+  .tr-desc__fade[hidden] {
+    display: none;
+  }
+  .tr-desc__toggle {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    color: var(--text-body);
+    font: var(--weight-semibold) var(--text-sm) var(--font-sans);
+    cursor: pointer;
+  }
+  .tr-desc__toggle:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}

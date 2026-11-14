@@ -163,7 +163,8 @@
     "GNE-ADM-4221": "Email nhân viên phải có đuôi @genie.example.",
     "GNE-SYS-5030": "Hệ thống đang bận. Vui lòng thử lại sau.",
     "GNE-DB-5002": "Hệ thống đang bận. Vui lòng thử lại sau vài giây.",
-    "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại."
+    "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại.",
+    "GNE-CMP-4041": "Chiến dịch không tồn tại hoặc đã kết thúc."
   },
   "ui": {
     "close": "Đóng",
@@ -273,6 +274,498 @@
       "chart_aria": "{name}. Cao nhất {max} vào {at}. Dùng phím mũi tên để đọc từng mốc.",
       "as_table": "Xem dạng bảng",
       "point": "Mốc"
+    },
+    "breadcrumb": {
+      "label": "Đường dẫn"
     }
+  },
+  "layout": {
+    "header": {
+      "home": "Genie — Trang chủ",
+      "sell": "Bán hàng",
+      "language": "Ngôn ngữ",
+      "help": "Hỗ trợ",
+      "notifications": "Thông báo",
+      "notifications_unread": "Thông báo, {count} chưa đọc",
+      "cart": "Giỏ hàng",
+      "cart_count": "Giỏ hàng, {count} sản phẩm",
+      "categories": "Danh mục",
+      "all_categories": "Tất cả danh mục",
+      "theme": "Giao diện"
+    },
+    "notfound": {
+      "title": "Không tìm thấy trang",
+      "text": "Trang bạn tìm có thể đã bị gỡ, đổi địa chỉ hoặc chưa từng tồn tại.",
+      "home": "Về trang chủ",
+      "search": "Tìm sản phẩm"
+    },
+    "auth": {
+      "brand_label": "Cam kết của Genie",
+      "promise_1": "Nhận hàng rồi,",
+      "promise_2": "tiền mới đến shop.",
+      "lead": "Mọi shop đều đã xác minh danh tính. Genie giữ tiền của bạn đến khi bạn nhận hàng.",
+      "hold": {
+        "title": "Giữ tiền đến khi nhận hàng",
+        "text": "Shop chỉ nhận tiền sau khi bạn xác nhận đã nhận."
+      },
+      "return": {
+        "title": "Đổi trả trong 7 ngày",
+        "text": "Hàng lỗi hoặc không đúng mô tả được hoàn tiền."
+      },
+      "freeship": {
+        "title": "Freeship",
+        "text": "Áp mã freeship ngay ở bước thanh toán."
+      }
+    },
+    "footer": {
+      "tagline": "Sàn đa người bán giữ tiền của bạn đến khi bạn nhận hàng, kèm 7 ngày đổi trả.",
+      "selling": "Bán hàng",
+      "become_seller": "Trở thành Người bán",
+      "seller_center": "Kênh người bán",
+      "app_soon": "Ứng dụng di động (sắp ra mắt)",
+      "legal": "© 2026 Genie (tên tạm). Bản mẫu đồ án, dữ liệu minh họa. Giá hiển thị bằng VND (₫)."
+    },
+    "nav": {
+      "home": "Trang chủ"
+    }
+  },
+  "notifications": {
+    "panel": {
+      "title": "Thông báo",
+      "mark_all": "Đánh dấu đã đọc",
+      "empty": "Chưa có thông báo nào",
+      "see_all": "Xem tất cả thông báo"
+    }
+  },
+  "cart": {
+    "mini": {
+      "empty_title": "Giỏ hàng của bạn đang trống",
+      "empty_text": "Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm",
+      "recent": "Sản phẩm mới thêm",
+      "more": "Còn {count} sản phẩm trong giỏ",
+      "view": "Xem Giỏ Hàng"
+    },
+    "add": {
+      "added": "Đã thêm vào giỏ hàng",
+      "guest_full": "Giỏ hàng đã đủ 50 sản phẩm. Đăng nhập để thêm tiếp."
+    }
+  },
+  "auth": {
+    "prompt": {
+      "title": "Vui lòng đăng nhập",
+      "text": "Bạn cần đăng nhập để thực hiện tính năng này.",
+      "later": "Để sau"
+    },
+    "menu": {
+      "label": "Tài khoản",
+      "profile": "Tài khoản của tôi",
+      "orders": "Đơn mua",
+      "seller": "Kênh người bán",
+      "switch": "Chuyển sang Kênh người bán",
+      "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name}?"
+    }
+  },
+  "search": {
+    "box": {
+      "placeholder": "Tìm sản phẩm, thương hiệu, shop đã xác minh…",
+      "submit": "Tìm"
+    },
+    "suggest": {
+      "label": "Gợi ý tìm kiếm",
+      "trending": "Xu hướng",
+      "category": "Danh mục",
+      "shop": "Shop"
+    },
+    "meta": {
+      "title": "Kết quả tìm kiếm cho “{q}”",
+      "title_all": "Tìm kiếm sản phẩm",
+      "description": "Tìm sản phẩm, thương hiệu và shop đã xác minh trên Genie."
+    },
+    "result": {
+      "for": "Kết quả cho",
+      "products": "sản phẩm",
+      "list": "Kết quả tìm kiếm"
+    },
+    "scope": {
+      "label": "Phạm vi tìm",
+      "all": "Toàn sàn",
+      "shop": "Trong Shop",
+      "in_shop": "Trong {shop}"
+    },
+    "shop": {
+      "filtering": "Đang lọc trong shop này · {rating} sao · {followers} theo dõi",
+      "visit": "Vào shop",
+      "matched": "Shop khớp từ khóa"
+    },
+    "sort": {
+      "label": "Sắp xếp theo",
+      "rel": "Liên quan",
+      "hot": "Bán chạy",
+      "new": "Mới nhất",
+      "price": "Giá",
+      "price_asc": "tăng dần",
+      "price_desc": "giảm dần"
+    },
+    "band": {
+      "under": "Dưới {max}",
+      "over": "Trên {min}",
+      "from": "Từ {min}",
+      "to": "Đến {max}"
+    },
+    "filter": {
+      "title": "Bộ lọc tìm kiếm",
+      "button": "Bộ lọc",
+      "close": "Đóng bộ lọc",
+      "active": "Đang lọc",
+      "remove": "Bỏ lọc {label}",
+      "clear": "Xoá lọc",
+      "clear_all": "Xoá tất cả",
+      "apply": "Áp dụng",
+      "show_n": "Xem {n} sản phẩm",
+      "service": "Nơi bán & dịch vụ",
+      "service_more": "Dịch vụ & khác",
+      "category": "Theo danh mục",
+      "brand": "Thương hiệu",
+      "brand_verified": "Thương hiệu đã xác minh",
+      "place": "Nơi bán",
+      "price": "Khoảng giá",
+      "price_from": "TỪ",
+      "price_to": "ĐẾN",
+      "price_min": "Giá thấp nhất",
+      "price_max": "Giá cao nhất",
+      "rating": "Đánh giá",
+      "and_up": "trở lên",
+      "rating_up": "{n} sao trở lên",
+      "authentic": "Chính hãng",
+      "authentic_shop": "Shop Chính Hãng",
+      "freeship": "Freeship",
+      "freeship_long": "Miễn phí vận chuyển",
+      "voucher": "Shop có voucher"
+    },
+    "empty": {
+      "filtered": "Không có sản phẩm nào khớp bộ lọc",
+      "none": "Không tìm thấy sản phẩm phù hợp",
+      "in_shop": "trong shop này",
+      "hint": "Thử từ khóa ngắn hơn, kiểm tra chính tả hoặc bỏ bớt bộ lọc.",
+      "widen": "Mở rộng tìm toàn sàn",
+      "suggest": "Có thể bạn quan tâm"
+    }
+  },
+  "theme": {
+    "picker": {
+      "title": "Chọn giao diện",
+      "saved_here": "Lưu trên trình duyệt này",
+      "change": "Đổi giao diện"
+    },
+    "genie": {
+      "name": "Đèn thần",
+      "note": "Đúng tên Genie: đèn đồng thau, khói ngọc lam sau lớp kính"
+    },
+    "hoian": {
+      "name": "Phố Hội",
+      "note": "Tường vàng Hội An, đèn lồng lụa, cửa chớp xanh, ngói âm dương"
+    },
+    "dongho": {
+      "name": "Giấy điệp",
+      "note": "Tranh Đông Hồ: đỏ son, vàng hoè, mực than"
+    },
+    "dongson": {
+      "name": "Trống đồng",
+      "note": "Mặt trống Đông Sơn: đồng thau, vàng đồng, xanh gỉ đồng"
+    },
+    "polymer": {
+      "name": "Tiền polymer",
+      "note": "Xanh ngọc, hồng, ô kính trong và hoa văn guilloche"
+    },
+    "buudien": {
+      "name": "Tem bưu chính",
+      "note": "Vàng bưu điện, mực navy, tem răng cưa và dấu bưu điện"
+    },
+    "saigon": {
+      "name": "Mái bạt Sài Gòn",
+      "note": "Biển hiệu kẻ tay: xanh lá, vàng hướng dương, mái bạt sọc"
+    },
+    "sleeve": {
+      "name": "Bìa đĩa than",
+      "note": "Một mảng tím phẳng, ảnh duotone, chữ in hoa nghiêng"
+    },
+    "classic": {
+      "name": "Mực & hoa cúc",
+      "note": "Bản gốc của Genie: mực navy, xanh dương và vàng hoa cúc"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "Nhận hàng rồi, tiền mới đến shop",
+      "description": "Sàn mua sắm nhiều shop: Genie giữ tiền của bạn cho đến khi bạn nhận hàng, mọi shop đều xác minh danh tính. Flash Sale mỗi ngày, voucher và freeship."
+    },
+    "hero": {
+      "title_a": "Nhận hàng rồi, ",
+      "title_mark": "tiền mới đến shop.",
+      "lead": "Genie giữ tiền của bạn cho đến khi bạn nhận hàng. Mọi shop đều phải xác minh danh tính mới được bán.",
+      "shelf": "Sản phẩm nổi bật"
+    },
+    "feed": {
+      "title": "Gợi ý cho bạn",
+      "more": "Xem thêm sản phẩm",
+      "see_more": "Xem thêm"
+    },
+    "flash": {
+      "title": "Flash Sale",
+      "see_all": "Xem tất cả",
+      "list": "Sản phẩm Flash Sale"
+    },
+    "vouchers": {
+      "title": "Lưu voucher, dùng khi thanh toán"
+    },
+    "shops": {
+      "title": "Shop đã xác minh",
+      "meta": "{rating} sao · {followers} người theo dõi · {location}"
+    }
+  },
+  "promotions": {
+    "banner": {
+      "carousel": "băng chuyền",
+      "label": "Banner",
+      "prev": "Banner trước",
+      "next": "Banner sau",
+      "go": "Banner {n}"
+    },
+    "popup": {
+      "label_many": "{title}, 1 trong {count} banner",
+      "next": "Lá tiếp theo",
+      "back": "Lá trước",
+      "go": "Xem banner {n}: {title}"
+    },
+    "voucher": {
+      "saved_toast": "Đã lưu voucher thành công"
+    },
+    "flash": {
+      "meta_title": "Flash Sale hôm nay",
+      "meta_description": "Flash Sale mỗi ngày trên Genie: giá giảm sâu theo khung giờ, số suất có hạn, Genie giữ tiền đến khi bạn nhận hàng.",
+      "slots": "Khung giờ Flash Sale",
+      "live": "Đang diễn ra",
+      "upcoming": "Sắp diễn ra",
+      "ended": "Đã kết thúc",
+      "ends_in": "Kết thúc sau",
+      "starts_in": "Bắt đầu sau",
+      "ends_at": "Khung giờ kết thúc lúc {time}",
+      "starts_at": "Khung giờ mở bán lúc {time}",
+      "upcoming_note": "Các sản phẩm dưới đây mở bán giá Flash Sale lúc {time} hôm nay."
+    },
+    "campaign": {
+      "count": "{n} sản phẩm tham gia",
+      "gone_title": "Chiến dịch không tồn tại hoặc đã kết thúc",
+      "gone_text": "Đường dẫn \"/{slug}\" không khớp chiến dịch nào đang chạy."
+    }
+  },
+  "payment": {
+    "rail": {
+      "example": "Ví dụ:",
+      "yours": "Đơn của bạn:",
+      "at": "tại {shop}",
+      "hint": "Bấm từng bước để xem tiền đi đâu",
+      "step": {
+        "pay": "Bạn thanh toán",
+        "hold": "Genie giữ tiền",
+        "receive": "Bạn nhận hàng",
+        "release": "Shop nhận tiền"
+      },
+      "note": {
+        "pay": "Trả qua VNPay hoặc VietQR. Chọn COD thì bạn trả tiền khi nhận hàng.",
+        "hold": "Tiền nằm ở sàn, shop chưa nhận được đồng nào.",
+        "receive": "Bạn có 7 ngày kiểm tra và yêu cầu trả hàng nếu có lỗi.",
+        "release": "Bạn xác nhận hoặc hết 7 ngày thì sàn mới chuyển tiền cho shop."
+      }
+    }
+  },
+  "product": {
+    "card": {
+      "vacation": "Shop đang tạm nghỉ"
+    },
+    "wishlist": {
+      "added": "Đã thêm vào danh sách yêu thích",
+      "removed": "Đã bỏ khỏi danh sách yêu thích",
+      "on": "Đã yêu thích",
+      "off": "Yêu thích"
+    },
+    "promise": {
+      "label": "Khi mua ở Genie",
+      "hold_title": "Genie giữ tiền đến khi bạn nhận hàng",
+      "hold_text": "Trả trước qua VNPay hoặc VietQR, tiền chưa đến shop cho tới khi bạn xác nhận.",
+      "return_title": "7 ngày để yêu cầu trả hàng",
+      "return_text": "Hàng lỗi hoặc sai mô tả, gửi ảnh và video bằng chứng ngay trong đơn.",
+      "verified_title": "{shop} đã xác minh danh tính",
+      "verified_text": "Bán trên Genie từ {year}, đánh giá shop {rating} sao."
+    },
+    "sold": "Đã bán",
+    "badge": {
+      "authentic": "Chính hãng",
+      "flash": "FLASH SALE",
+      "genuine": "Chính hãng 100%"
+    },
+    "buy": {
+      "add": "Thêm vào giỏ",
+      "now": "Mua ngay",
+      "preorder": "Đặt trước",
+      "pick_variant": "Vui lòng chọn Phân loại hàng",
+      "pick_all": "Vui lòng chọn đầy đủ Phân loại hàng",
+      "flash_out": "Sản phẩm này đã hết suất Flash Sale",
+      "flash_limit": "Giá Flash Sale áp dụng tối đa 1 suất cho mỗi tài khoản",
+      "preorder_note": "Hàng đặt trước, shop chuẩn bị trong {days} ngày trước khi giao.",
+      "vacation": "Shop đang tạm nghỉ đến {until}. Bạn chưa thể đặt mua sản phẩm này.",
+      "stock_a": "Còn",
+      "stock_b": "sản phẩm",
+      "low": "Sắp hết",
+      "hold_a": "Khi đặt hàng, Genie giữ chỗ sản phẩm trong",
+      "hold_b": "15 phút",
+      "hold_c": "để bạn thanh toán.",
+      "hold_note_a": "Khi trả trước qua VNPay hoặc VietQR, Genie giữ tiền của bạn và chỉ chuyển cho",
+      "hold_note_b": "sau khi bạn nhận hàng."
+    },
+    "gallery": {
+      "zoom": "Phóng to ảnh {title}",
+      "thumbs": "Ảnh sản phẩm",
+      "thumb": "Ảnh {n}",
+      "lightbox": "Ảnh sản phẩm {title}",
+      "image_of": "{title} — ảnh {n}/{total}",
+      "position": "Ảnh {n} trên {total}",
+      "prev": "Ảnh trước",
+      "next": "Ảnh sau"
+    },
+    "share": {
+      "copied": "Đã sao chép liên kết sản phẩm",
+      "failed": "Không sao chép được liên kết"
+    },
+    "specs": {
+      "title": "Chi tiết sản phẩm",
+      "category": "Danh Mục",
+      "brand": "Thương hiệu",
+      "shop": "Shop"
+    },
+    "desc": {
+      "title": "Mô tả sản phẩm",
+      "less": "Thu gọn"
+    },
+    "related": {
+      "title": "Sản phẩm tương tự",
+      "empty": "Không có sản phẩm tương tự."
+    },
+    "gone": {
+      "title": "Sản phẩm không còn bán",
+      "home": "Về trang chủ"
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title_page": "{name} — Trang {page}"
+    },
+    "sub": {
+      "label": "Danh mục con"
+    },
+    "empty": {
+      "filtered": "Không có sản phẩm nào khớp bộ lọc",
+      "none": "Danh mục này chưa có sản phẩm"
+    }
+  },
+  "discover": {
+    "title": "Gợi ý hôm nay",
+    "lead": "Sản phẩm bán chạy và mới theo danh mục bạn xem gần đây · {n} sản phẩm",
+    "page_of": "Trang {page}/{total}",
+    "meta": {
+      "title_page": "Gợi ý hôm nay — Trang {page}",
+      "description": "Gợi ý hôm nay trên Genie: sản phẩm bán chạy và hàng mới từ các shop đã xác minh, Genie giữ tiền đến khi bạn nhận hàng."
+    }
+  },
+  "reviews": {
+    "title": "Đánh giá sản phẩm",
+    "summary": "/ 5 · {n} đánh giá",
+    "empty": "Chưa có đánh giá nào ở mục này",
+    "filter": {
+      "label": "Lọc đánh giá",
+      "all": "Tất cả",
+      "5": "5 Sao",
+      "4": "4 Sao",
+      "3": "3 Sao",
+      "img": "Có hình ảnh",
+      "buy": "Đã mua hàng"
+    },
+    "item": {
+      "anonymous": "Đánh giá ẩn tên",
+      "verified": "Đã mua hàng",
+      "variant": "Phân loại: {variant}",
+      "photo": "Ảnh khách hàng chụp {n}",
+      "reply": "Phản hồi của Người bán",
+      "helpful": "Hữu ích ({n})"
+    },
+    "report": {
+      "action": "Báo cáo",
+      "done": "Đã báo cáo",
+      "title": "Báo cáo đánh giá",
+      "reason": "Lý do",
+      "note": "Ghi chú",
+      "note_ph": "Ghi chú thêm (không bắt buộc)",
+      "submit": "Gửi báo cáo",
+      "sent": "Đã gửi báo cáo tới bộ phận kiểm duyệt",
+      "reasons": {
+        "SPAM": "Spam / chuyển hướng giao dịch",
+        "OFFENSIVE": "Ngôn từ thô tục, xúc phạm",
+        "FAKE_BUYER": "Mua giả, không phải người mua thật"
+      }
+    }
+  },
+  "shop": {
+    "badge": {
+      "favorite": "Shop Yêu Thích"
+    },
+    "state": {
+      "online": "Online",
+      "vacation": "Đang tạm nghỉ"
+    },
+    "strip": {
+      "label": "Thông tin shop {shop}",
+      "visit": "Xem shop {shop}",
+      "meta": "{followers} người theo dõi · {location} · Đánh giá shop {rating} sao",
+      "chat": "Chat ngay",
+      "view": "Xem shop"
+    },
+    "follow": {
+      "done": "Đã theo dõi {shop}",
+      "undone": "Đã hủy theo dõi {shop}",
+      "confirm_title": "Hủy theo dõi Shop?",
+      "confirm_text": "Bạn sẽ không nhận được khuyến mãi từ {shop} nữa.",
+      "confirm": "Hủy theo dõi",
+      "cancel": "Không"
+    },
+    "empty": "Shop chưa có sản phẩm nào ở mục này.",
+    "head": {
+      "meta": "Online · Tham gia từ {year} · Phản hồi {time}",
+      "reopen": "Dự kiến mở lại ngày {until}."
+    },
+    "stat": {
+      "rating": "Đánh giá",
+      "followers": "Người theo dõi",
+      "products": "Sản phẩm",
+      "response": "Phản hồi chat"
+    },
+    "search": {
+      "label": "Tìm trong Shop",
+      "placeholder": "Tìm sản phẩm trong {shop}…",
+      "submit": "Tìm trong shop",
+      "all": "Tìm toàn sàn"
+    },
+    "tab": {
+      "label": "Danh mục của shop",
+      "all": "Tất cả sản phẩm",
+      "new": "Mới nhất",
+      "hot": "Bán chạy"
+    }
+  },
+  "policies": {
+    "menu": "Thông tin hỗ trợ",
+    "menu_mobile": "Thông tin hỗ trợ (danh sách trang)",
+    "pager": "Trang trước và sau",
+    "prev": "Trang trước",
+    "next": "Trang sau"
   }
 }

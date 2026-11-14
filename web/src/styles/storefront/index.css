@@ -1,0 +1,14 @@
+/* Storefront — lớp tr-* giữ dạng CSS (quyết định D2) để 9 theme đè được qua [data-theme].
+   Thứ tự = thứ tự khối trong storefront.css gốc. Thẻ sản phẩm, thanh Flash, phiếu voucher
+   đã viết bằng utility trong shared/ui (ProductCard, FlashProgress, Ticket) nên không có ở đây. */
+@import './shell.css';
+@import './header.css';
+@import './home.css';
+@import './footer.css';
+@import './product.css';
+@import './search.css';
+@import './cart.css';
+@import './checkout.css';
+@import './account.css';
+@import './chat.css';
+@import './policy.css';

@@ -1,0 +1,91 @@
+---
+// "Chi tiết sản phẩm" (prototype ProductDetail.jsx SpecsTable) — plan G08.29, SSR tĩnh.
+// Hàng đầu: Danh mục (liên kết gốc › con), Thương hiệu, Shop (liên kết), rồi thông số người bán khai.
+import { createT } from '@/shared/lib/i18n';
+import type { ProductSpec } from '../domain/product.types';
+
+interface Props {
+  specs: ProductSpec[];
+  brand: string;
+  /** Danh mục gốc → con (đã có href). */
+  categories: { name: string; href: string }[];
+  shop: { name: string; href: string };
+}
+
+const { specs, brand, categories, shop } = Astro.props;
+const t = createT(Astro.locals.lang ?? 'vi');
+const brandKey = 'Thương hiệu';
+const rest = specs.filter((s) => s.key !== brandKey);
+const link = 'text-blue-600 no-underline hover:underline';
+---
+
+<section
+  class="mb-4 rounded-lg bg-surface-card px-6 py-5 shadow-sm max-md:px-4"
+  aria-labelledby="specs-title"
+>
+  <h2 id="specs-title" class="m-0 mb-4 text-xl font-bold text-strong">
+    {t('product.specs.title')}
+  </h2>
+  <table class="w-full border-collapse">
+    <tbody>
+      <tr class="border-0 border-b border-solid border-line-subtle">
+        <th
+          scope="row"
+          class="w-[180px] whitespace-nowrap py-3 pr-4 text-left align-top text-sm font-normal text-muted max-md:w-[120px]"
+        >
+          {t('product.specs.category')}
+        </th>
+        <td class="py-3 text-base leading-normal text-body">
+          {
+            categories.map((c, i) => (
+              <>
+                {i > 0 && <span class="text-subtle"> › </span>}
+                <a href={c.href} class={link}>
+                  {c.name}
+                </a>
+              </>
+            ))
+          }
+        </td>
+      </tr>
+      <tr class="border-0 border-b border-solid border-line-subtle">
+        <th
+          scope="row"
+          class="whitespace-nowrap py-3 pr-4 text-left align-top text-sm font-normal text-muted"
+        >
+          {t('product.specs.brand')}
+        </th>
+        <td class="py-3 text-base leading-normal text-body">{brand}</td>
+      </tr>
+      <tr class:list={['border-0 border-solid border-line-subtle', rest.length > 0 && 'border-b']}>
+        <th
+          scope="row"
+          class="whitespace-nowrap py-3 pr-4 text-left align-top text-sm font-normal text-muted"
+        >
+          {t('product.specs.shop')}
+        </th>
+        <td class="py-3 text-base leading-normal text-body">
+          <a href={shop.href} class={link}>{shop.name}</a>
+        </td>
+      </tr>
+      {
+        rest.map((s, i) => (
+          <tr
+            class:list={[
+              'border-0 border-solid border-line-subtle',
+              i < rest.length - 1 && 'border-b',
+            ]}
+          >
+            <th
+              scope="row"
+              class="whitespace-nowrap py-3 pr-4 text-left align-top text-sm font-normal text-muted"
+            >
+              {s.key}
+            </th>
+            <td class="py-3 text-base leading-normal text-body">{s.value}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</section>

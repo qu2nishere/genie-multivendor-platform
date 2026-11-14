@@ -1,0 +1,15 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": ["src/shared/ui/Card.tsx"],
+        "createdAt": "2026-11-13T03:24:35.768Z",
+        "reason": "Claude decided: SectionHead accent is a heading rule ported 1:1 from prototype Discover.jsx (borderLeft 4px --color-primary); plan_chuyen_giao_dien requires faithful port"
+      }
+    ]
+  }
+}

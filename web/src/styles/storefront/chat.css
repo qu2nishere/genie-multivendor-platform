@@ -1,0 +1,29 @@
+/* ===========================================================================
+   Genie storefront — Chat nổi: vị trí so với thanh mua / giỏ.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  @media (max-width: 768px) {
+    .tr-root--bar .tr-chatdock,
+    .tr-root--cart .tr-chatdock {
+      bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+    }
+    .tr-root--bar .tr-chatdock > button,
+    .tr-root--cart .tr-chatdock > button {
+      display: none !important;
+    }
+    .tr-root--bar .tr-chatdock > div,
+    .tr-root--cart .tr-chatdock > div {
+      bottom: 0 !important;
+    }
+    .tr-chatdock {
+      right: 12px !important;
+      bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1320px) {
+    .tr-root--cart .tr-chatdock {
+      bottom: 130px !important;
+    }
+  }
+}

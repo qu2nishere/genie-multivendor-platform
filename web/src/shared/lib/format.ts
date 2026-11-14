@@ -173,3 +173,13 @@ export function formatHhMmSs(totalSeconds: number): string {
   const m = Math.floor((s % 3600) / 60);
   return [h, m, s % 60].map((v) => String(v).padStart(2, '0')).join(':');
 }
+
+/** Giờ / phút / giây hiện tại theo giờ Việt Nam (UTC+7, không có giờ mùa hè). */
+export function clockVN(now: number = Date.now()): {
+  hour: number;
+  minute: number;
+  second: number;
+} {
+  const s = Math.floor((now + 7 * 3600 * 1000) / 1000) % 86_400;
+  return { hour: Math.floor(s / 3600), minute: Math.floor((s % 3600) / 60), second: s % 60 };
+}

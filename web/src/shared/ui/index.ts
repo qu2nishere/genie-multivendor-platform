@@ -2,7 +2,7 @@
 // Bộ thống kê ở '@/shared/ui/dash', thương hiệu ở '@/shared/ui/brand' (chỉ Seller / Admin / layout cần).
 
 // Phần tử cơ bản
-export { Icon, type IconName, type IconProps } from './icon/Icon';
+export { Icon, toIconName, type IconName, type IconProps } from './icon/Icon';
 export { ICONS, ICON_NAMES } from './icon/icons';
 export {
   Button,
@@ -94,3 +94,4 @@ export {
   type FormSectionProps,
   type DateInputProps,
 } from './FormSection';
+export { Breadcrumbs, type Crumb } from './Breadcrumbs';

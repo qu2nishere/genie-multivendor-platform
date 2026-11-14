@@ -61,7 +61,16 @@ export function buttonClass({
   block = false,
   className,
 }: Pick<CommonProps, 'variant' | 'size' | 'block' | 'className'> = {}): string {
-  return cn(BASE, VARIANT[variant], SIZE[size], block && 'flex w-full', className);
+  // lz-btn* là móc cho storefront.css / themes.css (vd. .tr .lz-btn bo tròn viên thuốc)
+  return cn(
+    'lz-btn',
+    variant !== 'primary' && `lz-btn--${variant}`,
+    BASE,
+    VARIANT[variant],
+    SIZE[size],
+    block && 'flex w-full',
+    className,
+  );
 }
 
 /** Nút hành động; truyền `href` để thành liên kết thật (R16). */

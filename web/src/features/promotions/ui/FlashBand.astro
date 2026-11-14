@@ -1,0 +1,49 @@
+---
+// Dải Flash Sale trang chủ (prototype Home.jsx #flash-sale; DESIGN.md Flash Band) — plan G08.11.
+// SSR: tiêu đề, banner FLASH_SALE_TOP, lưới sản phẩm có thanh "đã bán" (FlashBar), dải voucher.
+// Island: đồng hồ đếm tới 24:00 giờ Việt Nam (tải lại không đặt lại), tim yêu thích, nút Lưu voucher.
+import { ProductGrid, type ProductSummary } from '@/features/product';
+import { createT } from '@/shared/lib/i18n';
+import { Countdown, Icon } from '@/shared/ui';
+import { listLiveBanners } from '../infrastructure/banner.api';
+import { BannerLink, BannerCarousel } from './banner/Banners';
+import SaveVoucher, { type SaveVoucherItem } from './SaveVoucher';
+
+interface Props {
+  products: ProductSummary[];
+  vouchers: SaveVoucherItem[];
+  /** Đích "Xem tất cả". */
+  moreHref?: string;
+}
+
+const { products, vouchers, moreHref = '/flash-sale' } = Astro.props;
+const t = createT(Astro.locals.lang ?? 'vi');
+const banners = await listLiveBanners('FLASH_SALE_TOP');
+---
+
+<section id="flash-sale" class="tr-section tr-flash" aria-labelledby="flash-title">
+  <div class="tr-flash__in">
+    <div class="tr-section__head tr-flash__head">
+      <h2 id="flash-title">{t('home.flash.title')}</h2>
+      <Countdown client:idle until="midnight" variant="clock" />
+      <a class="tr-more" href={moreHref}>
+        {t('home.flash.see_all')}
+        <Icon name="chevron-right" size={16} />
+      </a>
+    </div>
+    {
+      banners.length > 0 && (
+        <div class="tr-flash__banner">
+          {banners.length === 1 ? (
+            <BannerLink client:visible b={banners[0]} />
+          ) : (
+            <BannerCarousel client:visible items={banners} compact />
+          )}
+        </div>
+      )
+    }
+    <ProductGrid client:visible items={products} flashBar aria-label={t('home.flash.list')} />
+    <h3 class="tr-vouchers__title">{t('home.vouchers.title')}</h3>
+    <SaveVoucher client:idle items={vouchers} />
+  </div>
+</section>

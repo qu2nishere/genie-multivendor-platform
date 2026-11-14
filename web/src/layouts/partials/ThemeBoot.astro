@@ -1,0 +1,27 @@
+---
+// Đặt data-theme trước khi trình duyệt vẽ để không nháy theme (plan G07.05, prototype themes.js):
+// ?theme= → localStorage genie.theme → mặc định "genie". Dùng chung StorefrontLayout, AuthLayout, AppShellLayout.
+import { DEFAULT_THEME, THEME_IDS, THEME_STORAGE_KEY } from '@/shared/ui/brand/themes';
+---
+
+<script is:inline define:vars={{ ids: THEME_IDS, key: THEME_STORAGE_KEY, fallback: DEFAULT_THEME }}>
+  (function () {
+    var root = document.documentElement;
+    var pick = fallback;
+    try {
+      var q = new URLSearchParams(location.search).get('theme');
+      if (q && ids.indexOf(q) >= 0) {
+        localStorage.setItem(key, JSON.stringify(q));
+        pick = q;
+      } else {
+        var raw = localStorage.getItem(key);
+        var saved = raw ? JSON.parse(raw) : null;
+        if (ids.indexOf(saved) >= 0) pick = saved;
+      }
+    } catch (_e) {
+      /* storage bị chặn: dùng mặc định */
+    }
+    root.setAttribute('data-theme', pick);
+    root.classList.add('tr-play');
+  })();
+</script>

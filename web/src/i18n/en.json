@@ -163,7 +163,8 @@
     "GNE-ADM-4221": "Staff emails must end with @genie.example.",
     "GNE-SYS-5030": "The system is busy. Please try again shortly.",
     "GNE-DB-5002": "The system is busy. Please try again in a few seconds.",
-    "GNE-MINIO-5003": "The upload link expired. Please upload again."
+    "GNE-MINIO-5003": "The upload link expired. Please upload again.",
+    "GNE-CMP-4041": "This campaign doesn't exist or has ended."
   },
   "ui": {
     "close": "Close",
@@ -273,6 +274,498 @@
       "chart_aria": "{name}. Peak {max} on {at}. Use the arrow keys to read each point.",
       "as_table": "View as table",
       "point": "Point"
+    },
+    "breadcrumb": {
+      "label": "Breadcrumb"
     }
+  },
+  "layout": {
+    "header": {
+      "home": "Genie — Home",
+      "sell": "Sell",
+      "language": "Language",
+      "help": "Help",
+      "notifications": "Notifications",
+      "notifications_unread": "Notifications, {count} unread",
+      "cart": "Cart",
+      "cart_count": "Cart, {count} items",
+      "categories": "Categories",
+      "all_categories": "All categories",
+      "theme": "Theme"
+    },
+    "notfound": {
+      "title": "Page not found",
+      "text": "The page you're looking for may have been removed, moved, or never existed.",
+      "home": "Back to home",
+      "search": "Search products"
+    },
+    "auth": {
+      "brand_label": "Genie's promise",
+      "promise_1": "You receive it,",
+      "promise_2": "then the shop gets paid.",
+      "lead": "Every shop is identity-verified. Genie holds your money until you receive your order.",
+      "hold": {
+        "title": "Money held until delivery",
+        "text": "The shop is paid only after you confirm you've received it."
+      },
+      "return": {
+        "title": "7-day returns",
+        "text": "Faulty or not-as-described items are refunded."
+      },
+      "freeship": {
+        "title": "Free shipping",
+        "text": "Apply a free-shipping code right at checkout."
+      }
+    },
+    "footer": {
+      "tagline": "A multi-seller marketplace that holds your money until you receive your order, with 7-day returns.",
+      "selling": "Selling",
+      "become_seller": "Become a seller",
+      "seller_center": "Seller Center",
+      "app_soon": "Mobile app (coming soon)",
+      "legal": "© 2026 Genie (working name). Student project prototype with sample data. Prices in VND (₫)."
+    },
+    "nav": {
+      "home": "Home"
+    }
+  },
+  "notifications": {
+    "panel": {
+      "title": "Notifications",
+      "mark_all": "Mark all as read",
+      "empty": "No notifications yet",
+      "see_all": "See all notifications"
+    }
+  },
+  "cart": {
+    "mini": {
+      "empty_title": "Your cart is empty",
+      "empty_text": "Add products to your cart to keep shopping",
+      "recent": "Recently added",
+      "more": "{count} more items in your cart",
+      "view": "View cart"
+    },
+    "add": {
+      "added": "Added to cart",
+      "guest_full": "Your cart already has 50 items. Log in to add more."
+    }
+  },
+  "auth": {
+    "prompt": {
+      "title": "Please sign in",
+      "text": "You need to sign in to use this feature.",
+      "later": "Later"
+    },
+    "menu": {
+      "label": "Account",
+      "profile": "My account",
+      "orders": "My orders",
+      "seller": "Seller Center",
+      "switch": "Switch to Seller Center",
+      "logout_confirm": "Are you sure you want to sign out of {name}?"
+    }
+  },
+  "search": {
+    "box": {
+      "placeholder": "Search products, brands, verified shops…",
+      "submit": "Search"
+    },
+    "suggest": {
+      "label": "Search suggestions",
+      "trending": "Trending",
+      "category": "Category",
+      "shop": "Shop"
+    },
+    "meta": {
+      "title": "Search results for “{q}”",
+      "title_all": "Search products",
+      "description": "Find products, brands and verified shops on Genie."
+    },
+    "result": {
+      "for": "Results for",
+      "products": "products",
+      "list": "Search results"
+    },
+    "scope": {
+      "label": "Search scope",
+      "all": "Whole marketplace",
+      "shop": "In shop",
+      "in_shop": "In {shop}"
+    },
+    "shop": {
+      "filtering": "Filtering in this shop · {rating} stars · {followers} followers",
+      "visit": "Visit shop",
+      "matched": "Shops matching your search"
+    },
+    "sort": {
+      "label": "Sort by",
+      "rel": "Relevance",
+      "hot": "Best selling",
+      "new": "Newest",
+      "price": "Price",
+      "price_asc": "low to high",
+      "price_desc": "high to low"
+    },
+    "band": {
+      "under": "Under {max}",
+      "over": "Over {min}",
+      "from": "From {min}",
+      "to": "Up to {max}"
+    },
+    "filter": {
+      "title": "Search filters",
+      "button": "Filters",
+      "close": "Close filters",
+      "active": "Active filters",
+      "remove": "Remove filter {label}",
+      "clear": "Clear filters",
+      "clear_all": "Clear all",
+      "apply": "Apply",
+      "show_n": "Show {n} products",
+      "service": "Seller & services",
+      "service_more": "Services & more",
+      "category": "By category",
+      "brand": "Brand",
+      "brand_verified": "Verified brand",
+      "place": "Ships from",
+      "price": "Price range",
+      "price_from": "FROM",
+      "price_to": "TO",
+      "price_min": "Minimum price",
+      "price_max": "Maximum price",
+      "rating": "Rating",
+      "and_up": "& up",
+      "rating_up": "{n} stars & up",
+      "authentic": "Authentic",
+      "authentic_shop": "Authentic shops",
+      "freeship": "Free shipping",
+      "freeship_long": "Free shipping",
+      "voucher": "Shops with vouchers"
+    },
+    "empty": {
+      "filtered": "No products match these filters",
+      "none": "No matching products found",
+      "in_shop": "in this shop",
+      "hint": "Try a shorter keyword, check the spelling or remove some filters.",
+      "widen": "Search the whole marketplace",
+      "suggest": "You may also like"
+    }
+  },
+  "theme": {
+    "picker": {
+      "title": "Choose a theme",
+      "saved_here": "Saved in this browser",
+      "change": "Change theme"
+    },
+    "genie": {
+      "name": "Magic lamp",
+      "note": "True to the name: a brass lamp, teal smoke behind glass"
+    },
+    "hoian": {
+      "name": "Hội An",
+      "note": "Hội An's yellow walls, silk lanterns, green shutters, curved tiles"
+    },
+    "dongho": {
+      "name": "Điệp paper",
+      "note": "Đông Hồ prints: vermilion, sophora yellow, charcoal ink"
+    },
+    "dongson": {
+      "name": "Bronze drum",
+      "note": "The Đông Sơn drum face: brass, bronze gold, verdigris green"
+    },
+    "polymer": {
+      "name": "Polymer notes",
+      "note": "Jade, pink, a clear window and guilloche patterns"
+    },
+    "buudien": {
+      "name": "Postage stamp",
+      "note": "Post-office yellow, navy ink, perforated stamps and postmarks"
+    },
+    "saigon": {
+      "name": "Saigon awning",
+      "note": "Hand-painted signs: green, sunflower yellow, striped awnings"
+    },
+    "sleeve": {
+      "name": "Record sleeve",
+      "note": "One flat purple field, duotone photos, slanted capitals"
+    },
+    "classic": {
+      "name": "Ink & marigold",
+      "note": "Genie's original: navy ink, royal blue and marigold"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "You get the goods first, then the shop gets paid",
+      "description": "A multi-shop marketplace: Genie holds your money until you receive your order, and every shop verifies its identity. Daily Flash Sale, vouchers and free shipping."
+    },
+    "hero": {
+      "title_a": "You get the goods, ",
+      "title_mark": "then the shop gets paid.",
+      "lead": "Genie holds your money until you receive your order. Every shop must verify its identity before selling.",
+      "shelf": "Featured products"
+    },
+    "feed": {
+      "title": "Picked for you",
+      "more": "See more products",
+      "see_more": "See more"
+    },
+    "flash": {
+      "title": "Flash Sale",
+      "see_all": "See all",
+      "list": "Flash Sale products"
+    },
+    "vouchers": {
+      "title": "Save vouchers, use them at checkout"
+    },
+    "shops": {
+      "title": "Verified shops",
+      "meta": "{rating} stars · {followers} followers · {location}"
+    }
+  },
+  "promotions": {
+    "banner": {
+      "carousel": "carousel",
+      "label": "Banner",
+      "prev": "Previous banner",
+      "next": "Next banner",
+      "go": "Banner {n}"
+    },
+    "popup": {
+      "label_many": "{title}, 1 of {count} banners",
+      "next": "Next card",
+      "back": "Previous card",
+      "go": "View banner {n}: {title}"
+    },
+    "voucher": {
+      "saved_toast": "Voucher saved"
+    },
+    "flash": {
+      "meta_title": "Today's Flash Sale",
+      "meta_description": "Daily Flash Sale on Genie: deep discounts by time slot, limited quantities, with Genie holding your money until you receive your order.",
+      "slots": "Flash Sale time slots",
+      "live": "Live now",
+      "upcoming": "Coming up",
+      "ended": "Ended",
+      "ends_in": "Ends in",
+      "starts_in": "Starts in",
+      "ends_at": "This slot ends at {time}",
+      "starts_at": "This slot opens at {time}",
+      "upcoming_note": "The products below go on Flash Sale at {time} today."
+    },
+    "campaign": {
+      "count": "{n} products taking part",
+      "gone_title": "This campaign doesn't exist or has ended",
+      "gone_text": "The link \"/{slug}\" doesn't match any running campaign."
+    }
+  },
+  "payment": {
+    "rail": {
+      "example": "Example:",
+      "yours": "Your order:",
+      "at": "at {shop}",
+      "hint": "Tap each step to see where the money goes",
+      "step": {
+        "pay": "You pay",
+        "hold": "Genie holds it",
+        "receive": "You receive",
+        "release": "Shop gets paid"
+      },
+      "note": {
+        "pay": "Pay with VNPay or VietQR. Choose COD to pay on delivery.",
+        "hold": "The money stays with the marketplace; the shop has received nothing yet.",
+        "receive": "You have 7 days to check the item and request a return if something is wrong.",
+        "release": "Once you confirm, or after 7 days, the marketplace pays the shop."
+      }
+    }
+  },
+  "product": {
+    "card": {
+      "vacation": "Shop is on vacation"
+    },
+    "wishlist": {
+      "added": "Added to your wishlist",
+      "removed": "Removed from your wishlist",
+      "on": "In wishlist",
+      "off": "Wishlist"
+    },
+    "promise": {
+      "label": "When you buy on Genie",
+      "hold_title": "Genie holds the money until you receive it",
+      "hold_text": "Pay upfront with VNPay or VietQR; the shop gets nothing until you confirm.",
+      "return_title": "7 days to request a return",
+      "return_text": "Faulty or not as described? Send photo and video evidence right in the order.",
+      "verified_title": "{shop} has verified its identity",
+      "verified_text": "Selling on Genie since {year}, shop rating {rating} stars."
+    },
+    "sold": "Sold",
+    "badge": {
+      "authentic": "Authentic",
+      "flash": "FLASH SALE",
+      "genuine": "100% genuine"
+    },
+    "buy": {
+      "add": "Add to cart",
+      "now": "Buy now",
+      "preorder": "Pre-order",
+      "pick_variant": "Please choose a variation",
+      "pick_all": "Please choose all variations",
+      "flash_out": "This Flash Sale is sold out",
+      "flash_limit": "Flash Sale price is limited to 1 item per account",
+      "preorder_note": "Pre-order item: the shop prepares it within {days} days before shipping.",
+      "vacation": "The shop is on vacation until {until}. You can't order this product yet.",
+      "stock_a": "Only",
+      "stock_b": "left",
+      "low": "Almost gone",
+      "hold_a": "When you order, Genie reserves the item for",
+      "hold_b": "15 minutes",
+      "hold_c": "while you pay.",
+      "hold_note_a": "When you prepay with VNPay or VietQR, Genie holds your money and only pays",
+      "hold_note_b": "after you receive your order."
+    },
+    "gallery": {
+      "zoom": "Enlarge image of {title}",
+      "thumbs": "Product images",
+      "thumb": "Image {n}",
+      "lightbox": "Images of {title}",
+      "image_of": "{title} — image {n}/{total}",
+      "position": "Image {n} of {total}",
+      "prev": "Previous image",
+      "next": "Next image"
+    },
+    "share": {
+      "copied": "Product link copied",
+      "failed": "Couldn't copy the link"
+    },
+    "specs": {
+      "title": "Product details",
+      "category": "Category",
+      "brand": "Brand",
+      "shop": "Shop"
+    },
+    "desc": {
+      "title": "Description",
+      "less": "Show less"
+    },
+    "related": {
+      "title": "Similar products",
+      "empty": "No similar products."
+    },
+    "gone": {
+      "title": "This product is no longer for sale",
+      "home": "Back to home"
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title_page": "{name} — Page {page}"
+    },
+    "sub": {
+      "label": "Subcategories"
+    },
+    "empty": {
+      "filtered": "No products match these filters",
+      "none": "This category has no products yet"
+    }
+  },
+  "discover": {
+    "title": "Today's picks",
+    "lead": "Best sellers and new arrivals from categories you viewed recently · {n} products",
+    "page_of": "Page {page}/{total}",
+    "meta": {
+      "title_page": "Today's picks — Page {page}",
+      "description": "Today's picks on Genie: best sellers and new arrivals from verified shops, with Genie holding your money until you receive your order."
+    }
+  },
+  "reviews": {
+    "title": "Product reviews",
+    "summary": "/ 5 · {n} reviews",
+    "empty": "No reviews in this section yet",
+    "filter": {
+      "label": "Filter reviews",
+      "all": "All",
+      "5": "5 stars",
+      "4": "4 stars",
+      "3": "3 stars",
+      "img": "With photos",
+      "buy": "Verified purchase"
+    },
+    "item": {
+      "anonymous": "Anonymous review",
+      "verified": "Verified purchase",
+      "variant": "Variation: {variant}",
+      "photo": "Customer photo {n}",
+      "reply": "Seller's reply",
+      "helpful": "Helpful ({n})"
+    },
+    "report": {
+      "action": "Report",
+      "done": "Reported",
+      "title": "Report review",
+      "reason": "Reason",
+      "note": "Note",
+      "note_ph": "Additional note (optional)",
+      "submit": "Send report",
+      "sent": "Report sent to the moderation team",
+      "reasons": {
+        "SPAM": "Spam / moving the deal off-platform",
+        "OFFENSIVE": "Vulgar or abusive language",
+        "FAKE_BUYER": "Fake purchase, not a real buyer"
+      }
+    }
+  },
+  "shop": {
+    "badge": {
+      "favorite": "Preferred shop"
+    },
+    "state": {
+      "online": "Online",
+      "vacation": "On vacation"
+    },
+    "strip": {
+      "label": "About {shop}",
+      "visit": "Visit {shop}",
+      "meta": "{followers} followers · {location} · Shop rating {rating} stars",
+      "chat": "Chat now",
+      "view": "View shop"
+    },
+    "follow": {
+      "done": "Following {shop}",
+      "undone": "Unfollowed {shop}",
+      "confirm_title": "Unfollow this shop?",
+      "confirm_text": "You won't get promotions from {shop} anymore.",
+      "confirm": "Unfollow",
+      "cancel": "No"
+    },
+    "empty": "This shop has no products in this section yet.",
+    "head": {
+      "meta": "Online · Joined {year} · Replies {time}",
+      "reopen": "Expected to reopen on {until}."
+    },
+    "stat": {
+      "rating": "Rating",
+      "followers": "Followers",
+      "products": "Products",
+      "response": "Chat response"
+    },
+    "search": {
+      "label": "Search this shop",
+      "placeholder": "Search products in {shop}…",
+      "submit": "Search in shop",
+      "all": "Search everywhere"
+    },
+    "tab": {
+      "label": "Shop categories",
+      "all": "All products",
+      "new": "Newest",
+      "hot": "Best selling"
+    }
+  },
+  "policies": {
+    "menu": "Help & policies",
+    "menu_mobile": "Help & policies (page list)",
+    "pager": "Previous and next page",
+    "prev": "Previous",
+    "next": "Next"
   }
 }

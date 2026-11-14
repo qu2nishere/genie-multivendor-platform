@@ -1,10 +1,18 @@
 ---
-// Khung trống cho SPA Seller / Admin
+// Khung trống cho SPA Seller Center / Admin Portal (plan G07.09; TS 5.1): <head>, font, theme, dash.css,
+// không header storefront. Luôn noindex (trang cần đăng nhập).
+import SeoHead from './partials/SeoHead.astro';
+import ThemeBoot from './partials/ThemeBoot.astro';
+import ToastHost from './storefront/ToastHost';
+import '@/styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
+  /** Mặc định true — chỉ thư viện nội bộ / SPA. */
   noindex?: boolean;
 }
+
 const { title, description, noindex = true } = Astro.props;
 const lang = Astro.locals.lang ?? 'vi';
 ---
@@ -12,18 +20,11 @@ const lang = Astro.locals.lang ?? 'vi';
 <!doctype html>
 <html lang={lang}>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SeoHead title={title} description={description} noindex={noindex} />
+    <ThemeBoot />
   </head>
-  <body>
+  <body class="bg-surface-page min-h-screen">
     <slot />
+    <ToastHost client:idle />
   </body>
 </html>
-<style is:global>
-  @import '../styles/global.css';
-  @import '../styles/dash.css';
-</style>

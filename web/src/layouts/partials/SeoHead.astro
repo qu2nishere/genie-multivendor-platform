@@ -1,0 +1,51 @@
+---
+// <head> dùng chung (plan G07.04; TS 5.4, R14): tiêu đề "%s | Genie", meta description, canonical,
+// robots, Open Graph (og:locale), thẻ Twitter, JSON-LD, favicon, nạp sẵn font chính.
+import { env } from '@/shared/config/env';
+import { buildMeta, serializeJsonLd, type JsonLd } from '@/shared/lib/seo';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  follow?: boolean;
+  type?: 'website' | 'product' | 'article';
+  jsonLd?: JsonLd[];
+}
+
+const props = Astro.props;
+const lang = Astro.locals.lang ?? 'vi';
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+const meta = buildMeta({ ...props, locale: lang }, site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{meta.title}</title>
+{meta.description && <meta name="description" content={meta.description} />}
+<meta name="robots" content={meta.robots} />
+{meta.canonical && <link rel="canonical" href={meta.canonical} />}
+{Object.entries(meta.og).map(([k, v]) => <meta property={k} content={v} />)}
+{Object.entries(meta.twitter).map(([k, v]) => <meta name={k} content={v} />)}
+<meta name="theme-color" content="#0B1F4B" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link
+  rel="preload"
+  href="/fonts/be-vietnam-pro-400-vietnamese.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link
+  rel="preload"
+  href="/fonts/be-vietnam-pro-400-latin.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+{meta.jsonLd.map((ld) => <script type="application/ld+json" set:html={serializeJsonLd(ld)} />)}

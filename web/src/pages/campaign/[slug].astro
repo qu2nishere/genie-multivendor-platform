@@ -1,7 +1,89 @@
 ---
+// Trang chiến dịch (prototype Campaign.jsx) — plan G08.39. Banner màu của chiến dịch, giới thiệu,
+// voucher lưu ngay, ảnh xếp chồng, lưới sản phẩm tham gia. Không có / đã kết thúc → 404 (R19).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { listProducts, ProductGrid, productHref } from '@/features/product';
+import { getCampaign, SaveVoucher, type Campaign } from '@/features/promotions';
+import { env } from '@/shared/config/env';
+import { createT } from '@/shared/lib/i18n';
+import { breadcrumbLd, itemListLd } from '@/shared/lib/seo';
+import { buttonClass, Icon } from '@/shared/ui';
+
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+const slug = Astro.params.slug ?? '';
+
+let campaign: Campaign | null = null;
+try {
+  campaign = await getCampaign(slug);
+} catch {
+  campaign = null;
+}
+if (!campaign) Astro.response.status = 404;
+
+const products = campaign
+  ? (await listProducts({ minDiscount: campaign.minDiscount, size: 60 })).items
+  : [];
+const path = `/campaign/${slug}`;
 ---
 
-<StorefrontLayout title="Chiến dịch">
-  <!-- Trang chiến dịch -->
-</StorefrontLayout>
+{
+  campaign ? (
+    <StorefrontLayout
+      title={campaign.title}
+      description={campaign.intro}
+      canonical={path}
+      image={campaign.pictures[0]}
+      jsonLd={[
+        breadcrumbLd(
+          [
+            { name: t('layout.nav.home'), url: '/' },
+            { name: campaign.title, url: path },
+          ],
+          site,
+        ),
+        itemListLd(
+          products.map((p) => ({ name: p.title, url: productHref(p) })),
+          site,
+        ),
+      ]}
+    >
+      <div class="tr-section tr-camp pb-14">
+        <nav class="tr-camp__crumb" aria-label={t('ui.breadcrumb.label')}>
+          <a href="/">{t('layout.nav.home')}</a>
+          <Icon name="chevron-right" size={14} />
+          <span aria-current="page">{campaign.title}</span>
+        </nav>
+        <header class="tr-camp__head" style={`background:${campaign.colour}`}>
+          <div class="tr-camp__text">
+            <h1>{campaign.title}</h1>
+            <p>{campaign.intro}</p>
+            <SaveVoucher client:idle items={[campaign.voucher]} />
+          </div>
+          <div class="tr-camp__pics" aria-hidden="true">
+            {campaign.pictures.map((src) => (
+              <img src={src} alt="" width="150" height="150" />
+            ))}
+          </div>
+        </header>
+        <div class="tr-section__head">
+          <h2 id="camp-products">{t('promotions.campaign.count', { n: products.length })}</h2>
+        </div>
+        <ProductGrid client:visible items={products} aria-label={campaign.title} />
+      </div>
+    </StorefrontLayout>
+  ) : (
+    <StorefrontLayout title={t('promotions.campaign.gone_title')} noindex>
+      <div class="tr-section pb-14 text-center">
+        <h1 class="m-0 mb-2 mt-6 text-xl font-bold text-strong">
+          {t('promotions.campaign.gone_title')}
+        </h1>
+        <p class="m-0 mb-5 text-base text-muted">{t('promotions.campaign.gone_text', { slug })}</p>
+        <a href="/" class={buttonClass()}>
+          {t('product.gone.home')}
+        </a>
+      </div>
+    </StorefrontLayout>
+  )
+}

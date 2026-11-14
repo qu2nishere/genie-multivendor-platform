@@ -1,0 +1,43 @@
+/* ===========================================================================
+   Genie storefront — Tài khoản: menu trái thu thành hàng cuộn ngang.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  @media (max-width: 768px) {
+    aside.tr-acct {
+      min-width: 0;
+    }
+    .tr-acct__who {
+      padding-bottom: 10px !important;
+      margin-bottom: 8px !important;
+      border-bottom: 0 !important;
+    }
+    .tr-acct__menu {
+      display: flex;
+      gap: 6px;
+      margin: 0 -12px;
+      padding: 0 12px 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tr-acct__menu::-webkit-scrollbar {
+      display: none;
+    }
+    .tr-acct__menu > div,
+    .tr-acct__menu > div > div {
+      display: contents;
+    }
+    .tr-acct__menu button {
+      flex: none;
+      width: auto !important;
+      min-height: 44px;
+      height: 44px !important;
+      padding: 0 12px !important;
+      white-space: nowrap;
+      background-color: var(--surface-card);
+    }
+    .tr-acct__group {
+      display: none !important;
+    }
+  }
+}

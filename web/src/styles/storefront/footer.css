@@ -1,0 +1,184 @@
+/* ===========================================================================
+   Genie storefront — Footer: các nhóm liên kết, gập lại ở màn hẹp.
+   Tách từ prototype ui_kits/storefront/storefront.css (plan G07.01); giữ thứ tự quy tắc gốc.
+   =========================================================================== */
+@layer components {
+  .tr-foot {
+    position: relative;
+    z-index: 1;
+    margin-top: 64px;
+    background: var(--brand-900);
+    color: var(--foot-ink);
+  }
+  .tr-foot__in {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 44px 24px 36px;
+    display: grid;
+    grid-template-columns: 1.5fr repeat(var(--cols, 4), minmax(0, 1fr));
+    gap: 28px;
+  }
+  .tr-foot__brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-inverse);
+    font: 800 28px/1 var(--font-sans);
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+  .tr-foot p {
+    margin: 0;
+    max-width: 32ch;
+    font: var(--type-body-sm);
+    line-height: 1.55;
+  }
+  .tr-foot h3 {
+    margin: 0 0 12px;
+    font: var(--weight-bold) var(--text-sm) var(--font-sans);
+    color: var(--text-inverse);
+  }
+  .tr-foot__link {
+    display: block;
+    width: 100%;
+    padding: 5px 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    color: var(--foot-ink);
+    cursor: pointer;
+    font: var(--type-body-sm);
+  }
+  .tr-foot__link:hover {
+    color: var(--text-inverse);
+    text-decoration: underline;
+  }
+  .tr-foot__legal {
+    border-top: 1px solid rgba(201, 214, 238, 0.18);
+    padding: 16px 24px;
+    text-align: center;
+    font: var(--type-caption);
+    color: var(--foot-legal);
+  }
+  @media (max-width: 1100px) {
+    .tr-foot__in {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 768px) {
+    .tr-foot__in {
+      padding: 32px 16px;
+    }
+  }
+  .tr-foot__head {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    color: var(--text-inverse);
+    cursor: default;
+    font: var(--weight-bold) var(--text-sm) var(--font-sans);
+  }
+  .tr-foot__head svg {
+    display: none !important;
+  }
+  @media (max-width: 768px) {
+    .tr-foot {
+      margin-top: 32px;
+    }
+    .tr-foot__in {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding: 24px 16px 16px;
+    }
+    .tr-foot__in > :first-child {
+      padding-bottom: 12px;
+    }
+    .tr-foot__group {
+      border-top: 1px solid rgba(201, 214, 238, 0.18);
+    }
+    .tr-foot__group h3 {
+      margin: 0;
+    }
+    .tr-foot__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      cursor: pointer;
+    }
+    .tr-foot__head svg {
+      display: block !important;
+      transition: transform var(--dur-base) var(--ease-out);
+    }
+    .tr-foot__group[open] .tr-foot__head svg {
+      transform: rotate(180deg);
+    }
+    .tr-foot__group:not([open]) .tr-foot__link {
+      display: none;
+    }
+    .tr-foot__link {
+      min-height: 44px;
+    }
+  }
+  .tr-foot {
+    margin-top: 40px;
+  }
+  .tr-foot__in {
+    padding: 32px 24px 24px;
+    gap: 20px;
+  }
+  .tr-foot__brand {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .tr-foot h3 {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .tr-foot__link {
+    padding: 3px 0;
+    font-size: 13px;
+  }
+  .tr-foot__legal {
+    padding: 12px 24px;
+  }
+}
+
+/* Web: mỗi nhóm footer là <details>/<summary> (gập ở màn hẹp không cần JS) thay cho
+   <button> + data-open của prototype; tiêu đề nhóm là <h2> trong summary (thứ tự tiêu đề R18). */
+@layer components {
+  .tr-foot__group > summary {
+    list-style: none;
+    margin: 0 0 8px;
+  }
+  .tr-foot__group > summary::-webkit-details-marker {
+    display: none;
+  }
+  .tr-foot__head h2 {
+    font: var(--weight-bold) 13px var(--font-sans);
+    color: var(--text-inverse);
+  }
+  .tr-foot__group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Prototype dùng <button> cho liên kết footer: không gạch chân (base.css gạch chân li a) */
+  .tr-foot__group li a.tr-foot__link {
+    text-decoration: none;
+  }
+  .tr-foot__group li a.tr-foot__link:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 768px) {
+    .tr-foot__group > summary {
+      margin: 0;
+    }
+    .tr-foot__head h2 {
+      font-size: var(--text-sm);
+    }
+  }
+}

@@ -1,7 +1,32 @@
 ---
+// Trang không tìm thấy (plan G07.11; R19: trả HTTP 404 thật).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { createT } from '@/shared/lib/i18n';
+import { buttonClass } from '@/shared/ui/Button';
+import { Icon } from '@/shared/ui/icon/Icon';
+
+Astro.response.status = 404;
+const t = createT(Astro.locals.lang ?? 'vi');
 ---
 
-<StorefrontLayout title="Không tìm thấy trang">
-  <!-- 404 -->
+<StorefrontLayout title={t('layout.notfound.title')} noindex>
+  <section
+    class="max-w-[640px] mx-auto px-4 py-16 md:py-24 text-center flex flex-col items-center gap-4"
+  >
+    <span
+      class="w-20 h-20 rounded-full bg-surface-card shadow-sm grid place-items-center text-brand-500"
+    >
+      <Icon name="package" size={36} />
+    </span>
+    <p class="code text-sm text-muted m-0">404</p>
+    <h1 class="m-0 font-extrabold text-3xl md:text-4xl text-strong tracking-tight">
+      {t('layout.notfound.title')}
+    </h1>
+    <p class="m-0 text-md text-muted max-w-[46ch]">{t('layout.notfound.text')}</p>
+    <div class="flex flex-wrap justify-center gap-2.5 mt-2">
+      <a href="/" class={buttonClass()}>{t('layout.notfound.home')}</a>
+      <a href="/search" class={buttonClass({ variant: 'outline' })}>{t('layout.notfound.search')}</a
+      >
+    </div>
+  </section>
 </StorefrontLayout>

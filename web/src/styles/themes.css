@@ -1,0 +1,2197 @@
+/* ===========================================================================
+   Genie — 9 theme (quyết định D1), chuyển từ prototype ui_kits/storefront/themes.css (plan G07.22–G07.23).
+   Mỗi theme đè token (màu, font, bo góc) + vài phần đặc trưng; "classic" giữ bản gốc.
+   Không bọc @layer: bộ chọn [data-theme] có độ ưu tiên cao hơn utility nên đè được ProductCard, Ticket…
+   Thay đổi so với prototype: bỏ font "Genie Script" (logo là SVG); ảnh nền đọc từ /img/themes/;
+   .gn-auth__title dùng kiểu của h1 (trang đăng nhập chỉ có một h1 là tiêu đề form).
+   =========================================================================== */
+/* ===========================================================================
+   Genie storefront themes, for choosing a direction. Each theme overrides the
+   tokens every screen already reads (colour ramps, fonts, radii) and restyles
+   the few signature parts: the field behind the header, the bar, the hero, the
+   product card, the flash sheet, vouchers and the footer. "classic" adds
+   nothing, so it shows the build as it was.
+   =========================================================================== */
+
+/* ---- Shared hooks ---------------------------------------------------------- */
+/* Web: chữ "Genie" của logo là SVG (GenieWordmark, G03.08) nên không nạp font "Genie Script". */
+/* Coin logo metal: outer ring, middle ring, face and band, then the lettering. The
+   default is the gold of logo/Webicon.svg; each theme recasts it in its own colours. */
+:root,
+[data-theme='classic'] {
+  --mark-1: #f7d472;
+  --mark-2: #edc148;
+  --mark-3: #dba90b;
+  --mark-ink: #ffffff;
+}
+:root {
+  --font-display: var(--font-sans);
+}
+.tr-hero {
+  position: relative;
+}
+.tr-hero > :not(.tr-motif) {
+  position: relative;
+  z-index: 1;
+}
+.tr-motif {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.tr-motif i {
+  position: absolute;
+  display: none;
+}
+.tr-hero h1,
+.tr-section__head h2,
+.tr-vouchers__title {
+  font-family: var(--font-display);
+}
+.tr-hero .tr-h1a,
+.tr-hero mark {
+  display: inline-block;
+}
+.tr-hero .tr-h1a {
+  margin-right: 0.22em;
+}
+/* The account avatar follows the theme instead of the name-hash colour. */
+[data-theme]:not([data-theme='classic']) .tr-user [style*='background'] {
+  background: var(--brand-500) !important;
+  color: #fff !important;
+}
+/* Notes that used the sky tint take the theme's own tint. */
+[data-theme]:not([data-theme='classic']) {
+  --sky-50: var(--brand-50);
+  --blue-50: var(--brand-50);
+}
+.tr-hero mark {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.tr-logo {
+  color: var(--logo-body, var(--brand-900));
+}
+/* Chữ logo giống nhau ở mọi theme: SVG .tr-logo__word / GenieWordmark (thay quy tắc font Genie Script). */
+.tr-mark {
+  flex: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
+}
+
+/* ---- Theme picker: a palette button in the bar opens a list of looks ------- */
+.tr-theme {
+  position: relative;
+}
+.tr-theme__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+}
+.tr-theme__pop {
+  position: fixed;
+  top: var(--pop-top, 76px);
+  right: var(--pop-right, 16px);
+  z-index: 905;
+  width: 340px;
+  max-height: min(640px, calc(100dvh - 96px));
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--text-body);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow:
+    0 18px 40px -14px rgba(11, 31, 75, 0.3),
+    0 2px 6px rgba(11, 31, 75, 0.06);
+  overflow: hidden;
+  transform-origin: top right;
+}
+.tr-theme__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 16px 10px;
+}
+.tr-theme__head b {
+  font: var(--weight-bold) var(--text-sm) var(--font-sans);
+  color: var(--text-strong);
+}
+.tr-theme__head span {
+  margin-left: auto;
+  font: var(--type-caption);
+  color: var(--text-subtle);
+}
+.tr-theme__list {
+  overflow-y: auto;
+  padding: 0 6px 6px;
+  overscroll-behavior: contain;
+}
+.tr-theme__opt {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 10px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  position: relative;
+}
+.tr-theme__opt:hover {
+  background: var(--gray-50);
+}
+.tr-theme__opt:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+.tr-theme__opt[aria-checked='true'] {
+  background: var(--brand-50);
+  box-shadow: inset 0 0 0 1px var(--brand-200);
+}
+.tr-theme__txt b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tr-theme__txt b svg {
+  color: var(--brand-600);
+}
+.tr-theme__coin {
+  display: block;
+  width: 36px;
+  height: 36px;
+  background: none !important;
+}
+.tr-theme__txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.tr-theme__txt b {
+  font: var(--weight-semibold) var(--text-sm) var(--font-sans);
+  color: var(--text-strong);
+}
+.tr-theme__opt[aria-checked='true'] .tr-theme__txt b {
+  color: var(--brand-700);
+}
+.tr-theme__txt small {
+  font: var(--type-caption);
+  color: var(--text-muted);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tr-theme__sw {
+  display: flex;
+}
+.tr-theme__sw i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #fff,
+    inset 0 0 0 1px rgba(11, 31, 75, 0.14);
+}
+.tr-theme__sw i + i {
+  margin-left: -3px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tr-theme__pop {
+    animation: tr-theme-in 0.18s var(--ease-out) both;
+  }
+  @keyframes tr-theme-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.97);
+    }
+  }
+}
+@media (max-width: 768px) {
+  .tr-theme__scrim {
+    background: rgba(11, 31, 75, 0.32);
+  }
+  .tr-theme__pop {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: 72dvh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    transform-origin: bottom center;
+  }
+  .tr-theme__opt {
+    padding: 11px 10px;
+  }
+}
+
+/* ---- Logo lockup for the dashboards and sign-in: coin + script wordmark ------ */
+.gn-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--logo-body, var(--brand-900));
+}
+.gn-logo[data-tone='light'] {
+  color: #fff;
+}
+.gn-logo__txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+.gn-logo__word {
+  padding-right: 2px;
+}
+.gn-logo__txt small {
+  margin-top: 9px;
+  font: 700 10px/1 var(--font-sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+/* ---- Seller Center, Admin Console and sign-in take the same themes ------------ */
+/* The dark chrome (sidebar, sign-in panel) is the theme's deepest brand shade. */
+[data-theme]:not([data-theme='classic']) {
+  --side-bg: var(--brand-900);
+}
+.dash-title,
+.gn-page-title {
+  font-family: var(--font-display);
+}
+.gn-iconbtn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-body);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.gn-iconbtn:hover {
+  background: var(--gray-50);
+}
+.gn-iconbtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+/* Sign-in brand panel: small logo on top, the promise and its guarantees as one block. */
+.gn-auth__brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 9vh, 96px);
+  padding: 56px clamp(40px, 6vw, 96px);
+  background: var(--side-bg, var(--brand-900));
+  color: #fff;
+}
+.gn-auth__copy {
+  margin: auto 0;
+  max-width: 520px;
+}
+.gn-auth__copy h1,
+.gn-auth__copy .gn-auth__title {
+  margin: 0 0 18px;
+  font: 800 clamp(36px, 3.6vw, 52px)/1.08 var(--font-display);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.gn-auth__copy p {
+  margin: 0;
+  max-width: 42ch;
+  font: 400 18px/1.55 var(--font-sans);
+  color: rgba(255, 255, 255, 0.8);
+}
+.gn-auth__copy ul {
+  display: grid;
+  gap: 18px;
+  margin: 40px 0 0;
+  padding: 28px 0 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+.gn-auth__copy li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.gn-auth__copy li svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--mark-1);
+}
+.gn-auth__copy li span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 400 14px/1.45 var(--font-sans);
+  color: rgba(255, 255, 255, 0.68);
+}
+.gn-auth__copy li b {
+  font: 600 15px/1.4 var(--font-sans);
+  color: #fff;
+}
+
+/* ---- Intro: one choreography, each theme swaps the moves ------------------- */
+@keyframes tr-in-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-in-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-22px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-in-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes tr-in-mark {
+  from {
+    background-size: 0% 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tr-play .tr-pill {
+    animation: var(--in-bar, tr-in-drop) 0.7s var(--ease-out) both;
+  }
+  .tr-play .tr-cat {
+    animation: tr-in-rise 0.5s var(--ease-out) both;
+    animation-delay: calc(0.2s + var(--i, 0) * 45ms);
+  }
+  .tr-play .tr-hero .tr-h1a {
+    animation: var(--in-title, tr-in-rise) 0.8s var(--ease-out) 0.15s both;
+  }
+  .tr-play .tr-hero mark {
+    animation:
+      var(--in-title, tr-in-rise) 0.8s var(--ease-out) 0.3s both,
+      tr-in-mark 0.6s var(--ease-out) 0.85s both;
+  }
+  .tr-play .tr-hero > p {
+    animation: tr-in-rise 0.7s var(--ease-out) 0.45s both;
+  }
+  .tr-play .tr-shelf__item {
+    animation: var(--in-shelf, tr-in-rise) 0.7s var(--ease-out) both;
+    animation-delay: calc(0.5s + var(--i, 0) * 70ms);
+  }
+  .tr-play .tr-stage .tr-rail {
+    animation: tr-in-rise 0.8s var(--ease-out) 0.95s both;
+  }
+  .tr-play .tr-motif {
+    animation: var(--in-motif, tr-in-fade) 1.1s var(--ease-out) 0.1s both;
+  }
+  .tr-cat {
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      background var(--dur-fast),
+      color var(--dur-fast);
+  }
+  .tr-cat:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ===========================================================================
+   1. Giấy điệp: a Đông Hồ woodblock print. Đỏ son field, vàng hoè ink, mực
+      than for type and buttons, điệp paper for the sheets. Small cut corners,
+      double print rules, the bronze-drum sun pressed into the field.
+   =========================================================================== */
+[data-theme='dongho'] {
+  --brand-50: #f5eee2;
+  --brand-100: #eadfcc;
+  --brand-200: #d6c5aa;
+  --brand-300: #b9a285;
+  --brand-400: #8c765c;
+  --brand-500: #2a221d;
+  --brand-600: #463a31;
+  --brand-700: #120e0b;
+  --brand-800: #1a1411;
+  --brand-900: #1e1814;
+  --color-primary: #2a221d;
+  --color-primary-hover: #463a31;
+  --color-primary-active: #120e0b;
+  --color-primary-tint: #f1e6d2;
+  --text-link: #2e4372;
+  --border-focus: #2e4372;
+  --focus-ring: 0 0 0 3px rgba(46, 67, 114, 0.35);
+  --gold-50: #fbf0d6;
+  --gold-100: #f3dfa6;
+  --gold-400: #e9b23c;
+  --gold-500: #d49a22;
+  --gold-700: #6e4a00;
+  --color-accent: #e9b23c;
+  --color-accent-hover: #d49a22;
+  --color-on-accent: #1e1814;
+  --color-accent-ink: #6e4a00;
+  --color-accent-tint: #fbf0d6;
+  --flash-50: #fbe9e3;
+  --flash-100: #f4cdbf;
+  --flash-500: #b5381f;
+  --flash-600: #93301b;
+  --surface-page: #f3ede1;
+  --paper-50: #f3ede1;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 7px;
+  --radius-xl: 9px;
+  --radius-2xl: 12px;
+  --font-display: 'Bricolage Grotesque', var(--font-sans);
+  --logo-body: #b5381f;
+  --logo-accent: #e9b23c;
+  --mark-1: #d9674f;
+  --mark-2: #c24a2e;
+  --mark-3: #b5381f;
+  --mark-ink: #fbf0d6;
+  --coin: #e9b23c;
+  --coin-ring: #1e1814;
+  --in-motif: tr-press;
+  --top-bg: #b5381f;
+  --top-line: rgba(30, 24, 20, 0.35);
+}
+@keyframes tr-press {
+  from {
+    opacity: 0;
+    transform: scale(1.06) rotate(-4deg);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+[data-theme='dongho'] .tr-sky {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24'%3E%3Cpath d='M0 24a24 24 0 0 1 48 0M9 24a15 15 0 0 1 30 0M18 24a6 6 0 0 1 12 0' fill='none' stroke='%23E9B23C' stroke-opacity='.16' stroke-width='1.4'/%3E%3C/svg%3E")
+      0 0 / 48px 24px,
+    #b5381f;
+}
+[data-theme='dongho'] .tr-pill {
+  background: #fbf6ec;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 1.5px #1e1814,
+    inset 0 0 0 4px #fbf6ec,
+    inset 0 0 0 5px rgba(30, 24, 20, 0.35),
+    0 10px 24px -12px rgba(30, 24, 20, 0.5);
+}
+[data-theme='dongho'] .tr-search {
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px rgba(30, 24, 20, 0.22);
+}
+[data-theme='dongho'] .tr-search__go {
+  background: #1e1814;
+  border-radius: var(--radius-sm);
+}
+[data-theme='dongho'] .tr-cat {
+  background: rgba(251, 246, 236, 0.1);
+  border-color: rgba(251, 246, 236, 0.38);
+  color: #fbf6ec;
+  border-radius: var(--radius-sm);
+}
+[data-theme='dongho'] .tr-cat:hover {
+  background: #e9b23c;
+  border-color: #e9b23c;
+  color: #1e1814;
+}
+[data-theme='dongho'] .tr-hero {
+  color: #fbf6ec;
+}
+[data-theme='dongho'] .tr-hero h1 {
+  font-weight: 800;
+  font-stretch: 75%;
+  font-variation-settings: 'wdth' 75;
+  letter-spacing: -0.02em;
+  font-size: clamp(32px, 3.8vw, 54px);
+  line-height: 1.08;
+}
+[data-theme='dongho'] .tr-hero mark {
+  color: #1e1814;
+  padding: 0 0.12em;
+  background-image: linear-gradient(#e9b23c, #e9b23c);
+}
+[data-theme='dongho'] .tr-hero > p {
+  color: #f7dfc6;
+}
+[data-theme='dongho'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: -30px;
+  top: -30px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #e9b23c 0 38px, transparent 39px),
+    repeating-radial-gradient(circle, transparent 0 18px, rgba(233, 178, 60, 0.4) 18px 20px);
+}
+[data-theme='dongho'] .tr-motif i:nth-child(2) {
+  display: block;
+  right: 70px;
+  top: 70px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(#e9b23c 0 5deg, transparent 5deg 25.7deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 40px, #000 41px);
+  mask: radial-gradient(circle, transparent 0 40px, #000 41px);
+}
+[data-theme='dongho'] .tr-shelf__item {
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 0 1.5px #1e1814,
+    6px 6px 0 -1px rgba(30, 24, 20, 0.35);
+}
+[data-theme='dongho'] .tr-shelf__tag {
+  background: #fbf6ec;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 1px #1e1814;
+}
+[data-theme='dongho'] .tr-stage .tr-rail.tr-glass {
+  background: #fbf6ec;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow:
+    0 0 0 1.5px #1e1814,
+    inset 0 0 0 5px #fbf6ec,
+    inset 0 0 0 6px rgba(30, 24, 20, 0.3),
+    0 18px 34px -16px rgba(30, 24, 20, 0.55);
+}
+[data-theme='dongho'] .tr-rail__fill {
+  background: #b5381f;
+}
+[data-theme='dongho'] .tr-rail__stop[data-done='1'] .tr-rail__dot i {
+  box-shadow: inset 0 0 0 3px #b5381f;
+}
+[data-theme='dongho'] .tr-card__main {
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px #d6c5aa;
+}
+[data-theme='dongho'] .tr-card__off {
+  border-radius: var(--radius-sm);
+}
+[data-theme='dongho'] .tr-flash__in {
+  background: #fbf0d6;
+  border: 1.5px solid #1e1814;
+  box-shadow:
+    inset 0 0 0 5px #fbf0d6,
+    inset 0 0 0 6px rgba(30, 24, 20, 0.25);
+}
+[data-theme='dongho'] .tr-clock {
+  background: #b5381f;
+  color: #fbf6ec;
+}
+[data-theme='dongho'] .tr-clock small {
+  color: #f7dfc6;
+}
+[data-theme='dongho'] .tr-ticket {
+  border: 1.5px solid #1e1814;
+}
+[data-theme='dongho'] .tr-ticket__amt {
+  background: #b5381f;
+}
+[data-theme='dongho'] .tr-ticket--shop .tr-ticket__amt {
+  background: #1e1814;
+}
+[data-theme='dongho'] .tr-ticket--freeship .tr-ticket__amt {
+  background: #4f6b2e;
+}
+[data-theme='dongho'] .tr-shops {
+  box-shadow: 0 0 0 1px #d6c5aa;
+}
+[data-theme='dongho'] .tr-foot {
+  background: #1e1814;
+}
+[data-theme='dongho'] .tr-foot h3,
+[data-theme='dongho'] .tr-foot__head {
+  color: #e9b23c;
+}
+[data-theme='dongho'] .tr .lz-btn {
+  border-radius: var(--radius-md);
+}
+
+/* ===========================================================================
+   2. Tiền polymer: the Vietnamese polymer note. Jade and rose on a pale mint
+      ground, a clear window for the glass, guilloche rosettes turning slowly
+      in the field. Lexend throughout.
+   =========================================================================== */
+[data-theme='polymer'] {
+  --brand-50: #e6f3ee;
+  --brand-100: #cde7dc;
+  --brand-200: #9dd0ba;
+  --brand-300: #67b497;
+  --brand-400: #369777;
+  --brand-500: #1f7356;
+  --brand-600: #186248;
+  --brand-700: #124f3a;
+  --brand-800: #0d3d2d;
+  --brand-900: #0b2e23;
+  --color-primary: #1f7356;
+  --color-primary-hover: #186248;
+  --color-primary-active: #124f3a;
+  --color-primary-tint: #e6f3ee;
+  --text-link: #186248;
+  --border-focus: #1f7356;
+  --focus-ring: 0 0 0 3px rgba(31, 115, 86, 0.35);
+  --gold-50: #fce8ef;
+  --gold-100: #f7cfdc;
+  --gold-400: #e26a93;
+  --gold-500: #cf5480;
+  --gold-700: #a0284f;
+  --color-accent: #e26a93;
+  --color-accent-hover: #cf5480;
+  --color-on-accent: #2b0f1c;
+  --color-accent-ink: #a0284f;
+  --color-accent-tint: #fceef3;
+  --surface-page: #eef4f1;
+  --paper-50: #eef4f1;
+  --sky-50: #e8f3ee;
+  --sky-100: #d7eee4;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --font-sans: 'Lexend', 'Be Vietnam Pro', system-ui, sans-serif;
+  --logo-body: #1f7356;
+  --logo-accent: #e26a93;
+  --mark-1: #8fd0b4;
+  --mark-2: #4fa584;
+  --mark-3: #1f7356;
+  --mark-ink: #ffffff;
+  --coin: #e3c15a;
+  --coin-ring: #124f3a;
+  --in-motif: tr-unveil;
+  --top-bg: rgba(231, 241, 238, 0.94);
+  --top-line: rgba(31, 115, 86, 0.16);
+}
+@keyframes tr-unveil {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+[data-theme='polymer'] .tr-sky {
+  background:
+    radial-gradient(60% 90% at 100% 0%, rgba(226, 106, 147, 0.2), transparent 70%),
+    linear-gradient(180deg, #d7eee4 0%, #e7f1ee 55%, #eef4f1 100%);
+}
+[data-theme='polymer'] .tr-pill {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(31, 115, 86, 0.14),
+    0 0 0 4px rgba(226, 106, 147, 0.07),
+    0 18px 40px -18px rgba(11, 46, 35, 0.35);
+}
+[data-theme='polymer'] .tr-cat {
+  color: #0b2e23;
+  border-color: rgba(31, 115, 86, 0.18);
+}
+[data-theme='polymer'] .tr-cat:hover {
+  background: #1f7356;
+  border-color: #1f7356;
+  color: #fff;
+}
+[data-theme='polymer'] .tr-hero {
+  color: #0b2e23;
+}
+[data-theme='polymer'] .tr-hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+[data-theme='polymer'] .tr-hero mark {
+  background-image: linear-gradient(
+    transparent 58%,
+    rgba(226, 106, 147, 0.55) 58% 92%,
+    transparent 92%
+  );
+}
+[data-theme='polymer'] .tr-hero > p {
+  color: #2e5247;
+}
+[data-theme='polymer'] .tr-motif i:nth-child(1),
+[data-theme='polymer'] .tr-motif i:nth-child(2) {
+  display: block;
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 0 32%, #000 33% 49.5%, transparent 50%);
+  mask: radial-gradient(circle, transparent 0 32%, #000 33% 49.5%, transparent 50%);
+}
+[data-theme='polymer'] .tr-motif i:nth-child(1) {
+  right: -60px;
+  top: -90px;
+  width: 520px;
+  height: 520px;
+  background: repeating-conic-gradient(rgba(31, 115, 86, 0.34) 0 0.6deg, transparent 0.6deg 3deg);
+}
+[data-theme='polymer'] .tr-motif i:nth-child(2) {
+  right: 10px;
+  top: -20px;
+  width: 380px;
+  height: 380px;
+  background: repeating-conic-gradient(
+    rgba(226, 106, 147, 0.4) 0 0.6deg,
+    transparent 0.6deg 3.4deg
+  );
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='polymer'] .tr-motif i:nth-child(1) {
+    animation: tr-turn 90s linear infinite;
+  }
+  [data-theme='polymer'] .tr-motif i:nth-child(2) {
+    animation: tr-turn 70s linear infinite reverse;
+  }
+}
+[data-theme='polymer'] .tr-shelf__item {
+  border-radius: var(--radius-xl);
+}
+[data-theme='polymer'] .tr-stage .tr-rail.tr-glass {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(31, 115, 86, 0.14),
+    0 0 0 5px rgba(255, 255, 255, 0.35),
+    0 20px 40px -18px rgba(11, 46, 35, 0.4);
+}
+[data-theme='polymer'] .tr-card__main {
+  box-shadow: 0 0 0 1px #d5e7de;
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+[data-theme='polymer'] .tr-card__main:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px #9dd0ba,
+    var(--shadow-lift);
+}
+[data-theme='polymer'] .tr-flash__in {
+  background: #fceef3;
+  border-color: #f7cfdc;
+}
+[data-theme='polymer'] .tr-clock {
+  background: #0b2e23;
+  color: #f7cfdc;
+}
+[data-theme='polymer'] .tr-ticket {
+  border-color: #d5e7de;
+  border-radius: var(--radius-lg);
+}
+[data-theme='polymer'] .tr-ticket--freeship .tr-ticket__amt {
+  background: #0e8c8c;
+}
+[data-theme='polymer'] .tr-foot {
+  background: #0b2e23;
+}
+
+/* ===========================================================================
+   3. Tem bưu chính: a sheet of stamps on a post-office counter. Postal yellow
+      band, navy ink, product cards with perforated edges, a postmark struck
+      into the hero, airmail stripes as the rule. Archivo, wide.
+   =========================================================================== */
+[data-theme='buudien'] {
+  --brand-50: #eceff6;
+  --brand-100: #d8deeb;
+  --brand-200: #b1bdd6;
+  --brand-300: #8394b9;
+  --brand-400: #4e6293;
+  --brand-500: #22335c;
+  --brand-600: #1b2a4d;
+  --brand-700: #15213d;
+  --brand-800: #101a30;
+  --brand-900: #0d1526;
+  --color-primary: #22335c;
+  --color-primary-hover: #1b2a4d;
+  --color-primary-active: #15213d;
+  --color-primary-tint: #eceff6;
+  --text-link: #22335c;
+  --border-focus: #22335c;
+  --focus-ring: 0 0 0 3px rgba(34, 51, 92, 0.35);
+  --gold-50: #fdf3d0;
+  --gold-100: #f8e39a;
+  --gold-400: #f5be16;
+  --gold-500: #e0aa00;
+  --gold-700: #6e5200;
+  --color-accent: #f5be16;
+  --color-accent-hover: #e0aa00;
+  --color-on-accent: #0d1526;
+  --color-accent-ink: #6e5200;
+  --color-accent-tint: #fdf6dc;
+  --flash-500: #c9341b;
+  --flash-600: #a82a15;
+  --surface-page: #edeee8;
+  --paper-50: #edeee8;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --font-display: 'Archivo', var(--font-sans);
+  --logo-body: #22335c;
+  --logo-accent: #c9341b;
+  --mark-1: #fadb6e;
+  --mark-2: #f7cb3a;
+  --mark-3: #f5be16;
+  --mark-ink: #22335c;
+  --coin: #f5be16;
+  --coin-ring: #0d1526;
+  --in-motif: tr-stamp;
+  --top-bg: #f5be16;
+  --top-line: rgba(13, 21, 38, 0.3);
+}
+@keyframes tr-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.7) rotate(-26deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.94) rotate(-12deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-12deg);
+  }
+}
+/* The airmail stripe sits just under the category chips, not behind them. */
+[data-theme='buudien'] .tr-sky {
+  height: var(--sky-h, calc(var(--top-h, 140px) + 8px));
+}
+[data-theme='buudien'] .tr-sky {
+  background:
+    repeating-linear-gradient(
+        -45deg,
+        #c9341b 0 14px,
+        #fff 14px 22px,
+        #22335c 22px 36px,
+        #fff 36px 44px
+      )
+      left bottom / 100% 8px no-repeat,
+    linear-gradient(#f5be16, #f5be16) left top / 100% calc(100% - 8px) no-repeat;
+}
+[data-theme='buudien'] .tr-pill {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 0 2px #0d1526,
+    0 8px 0 -2px rgba(13, 21, 38, 0.18);
+}
+[data-theme='buudien'] .tr-search {
+  box-shadow: inset 0 0 0 1px rgba(13, 21, 38, 0.25);
+}
+[data-theme='buudien'] .tr-search__go {
+  border-radius: var(--radius-sm);
+}
+[data-theme='buudien'] .tr-cat {
+  background: #fff;
+  border: 1.5px solid #0d1526;
+  color: #0d1526;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+[data-theme='buudien'] .tr-cat:hover {
+  background: #0d1526;
+  color: #f5be16;
+}
+[data-theme='buudien'] .tr-hero {
+  color: #0d1526;
+}
+[data-theme='buudien'] .tr-hero h1 {
+  font-weight: 800;
+  font-stretch: 112%;
+  font-variation-settings: 'wdth' 112;
+  letter-spacing: -0.03em;
+  font-size: clamp(28px, 3.3vw, 46px);
+}
+[data-theme='buudien'] .tr-hero mark {
+  color: #f5be16;
+  padding: 0 0.14em;
+  background-image: linear-gradient(#0d1526, #0d1526);
+}
+[data-theme='buudien'] .tr-hero > p {
+  color: #2b3550;
+}
+[data-theme='buudien'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: 150px;
+  top: 96px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  border: 3px solid rgba(13, 21, 38, 0.7);
+  box-shadow:
+    inset 0 0 0 10px transparent,
+    inset 0 0 0 12px rgba(13, 21, 38, 0.7);
+  background:
+    linear-gradient(rgba(13, 21, 38, 0.7), rgba(13, 21, 38, 0.7)) center / 72% 3px no-repeat,
+    linear-gradient(rgba(13, 21, 38, 0.7), rgba(13, 21, 38, 0.7)) center 62% / 52% 3px no-repeat;
+}
+[data-theme='buudien'] .tr-motif i:nth-child(2) {
+  display: block;
+  right: -70px;
+  top: 150px;
+  width: 230px;
+  height: 70px;
+  transform: rotate(-12deg);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='14'%3E%3Cpath d='M0 7q7.5-7 15 0t15 0 15 0 15 0' fill='none' stroke='%230D1526' stroke-opacity='.7' stroke-width='3'/%3E%3C/svg%3E")
+    0 0 / 60px 14px repeat;
+}
+[data-theme='buudien'] .tr-shelf__item {
+  border-radius: 0;
+  padding: 7px;
+  background: #fff;
+  -webkit-mask:
+    radial-gradient(circle at center, transparent 4.2px, #000 4.6px) -7px -7px / 14px 14px,
+    linear-gradient(#000, #000) 7px 7px / calc(100% - 14px) calc(100% - 14px) no-repeat;
+  mask:
+    radial-gradient(circle at center, transparent 4.2px, #000 4.6px) -7px -7px / 14px 14px,
+    linear-gradient(#000, #000) 7px 7px / calc(100% - 14px) calc(100% - 14px) no-repeat;
+}
+[data-theme='buudien'] .tr-shelf__item img {
+  border-radius: 0;
+}
+[data-theme='buudien'] .tr-shelf {
+  filter: drop-shadow(0 6px 10px rgba(13, 21, 38, 0.22));
+}
+[data-theme='buudien'] .tr-shelf__tag {
+  left: 14px;
+  top: 14px;
+  border-radius: 0;
+  background: #f5be16;
+  box-shadow: none;
+}
+[data-theme='buudien'] .tr-stage .tr-rail.tr-glass {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 2px #0d1526,
+    0 10px 0 -2px rgba(13, 21, 38, 0.16);
+}
+[data-theme='buudien'] .tr-rail__fill {
+  background: #22335c;
+}
+/* Product cards are stamps: perforated edges, a drop shadow on the sheet, not the stamp. */
+[data-theme='buudien'] .tr-card {
+  filter: drop-shadow(0 2px 3px rgba(13, 21, 38, 0.16));
+}
+[data-theme='buudien'] .tr-card__main {
+  border-radius: 0;
+  padding: 7px 7px 2px;
+  background: #fff;
+  -webkit-mask:
+    radial-gradient(circle at center, transparent 4.2px, #000 4.6px) -7px -7px / 14px 14px,
+    linear-gradient(#000, #000) 7px 7px / calc(100% - 14px) calc(100% - 14px) no-repeat;
+  mask:
+    radial-gradient(circle at center, transparent 4.2px, #000 4.6px) -7px -7px / 14px 14px,
+    linear-gradient(#000, #000) 7px 7px / calc(100% - 14px) calc(100% - 14px) no-repeat;
+}
+[data-theme='buudien'] .tr-card__media {
+  border-radius: 0;
+}
+[data-theme='buudien'] .tr-card__off {
+  border-radius: 0;
+}
+[data-theme='buudien'] .tr-flash__in {
+  background: #fdf6dc;
+  border: 2px solid #0d1526;
+}
+[data-theme='buudien'] .tr-clock {
+  border-radius: var(--radius-sm);
+}
+[data-theme='buudien'] .tr-ticket {
+  border: 2px dashed #0d1526;
+  border-radius: var(--radius-md);
+}
+[data-theme='buudien'] .tr-ticket__amt {
+  background: #22335c;
+}
+[data-theme='buudien'] .tr-ticket--shop .tr-ticket__amt {
+  background: #c9341b;
+}
+[data-theme='buudien'] .tr-shops {
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1.5px #0d1526;
+}
+[data-theme='buudien'] .tr-foot {
+  background: #0d1526;
+  border-top: 8px solid transparent;
+  border-image: repeating-linear-gradient(
+      -45deg,
+      #c9341b 0 14px,
+      #fff 14px 22px,
+      #f5be16 22px 36px,
+      #fff 36px 44px
+    )
+    8;
+}
+[data-theme='buudien'] .tr .lz-btn {
+  border-radius: var(--radius-md);
+}
+
+/* ===========================================================================
+   4. Mái bạt Sài Gòn: a hand-painted shop sign under a striped awning. Sign
+      green board, sunflower letters with a painted shadow, the awning's
+      scalloped edge over the bar. Phudu for every sign line.
+   =========================================================================== */
+[data-theme='saigon'] {
+  --brand-50: #e7f3ec;
+  --brand-100: #cfe7d9;
+  --brand-200: #9fcfb3;
+  --brand-300: #63af86;
+  --brand-400: #2f8e5e;
+  --brand-500: #0f6e45;
+  --brand-600: #0c5d3a;
+  --brand-700: #094b2f;
+  --brand-800: #073b25;
+  --brand-900: #062c1c;
+  --color-primary: #0f6e45;
+  --color-primary-hover: #0c5d3a;
+  --color-primary-active: #094b2f;
+  --color-primary-tint: #e7f3ec;
+  --text-link: #0c5d3a;
+  --border-focus: #0f6e45;
+  --focus-ring: 0 0 0 3px rgba(15, 110, 69, 0.35);
+  --gold-50: #fff6cf;
+  --gold-100: #ffe88a;
+  --gold-400: #ffd024;
+  --gold-500: #f0be00;
+  --gold-700: #6a5100;
+  --color-accent: #ffd024;
+  --color-accent-hover: #f0be00;
+  --color-on-accent: #062c1c;
+  --color-accent-ink: #6a5100;
+  --color-accent-tint: #fff8da;
+  --flash-500: #d52b1e;
+  --flash-600: #b12318;
+  --surface-page: #faf9f4;
+  --paper-50: #faf9f4;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --font-display: 'Phudu', var(--font-sans);
+  --logo-body: #0f6e45;
+  --logo-accent: #d52b1e;
+  --mark-1: #46a574;
+  --mark-2: #22865a;
+  --mark-3: #0f6e45;
+  --mark-ink: #ffd024;
+  --coin: #ffd024;
+  --coin-ring: #062c1c;
+  --in-bar: tr-awning;
+  --in-title: tr-paint;
+  --top-bg: #0f6e45;
+  --top-line: rgba(6, 44, 28, 0.4);
+}
+@keyframes tr-awning {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-paint {
+  from {
+    opacity: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 -10% 0 0);
+  }
+}
+@keyframes tr-unroll {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+[data-theme='saigon'] .tr-sky {
+  background: #0f6e45;
+}
+/* The awning hangs over the field at rest and over the stuck band once the page scrolls,
+   so it never scrolls away. */
+[data-theme='saigon'] .tr-sky::before,
+[data-theme='saigon'] .tr-top[data-stuck='1']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 46px;
+  transform-origin: top;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, #d52b1e 0 40px, #faf6e8 40px 80px);
+  -webkit-mask:
+    radial-gradient(circle 20px at 20px 26px, #000 98%, transparent) 0 0 / 40px 46px repeat-x,
+    linear-gradient(#000, #000) 0 0 / 100% 26px no-repeat;
+  mask:
+    radial-gradient(circle 20px at 20px 26px, #000 98%, transparent) 0 0 / 40px 46px repeat-x,
+    linear-gradient(#000, #000) 0 0 / 100% 26px no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='saigon'].tr-play .tr-sky::before {
+    animation: tr-unroll 0.6s var(--ease-out) both;
+  }
+}
+[data-theme='saigon'] .tr-pillwrap {
+  padding-top: 26px;
+}
+[data-theme='saigon'] .tr-pill {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow:
+    0 0 0 2px #062c1c,
+    0 12px 26px -12px rgba(6, 44, 28, 0.55);
+}
+[data-theme='saigon'] .tr-logo span {
+  font-weight: 800;
+  letter-spacing: 0;
+  font-size: 26px;
+}
+[data-theme='saigon'] .tr-cat {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #fff;
+}
+[data-theme='saigon'] .tr-cat:hover {
+  background: #ffd024;
+  border-color: #ffd024;
+  color: #062c1c;
+}
+[data-theme='saigon'] .tr-hero {
+  color: #fff;
+}
+[data-theme='saigon'] .tr-hero h1 {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 1.12;
+  font-size: clamp(32px, 4vw, 58px);
+  color: #ffd024;
+  text-shadow: 3px 3px 0 #062c1c;
+}
+[data-theme='saigon'] .tr-hero mark {
+  background: none;
+  color: #fff;
+  padding: 0;
+}
+[data-theme='saigon'] .tr-hero > p {
+  color: #d9eee2;
+}
+[data-theme='saigon'] .tr-shelf__item {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 14px 26px -12px rgba(6, 44, 28, 0.7);
+}
+[data-theme='saigon'] .tr-shelf__tag {
+  background: #ffd024;
+  color: #062c1c;
+}
+[data-theme='saigon'] .tr-stage .tr-rail.tr-glass {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow:
+    0 0 0 2px #062c1c,
+    0 18px 34px -16px rgba(6, 44, 28, 0.6);
+}
+[data-theme='saigon'] .tr-rail__fill {
+  background: #0f6e45;
+}
+[data-theme='saigon'] .tr-section__head h2 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+[data-theme='saigon'] .tr-card__main {
+  box-shadow: 0 0 0 1px #e3e6df;
+}
+[data-theme='saigon'] .tr-flash__in {
+  background: #fff8da;
+  border: 2px solid #062c1c;
+}
+[data-theme='saigon'] .tr-flash h2 {
+  color: #d52b1e;
+}
+[data-theme='saigon'] .tr-clock {
+  background: #062c1c;
+  color: #ffd024;
+}
+[data-theme='saigon'] .tr-ticket {
+  border: 2px solid #062c1c;
+}
+[data-theme='saigon'] .tr-ticket__amt {
+  background: #0f6e45;
+  font-family: var(--font-display);
+  font-size: 24px;
+}
+[data-theme='saigon'] .tr-ticket--shop .tr-ticket__amt {
+  background: #d52b1e;
+}
+[data-theme='saigon'] .tr-ticket--freeship .tr-ticket__amt {
+  background: #062c1c;
+  color: #ffd024;
+}
+[data-theme='saigon'] .tr-foot {
+  background: #062c1c;
+}
+[data-theme='saigon'] .tr-foot__brand {
+  font-weight: 800;
+}
+
+/* ===========================================================================
+   5. Bìa đĩa than: a jazz session sleeve. One flat violet band carries the
+      field, product photographs go duotone until you point at them, the
+      promise is set in tight caps on a slant, and a record slides out of the
+      sleeve. No gradients, square corners.
+   =========================================================================== */
+[data-theme='sleeve'] {
+  --brand-50: #f0edfc;
+  --brand-100: #e0d9f8;
+  --brand-200: #c1b3f1;
+  --brand-300: #9c87e6;
+  --brand-400: #7a62dc;
+  --brand-500: #5b3fd1;
+  --brand-600: #4a31b4;
+  --brand-700: #3b2794;
+  --brand-800: #2d1e73;
+  --brand-900: #111216;
+  --color-primary: #111216;
+  --color-primary-hover: #2c2d33;
+  --color-primary-active: #000;
+  --color-primary-tint: #f0edfc;
+  --text-link: #4a31b4;
+  --border-focus: #5b3fd1;
+  --focus-ring: 0 0 0 3px rgba(91, 63, 209, 0.4);
+  --gold-50: #f4fcd9;
+  --gold-100: #e4f6a6;
+  --gold-400: #c8f03c;
+  --gold-500: #b2dc22;
+  --gold-700: #4e6500;
+  --color-accent: #c8f03c;
+  --color-accent-hover: #b2dc22;
+  --color-on-accent: #111216;
+  --color-accent-ink: #4e6500;
+  --color-accent-tint: #f4fcd9;
+  --surface-page: #ffffff;
+  --paper-50: #ffffff;
+  --radius-sm: 0;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 4px;
+  --font-display: 'Saira Condensed', var(--font-sans);
+  --logo-body: #fff;
+  --logo-accent: #c8f03c;
+  --mark-1: #e0f78e;
+  --mark-2: #d4f466;
+  --mark-3: #c8f03c;
+  --mark-ink: #111216;
+  --coin: #c8f03c;
+  --coin-ring: #111216;
+  --in-title: tr-slant;
+  --in-motif: tr-record;
+  --top-bg: #5b3fd1;
+  --top-line: rgba(17, 18, 22, 0.35);
+}
+@keyframes tr-slant {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-record {
+  from {
+    opacity: 0;
+    transform: translateX(-160px) rotate(-120deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tr-band {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+[data-theme='sleeve'] .tr-sky {
+  background: #5b3fd1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='sleeve'].tr-play .tr-sky {
+    animation: tr-band 0.7s cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+}
+[data-theme='sleeve'] .tr-pill {
+  background: #111216;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+[data-theme='sleeve'] .tr-actions,
+[data-theme='sleeve'] .tr-logo {
+  color: #fff;
+}
+[data-theme='sleeve'] .tr-logo span {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 24px;
+}
+[data-theme='sleeve'] .tr-iconbtn:hover,
+[data-theme='sleeve'] .tr-textbtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+[data-theme='sleeve'] .tr-user {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+[data-theme='sleeve'] .tr-badge {
+  background: #c8f03c;
+  color: #111216;
+}
+[data-theme='sleeve'] .tr-search {
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-search__go {
+  background: #c8f03c;
+  color: #111216;
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-search__go:hover {
+  background: #b2dc22;
+}
+[data-theme='sleeve'] .tr-cat {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+  border-radius: 0;
+  text-transform: uppercase;
+  font: 700 14px/1 var(--font-display);
+  letter-spacing: 0.06em;
+}
+[data-theme='sleeve'] .tr-cat:hover {
+  background: #fff;
+  color: #5b3fd1;
+}
+[data-theme='sleeve'] .tr-hero {
+  color: #fff;
+}
+[data-theme='sleeve'] .tr-hero h1 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  line-height: 1.04;
+  font-size: clamp(34px, 4.6vw, 66px);
+  transform: rotate(-3deg);
+  transform-origin: left bottom;
+  max-width: 11em;
+  margin-top: 18px;
+}
+[data-theme='sleeve'] .tr-hero mark {
+  color: #111216;
+  padding: 0 0.12em;
+  background-image: linear-gradient(#c8f03c, #c8f03c);
+}
+[data-theme='sleeve'] .tr-hero > p {
+  color: #e6e0fb;
+  margin-top: 26px;
+}
+[data-theme='sleeve'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: -100px;
+  top: -40px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #111216 0 6px, #c8f03c 7px 74px, #111216 75px),
+    repeating-radial-gradient(circle, #1a1b21 0 2px, #111216 2px 4px);
+  background-blend-mode: normal;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='sleeve'] .tr-motif i:nth-child(1) {
+    animation: tr-turn 14s linear infinite;
+  }
+}
+[data-theme='sleeve'] .tr-shelf {
+  gap: 0;
+}
+[data-theme='sleeve'] .tr-shelf__item {
+  border-radius: 0;
+  background: #5b3fd1;
+  box-shadow: none;
+}
+[data-theme='sleeve'] .tr-shelf__item img {
+  filter: grayscale(1) contrast(1.15);
+  mix-blend-mode: multiply;
+  transition: filter 0.5s var(--ease-out);
+}
+[data-theme='sleeve'] .tr-shelf__item:hover img,
+[data-theme='sleeve'] .tr-shelf__item:focus-visible img {
+  filter: none;
+  mix-blend-mode: normal;
+}
+[data-theme='sleeve'] .tr-shelf__tag {
+  border-radius: 0;
+  background: #111216;
+  color: #c8f03c;
+  box-shadow: none;
+}
+[data-theme='sleeve'] .tr-stage .tr-rail.tr-glass {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow:
+    0 0 0 2px #111216,
+    12px 12px 0 #c8f03c;
+}
+[data-theme='sleeve'] .tr-rail__fill {
+  background: #5b3fd1;
+}
+[data-theme='sleeve'] .tr-rail__stop[data-done='1'] .tr-rail__dot i {
+  box-shadow: inset 0 0 0 3px #5b3fd1;
+}
+[data-theme='sleeve'] .tr-section__head h2 {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(22px, 2.2vw, 30px);
+  letter-spacing: 0;
+}
+[data-theme='sleeve'] .tr-card__main {
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-card__off {
+  border-radius: 0;
+  background: #111216;
+  color: #c8f03c;
+}
+[data-theme='sleeve'] .tr-flash__in {
+  background: #f4fcd9;
+  border: 2px solid #111216;
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-flash h2 {
+  font-weight: 800;
+  text-transform: uppercase;
+}
+[data-theme='sleeve'] .tr-clock {
+  border-radius: 0;
+  background: #5b3fd1;
+  color: #fff;
+}
+[data-theme='sleeve'] .tr-clock small {
+  color: #e6e0fb;
+}
+[data-theme='sleeve'] .tr-ticket {
+  border: 2px solid #111216;
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-ticket__amt {
+  background: #5b3fd1;
+  font-family: var(--font-display);
+  font-size: 26px;
+}
+[data-theme='sleeve'] .tr-ticket--shop .tr-ticket__amt {
+  background: #111216;
+  color: #c8f03c;
+}
+[data-theme='sleeve'] .tr-ticket__save {
+  border-radius: 0;
+}
+[data-theme='sleeve'] .tr-shops {
+  border-radius: 0;
+  box-shadow: 0 0 0 2px #111216;
+}
+[data-theme='sleeve'] .tr-foot {
+  background: #5b3fd1;
+  color: #e6e0fb;
+}
+[data-theme='sleeve'] .tr-foot__link {
+  color: #e6e0fb;
+}
+[data-theme='sleeve'] .tr-foot__legal {
+  color: #d6cef7;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+[data-theme='sleeve'] .tr .lz-btn {
+  border-radius: 0;
+}
+
+/* ===========================================================================
+   6. Trống đồng Đông Sơn: the face of a Ngọc Lũ bronze drum. Bronze for
+      actions, drum gold for the line work and money, verdigris patina for
+      links, light stone underneath. The drum face turns slowly behind the
+      promise; its sawtooth band fringes the header, the section titles and
+      the footer. Bai Jamjuree, whose cut corners read as engraved metal.
+   =========================================================================== */
+[data-theme='dongson'] {
+  --brand-50: #faf3e6;
+  --brand-100: #f2e2c2;
+  --brand-200: #e5c68c;
+  --brand-300: #d6a758;
+  --brand-400: #c98a2b;
+  --brand-500: #8e5a17;
+  --brand-600: #774a12;
+  --brand-700: #5e390c;
+  --brand-800: #472a08;
+  --brand-900: #2e1b05;
+  --color-primary: #8e5a17;
+  --color-primary-hover: #774a12;
+  --color-primary-active: #5e390c;
+  --color-primary-tint: #f7ebd3;
+  --text-link: #2b6b5e;
+  --border-focus: #2b6b5e;
+  --focus-ring: 0 0 0 3px rgba(43, 107, 94, 0.35);
+  --gold-50: #fbf3e2;
+  --gold-100: #f1dcaa;
+  --gold-400: #e0a93b;
+  --gold-500: #c98a2b;
+  --gold-700: #6e4500;
+  --color-accent: #e0a93b;
+  --color-accent-hover: #c98a2b;
+  --color-on-accent: #2e1b05;
+  --color-accent-ink: #6e4500;
+  --color-accent-tint: #fbf3e2;
+  --flash-50: #fbeae6;
+  --flash-100: #f2ccc4;
+  --flash-500: #a8322a;
+  --flash-600: #8a2822;
+  --surface-page: #f5f1e8;
+  --paper-50: #f5f1e8;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 22px;
+  --font-display: 'Bai Jamjuree', var(--font-sans);
+  --logo-body: #8e5a17;
+  --logo-accent: #2b6b5e;
+  --mark-1: #e6be6e;
+  --mark-2: #c9913f;
+  --mark-3: #8e5a17;
+  --mark-ink: #f5f1e8;
+  --coin: #e0a93b;
+  --coin-ring: #2e1b05;
+  --top-bg: rgba(245, 241, 232, 0.95);
+  --top-line: rgba(142, 90, 23, 0.22);
+  --in-motif: tr-drum;
+  --saw: conic-gradient(from -45deg at 50% 100%, #c98a2b 90deg, transparent 0) 0 0 / 14px 8px
+    repeat-x;
+}
+@keyframes tr-drum {
+  from {
+    opacity: 0;
+    transform: scale(0.82) rotate(-40deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+[data-theme='dongson'] .tr-sky {
+  background: linear-gradient(180deg, #f1e3c6 0%, #f4ecdc 55%, #f5f1e8 100%);
+}
+[data-theme='dongson'] .tr-top[data-stuck='1']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 8px;
+  background: var(--saw);
+  opacity: 0.85;
+  pointer-events: none;
+}
+[data-theme='dongson'] .tr-pill {
+  background: #fffdf8;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #e5c68c;
+  box-shadow:
+    0 0 0 4px rgba(255, 253, 248, 0.7),
+    0 0 0 5px rgba(201, 138, 43, 0.35),
+    0 14px 30px -16px rgba(46, 27, 5, 0.45);
+}
+[data-theme='dongson'] .tr-search {
+  box-shadow: inset 0 0 0 1px #e5c68c;
+}
+[data-theme='dongson'] .tr-cat {
+  background: rgba(255, 253, 248, 0.72);
+  border-color: #e5c68c;
+  color: #472a08;
+}
+[data-theme='dongson'] .tr-cat:hover {
+  background: #8e5a17;
+  border-color: #8e5a17;
+  color: #fffdf8;
+}
+[data-theme='dongson'] .tr-hero {
+  color: #2e1b05;
+}
+[data-theme='dongson'] .tr-hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+[data-theme='dongson'] .tr-hero mark {
+  background-image: linear-gradient(
+    transparent 60%,
+    rgba(224, 169, 59, 0.7) 60% 92%,
+    transparent 92%
+  );
+}
+[data-theme='dongson'] .tr-hero > p {
+  color: #5e4a33;
+}
+[data-theme='dongson'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: -110px;
+  top: -150px;
+  width: 520px;
+  height: 520px;
+  opacity: 0.7;
+  will-change: transform;
+  background: url('/img/themes/dongson-drum.svg') center / contain no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='dongson'] .tr-motif i:nth-child(1) {
+    animation: tr-turn 240s linear infinite;
+  }
+}
+[data-theme='dongson'] .tr-shelf__item {
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 0 0 1.5px #e5c68c,
+    0 0 0 5px #f5f1e8,
+    0 0 0 6.5px #e5c68c;
+}
+[data-theme='dongson'] .tr-shelf__tag {
+  background: #2e1b05;
+  color: #f1dcaa;
+  box-shadow: none;
+}
+[data-theme='dongson'] .tr-stage .tr-rail.tr-glass {
+  background: #fffdf8;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow:
+    0 0 0 1.5px #c98a2b,
+    0 0 0 5px #fffdf8,
+    0 0 0 6px rgba(201, 138, 43, 0.45),
+    0 20px 36px -18px rgba(46, 27, 5, 0.5);
+}
+[data-theme='dongson'] .tr-rail__fill {
+  background: #8e5a17;
+}
+[data-theme='dongson'] .tr-rail__stop[data-done='1'] .tr-rail__dot i {
+  box-shadow: inset 0 0 0 3px #8e5a17;
+}
+[data-theme='dongson'] .tr-section__head h2::after {
+  content: '';
+  display: block;
+  width: 84px;
+  height: 8px;
+  margin-top: 10px;
+  background: var(--saw);
+}
+[data-theme='dongson'] .tr-card__main {
+  box-shadow: 0 0 0 1px #ead8b4;
+}
+[data-theme='dongson'] .tr-flash__in {
+  background: #fbf3e2;
+  border-color: #f1dcaa;
+}
+[data-theme='dongson'] .tr-clock {
+  background: #2e1b05;
+  color: #e0a93b;
+}
+[data-theme='dongson'] .tr-ticket {
+  border-color: #e5c68c;
+}
+[data-theme='dongson'] .tr-ticket__amt {
+  background: #8e5a17;
+}
+[data-theme='dongson'] .tr-ticket--shop .tr-ticket__amt {
+  background: #2b6b5e;
+}
+[data-theme='dongson'] .tr-ticket--freeship .tr-ticket__amt {
+  background: #2e1b05;
+  color: #e0a93b;
+}
+[data-theme='dongson'] .tr-shops {
+  box-shadow: 0 0 0 1px #ead8b4;
+}
+[data-theme='dongson'] .tr-foot {
+  background: #2e1b05;
+  color: #e8d7b5;
+}
+[data-theme='dongson'] .tr-foot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 8px;
+  background: conic-gradient(from 135deg at 50% 0, #c98a2b 90deg, transparent 0) 0 0 / 14px 8px
+    repeat-x;
+}
+[data-theme='dongson'] .tr-foot h3,
+[data-theme='dongson'] .tr-foot__head {
+  color: #e0a93b;
+}
+[data-theme='dongson'] .tr-foot__link {
+  color: #e8d7b5;
+}
+
+/* ===========================================================================
+   7. Đèn thần: the name itself. A brass lamp stands at the right of the hero
+      and turquoise smoke curls up behind the liquid-glass bar, so the wish is
+      seen through the glass. Lagoon teal for actions, brass for money, a pale
+      mist ground. Baloo 2, round and friendly, for every heading.
+   =========================================================================== */
+[data-theme='genie'] {
+  --brand-50: #e7f6f5;
+  --brand-100: #cdedea;
+  --brand-200: #9ddbd6;
+  --brand-300: #63c3bd;
+  --brand-400: #2ba6a3;
+  --brand-500: #0f6e78;
+  --brand-600: #0c5b63;
+  --brand-700: #0a4a51;
+  --brand-800: #083a40;
+  --brand-900: #0e2e33;
+  --color-primary: #0f6e78;
+  --color-primary-hover: #0c5b63;
+  --color-primary-active: #0a4a51;
+  --color-primary-tint: #e7f6f5;
+  --text-link: #0c5b63;
+  --border-focus: #0f6e78;
+  --focus-ring: 0 0 0 3px rgba(15, 110, 120, 0.35);
+  --gold-50: #fbf3e0;
+  --gold-100: #f3dfae;
+  --gold-400: #e2b04a;
+  --gold-500: #c99232;
+  --gold-700: #6b4a0e;
+  --color-accent: #e2b04a;
+  --color-accent-hover: #c99232;
+  --color-on-accent: #2a1d05;
+  --color-accent-ink: #6b4a0e;
+  --color-accent-tint: #fbf3e0;
+  --surface-page: #f1f6f5;
+  --paper-50: #f1f6f5;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 26px;
+  --font-display: 'Baloo 2', var(--font-sans);
+  --logo-body: #0f6e78;
+  --logo-accent: #2bb3b1;
+  --mark-1: #f7d472;
+  --mark-2: #edc148;
+  --mark-3: #dba90b;
+  --mark-ink: #ffffff;
+  --coin: #e2b04a;
+  --coin-ring: #0e2e33;
+  --top-bg: rgba(241, 246, 245, 0.86);
+  --top-line: rgba(15, 110, 120, 0.16);
+  --in-motif: tr-rub;
+}
+@keyframes tr-rub {
+  from {
+    opacity: 0;
+    transform: translateY(36px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+[data-theme='genie'] .tr-sky {
+  background: linear-gradient(180deg, #d6efec 0%, #e6f3f1 55%, #f1f6f5 100%);
+}
+[data-theme='genie'] .tr-pill {
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgba(15, 110, 120, 0.14),
+    0 16px 36px -16px rgba(14, 46, 51, 0.35);
+}
+[data-theme='genie'] .tr-cat {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(15, 110, 120, 0.16);
+  color: #0e2e33;
+}
+[data-theme='genie'] .tr-cat:hover {
+  background: #0f6e78;
+  border-color: #0f6e78;
+  color: #fff;
+}
+[data-theme='genie'] .tr-hero {
+  color: #0e2e33;
+}
+[data-theme='genie'] .tr-hero h1 {
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+}
+[data-theme='genie'] .tr-hero mark {
+  background-image: linear-gradient(
+    transparent 58%,
+    rgba(226, 176, 74, 0.7) 58% 90%,
+    transparent 90%
+  );
+}
+[data-theme='genie'] .tr-hero > p {
+  color: #2e5257;
+}
+/* The lamp and its smoke from the owner's art (logo/Logo.svg, coin left out) stand at the
+   right of the hero; the smoke curls up behind the glass bar, as the drawn lamp did. */
+[data-theme='genie'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: 8px;
+  top: -213px;
+  width: 340px;
+  height: 340px;
+  background: url('/img/themes/genie-lamp.svg') center bottom / contain no-repeat;
+}
+@media (min-width: 1200px) {
+  [data-theme='genie'] .tr-motif i:nth-child(1) {
+    right: 24px;
+    top: -228px;
+    width: 370px;
+    height: 370px;
+  }
+}
+[data-theme='genie'] .tr-section__head h2 {
+  font-weight: 800;
+  letter-spacing: 0;
+}
+[data-theme='genie'] .tr-rail__fill {
+  background: #0f6e78;
+}
+[data-theme='genie'] .tr-rail__stop[data-done='1'] .tr-rail__dot i {
+  box-shadow: inset 0 0 0 3px #0f6e78;
+}
+[data-theme='genie'] .tr-card__main {
+  box-shadow: 0 0 0 1px #d3e7e4;
+}
+[data-theme='genie'] .tr-flash__in {
+  background: #fbf3e0;
+  border-color: #f3dfae;
+}
+[data-theme='genie'] .tr-clock {
+  background: #0e2e33;
+  color: #e2b04a;
+}
+[data-theme='genie'] .tr-ticket {
+  border-color: #d3e7e4;
+}
+[data-theme='genie'] .tr-ticket__amt {
+  background: #0f6e78;
+}
+[data-theme='genie'] .tr-ticket--shop .tr-ticket__amt {
+  background: #0e2e33;
+  color: #e2b04a;
+}
+[data-theme='genie'] .tr-foot {
+  background: #0e2e33;
+  color: #cfe6e3;
+}
+[data-theme='genie'] .tr-foot h3,
+[data-theme='genie'] .tr-foot__head {
+  color: #e2b04a;
+}
+[data-theme='genie'] .tr-foot__link {
+  color: #cfe6e3;
+}
+
+/* ===========================================================================
+   8. Phố Hội: an ochre wall in Hội An at dusk. The field is the wall itself,
+      silk lanterns sway from a wire across it, the bar is a white-washed sign
+      board, and yin-yang roof tiles edge the stuck band. Shutter teal for
+      actions, lotus silk for money, dark wood for type. Alegreya headings.
+   =========================================================================== */
+[data-theme='hoian'] {
+  --brand-50: #e8f2f0;
+  --brand-100: #cfe4e1;
+  --brand-200: #a0c9c4;
+  --brand-300: #6aa9a2;
+  --brand-400: #3e8a82;
+  --brand-500: #2c6e68;
+  --brand-600: #245b56;
+  --brand-700: #1d4945;
+  --brand-800: #163835;
+  --brand-900: #142b29;
+  --color-primary: #2c6e68;
+  --color-primary-hover: #245b56;
+  --color-primary-active: #1d4945;
+  --color-primary-tint: #e8f2f0;
+  --text-link: #245b56;
+  --border-focus: #2c6e68;
+  --focus-ring: 0 0 0 3px rgba(44, 110, 104, 0.35);
+  --gold-50: #fbeff4;
+  --gold-100: #f3cadb;
+  --gold-400: #b8326e;
+  --gold-500: #9e2a5e;
+  --gold-700: #7e1e4a;
+  --color-accent: #b8326e;
+  --color-accent-hover: #9e2a5e;
+  --color-on-accent: #ffffff;
+  --color-accent-ink: #7e1e4a;
+  --color-accent-tint: #fbeff4;
+  --flash-500: #c8323c;
+  --flash-600: #a3272f;
+  --surface-page: #f6f1e5;
+  --paper-50: #f6f1e5;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --font-display: 'Alegreya', var(--font-sans);
+  --logo-body: #2c6e68;
+  --logo-accent: #b8326e;
+  --mark-1: #8cc0b9;
+  --mark-2: #4e9790;
+  --mark-3: #2c6e68;
+  --mark-ink: #f2c25a;
+  --coin: #f2b13e;
+  --coin-ring: #142b29;
+  --top-bg: #e8b54a;
+  --top-line: rgba(90, 58, 38, 0.35);
+  --in-motif: tr-hang;
+}
+@keyframes tr-hang {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+[data-theme='hoian'] .tr-sky {
+  background: #e8b54a;
+}
+[data-theme='hoian'] .tr-top[data-stuck='1']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 10px;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 0, #6b3e26 0 9px, transparent 9.5px) 0 0 / 22px 10px
+    repeat-x;
+}
+[data-theme='hoian'] .tr-pill {
+  background: #fffbf2;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1.5px solid #5a3a26;
+  box-shadow: 0 10px 22px -14px rgba(58, 35, 18, 0.55);
+}
+[data-theme='hoian'] .tr-search {
+  box-shadow: inset 0 0 0 1px rgba(90, 58, 38, 0.25);
+}
+[data-theme='hoian'] .tr-cat {
+  background: rgba(255, 251, 242, 0.6);
+  border-color: rgba(90, 58, 38, 0.28);
+  color: #3a2312;
+}
+[data-theme='hoian'] .tr-cat:hover {
+  background: #2c6e68;
+  border-color: #2c6e68;
+  color: #fff;
+}
+[data-theme='hoian'] .tr-hero {
+  color: #3a2312;
+}
+[data-theme='hoian'] .tr-hero h1 {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+[data-theme='hoian'] .tr-hero mark {
+  color: #fbf2dc;
+  padding: 0 0.14em;
+  background-image: linear-gradient(#2c6e68, #2c6e68);
+}
+[data-theme='hoian'] .tr-hero > p {
+  color: #4a2e18;
+}
+[data-theme='hoian'] .tr-motif i:nth-child(1) {
+  display: block;
+  right: -30px;
+  top: -14px;
+  width: 400px;
+  height: 231px;
+  background: url('/img/themes/hoian-lanterns.svg') center top / contain no-repeat;
+}
+[data-theme='hoian'] .tr-shelf__item {
+  box-shadow:
+    0 0 0 3px #fffbf2,
+    0 12px 24px -14px rgba(58, 35, 18, 0.6);
+}
+[data-theme='hoian'] .tr-stage .tr-rail.tr-glass {
+  background: #fffbf2;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow:
+    0 0 0 1.5px #5a3a26,
+    0 18px 34px -18px rgba(58, 35, 18, 0.6);
+}
+[data-theme='hoian'] .tr-rail__fill {
+  background: #2c6e68;
+}
+[data-theme='hoian'] .tr-rail__stop[data-done='1'] .tr-rail__dot i {
+  box-shadow: inset 0 0 0 3px #2c6e68;
+}
+[data-theme='hoian'] .tr-section__head h2 {
+  font-weight: 800;
+}
+[data-theme='hoian'] .tr-card__main {
+  box-shadow: 0 0 0 1px #e6dcc6;
+}
+[data-theme='hoian'] .tr-flash__in {
+  background: #fbeff4;
+  border-color: #f3cadb;
+}
+[data-theme='hoian'] .tr-clock {
+  background: #3a2312;
+  color: #f2b13e;
+}
+[data-theme='hoian'] .tr-ticket {
+  border-color: #e6dcc6;
+}
+[data-theme='hoian'] .tr-ticket__amt {
+  background: #2c6e68;
+}
+[data-theme='hoian'] .tr-ticket--shop .tr-ticket__amt {
+  background: #5a3a26;
+}
+[data-theme='hoian'] .tr-shops {
+  box-shadow: 0 0 0 1px #e6dcc6;
+}
+[data-theme='hoian'] .tr-foot {
+  background: #2b1a0e;
+  color: #ead9bc;
+}
+[data-theme='hoian'] .tr-foot h3,
+[data-theme='hoian'] .tr-foot__head {
+  color: #e8b54a;
+}
+[data-theme='hoian'] .tr-foot__link {
+  color: #ead9bc;
+}
+
+/* ---- Phones: motifs step back so the content leads ------------------------- */
+@media (max-width: 768px) {
+  .tr-motif i {
+    transform: scale(0.55);
+    transform-origin: top right;
+  }
+  [data-theme='sleeve'] .tr-hero h1 {
+    transform: rotate(-2deg);
+  }
+  [data-theme='saigon'] .tr-pillwrap {
+    padding-top: 22px;
+  }
+  [data-theme='buudien'] .tr-motif i:nth-child(1) {
+    right: -40px;
+    top: -20px;
+  }
+  [data-theme='buudien'] .tr-motif i:nth-child(2) {
+    right: -150px;
+    top: 40px;
+  }
+  [data-theme='dongho'] .tr-motif i:nth-child(2) {
+    display: none;
+  }
+  [data-theme='dongson'] .tr-motif i:nth-child(1) {
+    right: -260px;
+    top: -150px;
+    opacity: 0.45;
+  }
+  [data-theme='genie'] .tr-motif i:nth-child(1) {
+    display: none;
+  }
+  [data-theme='hoian'] .tr-motif i:nth-child(1) {
+    right: -60px;
+    top: -40px;
+    width: 260px;
+    height: 150px;
+    opacity: 0.9;
+  }
+}

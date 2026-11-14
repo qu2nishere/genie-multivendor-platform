@@ -1,0 +1,39 @@
+---
+// Lưới kết quả + phân trang SSR (prototype Category.jsx / Search.jsx / Discover.jsx) — plan G08.19, G08.50.
+// Thẻ sản phẩm là island (tim yêu thích); phân trang là liên kết ?page=N thật. Rỗng → slot "empty".
+import { ProductGrid, type ProductSummary } from '@/features/product';
+import { Pagination } from '@/shared/ui';
+import { filtersHref, type FilterState } from '../domain/filters';
+
+interface Props {
+  path: string;
+  state: FilterState;
+  items: ProductSummary[];
+  totalPages: number;
+  /** Số cột ở màn rộng (prototype: danh mục / tìm kiếm 5, khám phá 6). */
+  columns?: 5 | 6;
+  shopLinks?: boolean;
+  label: string;
+}
+
+const { path, state, items, totalPages, columns = 5, shopLinks = false, label } = Astro.props;
+const pageHref = (page: number) => filtersHref(path, state, { page });
+---
+
+{
+  items.length === 0 ? (
+    <slot name="empty" />
+  ) : (
+    <>
+      <ProductGrid
+        client:visible
+        items={items}
+        shopLinks={shopLinks}
+        priorityCount={columns}
+        className={columns === 5 ? 'min-[1101px]:grid-cols-5' : undefined}
+        aria-label={label}
+      />
+      <Pagination page={state.page} total={totalPages} hrefFor={pageHref} className="mt-8" />
+    </>
+  )
+}

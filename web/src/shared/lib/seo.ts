@@ -216,3 +216,29 @@ export function itemListLd(items: { name: string; url: string }[], site: string)
     })),
   };
 }
+
+/** Tham số theo dõi / chia sẻ không làm đổi nội dung trang. */
+const TRACKING = /^(utm_.+|fbclid|gclid|msclkid|ref|src)$/;
+
+/**
+ * URL chuẩn của một trang danh sách (plan G08.46): bỏ tham số theo dõi; nếu còn tham số lọc /
+ * sắp xếp (ngoài `keep`) thì trỏ về trang gốc; giữ `page` > 1 để mỗi trang phân trang tự đứng.
+ */
+export function canonicalUrl(
+  path: string,
+  params: URLSearchParams | string = '',
+  keep: readonly string[] = ['page'],
+): string {
+  const src = typeof params === 'string' ? new URLSearchParams(params) : params;
+  const meaningful = Array.from(src.keys()).filter((k) => !TRACKING.test(k));
+  if (meaningful.some((k) => !keep.includes(k))) return path;
+  const out = new URLSearchParams();
+  for (const k of keep) {
+    const v = src.get(k);
+    if (!v) continue;
+    if (k === 'page' && (!/^\d+$/.test(v) || Number(v) <= 1)) continue;
+    out.set(k, v);
+  }
+  const qs = out.toString();
+  return qs ? `${path}?${qs}` : path;
+}

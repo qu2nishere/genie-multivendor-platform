@@ -1,7 +1,164 @@
 ---
+// Trang chủ storefront (prototype Home.jsx) — plan G08.15. Dữ liệu lấy trong frontmatter qua API công
+// khai của từng feature (SSR, R17); island chỉ cho phần cần tương tác: đường tiền, banner xoay, popup,
+// tải thêm gợi ý, đồng hồ Flash Sale, lưu voucher, tim yêu thích.
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+import { MoneyRail } from '@/features/payment';
+import { listFeed, listProducts, ProductFeed, productHref } from '@/features/product';
+import { BannerPair, BannerPopup, HomeBanners, listLiveBanners } from '@/features/promotions';
+import { FlashBand } from '@/features/promotions/server';
+import { listShops } from '@/features/shop';
+import { VerifiedShops } from '@/features/shop/server';
+import { formatVND } from '@/shared/lib/format';
+import { createT } from '@/shared/lib/i18n';
+import { organizationLd, websiteLd } from '@/shared/lib/seo';
+import { env } from '@/shared/config/env';
+import { buttonClass, Icon } from '@/shared/ui';
+
+const lang = Astro.locals.lang ?? 'vi';
+const t = createT(lang);
+const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
+
+// Gợi ý trang chủ bắt đầu sau 6 sản phẩm của kệ hero (prototype: PRODUCTS[(i + 6) % n])
+const FEED_SIZE = 36;
+const [shelfPage, feed, flashPage, shops, top, side, middle, popup] = await Promise.all([
+  listProducts({ size: 6 }),
+  listFeed({ page: 1, size: FEED_SIZE, offset: 6 }),
+  listProducts({ flash: true, size: 6 }),
+  listShops(),
+  listLiveBanners('HOME_TOP_CAROUSEL'),
+  listLiveBanners('HOME_TOP_SIDE'),
+  listLiveBanners('HOME_MIDDLE'),
+  listLiveBanners('POPUP'),
+]);
+
+// Dải voucher (prototype Home.jsx SaveVoucher): chữ trên phiếu theo bản gốc
+const vouchers = [
+  {
+    code: 'GENIE30K',
+    kind: 'platform',
+    amount: '-30k',
+    label: lang === 'vi' ? 'Đơn từ 199.000₫' : 'Orders from 199,000₫',
+  },
+  {
+    code: 'TECH15',
+    kind: 'shop',
+    amount: '-15%',
+    label: lang === 'vi' ? 'Tối đa 50.000₫' : 'Up to 50,000₫',
+  },
+  {
+    code: 'FREESHIP30',
+    kind: 'freeship',
+    amount: '0₫',
+    label: lang === 'vi' ? 'Miễn phí vận chuyển' : 'Free shipping',
+  },
+  {
+    code: 'SALE1212',
+    kind: 'platform',
+    amount: '-12%',
+    label: lang === 'vi' ? 'Siêu sale 12.12' : '12.12 mega sale',
+  },
+] as const;
 ---
 
-<StorefrontLayout title="Genie">
-  <!-- Trang chủ -->
+<StorefrontLayout
+  home
+  title={t('home.meta.title')}
+  description={t('home.meta.description')}
+  canonical="/"
+  jsonLd={[organizationLd(site), websiteLd(site)]}
+>
+  <section class="tr-hero" aria-labelledby="home-title">
+    <div class="tr-motif" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h1 id="home-title">
+      <span class="tr-h1a">{t('home.hero.title_a')}</span><mark>{t('home.hero.title_mark')}</mark>
+    </h1>
+    <p>{t('home.hero.lead')}</p>
+    <div class="tr-stage" data-home-stage>
+      <ul class="tr-shelf list-none m-0 p-0" aria-label={t('home.hero.shelf')}>
+        {
+          shelfPage.items.map((p, i) => (
+            <li class="contents">
+              <a
+                class="tr-shelf__item"
+                href={productHref(p)}
+                style={`--i:${i}`}
+                aria-label={`${p.title}, ${formatVND(p.price, { locale: lang })}`}
+              >
+                <img
+                  src={p.image}
+                  alt=""
+                  width="276"
+                  height="276"
+                  loading={i < 3 ? 'eager' : 'lazy'}
+                  fetchpriority={i < 3 ? 'high' : undefined}
+                  decoding="async"
+                />
+                <span class="tr-shelf__tag" aria-hidden="true">
+                  {formatVND(p.price, { locale: lang })}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <MoneyRail client:visible interactive amount={389000} shop="TechZone Official" />
+    </div>
+  </section>
+
+  {
+    (top.length > 0 || side.length > 0) && (
+      <div class="tr-section tr-section--banner">
+        <HomeBanners client:visible top={top} side={side} />
+      </div>
+    )
+  }
+
+  <section class="tr-section" aria-labelledby="feed-title">
+    <div class="tr-section__head">
+      <h2 id="feed-title">{t('home.feed.title')}</h2>
+      <a class="tr-more" href="/discover">
+        {t('home.feed.see_more')}
+        <Icon name="chevron-right" size={16} />
+      </a>
+    </div>
+    <ProductFeed client:visible initial={feed} size={FEED_SIZE} offset={6} />
+  </section>
+
+  {
+    middle.length > 0 && (
+      <div class="tr-section tr-section--banner">
+        <BannerPair client:visible items={middle} className="tr-duo" />
+      </div>
+    )
+  }
+
+  <FlashBand products={flashPage.items} vouchers={[...vouchers]} />
+
+  <section class="tr-section" aria-labelledby="shops-title">
+    <div class="tr-section__head"><h2 id="shops-title">{t('home.shops.title')}</h2></div>
+    <VerifiedShops shops={shops.slice(0, 6)} labelledBy="shops-title" />
+    <div class="flex justify-center pt-10">
+      <a href="/discover" class={buttonClass({ variant: 'outline', size: 'lg' })}>
+        {t('home.feed.more')}
+        <Icon name="chevron-down" size={18} />
+      </a>
+    </div>
+  </section>
+
+  {popup.length > 0 && <BannerPopup client:idle items={popup} slot="overlays" />}
 </StorefrontLayout>
+
+<script>
+  // Nền trời xanh kết thúc giữa kệ sản phẩm, dù tiêu đề xuống dòng ở đâu (prototype --sky-h).
+  const stage = document.querySelector<HTMLElement>('[data-home-stage]');
+  const root = stage?.closest<HTMLElement>('.tr-root');
+  if (stage && root) {
+    const fit = () => {
+      const r = stage.getBoundingClientRect();
+      root.style.setProperty('--sky-h', `${Math.round(r.top + window.scrollY + r.height * 0.6)}px`);
+    };
+    fit();
+    window.addEventListener('resize', fit, { passive: true });
+  }
+</script>
