@@ -28,6 +28,16 @@ const ModerationDetail = lazy(() =>
   import('@/features/admin-moderation').then((m) => ({ default: m.ProductModerationDetail })),
 );
 
+const Catalog = lazy(() =>
+  import('@/features/admin-catalog').then((m) => ({ default: m.CatalogPage })),
+);
+const Attributes = lazy(() =>
+  import('@/features/admin-catalog').then((m) => ({ default: m.AttributePanel })),
+);
+const CatProducts = lazy(() =>
+  import('@/features/admin-catalog').then((m) => ({ default: m.CategoryProducts })),
+);
+
 export const adminRoutes: AdminRoute[] = [
   { path: '/', section: 'overview', screen: Dashboard },
   { path: '/kyc', section: 'kyc', screen: Kyc },
@@ -38,7 +48,9 @@ export const adminRoutes: AdminRoute[] = [
   { path: '/commission', section: 'commission', screen: Pending },
   { path: '/ledger', section: 'ledger', screen: Pending },
   { path: '/audit-logs', section: 'audit', screen: Pending },
-  { path: '/catalog', section: 'catalog', screen: Pending },
+  { path: '/catalog', section: 'catalog', screen: Catalog },
+  { path: '/catalog/:id/attributes', section: 'catalog', screen: Attributes },
+  { path: '/catalog/sub/:id/products', section: 'catalog', screen: CatProducts },
   { path: '/product-moderation', section: 'product_moderation', screen: Moderation },
   { path: '/product-moderation/:id', section: 'product_moderation', screen: ModerationDetail },
   { path: '/users', section: 'users', screen: Pending },

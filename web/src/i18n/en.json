@@ -3492,5 +3492,159 @@
         "note_long": "At most 500 characters."
       }
     }
+  },
+  "admin-catalog": {
+    "back": "Back to catalog",
+    "not_found": "Category not found",
+    "kpi": {
+      "roots": "Root categories",
+      "children": "Subcategories",
+      "products": "Total products",
+      "pending": "Pending"
+    },
+    "tree": {
+      "title": "Category tree",
+      "add": "Add",
+      "meta": "{subs} subcategories · {products} products",
+      "hidden": "Hidden"
+    },
+    "detail": {
+      "meta": "{products} products · {shops} shops · {rate}% commission",
+      "visible": "Visible",
+      "hidden": "Category hidden from the platform.",
+      "shown": "Category visible again.",
+      "attributes": "Attributes",
+      "edit": "Edit",
+      "sub": "Subcategory",
+      "products": "Products",
+      "rate": "Commission",
+      "action": "Action",
+      "view_products": "View products",
+      "no_sub": "This category has no subcategories yet."
+    },
+    "proposals": {
+      "title": "Category proposals from sellers",
+      "empty": "No proposals.",
+      "meta": "Proposed by {shop} · {date} · Under: {parent}",
+      "new_root": "— (new root category)",
+      "approve": "Approve",
+      "approved": "Category “{name}” approved",
+      "reject": "Reject",
+      "reject_title": "Reject proposal",
+      "reject_desc": "Reject the category proposal “{name}” from {shop}?",
+      "reason": "Rejection reason (required)",
+      "reason_placeholder": "E.g. A similar category already exists",
+      "rejected": "Rejected and reason sent to the seller",
+      "err": {
+        "reason": "Enter a reason.",
+        "long": "At most 500 characters."
+      }
+    },
+    "cat": {
+      "add_title": "Add category",
+      "edit_title": "Edit category — {name}",
+      "name": "Category name",
+      "name_placeholder": "Pets",
+      "slug": "Slug (URL)",
+      "parent": "Parent category",
+      "root": "— Root category",
+      "icon": "Icon",
+      "rate": "Default commission (%)",
+      "visible": "Visible",
+      "save": "Save category",
+      "saved": "Category saved",
+      "delete": "Delete",
+      "delete_hint": "Only empty categories (no products, no subcategories) can be deleted",
+      "delete_title": "Delete category?",
+      "delete_desc": "This cannot be undone.",
+      "delete_confirm": "Delete category",
+      "deleted": "Category deleted",
+      "err": {
+        "name": "Enter a category name.",
+        "name_long": "At most 100 characters.",
+        "slug": "Slug may only contain lowercase letters, digits and hyphens.",
+        "rate": "Commission must be 0 to 50%."
+      }
+    },
+    "attr": {
+      "title": "Attributes — {name}",
+      "desc": "The listing form suggests fields from this set; subcategories inherit their parent's attributes.",
+      "add": "Add attribute",
+      "add_title": "Add attribute",
+      "edit_title": "Edit attribute",
+      "code": "Code",
+      "name": "Display name",
+      "name_placeholder": "Warranty",
+      "type": "Data type",
+      "unit": "Unit",
+      "unit_placeholder": "hours",
+      "values": "Allowed values (comma separated)",
+      "values_placeholder": "6 months, 12 months, 24 months",
+      "values_unit": "Values / Unit",
+      "required": "Required",
+      "filterable": "Filterable",
+      "filterable_long": "Use as a filter",
+      "axis": "Variant axis",
+      "status": "Status",
+      "action": "Action",
+      "active": "In use",
+      "inactive": "Retired",
+      "edit": "Edit",
+      "deactivate": "Retire",
+      "activate": "Use again",
+      "empty": "This category has no attributes yet.",
+      "save": "Save attribute",
+      "saved": "Attribute saved",
+      "saved_grace": "Saved. Shops have {days} days to fill this required attribute on existing products",
+      "err": {
+        "code": "Code must start with a letter and contain only lowercase letters, digits and underscores",
+        "name": "Enter a display name (at most 100 characters)",
+        "values": "Enter at least one value",
+        "duplicate": "This code already exists in this category"
+      }
+    },
+    "products": {
+      "title": "Products — {name}",
+      "tabs_label": "Filter products",
+      "tabs": {
+        "ALL": "All",
+        "PENDING": "Pending",
+        "PUBLISHED": "On sale",
+        "HIDDEN_OR_LOCKED": "Hidden"
+      },
+      "col": {
+        "product": "Product",
+        "shop": "Shop",
+        "price": "Price",
+        "stock": "Stock",
+        "status": "Status",
+        "action": "Action"
+      },
+      "status": {
+        "PUBLISHED": "On sale",
+        "PENDING_APPROVAL": "Pending",
+        "REJECTED": "Hidden",
+        "HIDDEN": "Hidden",
+        "LOCKED": "Locked"
+      },
+      "empty": "No products in this tab.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "lock": "Lock product",
+      "unlock": "Unlock",
+      "reject_title": "Reject product",
+      "reject_reason": "Rejection reason",
+      "reject_confirm": "Confirm rejection",
+      "lock_title": "Lock violating product",
+      "lock_reason": "Lock reason",
+      "lock_confirm": "Confirm lock",
+      "lock_hint": "The product is hidden and the shop is notified with the reason. The shop must fix it and resubmit before selling again.",
+      "done": {
+        "approve": "Product approved.",
+        "reject": "Product rejected.",
+        "lock": "Product locked.",
+        "unlock": "Product unlocked."
+      }
+    }
   }
 }

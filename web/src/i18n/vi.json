@@ -3492,5 +3492,159 @@
         "note_long": "Tối đa 500 ký tự."
       }
     }
+  },
+  "admin-catalog": {
+    "back": "Quay lại danh mục",
+    "not_found": "Không tìm thấy danh mục",
+    "kpi": {
+      "roots": "Danh mục gốc",
+      "children": "Danh mục con",
+      "products": "Tổng sản phẩm",
+      "pending": "Chờ duyệt"
+    },
+    "tree": {
+      "title": "Cây danh mục",
+      "add": "Thêm",
+      "meta": "{subs} mục con · {products} SP",
+      "hidden": "Ẩn"
+    },
+    "detail": {
+      "meta": "{products} sản phẩm · {shops} shop · hoa hồng {rate}%",
+      "visible": "Hiển thị",
+      "hidden": "Đã ẩn danh mục khỏi sàn.",
+      "shown": "Đã hiển thị lại danh mục.",
+      "attributes": "Bộ thuộc tính",
+      "edit": "Sửa",
+      "sub": "Danh mục con",
+      "products": "Sản phẩm",
+      "rate": "Hoa hồng",
+      "action": "Thao tác",
+      "view_products": "Xem SP",
+      "no_sub": "Danh mục này chưa có danh mục con."
+    },
+    "proposals": {
+      "title": "Đề xuất danh mục từ người bán",
+      "empty": "Không có đề xuất nào.",
+      "meta": "Đề xuất bởi {shop} · {date} · Thuộc: {parent}",
+      "new_root": "— (danh mục gốc mới)",
+      "approve": "Duyệt",
+      "approved": "Đã duyệt danh mục “{name}”",
+      "reject": "Từ chối",
+      "reject_title": "Từ chối đề xuất",
+      "reject_desc": "Từ chối đề xuất danh mục “{name}” từ {shop}?",
+      "reason": "Lý do từ chối (bắt buộc)",
+      "reason_placeholder": "VD: Đã có danh mục tương tự",
+      "rejected": "Đã từ chối và gửi lý do cho người bán",
+      "err": {
+        "reason": "Nhập lý do từ chối.",
+        "long": "Tối đa 500 ký tự."
+      }
+    },
+    "cat": {
+      "add_title": "Thêm danh mục",
+      "edit_title": "Sửa danh mục — {name}",
+      "name": "Tên danh mục",
+      "name_placeholder": "Thú cưng",
+      "slug": "Slug (URL)",
+      "parent": "Danh mục cha",
+      "root": "— Danh mục gốc (root)",
+      "icon": "Biểu tượng",
+      "rate": "Hoa hồng mặc định (%)",
+      "visible": "Hiển thị",
+      "save": "Lưu danh mục",
+      "saved": "Đã lưu danh mục thành công",
+      "delete": "Xóa",
+      "delete_hint": "Chỉ xóa được khi không còn sản phẩm và danh mục con",
+      "delete_title": "Xác nhận xóa danh mục",
+      "delete_desc": "Hành động này không thể hoàn tác.",
+      "delete_confirm": "Xóa danh mục",
+      "deleted": "Đã xóa danh mục",
+      "err": {
+        "name": "Nhập tên danh mục.",
+        "name_long": "Tối đa 100 ký tự.",
+        "slug": "Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.",
+        "rate": "Hoa hồng từ 0 đến 50%."
+      }
+    },
+    "attr": {
+      "title": "Bộ thuộc tính — {name}",
+      "desc": "Form đăng bán tự gợi ý theo bộ này; ngành con kế thừa thuộc tính của ngành cha.",
+      "add": "Thêm thuộc tính",
+      "add_title": "Thêm thuộc tính",
+      "edit_title": "Sửa thuộc tính",
+      "code": "Mã (code)",
+      "name": "Tên hiển thị",
+      "name_placeholder": "Bảo hành",
+      "type": "Kiểu dữ liệu",
+      "unit": "Đơn vị",
+      "unit_placeholder": "giờ",
+      "values": "Danh sách giá trị (cách nhau bằng dấu phẩy)",
+      "values_placeholder": "6 tháng, 12 tháng, 24 tháng",
+      "values_unit": "Giá trị / Đơn vị",
+      "required": "Bắt buộc",
+      "filterable": "Lọc được",
+      "filterable_long": "Dùng làm bộ lọc",
+      "axis": "Trục biến thể",
+      "status": "Trạng thái",
+      "action": "Thao tác",
+      "active": "Đang dùng",
+      "inactive": "Ngừng dùng",
+      "edit": "Sửa",
+      "deactivate": "Ngừng dùng",
+      "activate": "Dùng lại",
+      "empty": "Ngành này chưa có thuộc tính nào.",
+      "save": "Lưu thuộc tính",
+      "saved": "Đã lưu thuộc tính",
+      "saved_grace": "Đã lưu. Shop có {days} ngày bổ sung thuộc tính bắt buộc cho sản phẩm cũ",
+      "err": {
+        "code": "Mã chỉ gồm chữ thường, số và dấu gạch dưới, bắt đầu bằng chữ",
+        "name": "Nhập tên hiển thị (tối đa 100 ký tự)",
+        "values": "Nhập ít nhất một giá trị",
+        "duplicate": "Mã này đã có trong ngành này"
+      }
+    },
+    "products": {
+      "title": "Sản phẩm — {name}",
+      "tabs_label": "Lọc sản phẩm",
+      "tabs": {
+        "ALL": "Tất cả",
+        "PENDING": "Chờ duyệt",
+        "PUBLISHED": "Đang bán",
+        "HIDDEN_OR_LOCKED": "Đã ẩn"
+      },
+      "col": {
+        "product": "Sản phẩm",
+        "shop": "Shop",
+        "price": "Giá",
+        "stock": "Kho",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "status": {
+        "PUBLISHED": "Đang bán",
+        "PENDING_APPROVAL": "Chờ duyệt",
+        "REJECTED": "Đã ẩn",
+        "HIDDEN": "Đã ẩn",
+        "LOCKED": "Đã khóa"
+      },
+      "empty": "Không có sản phẩm nào ở mục này.",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "lock": "Khóa sản phẩm",
+      "unlock": "Mở khóa",
+      "reject_title": "Từ chối sản phẩm",
+      "reject_reason": "Lý do từ chối",
+      "reject_confirm": "Xác nhận từ chối",
+      "lock_title": "Khóa sản phẩm vi phạm",
+      "lock_reason": "Lý do khóa",
+      "lock_confirm": "Xác nhận khóa",
+      "lock_hint": "Sản phẩm bị ẩn khỏi sàn và shop nhận thông báo kèm lý do. Shop phải sửa và gửi duyệt lại mới được bán.",
+      "done": {
+        "approve": "Đã duyệt sản phẩm.",
+        "reject": "Đã từ chối sản phẩm.",
+        "lock": "Đã khóa sản phẩm.",
+        "unlock": "Đã mở khóa sản phẩm."
+      }
+    }
   }
 }
