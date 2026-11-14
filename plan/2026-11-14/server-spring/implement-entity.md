@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P05c (14 / 23 lượt); lượt kế: P06a |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P06a (15 / 23 lượt); lượt kế: P06b |
 
 ---
 
@@ -238,12 +238,12 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `PaymentTransaction` (L3927) | `payment.vnpay.domain` | 12 | 4 | ✔ | CHECK XOR `order_id`/`checkout_session_id` (mục 💡, L4027) |
-| [ ] | `PaymentRefund` (L4060) | `payment.vnpay.domain` | 6 | 2 | | |
-| [ ] | `EscrowLedger` (L4121) | `payment.escrow.domain` | 18 | 11 | | Có `private totalFunded()` |
-| [ ] | `FinancialLedger` (L4655) | `payment.ledger.domain` | 10 | 1 | | Chỉ ghi thêm; factory `static entry` |
+| [x] | `PaymentTransaction` (L3927) | `payment.vnpay.domain` | 12 | 4 | ✔ | CHECK XOR `order_id`/`checkout_session_id` (mục 💡, L4027) |
+| [x] | `PaymentRefund` (L4060) | `payment.vnpay.domain` | 6 | 2 | | |
+| [x] | `EscrowLedger` (L4121) | `payment.escrow.domain` | 18 | 11 | | Có `private totalFunded()` |
+| [x] | `FinancialLedger` (L4655) | `payment.ledger.domain` | 10 | 1 | | Chỉ ghi thêm; factory `static entry` |
 
-- [ ] Enum: `PaymentRefundStatus` (payment.vnpay) · `FundingSource`, `EscrowStatus` (payment.escrow) · `FinancialEventType` (payment.ledger).
+- [x] Enum: `PaymentRefundStatus` (payment.vnpay) · `FundingSource`, `EscrowStatus` (payment.escrow) · `FinancialEventType` (payment.ledger).
 
 **Lượt 6b**
 
@@ -412,7 +412,7 @@
 | [x] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
 | [x] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
 | [x] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
-| [ ] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
+| [x] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
 | [ ] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
 | [ ] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
 | [ ] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
@@ -443,4 +443,5 @@
 | 11 | 2026-11-14 | P04c | `feature/entity-p04c-promotion-migration` (từ `feature/entity-p04b-flashsale-coin`) | `8c924bd` | `V4__promotion.sql`: 12 bảng (4 bảng nối PK gộp, `user_coins` PK = `user_id`), CHECK enum, UNIQUE `(voucher_id, checkout_session_id)`, `(user_id, voucher_id)`, 19 FK (bảng nối CASCADE theo voucher) | V1–V4 trên `postgres:16` ✔ (34 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. 2 FK nợ `voucher_usages.checkout_session_id`, `voucher_usages.order_id` để V5 |
 | 12 | 2026-11-14 | P05a | `feature/entity-p05a-order-aggregate` (từ `feature/entity-p04c-promotion-migration`) | `563b3b9` | Thay stub `Order`, `OrderStatus`, `OrderRepository`; thêm enum `FundingStatus` | `compile` ✔, `ModuleBoundaryTest` ✔; 33 trường, 22 PT (kể cả `transitionTo`, `isCod` private), hằng `ALLOWED` 14/14 entry khớp ENTITY.md | Xong. D2: bỏ `vendorProfile` (→ `vendor`). `paymentMethod` / `paymentStatus` dùng enum ở `common.domain` (D3) |
 | 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | `edb5958` | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
-| 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | (lượt sau điền) | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
+| 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | `4b21972` | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
+| 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | (lượt sau điền) | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
