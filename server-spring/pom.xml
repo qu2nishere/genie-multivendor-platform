@@ -27,6 +27,8 @@
         <minio.version>8.5.12</minio.version>
         <logstash-encoder.version>8.0</logstash-encoder.version>
         <archunit.version>1.3.0</archunit.version>
+        <!-- Ghi đè BOM Spring Boot (1.19.x): runner GitHub dùng Docker Engine 29, chỉ nhận Docker API ≥ 1.40 -->
+        <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
 
     <dependencies>

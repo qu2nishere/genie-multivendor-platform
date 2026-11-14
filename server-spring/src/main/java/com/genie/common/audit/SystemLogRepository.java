@@ -1,7 +1,6 @@
 package com.genie.common.audit;
 
-/**
- * Shared kernel (common.audit) — không chứa nghiệp vụ phân hệ. TODO: hiện thực.
- */
-public interface SystemLogRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SystemLogRepository extends JpaRepository<SystemLog, String> {
 }

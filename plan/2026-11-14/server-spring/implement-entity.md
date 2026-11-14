@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong P00 (1 / 23 lượt); lượt kế: P01a |
+| **Cập nhật gần nhất** | 2026-11-14 — **xong toàn bộ 23 / 23 lượt** (P00–P12); chưa push, chưa mở PR |
 
 ---
 
@@ -21,7 +21,7 @@
    - **Kết thúc lượt:** làm đúng mục 7.2 bước 4–7 (kiểm tra → **ghi nhật ký mục 8** → commit trên nhánh của lượt).
 2. Trước khi viết một entity: đọc **toàn bộ mục** của nó trong ENTITY.md — khối code **và** phần `💡 Kiến thức chuyên sâu` (thường chứa `CHECK`, `UNIQUE`, index, `ON DELETE` chỉ có trong lời văn).
 3. Chép **đủ 100%**: mọi trường, mọi annotation, mọi `@Builder.Default`, mọi phương thức nghiệp vụ (kể cả `private`, `static`, hằng `static final`), giữ nguyên chú thích tiếng Việt. Không tự thêm trường, không đổi tên, không rút gọn thân phương thức.
-4. Chỉ được sửa so với ENTITY.md ở đúng các điểm trong **mục 2 — Điều chỉnh bắt buộc**.
+4. Chỉ được sửa so với ENTITY.md ở đúng các điểm trong **mục 2 — Điều chỉnh bắt buộc** (D1–D8).
 5. Sau mỗi entity: tự đối chiếu với cột **Trường / PT** trong bảng của Phase (số khai báo `private` cấp class, tính cả trường quan hệ / số phương thức nghiệp vụ theo Phụ lục E). Lệch → đọc lại mục đó.
 6. Làm xong mục nào thì đổi `- [ ]` thành `- [x]` ngay trong file này. Gặp chỗ ENTITY.md mâu thuẫn hoặc không rõ → **không tự đoán**, ghi vào **mục 6 — Nhật ký sai lệch** và báo người dùng.
 7. Mỗi lượt (kể cả lượt `a`, `b` giữa Phase) đều phải `compile` + `ModuleBoundaryTest` xanh trước khi commit; lượt cuối Phase chạy thêm bước **Kiểm tra cuối Phase**. Chỉ tick lượt / Phase khi build xanh.
@@ -49,6 +49,7 @@
 | D4 | Tạo 5 class khóa gộp (ENTITY.md chỉ nhắc tên): `VoucherCategoryId`, `VoucherProductId`, `VoucherExcludedCategoryId`, `VoucherExcludedProductId`, `UserPlatformNotificationReadId` — cùng package với entity; `implements Serializable`; constructor không tham số public; đúng tên & kiểu các trường `@Id` của entity; `equals`/`hashCode` trên tất cả trường khóa. | `@IdClass` bắt buộc |
 | D5 | **Không** `extends BaseEntity`; khai báo `createdAt`/`updatedAt` đúng như từng class trong ENTITY.md (có bảng chỉ ghi thêm, không có `updatedAt`). | Giữ khớp 1-1 với ENTITY.md |
 | D6 | Mỗi entity một repository `XxxRepository extends JpaRepository<Xxx, KiểuId>` đặt cùng package `domain` (IdClass → kiểu id là class khóa gộp; `SystemLog` id là `String`). Chưa thêm query tùy biến. | Con được ghi qua `Long xxxId` riêng nên cũng cần repository |
+| D8 | Trường `Long xxxId` nào trùng cột với một `@JoinColumn(name = "xxx_id", insertable = false, updatable = false)` (kể cả `@OneToMany` của entity cha trỏ sang bảng con) → thêm `name = "xxx_id"` vào `@Column` của trường đó (thiếu `@Column` thì thêm `@Column(name = "xxx_id")`). Cột vật lý không đổi. | Hibernate 6 ném `DuplicateMappingException` khi một cột có 2 tên logic (`userId` vs `user_id`) — phát hiện ở P01c bằng `SchemaValidationIT` |
 | D7 | Phương thức trong ENTITY.md tham chiếu class thuộc module khác (tham số, kiểu trả về, thân hàm) → không tự sửa chữ ký, ghi mục 6 và hỏi. | Tránh lệch thiết kế |
 
 ---
@@ -85,31 +86,31 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `User` (L124) | `auth.profile.domain` | 20 | 7 | ✔ | Bỏ `vendorProfile`, `adminProfile`. Giữ `customerProfile`, `addresses`, `refreshTokens`. `@UniqueConstraint uk_users_oauth` |
-| [ ] | `CustomerProfile` (L290) | `auth.profile.domain` | 14 | 2 | | Giữ `user` |
-| [ ] | `Address` (L375) | `auth.address.domain` | 16 | 2 | | Xóa mềm `isDeleted` |
-| [ ] | `RefreshToken` (L1029) | `auth.token.domain` | 9 | 2 | | |
+| [x] | `User` (L124) | `auth.profile.domain` | 20 | 7 | ✔ | Bỏ `vendorProfile`, `adminProfile`. Giữ `customerProfile`, `addresses`, `refreshTokens`. `@UniqueConstraint uk_users_oauth` |
+| [x] | `CustomerProfile` (L290) | `auth.profile.domain` | 14 | 2 | | Giữ `user` |
+| [x] | `Address` (L375) | `auth.address.domain` | 16 | 2 | | Xóa mềm `isDeleted` |
+| [x] | `RefreshToken` (L1029) | `auth.token.domain` | 9 | 2 | | |
 
-- [ ] Enum: `AccountStatus`, `Gender` (auth.profile) · `AddressLabel` (auth.address). (`UserRole` đã ở Phase 0.)
+- [x] Enum: `AccountStatus`, `Gender` (auth.profile) · `AddressLabel` (auth.address). (`UserRole` đã ở Phase 0.)
 
 **Lượt 1b — Entity còn lại**
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `VendorProfile` (L468) | `vendor.shop.domain` | 51 | 15 | | Bỏ `user`. Entity lớn nhất — làm riêng, đếm kỹ 51 trường. Dùng `NameNormalizer` |
-| [ ] | `KycResult` (L852) | `vendor.kyc.domain` | 29 | 3 | | Giữ `vendorProfile` (cùng module `vendor`) |
-| [ ] | `AdminProfile` (L786) | `admin.staff.domain` | 9 | 2 | | Bỏ `user` |
-| [ ] | `StaffPermission` (L1107) | `admin.rbac.domain` | 6 | 2 | | |
+| [x] | `VendorProfile` (L468) | `vendor.shop.domain` | 51 | 15 | | Bỏ `user`. Entity lớn nhất — làm riêng, đếm kỹ 51 trường. Dùng `NameNormalizer` |
+| [x] | `KycResult` (L852) | `vendor.kyc.domain` | 29 | 3 | | Giữ `vendorProfile` (cùng module `vendor`) |
+| [x] | `AdminProfile` (L786) | `admin.staff.domain` | 9 | 2 | | Bỏ `user` |
+| [x] | `StaffPermission` (L1107) | `admin.rbac.domain` | 6 | 2 | | |
 
-- [ ] Enum: `BusinessType`, `KycStatus`, `KycVerificationMethod` (vendor.shop) · `KycOverallResult` (vendor.kyc) · `StaffPermissionEnum` (admin.rbac) · `StaffTitle` (admin.staff — enum có constructor & `defaultPermissions()`, import `StaffPermissionEnum`).
-- [ ] 8 repository (D6).
+- [x] Enum: `BusinessType`, `KycStatus`, `KycVerificationMethod` (vendor.shop) · `KycOverallResult` (vendor.kyc) · `StaffPermissionEnum` (admin.rbac) · `StaffTitle` (admin.staff — enum có constructor & `defaultPermissions()`, import `StaffPermissionEnum`).
+- [x] 8 repository (D6).
 
 **Lượt 1c — Migration `V1__identity.sql`** (giữ 2 dòng `CREATE EXTENSION` đã có)
-- [ ] Bảng theo thứ tự: `users` → `customer_profiles` → `addresses` → `refresh_tokens` → `vendor_profiles` → `kyc_results` → `admin_profiles` → `staff_permissions`.
-- [ ] `customer_profiles.default_address_id`: **FK mềm — không tạo constraint** (ENTITY.md L319, L364; mục chi tiết thắng ví dụ ở Quy ước 9).
-- [ ] FK nợ: `vendor_profiles.category_id` → `categories` (ghi mục 5, thêm ở V2).
-- [ ] Unique 1-1: `customer_profiles.user_id`, `vendor_profiles.user_id`, `admin_profiles.user_id`, `kyc_results.vendor_profile_id`.
-- [ ] Kiểm tra cuối Phase: compile + `./mvnw -q test -Dtest=ModuleBoundaryTest`.
+- [x] Bảng theo thứ tự: `users` → `customer_profiles` → `addresses` → `refresh_tokens` → `vendor_profiles` → `kyc_results` → `admin_profiles` → `staff_permissions`.
+- [x] `customer_profiles.default_address_id`: **FK mềm — không tạo constraint** (ENTITY.md L319, L364; mục chi tiết thắng ví dụ ở Quy ước 9).
+- [x] FK nợ: `vendor_profiles.category_id` → `categories` (ghi mục 5, thêm ở V2).
+- [x] Unique 1-1: `customer_profiles.user_id`, `vendor_profiles.user_id`, `admin_profiles.user_id`, `kyc_results.vendor_profile_id`.
+- [x] Kiểm tra cuối Phase: compile + `./mvnw -q test -Dtest=ModuleBoundaryTest`.
 
 ---
 
@@ -119,35 +120,35 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Category` (L1189) | `catalog.category.domain` | 11 | 2 | | Giữ `children` (tự tham chiếu `parent_id`) |
-| [ ] | `Brand` (L1854) | `catalog.brand.domain` | 7 | 2 | | Có factory `static proposedBy` |
-| [ ] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendor` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
-| [ ] | `ProductVariant` (L1509) | `catalog.product.domain` | 12 | 5 | ✔ | Giữ `product`. Xóa mềm bằng timestamp |
-| [ ] | `ProductImage` (L1635) | `catalog.product.domain` | 12 | 1 | | |
-| [ ] | `ProductDocument` (L1911) | `catalog.product.domain` | 10 | 1 | | Giữ `product`; `@Table indexes` |
+| [x] | `Category` (L1189) | `catalog.category.domain` | 11 | 2 | | Giữ `children` (tự tham chiếu `parent_id`) |
+| [x] | `Brand` (L1854) | `catalog.brand.domain` | 7 | 2 | | Có factory `static proposedBy` |
+| [x] | `Product` (L1276) | `catalog.product.domain` | 37 | 6 | ✔ | Bỏ `vendorProfile` (→ VendorProfile, L1396). Giữ `category`, `variants`, `images` |
+| [x] | `ProductVariant` (L1509) | `catalog.product.domain` | 12 | 5 | ✔ | Giữ `product`. Xóa mềm bằng timestamp |
+| [x] | `ProductImage` (L1635) | `catalog.product.domain` | 12 | 1 | | |
+| [x] | `ProductDocument` (L1911) | `catalog.product.domain` | 10 | 1 | | Giữ `product`; `@Table indexes` |
 
-- [ ] Enum: `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType` (catalog.product).
+- [x] Enum: `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType` (catalog.product).
 
 **Lượt 2b — Phụ trợ catalog**
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `CategoryAttribute` (L1749) | `catalog.attribute.domain` | 15 | 2 | | Giữ `category` (cùng module) |
-| [ ] | `UserWishlist` (L1716) | `catalog.wishlist.domain` | 4 | 0 | | Chỉ unique constraint |
-| [ ] | `CategoryProposal` (L1972) | `catalog.proposal.domain` | 11 | 2 | | |
-| [ ] | `ProductModerationResult` (L2041) | `catalog.moderation.domain` | 11 | 2 | | Giữ `product`; factory `static fallback` |
-| [ ] | `SearchKeywordStat` (L2116) | `catalog.search.domain` | 6 | 1 | | |
-| [ ] | `ProductViewStat` (L2162) | `catalog.stats.domain` | 8 | 1 | | |
+| [x] | `CategoryAttribute` (L1749) | `catalog.attribute.domain` | 15 | 2 | | Giữ `category` (cùng module) |
+| [x] | `UserWishlist` (L1716) | `catalog.wishlist.domain` | 4 | 0 | | Chỉ unique constraint |
+| [x] | `CategoryProposal` (L1972) | `catalog.proposal.domain` | 11 | 2 | | |
+| [x] | `ProductModerationResult` (L2041) | `catalog.moderation.domain` | 11 | 2 | | Giữ `product`; factory `static fallback` |
+| [x] | `SearchKeywordStat` (L2116) | `catalog.search.domain` | 6 | 1 | | |
+| [x] | `ProductViewStat` (L2162) | `catalog.stats.domain` | 8 | 1 | | |
 
-- [ ] Enum: `AttributeDataType` (catalog.attribute) · `CategoryProposalStatus` (catalog.proposal) · `ModerationDecision` (catalog.moderation) · `TrafficSource` (catalog.stats).
-- [ ] 12 repository.
+- [x] Enum: `AttributeDataType` (catalog.attribute) · `CategoryProposalStatus` (catalog.proposal) · `ModerationDecision` (catalog.moderation) · `TrafficSource` (catalog.stats).
+- [x] 12 repository.
 
 **Lượt 2c — Migration `V2__catalog.sql`**
-- [ ] Thứ tự: `categories` → `category_attributes` → `brands` → `products` → `product_variants` → `product_images` → `product_documents` → `category_proposals` → `product_moderation_results` → `search_keyword_stats` → `product_view_stats` → `user_wishlists`.
-- [ ] `products.search_vector`: cột `tsvector` sinh tự động (`GENERATED ALWAYS AS … STORED`) từ `name`, `brand`, `description` qua `unaccent` — `unaccent` không IMMUTABLE nên tạo hàm bọc IMMUTABLE trước; **không** thêm trường này vào entity (validate bỏ qua cột thừa). Ghi mục 6 nếu chọn cách khác.
-- [ ] Index mục 13.1: GIN `search_vector`, GIN `name gin_trgm_ops`, `(category_id, status, created_at DESC)`, `(vendor_id, status)`, `UNIQUE product_variants(sku)`; GIN `jsonb_path_ops` cho `products.specs_json` (mục 2.6).
-- [ ] Trả FK nợ từ V1: `vendor_profiles.category_id` → `categories`.
-- [ ] Kiểm tra cuối Phase: compile + ModuleBoundaryTest.
+- [x] Thứ tự: `categories` → `category_attributes` → `brands` → `products` → `product_variants` → `product_images` → `product_documents` → `category_proposals` → `product_moderation_results` → `search_keyword_stats` → `product_view_stats` → `user_wishlists`.
+- [x] `products.search_vector`: cột `tsvector` sinh tự động (`GENERATED ALWAYS AS … STORED`) từ `name`, `brand`, `description` qua `unaccent` — `unaccent` không IMMUTABLE nên tạo hàm bọc IMMUTABLE trước; **không** thêm trường này vào entity (validate bỏ qua cột thừa). Ghi mục 6 nếu chọn cách khác.
+- [x] Index mục 13.1: GIN `search_vector`, GIN `name gin_trgm_ops`, `(category_id, status, created_at DESC)`, `(vendor_id, status)`, `UNIQUE product_variants(sku)`; GIN `jsonb_path_ops` cho `products.specs_json` (mục 2.6).
+- [x] Trả FK nợ từ V1: `vendor_profiles.category_id` → `categories`.
+- [x] Kiểm tra cuối Phase: compile + ModuleBoundaryTest.
 
 ---
 
@@ -155,12 +156,12 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Cart` (L2218) | `order.cart.domain` (stub) | 4 | 4 | | Giữ `items` |
-| [ ] | `CartItem` (L2269) | `order.cart.domain` (stub) | 7 | 2 | | Bỏ `productVariant` (→ catalog) |
+| [x] | `Cart` (L2218) | `order.cart.domain` (stub) | 4 | 4 | | Giữ `items` |
+| [x] | `CartItem` (L2269) | `order.cart.domain` (stub) | 7 | 2 | | Bỏ `variant` (→ catalog) |
 
-- [ ] Thay nội dung stub `Cart`, `CartItem`, `CartRepository`; tạo `CartItemRepository`.
-- [ ] Migration `carts` → `cart_items` (`cart_id` CASCADE; `product_variant_id` → `product_variants`).
-- [ ] Kiểm tra cuối Phase.
+- [x] Thay nội dung stub `Cart`, `CartItem`, `CartRepository`; tạo `CartItemRepository`.
+- [x] Migration `carts` → `cart_items` (`cart_id` CASCADE; `product_variant_id` → `product_variants`).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -170,34 +171,34 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Voucher` (L2345) | `promotion.voucher.domain` | 27 | 5 | ✔ | Giữ 4 `@OneToMany` tới bảng nối |
-| [ ] | `VoucherUsage` (L2539) | `promotion.voucher.domain` | 7 | 1 | | Giữ `voucher`; factory `static of` |
-| [ ] | `UserVoucher` (L2604) | `promotion.voucher.domain` | 7 | 1 | | Bỏ `user` (→ auth). Giữ `voucher` |
-| [ ] | `VoucherCategory` (L2676) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` (→ catalog) |
-| [ ] | `VoucherProduct` (L2705) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
-| [ ] | `VoucherExcludedCategory` (L2734) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` |
-| [ ] | `VoucherExcludedProduct` (L2763) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
+| [x] | `Voucher` (L2345) | `promotion.voucher.domain` | 27 | 5 | ✔ | Giữ 4 `@OneToMany` tới bảng nối |
+| [x] | `VoucherUsage` (L2539) | `promotion.voucher.domain` | 7 | 1 | | Giữ `voucher`; factory `static of` |
+| [x] | `UserVoucher` (L2604) | `promotion.voucher.domain` | 7 | 1 | | Bỏ `user` (→ auth). Giữ `voucher` |
+| [x] | `VoucherCategory` (L2676) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` (→ catalog) |
+| [x] | `VoucherProduct` (L2705) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
+| [x] | `VoucherExcludedCategory` (L2734) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `category` |
+| [x] | `VoucherExcludedProduct` (L2763) | `promotion.voucher.domain` | 4 | 1 | | `@IdClass`; bỏ `product` |
 
-- [ ] 4 class khóa gộp (D4).
-- [ ] Enum: `VoucherScope`, `DiscountType` (promotion.voucher). (`VoucherType`, `FundingParty` ở common.)
+- [x] 4 class khóa gộp (D4).
+- [x] Enum: `VoucherScope`, `DiscountType` (promotion.voucher). (`VoucherType`, `FundingParty` ở common.)
 
 **Lượt 4b — Flash Sale & Điểm**
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `FlashSaleCampaign` (L2813) | `promotion.flashsale.domain` | 9 | 4 | | Giữ `items` |
-| [ ] | `FlashSaleItem` (L2881) | `promotion.flashsale.domain` | 9 | 5 | ✔ | |
-| [ ] | `UserCoin` (L2993) | `promotion.coin.domain` | 5 | 3 | ✔ | |
-| [ ] | `CoinTransaction` (L3040) | `promotion.coin.domain` | 8 | 2 | | Chỉ ghi thêm |
-| [ ] | `DailyCheckin` (L3096) | `promotion.coin.domain` | 4 | 1 | | |
+| [x] | `FlashSaleCampaign` (L2813) | `promotion.flashsale.domain` | 9 | 4 | | Giữ `items` |
+| [x] | `FlashSaleItem` (L2881) | `promotion.flashsale.domain` | 9 | 5 | ✔ | |
+| [x] | `UserCoin` (L2993) | `promotion.coin.domain` | 5 | 3 | ✔ | |
+| [x] | `CoinTransaction` (L3040) | `promotion.coin.domain` | 8 | 2 | | Chỉ ghi thêm |
+| [x] | `DailyCheckin` (L3096) | `promotion.coin.domain` | 4 | 1 | | |
 
-- [ ] Enum: `FlashSaleStatus`, `FlashSaleItemStatus` (promotion.flashsale) · `CoinTransactionType` (promotion.coin).
-- [ ] 12 repository (bảng nối dùng kiểu id = class khóa gộp).
+- [x] Enum: `FlashSaleStatus`, `FlashSaleItemStatus` (promotion.flashsale) · `CoinTransactionType` (promotion.coin).
+- [x] 12 repository (bảng nối dùng kiểu id = class khóa gộp).
 
 **Lượt 4c — Migration `V4__promotion.sql`**
-- [ ] Thứ tự: `vouchers` → `voucher_usages` → `user_vouchers` → 4 bảng nối (PRIMARY KEY gộp 2 cột, CASCADE theo voucher) → `flash_sale_campaigns` → `flash_sale_items` → `user_coins` → `coin_transactions` → `daily_checkins`.
-- [ ] FK nợ: `voucher_usages.checkout_session_id` → `checkout_sessions`, `voucher_usages.order_id` → `orders` (để lại cho V5 — mục 5).
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `vouchers` → `voucher_usages` → `user_vouchers` → 4 bảng nối (PRIMARY KEY gộp 2 cột, CASCADE theo voucher) → `flash_sale_campaigns` → `flash_sale_items` → `user_coins` → `coin_transactions` → `daily_checkins`.
+- [x] FK nợ: `voucher_usages.checkout_session_id` → `checkout_sessions`, `voucher_usages.order_id` → `orders` (để lại cho V5 — mục 5).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -207,27 +208,27 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Order` (L3287) | `order.order.domain` (stub) | 34 | 22 | ✔ | Bỏ `vendor` (L3303). Giữ `items`, `discounts`. Chép đủ hằng `ALLOWED` (L3409, mọi `Map.entry`) + `transitionTo`, `isCod` private |
+| [x] | `Order` (L3287) | `order.order.domain` (stub) | 34 | 22 | ✔ | Bỏ `vendorProfile` (L3303). Giữ `items`, `discounts`. Chép đủ hằng `ALLOWED` (L3409, mọi `Map.entry`) + `transitionTo`, `isCod` private |
 
-- [ ] Enum: `OrderStatus` (stub, 19 giá trị), `FundingStatus` (order.order).
+- [x] Enum: `OrderStatus` (stub, 19 giá trị), `FundingStatus` (order.order).
 
 **Lượt 5b — Còn lại**
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `CheckoutSession` (L3183) | `order.checkout.domain` (stub) | 9 | 4 | | Giữ `orders` |
-| [ ] | `OrderItem` (L3647) | `order.order.domain` (stub) | 17 | 2 | | Bỏ `productVariant` (→ catalog). Snapshot |
-| [ ] | `OrderDiscount` (L3771) | `order.order.domain` (stub) | 7 | 1 | | `voucher_id` `ON DELETE SET NULL` |
-| [ ] | `StockReservation` (L3826) | `order.reservation.domain` (stub) | 9 | 3 | ✔ | |
+| [x] | `CheckoutSession` (L3183) | `order.checkout.domain` (stub) | 9 | 4 | | Giữ `orders` |
+| [x] | `OrderItem` (L3647) | `order.order.domain` (stub) | 17 | 2 | | Bỏ `productVariant` (→ catalog). Snapshot |
+| [x] | `OrderDiscount` (L3771) | `order.order.domain` (stub) | 7 | 1 | | `voucher_id` `ON DELETE SET NULL` |
+| [x] | `StockReservation` (L3826) | `order.reservation.domain` (stub) | 9 | 3 | ✔ | |
 
-- [ ] Enum: `SessionStatus` (stub) · `StockReservationStatus` (order.reservation).
-- [ ] Thay nội dung stub repository + tạo `OrderItemRepository`, `OrderDiscountRepository`.
+- [x] Enum: `SessionStatus` (stub) · `StockReservationStatus` (order.reservation).
+- [x] Thay nội dung stub repository + tạo `OrderItemRepository`, `OrderDiscountRepository`.
 
 **Lượt 5c — Migration `V5__order.sql`**
-- [ ] Thứ tự: `checkout_sessions` → `orders` → `order_items` → `order_discounts` → `stock_reservations`.
-- [ ] Index 13.1: `orders(customer_id, created_at DESC)`, `orders(vendor_id, status, created_at DESC)`, partial `orders(status, delivered_at) WHERE status = 'DELIVERED'`, partial `stock_reservations(status, expires_at) WHERE status = 'ACTIVE'`.
-- [ ] Trả FK nợ từ V4.
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `checkout_sessions` → `orders` → `order_items` → `order_discounts` → `stock_reservations`.
+- [x] Index 13.1: `orders(customer_id, created_at DESC)`, `orders(vendor_id, status, created_at DESC)`, partial `orders(status, delivered_at) WHERE status = 'DELIVERED'`, partial `stock_reservations(status, expires_at) WHERE status = 'ACTIVE'`.
+- [x] Trả FK nợ từ V4.
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -237,30 +238,30 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `PaymentTransaction` (L3927) | `payment.vnpay.domain` | 12 | 4 | ✔ | CHECK XOR `order_id`/`checkout_session_id` (mục 💡, L4027) |
-| [ ] | `PaymentRefund` (L4060) | `payment.vnpay.domain` | 6 | 2 | | |
-| [ ] | `EscrowLedger` (L4121) | `payment.escrow.domain` | 18 | 11 | | Có `private totalFunded()` |
-| [ ] | `FinancialLedger` (L4655) | `payment.ledger.domain` | 10 | 1 | | Chỉ ghi thêm; factory `static entry` |
+| [x] | `PaymentTransaction` (L3927) | `payment.vnpay.domain` | 12 | 4 | ✔ | CHECK XOR `order_id`/`checkout_session_id` (mục 💡, L4027) |
+| [x] | `PaymentRefund` (L4060) | `payment.vnpay.domain` | 6 | 2 | | |
+| [x] | `EscrowLedger` (L4121) | `payment.escrow.domain` | 18 | 11 | | Có `private totalFunded()` |
+| [x] | `FinancialLedger` (L4655) | `payment.ledger.domain` | 10 | 1 | | Chỉ ghi thêm; factory `static entry` |
 
-- [ ] Enum: `PaymentRefundStatus` (payment.vnpay) · `FundingSource`, `EscrowStatus` (payment.escrow) · `FinancialEventType` (payment.ledger).
+- [x] Enum: `PaymentRefundStatus` (payment.vnpay) · `FundingSource`, `EscrowStatus` (payment.escrow) · `FinancialEventType` (payment.ledger).
 
 **Lượt 6b**
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `VendorWallet` (L4333) | `payment.wallet.domain` | 8 | 6 | ✔ | |
-| [ ] | `WalletTransaction` (L4447) | `payment.wallet.domain` | 10 | 3 | | 2 factory `static debit/credit(VendorWallet …)` |
-| [ ] | `WithdrawalRequest` (L4544) | `payment.wallet.domain` | 12 | 4 | | Đặt ở `payment` (sở hữu tiền); `admin.payout` gọi qua facade. Ghi mục 6 nếu muốn đổi |
-| [ ] | `CodRemittance` (L4772) | `shipping.cod.domain` | 12 | 1 | | Dùng `CarrierType` của `shipping.shipment.domain` (cùng module) — nếu Phase 7 chưa làm, tạo enum đó ngay ở đây |
+| [x] | `VendorWallet` (L4333) | `payment.wallet.domain` | 8 | 6 | ✔ | |
+| [x] | `WalletTransaction` (L4447) | `payment.wallet.domain` | 10 | 3 | | 2 factory `static debit/credit(VendorWallet …)` |
+| [x] | `WithdrawalRequest` (L4544) | `payment.wallet.domain` | 12 | 4 | | Đặt ở `payment` (sở hữu tiền); `admin.payout` gọi qua facade. Ghi mục 6 nếu muốn đổi |
+| [x] | `CodRemittance` (L4772) | `shipping.cod.domain` | 12 | 1 | | Dùng `CarrierType` của `shipping.shipment.domain` (cùng module) — nếu Phase 7 chưa làm, tạo enum đó ngay ở đây |
 
-- [ ] Enum: `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus` (payment.wallet) · `CodRemittanceStatus` (shipping.cod).
-- [ ] 8 repository.
+- [x] Enum: `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus` (payment.wallet) · `CodRemittanceStatus` (shipping.cod).
+- [x] 8 repository.
 
 **Lượt 6c — Migration `V6__payment.sql`**
-- [ ] Thứ tự: `payment_transactions` → `payment_refunds` → `escrow_ledgers` → `vendor_wallets` → `wallet_transactions` → `withdrawal_requests` → `financial_ledger` → `cod_remittances`.
-- [ ] Index 13.1: `UNIQUE payment_transactions(idempotency_key)`, `UNIQUE (gateway_transaction_id)`, partial `escrow_ledgers(status, release_eligible_at) WHERE status = 'HELD'`.
-- [ ] FK nợ: `payment_refunds.refund_request_id` → `refund_requests` (để lại cho V8 — mục 5).
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `payment_transactions` → `payment_refunds` → `escrow_ledgers` → `vendor_wallets` → `wallet_transactions` → `withdrawal_requests` → `financial_ledger` → `cod_remittances`.
+- [x] Index 13.1: `UNIQUE payment_transactions(idempotency_key)`, `UNIQUE (gateway_transaction_id)`, partial `escrow_ledgers(status, release_eligible_at) WHERE status = 'HELD'`.
+- [x] FK nợ: `payment_refunds.refund_request_id` → `refund_requests` (để lại cho V8 — mục 5).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -268,14 +269,14 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `ShipmentTracking` (L4847) | `shipping.shipment.domain` | 11 | 3 | | Giữ `events`; factory `static forReturn` |
-| [ ] | `ShipmentEvent` (L4918) | `shipping.shipment.domain` | 7 | 1 | | |
-| [ ] | `VendorShippingConfig` (L4984) | `shipping.shipment.domain` | 8 | 2 | | Bảng `vendor_shipping_config` (số ít) |
+| [x] | `ShipmentTracking` (L4847) | `shipping.shipment.domain` | 11 | 3 | | Giữ `events`; factory `static forReturn` |
+| [x] | `ShipmentEvent` (L4918) | `shipping.shipment.domain` | 7 | 1 | | |
+| [x] | `VendorShippingConfig` (L4984) | `shipping.shipment.domain` | 8 | 2 | | Bảng `vendor_shipping_config` (số ít) |
 
-- [ ] Enum: `CarrierType` (nếu chưa tạo ở 6b), `ShipmentDirection`, `ShipmentTrackingStatus` (shipping.shipment).
-- [ ] 3 repository.
-- [ ] Migration: 2 partial unique index ghi ở L4844–4845 (`uq_shipment_outbound`, `uq_shipment_return`).
-- [ ] Kiểm tra cuối Phase.
+- [x] Enum: `CarrierType` (nếu chưa tạo ở 6b), `ShipmentDirection`, `ShipmentTrackingStatus` (shipping.shipment).
+- [x] 3 repository.
+- [x] Migration: 2 partial unique index ghi ở L4844–4845 (`uq_shipment_outbound`, `uq_shipment_return`).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -283,13 +284,13 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `RefundRequest` (L5054) | `support.refund.domain` | 22 | 16 | | Giữ `items`, `evidences`. 2 PT private (`applyApproval`, `requireStatus`). Đọc thêm bảng đồng bộ L5250 |
-| [ ] | `RefundRequestItem` (L5284) | `support.refund.domain` | 5 | 1 | | |
-| [ ] | `RefundEvidence` (L5319) | `support.refund.domain` | 7 | 2 | | |
+| [x] | `RefundRequest` (L5054) | `support.refund.domain` | 22 | 16 | | Giữ `items`, `evidences`. 2 PT private (`applyApproval`, `requireStatus`). Đọc thêm bảng đồng bộ L5250 |
+| [x] | `RefundRequestItem` (L5284) | `support.refund.domain` | 5 | 1 | | |
+| [x] | `RefundEvidence` (L5319) | `support.refund.domain` | 7 | 2 | | |
 
-- [ ] Enum: `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType` (support.refund).
-- [ ] 3 repository · migration · trả FK nợ ở cuối V8: `payment_refunds.refund_request_id` (V6) và `shipment_trackings.refund_request_id` (V7) → `refund_requests`.
-- [ ] Kiểm tra cuối Phase.
+- [x] Enum: `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType` (support.refund).
+- [x] 3 repository · migration · trả FK nợ ở cuối V8: `payment_refunds.refund_request_id` (V6) và `shipment_trackings.refund_request_id` (V7) → `refund_requests`.
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -297,13 +298,13 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `ProductReview` (L5414) | `social.review.domain` | 16 | 4 | | Index 13.1 `(vendor_id, created_at DESC)` + biểu thức `((aspect_sentiment_json ->> 'overall'))` |
-| [ ] | `ReviewReport` (L5577) | `social.review.domain` | 6 | 1 | | |
-| [ ] | `ReviewHelpfulVote` (L5632) | `social.review.domain` | 4 | 1 | | `review_id` CASCADE |
-| [ ] | `ShopFollow` (L5536) | `social.follow.domain` | 4 | 1 | | |
+| [x] | `ProductReview` (L5414) | `social.review.domain` | 16 | 4 | | Index 13.1 `(vendor_id, created_at DESC)` + biểu thức `((aspect_sentiment_json ->> 'overall'))` |
+| [x] | `ReviewReport` (L5577) | `social.review.domain` | 6 | 1 | | |
+| [x] | `ReviewHelpfulVote` (L5632) | `social.review.domain` | 4 | 1 | | `review_id` CASCADE |
+| [x] | `ShopFollow` (L5536) | `social.follow.domain` | 4 | 1 | | |
 
-- [ ] Enum: `ReviewReportReason` (social.review).
-- [ ] 4 repository · migration · Kiểm tra cuối Phase.
+- [x] Enum: `ReviewReportReason` (social.review).
+- [x] 4 repository · migration · Kiểm tra cuối Phase.
 
 ---
 
@@ -311,14 +312,14 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Notification` (L5670) | `notification.inbox.domain` | 16 | 3 | | Index 13.1 `(user_id, is_read, created_at DESC)` |
-| [ ] | `PlatformNotification` (L5774) | `notification.platform.domain` | 12 | 1 | | |
-| [ ] | `UserPlatformNotificationRead` (L5833) | `notification.platform.domain` | 3 | 1 | | `@IdClass` → tạo `UserPlatformNotificationReadId` (D4) |
-| [ ] | `AdminNotification` (L5994) | `notification.admin.domain` | 9 | 1 | | |
-| [ ] | `HomeBanner` (L5893) | `admin.banner.domain` | 17 | 4 | | `@Table indexes` |
+| [x] | `Notification` (L5670) | `notification.inbox.domain` | 16 | 3 | | Index 13.1 `(user_id, is_read, created_at DESC)` |
+| [x] | `PlatformNotification` (L5774) | `notification.platform.domain` | 12 | 1 | | |
+| [x] | `UserPlatformNotificationRead` (L5833) | `notification.platform.domain` | 3 | 1 | | `@IdClass` → tạo `UserPlatformNotificationReadId` (D4) |
+| [x] | `AdminNotification` (L5994) | `notification.admin.domain` | 9 | 1 | | |
+| [x] | `HomeBanner` (L5893) | `admin.banner.domain` | 17 | 4 | | `@Table indexes` |
 
-- [ ] Enum: `NotificationType`, `NotificationChannel`, `NotificationDeliveryStatus` (notification.inbox) · `PlatformNotificationTarget` (notification.platform) · `AdminNotificationType` (notification.admin) · `BannerPosition` (admin.banner).
-- [ ] 5 repository · migration · Kiểm tra cuối Phase.
+- [x] Enum: `NotificationType`, `NotificationChannel`, `NotificationDeliveryStatus` (notification.inbox) · `PlatformNotificationTarget` (notification.platform) · `AdminNotificationType` (notification.admin) · `BannerPosition` (admin.banner).
+- [x] 5 repository · migration · Kiểm tra cuối Phase.
 
 ---
 
@@ -326,25 +327,25 @@
 
 | ✓ | Entity (dòng) | Package | Trường | PT | @V | Quan hệ bỏ (D2) / ghi chú |
 |---|---|---|---|---|---|---|
-| [ ] | `Conversation` (L6058) | `social.chat.domain` | 10 | 2 | | Giữ `messages`; `@Table` có unique constraint |
-| [ ] | `Message` (L6123) | `social.chat.domain` | 10 | 1 | | Index 13.1 `(conversation_id, created_at DESC)` |
-| [ ] | `SystemLog` (L6207) | `common.audit` (stub) | 12 | 2 (+`prePersist`) | | Id `String` UUID sinh ở `@PrePersist`; chỉ ghi thêm; index `(created_at, action_type)` |
+| [x] | `Conversation` (L6058) | `social.chat.domain` | 10 | 2 | | Giữ `messages`; `@Table` có unique constraint |
+| [x] | `Message` (L6123) | `social.chat.domain` | 10 | 1 | | Index 13.1 `(conversation_id, created_at DESC)` |
+| [x] | `SystemLog` (L6207) | `common.audit` (stub) | 12 | 2 (+`prePersist`) | | Id `String` UUID sinh ở `@PrePersist`; chỉ ghi thêm; index `(created_at, action_type)` |
 
-- [ ] Enum: `MessageType` (social.chat) · `AuditAction` (common.audit).
-- [ ] `ConversationRepository`, `MessageRepository`; thay stub `SystemLogRepository` (`JpaRepository<SystemLog, String>`).
-- [ ] Migration V11, V12 · Kiểm tra cuối Phase.
+- [x] Enum: `MessageType` (social.chat) · `AuditAction` (common.audit).
+- [x] `ConversationRepository`, `MessageRepository`; thay stub `SystemLogRepository` (`JpaRepository<SystemLog, String>`).
+- [x] Migration V11, V12 · Kiểm tra cuối Phase.
 
 ---
 
 ### Phase 12 — Nghiệm thu toàn bộ
 
-- [ ] **Đếm tổng:** 65 class `@Entity`, 5 class khóa gộp, 55 enum (5 ở `common.domain`, `AuditAction` ở `common.audit`, 49 trong các module), 65 repository — liệt kê bằng `grep -rl "@Entity"` và so với Mục lục ENTITY.md (L25–L39).
-- [ ] **Phương thức:** với mỗi entity, số phương thức nghiệp vụ khớp Phụ lục E (L7193–L7458; tổng 202).
-- [ ] **Enum:** mỗi enum khớp từng giá trị Phụ lục A (L6357–L6497) và mỗi `CHECK` trong SQL khớp enum Java.
-- [ ] **Quan hệ:** mục 5 không còn FK nợ chưa trả; mọi FK trong Phụ lục B.1 (101 quan hệ) có constraint ở DB (trừ *Not a DB Foreign Key*).
-- [ ] **Test kiểm schema:** tạo `src/test/java/com/genie/support/SchemaValidationIT.java` — `@DataJpaTest` + `@AutoConfigureTestDatabase(replace = NONE)` + Testcontainers `postgres:16`, Flyway chạy V1–V12, Hibernate `validate`; test rỗng chỉ cần context khởi động.
-- [ ] Chạy `./mvnw -q verify` (cần Docker): compile, `ModuleBoundaryTest`, `SchemaValidationIT` đều xanh.
-- [ ] Không còn file domain nào chứa chú thích `TODO: hiện thực` trong 11 module + `common/audit`.
+- [x] **Đếm tổng:** 65 class `@Entity`, 5 class khóa gộp, 55 enum (5 ở `common.domain`, `AuditAction` ở `common.audit`, 49 trong các module), 65 repository — liệt kê bằng `grep -rl "@Entity"` và so với Mục lục ENTITY.md (L25–L39).
+- [x] **Phương thức:** với mỗi entity, số phương thức nghiệp vụ khớp Phụ lục E (L7193–L7458; tổng 202).
+- [x] **Enum:** mỗi enum khớp từng giá trị Phụ lục A (L6357–L6497) và mỗi `CHECK` trong SQL khớp enum Java.
+- [x] **Quan hệ:** mục 5 không còn FK nợ chưa trả; mọi FK trong Phụ lục B.1 (101 quan hệ) có constraint ở DB (trừ *Not a DB Foreign Key*).
+- [x] **Test kiểm schema:** tạo `src/test/java/com/genie/support/SchemaValidationIT.java` — `@DataJpaTest` + `@AutoConfigureTestDatabase(replace = NONE)` + Testcontainers `postgres:16`, Flyway chạy V1–V12, Hibernate `validate`; test rỗng chỉ cần context khởi động.
+- [x] Chạy `./mvnw -q verify` (cần Docker): compile, `ModuleBoundaryTest`, `SchemaValidationIT` đều xanh.
+- [x] Không còn file domain nào chứa chú thích `TODO: hiện thực` trong 11 module + `common/audit`.
 
 ---
 
@@ -352,20 +353,29 @@
 
 | ✓ | Cột (file tạo cột) | Bảng đích | Thêm `ALTER TABLE` ở |
 |---|---|---|---|
-| [ ] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
-| [ ] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
-| [ ] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
-| [ ] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
-| [ ] | `shipment_trackings.refund_request_id` (V7) | `refund_requests` | cuối V8 |
+| [x] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
+| [x] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
+| [x] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
+| [x] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
+| [x] | `shipment_trackings.refund_request_id` (V7) | `refund_requests` | cuối V8 |
 | [ ] | *(bổ sung khi phát hiện thêm trong lúc làm)* | | |
 
 ---
 
 ## 6. NHẬT KÝ SAI LỆCH / CÂU HỎI
 
-> Ghi mọi chỗ phải lệch khỏi ENTITY.md ngoài D1–D7, mọi mâu thuẫn tìm thấy, mọi quyết định cần người dùng chốt. Định dạng: `Phase · Entity · vấn đề · đề xuất · trạng thái`.
+> Ghi mọi chỗ phải lệch khỏi ENTITY.md ngoài D1–D8, mọi mâu thuẫn tìm thấy, mọi quyết định cần người dùng chốt. Định dạng: `Phase · Entity · vấn đề · đề xuất · trạng thái`.
 
-- *(trống)*
+- P01b · `VendorProfile` · `common.domain.NameNormalizer` mới là stub rỗng, `verifyPayoutAccount` cần `normalize()` · hiện thực tối thiểu theo mô tả ENTITY.md 1.4 (bỏ dấu kể cả đ/Đ, viết hoa, gộp khoảng trắng) · đã làm
+- P01c · `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` · Hibernate `DuplicateMappingException` (cột FK có 2 tên logic) · thêm điều chỉnh D8, sửa 4 entity đã commit ở P01a/P01b · đã làm
+- P01c · checklist · tên trường D2 ghi sai: thật là `Product.vendorProfile`, `CartItem.variant`, `Order.vendorProfile` · đã sửa bảng Phase 2/3/5 · đã làm
+- P01c · `SchemaValidationIT` · viết sớm (chưa commit) để chạy ở mỗi lượt migration; commit ở P12 · JVM Windows mặc định `Asia/Saigon` PostgreSQL 16 không nhận → test đặt UTC · đã làm
+- P07 · `VendorShippingConfig.supports()` · `switch` không có nhánh `JNT_EXPRESS` (enum `CarrierType` có) → Java 21 báo lỗi biên dịch · P07 tạm thêm `case JNT_EXPRESS -> false`; **P11 sửa lại** thành `Boolean.TRUE.equals(this.jtEnabled)` vì entity có sẵn cờ `jtEnabled` · nên bổ sung vào ENTITY.md · đã làm
+- P11 · `Conversation.customerUnread` / `vendorUnread`, `UserCoin.balance`, 5 cờ `VendorShippingConfig.*Enabled` · cột NOT NULL có giá trị khởi tạo tự nhiên nhưng ENTITY.md thiếu `@Builder.Default` (vi phạm Quy ước 12; `onNewMessage()` / `earn()` dùng `+=` sẽ NPE) · thêm `@Builder.Default` (0 / theo chú thích "mặc định bật/tắt") + `DEFAULT` ở V4, V7, V11; sửa luôn 2 file entity đã commit ở P04b, P07 · đã làm
+- P11 · `SystemLog` · checklist ghi 12 trường, ENTITY.md thực có 11 (bảng đếm tự động đếm thừa) · giữ đúng ENTITY.md · đã làm
+- P12 · `UserWishlist` · đối chiếu Phụ lục B.1: thiếu 2 FK `user_wishlists.user_id` (◆ → CASCADE), `product_id` vì chú thích trường không ghi dạng `FK → bảng.id` · thêm vào cuối V2 · đã làm
+- P12 · `common/audit/AuditLogger`, `common/domain/Money`, `Haversine` · vẫn là stub `TODO` — là service / tiện ích, không phải entity, ngoài phạm vi checklist · để lại
+- P12 · Phụ lục E · thực tế 203 dòng phương thức (tài liệu ghi 202) — code khớp đủ 203 · ghi nhận
 
 ---
 
@@ -376,6 +386,7 @@
 - **Mỗi lượt một nhánh mới, một commit.** Tên nhánh: `feature/entity-p<NN><lượt>-<mo-ta>` — chữ thường, gạch nối. Chưa có mã Jira nên bỏ phần `GNE-<số>` khỏi tên nhánh và commit (giống tiền lệ `plan/2026-11-11/web`, quyết định D6); có mã thì thêm ` [#GNE-<số>]` cuối commit.
 - **Nhánh xếp chồng:** lượt sau phụ thuộc code lượt trước (vd. 1c cần entity của 1a, 1b) ⇒ nhánh lượt đầu tiên (P00) tách từ `develop`; **mỗi lượt sau tách từ nhánh của lượt ngay trước**. Nếu nhánh lượt trước đã được merge vào `develop` thì tách từ `develop` mới nhất (`git switch develop && git pull`).
 - **Commit:** đúng `commitlint.config.cjs` — `<type>(<scope>): <subject>`, subject tiếng Anh, chữ thường, không dấu chấm cuối, dòng đầu ≤ 100 ký tự; body tiếng Việt nếu cần. Dùng thông điệp ghi sẵn ở bảng 7.3. Không `--no-verify`, không `--author`; hook commitlint / lint-staged lỗi thì sửa nguyên nhân.
+- **Không có collaborator:** thông điệp commit **không** có dòng `Co-Authored-By:` (cũng không có dòng "Generated with Claude Code"). Commit chỉ mang danh tính git của chủ repo (`git config user.name` / `user.email`). Quy tắc này thắng mọi hướng dẫn tự động thêm dòng attribution. Chỉ viết `-m "<subject>"` (+ body tiếng Việt nếu cần). Trước khi commit, kiểm `git log -1 --format=%B` không chứa `Co-Authored-By`.
 - Commit gồm: code của lượt **+** file này (đã tick checklist và ghi nhật ký mục 8). Lượt P00 commit thêm chính file plan này lần đầu.
 - **Không tự `git push`, không mở PR** — chỉ làm khi người dùng yêu cầu (khi đó mở PR xếp chồng: PR của lượt N có base là nhánh lượt N−1, PR P00 base `develop`).
 
@@ -394,28 +405,28 @@
 | ✓ | Lượt | Nhánh | Thông điệp commit |
 |---|---|---|---|
 | [x] | P00 | `feature/entity-p00-shared-enums` | `feat(common): add shared enums for entity layer` |
-| [ ] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
-| [ ] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
-| [ ] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
-| [ ] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
-| [ ] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
-| [ ] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
-| [ ] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
-| [ ] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
-| [ ] | P04b | `feature/entity-p04b-flashsale-coin` | `feat(promotion): add flash sale and coin entities` |
-| [ ] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
-| [ ] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
-| [ ] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
-| [ ] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
-| [ ] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
-| [ ] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
-| [ ] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
-| [ ] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
-| [ ] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
-| [ ] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
-| [ ] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
-| [ ] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
-| [ ] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
+| [x] | P01a | `feature/entity-p01a-auth-entities` | `feat(auth): add user, profile, address and refresh token entities` |
+| [x] | P01b | `feature/entity-p01b-vendor-admin-entities` | `feat(vendor): add vendor profile, kyc and staff permission entities` |
+| [x] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
+| [x] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
+| [x] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
+| [x] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
+| [x] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
+| [x] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
+| [x] | P04b | `feature/entity-p04b-flashsale-coin` | `feat(promotion): add flash sale and coin entities` |
+| [x] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
+| [x] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
+| [x] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
+| [x] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
+| [x] | P06a | `feature/entity-p06a-payment-escrow` | `feat(payment): add payment, escrow and ledger entities` |
+| [x] | P06b | `feature/entity-p06b-wallet-cod` | `feat(payment): add wallet, withdrawal and cod remittance entities` |
+| [x] | P06c | `feature/entity-p06c-payment-migration` | `feat(db): add payment schema migration` |
+| [x] | P07 | `feature/entity-p07-shipping` | `feat(shipping): add shipment entities and migration` |
+| [x] | P08 | `feature/entity-p08-refund` | `feat(support): add refund entities and migration` |
+| [x] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
+| [x] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
+| [x] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
+| [x] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
 
 ---
 
@@ -425,4 +436,26 @@
 
 | # | Ngày | Lượt | Nhánh (tách từ) | Commit | Đã làm (entity / enum / repo / migration) | Kiểm tra | Kết quả & ghi chú |
 |---|---|---|---|---|---|---|---|
-| 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | (lượt sau điền) | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
+| 1 | 2026-11-14 | P00 | `feature/entity-p00-shared-enums` (từ `develop`) | `6397563` | 5 enum ở `common.domain`: `UserRole`, `PaymentMethod`, `PaymentStatus`, `VoucherType`, `FundingParty`; commit kèm file plan | `compile` ✔, `ModuleBoundaryTest` ✔ | Xong. Không có sai lệch so với Phụ lục A |
+| 2 | 2026-11-14 | P01a | `feature/entity-p01a-auth-entities` (từ `feature/entity-p00-shared-enums`) | `2ec68f7` | Entity `User`, `CustomerProfile`, `Address`, `RefreshToken`; enum `AccountStatus`, `Gender`, `AddressLabel`; 4 repository (`auth.profile` / `auth.address` / `auth.token`) | `compile` ✔, `ModuleBoundaryTest` ✔; đếm trường 18/14/16/9, phương thức 7/2/2/2 khớp | Xong. D2: `User` bỏ `vendorProfile`, `adminProfile` (18 trường thay vì 20). `User.addresses` / `refreshTokens` trỏ sang feature khác của cùng module `auth` nên giữ |
+| 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | `b7f3611` | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
+| 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | `42e10b1` | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |
+| 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | `a69b974` | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
+| 6 | 2026-11-14 | P02b | `feature/entity-p02b-catalog-support` (từ `feature/entity-p02a-catalog-core`) | `a20cb56` | Entity `CategoryAttribute`, `UserWishlist`, `CategoryProposal`, `ProductModerationResult`, `SearchKeywordStat`, `ProductViewStat`; enum `AttributeDataType`, `CategoryProposalStatus`, `ModerationDecision`, `TrafficSource`; 6 repository (đủ 12 repository của Phase 2) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 15/4/11/11/6/8, PT 2/0/2/2/1/1 khớp | Xong. Không có quan hệ chéo module trong lượt này |
+| 7 | 2026-11-14 | P02c | `feature/entity-p02c-catalog-migration` (từ `feature/entity-p02b-catalog-support`) | `feaa6dc` | `V2__catalog.sql`: 12 bảng, CHECK enum, unique/index từ `@Table`, 15 FK + FK tự tham chiếu `categories.parent_id`; trả FK nợ `vendor_profiles.category_id` (SET NULL); hàm `immutable_unaccent`, cột sinh `products.search_vector` + 5 index mục 13.1 | V1+V2 chạy trên `postgres:16` ✔, `SchemaValidationIT` ✔ (24 entity), `ModuleBoundaryTest` ✔ | Xong. `@UniqueConstraint(columnNames = {"userId", "productId"})` của `UserWishlist` dùng tên Java → SQL dùng `user_id, product_id`. Full-text dùng cấu hình `simple` + unaccent (PostgreSQL không có cấu hình tiếng Việt) |
+| 8 | 2026-11-14 | P03 | `feature/entity-p03-cart` (từ `feature/entity-p02c-catalog-migration`) | `c0c1f13` | Thay stub `Cart`, `CartItem`, `CartRepository`; thêm `CartItemRepository`; `V3__cart.sql` (2 bảng, 3 FK: `carts.user_id`, `cart_items.cart_id` CASCADE, `cart_items.product_variant_id`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V3 trên `postgres:16` ✔ (22 bảng), `SchemaValidationIT` ✔; trường 4/6, PT 4/2 khớp | Xong. D2: `CartItem` bỏ `variant` (6 trường thay vì 7) |
+| 9 | 2026-11-14 | P04a | `feature/entity-p04a-voucher` (từ `feature/entity-p03-cart`) | `9734a0d` | Entity `Voucher`, `VoucherUsage`, `UserVoucher`, 4 bảng nối phạm vi; 4 class khóa gộp `*Id`; enum `VoucherScope`, `DiscountType`; 7 repository (bảng nối dùng kiểu id gộp) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 27/7/6/3/3/3/3, PT 5/1/1/1/1/1/1 khớp | Xong. D2: `UserVoucher` bỏ `user`; 4 bảng nối bỏ `category` / `product` |
+| 10 | 2026-11-14 | P04b | `feature/entity-p04b-flashsale-coin` (từ `feature/entity-p04a-voucher`) | `1949682` | Entity `FlashSaleCampaign`, `FlashSaleItem`, `UserCoin`, `CoinTransaction`, `DailyCheckin`; enum `FlashSaleStatus`, `FlashSaleItemStatus`, `CoinTransactionType`; 5 repository (đủ 12 repository của Phase 4) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/9/5/8/4, PT 4/5/3/2/1 khớp | Xong. `UserCoin.verifyHash` cần import `MessageDigest`, `StandardCharsets` (ENTITY.md lược import) |
+| 11 | 2026-11-14 | P04c | `feature/entity-p04c-promotion-migration` (từ `feature/entity-p04b-flashsale-coin`) | `8c924bd` | `V4__promotion.sql`: 12 bảng (4 bảng nối PK gộp, `user_coins` PK = `user_id`), CHECK enum, UNIQUE `(voucher_id, checkout_session_id)`, `(user_id, voucher_id)`, 19 FK (bảng nối CASCADE theo voucher) | V1–V4 trên `postgres:16` ✔ (34 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. 2 FK nợ `voucher_usages.checkout_session_id`, `voucher_usages.order_id` để V5 |
+| 12 | 2026-11-14 | P05a | `feature/entity-p05a-order-aggregate` (từ `feature/entity-p04c-promotion-migration`) | `563b3b9` | Thay stub `Order`, `OrderStatus`, `OrderRepository`; thêm enum `FundingStatus` | `compile` ✔, `ModuleBoundaryTest` ✔; 33 trường, 22 PT (kể cả `transitionTo`, `isCod` private), hằng `ALLOWED` 14/14 entry khớp ENTITY.md | Xong. D2: bỏ `vendorProfile` (→ `vendor`). `paymentMethod` / `paymentStatus` dùng enum ở `common.domain` (D3) |
+| 13 | 2026-11-14 | P05b | `feature/entity-p05b-checkout-reservation` (từ `feature/entity-p05a-order-aggregate`) | `edb5958` | Thay stub `CheckoutSession`, `SessionStatus`, `CheckoutSessionRepository`, `OrderItem`, `OrderDiscount`, `StockReservation`, `StockReservationRepository`; thêm enum `StockReservationStatus`, `OrderItemRepository`, `OrderDiscountRepository` | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/16/7/9, PT 4/2/1/3 khớp | Xong. D2: `OrderItem` bỏ `productVariant`. `CheckoutSession.orders` giữ (cùng module `order`) |
+| 14 | 2026-11-14 | P05c | `feature/entity-p05c-order-migration` (từ `feature/entity-p05b-checkout-reservation`) | `4b21972` | `V5__order.sql`: 5 bảng, CHECK enum, 10 FK (`order_items`/`order_discounts` CASCADE theo đơn, `order_discounts.voucher_id` SET NULL), 4 index mục 13.1 (2 partial); trả 2 FK nợ của `voucher_usages` | V1–V5 trên `postgres:16` ✔ (39 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong |
+| 15 | 2026-11-14 | P06a | `feature/entity-p06a-payment-escrow` (từ `feature/entity-p05c-order-migration`) | `a489e42` | Entity `PaymentTransaction`, `PaymentRefund`, `EscrowLedger`, `FinancialLedger`; enum `PaymentRefundStatus`, `FundingSource`, `EscrowStatus`, `FinancialEventType`; 4 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 12/6/18/10, PT 4/2/11/1 khớp (kể cả `totalFunded()` private) | Xong. `EscrowLedger` dùng `@ColumnDefault` của Hibernate (ENTITY.md lược import) |
+| 16 | 2026-11-14 | P06b | `feature/entity-p06b-wallet-cod` (từ `feature/entity-p06a-payment-escrow`) | `ac3ef65` | Entity `VendorWallet`, `WalletTransaction`, `WithdrawalRequest` (payment.wallet), `CodRemittance` (shipping.cod); enum `WalletTransactionType`, `WalletReferenceType`, `WithdrawalStatus`, `CodRemittanceStatus`, `CarrierType` (tạo sớm ở shipping.shipment); 4 repository (đủ 8 của Phase 6) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 8/10/12/12, PT 6/3/4/1 khớp | Xong. `WithdrawalRequest` đặt ở `payment.wallet` theo checklist; `CarrierType` tạo ở lượt này vì `CodRemittance` dùng |
+| 17 | 2026-11-14 | P06c | `feature/entity-p06c-payment-migration` (từ `feature/entity-p06b-wallet-cod`) | `608dd32` | `V6__payment.sql`: 8 bảng, CHECK enum, CHECK XOR `order_id`/`checkout_session_id`, UNIQUE `gateway_transaction_id`, partial index escrow `HELD`, 10 FK; UNIQUE từ entity (`escrow_ledgers.order_id`, `vendor_wallets.vendor_id`, `cod_remittances.bank_reference`…) | V1–V6 trên `postgres:16` ✔ (47 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. FK mềm không tạo constraint: `withdrawal_requests.wallet_id`, `processed_by_admin_id`, `cod_remittances.reconciled_by_staff_id`. FK nợ `payment_refunds.refund_request_id` để V8 |
+| 18 | 2026-11-14 | P07 | `feature/entity-p07-shipping` (từ `feature/entity-p06c-payment-migration`) | `acca3ec` | Entity `ShipmentTracking`, `ShipmentEvent`, `VendorShippingConfig`; enum `ShipmentDirection`, `ShipmentTrackingStatus`; 3 repository; `V7__shipping.sql` (3 bảng, 3 FK, 2 partial unique index `uq_shipment_outbound` / `uq_shipment_return`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V7 trên `postgres:16` ✔ (50 bảng), `SchemaValidationIT` ✔; trường 11/7/8, PT 3/1/2 khớp | Xong. Sửa lệch ENTITY.md: `supports()` thiếu nhánh `JNT_EXPRESS` (mục 6). FK nợ `shipment_trackings.refund_request_id` để V8 |
+| 19 | 2026-11-14 | P08 | `feature/entity-p08-refund` (từ `feature/entity-p07-shipping`) | `3eb9b53` | Entity `RefundRequest`, `RefundRequestItem`, `RefundEvidence`; enum `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType`; 3 repository; `V8__refund.sql` (3 bảng, 5 FK) + trả 2 FK nợ `payment_refunds.refund_request_id`, `shipment_trackings.refund_request_id` | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V8 trên `postgres:16` ✔ (53 bảng), `SchemaValidationIT` ✔; trường 22/5/7, PT 16/1/2 khớp (kể cả `applyApproval`, `requireStatus` private) | Xong. Sổ FK nợ mục 5 đã trả hết |
+| 20 | 2026-11-14 | P09 | `feature/entity-p09-review` (từ `feature/entity-p08-refund`) | `9842965` | Entity `ProductReview`, `ReviewReport`, `ReviewHelpfulVote`, `ShopFollow`; enum `ReviewReportReason`; 4 repository; `V9__review.sql` (4 bảng, 10 FK, UNIQUE `order_item_id`, `(customer_id, vendor_id)`, `(review_id, user_id)`, 3 index: `(product_id, is_visible)`, `(vendor_id, created_at DESC)`, biểu thức `aspect_sentiment_json ->> 'overall'`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V9 trên `postgres:16` ✔ (57 bảng), `SchemaValidationIT` ✔; trường 16/6/4/4, PT 4/1/1/1 khớp | Xong. `ShopFollow` `@UniqueConstraint` dùng tên Java → SQL dùng `customer_id, vendor_id` |
+| 21 | 2026-11-14 | P10 | `feature/entity-p10-notification` (từ `feature/entity-p09-review`) | `f6ddae5` | Entity `Notification`, `PlatformNotification`, `UserPlatformNotificationRead` (+ khóa gộp `UserPlatformNotificationReadId`), `AdminNotification`, `HomeBanner`; 6 enum; 5 repository; `V10__notification.sql` (5 bảng, PK gộp, 4 FK, index `idx_banner_position_time` + `notifications(user_id, is_read, created_at DESC)`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V10 trên `postgres:16` ✔ (62 bảng), `SchemaValidationIT` ✔; trường 16/12/3/9/17, PT 3/1/1/1/4 khớp | Xong. `home_banners.created_by_admin_id` không FK (dữ liệu kiểm toán, ENTITY.md 10.4) |
+| 22 | 2026-11-14 | P11 | `feature/entity-p11-chat-audit` (từ `feature/entity-p10-notification`) | `19d879b` | Entity `Conversation`, `Message`, thay stub `SystemLog` + `SystemLogRepository` (`JpaRepository<SystemLog, String>`); enum `MessageType`, `AuditAction`; `V11__chat.sql` (2 bảng, 6 FK, index `(conversation_id, created_at DESC)`), `V12__audit.sql` (`system_logs` + index `(created_at, action_type)`); sửa thiếu `@Builder.Default` ở `Conversation`, `UserCoin`, `VendorShippingConfig` và nhánh J&T | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V12 trên `postgres:16` ✔ (**65 bảng**), `SchemaValidationIT` ✔ (65 entity); trường 10/10/11, PT 2/1/2 (+`prePersist`) khớp | Xong. Lệch ENTITY.md ghi ở mục 6 (mặc định bộ đếm / cờ, nhánh J&T, số trường `SystemLog`) |
+| 23 | 2026-11-14 | P12 | `feature/entity-p12-schema-verification` (từ `feature/entity-p11-chat-audit`) | `ec7c676` | Commit `SchemaValidationIT` (Testcontainers `postgres:16` + Flyway V1–V12 + Hibernate validate, đặt UTC); thêm 2 FK `user_wishlists` vào V2; đối chiếu toàn bộ | 65 `@Entity`, 5 khóa gộp, 55 enum (giá trị khớp Phụ lục A), 65 repository; PT khớp Phụ lục E 203/203; 100 FK ở DB khớp B.1 (trừ `withdrawal_requests.wallet_id` FK mềm); `./mvnw verify` ✔ (`ModuleBoundaryTest` 4/4, `SchemaValidationIT` 1/1) | Xong toàn bộ plan. Còn stub ngoài phạm vi: `AuditLogger`, `Money`, `Haversine` (mục 6) |
