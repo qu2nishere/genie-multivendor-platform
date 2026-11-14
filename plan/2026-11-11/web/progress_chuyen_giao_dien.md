@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A–B trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A–C trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 12 / 26 | — | `feature/web-polish` |
-| **Tổng** | | **379** | **50** | **415 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 19 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **422 / 429** | | |
 
 ---
 
@@ -635,13 +635,13 @@
 
 **Nhóm C — Kiểm thử**
 
-- [ ] **G13.11** Bổ sung Vitest
-- [ ] **G13.12** E2E khách vãng lai
-- [ ] **G13.13** E2E mua hàng
-- [ ] **G13.14** E2E đơn hàng
-- [ ] **G13.15** E2E người bán
-- [ ] **G13.16** E2E quản trị
-- [ ] **G13.C3** 🔖 COMMIT `test(web): add unit and e2e coverage for migrated screens` · hash: `_______`
+- [x] **G13.11** Bổ sung Vitest
+- [x] **G13.12** E2E khách vãng lai
+- [x] **G13.13** E2E mua hàng
+- [x] **G13.14** E2E đơn hàng
+- [x] **G13.15** E2E người bán
+- [x] **G13.16** E2E quản trị
+- [x] **G13.C3** 🔖 COMMIT `test(web): add unit and e2e coverage for migrated screens` · hash: `7254e9f`
 
 **Nhóm D — Dọn dẹp & bàn giao**
 
@@ -888,6 +888,13 @@
 | G13.08 | Đối chiếu 63 chỉ thị với bảng TS 5.1: đúng ở hầu hết (Header / BuyBox / trang giỏ, checkout, đơn, tài khoản, form auth `load`; nút yêu thích / theo dõi / chia sẻ / bộ lọc `idle`; đánh giá, lưới sản phẩm, banner dưới màn `visible`; Seller / Admin / chat `only`). Chuyển 2 island sang `client:idle`: `AuthTools` (theme + ngôn ngữ góc trang đăng nhập) và `Countdown` trang Flash Sale (SSR đã in giờ, trang chủ cũng dùng `idle`). |
 | G13.09 | `seo.spec.ts` thêm kịch bản `noindex, nofollow` cho `/auth/*`, `/cart`, `/checkout/result`, `/dev/ui` và (có cookie đăng nhập) `/seller`, `/admin`, `/orders`, `/account/*`, `/chat`, `/checkout`: **18/18 xanh** (360 + 1440). Lighthouse 12.8 (Chromium của Playwright) trên bản build mock **sau proxy gzip cục bộ** (server Node của Astro không nén — production nén ở reverse proxy; đo thẳng không nén: hiệu năng mobile 57–58, LCP 11–13 s). Điểm (hiệu năng / trợ năng / thực hành tốt / SEO): **trang chủ** mobile 65 / 100 / 100 / 100 (LCP 8,0 s — là ảnh popup banner lần đầu, render sau hydrate), desktop 91 / 100 / 100 / 100; **danh mục** mobile 66 / 100 / 100 / 100, desktop 94 / 100 / 100 / 100; **sản phẩm** mobile 67 / 100 / 100 / 100, desktop 95 / 100 / 100 / 100. Đã sửa: banner phụ đầu trang + ảnh popup không còn `lazy`. Việc còn lại (ghi cho giai đoạn sau): (1) chunk chung 267 KB (88 KB gzip) chứa **cả hai** từ điển vi + en — tách theo ngôn ngữ cần `t()` bất đồng bộ; (2) CSS chặn render 186 KB (34 KB gzip, gồm themes.css của 9 theme) — tách CSS theme theo `data-theme`; (3) banner 1600 px JPEG cho mọi khổ — cần srcset / WebP từ pipeline ảnh MinIO. |
 | G13.10 | Không còn `/* eslint-disable */` toàn tệp ở 3 tệp sinh tự động (`seed.ts`, `voucher.mock.ts`, `policies.data.ts`) — bỏ đi vẫn sạch lint nên luật boundaries áp cho cả 3. Còn 17 dòng `eslint-disable-next-line react-hooks/exhaustive-deps` có chủ đích (chạy hiệu ứng 1 lần khi mở hộp / đổi khóa), không có cho boundaries. Không có `any` (luật `no-explicit-any: error` cả mã lẫn test). Override nới boundaries chỉ cho test / tệp cấu hình (G01.08). |
+| G13.11 | Rà theo danh sách: cả 34 feature có `domain/` đều đã có test; rà sâu từng tệp `domain/*` (trừ `*.types.ts`) chưa được test nào import → thêm 3 tệp: `payment/domain/escrow.test.ts` (Money Rail), `account/domain/account.menu.test.ts` (mục /account, 404 mục lạ), `admin-moderation/domain/moderation.schema.test.ts` (lý do từ chối, ghi chú ≤ 500). Vitest: 64 tệp / 313 test. |
+| G13.12–G13.16 (hạ tầng) | E2E mặc định chạy trên **bản build production** (`astro build` → `node dist/server/entry.mjs`, cổng 4322) thay vì `astro dev`: dev server phục vụ hàng trăm module ESM rời làm Chromium báo `ERR_INSUFFICIENT_RESOURCES` khi 2 trình duyệt chạy song song (island giỏ / thanh toán không hydrate được — không phải lỗi sản phẩm). `E2E_DEV=1` dùng lại dev server, `E2E_PORT` đổi cổng (cổng 4321 đang có phiên dev khác). Giới hạn 2 worker (nhiều hơn làm Chromium crash 0xC0000409 trên máy Windows). Bộ chọn tiêu đề dùng `#main h1` (thanh dev toolbar của Astro có `<h1>` riêng). **Toàn bộ 44 kịch bản xanh** (22 × mobile-360 / desktop-1440). |
+| G13.12 | `guest.spec.ts`: thao tác bằng **bàn phím** (focus + Enter / Space): ô tìm kiếm header → kết quả → mở sản phẩm → chọn phân loại (kiểm `aria-pressed`) → Thêm vào giỏ → số trên icon giỏ → /cart bỏ chọn / chọn lại bằng Space → "Mua hàng (1)" → hộp "Vui lòng đăng nhập" (liên kết `next=/cart`), Esc đóng; trang cần đăng nhập chuyển `/auth/login?next=`. |
+| G13.13 | `checkout-vnpay.spec.ts` (thay stub `test.skip`): đăng nhập bằng form → giỏ ≥ 3 shop, voucher shop ở từng nhóm + "Voucher Genie (−…) + Freeship" (3 tầng), tổng **3.485.200₫** đúng bộ số vàng G10.18 → bật công tắc Điểm (bàn phím) → tổng giảm → Mua hàng → /checkout (Đơn 1/n) → chọn VNPAY → cổng mô phỏng → "Thanh toán" → "Thanh toán thành công!", mã giao dịch, ≥ 3 liên kết Theo dõi. Thêm ca "Quay lại đơn hàng" (khách hủy) → "Thanh toán thất bại" + Thử thanh toán lại / Đổi phương thức. |
+| G13.14 | `orders.spec.ts`: danh sách → Theo dõi đơn 44 (mã đơn, sao chép mã vận đơn, chưa có Trả hàng); trả hàng đơn 41 (VietQR): tải 1 ảnh + 1 video, tài khoản hoàn tiền → toast + khối `#return`; đánh giá đơn 33 bằng phím mũi tên. **Sửa kèm (trợ năng):** `RatingInput` đổi sao bằng ← → nhưng focus đứng yên ở sao cũ → nay focus đi theo sao được chọn (mẫu radiogroup WAI-ARIA). |
+| G13.15 | `kyc-onboarding.spec.ts` (thay stub): /become-seller → OTP 123456 → `/seller/kyc` → Số CCCD + Người đại diện + CCCD 2 mặt + selfie (PNG ≥ 20 KB) → "Gửi duyệt KYC" → "Hồ sơ đang chờ duyệt", mục Sản phẩm trên nav bị khóa. Shop đã xác minh: tạo sản phẩm (Lưu nháp — chỉ cần tên) → có ở tab Nháp; đơn tab Mới → Xác nhận → tab Chờ chuẩn bị → Chuẩn bị hàng. |
+| G13.16 | `admin.spec.ts`: thêm cơ chế mock `genie.mock.staff_title` (sessionStorage, `shared/auth/session.ts`) đăng nhập /admin bằng nhân viên theo chức danh MODERATOR / FINANCE_OFFICER / CS_SPECIALIST với bộ quyền `TITLE_PRESETS` — chỉ cho e2e, không có nút đổi vai (D5). Kiểm: Kiểm duyệt viên thấy đúng 4 mục, không thấy Rút tiền / Sổ cái / Phân quyền / Voucher, mở `/admin/withdrawals` → "Bạn không có quyền truy cập"; Tài chính thấy Rút tiền, không thấy Duyệt KYC; Admin phê duyệt KYC; Admin Duyệt chi → hộp chuyển khoản có nội dung `TRWD…` → Đã chuyển khoản → hoàn tất. |
 
 ## Nhật ký
 
@@ -927,3 +934,4 @@
 | 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |
 | 2026-11-14 | Hoàn thiện i18n + từ ngữ thương hiệu: chuỗi cứng còn lại sang `t()`, tên ngôn ngữ dùng chung, `isoDateVN` / `formatMonthShort` thay Intl tự viết (G13 nhóm A) | fc589e8 |
 | 2026-11-14 | So khớp hình storefront / Seller / Admin (16 màn × 3 khổ + quét 36 route SPA), sửa màu footer theo theme, thanh sắp xếp màn hẹp, tràn ngang bảng; trợ năng (Lighthouse a11y 100), tương phản 9 theme, 2 island sang `idle`, `noindex` có e2e, bỏ `eslint-disable` toàn tệp (G13 nhóm B) | 0914230 |
+| 2026-11-14 | Vitest bổ sung 3 tệp miền; E2E 6 spec / 22 kịch bản × 2 khổ màn (khách vãng lai bằng bàn phím, mua hàng VNPay + voucher 3 tầng + Điểm, đơn hàng / trả hàng / đánh giá, KYC + sản phẩm + xử lý đơn, phân quyền Admin + duyệt KYC + rút tiền), chạy trên bản build production; sửa focus của ô chọn sao (G13 nhóm C) | 7254e9f |
