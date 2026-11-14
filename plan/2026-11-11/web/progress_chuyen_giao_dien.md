@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G11, G12 nhóm A–F; Admin Portal trên `feature/admin-ui` |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G12; Admin Portal trên `feature/admin-ui` (chưa push) |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | G09 | Xác thực | 14 | 1 | 15 / 15 | — | `feature/web-auth` |
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
-| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 44 / 52 | — | `feature/admin-ui` |
+| G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
 | G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **395 / 429** | | |
+| **Tổng** | | **379** | **50** | **403 / 429** | | |
 
 ---
 
@@ -603,14 +603,14 @@
 
 **Nhóm G — Hệ thống**
 
-- [ ] **G12.39** `admin-system` miền + hạ tầng
-- [ ] **G12.40** `StaffPage` (`Rbac`)
-- [ ] **G12.41** `InviteStaff`, `RbacEditor`
-- [ ] **G12.42** `UsersPage`
-- [ ] **G12.43** `AuditLogPage`
-- [ ] **G12.44** `AccountAdminPage`
-- [ ] **G12.45** Khóa i18n `admin-system.*`
-- [ ] **G12.C7** 🔖 COMMIT `feat(admin-ui): add staff, users, audit log and account screens` · hash: `_______`
+- [x] **G12.39** `admin-system` miền + hạ tầng
+- [x] **G12.40** `StaffPage` (`Rbac`)
+- [x] **G12.41** `InviteStaff`, `RbacEditor`
+- [x] **G12.42** `UsersPage`
+- [x] **G12.43** `AuditLogPage`
+- [x] **G12.44** `AccountAdminPage`
+- [x] **G12.45** Khóa i18n `admin-system.*`
+- [x] **G12.C7** 🔖 COMMIT `feat(admin-ui): add staff, users, audit log and account screens` · hash: `0b68d13`
 
 ## G13 — Hoàn thiện, kiểm thử, bàn giao
 
@@ -867,6 +867,11 @@
 | G12.35 | Miền banner nằm ở `domain/marketing.rules.ts` (cùng các quy tắc marketing khác) thay vì file `banner.rules.ts` riêng; đích chuyển sang route mới (/c/…, /p/…-id, /shop/id, /#flash-sale, /discover, /campaign/…). Bộ banner mẫu chuyển sang kho chung `shared/api/mock/banners.ts` — storefront (promotions) và Admin cùng đọc; Admin sửa giữ trong phiên tab, storefront SSR vẫn đọc bộ gốc (khi có backend cùng một bảng). |
 | G12.36 | `BannersPage` + `BannerModal`: ảnh tải qua mục đích mới `BANNER_IMAGE` (thêm vào `upload.rules` cùng `NOTIFICATION_IMAGE` theo API 4.1, nén WebP ≤ 5 MB); ô chọn đích dùng danh mục (`catalog`), sản phẩm (`product.listProducts` + lọc shop), cửa hàng (`shop.listShops` — API thật là `/admin/shops`, ghi G13.20); đủ 8 banner đang hiển thị → lỗi dưới ô Vị trí (GNE-BNR-4221). Cột thao tác dính phải để không bị đẩy khỏi khung khi bảng cuộn ngang. |
 | G12.37 | `PlatformNotificationsPage`: `RichBox` (In đậm / In nghiêng / Liên kết qua hộp nhập URL thay `window.prompt`), `sanitizeHtml` chỉ giữ thẻ ô soạn tạo ra và href http/https — dùng khi lưu và khi hiển thị chi tiết; email người nhận cụ thể kiểm định dạng + email không tồn tại báo dưới ô (GNE-NOT-4221); chỉ sửa được khi còn hẹn giờ (GNE-NOT-4091). |
+| G12.39 | `admin-system`: kiểu / quy tắc theo 11.10 + 11.13 (chức danh nạp bộ quyền mặc định, chỉnh khác → Tùy chỉnh, không cấp MANAGE_RBAC cho nhân viên, thao tác theo trạng thái, tab + tìm người dùng theo SĐT có khoảng trắng, hạn đình chỉ 7 / 30 ngày / vô thời hạn, khoảng thời gian nhật ký theo giờ VN, màu hành động), zod mời (email `@genie.example`) / khóa / đình chỉ (Lý do khác bắt buộc mô tả) / mở khóa / tên + test. Mock nhân viên, người dùng, nhật ký theo prototype; nhật ký mẫu kết thúc 22/06/2026 nên "Hôm nay / 7 / 30 ngày" tính từ ngày đó. |
+| G12.40–G12.41 | `StaffPage`: mã quyền di chuột xem mô tả; Gửi lại lời mời / Sửa quyền / Khóa (lý do) / Mở khóa / Xóa (hộp xác nhận) theo trạng thái; tài khoản đang đăng nhập không tự thao tác. `RbacEditor` cảnh báo tách biệt nhiệm vụ (PROCESS_PAYOUT + UPDATE_COMMISSION) theo `warnings` của API — vẫn lưu được. Sửa lỗi tràn ngang ở 360: nhãn `sr-only` trong `th` thoát khung cuộn (thêm `relative` cho khung bảng). |
+| G12.42 | `UsersPage`: tab có số đếm, tìm theo email / SĐT / tên shop; khóa tài khoản = đình chỉ theo mã lý do + thời hạn (phiên đăng nhập bị thu hồi), mở khóa bắt buộc lý do. Khóa nhân viên chỉ ở Phân quyền nhân viên (có liên kết). |
+| G12.43 | `AuditLogPage`: lọc khoảng thời gian (có Tuỳ chọn từ / đến), loại hành động, tìm; phân trang con trỏ "Tải thêm"; ô "n lần truy cập bị từ chối" đếm theo bộ lọc (`denied_count` của API); Xuất nhật ký tạo CSV phía client từ toàn bộ kết quả lọc (API có export — dùng khi nối backend G13). Chỉ đọc, không có thao tác sửa / xóa. |
+| G12.44 | `AccountAdminPage`: ảnh đại diện (upload AVATAR) + sửa tên qua PATCH `/admin/me` (khung Admin đổi theo); đổi mật khẩu và thiết bị đăng nhập dùng lại `PasswordForm`, `DevicesPanel` của khu tài khoản (thêm prop `passwordHref`). Ghi chú "Bắt buộc OTP" đặt trên form (form đã có khối Mẹo bảo mật riêng). `PanelHead` (shared/ui) + dòng thiết bị tự xuống hàng khi hẹp — trang tài khoản khách ở 1440 không đổi. |
 
 ## Nhật ký
 
@@ -903,3 +908,4 @@
 | 2026-11-14 | Admin Portal: Danh mục toàn sàn (4 chỉ số, cây danh mục, chi tiết + hiển thị, thêm / sửa / xóa danh mục, bộ thuộc tính, sản phẩm theo danh mục con: duyệt / từ chối / khóa, đề xuất từ người bán) (G12 nhóm D) | 93b53d5 |
 | 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
 | 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
+| 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |
