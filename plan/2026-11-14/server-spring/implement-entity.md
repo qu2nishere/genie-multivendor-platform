@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P11 (22 / 23 lượt); lượt kế: P12 |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P12 (23 / 23 lượt); lượt kế: — (hết plan) |
 
 ---
 
@@ -339,13 +339,13 @@
 
 ### Phase 12 — Nghiệm thu toàn bộ
 
-- [ ] **Đếm tổng:** 65 class `@Entity`, 5 class khóa gộp, 55 enum (5 ở `common.domain`, `AuditAction` ở `common.audit`, 49 trong các module), 65 repository — liệt kê bằng `grep -rl "@Entity"` và so với Mục lục ENTITY.md (L25–L39).
-- [ ] **Phương thức:** với mỗi entity, số phương thức nghiệp vụ khớp Phụ lục E (L7193–L7458; tổng 202).
-- [ ] **Enum:** mỗi enum khớp từng giá trị Phụ lục A (L6357–L6497) và mỗi `CHECK` trong SQL khớp enum Java.
-- [ ] **Quan hệ:** mục 5 không còn FK nợ chưa trả; mọi FK trong Phụ lục B.1 (101 quan hệ) có constraint ở DB (trừ *Not a DB Foreign Key*).
-- [ ] **Test kiểm schema:** tạo `src/test/java/com/genie/support/SchemaValidationIT.java` — `@DataJpaTest` + `@AutoConfigureTestDatabase(replace = NONE)` + Testcontainers `postgres:16`, Flyway chạy V1–V12, Hibernate `validate`; test rỗng chỉ cần context khởi động.
-- [ ] Chạy `./mvnw -q verify` (cần Docker): compile, `ModuleBoundaryTest`, `SchemaValidationIT` đều xanh.
-- [ ] Không còn file domain nào chứa chú thích `TODO: hiện thực` trong 11 module + `common/audit`.
+- [x] **Đếm tổng:** 65 class `@Entity`, 5 class khóa gộp, 55 enum (5 ở `common.domain`, `AuditAction` ở `common.audit`, 49 trong các module), 65 repository — liệt kê bằng `grep -rl "@Entity"` và so với Mục lục ENTITY.md (L25–L39).
+- [x] **Phương thức:** với mỗi entity, số phương thức nghiệp vụ khớp Phụ lục E (L7193–L7458; tổng 202).
+- [x] **Enum:** mỗi enum khớp từng giá trị Phụ lục A (L6357–L6497) và mỗi `CHECK` trong SQL khớp enum Java.
+- [x] **Quan hệ:** mục 5 không còn FK nợ chưa trả; mọi FK trong Phụ lục B.1 (101 quan hệ) có constraint ở DB (trừ *Not a DB Foreign Key*).
+- [x] **Test kiểm schema:** tạo `src/test/java/com/genie/support/SchemaValidationIT.java` — `@DataJpaTest` + `@AutoConfigureTestDatabase(replace = NONE)` + Testcontainers `postgres:16`, Flyway chạy V1–V12, Hibernate `validate`; test rỗng chỉ cần context khởi động.
+- [x] Chạy `./mvnw -q verify` (cần Docker): compile, `ModuleBoundaryTest`, `SchemaValidationIT` đều xanh.
+- [x] Không còn file domain nào chứa chú thích `TODO: hiện thực` trong 11 module + `common/audit`.
 
 ---
 
@@ -373,6 +373,9 @@
 - P07 · `VendorShippingConfig.supports()` · `switch` không có nhánh `JNT_EXPRESS` (enum `CarrierType` có) → Java 21 báo lỗi biên dịch · P07 tạm thêm `case JNT_EXPRESS -> false`; **P11 sửa lại** thành `Boolean.TRUE.equals(this.jtEnabled)` vì entity có sẵn cờ `jtEnabled` · nên bổ sung vào ENTITY.md · đã làm
 - P11 · `Conversation.customerUnread` / `vendorUnread`, `UserCoin.balance`, 5 cờ `VendorShippingConfig.*Enabled` · cột NOT NULL có giá trị khởi tạo tự nhiên nhưng ENTITY.md thiếu `@Builder.Default` (vi phạm Quy ước 12; `onNewMessage()` / `earn()` dùng `+=` sẽ NPE) · thêm `@Builder.Default` (0 / theo chú thích "mặc định bật/tắt") + `DEFAULT` ở V4, V7, V11; sửa luôn 2 file entity đã commit ở P04b, P07 · đã làm
 - P11 · `SystemLog` · checklist ghi 12 trường, ENTITY.md thực có 11 (bảng đếm tự động đếm thừa) · giữ đúng ENTITY.md · đã làm
+- P12 · `UserWishlist` · đối chiếu Phụ lục B.1: thiếu 2 FK `user_wishlists.user_id` (◆ → CASCADE), `product_id` vì chú thích trường không ghi dạng `FK → bảng.id` · thêm vào cuối V2 · đã làm
+- P12 · `common/audit/AuditLogger`, `common/domain/Money`, `Haversine` · vẫn là stub `TODO` — là service / tiện ích, không phải entity, ngoài phạm vi checklist · để lại
+- P12 · Phụ lục E · thực tế 203 dòng phương thức (tài liệu ghi 202) — code khớp đủ 203 · ghi nhận
 
 ---
 
@@ -423,7 +426,7 @@
 | [x] | P09 | `feature/entity-p09-review` | `feat(social): add review and shop follow entities and migration` |
 | [x] | P10 | `feature/entity-p10-notification` | `feat(notification): add notification and banner entities and migration` |
 | [x] | P11 | `feature/entity-p11-chat-audit` | `feat(social): add chat and audit log entities and migrations` |
-| [ ] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
+| [x] | P12 | `feature/entity-p12-schema-verification` | `test(db): add schema validation integration test` |
 
 ---
 
@@ -454,4 +457,5 @@
 | 19 | 2026-11-14 | P08 | `feature/entity-p08-refund` (từ `feature/entity-p07-shipping`) | `3eb9b53` | Entity `RefundRequest`, `RefundRequestItem`, `RefundEvidence`; enum `RefundRequestType`, `RefundResolution`, `RefundStatus`, `MediaType`; 3 repository; `V8__refund.sql` (3 bảng, 5 FK) + trả 2 FK nợ `payment_refunds.refund_request_id`, `shipment_trackings.refund_request_id` | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V8 trên `postgres:16` ✔ (53 bảng), `SchemaValidationIT` ✔; trường 22/5/7, PT 16/1/2 khớp (kể cả `applyApproval`, `requireStatus` private) | Xong. Sổ FK nợ mục 5 đã trả hết |
 | 20 | 2026-11-14 | P09 | `feature/entity-p09-review` (từ `feature/entity-p08-refund`) | `9842965` | Entity `ProductReview`, `ReviewReport`, `ReviewHelpfulVote`, `ShopFollow`; enum `ReviewReportReason`; 4 repository; `V9__review.sql` (4 bảng, 10 FK, UNIQUE `order_item_id`, `(customer_id, vendor_id)`, `(review_id, user_id)`, 3 index: `(product_id, is_visible)`, `(vendor_id, created_at DESC)`, biểu thức `aspect_sentiment_json ->> 'overall'`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V9 trên `postgres:16` ✔ (57 bảng), `SchemaValidationIT` ✔; trường 16/6/4/4, PT 4/1/1/1 khớp | Xong. `ShopFollow` `@UniqueConstraint` dùng tên Java → SQL dùng `customer_id, vendor_id` |
 | 21 | 2026-11-14 | P10 | `feature/entity-p10-notification` (từ `feature/entity-p09-review`) | `f6ddae5` | Entity `Notification`, `PlatformNotification`, `UserPlatformNotificationRead` (+ khóa gộp `UserPlatformNotificationReadId`), `AdminNotification`, `HomeBanner`; 6 enum; 5 repository; `V10__notification.sql` (5 bảng, PK gộp, 4 FK, index `idx_banner_position_time` + `notifications(user_id, is_read, created_at DESC)`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V10 trên `postgres:16` ✔ (62 bảng), `SchemaValidationIT` ✔; trường 16/12/3/9/17, PT 3/1/1/1/4 khớp | Xong. `home_banners.created_by_admin_id` không FK (dữ liệu kiểm toán, ENTITY.md 10.4) |
-| 22 | 2026-11-14 | P11 | `feature/entity-p11-chat-audit` (từ `feature/entity-p10-notification`) | (lượt sau điền) | Entity `Conversation`, `Message`, thay stub `SystemLog` + `SystemLogRepository` (`JpaRepository<SystemLog, String>`); enum `MessageType`, `AuditAction`; `V11__chat.sql` (2 bảng, 6 FK, index `(conversation_id, created_at DESC)`), `V12__audit.sql` (`system_logs` + index `(created_at, action_type)`); sửa thiếu `@Builder.Default` ở `Conversation`, `UserCoin`, `VendorShippingConfig` và nhánh J&T | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V12 trên `postgres:16` ✔ (**65 bảng**), `SchemaValidationIT` ✔ (65 entity); trường 10/10/11, PT 2/1/2 (+`prePersist`) khớp | Xong. Lệch ENTITY.md ghi ở mục 6 (mặc định bộ đếm / cờ, nhánh J&T, số trường `SystemLog`) |
+| 22 | 2026-11-14 | P11 | `feature/entity-p11-chat-audit` (từ `feature/entity-p10-notification`) | `19d879b` | Entity `Conversation`, `Message`, thay stub `SystemLog` + `SystemLogRepository` (`JpaRepository<SystemLog, String>`); enum `MessageType`, `AuditAction`; `V11__chat.sql` (2 bảng, 6 FK, index `(conversation_id, created_at DESC)`), `V12__audit.sql` (`system_logs` + index `(created_at, action_type)`); sửa thiếu `@Builder.Default` ở `Conversation`, `UserCoin`, `VendorShippingConfig` và nhánh J&T | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V12 trên `postgres:16` ✔ (**65 bảng**), `SchemaValidationIT` ✔ (65 entity); trường 10/10/11, PT 2/1/2 (+`prePersist`) khớp | Xong. Lệch ENTITY.md ghi ở mục 6 (mặc định bộ đếm / cờ, nhánh J&T, số trường `SystemLog`) |
+| 23 | 2026-11-14 | P12 | `feature/entity-p12-schema-verification` (từ `feature/entity-p11-chat-audit`) | (lượt sau điền) | Commit `SchemaValidationIT` (Testcontainers `postgres:16` + Flyway V1–V12 + Hibernate validate, đặt UTC); thêm 2 FK `user_wishlists` vào V2; đối chiếu toàn bộ | 65 `@Entity`, 5 khóa gộp, 55 enum (giá trị khớp Phụ lục A), 65 repository; PT khớp Phụ lục E 203/203; 100 FK ở DB khớp B.1 (trừ `withdrawal_requests.wallet_id` FK mềm); `./mvnw verify` ✔ (`ModuleBoundaryTest` 4/4, `SchemaValidationIT` 1/1) | Xong toàn bộ plan. Còn stub ngoài phạm vi: `AuditLogger`, `Money`, `Haversine` (mục 6) |
