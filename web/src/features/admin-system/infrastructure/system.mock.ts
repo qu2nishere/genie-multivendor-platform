@@ -1,0 +1,271 @@
+// Nhân viên, người dùng, nhật ký (prototype admin/data.jsx STAFF, USERS, AUDIT) — hình DTO, giữ trong
+// phiên tab. Nhật ký mẫu kết thúc ngày 22/06/2026 nên mock tính "Hôm nay / 7 ngày / 30 ngày" từ ngày đó.
+import { mockState } from '@/shared/api/mock';
+import { TITLE_PRESETS, PERMISSIONS } from '@/shared/auth/permissions';
+import type { AuditLogDto, PlatformUserDto, StaffDto } from './system.dto';
+
+export const AUDIT_NOW = new Date('2026-06-22T12:00:00+07:00');
+
+/** Thay đổi tên / ảnh của tài khoản đang đăng nhập (PATCH /admin/me). */
+export const adminMeStore = mockState<{ full_name: string | null; avatar_url: string | null }>(
+  'admin.me',
+  () => ({ full_name: null, avatar_url: null }),
+);
+
+const staff = (
+  id: number,
+  full_name: string,
+  email: string,
+  title: StaffDto['staff_title'],
+  status: StaffDto['status'],
+): StaffDto => ({
+  id,
+  full_name,
+  email,
+  role: title === null ? 'ADMIN' : 'STAFF',
+  staff_title: title,
+  permissions:
+    title === null ? [...PERMISSIONS] : title === 'CUSTOM' ? [] : [...TITLE_PRESETS[title]],
+  status,
+  is_self: id === 1,
+});
+
+export const staffStore = mockState<StaffDto[]>('admin.staff', () => [
+  staff(1, 'Đặng Hải Yến', 'yen.dh@genie.example', null, 'ACTIVE'),
+  staff(7, 'Ngô Tấn Phát', 'phat.nt@genie.example', 'MODERATOR', 'ACTIVE'),
+  staff(8, 'Trịnh Mỹ Linh', 'linh.tm@genie.example', 'FINANCE_OFFICER', 'ACTIVE'),
+  staff(9, 'Vương Đại Nghĩa', 'nghia.vd@genie.example', 'CS_SPECIALIST', 'LOCKED'),
+  staff(10, 'Hồ Thanh Trúc', 'truc.ht@genie.example', 'CS_SPECIALIST', 'PENDING_ACTIVATION'),
+]);
+
+const user = (
+  id: number,
+  full_name: string,
+  shop: string | null,
+  email: string,
+  phone: string,
+  orders: number,
+  warnings: number,
+  status: PlatformUserDto['status'],
+  suspension: PlatformUserDto['suspension'] = null,
+): PlatformUserDto => ({
+  id,
+  code: `U-${id}`,
+  full_name,
+  shop_name: shop,
+  email,
+  phone_number: phone,
+  role: shop ? 'VENDOR' : 'CUSTOMER',
+  order_count: orders,
+  warning_count: warnings,
+  status,
+  suspension,
+});
+
+export const usersStore = mockState<PlatformUserDto[]>('admin.users', () => [
+  user(20411, 'Trần Thị Mai', null, 'mai.tran@gmail.com', '0901234567', 48, 0, 'ACTIVE'),
+  user(20398, 'Nguyễn Văn An', null, 'an.nguyen@gmail.com', '0912887001', 12, 0, 'ACTIVE'),
+  user(20377, 'Lê Hoàng Phúc', null, 'phuc.le@yahoo.com', '0978112340', 31, 3, 'SUSPENDED', {
+    reason: 'Hoàn hàng bất thường nhiều lần',
+    until: '2026-06-29T00:00:00+07:00',
+  }),
+  user(
+    10021,
+    'Đặng Quốc Huy',
+    'TechZone Official',
+    'shop@techzone.vn',
+    '0912345678',
+    18420,
+    0,
+    'ACTIVE',
+  ),
+  user(
+    10044,
+    'Phạm Thị Lan',
+    'Boutique Sài Gòn',
+    'lan@boutiquesg.vn',
+    '0933450112',
+    15280,
+    1,
+    'ACTIVE',
+  ),
+  user(
+    10087,
+    'Lý Văn Tèo',
+    'Cheap Electronics',
+    'teo@cheapelec.vn',
+    '0966220991',
+    214,
+    5,
+    'LOCKED',
+    {
+      reason: 'Người bán gian lận hàng giả',
+      until: null,
+    },
+  ),
+]);
+
+type A = [
+  string,
+  string,
+  string,
+  string,
+  AuditLogDto['category'],
+  string,
+  string,
+  AuditLogDto['result'],
+];
+export const AUDIT_DTOS: AuditLogDto[] = (
+  [
+    [
+      '2026-06-22T09:42:11',
+      'phat.nt@genie.example',
+      'MODERATOR',
+      'KYC_APPROVED',
+      'KYC',
+      'KYC-1037 · TravelGear',
+      '113.161.40.12',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-22T09:15:03',
+      'system',
+      'SYSTEM',
+      'ESCROW_RELEASED',
+      'FINANCE',
+      'TR-20260608-000139 · 1.245.000₫',
+      '10.0.2.7',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-22T08:51:46',
+      'linh.tm@genie.example',
+      'FINANCE_OFFICER',
+      'PAYOUT_APPROVED',
+      'FINANCE',
+      'PAYOUT-0012 · 5.000.000₫',
+      '113.161.40.88',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-22T08:33:20',
+      'unknown',
+      '—',
+      'LOGIN_FAILED',
+      'AUTH',
+      'yen.dh@genie.example (sai mật khẩu ×3)',
+      '45.119.82.201',
+      'FAILED',
+    ],
+    [
+      '2026-06-21T22:07:55',
+      'nghia.vd@genie.example',
+      'CS_SPECIALIST',
+      'REVIEW_HIDDEN',
+      'MODERATION',
+      'RV-9910 · ngôn từ phản cảm',
+      '171.244.10.5',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-21T18:46:12',
+      'linh.tm@genie.example',
+      'FINANCE_OFFICER',
+      'COMMISSION_UPDATED',
+      'CONFIG',
+      'Làm đẹp: 9% → 10%',
+      '113.161.40.88',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-21T16:30:41',
+      'system',
+      'SYSTEM',
+      'REFUND_PROCESSED',
+      'FINANCE',
+      'RFN-0229 · 389.000₫',
+      '10.0.2.7',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-21T14:02:09',
+      'yen.dh@genie.example',
+      'ADMIN',
+      'RBAC_ROLE_CHANGED',
+      'SECURITY',
+      'phat.nt → Moderator',
+      '113.161.40.12',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-21T11:18:33',
+      'unknown',
+      '—',
+      'LOGIN_FAILED',
+      'AUTH',
+      'admin@genie.example (tài khoản không tồn tại)',
+      '193.32.126.44',
+      'FAILED',
+    ],
+    [
+      '2026-06-21T10:02:41',
+      'nghia.vd@genie.example',
+      'CS_SPECIALIST',
+      'ACCESS_DENIED',
+      'SECURITY',
+      'Màn Sổ cái tài chính (thiếu VIEW_FINANCE)',
+      '171.244.10.5',
+      'DENIED',
+    ],
+    [
+      '2026-06-21T09:00:00',
+      'yen.dh@genie.example',
+      'ADMIN',
+      'STAFF_INVITED',
+      'SECURITY',
+      'support1@genie.example',
+      '113.161.40.12',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-20T20:44:17',
+      'phat.nt@genie.example',
+      'MODERATOR',
+      'KYC_REJECTED',
+      'KYC',
+      'KYC-1033 · ảnh giấy tờ mờ',
+      '171.244.10.5',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-20T15:12:50',
+      'system',
+      'SYSTEM',
+      'ESCROW_RELEASED',
+      'FINANCE',
+      'TR-20260608-000133 · 536.000₫',
+      '10.0.2.7',
+      'SUCCESS',
+    ],
+    [
+      '2026-06-20T10:30:18',
+      'yen.dh@genie.example',
+      'ADMIN',
+      'PERMISSION_REVOKED',
+      'SECURITY',
+      'nghia.vd — thu hồi quyền HANDLE_DISPUTE',
+      '113.161.40.12',
+      'SUCCESS',
+    ],
+  ] as A[]
+).map(([at, actor_email, actor_role, action, category, target, ip_address, result], i) => ({
+  id: 55120 - i,
+  created_at: `${at}+07:00`,
+  actor_email,
+  actor_role,
+  action,
+  category,
+  target,
+  ip_address,
+  result,
+}));

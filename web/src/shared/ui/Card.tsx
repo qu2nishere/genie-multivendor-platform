@@ -43,9 +43,12 @@ export function PanelHead({ icon, title, sub, level = 2, action, id }: PanelHead
   const H = `h${level}` as 'h2' | 'h3';
   return (
     <div className={cn(sub && 'pb-3 mb-1 border-b border-line-subtle')}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {icon && <Icon name={icon} size={20} className="text-brand-500" />}
-        <H id={id} className="m-0 flex-1 font-semibold text-xl leading-snug text-strong">
+        <H
+          id={id}
+          className="m-0 flex-1 min-w-[180px] font-semibold text-xl leading-snug text-strong"
+        >
           {title}
         </H>
         {action}

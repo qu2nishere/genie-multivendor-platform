@@ -4115,5 +4115,190 @@
         "upload_size": "Ảnh tối đa {mb} MB"
       }
     }
+  },
+  "admin-system": {
+    "common": {
+      "err": {
+        "reason": "Vui lòng nhập lý do",
+        "long": "Tối đa 500 ký tự"
+      }
+    },
+    "staff": {
+      "summary": "{count} nhân viên · 3 chức danh + Admin · {perms} mã quyền. Di chuột lên mã quyền để xem mô tả.",
+      "invite": "Mời nhân viên mới",
+      "search": "Tìm nhân viên",
+      "search_placeholder": "Tìm kiếm theo tên hoặc email...",
+      "col": {
+        "staff": "Nhân viên",
+        "title": "Chức danh",
+        "perms": "Quyền",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "status": {
+        "ACTIVE": "Hoạt động",
+        "LOCKED": "Tạm khoá",
+        "PENDING_ACTIVATION": "Chờ kích hoạt"
+      },
+      "all_perms": "Toàn quyền",
+      "all_perms_desc": "Có tất cả quyền trong hệ thống",
+      "yours": "Tài khoản của bạn",
+      "empty": "Không tìm thấy nhân viên nào.",
+      "resend": "Gửi lại lời mời",
+      "resent": "Đã gửi lại lời mời tới {email}",
+      "edit": "Sửa quyền",
+      "lock": "Khóa",
+      "unlock": "Mở khóa",
+      "unlocked": "Mở khóa tài khoản thành công!",
+      "delete": "Xóa",
+      "lock_title": "Khóa tài khoản — {name}",
+      "lock_reason": "Lý do khóa",
+      "lock_placeholder": "VD: Nhân viên đã chấm dứt hợp đồng lao động",
+      "lock_confirm": "Xác nhận khóa",
+      "locked": "Khóa tài khoản thành công!",
+      "lock_account": "Tạm khoá tài khoản",
+      "locked_note": "Tài khoản đang tạm khoá.",
+      "delete_title": "Xóa tài khoản nhân viên",
+      "warning": "CẢNH BÁO:",
+      "delete_desc": "Hành động này sẽ xoá hoàn toàn tài khoản và quyền của nhân viên {name}. Bạn có chắc chắn?",
+      "delete_confirm": "Xóa tài khoản",
+      "deleted": "Đã xóa tài khoản nhân viên.",
+      "invite_title": "Mời nhân viên mới",
+      "invite_note": "Nhân viên sẽ nhận email lời mời và kích hoạt tài khoản qua OTP. Trạng thái ban đầu là Chờ kích hoạt.",
+      "invite_send": "Gửi lời mời",
+      "invited": "Đã gửi lời mời tới {email}",
+      "name": "Họ và tên",
+      "title": "Chức danh",
+      "email": "Email công việc",
+      "perms_by_title": "Quyền cấp theo chức danh",
+      "perm_count": "{n}/{total} quyền",
+      "edit_title": "Chỉnh quyền — {name}",
+      "title_hint": "Chọn chức danh sẽ nạp bộ quyền mặc định — bạn có thể tuỳ chỉnh bên dưới.",
+      "perms": "Quyền chi tiết",
+      "segregation": "Một người giữ cả PROCESS_PAYOUT và UPDATE_COMMISSION vi phạm tách biệt nhiệm vụ. Vẫn lưu được và sẽ ghi log.",
+      "segregation_logged": "Đã ghi cảnh báo tách biệt nhiệm vụ vào nhật ký.",
+      "save": "Lưu",
+      "saved": "Đã lưu quyền nhân viên.",
+      "footnote": "Quyền MANAGE_RBAC chỉ dành cho Admin, không cấp cho nhân viên.",
+      "err": {
+        "name": "Nhập họ tên (tối đa 100 ký tự)",
+        "email": "Email công việc phải có đuôi @genie.example"
+      }
+    },
+    "users": {
+      "search": "Tìm tài khoản",
+      "search_placeholder": "Tìm theo email, số điện thoại, tên shop...",
+      "staff_note_before": "Khóa nhân viên ở mục ",
+      "tabs_label": "Lọc tài khoản",
+      "tabs": {
+        "ALL": "Tất cả",
+        "CUSTOMER": "Khách hàng",
+        "VENDOR": "Shop",
+        "LOCKED": "Đang khóa / đình chỉ"
+      },
+      "col": {
+        "account": "Tài khoản",
+        "type": "Loại",
+        "phone": "Số điện thoại",
+        "orders": "Số đơn",
+        "warnings": "Cảnh báo",
+        "status": "Trạng thái",
+        "action": "Thao tác"
+      },
+      "roles": {
+        "CUSTOMER": "Khách hàng",
+        "VENDOR": "Shop"
+      },
+      "status": {
+        "ACTIVE": "Hoạt động",
+        "SUSPENDED": "Đình chỉ",
+        "LOCKED": "Đã khóa"
+      },
+      "warnings": "{count} cảnh báo",
+      "until": "đến {date}",
+      "empty": "Không tìm thấy tài khoản nào.",
+      "lock": "Khóa tài khoản",
+      "unlock": "Mở khóa",
+      "lock_title": "Khóa tài khoản — {name}",
+      "reason": "Lý do đình chỉ",
+      "reasons": {
+        "COUNTERFEIT_SELLER": "Người bán gian lận hàng giả",
+        "ABNORMAL_RETURNS": "Hoàn hàng bất thường nhiều lần",
+        "REVIEW_SPAM": "Spam đánh giá / mua giả",
+        "FRAUD": "Lừa đảo, chuyển hướng giao dịch",
+        "OTHER": "Lý do khác"
+      },
+      "duration": "Thời hạn",
+      "durations": {
+        "P7D": "7 ngày",
+        "P30D": "30 ngày",
+        "FOREVER": "Vô thời hạn"
+      },
+      "note": "Mô tả lý do",
+      "lock_hint": "Mọi phiên đăng nhập của tài khoản sẽ bị thu hồi ngay. Đình chỉ có thời hạn tự mở khi hết hạn; vô thời hạn chỉ mở thủ công.",
+      "lock_confirm": "Xác nhận khóa",
+      "suspended": "Đã khóa tài khoản {name}.",
+      "unlock_title": "Mở khóa — {name}",
+      "unlock_reason": "Lý do mở khóa (bắt buộc)",
+      "reactivated": "Đã mở khóa tài khoản {name}."
+    },
+    "audit": {
+      "append_only": "Append-only · bất biến",
+      "desc": "Nhật ký ghi nhận mọi hành động nhạy cảm. Bản ghi không thể sửa hoặc xoá — phục vụ điều tra & tuân thủ.",
+      "export": "Xuất nhật ký",
+      "range": "Khoảng thời gian",
+      "ranges": {
+        "TODAY": "Hôm nay",
+        "7D": "7 ngày qua",
+        "30D": "30 ngày qua",
+        "CUSTOM": "Tuỳ chọn…"
+      },
+      "from": "Từ ngày",
+      "to": "Đến ngày",
+      "category": "Loại hành động",
+      "all": "Tất cả",
+      "cats": {
+        "AUTH": "Đăng nhập",
+        "KYC": "KYC",
+        "FINANCE": "Tài chính",
+        "MODERATION": "Kiểm duyệt",
+        "SECURITY": "Bảo mật",
+        "CONFIG": "Cấu hình"
+      },
+      "search": "Tìm kiếm",
+      "search_placeholder": "User, IP, mã tham chiếu…",
+      "denied": "{count} lần truy cập bị từ chối",
+      "col": {
+        "time": "Thời gian",
+        "user": "User / Vai trò",
+        "role": "Vai trò",
+        "action": "Hành động",
+        "detail": "Chi tiết",
+        "result": "Kết quả"
+      },
+      "empty": "Không có bản ghi nào khớp bộ lọc.",
+      "footnote": "Hiển thị {count} bản ghi gần nhất · lưu trữ tối thiểu 12 tháng theo chính sách.",
+      "more": "Tải thêm"
+    },
+    "account": {
+      "change_avatar": "Đổi ảnh đại diện",
+      "avatar_saved": "Đã cập nhật ảnh đại diện.",
+      "name": "Họ và tên",
+      "edit": "Sửa",
+      "save": "Lưu",
+      "name_saved": "Đã cập nhật tên.",
+      "verified": "Xác minh",
+      "role": "Vai trò",
+      "perms": "Số quyền",
+      "status": "Trạng thái",
+      "password": "Đổi mật khẩu",
+      "otp_title": "Bắt buộc OTP",
+      "otp_desc": "Tài khoản quản trị bắt buộc xác thực OTP khi đổi mật khẩu để bảo vệ quyền truy cập hệ thống.",
+      "err": {
+        "name": "Nhập họ tên (tối đa 100 ký tự)",
+        "upload_type": "Ảnh phải là JPG hoặc PNG",
+        "upload_size": "Ảnh tối đa {mb} MB"
+      }
+    }
   }
 }

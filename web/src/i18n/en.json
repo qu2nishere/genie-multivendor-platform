@@ -4115,5 +4115,190 @@
         "upload_size": "Image is at most {mb} MB"
       }
     }
+  },
+  "admin-system": {
+    "common": {
+      "err": {
+        "reason": "Please enter a reason",
+        "long": "At most 500 characters"
+      }
+    },
+    "staff": {
+      "summary": "{count} staff · 3 titles + Admin · {perms} permission codes. Hover a code to see what it allows.",
+      "invite": "Invite staff",
+      "search": "Search staff",
+      "search_placeholder": "Search by name or email...",
+      "col": {
+        "staff": "Staff",
+        "title": "Title",
+        "perms": "Permissions",
+        "status": "Status",
+        "action": "Action"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "LOCKED": "Locked",
+        "PENDING_ACTIVATION": "Pending activation"
+      },
+      "all_perms": "Full access",
+      "all_perms_desc": "Holds every permission in the system",
+      "yours": "Your account",
+      "empty": "No staff found.",
+      "resend": "Resend invite",
+      "resent": "Invitation resent to {email}",
+      "edit": "Edit permissions",
+      "lock": "Lock",
+      "unlock": "Unlock",
+      "unlocked": "Account unlocked!",
+      "delete": "Delete",
+      "lock_title": "Lock account — {name}",
+      "lock_reason": "Lock reason",
+      "lock_placeholder": "E.g. Employment contract ended",
+      "lock_confirm": "Confirm lock",
+      "locked": "Account locked!",
+      "lock_account": "Lock account",
+      "locked_note": "This account is locked.",
+      "delete_title": "Delete staff account",
+      "warning": "WARNING:",
+      "delete_desc": "This permanently removes {name}'s account and permissions. Are you sure?",
+      "delete_confirm": "Delete account",
+      "deleted": "Staff account deleted.",
+      "invite_title": "Invite staff",
+      "invite_note": "The staff member gets an invitation email and activates the account with an OTP. Initial status is Pending activation.",
+      "invite_send": "Send invitation",
+      "invited": "Invitation sent to {email}",
+      "name": "Full name",
+      "title": "Title",
+      "email": "Work email",
+      "perms_by_title": "Permissions for this title",
+      "perm_count": "{n}/{total} permissions",
+      "edit_title": "Edit permissions — {name}",
+      "title_hint": "Choosing a title loads its default permissions — you can adjust them below.",
+      "perms": "Permissions",
+      "segregation": "One person holding both PROCESS_PAYOUT and UPDATE_COMMISSION breaks segregation of duties. You can still save; it will be logged.",
+      "segregation_logged": "Segregation-of-duties warning recorded in the log.",
+      "save": "Save",
+      "saved": "Permissions saved.",
+      "footnote": "MANAGE_RBAC is reserved for Admins and can't be granted to staff.",
+      "err": {
+        "name": "Enter a full name (max 100 characters)",
+        "email": "Work email must end with @genie.example"
+      }
+    },
+    "users": {
+      "search": "Search accounts",
+      "search_placeholder": "Search by email, phone, shop name...",
+      "staff_note_before": "Lock staff under ",
+      "tabs_label": "Filter accounts",
+      "tabs": {
+        "ALL": "All",
+        "CUSTOMER": "Customers",
+        "VENDOR": "Shops",
+        "LOCKED": "Locked / suspended"
+      },
+      "col": {
+        "account": "Account",
+        "type": "Type",
+        "phone": "Phone",
+        "orders": "Orders",
+        "warnings": "Warnings",
+        "status": "Status",
+        "action": "Action"
+      },
+      "roles": {
+        "CUSTOMER": "Customer",
+        "VENDOR": "Shop"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "LOCKED": "Locked"
+      },
+      "warnings": "{count} warnings",
+      "until": "until {date}",
+      "empty": "No accounts found.",
+      "lock": "Lock account",
+      "unlock": "Unlock",
+      "lock_title": "Lock account — {name}",
+      "reason": "Suspension reason",
+      "reasons": {
+        "COUNTERFEIT_SELLER": "Selling counterfeit goods",
+        "ABNORMAL_RETURNS": "Abnormal repeated returns",
+        "REVIEW_SPAM": "Review spam / fake purchases",
+        "FRAUD": "Fraud, off-platform deals",
+        "OTHER": "Other reason"
+      },
+      "duration": "Duration",
+      "durations": {
+        "P7D": "7 days",
+        "P30D": "30 days",
+        "FOREVER": "Indefinitely"
+      },
+      "note": "Describe the reason",
+      "lock_hint": "All of this account's sessions are revoked immediately. Timed suspensions lift automatically; indefinite ones only manually.",
+      "lock_confirm": "Confirm lock",
+      "suspended": "{name} has been locked.",
+      "unlock_title": "Unlock — {name}",
+      "unlock_reason": "Unlock reason (required)",
+      "reactivated": "{name} has been unlocked."
+    },
+    "audit": {
+      "append_only": "Append-only · immutable",
+      "desc": "The log records every sensitive action. Entries can't be edited or deleted — for investigations & compliance.",
+      "export": "Export log",
+      "range": "Time range",
+      "ranges": {
+        "TODAY": "Today",
+        "7D": "Last 7 days",
+        "30D": "Last 30 days",
+        "CUSTOM": "Custom…"
+      },
+      "from": "From",
+      "to": "To",
+      "category": "Action type",
+      "all": "All",
+      "cats": {
+        "AUTH": "Sign-in",
+        "KYC": "KYC",
+        "FINANCE": "Finance",
+        "MODERATION": "Moderation",
+        "SECURITY": "Security",
+        "CONFIG": "Configuration"
+      },
+      "search": "Search",
+      "search_placeholder": "User, IP, reference…",
+      "denied": "{count} denied access attempts",
+      "col": {
+        "time": "Time",
+        "user": "User / Role",
+        "role": "Role",
+        "action": "Action",
+        "detail": "Details",
+        "result": "Result"
+      },
+      "empty": "No entries match the filters.",
+      "footnote": "Showing the latest {count} entries · kept for at least 12 months by policy.",
+      "more": "Load more"
+    },
+    "account": {
+      "change_avatar": "Change avatar",
+      "avatar_saved": "Avatar updated.",
+      "name": "Full name",
+      "edit": "Edit",
+      "save": "Save",
+      "name_saved": "Name updated.",
+      "verified": "Verified",
+      "role": "Role",
+      "perms": "Permissions",
+      "status": "Status",
+      "password": "Change password",
+      "otp_title": "OTP required",
+      "otp_desc": "Admin accounts must confirm a password change with an OTP to protect system access.",
+      "err": {
+        "name": "Enter a full name (max 100 characters)",
+        "upload_type": "Image must be JPG or PNG",
+        "upload_size": "Image is at most {mb} MB"
+      }
+    }
   }
 }

@@ -378,7 +378,10 @@ const DEVICE_ICON: Record<string, IconName> = {
   TABLET: 'smartphone',
 };
 
-export function DevicesPanel() {
+/** `passwordHref`: liên kết "đổi mật khẩu" trong lời nhắc (Admin trỏ tới khối đổi mật khẩu cùng trang). */
+export function DevicesPanel({
+  passwordHref = '/account/password',
+}: { passwordHref?: string } = {}) {
   const { t, locale } = useT();
   const q = useDevices();
   const out = useLogoutDevices();
@@ -413,7 +416,7 @@ export function DevicesPanel() {
         <Icon name="shield-check" size={18} className="text-blue-600 flex-none" />
         <span>
           {t('account.devices.tip_before')}{' '}
-          <a href="/account/password" className="font-bold text-blue-600">
+          <a href={passwordHref} className="font-bold text-blue-600">
             {t('account.devices.tip_link')}
           </a>
           . {t('account.devices.count', { count: list.length })}
@@ -439,7 +442,7 @@ export function DevicesPanel() {
               >
                 <Icon name={DEVICE_ICON[d.type] ?? 'lock'} size={22} />
               </span>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-[180px]">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-sm text-strong">{d.name}</span>
                   {d.current && (
