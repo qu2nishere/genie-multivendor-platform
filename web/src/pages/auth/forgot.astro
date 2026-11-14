@@ -1,7 +1,13 @@
 ---
-import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+// Quên mật khẩu (plan G09.11) — AuthLayout, island client:load, noindex.
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import { ForgotForm } from '@/features/auth';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const email = Astro.url.searchParams.get('email') ?? '';
 ---
 
-<StorefrontLayout title="Quên mật khẩu">
-  <!-- TODO -->
-</StorefrontLayout>
+<AuthLayout title={t('auth.forgot.title')} description={t('auth.meta.description')}>
+  <ForgotForm client:load email={email} />
+</AuthLayout>

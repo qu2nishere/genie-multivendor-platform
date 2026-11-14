@@ -1,6 +1,7 @@
 // Giỏ mẫu của người dùng đã đăng nhập (prototype index.html seedCart), dạng DTO.
 import { SEED_PRODUCTS } from '@/shared/api/mock/seed';
 import { productImg } from '@/shared/lib/assets';
+import type { CartLineInput, GuestCartItem } from '../domain/cart.types';
 import type { CartLineDto } from './cart.dto';
 
 const mk = (
@@ -42,3 +43,37 @@ export const SEED_CART: CartLineDto[] = [
   mk(16, 'Trắng / M', 89000, 2, 100),
   mk(10, 'Trắng', 149000, 1, 60),
 ];
+
+// Mock: SKU của sản phẩm mẫu = productId * 100 + màu * 10 + phiên bản (khớp product.mock).
+const COLORS = [
+  { label: 'Đen', delta: 0, stock: 38 },
+  { label: 'Trắng', delta: 0, stock: 12 },
+  { label: 'Xanh navy', delta: 30000, stock: 5 },
+  { label: 'Hồng', delta: 20000, stock: 0 },
+];
+const VERSIONS = [
+  { label: 'Tiêu chuẩn', delta: 0 },
+  { label: 'Bản Pro', delta: 150000 },
+];
+
+/** Dòng giỏ khách (chỉ SKU + số lượng) → dữ liệu dòng giỏ đầy đủ để gộp vào giỏ tài khoản. */
+export function guestItemToInput(it: GuestCartItem): CartLineInput | null {
+  const id = it.product_variant_id;
+  const p = SEED_PRODUCTS.find((x) => x.id === Math.floor(id / 100));
+  const c = COLORS[Math.floor((id % 100) / 10)];
+  const v = VERSIONS[id % 10];
+  if (!p || !c || !v || c.stock === 0) return null;
+  return {
+    variantId: id,
+    productId: p.id,
+    productSlug: p.slug,
+    shopId: p.shop_id,
+    title: p.title,
+    image: productImg(p.image),
+    variantLabel: `${c.label} / ${v.label}`,
+    price: p.price + c.delta + v.delta,
+    originalPrice: p.original_price,
+    qty: it.quantity,
+    stock: c.stock,
+  };
+}

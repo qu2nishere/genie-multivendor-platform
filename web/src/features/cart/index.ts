@@ -14,3 +14,4 @@ export {
 } from './application/cart.store';
 export { default as AddToCartButton, type AddToCartButtonProps } from './ui/AddToCartButton';
 export { MiniCart } from './ui/MiniCart';
+export { mergeGuestCart } from './application/mergeGuestCart';

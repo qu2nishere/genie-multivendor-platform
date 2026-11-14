@@ -1,7 +1,15 @@
 ---
-import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+// Đăng ký người mua (plan G09.11) — AuthLayout, island client:load, noindex.
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import { RegisterForm, safeNext } from '@/features/auth';
+import { LOGGED_IN_COOKIE } from '@/shared/auth/session';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const next = Astro.url.searchParams.get('next');
+if (Astro.cookies.has(LOGGED_IN_COOKIE)) return Astro.redirect(safeNext(next), 302);
 ---
 
-<StorefrontLayout title="Đăng ký">
-  <!-- TODO -->
-</StorefrontLayout>
+<AuthLayout title={t('auth.register.title')} description={t('auth.meta.description')}>
+  <RegisterForm client:load next={next} />
+</AuthLayout>

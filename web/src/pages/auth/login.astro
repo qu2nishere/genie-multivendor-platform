@@ -1,7 +1,19 @@
 ---
-import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
+// Đăng nhập (plan G09.11) — AuthLayout, island client:load, noindex. ?next= đích sau đăng nhập
+// (middleware gắn khi chặn trang cần đăng nhập); đã đăng nhập thì đi thẳng tới đích.
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import { LoginForm, safeNext } from '@/features/auth';
+import { LOGGED_IN_COOKIE } from '@/shared/auth/session';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const next = Astro.url.searchParams.get('next');
+if (Astro.cookies.has(LOGGED_IN_COOKIE) && !Astro.url.searchParams.has('switch')) {
+  return Astro.redirect(safeNext(next), 302);
+}
+const email = Astro.url.searchParams.get('email') ?? '';
 ---
 
-<StorefrontLayout title="Đăng nhập">
-  <!-- TODO -->
-</StorefrontLayout>
+<AuthLayout title={t('auth.login.title')} description={t('auth.meta.description')}>
+  <LoginForm client:load next={next} email={email} />
+</AuthLayout>

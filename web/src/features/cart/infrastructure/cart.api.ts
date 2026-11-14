@@ -3,10 +3,10 @@
 import { api } from '@/shared/api/http';
 import { mockDelay, USE_MOCK } from '@/shared/api/mock';
 import { mergeLine } from '../domain/cart.rules';
-import type { CartLine, CartLineInput } from '../domain/cart.types';
+import type { CartLine, CartLineInput, GuestCartItem } from '../domain/cart.types';
 import type { CartLineDto } from './cart.dto';
 import { toCartLine } from './cart.mapper';
-import { SEED_CART } from './cart.mock';
+import { guestItemToInput, SEED_CART } from './cart.mock';
 
 // Mock: giỏ trong bộ nhớ, bắt đầu từ giỏ mẫu của prototype
 let mockLines: CartLine[] | null = null;
@@ -29,4 +29,22 @@ export async function addCartItem(input: CartLineInput): Promise<CartLine[]> {
   }
   await api.post('/me/cart/items', { product_variant_id: input.variantId, quantity: input.qty });
   return fetchCart();
+}
+
+/** POST /me/cart/merge — gộp giỏ khách sau đăng nhập (cùng SKU cộng dồn, chặn theo tồn). */
+export async function mergeCart(items: GuestCartItem[]): Promise<{ merged: number }> {
+  if (USE_MOCK) {
+    await mockDelay(250);
+    let merged = 0;
+    for (const it of items) {
+      const input = guestItemToInput(it);
+      if (!input) continue;
+      mockLines = mergeLine(mockCart(), input);
+      merged += 1;
+    }
+    return { merged };
+  }
+  return api.post<{ merged: number }>('/me/cart/merge', {
+    items: items.map((i) => ({ variant_id: i.product_variant_id, quantity: i.quantity })),
+  });
 }
