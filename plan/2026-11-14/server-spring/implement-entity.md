@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P04b (10 / 23 lượt); lượt kế: P04c |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P04c (11 / 23 lượt); lượt kế: P05a |
 
 ---
 
@@ -196,9 +196,9 @@
 - [x] 12 repository (bảng nối dùng kiểu id = class khóa gộp).
 
 **Lượt 4c — Migration `V4__promotion.sql`**
-- [ ] Thứ tự: `vouchers` → `voucher_usages` → `user_vouchers` → 4 bảng nối (PRIMARY KEY gộp 2 cột, CASCADE theo voucher) → `flash_sale_campaigns` → `flash_sale_items` → `user_coins` → `coin_transactions` → `daily_checkins`.
-- [ ] FK nợ: `voucher_usages.checkout_session_id` → `checkout_sessions`, `voucher_usages.order_id` → `orders` (để lại cho V5 — mục 5).
-- [ ] Kiểm tra cuối Phase.
+- [x] Thứ tự: `vouchers` → `voucher_usages` → `user_vouchers` → 4 bảng nối (PRIMARY KEY gộp 2 cột, CASCADE theo voucher) → `flash_sale_campaigns` → `flash_sale_items` → `user_coins` → `coin_transactions` → `daily_checkins`.
+- [x] FK nợ: `voucher_usages.checkout_session_id` → `checkout_sessions`, `voucher_usages.order_id` → `orders` (để lại cho V5 — mục 5).
+- [x] Kiểm tra cuối Phase.
 
 ---
 
@@ -408,7 +408,7 @@
 | [x] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
 | [x] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
 | [x] | P04b | `feature/entity-p04b-flashsale-coin` | `feat(promotion): add flash sale and coin entities` |
-| [ ] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
+| [x] | P04c | `feature/entity-p04c-promotion-migration` | `feat(db): add promotion schema migration` |
 | [ ] | P05a | `feature/entity-p05a-order-aggregate` | `feat(order): add order entity with status transition table` |
 | [ ] | P05b | `feature/entity-p05b-checkout-reservation` | `feat(order): add checkout, order item and stock reservation entities` |
 | [ ] | P05c | `feature/entity-p05c-order-migration` | `feat(db): add order schema migration` |
@@ -439,4 +439,5 @@
 | 7 | 2026-11-14 | P02c | `feature/entity-p02c-catalog-migration` (từ `feature/entity-p02b-catalog-support`) | `feaa6dc` | `V2__catalog.sql`: 12 bảng, CHECK enum, unique/index từ `@Table`, 15 FK + FK tự tham chiếu `categories.parent_id`; trả FK nợ `vendor_profiles.category_id` (SET NULL); hàm `immutable_unaccent`, cột sinh `products.search_vector` + 5 index mục 13.1 | V1+V2 chạy trên `postgres:16` ✔, `SchemaValidationIT` ✔ (24 entity), `ModuleBoundaryTest` ✔ | Xong. `@UniqueConstraint(columnNames = {"userId", "productId"})` của `UserWishlist` dùng tên Java → SQL dùng `user_id, product_id`. Full-text dùng cấu hình `simple` + unaccent (PostgreSQL không có cấu hình tiếng Việt) |
 | 8 | 2026-11-14 | P03 | `feature/entity-p03-cart` (từ `feature/entity-p02c-catalog-migration`) | `c0c1f13` | Thay stub `Cart`, `CartItem`, `CartRepository`; thêm `CartItemRepository`; `V3__cart.sql` (2 bảng, 3 FK: `carts.user_id`, `cart_items.cart_id` CASCADE, `cart_items.product_variant_id`) | `compile` ✔, `ModuleBoundaryTest` ✔, V1–V3 trên `postgres:16` ✔ (22 bảng), `SchemaValidationIT` ✔; trường 4/6, PT 4/2 khớp | Xong. D2: `CartItem` bỏ `variant` (6 trường thay vì 7) |
 | 9 | 2026-11-14 | P04a | `feature/entity-p04a-voucher` (từ `feature/entity-p03-cart`) | `9734a0d` | Entity `Voucher`, `VoucherUsage`, `UserVoucher`, 4 bảng nối phạm vi; 4 class khóa gộp `*Id`; enum `VoucherScope`, `DiscountType`; 7 repository (bảng nối dùng kiểu id gộp) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 27/7/6/3/3/3/3, PT 5/1/1/1/1/1/1 khớp | Xong. D2: `UserVoucher` bỏ `user`; 4 bảng nối bỏ `category` / `product` |
-| 10 | 2026-11-14 | P04b | `feature/entity-p04b-flashsale-coin` (từ `feature/entity-p04a-voucher`) | (lượt sau điền) | Entity `FlashSaleCampaign`, `FlashSaleItem`, `UserCoin`, `CoinTransaction`, `DailyCheckin`; enum `FlashSaleStatus`, `FlashSaleItemStatus`, `CoinTransactionType`; 5 repository (đủ 12 repository của Phase 4) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/9/5/8/4, PT 4/5/3/2/1 khớp | Xong. `UserCoin.verifyHash` cần import `MessageDigest`, `StandardCharsets` (ENTITY.md lược import) |
+| 10 | 2026-11-14 | P04b | `feature/entity-p04b-flashsale-coin` (từ `feature/entity-p04a-voucher`) | `1949682` | Entity `FlashSaleCampaign`, `FlashSaleItem`, `UserCoin`, `CoinTransaction`, `DailyCheckin`; enum `FlashSaleStatus`, `FlashSaleItemStatus`, `CoinTransactionType`; 5 repository (đủ 12 repository của Phase 4) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 9/9/5/8/4, PT 4/5/3/2/1 khớp | Xong. `UserCoin.verifyHash` cần import `MessageDigest`, `StandardCharsets` (ENTITY.md lược import) |
+| 11 | 2026-11-14 | P04c | `feature/entity-p04c-promotion-migration` (từ `feature/entity-p04b-flashsale-coin`) | (lượt sau điền) | `V4__promotion.sql`: 12 bảng (4 bảng nối PK gộp, `user_coins` PK = `user_id`), CHECK enum, UNIQUE `(voucher_id, checkout_session_id)`, `(user_id, voucher_id)`, 19 FK (bảng nối CASCADE theo voucher) | V1–V4 trên `postgres:16` ✔ (34 bảng), `SchemaValidationIT` ✔, `ModuleBoundaryTest` ✔ | Xong. 2 FK nợ `voucher_usages.checkout_session_id`, `voucher_usages.order_id` để V5 |
