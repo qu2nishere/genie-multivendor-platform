@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G13.01–G13.21 trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push); G13.22 (mở PR) chờ chủ dự án xác nhận |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G13 (429/429); đã push `develop` + 7 nhánh giai đoạn, mở 7 PR xếp chồng #20–#26, chờ CI + duyệt |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 25 / 26 | — | `feature/web-polish` |
-| **Tổng** | | **379** | **50** | **428 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 26 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **429 / 429** | | |
 
 ---
 
@@ -650,7 +650,7 @@
 - [x] **G13.19** ADR
 - [x] **G13.20** Danh sách việc nối backend
 - [x] **G13.21** CI
-- [ ] **G13.22** Mở PR vào `develop`
+- [x] **G13.22** Mở PR vào `develop`
 - [x] **G13.C4** 🔖 COMMIT `docs(web): document mock mode, ui gallery and backend handoff` · hash: `9228a94`
 
 ---
@@ -900,6 +900,7 @@
 | G13.19 | `docs/adr/`: README (mục lục, mẫu Trạng thái · Bối cảnh · Quyết định · Hệ quả) + 6 ADR: 0001 chín theme, 0002 CSS lai, 0003 mock trước, 0004 bảng icon, 0005 bỏ phần trình diễn (kèm ngoại lệ `genie.mock.staff_title` cho e2e), 0006 thư mục bổ sung — viết theo cây **thực tế** (34 feature, `features/*/server.ts`, `app/{seller,admin}`, `shared/api/mock/`, `tests/e2e/`…), không chép nguyên plan mục 3. |
 | G13.20 | `docs/web-backend-handoff.md`: bảng 237 hàm có nhánh mock / 33 nhóm, sinh tự động từ mã (endpoint ở nhánh gọi thật), rồi đối chiếu tự động với `API_SPEC.md` → **21 endpoint lệch**: 11 đặt khác tên spec (sửa mã khi nối — vd. `/me/wishlist/ids` → `/me/wishlist/product-ids`, `/public/feed` → `/public/recommendations`, `/me/shop-follows` → `/me/following`), 5 spec chưa có (chiến dịch, bộ lọc thuộc tính, thương hiệu xác minh, tra SKU công khai, chính sách phí ship). Kèm trường DTO thiếu (`product_slug`, `order_id` trong thông báo), chức năng thay tạm (WebSocket chat, xuất CSV server, PDF A6, `/admin/shops`…), 3 hàm chỉ có ở mock, các bước nối. |
 | G13.21 | `ci.yml` job `web` đã có lint, Vitest, build, check-i18n, lọc đường dẫn `web/**` + `scripts/check-i18n.mjs`, chạy trên PR vào `develop` / `main`. Sửa: `npx astro check` → `npm run check` (thêm `tsc --noEmit`, cùng cổng với `npm run verify` ở máy dev). E2E Playwright chưa đưa vào CI (cần cài trình duyệt + build, ~1 phút) — đề xuất thêm job riêng khi nhóm cần. |
+| G13.22 | Chủ dự án đồng ý làm theo TS 13 (2026-11-14). Push `develop` (= `main`) và 7 nhánh giai đoạn (giải quyết phần "chưa push" của G00.04 / G00.05), mở **7 PR xếp chồng** theo `pull_request_template.md`: #20 `feature/web-foundation` → `develop` (G00–G06), #21 storefront-public → web-foundation (G07–G08), #22 web-auth (G09), #23 web-buyer (G10), #24 seller-ui (G11), #25 admin-ui (G12), #26 web-polish (G13). Tiêu đề = commit sẽ squash, đã qua commitlint; không kèm mã Jira (D6). Mỗi PR nêu thứ tự merge và lệnh `git rebase --onto origin/develop <base> <head>` sau khi PR trước squash-merge. Checklist ghi thật: PR vượt ~400 dòng (dữ liệu mock / i18n / CSS chuyển từ prototype — review theo từng commit nhóm), OpenAPI không áp dụng, `Quản Lý UseCase.xlsx` chưa cập nhật (UC cần backend). **Không tự merge** (TS 13.7: CI xanh + ≥ 2 duyệt). CI `ci.yml` chỉ chạy cho PR vào `develop` / `main` nên #21–#26 chạy CI khi được đổi base sang `develop`. |
 
 ## Nhật ký
 
@@ -941,3 +942,4 @@
 | 2026-11-14 | So khớp hình storefront / Seller / Admin (16 màn × 3 khổ + quét 36 route SPA), sửa màu footer theo theme, thanh sắp xếp màn hẹp, tràn ngang bảng; trợ năng (Lighthouse a11y 100), tương phản 9 theme, 2 island sang `idle`, `noindex` có e2e, bỏ `eslint-disable` toàn tệp (G13 nhóm B) | 0914230 |
 | 2026-11-14 | Vitest bổ sung 3 tệp miền; E2E 6 spec / 22 kịch bản × 2 khổ màn (khách vãng lai bằng bàn phím, mua hàng VNPay + voucher 3 tầng + Điểm, đơn hàng / trả hàng / đánh giá, KYC + sản phẩm + xử lý đơn, phân quyền Admin + duyệt KYC + rút tiền), chạy trên bản build production; sửa focus của ô chọn sao (G13 nhóm C) | 7254e9f |
 | 2026-11-14 | Dọn `.gitkeep` / stub thừa, README chế độ mock, 6 ADR, tài liệu bàn giao backend (237 hàm, 21 endpoint lệch API_SPEC), CI dùng `npm run check` (G13 nhóm D, trừ G13.22 chờ xác nhận) | 9228a94 |
+| 2026-11-14 | Push `develop` + 7 nhánh, mở PR #20–#26 vào chuỗi `develop` (G13.22) — xong toàn bộ plan | — |
