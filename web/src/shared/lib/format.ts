@@ -183,3 +183,17 @@ export function clockVN(now: number = Date.now()): {
   const s = Math.floor((now + 7 * 3600 * 1000) / 1000) % 86_400;
   return { hour: Math.floor(s / 3600), minute: Math.floor((s % 3600) / 60), second: s % 60 };
 }
+
+/** Ngày theo giờ Việt Nam dạng "YYYY-MM-DD" (giá trị ô `<input type="date">`, tham số lọc API). */
+export function isoDateVN(d: DateInput = Date.now()): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE }).format(toDate(d));
+}
+
+/** Tháng 1–12 → nhãn ngắn trục biểu đồ: "T6" (vi) / "Jun" (en). */
+export function formatMonthShort(month: number, opts: Opts = {}): string {
+  const l = opts.locale ?? currentLocale();
+  if (l === 'vi') return `T${month}`;
+  return new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(2000, month - 1, 1)),
+  );
+}

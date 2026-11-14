@@ -38,25 +38,25 @@ const vouchers = [
     code: 'GENIE30K',
     kind: 'platform',
     amount: '-30k',
-    label: lang === 'vi' ? 'Đơn từ 199.000₫' : 'Orders from 199,000₫',
+    label: t('home.vouchers.min_order', { amount: formatVND(199000, { locale: lang }) }),
   },
   {
     code: 'TECH15',
     kind: 'shop',
     amount: '-15%',
-    label: lang === 'vi' ? 'Tối đa 50.000₫' : 'Up to 50,000₫',
+    label: t('home.vouchers.max_off', { amount: formatVND(50000, { locale: lang }) }),
   },
   {
     code: 'FREESHIP30',
     kind: 'freeship',
     amount: '0₫',
-    label: lang === 'vi' ? 'Miễn phí vận chuyển' : 'Free shipping',
+    label: t('home.vouchers.freeship'),
   },
   {
     code: 'SALE1212',
     kind: 'platform',
     amount: '-12%',
-    label: lang === 'vi' ? 'Siêu sale 12.12' : '12.12 mega sale',
+    label: t('home.vouchers.sale_1212'),
   },
 ] as const;
 ---

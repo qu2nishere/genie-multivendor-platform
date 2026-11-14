@@ -46,6 +46,49 @@ cd web && npm ci && npm run dev
 
 Webhook đối tác khi dev: `cloudflared tunnel --url http://localhost:8080` hoặc `scripts/webhooks/*.http`.
 
+## Frontend `web/` — chạy riêng ở chế độ mock
+
+Giao diện (storefront, Seller Center, Admin Portal) chạy được **không cần backend**: mọi hàm
+`features/*/infrastructure/*.api.ts` trả dữ liệu mẫu khi `PUBLIC_USE_MOCK=true` (mặc định).
+
+```bash
+cd web
+cp .env.example .env      # tùy chọn — thiếu biến thì dùng giá trị dev mặc định
+npm ci
+npm run dev               # http://localhost:4321
+```
+
+| Biến (`web/.env`) | Mặc định | Ý nghĩa |
+|---|---|---|
+| `PUBLIC_USE_MOCK` | `true` | `true`: dữ liệu mock trong trình duyệt / SSR; `false`: gọi API thật |
+| `PUBLIC_API_URL` | `http://localhost:8080/api/v1` | API gọi từ trình duyệt |
+| `INTERNAL_API_URL` | = `PUBLIC_API_URL` | API gọi khi SSR (trong Docker: `http://backend:8080/api/v1`) |
+| `PUBLIC_WEB_URL` | `http://localhost:4321` | Tên miền công khai — canonical, sitemap, Open Graph |
+| `PUBLIC_S3_URL` | — | Ảnh / tệp trên MinIO |
+
+**Dữ liệu mẫu ở chế độ mock**
+
+- Đăng nhập: `mai.tran@gmail.com` / mật khẩu `Genie@123`, mã OTP luôn là `123456`.
+  Tài khoản này vừa là người mua vừa là chủ shop TechZone Official (`/seller`).
+- `/admin` đăng nhập bằng Admin mẫu đủ 13 quyền. Muốn xem dưới quyền nhân viên: đặt
+  `sessionStorage['genie.mock.staff_title']` = `MODERATOR` | `FINANCE_OFFICER` | `CS_SPECIALIST` rồi tải lại.
+- Thay đổi (giỏ, đơn, địa chỉ, duyệt KYC…) giữ trong `sessionStorage` của tab (`genie.mock.*`) — đóng tab là về dữ liệu gốc.
+- Theme storefront: `?theme=genie|classic|dongho|dongson|hoian|polymer|buudien|saigon|sleeve`.
+
+**Thư viện giao diện `/dev/ui`** — mọi component `shared/ui` với đủ biến thể (nút, form, overlay,
+thẻ sản phẩm, bộ thống kê). Chỉ có ở `npm run dev`; bản build trả 404.
+
+**Lệnh kiểm tra**
+
+| Lệnh | Việc |
+|---|---|
+| `npm run verify` | lint → `astro check` + `tsc` → Vitest → build → `check-i18n` (cổng trước mỗi commit) |
+| `npm run test` | Vitest (`src/**/*.test.ts`) |
+| `npm run test:e2e` | Playwright 360 px + 1440 px trên bản build production cổng 4322 (`E2E_DEV=1`: chạy trên dev server; `E2E_PORT`: đổi cổng) |
+
+Danh sách hàm mock cần nối API thật: [`docs/web-backend-handoff.md`](docs/web-backend-handoff.md).
+Quyết định kiến trúc của phần chuyển giao diện: [`docs/adr/`](docs/adr/).
+
 ## Quy trình nhóm
 
 - Nhánh: `main` (bản phát hành), `develop` (tích hợp), `feature/GNE-<số>-<mo-ta>`, `bugfix/…`, `release/vX.Y.Z`, `hotfix/…`.

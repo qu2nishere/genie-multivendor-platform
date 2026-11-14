@@ -820,8 +820,9 @@
   border-color: #d5e7de;
   border-radius: var(--radius-lg);
 }
+/* Web (G13.07): prototype #0E8C8C chỉ đạt 4,08:1 với chữ trắng → #0C7F7F (≈ 4,8:1) */
 [data-theme='polymer'] .tr-ticket--freeship .tr-ticket__amt {
-  background: #0e8c8c;
+  background: #0c7f7f;
 }
 [data-theme='polymer'] .tr-foot {
   background: #0b2e23;

@@ -110,7 +110,7 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
       <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
         <Input
           label={t('account.address.recipient')}
-          placeholder="Nguyễn Văn A"
+          placeholder={t('common.placeholder.person_name')}
           autoComplete="name"
           error={err(errors.recipient?.message)}
           {...register('recipient')}
@@ -172,7 +172,7 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
 
       <Input
         label={t('account.address.line')}
-        placeholder="25 Nguyễn Huệ, Căn hộ 12A"
+        placeholder={t('account.address.line_placeholder')}
         autoComplete="street-address"
         error={err(errors.line?.message)}
         {...register('line')}

@@ -101,7 +101,7 @@ export default function ProductsPage() {
             />
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto">
             <table className="w-full border-collapse tabular-nums min-w-[860px]">
               <thead>
                 <tr className="text-xs font-semibold text-muted text-left bg-gray-25">

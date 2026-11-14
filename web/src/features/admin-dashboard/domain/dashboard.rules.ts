@@ -1,4 +1,5 @@
 // Hàm thuần của Tổng quan sàn (prototype Dashboard.jsx).
+import { formatMonthShort } from '@/shared/lib/format';
 import type { FinishedGroup, GmvRange, MonthKey, MovingGroup } from './dashboard.types';
 
 /** Cùng bộ tông với shared/ui/dash (Tone) — domain không import UI. */
@@ -53,11 +54,7 @@ export function gmvPointLabel(label: string, range: GmvRange, locale: 'vi' | 'en
   if (range === '6m') {
     const mo = Number(label.split('-')[1]);
     if (!mo) return label;
-    if (locale === 'vi') return `T${mo}`;
-    return new Date(Date.UTC(2000, mo - 1, 1)).toLocaleString('en', {
-      month: 'short',
-      timeZone: 'UTC',
-    });
+    return formatMonthShort(mo, { locale });
   }
   const day = (iso: string) => {
     const [, mo, d] = iso.split('-');

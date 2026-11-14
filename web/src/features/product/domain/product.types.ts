@@ -55,6 +55,9 @@ export interface ProductSku {
   options: number[];
 }
 
+/** Khóa thông số thương hiệu trong dữ liệu người bán — bảng thông số hiện riêng hàng này ở đầu. */
+export const BRAND_SPEC_KEY = 'Thương hiệu';
+
 export interface ProductSpec {
   key: string;
   value: string;

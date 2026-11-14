@@ -5,6 +5,7 @@ import {
   type PermissionCode,
   type StaffTitle,
 } from '@/shared/auth/permissions';
+import { isoDateVN as day } from '@/shared/lib/format';
 import type {
   AccountState,
   AuditCategory,
@@ -123,9 +124,6 @@ export const AUDIT_CATEGORIES: AuditCategory[] = [
   'SECURITY',
   'CONFIG',
 ];
-
-const day = (d: Date) =>
-  new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(d);
 
 /** Khoảng thời gian → [from, to] dạng "YYYY-MM-DD" (giờ VN), tính lùi từ `now`. */
 export function rangeOf(

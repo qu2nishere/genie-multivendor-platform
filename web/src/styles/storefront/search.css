@@ -30,8 +30,10 @@
       scrollbar-width: none;
     }
     .tr-scrollrow > *,
-    .tr-sortbar > * {
+    .tr-sortbar > *,
+    .tr-sortbar > nav > * {
       flex: none;
+      white-space: nowrap;
     }
     .tr-scrollrow {
       margin-inline: -12px;

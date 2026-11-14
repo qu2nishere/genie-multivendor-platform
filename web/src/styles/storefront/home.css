@@ -713,27 +713,36 @@
   .tr-deck__close:hover {
     background: var(--gray-100);
   }
+  /* Web (G13.07): nút 24px (WCAG 2.5.8), chấm 10px như prototype vẽ bằng ::after */
   .tr-deck__nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    margin-top: 14px;
+    gap: 0;
+    margin-top: 7px;
   }
   .tr-deck__nav button {
+    display: grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+    min-height: 0 !important;
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .tr-deck__nav button::after {
+    content: '';
     width: 10px;
     height: 10px;
-    min-height: 0 !important;
-    padding: 0;
-    border: 0;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.55);
-    cursor: pointer;
     transition:
       width var(--dur-base) var(--ease-out),
       background var(--dur-base);
   }
-  .tr-deck__nav button[aria-current='true'] {
+  .tr-deck__nav button[aria-current='true']::after {
     width: 26px;
     background: var(--color-accent);
   }

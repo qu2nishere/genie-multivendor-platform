@@ -8,7 +8,7 @@ import { badgeLabel, useAdminQueues } from '@/features/admin-dashboard';
 import type { AdminMe } from '@/features/admin-system';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
-import { switchLocale, type Locale } from '@/shared/lib/locale';
+import { LOCALE_LABELS, LOCALES, switchLocale, type Locale } from '@/shared/lib/locale';
 import { Avatar, Badge, Icon } from '@/shared/ui';
 import { GenieLogo, ThemePicker } from '@/shared/ui/brand';
 import { AdminBell } from './AdminBell';
@@ -112,8 +112,11 @@ function LangSwitch() {
       onChange={(e) => switchLocale(e.target.value as Locale)}
       className="h-8 border border-solid border-line rounded-sm bg-surface-card text-xs text-body px-1.5 cursor-pointer"
     >
-      <option value="vi">Tiếng Việt</option>
-      <option value="en">English</option>
+      {LOCALES.map((l) => (
+        <option key={l} value={l} lang={l}>
+          {LOCALE_LABELS[l]}
+        </option>
+      ))}
     </select>
   );
 }

@@ -2,7 +2,7 @@
 // "Chi tiết sản phẩm" (prototype ProductDetail.jsx SpecsTable) — plan G08.29, SSR tĩnh.
 // Hàng đầu: Danh mục (liên kết gốc › con), Thương hiệu, Shop (liên kết), rồi thông số người bán khai.
 import { createT } from '@/shared/lib/i18n';
-import type { ProductSpec } from '../domain/product.types';
+import { BRAND_SPEC_KEY, type ProductSpec } from '../domain/product.types';
 
 interface Props {
   specs: ProductSpec[];
@@ -14,8 +14,7 @@ interface Props {
 
 const { specs, brand, categories, shop } = Astro.props;
 const t = createT(Astro.locals.lang ?? 'vi');
-const brandKey = 'Thương hiệu';
-const rest = specs.filter((s) => s.key !== brandKey);
+const rest = specs.filter((s) => s.key !== BRAND_SPEC_KEY);
 const link = 'text-blue-600 no-underline hover:underline';
 ---
 

@@ -1,4 +1,5 @@
 // Quy tắc phân tích: tỉ lệ client tự tính (API 10.2, 10.9), thứ tự / màu kết quả đơn, nhãn mốc biểu đồ.
+import { formatMonthShort } from '@/shared/lib/format';
 import type { Granularity, Outcome, Outcomes, Sentiment } from './analytics.types';
 
 /** Thứ tự + sắc độ thanh "Đơn kết thúc thế nào" (prototype OUTCOMES). */
@@ -32,10 +33,7 @@ export function pointLabel(label: string, g: Granularity, locale: 'vi' | 'en'): 
   if (g === 'HOUR') return `${Number(label.slice(0, 2))}h`;
   if (g === 'MONTH') {
     const m = Number(label.slice(5, 7));
-    if (locale === 'vi') return `T${m}`;
-    return new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(
-      new Date(Date.UTC(2000, m - 1, 1)),
-    );
+    return formatMonthShort(m, { locale });
   }
   return `${label.slice(8, 10)}/${label.slice(5, 7)}`;
 }

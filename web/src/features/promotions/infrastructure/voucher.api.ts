@@ -3,6 +3,7 @@ import { api, request } from '@/shared/api/http';
 import { env } from '@/shared/config/env';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
 import { activityStore } from '@/shared/api/mock/activity';
+import { formatNumber, formatVND } from '@/shared/lib/format';
 import type { Voucher } from '../domain/voucher.types';
 import type { VoucherDto } from './voucher.dto';
 import { toVoucher } from './voucher.mapper';
@@ -27,7 +28,7 @@ function redeemedDtos(): VoucherDto[] {
     kind: 'platform',
     shop_id: null,
     amount_label: `-${r.value / 1000}k`,
-    label: `Giảm ${r.value.toLocaleString('vi-VN')}₫`,
+    label: `Giảm ${formatVND(r.value, { locale: 'vi' })}`,
     condition_label: 'Đơn từ 50.000₫',
     type: 'FIXED',
     value: r.value,
@@ -39,7 +40,7 @@ function redeemedDtos(): VoucherDto[] {
     expires_at: '2026-12-31',
     scope_label: 'Toàn sàn',
     sponsor_label: 'Đổi từ Điểm Genie',
-    content: `Đổi từ ${r.cost.toLocaleString('vi-VN')} Điểm, dùng 1 lần.`,
+    content: `Đổi từ ${formatNumber(r.cost, { locale: 'vi' })} Điểm, dùng 1 lần.`,
     saved: true,
     status: 'active',
     used_count: 0,

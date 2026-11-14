@@ -7,7 +7,7 @@ import {
   SEED_SUB_CATEGORIES,
 } from '@/shared/api/mock/seed';
 import { productImg } from '@/shared/lib/assets';
-import type { ProductQuery } from '../domain/product.types';
+import { BRAND_SPEC_KEY, type ProductQuery } from '../domain/product.types';
 import type { ProductDetailDto, ProductSummaryDto, VariantGroupDto } from './product.dto';
 
 type SeedProduct = (typeof SEED_PRODUCTS)[number];
@@ -120,7 +120,7 @@ export function toDetailDto(p: SeedProduct): ProductDetailDto {
       })),
     ),
     specs: [
-      { key: 'Thương hiệu', value: p.brand },
+      { key: BRAND_SPEC_KEY, value: p.brand },
       { key: 'Chất liệu', value: 'Nhựa ABS + Polycarbonate' },
       { key: 'Loại kết nối', value: 'Bluetooth 5.3, USB-C' },
       { key: 'Tính năng', value: 'Chống ồn chủ động (ANC), Xuyên âm' },

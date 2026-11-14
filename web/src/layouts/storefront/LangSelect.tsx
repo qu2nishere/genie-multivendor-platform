@@ -1,11 +1,11 @@
 import { useT } from '@/shared/hooks/useT';
-import { switchLocale, type Locale } from '@/shared/lib/locale';
+import { LOCALE_LABELS, LOCALES, switchLocale, type Locale } from '@/shared/lib/locale';
 import { Icon, Popover } from '@/shared/ui';
 
-const LANGS: { id: Locale; label: string }[] = [
-  { id: 'vi', label: 'Tiếng Việt' },
-  { id: 'en', label: 'English' },
-];
+const LANGS: { id: Locale; label: string }[] = LOCALES.map((id) => ({
+  id,
+  label: LOCALE_LABELS[id],
+}));
 
 /** Chọn ngôn ngữ (prototype Header.jsx LangSelect) — plan G07.12: ghi cookie `lang` rồi tải lại để SSR đúng. */
 export default function LangSelect() {
@@ -17,12 +17,8 @@ export default function LangSelect() {
       aria-label={t('layout.header.language')}
       panelClassName="w-[168px] min-w-0 p-1 rounded-md shadow-xl"
       trigger={(p) => (
-        <button
-          type="button"
-          className="tr-textbtn"
-          aria-label={`${t('layout.header.language')}: ${cur.label}`}
-          {...p}
-        >
+        <button type="button" className="tr-textbtn" {...p}>
+          <span className="sr-only">{t('layout.header.language')}: </span>
           <span className="tr-lang-full">{cur.label}</span>
           <span className="tr-lang-code">{cur.id.toUpperCase()}</span>
           <Icon

@@ -65,6 +65,9 @@
       "price": "Giá",
       "total": "Tổng cộng",
       "skip_to_content": "Bỏ qua tới nội dung chính"
+    },
+    "placeholder": {
+      "person_name": "Nguyễn Văn A"
     }
   },
   "errors": {
@@ -719,7 +722,11 @@
       "list": "Sản phẩm Flash Sale"
     },
     "vouchers": {
-      "title": "Lưu voucher, dùng khi thanh toán"
+      "title": "Lưu voucher, dùng khi thanh toán",
+      "min_order": "Đơn từ {amount}",
+      "max_off": "Tối đa {amount}",
+      "freeship": "Miễn phí vận chuyển",
+      "sale_1212": "Siêu sale 12.12"
     },
     "shops": {
       "title": "Shop đã xác minh",
@@ -1279,7 +1286,8 @@
       "book_sub": "Quản lý địa chỉ nhận hàng của bạn",
       "empty": "Chưa có địa chỉ nào",
       "remove_title": "Xóa địa chỉ",
-      "remove_text": "Bạn có chắc muốn xóa địa chỉ này?"
+      "remove_text": "Bạn có chắc muốn xóa địa chỉ này?",
+      "line_placeholder": "25 Nguyễn Huệ, Căn hộ 12A"
     },
     "menu": {
       "label": "Tài khoản",
@@ -2953,7 +2961,6 @@
       "badge": "{count} mục đang chờ",
       "role_chip": "Quyền: {role}",
       "notif_unread": "Thông báo, {count} chưa đọc",
-      "pending": "Màn này đang được chuyển sang giao diện mới.",
       "forbidden": {
         "title": "Bạn không có quyền truy cập",
         "desc_before": "Màn “{screen}” yêu cầu quyền ",
@@ -3342,7 +3349,8 @@
       "failed_hint": "Vui lòng kiểm tra trên dashboard gateway hoặc thử lại.",
       "retry": "Thử lại hoàn tiền",
       "retried": "Đã gửi lại lệnh hoàn tiền."
-    }
+    },
+    "evidence_image": "Mở ảnh bằng chứng {n}"
   },
   "admin-moderation": {
     "reviews": {

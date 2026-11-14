@@ -103,7 +103,7 @@ export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: ()
         <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
           <Input
             label={t('admin-system.staff.name')}
-            placeholder="Nguyễn Văn A"
+            placeholder={t('common.placeholder.person_name')}
             error={m(e.fullName?.message)}
             {...form.register('fullName')}
           />

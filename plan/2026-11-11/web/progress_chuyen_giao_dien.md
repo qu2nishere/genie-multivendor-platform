@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G12; Admin Portal trên `feature/admin-ui` (chưa push) |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G13 (429/429); đã push `develop` + 7 nhánh giai đoạn, mở 7 PR xếp chồng #20–#26, chờ CI + duyệt |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **403 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 26 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **429 / 429** | | |
 
 ---
 
@@ -617,41 +617,41 @@
 
 **Nhóm A — Ngôn ngữ & thương hiệu**
 
-- [ ] **G13.01** Quét chuỗi cứng
-- [ ] **G13.02** Hoàn tất `en.json`
-- [ ] **G13.03** Rà từ ngữ R11
-- [ ] **G13.04** Rà tiền / ngày
-- [ ] **G13.C1** 🔖 COMMIT `refactor(web): complete i18n coverage and brand wording` · hash: `_______`
+- [x] **G13.01** Quét chuỗi cứng
+- [x] **G13.02** Hoàn tất `en.json`
+- [x] **G13.03** Rà từ ngữ R11
+- [x] **G13.04** Rà tiền / ngày
+- [x] **G13.C1** 🔖 COMMIT `refactor(web): complete i18n coverage and brand wording` · hash: `fc589e8`
 
 **Nhóm B — Chất lượng giao diện**
 
-- [ ] **G13.05** So khớp hình storefront
-- [ ] **G13.06** So khớp hình Seller + Admin
-- [ ] **G13.07** Trợ năng
-- [ ] **G13.08** Rà chỉ thị hydrate
-- [ ] **G13.09** Rà SEO lần cuối
-- [ ] **G13.10** Rà kiến trúc
-- [ ] **G13.C2** 🔖 COMMIT `fix(web): resolve visual parity, accessibility and hydration issues` · hash: `_______`
+- [x] **G13.05** So khớp hình storefront
+- [x] **G13.06** So khớp hình Seller + Admin
+- [x] **G13.07** Trợ năng
+- [x] **G13.08** Rà chỉ thị hydrate
+- [x] **G13.09** Rà SEO lần cuối
+- [x] **G13.10** Rà kiến trúc
+- [x] **G13.C2** 🔖 COMMIT `fix(web): resolve visual parity, accessibility and hydration issues` · hash: `0914230`
 
 **Nhóm C — Kiểm thử**
 
-- [ ] **G13.11** Bổ sung Vitest
-- [ ] **G13.12** E2E khách vãng lai
-- [ ] **G13.13** E2E mua hàng
-- [ ] **G13.14** E2E đơn hàng
-- [ ] **G13.15** E2E người bán
-- [ ] **G13.16** E2E quản trị
-- [ ] **G13.C3** 🔖 COMMIT `test(web): add unit and e2e coverage for migrated screens` · hash: `_______`
+- [x] **G13.11** Bổ sung Vitest
+- [x] **G13.12** E2E khách vãng lai
+- [x] **G13.13** E2E mua hàng
+- [x] **G13.14** E2E đơn hàng
+- [x] **G13.15** E2E người bán
+- [x] **G13.16** E2E quản trị
+- [x] **G13.C3** 🔖 COMMIT `test(web): add unit and e2e coverage for migrated screens` · hash: `7254e9f`
 
 **Nhóm D — Dọn dẹp & bàn giao**
 
-- [ ] **G13.17** Xóa `.gitkeep` ở thư mục đã có file; xóa stub không dùng
-- [ ] **G13.18** Tài liệu
-- [ ] **G13.19** ADR
-- [ ] **G13.20** Danh sách việc nối backend
-- [ ] **G13.21** CI
-- [ ] **G13.22** Mở PR vào `develop`
-- [ ] **G13.C4** 🔖 COMMIT `docs(web): document mock mode, ui gallery and backend handoff` · hash: `_______`
+- [x] **G13.17** Xóa `.gitkeep` ở thư mục đã có file; xóa stub không dùng
+- [x] **G13.18** Tài liệu
+- [x] **G13.19** ADR
+- [x] **G13.20** Danh sách việc nối backend
+- [x] **G13.21** CI
+- [x] **G13.22** Mở PR vào `develop`
+- [x] **G13.C4** 🔖 COMMIT `docs(web): document mock mode, ui gallery and backend handoff` · hash: `9228a94`
 
 ---
 
@@ -702,7 +702,12 @@
 
 | Route | Khổ màn | Mô tả lệch | Đã sửa |
 |---|---|---|---|
-| | | | |
+| Mọi trang storefront | 360 / 768 / 1440 | Tiêu đề nhóm footer màu trắng; prototype (theme genie, hoian, dongson, dongho) tô vàng — `<h2>` trong `summary` đặt `color: var(--text-inverse)` đè màu theme của `.tr-foot__head` | ☑ `h2` kế thừa màu |
+| `/c/*`, `/search` | 360 | Nút sắp xếp "Liên quan / Bán chạy / Mới nhất" gãy 2 dòng; prototype 1 dòng cuộn ngang — liên kết nằm trong `<nav class="contents">` nên quy tắc `.tr-sortbar > *` không áp | ☑ thêm `.tr-sortbar > nav > *` + `nowrap` |
+| `/seller/products` | 360, 1024 | Trang tràn ngang (799 / 1047 px): nhãn `sr-only` trong `th` thoát khung cuộn bảng (cùng lỗi G12.40) | ☑ khung bảng `relative` (kèm `DataTable` dùng chung, bảng biến thể) |
+| `/policies/*` | 360 | Prototype hiện cả danh sách mục lục (dài) trước nội dung; web gập vào nút "Thông tin hỗ trợ" | Giữ — cải tiến có chủ đích từ G08 (nội dung lên trước) |
+| `/account/profile` | 360 | Ảnh đại diện lên đầu form (prototype để cuối) | Giữ — khối ảnh đọc trước khi sửa thông tin |
+| `/become-seller` | 768 | Form đăng ký 2 cột (prototype 1 cột ở 768) | Giữ — đủ rộng, ít cuộn hơn |
 
 ### Task bỏ qua / thay đổi so với plan
 
@@ -872,6 +877,30 @@
 | G12.42 | `UsersPage`: tab có số đếm, tìm theo email / SĐT / tên shop; khóa tài khoản = đình chỉ theo mã lý do + thời hạn (phiên đăng nhập bị thu hồi), mở khóa bắt buộc lý do. Khóa nhân viên chỉ ở Phân quyền nhân viên (có liên kết). |
 | G12.43 | `AuditLogPage`: lọc khoảng thời gian (có Tuỳ chọn từ / đến), loại hành động, tìm; phân trang con trỏ "Tải thêm"; ô "n lần truy cập bị từ chối" đếm theo bộ lọc (`denied_count` của API); Xuất nhật ký tạo CSV phía client từ toàn bộ kết quả lọc (API có export — dùng khi nối backend G13). Chỉ đọc, không có thao tác sửa / xóa. |
 | G12.44 | `AccountAdminPage`: ảnh đại diện (upload AVATAR) + sửa tên qua PATCH `/admin/me` (khung Admin đổi theo); đổi mật khẩu và thiết bị đăng nhập dùng lại `PasswordForm`, `DevicesPanel` của khu tài khoản (thêm prop `passwordHref`). Ghi chú "Bắt buộc OTP" đặt trên form (form đã có khối Mẹo bảo mật riêng). `PanelHead` (shared/ui) + dòng thiết bị tự xuống hàng khi hẹp — trang tài khoản khách ở 1440 không đổi. |
+| Nhánh (G13) | `feature/web-polish` tạo từ `feature/admin-ui` (xếp chồng, local, chưa push). |
+| G13.01 | Quét bằng script (bỏ chú thích, `*mock*`, `*.test.*`, `policies.data.ts`): chuyển sang `t()` placeholder tên người (`common.placeholder.person_name` — 3 form), placeholder địa chỉ, 4 nhãn phiếu voucher trang chủ (`home.vouchers.*`, số tiền qua `formatVND`). Tên ngôn ngữ "Tiếng Việt" / "English" giữ nguyên dạng tự xưng (không dịch) nhưng gom về `LOCALE_LABELS` ở `shared/lib/locale.ts` (4 ô chọn ngôn ngữ). Khóa thông số "Thương hiệu" là dữ liệu người bán → hằng `BRAND_SPEC_KEY`. **Giữ lại có chủ đích:** thư viện `/dev/ui` (146 chuỗi mẫu, chỉ chạy dev, build production 404) và dữ liệu mock nằm trong `*.api.ts` (chat, ví, đánh giá… — sẽ do backend trả, G13.20); tên nhóm phân loại gợi ý của form sản phẩm (`seller-products/domain/product.rules.ts`) là dữ liệu người bán lưu thẳng vào sản phẩm. |
+| G13.02 | `en.json` đủ 3.246 khóa, `check-i18n` xanh; quét thêm mọi `t('…')` dạng chuỗi trong mã → 0 khóa thiếu. 8 giá trị en còn dấu tiếng Việt đều là tên riêng (Hội An, Đông Hồ, Đông Sơn, GHN — Giao Hàng Nhanh…). |
+| G13.03 | Không còn "Xu", "Mall", `LZD-`, `Lazadee`, `lz_` trong mã chạy và khóa lưu trữ; chỉ còn trong chú thích ghi nguồn prototype và `normalizeCode()` (đổi `LZD-` → `GNE-` phòng dữ liệu cũ, có test). "Xu hướng" (`search.trending`) là từ thường, không phải đơn vị Xu. |
+| G13.04 | Thêm `isoDateVN()` (ngày giờ VN "YYYY-MM-DD") và `formatMonthShort()` ("T6" / "Jun") vào `format.ts` + test; thay 3 bản `Intl.DateTimeFormat('en-CA')` tự viết (marketing, admin-system, VoucherFormModal), 2 bản nhãn tháng tự viết (admin-dashboard, seller-analytics), 2 `toLocaleString` trong mock voucher đổi từ Điểm. Không còn nối "₫"/"đ" ngoài `format.ts` (hậu tố `suffix="₫"` của ô nhập là ký hiệu đơn vị, không phải định dạng số). |
+| G13.05 | Chụp toàn trang bản build (mock) ở 360 / 768 / 1440 cho 16 màn có ảnh tham chiếu bằng Playwright rồi ghép cạnh ảnh prototype để so. Bố cục, thứ tự khối, số liệu khớp ở trang chủ, danh mục, tìm kiếm, khám phá, sản phẩm, shop, chính sách, trở thành người bán, giỏ, thanh toán (vào từ giỏ → "Mua hàng"), đơn mua, tài khoản, đăng nhập / đăng ký. Kiểm tự động mọi trang: không tràn ngang, đúng 1 `<h1>`, không lỗi JS. Ảnh danh mục prototype chụp "Điện thoại" rỗng nên chiều cao khác; ảnh gốc chụp khi đã đăng nhập + popup mở. Lệch tìm được ghi ở bảng "Lệch giao diện". |
+| G13.06 | Tổng quan Seller / Admin khớp ảnh `vendor-*`, `admin-*` (360 / 768 / 1440). Quét tự động **36 route** mục 4.3 + 4.4 ở 360 / 1024 / 1440 (108 lượt): chỉ `/seller/products` tràn ngang (đã sửa); xem lưới ảnh 1024 của 9 màn đại diện (đơn hàng, thêm sản phẩm, ví, cài đặt, duyệt KYC, rút tiền, danh mục, nhân viên, banner) — bảng rộng cuộn trong khung, không vỡ bố cục. |
+| G13.07 | Quét toàn bộ trang storefront + 36 route SPA ở 1440 và 360 (nút / liên kết không tên, ô nhập không nhãn, ảnh thiếu `alt`, id trùng, Tab 12 lần đo vòng focus): sửa liên kết ảnh bằng chứng ở `/admin/refunds` thiếu tên (`admin-disputes.evidence_image`); ô tìm kiếm header có vòng focus ở khung cha (`:focus-within`). Lighthouse báo thêm và đã sửa: `aria-label` trên `div` không role (logo footer → `role="img"`), chấm chuyển popup banner 10 px → nút 24 px (WCAG 2.5.8, chấm vẽ bằng `::after`), nhãn nút ngôn ngữ lệch chữ hiển thị (2.5.3 → chữ ẩn "Ngôn ngữ:" trong nút), ô số lượng `aria-valuemin/max` trên textbox → `role="spinbutton"` + `aria-valuenow`. Tương phản 9 theme × 6 trang (chủ, sản phẩm, giỏ, đăng nhập, Seller, Admin): nhãn % trắng trên thanh tỷ lệ Seller / Admin 4,42:1 → đoạn `ok` / `bad` / `ship` dùng `--tone-ink`; phiếu freeship theme polymer `#0E8C8C` 4,08:1 → `#0C7F7F` (≈ 4,8:1); các báo ~1,0 ở theme saigon / sleeve / dongho là báo nhầm (nền vẽ bằng lớp khác — đã chụp kiểm). `prefers-reduced-motion`: CSS đã có từ G02; thêm cho `scrollIntoView` của form sản phẩm. Luồng mua bằng bàn phím kiểm ở e2e G13.12–G13.13. |
+| G13.08 | Đối chiếu 63 chỉ thị với bảng TS 5.1: đúng ở hầu hết (Header / BuyBox / trang giỏ, checkout, đơn, tài khoản, form auth `load`; nút yêu thích / theo dõi / chia sẻ / bộ lọc `idle`; đánh giá, lưới sản phẩm, banner dưới màn `visible`; Seller / Admin / chat `only`). Chuyển 2 island sang `client:idle`: `AuthTools` (theme + ngôn ngữ góc trang đăng nhập) và `Countdown` trang Flash Sale (SSR đã in giờ, trang chủ cũng dùng `idle`). |
+| G13.09 | `seo.spec.ts` thêm kịch bản `noindex, nofollow` cho `/auth/*`, `/cart`, `/checkout/result`, `/dev/ui` và (có cookie đăng nhập) `/seller`, `/admin`, `/orders`, `/account/*`, `/chat`, `/checkout`: **18/18 xanh** (360 + 1440). Lighthouse 12.8 (Chromium của Playwright) trên bản build mock **sau proxy gzip cục bộ** (server Node của Astro không nén — production nén ở reverse proxy; đo thẳng không nén: hiệu năng mobile 57–58, LCP 11–13 s). Điểm (hiệu năng / trợ năng / thực hành tốt / SEO): **trang chủ** mobile 65 / 100 / 100 / 100 (LCP 8,0 s — là ảnh popup banner lần đầu, render sau hydrate), desktop 91 / 100 / 100 / 100; **danh mục** mobile 66 / 100 / 100 / 100, desktop 94 / 100 / 100 / 100; **sản phẩm** mobile 67 / 100 / 100 / 100, desktop 95 / 100 / 100 / 100. Đã sửa: banner phụ đầu trang + ảnh popup không còn `lazy`. Việc còn lại (ghi cho giai đoạn sau): (1) chunk chung 267 KB (88 KB gzip) chứa **cả hai** từ điển vi + en — tách theo ngôn ngữ cần `t()` bất đồng bộ; (2) CSS chặn render 186 KB (34 KB gzip, gồm themes.css của 9 theme) — tách CSS theme theo `data-theme`; (3) banner 1600 px JPEG cho mọi khổ — cần srcset / WebP từ pipeline ảnh MinIO. |
+| G13.10 | Không còn `/* eslint-disable */` toàn tệp ở 3 tệp sinh tự động (`seed.ts`, `voucher.mock.ts`, `policies.data.ts`) — bỏ đi vẫn sạch lint nên luật boundaries áp cho cả 3. Còn 17 dòng `eslint-disable-next-line react-hooks/exhaustive-deps` có chủ đích (chạy hiệu ứng 1 lần khi mở hộp / đổi khóa), không có cho boundaries. Không có `any` (luật `no-explicit-any: error` cả mã lẫn test). Override nới boundaries chỉ cho test / tệp cấu hình (G01.08). |
+| G13.11 | Rà theo danh sách: cả 34 feature có `domain/` đều đã có test; rà sâu từng tệp `domain/*` (trừ `*.types.ts`) chưa được test nào import → thêm 3 tệp: `payment/domain/escrow.test.ts` (Money Rail), `account/domain/account.menu.test.ts` (mục /account, 404 mục lạ), `admin-moderation/domain/moderation.schema.test.ts` (lý do từ chối, ghi chú ≤ 500). Vitest: 64 tệp / 313 test. |
+| G13.12–G13.16 (hạ tầng) | E2E mặc định chạy trên **bản build production** (`astro build` → `node dist/server/entry.mjs`, cổng 4322) thay vì `astro dev`: dev server phục vụ hàng trăm module ESM rời làm Chromium báo `ERR_INSUFFICIENT_RESOURCES` khi 2 trình duyệt chạy song song (island giỏ / thanh toán không hydrate được — không phải lỗi sản phẩm). `E2E_DEV=1` dùng lại dev server, `E2E_PORT` đổi cổng (cổng 4321 đang có phiên dev khác). Giới hạn 2 worker (nhiều hơn làm Chromium crash 0xC0000409 trên máy Windows). Bộ chọn tiêu đề dùng `#main h1` (thanh dev toolbar của Astro có `<h1>` riêng). **Toàn bộ 44 kịch bản xanh** (22 × mobile-360 / desktop-1440). |
+| G13.12 | `guest.spec.ts`: thao tác bằng **bàn phím** (focus + Enter / Space): ô tìm kiếm header → kết quả → mở sản phẩm → chọn phân loại (kiểm `aria-pressed`) → Thêm vào giỏ → số trên icon giỏ → /cart bỏ chọn / chọn lại bằng Space → "Mua hàng (1)" → hộp "Vui lòng đăng nhập" (liên kết `next=/cart`), Esc đóng; trang cần đăng nhập chuyển `/auth/login?next=`. |
+| G13.13 | `checkout-vnpay.spec.ts` (thay stub `test.skip`): đăng nhập bằng form → giỏ ≥ 3 shop, voucher shop ở từng nhóm + "Voucher Genie (−…) + Freeship" (3 tầng), tổng **3.485.200₫** đúng bộ số vàng G10.18 → bật công tắc Điểm (bàn phím) → tổng giảm → Mua hàng → /checkout (Đơn 1/n) → chọn VNPAY → cổng mô phỏng → "Thanh toán" → "Thanh toán thành công!", mã giao dịch, ≥ 3 liên kết Theo dõi. Thêm ca "Quay lại đơn hàng" (khách hủy) → "Thanh toán thất bại" + Thử thanh toán lại / Đổi phương thức. |
+| G13.14 | `orders.spec.ts`: danh sách → Theo dõi đơn 44 (mã đơn, sao chép mã vận đơn, chưa có Trả hàng); trả hàng đơn 41 (VietQR): tải 1 ảnh + 1 video, tài khoản hoàn tiền → toast + khối `#return`; đánh giá đơn 33 bằng phím mũi tên. **Sửa kèm (trợ năng):** `RatingInput` đổi sao bằng ← → nhưng focus đứng yên ở sao cũ → nay focus đi theo sao được chọn (mẫu radiogroup WAI-ARIA). |
+| G13.15 | `kyc-onboarding.spec.ts` (thay stub): /become-seller → OTP 123456 → `/seller/kyc` → Số CCCD + Người đại diện + CCCD 2 mặt + selfie (PNG ≥ 20 KB) → "Gửi duyệt KYC" → "Hồ sơ đang chờ duyệt", mục Sản phẩm trên nav bị khóa. Shop đã xác minh: tạo sản phẩm (Lưu nháp — chỉ cần tên) → có ở tab Nháp; đơn tab Mới → Xác nhận → tab Chờ chuẩn bị → Chuẩn bị hàng. |
+| G13.16 | `admin.spec.ts`: thêm cơ chế mock `genie.mock.staff_title` (sessionStorage, `shared/auth/session.ts`) đăng nhập /admin bằng nhân viên theo chức danh MODERATOR / FINANCE_OFFICER / CS_SPECIALIST với bộ quyền `TITLE_PRESETS` — chỉ cho e2e, không có nút đổi vai (D5). Kiểm: Kiểm duyệt viên thấy đúng 4 mục, không thấy Rút tiền / Sổ cái / Phân quyền / Voucher, mở `/admin/withdrawals` → "Bạn không có quyền truy cập"; Tài chính thấy Rút tiền, không thấy Duyệt KYC; Admin phê duyệt KYC; Admin Duyệt chi → hộp chuyển khoản có nội dung `TRWD…` → Đã chuyển khoản → hoàn tất. |
+| G13.17 | Xóa 28 `.gitkeep` ở thư mục `web/` đã có tệp; giữ 4 ở tầng còn trống (`catalog/application`, `catalog/ui`, `payment/application`, `payment/infrastructure`). `.gitkeep` của `server-spring` / `server-python` ngoài phạm vi (plan mục 8). Stub không dùng: barrel `shared/hooks/index.ts` (mọi nơi import thẳng `@/shared/hooks/useT`…) và khóa i18n `admin.shell.pending` ("Màn này đang được chuyển…") còn sót từ màn tạm G12 — đã xóa; không còn TODO / FIXME trong `web/src`. Commit C4 làm sau G13.21 vì G13.22 chờ xác nhận. |
+| G13.18 | README gốc thêm mục "Frontend `web/` — chạy riêng ở chế độ mock": lệnh chạy, bảng biến môi trường (mặc định lấy từ `shared/config/env.ts`), tài khoản / OTP mẫu, nhân viên mock theo chức danh, `?theme=`, thư viện `/dev/ui` (chỉ ở dev), bảng lệnh `verify` / `test` / `test:e2e` (`E2E_DEV`, `E2E_PORT`), liên kết tài liệu bàn giao + ADR. |
+| G13.19 | `docs/adr/`: README (mục lục, mẫu Trạng thái · Bối cảnh · Quyết định · Hệ quả) + 6 ADR: 0001 chín theme, 0002 CSS lai, 0003 mock trước, 0004 bảng icon, 0005 bỏ phần trình diễn (kèm ngoại lệ `genie.mock.staff_title` cho e2e), 0006 thư mục bổ sung — viết theo cây **thực tế** (34 feature, `features/*/server.ts`, `app/{seller,admin}`, `shared/api/mock/`, `tests/e2e/`…), không chép nguyên plan mục 3. |
+| G13.20 | `docs/web-backend-handoff.md`: bảng 237 hàm có nhánh mock / 33 nhóm, sinh tự động từ mã (endpoint ở nhánh gọi thật), rồi đối chiếu tự động với `API_SPEC.md` → **21 endpoint lệch**: 11 đặt khác tên spec (sửa mã khi nối — vd. `/me/wishlist/ids` → `/me/wishlist/product-ids`, `/public/feed` → `/public/recommendations`, `/me/shop-follows` → `/me/following`), 5 spec chưa có (chiến dịch, bộ lọc thuộc tính, thương hiệu xác minh, tra SKU công khai, chính sách phí ship). Kèm trường DTO thiếu (`product_slug`, `order_id` trong thông báo), chức năng thay tạm (WebSocket chat, xuất CSV server, PDF A6, `/admin/shops`…), 3 hàm chỉ có ở mock, các bước nối. |
+| G13.21 | `ci.yml` job `web` đã có lint, Vitest, build, check-i18n, lọc đường dẫn `web/**` + `scripts/check-i18n.mjs`, chạy trên PR vào `develop` / `main`. Sửa: `npx astro check` → `npm run check` (thêm `tsc --noEmit`, cùng cổng với `npm run verify` ở máy dev). E2E Playwright chưa đưa vào CI (cần cài trình duyệt + build, ~1 phút) — đề xuất thêm job riêng khi nhóm cần. |
+| G13.22 | Chủ dự án đồng ý làm theo TS 13 (2026-11-14). Push `develop` (= `main`) và 7 nhánh giai đoạn (giải quyết phần "chưa push" của G00.04 / G00.05), mở **7 PR xếp chồng** theo `pull_request_template.md`: #20 `feature/web-foundation` → `develop` (G00–G06), #21 storefront-public → web-foundation (G07–G08), #22 web-auth (G09), #23 web-buyer (G10), #24 seller-ui (G11), #25 admin-ui (G12), #26 web-polish (G13). Tiêu đề = commit sẽ squash, đã qua commitlint; không kèm mã Jira (D6). Mỗi PR nêu thứ tự merge và lệnh `git rebase --onto origin/develop <base> <head>` sau khi PR trước squash-merge. Checklist ghi thật: PR vượt ~400 dòng (dữ liệu mock / i18n / CSS chuyển từ prototype — review theo từng commit nhóm), OpenAPI không áp dụng, `Quản Lý UseCase.xlsx` chưa cập nhật (UC cần backend). **Không tự merge** (TS 13.7: CI xanh + ≥ 2 duyệt). CI `ci.yml` chỉ chạy cho PR vào `develop` / `main` nên #21–#26 chạy CI khi được đổi base sang `develop`. |
 
 ## Nhật ký
 
@@ -909,3 +938,8 @@
 | 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
 | 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
 | 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |
+| 2026-11-14 | Hoàn thiện i18n + từ ngữ thương hiệu: chuỗi cứng còn lại sang `t()`, tên ngôn ngữ dùng chung, `isoDateVN` / `formatMonthShort` thay Intl tự viết (G13 nhóm A) | fc589e8 |
+| 2026-11-14 | So khớp hình storefront / Seller / Admin (16 màn × 3 khổ + quét 36 route SPA), sửa màu footer theo theme, thanh sắp xếp màn hẹp, tràn ngang bảng; trợ năng (Lighthouse a11y 100), tương phản 9 theme, 2 island sang `idle`, `noindex` có e2e, bỏ `eslint-disable` toàn tệp (G13 nhóm B) | 0914230 |
+| 2026-11-14 | Vitest bổ sung 3 tệp miền; E2E 6 spec / 22 kịch bản × 2 khổ màn (khách vãng lai bằng bàn phím, mua hàng VNPay + voucher 3 tầng + Điểm, đơn hàng / trả hàng / đánh giá, KYC + sản phẩm + xử lý đơn, phân quyền Admin + duyệt KYC + rút tiền), chạy trên bản build production; sửa focus của ô chọn sao (G13 nhóm C) | 7254e9f |
+| 2026-11-14 | Dọn `.gitkeep` / stub thừa, README chế độ mock, 6 ADR, tài liệu bàn giao backend (237 hàm, 21 endpoint lệch API_SPEC), CI dùng `npm run check` (G13 nhóm D, trừ G13.22 chờ xác nhận) | 9228a94 |
+| 2026-11-14 | Push `develop` + 7 nhánh, mở PR #20–#26 vào chuỗi `develop` (G13.22) — xong toàn bộ plan | — |
