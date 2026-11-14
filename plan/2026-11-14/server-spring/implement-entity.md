@@ -10,7 +10,7 @@
 |---|---|
 | **Ngày lập** | 2026-11-14 |
 | **Tổng** | 23 lượt (= 23 nhánh, 23 commit) — bảng ở mục 7 |
-| **Cập nhật gần nhất** | 2026-11-14 — xong tới P02b (6 / 23 lượt); lượt kế: P02c |
+| **Cập nhật gần nhất** | 2026-11-14 — xong tới P02c (7 / 23 lượt); lượt kế: P03 |
 
 ---
 
@@ -144,11 +144,11 @@
 - [x] 12 repository.
 
 **Lượt 2c — Migration `V2__catalog.sql`**
-- [ ] Thứ tự: `categories` → `category_attributes` → `brands` → `products` → `product_variants` → `product_images` → `product_documents` → `category_proposals` → `product_moderation_results` → `search_keyword_stats` → `product_view_stats` → `user_wishlists`.
-- [ ] `products.search_vector`: cột `tsvector` sinh tự động (`GENERATED ALWAYS AS … STORED`) từ `name`, `brand`, `description` qua `unaccent` — `unaccent` không IMMUTABLE nên tạo hàm bọc IMMUTABLE trước; **không** thêm trường này vào entity (validate bỏ qua cột thừa). Ghi mục 6 nếu chọn cách khác.
-- [ ] Index mục 13.1: GIN `search_vector`, GIN `name gin_trgm_ops`, `(category_id, status, created_at DESC)`, `(vendor_id, status)`, `UNIQUE product_variants(sku)`; GIN `jsonb_path_ops` cho `products.specs_json` (mục 2.6).
-- [ ] Trả FK nợ từ V1: `vendor_profiles.category_id` → `categories`.
-- [ ] Kiểm tra cuối Phase: compile + ModuleBoundaryTest.
+- [x] Thứ tự: `categories` → `category_attributes` → `brands` → `products` → `product_variants` → `product_images` → `product_documents` → `category_proposals` → `product_moderation_results` → `search_keyword_stats` → `product_view_stats` → `user_wishlists`.
+- [x] `products.search_vector`: cột `tsvector` sinh tự động (`GENERATED ALWAYS AS … STORED`) từ `name`, `brand`, `description` qua `unaccent` — `unaccent` không IMMUTABLE nên tạo hàm bọc IMMUTABLE trước; **không** thêm trường này vào entity (validate bỏ qua cột thừa). Ghi mục 6 nếu chọn cách khác.
+- [x] Index mục 13.1: GIN `search_vector`, GIN `name gin_trgm_ops`, `(category_id, status, created_at DESC)`, `(vendor_id, status)`, `UNIQUE product_variants(sku)`; GIN `jsonb_path_ops` cho `products.specs_json` (mục 2.6).
+- [x] Trả FK nợ từ V1: `vendor_profiles.category_id` → `categories`.
+- [x] Kiểm tra cuối Phase: compile + ModuleBoundaryTest.
 
 ---
 
@@ -353,7 +353,7 @@
 
 | ✓ | Cột (file tạo cột) | Bảng đích | Thêm `ALTER TABLE` ở |
 |---|---|---|---|
-| [ ] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
+| [x] | `vendor_profiles.category_id` (V1) | `categories` | cuối V2 |
 | [ ] | `voucher_usages.checkout_session_id` (V4) | `checkout_sessions` | cuối V5 |
 | [ ] | `voucher_usages.order_id` (V4) | `orders` | cuối V5 |
 | [ ] | `payment_refunds.refund_request_id` (V6) | `refund_requests` | cuối V8 |
@@ -404,7 +404,7 @@
 | [x] | P01c | `feature/entity-p01c-identity-migration` | `feat(db): add identity schema migration` |
 | [x] | P02a | `feature/entity-p02a-catalog-core` | `feat(catalog): add category, brand and product entities` |
 | [x] | P02b | `feature/entity-p02b-catalog-support` | `feat(catalog): add attribute, proposal, moderation and stats entities` |
-| [ ] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
+| [x] | P02c | `feature/entity-p02c-catalog-migration` | `feat(db): add catalog schema migration` |
 | [ ] | P03 | `feature/entity-p03-cart` | `feat(order): add cart entities and migration` |
 | [ ] | P04a | `feature/entity-p04a-voucher` | `feat(promotion): add voucher entities and composite keys` |
 | [ ] | P04b | `feature/entity-p04b-flashsale-coin` | `feat(promotion): add flash sale and coin entities` |
@@ -435,4 +435,5 @@
 | 3 | 2026-11-14 | P01b | `feature/entity-p01b-vendor-admin-entities` (từ `feature/entity-p01a-auth-entities`) | `b7f3611` | Entity `VendorProfile`, `KycResult`, `AdminProfile`, `StaffPermission`; enum `BusinessType`, `KycStatus`, `KycVerificationMethod`, `KycOverallResult`, `StaffPermissionEnum`, `StaffTitle`; 4 repository; hiện thực `common.domain.NameNormalizer` (đang là stub) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 50/29/8/6, PT 15/3/2/2 khớp | Xong. D2: `VendorProfile`, `AdminProfile` bỏ `user` (50, 8 trường). `NameNormalizer.normalize` viết theo mô tả ENTITY.md 1.4 (bỏ dấu, viết hoa, gộp khoảng trắng) — ghi mục 6. Từ lượt này code chép từ ENTITY.md bằng script trích xuất (giữ nguyên văn khối code) để tránh sót |
 | 4 | 2026-11-14 | P01c | `feature/entity-p01c-identity-migration` (từ `feature/entity-p01b-vendor-admin-entities`) | `42e10b1` | `V1__identity.sql`: 8 bảng, CHECK enum, unique 1-1, 8 FK (`ON DELETE` theo B.1); D8 cho `CustomerProfile`, `Address`, `RefreshToken`, `KycResult` | `compile` ✔, `ModuleBoundaryTest` ✔, V1 chạy trên `postgres:16` ✔, `SchemaValidationIT` (Flyway + Hibernate validate) ✔ | Xong. Phát hiện & thêm D8 (xem mục 2, 6). FK nợ `vendor_profiles.category_id` để V2. `staff_permissions.granted_by_admin_id` FK không cascade |
 | 5 | 2026-11-14 | P02a | `feature/entity-p02a-catalog-core` (từ `feature/entity-p01c-identity-migration`) | `a69b974` | Entity `Category`, `Brand`, `Product`, `ProductVariant`, `ProductImage`, `ProductDocument`; enum `ProductStatus`, `ShippingPayer`, `ProductCondition`, `ProductDocumentType`; 6 repository | `compile` ✔, `ModuleBoundaryTest` ✔; trường 11/7/36/12/12/10, PT 2/2/6/5/1/1 khớp | Xong. D2: `Product` bỏ `vendorProfile`. D8 áp cho `Product.categoryId`, `ProductVariant`/`ProductImage`/`ProductDocument.productId`, `Category.parentId` |
-| 6 | 2026-11-14 | P02b | `feature/entity-p02b-catalog-support` (từ `feature/entity-p02a-catalog-core`) | (lượt sau điền) | Entity `CategoryAttribute`, `UserWishlist`, `CategoryProposal`, `ProductModerationResult`, `SearchKeywordStat`, `ProductViewStat`; enum `AttributeDataType`, `CategoryProposalStatus`, `ModerationDecision`, `TrafficSource`; 6 repository (đủ 12 repository của Phase 2) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 15/4/11/11/6/8, PT 2/0/2/2/1/1 khớp | Xong. Không có quan hệ chéo module trong lượt này |
+| 6 | 2026-11-14 | P02b | `feature/entity-p02b-catalog-support` (từ `feature/entity-p02a-catalog-core`) | `a20cb56` | Entity `CategoryAttribute`, `UserWishlist`, `CategoryProposal`, `ProductModerationResult`, `SearchKeywordStat`, `ProductViewStat`; enum `AttributeDataType`, `CategoryProposalStatus`, `ModerationDecision`, `TrafficSource`; 6 repository (đủ 12 repository của Phase 2) | `compile` ✔, `ModuleBoundaryTest` ✔; trường 15/4/11/11/6/8, PT 2/0/2/2/1/1 khớp | Xong. Không có quan hệ chéo module trong lượt này |
+| 7 | 2026-11-14 | P02c | `feature/entity-p02c-catalog-migration` (từ `feature/entity-p02b-catalog-support`) | (lượt sau điền) | `V2__catalog.sql`: 12 bảng, CHECK enum, unique/index từ `@Table`, 15 FK + FK tự tham chiếu `categories.parent_id`; trả FK nợ `vendor_profiles.category_id` (SET NULL); hàm `immutable_unaccent`, cột sinh `products.search_vector` + 5 index mục 13.1 | V1+V2 chạy trên `postgres:16` ✔, `SchemaValidationIT` ✔ (24 entity), `ModuleBoundaryTest` ✔ | Xong. `@UniqueConstraint(columnNames = {"userId", "productId"})` của `UserWishlist` dùng tên Java → SQL dùng `user_id, product_id`. Full-text dùng cấu hình `simple` + unaccent (PostgreSQL không có cấu hình tiếng Việt) |
