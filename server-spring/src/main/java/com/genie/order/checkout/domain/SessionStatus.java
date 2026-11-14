@@ -1,8 +1,6 @@
 package com.genie.order.checkout.domain;
 
 /**
- * Tầng domain — entity (rich domain model), enum, repository interface. Không phụ thuộc tầng khác. TODO: hiện thực.
+ * Enum SessionStatus — ENTITY.md Phụ lục A. ← CheckoutSession.status
  */
-public enum SessionStatus {
-    // TODO: giá trị đúng Phụ lục A ENTITY.md (UPPER_SNAKE_CASE)
-}
+public enum SessionStatus { INITIATED, PAYMENT_PENDING, COMPLETED, FAILED, EXPIRED }           // ← CheckoutSession.status
