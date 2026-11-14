@@ -5,7 +5,7 @@
 | **Plan** | [plan_chuyen_giao_dien.md](./plan_chuyen_giao_dien.md) — chi tiết từng task tra theo mã `Gxx.yy` |
 | **Ngày lập** | 2026-11-11 |
 | **Tổng** | 379 task + 50 commit, 14 giai đoạn |
-| **Cập nhật gần nhất** | 2026-11-14 — xong G00–G12; Admin Portal trên `feature/admin-ui` (chưa push) |
+| **Cập nhật gần nhất** | 2026-11-14 — xong G13 nhóm A trên `feature/web-polish` (xếp chồng từ `feature/admin-ui`, chưa push) |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | G10 | Trang người mua (cần đăng nhập) | 66 | 9 | 75 / 75 | — | `feature/web-buyer` |
 | G11 | Seller Center (SPA `/seller/*`) | 45 | 6 | 51 / 51 | — | `feature/seller-ui` |
 | G12 | Admin Portal (SPA `/admin/*`) | 45 | 7 | 52 / 52 | — | `feature/admin-ui` |
-| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 0 / 26 |  |  |
-| **Tổng** | | **379** | **50** | **403 / 429** | | |
+| G13 | Hoàn thiện, kiểm thử, bàn giao | 22 | 4 | 5 / 26 | — | `feature/web-polish` |
+| **Tổng** | | **379** | **50** | **408 / 429** | | |
 
 ---
 
@@ -617,11 +617,11 @@
 
 **Nhóm A — Ngôn ngữ & thương hiệu**
 
-- [ ] **G13.01** Quét chuỗi cứng
-- [ ] **G13.02** Hoàn tất `en.json`
-- [ ] **G13.03** Rà từ ngữ R11
-- [ ] **G13.04** Rà tiền / ngày
-- [ ] **G13.C1** 🔖 COMMIT `refactor(web): complete i18n coverage and brand wording` · hash: `_______`
+- [x] **G13.01** Quét chuỗi cứng
+- [x] **G13.02** Hoàn tất `en.json`
+- [x] **G13.03** Rà từ ngữ R11
+- [x] **G13.04** Rà tiền / ngày
+- [x] **G13.C1** 🔖 COMMIT `refactor(web): complete i18n coverage and brand wording` · hash: `fc589e8`
 
 **Nhóm B — Chất lượng giao diện**
 
@@ -872,6 +872,11 @@
 | G12.42 | `UsersPage`: tab có số đếm, tìm theo email / SĐT / tên shop; khóa tài khoản = đình chỉ theo mã lý do + thời hạn (phiên đăng nhập bị thu hồi), mở khóa bắt buộc lý do. Khóa nhân viên chỉ ở Phân quyền nhân viên (có liên kết). |
 | G12.43 | `AuditLogPage`: lọc khoảng thời gian (có Tuỳ chọn từ / đến), loại hành động, tìm; phân trang con trỏ "Tải thêm"; ô "n lần truy cập bị từ chối" đếm theo bộ lọc (`denied_count` của API); Xuất nhật ký tạo CSV phía client từ toàn bộ kết quả lọc (API có export — dùng khi nối backend G13). Chỉ đọc, không có thao tác sửa / xóa. |
 | G12.44 | `AccountAdminPage`: ảnh đại diện (upload AVATAR) + sửa tên qua PATCH `/admin/me` (khung Admin đổi theo); đổi mật khẩu và thiết bị đăng nhập dùng lại `PasswordForm`, `DevicesPanel` của khu tài khoản (thêm prop `passwordHref`). Ghi chú "Bắt buộc OTP" đặt trên form (form đã có khối Mẹo bảo mật riêng). `PanelHead` (shared/ui) + dòng thiết bị tự xuống hàng khi hẹp — trang tài khoản khách ở 1440 không đổi. |
+| Nhánh (G13) | `feature/web-polish` tạo từ `feature/admin-ui` (xếp chồng, local, chưa push). |
+| G13.01 | Quét bằng script (bỏ chú thích, `*mock*`, `*.test.*`, `policies.data.ts`): chuyển sang `t()` placeholder tên người (`common.placeholder.person_name` — 3 form), placeholder địa chỉ, 4 nhãn phiếu voucher trang chủ (`home.vouchers.*`, số tiền qua `formatVND`). Tên ngôn ngữ "Tiếng Việt" / "English" giữ nguyên dạng tự xưng (không dịch) nhưng gom về `LOCALE_LABELS` ở `shared/lib/locale.ts` (4 ô chọn ngôn ngữ). Khóa thông số "Thương hiệu" là dữ liệu người bán → hằng `BRAND_SPEC_KEY`. **Giữ lại có chủ đích:** thư viện `/dev/ui` (146 chuỗi mẫu, chỉ chạy dev, build production 404) và dữ liệu mock nằm trong `*.api.ts` (chat, ví, đánh giá… — sẽ do backend trả, G13.20); tên nhóm phân loại gợi ý của form sản phẩm (`seller-products/domain/product.rules.ts`) là dữ liệu người bán lưu thẳng vào sản phẩm. |
+| G13.02 | `en.json` đủ 3.246 khóa, `check-i18n` xanh; quét thêm mọi `t('…')` dạng chuỗi trong mã → 0 khóa thiếu. 8 giá trị en còn dấu tiếng Việt đều là tên riêng (Hội An, Đông Hồ, Đông Sơn, GHN — Giao Hàng Nhanh…). |
+| G13.03 | Không còn "Xu", "Mall", `LZD-`, `Lazadee`, `lz_` trong mã chạy và khóa lưu trữ; chỉ còn trong chú thích ghi nguồn prototype và `normalizeCode()` (đổi `LZD-` → `GNE-` phòng dữ liệu cũ, có test). "Xu hướng" (`search.trending`) là từ thường, không phải đơn vị Xu. |
+| G13.04 | Thêm `isoDateVN()` (ngày giờ VN "YYYY-MM-DD") và `formatMonthShort()` ("T6" / "Jun") vào `format.ts` + test; thay 3 bản `Intl.DateTimeFormat('en-CA')` tự viết (marketing, admin-system, VoucherFormModal), 2 bản nhãn tháng tự viết (admin-dashboard, seller-analytics), 2 `toLocaleString` trong mock voucher đổi từ Điểm. Không còn nối "₫"/"đ" ngoài `format.ts` (hậu tố `suffix="₫"` của ô nhập là ký hiệu đơn vị, không phải định dạng số). |
 
 ## Nhật ký
 
@@ -909,3 +914,4 @@
 | 2026-11-14 | Admin Portal: Xử lý rút tiền (duyệt chi + chuyển khoản VietQR TRWD…, xác nhận tay, từ chối hoàn ví), Cấu hình hoa hồng, Sổ cái (lọc, tải thêm, xuất CSV), Đối soát COD (bảng kê CSV, đối chiếu, xác nhận) (G12 nhóm E) | e35446a |
 | 2026-11-14 | Admin Portal: Voucher sàn (dùng chung VoucherEditor với Seller), Flash Sale (chiến dịch, duyệt SP đăng ký, lên lịch / kết thúc sớm), Banner trang chủ (kho banner chung với storefront, chọn đích từ dữ liệu sàn), Thông báo sàn (soạn rich-text, hẹn giờ, người nhận cụ thể) (G12 nhóm F) | c070b95 |
 | 2026-11-14 | Admin Portal: Phân quyền nhân viên (mời, sửa quyền theo chức danh + cảnh báo tách biệt nhiệm vụ, khóa / mở khóa / xóa), Người dùng (tab, tìm, đình chỉ có thời hạn, mở khóa), Nhật ký hệ thống (lọc, tải thêm, xuất CSV), Tài khoản quản trị (ảnh, tên, mật khẩu OTP, thiết bị) (G12 nhóm G) — xong G12 | 0b68d13 |
+| 2026-11-14 | Hoàn thiện i18n + từ ngữ thương hiệu: chuỗi cứng còn lại sang `t()`, tên ngôn ngữ dùng chung, `isoDateVN` / `formatMonthShort` thay Intl tự viết (G13 nhóm A) | fc589e8 |
