@@ -55,8 +55,13 @@ public abstract class IntegrationTestBase {
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16");
     static final GenericContainer<?> REDIS = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
             .withExposedPorts(6379);
-    /** MinIO cùng phiên bản deploy/docker-compose.local.yml; bucket tạo trong {@link #createBuckets()}. */
-    protected static final MinIOContainer MINIO = new MinIOContainer("minio/minio:RELEASE.2024-08-17T01-24-54Z");
+    /**
+     * Kho S3 cùng image với deploy/docker-compose.local.yml: Silo — fork cộng đồng của MinIO (MinIO đã xóa image
+     * minio/minio khỏi Docker Hub, ADR 0009). Silo giữ API S3, đường dẫn /minio/health/*, biến MINIO_* nên dùng được
+     * {@link MinIOContainer}. Bucket tạo trong {@link #createBuckets()}.
+     */
+    protected static final MinIOContainer MINIO = new MinIOContainer(
+            DockerImageName.parse("pgsty/silo:RELEASE.2026-10-26T00-00-00Z").asCompatibleSubstituteFor("minio/minio"));
 
     static {
         // JVM Windows / macOS có thể mặc định "Asia/Saigon" — tên PostgreSQL 16 không nhận; dự án lưu UTC.
