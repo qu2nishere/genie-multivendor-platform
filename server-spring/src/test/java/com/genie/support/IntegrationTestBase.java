@@ -6,6 +6,7 @@ import com.genie.auth.profile.domain.User;
 import com.genie.auth.profile.domain.UserRepository;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.servlet.http.Cookie;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -119,7 +120,7 @@ public abstract class IntegrationTestBase {
     }
 
     protected static String accessTokenOf(MvcResult result) throws Exception {
-        return JsonPath.read(result.getResponse().getContentAsString(), "$.data.access_token");
+        return JsonPath.read(result.getResponse().getContentAsString(StandardCharsets.UTF_8), "$.data.access_token");
     }
 
     protected static Cookie refreshCookieOf(MvcResult result) {
@@ -131,7 +132,7 @@ public abstract class IntegrationTestBase {
     }
 
     protected static String json(MvcResult result, String path) throws Exception {
-        Object value = JsonPath.read(result.getResponse().getContentAsString(), path);
+        Object value = JsonPath.read(result.getResponse().getContentAsString(StandardCharsets.UTF_8), path);
         return value == null ? null : value.toString();
     }
 
