@@ -2,11 +2,13 @@ package com.genie.auth.profile.application;
 
 import com.genie.auth.login.event.NewDeviceLoginEvent;
 import com.genie.auth.password.event.PasswordChangedEvent;
+import com.genie.auth.token.application.UserAgentParser;
 import com.genie.common.mail.EmailSender;
 import com.genie.common.mail.MailTemplate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -39,7 +41,28 @@ public class AccountMailListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPasswordChanged(PasswordChangedEvent event) {
-        send(event.userId(), event.email(), MailTemplate.PASSWORD_CHANGED, Map.of("changedAt", format(event.changedAt())));
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("name", nameOf(event.userId(), event.email()));
+        vars.put("email", event.email());
+        vars.put("method", event.method() == null ? "CHANGE" : event.method());
+        vars.put("changedAt", format(event.changedAt()));
+        vars.put("device", event.userAgent() == null ? "" : UserAgentParser.parse(event.userAgent()).name());
+        vars.put("ip", event.ipAddress() == null ? "" : event.ipAddress());
+        send(event.userId(), event.email(), MailTemplate.PASSWORD_CHANGED, vars);
+    }
+
+    /** Tên hiển thị trong lời chào: họ tên hồ sơ, không có thì phần trước @ của email. */
+    private String nameOf(Long userId, String email) {
+        try {
+            String name = summaries.summaryOf(userId).fullName();
+            if (name != null && !name.isBlank()) {
+                return name;
+            }
+        } catch (RuntimeException e) {
+            log.debug("Không đọc được tên user {}: {}", userId, e.getMessage());
+        }
+        int at = email == null ? -1 : email.indexOf('@');
+        return at > 0 ? email.substring(0, at) : "";
     }
 
     @Async

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import com.genie.common.mail.MailTemplate;
+import com.genie.support.FakeEmailSender;
 import com.genie.support.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -56,10 +58,95 @@ class PasswordFlowIT extends IntegrationTestBase {
 
     @Test
     void forgotPasswordForUnknownEmailLooksTheSame() throws Exception {
-        MvcResult sent = sendOtp("PASSWORD_RESET", uniqueEmail());
+        String email = uniqueEmail();
+        MvcResult sent = sendOtp("PASSWORD_RESET", email);
         assertThat(sent.getResponse().getStatus()).isEqualTo(202);
         assertThat(json(sent, "$.data.challenge_id")).startsWith("otp_");
-        assertThat(mails.sent()).isEmpty();
+        assertThat(mailsTo(email)).isEmpty();
+    }
+
+    @Test
+    void fiveWrongCodesLockRecoveryForThirtyMinutes() throws Exception {
+        String email = uniqueEmail();
+        createCustomer(email, PASSWORD);
+        MvcResult sent = sendOtp("PASSWORD_RESET", email);
+        String challengeId = json(sent, "$.data.challenge_id");
+        String wrong = mails.lastOtp(email).equals("000000") ? "111111" : "000000";
+
+        for (int i = 1; i <= 4; i++) {
+            MvcResult r = verify(challengeId, wrong);
+            assertThat(r.getResponse().getStatus()).isEqualTo(422);
+            assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4222");
+            assertThat(json(r, "$.details.remaining_attempts")).isEqualTo(String.valueOf(5 - i));
+        }
+        MvcResult locked = verify(challengeId, wrong);
+        assertThat(json(locked, "$.code")).isEqualTo("GNE-AUTH-4221");
+        assertThat(json(locked, "$.details.locked_until")).isNotBlank();
+        assertThat(redis.hasKey("auth:pwreset_lock:" + email)).isTrue();
+        Long ttl = redis.getExpire("auth:pwreset_lock:" + email);
+        assertThat(ttl).isBetween(29 * 60L, 30 * 60L);
+
+        // Đang bị khóa: xin mã lại (sau 60 giây chờ gửi lại) vẫn 202 — không lộ trạng thái — nhưng không gửi thư.
+        mails.clear();
+        redis.delete("rl:otp:" + email);
+        MvcResult again = sendOtp("PASSWORD_RESET", email);
+        assertThat(again.getResponse().getStatus()).isEqualTo(202);
+        assertThat(json(again, "$.data.challenge_id")).startsWith("otp_");
+        assertThat(mailsTo(email)).isEmpty();
+
+        // Hết 30 phút khóa → xin mã được lại.
+        redis.delete("auth:pwreset_lock:" + email);
+        redis.delete("rl:otp:" + email);
+        sendOtp("PASSWORD_RESET", email);
+        assertThat(mails.lastOtp(email)).hasSize(6);
+    }
+
+    @Test
+    void googleOnlyAccountGetsNoResetEmail() throws Exception {
+        String email = uniqueEmail();
+        createCustomer(email, null);   // tạo bằng Google, chưa thiết lập mật khẩu
+
+        MvcResult sent = sendOtp("PASSWORD_RESET", email);
+        assertThat(sent.getResponse().getStatus()).isEqualTo(202);
+        assertThat(json(sent, "$.data.challenge_id")).startsWith("otp_");
+        assertThat(mailsTo(email)).isEmpty();
+    }
+
+    @Test
+    void resetSendsBrandedSecurityEmailWithDevice() throws Exception {
+        String email = uniqueEmail();
+        createCustomer(email, PASSWORD);
+        MvcResult sent = sendOtp("PASSWORD_RESET", email);
+        String token = json(verify(json(sent, "$.data.challenge_id"), mails.lastOtp(email)), "$.data.reset_token");
+
+        MvcResult done = mvc.perform(post("/api/v1/auth/password-resets").contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 "
+                        + "(KHTML, like Gecko) Version/18.0 Safari/605.1.15")
+                .content("{\"reset_token\":\"" + token + "\",\"new_password\":\"NewPass@2026\"}")).andReturn();
+        assertThat(done.getResponse().getStatus()).isEqualTo(204);
+
+        FakeEmailSender.SentMail mail = waitForMail(email, MailTemplate.PASSWORD_CHANGED);
+        assertThat(mail.variables()).containsEntry("name", "Người dùng test").containsEntry("method", "RESET")
+                .containsEntry("email", email);
+        assertThat((String) mail.variables().get("device")).contains("Safari");
+        assertThat((String) mail.variables().get("changedAt")).isNotBlank();
+    }
+
+    /** Thư gửi tới {@code to} — bỏ qua email cảnh báo gửi nền của test khác đến muộn. */
+    private java.util.List<FakeEmailSender.SentMail> mailsTo(String to) {
+        return mails.sent().stream().filter(m -> m.to().equals(to)).toList();
+    }
+
+    /** Email cảnh báo gửi nền sau commit ({@code @Async}) — chờ tối đa 5 giây. */
+    private FakeEmailSender.SentMail waitForMail(String to, MailTemplate template) throws InterruptedException {
+        for (int i = 0; i < 50; i++) {
+            var mail = mails.last(to, template);
+            if (mail.isPresent()) {
+                return mail.get();
+            }
+            Thread.sleep(100);
+        }
+        throw new AssertionError("Chưa có email " + template + " gửi tới " + to);
     }
 
     @Test

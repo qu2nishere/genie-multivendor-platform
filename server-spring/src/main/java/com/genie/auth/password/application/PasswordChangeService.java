@@ -84,6 +84,7 @@ public class PasswordChangeService {
         }
         audit.record(AuditAction.PASSWORD_CHANGED, user.getId(), null, Map.of("method", setup ? "SETUP" : "CHANGE"),
                 client, true);
-        events.publishEvent(new PasswordChangedEvent(user.getId(), user.getEmail(), setup ? "SETUP" : "CHANGE", now));
+        events.publishEvent(PasswordChangedEvent.of(user.getId(), user.getEmail(), setup ? "SETUP" : "CHANGE", now,
+                client));
     }
 }

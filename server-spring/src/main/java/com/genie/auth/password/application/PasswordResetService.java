@@ -124,7 +124,7 @@ public class PasswordResetService {
         user.clearLock();
         sessions.revokeAllSessions(user.getId(), RevokeReason.PASSWORD_CHANGED);
         audit.record(AuditAction.PASSWORD_RESET, user.getId(), null, null, client, true);
-        events.publishEvent(new PasswordChangedEvent(user.getId(), user.getEmail(), "RESET", now));
+        events.publishEvent(PasswordChangedEvent.of(user.getId(), user.getEmail(), "RESET", now, client));
     }
 
     private boolean isRecoveryLocked(String email) {
