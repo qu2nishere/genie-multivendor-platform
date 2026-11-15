@@ -112,8 +112,18 @@ public class CustomerProfile {
         if (preferredLanguage != null) this.preferredLanguage = preferredLanguage;
     }
 
-    /** Đổi ảnh đại diện (URL công khai sau khi chuyển khỏi tmp/) — UC-AUTH-08 */
+    /** Độ dài tối đa cột {@code avatar_url} (VARCHAR 500). */
+    public static final int MAX_AVATAR_URL = 500;
+
+    /**
+     * Đổi ảnh đại diện — UC-AUTH-08. {@code avatarUrl} là URL công khai: ảnh MinIO
+     * ({@code <PUBLIC_S3_URL>/avatar-assets/user/{id}/{uuid}.jpg}, sau khi chuyển khỏi {@code tmp/}) hoặc ảnh Google;
+     * {@code null} = gỡ ảnh.
+     */
     public void changeAvatar(String avatarUrl) {
+        if (avatarUrl != null && (avatarUrl.isBlank() || avatarUrl.length() > MAX_AVATAR_URL)) {
+            throw new IllegalArgumentException("URL ảnh đại diện không hợp lệ hoặc dài quá " + MAX_AVATAR_URL + " ký tự");
+        }
         this.avatarUrl = avatarUrl;
     }
 
