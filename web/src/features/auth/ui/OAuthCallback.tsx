@@ -21,7 +21,8 @@ export default function OAuthCallback() {
     if (started.current) return;
     started.current = true;
     const q = new URLSearchParams(window.location.search);
-    const provider = q.get('provider') as SocialProvider | null;
+    // Callback khai báo ở Google Cloud là `/auth/oauth-callback` (không kèm tham số) → mặc định Google
+    const provider = (q.get('provider') ?? 'google') as SocialProvider;
     const code = q.get('code');
     const state = q.get('state');
     if (q.get('error')) {
@@ -32,12 +33,8 @@ export default function OAuthCallback() {
       setError(t('errors.GNE-AUTH-4001'));
       return;
     }
-    const redirect = new URL(window.location.href);
-    ['code', 'state', 'scope', 'authuser', 'prompt'].forEach((k) =>
-      redirect.searchParams.delete(k),
-    );
-    finishOAuth(provider, code, state, redirect.href)
-      .then((r) => completeLogin(r.session, q.get('next')))
+    finishOAuth(provider, code, state)
+      .then((r) => completeLogin(r.session, r.next ?? q.get('next')))
       .catch((e: unknown) => setError(errorMessage(e, t)));
   }, [t]);
 

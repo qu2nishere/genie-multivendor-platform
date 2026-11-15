@@ -34,12 +34,8 @@ export async function finishLogin(
 export const oauthStartUrl = oauthAuthorizeUrl;
 
 /** Hoàn tất đăng nhập mạng xã hội ở trang callback. */
-export const finishOAuth = (
-  provider: SocialProvider,
-  code: string,
-  state: string,
-  redirectUri: string,
-) => completeOAuth(provider, code, state, redirectUri);
+export const finishOAuth = (provider: SocialProvider, code: string, state: string) =>
+  completeOAuth(provider, code, state);
 
 export function useLogin() {
   return useMutation({
