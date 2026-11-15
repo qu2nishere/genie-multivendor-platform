@@ -31,7 +31,7 @@ Tài liệu tham chiếu trong code ghi kiểu `TECH_STACK mục 8`, `TS 5.2`, `
 | `web/` | **Xong giao diện** (plan G00–G13): 34 feature, storefront + auth + buyer + Seller + Admin, chạy trên **lớp mock** (`PUBLIC_USE_MOCK=true`). 237 hàm `*.api.ts` có nhánh mock; **21 endpoint lệch `API_SPEC.md`** — danh sách ở `docs/web-backend-handoff.md`. Vitest + 6 spec Playwright (22 kịch bản × 2 khổ). |
 | `server-spring/` | **Entity xong, nghiệp vụ chưa.** 65 entity + 55 enum + 65 repository (rỗng) khớp 1-1 ENTITY.md, migration `V1…V12` thật, `SchemaValidationIT` xanh (plan `plan/2026-11-14/server-spring/implement-entity.md`, PR #28–#51). Có thật ở `common`: `ApiResponse`, `ErrorResponse`, `GlobalExceptionHandler`, `ErrorCode` (6 mã), `BaseEntity`, `JacksonConfig`, `ClockConfig`, `NameNormalizer`, `SystemLog`/`AuditAction`. **Còn stub:** security (`SecurityConfig`, `JwtService`, `JwtAuthFilter`, `CurrentUser`, `RateLimiter`, `InternalTokenFilter`), `AuditLogger`, `ObjectStorage`/`UploadController`, `Money`, `Haversine`; mọi service / controller; `V13__bootstrap_admin.sql`, `R__seed_demo.sql`. Entity theo ENTITY.md đặt ở `<module>/<feature>/domain` (vd `User` ở `auth/profile/domain`), quan hệ JPA sang module khác đã bỏ, chỉ giữ `Long xxxId`. |
 | `server-python/` | **Khung.** Có `main.py`, `health.py`, `core/config.py`, `core/security.py`; `kyc/*`, `sentiment/*` là `# TODO`. |
-| `deploy/` | Đã viết: compose local + VPS, nginx 3 conf, minio init, redis/postgres conf, backup/restore, deploy.sh (chưa chạy thử thật). |
+| `deploy/` | Đã viết: compose local + VPS, nginx 3 conf, silo init (kho tệp — ADR 0009), redis/postgres conf, backup/restore, deploy.sh (chưa chạy thử thật). |
 | `.github/` | `ci.yml` (paths-filter backend / web / ai-worker + commitlint tiêu đề PR + SonarCloud), `release.yml`, `deploy.yml`, dependabot (đích `develop`), CODEOWNERS (tên team còn là placeholder `@genie-team/...`). |
 
 **Việc kế tiếp hợp lý:** phần nền `common` (security, audit, mail) rồi nghiệp vụ từng phân hệ, bắt đầu từ AUTH
@@ -46,7 +46,7 @@ progress là bảng tick + nhật ký có mã commit).
 ```bash
 # gốc repo
 npm install                                   # husky + commitlint + lint-staged
-docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d   # postgres, redis, minio, mailpit
+docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d   # postgres, redis, silo, mailpit
 
 # web/ (Node 22)
 npm run dev          # http://localhost:4321 ; /dev/ui = thư viện component (chỉ dev)
@@ -117,7 +117,7 @@ export async function fetchCart(): Promise<CartLine[]> {
 `shared/api/mock.ts`: `USE_MOCK`, `mockDelay`, `mockOk`, `mockFail('GNE-…')`, `mockState('<tên>', seed)`, `paginateCursor`.
 Dữ liệu mock dùng chung nhiều feature: `shared/api/mock/{seed,seller,admin,banners,activity,placed}.ts`.
 HTTP: `shared/api/http.ts` (`api.get/post…`, Bearer, refresh 1 lần khi 401, `idempotencyKey`), SSR: `server-http.ts`.
-Tải tệp: `shared/api/upload.ts` (presigned PUT → MinIO → gửi `object_key` trong request nghiệp vụ).
+Tải tệp: `shared/api/upload.ts` (presigned PUT → Silo → gửi `object_key` trong request nghiệp vụ).
 
 **Trạng thái:** server data = TanStack Query · chia sẻ giữa island = nanostores · form = react-hook-form + zod
 (`shared/lib/zodResolver.ts`) · phiên = `shared/auth/session.ts` (token trong bộ nhớ) · trình duyệt = `shared/lib/storage.ts`
@@ -144,7 +144,7 @@ công tắc kịch bản mock). Không `any`. Không biến toàn cục `window.
 ## 6. Quy ước BACKEND `server-spring/` (Java 21, Spring Boot 3.3.5, modular monolith)
 
 - Package: `com.genie.<module>.<feature>.<layer>`; 11 module = `auth catalog order payment vendor shipping promotion social support notification admin` + `common` (shared kernel).
-- Tầng: `api` (controller, DTO `record` `*Request/*Response`, mapper) → `application` (`*Service` mở `@Transactional`, `*Facade` cửa cho module khác, listener, **port** interface) → `domain` (`@Entity` = rich domain model, enum, Spring Data repo) ← `infra` (adapter: VNPay, GHN, Gemini, MinIO, AI Worker). `event/` = record sự kiện công khai (chỉ ID + giá trị). Feature chỉ tạo tầng cần.
+- Tầng: `api` (controller, DTO `record` `*Request/*Response`, mapper) → `application` (`*Service` mở `@Transactional`, `*Facade` cửa cho module khác, listener, **port** interface) → `domain` (`@Entity` = rich domain model, enum, Spring Data repo) ← `infra` (adapter: VNPay, GHN, Gemini, Silo (S3), AI Worker). `event/` = record sự kiện công khai (chỉ ID + giá trị). Feature chỉ tạo tầng cần.
 - Giữa module: **chỉ** `*Facade` + `event/` + DTO facade trả; FK sang module khác lưu `Long xxxId`; không vòng phụ thuộc (ArchUnit trong `ModuleBoundaryTest`).
 - Tiền / tồn / Điểm / suất Flash Sale xử lý **trong transaction chính**; `@Async @TransactionalEventListener(AFTER_COMMIT)` chỉ cho thông báo, email, cache, gọi AI, thống kê.
 - Entity: Lombok `@Getter @Setter @Builder @NoArgsConstructor(PROTECTED) @AllArgsConstructor`, **không `@Data`**; PK `BIGINT GENERATED ALWAYS AS IDENTITY`; tiền `NUMERIC(19,2)`/`BigDecimal` (cấm float/double); thời gian `TIMESTAMPTZ`/`OffsetDateTime`; enum `@Enumerated(STRING)` + `VARCHAR CHECK`; JSON `JSONB` (`*Json`); `@Version` trên 10 bảng nóng; snapshot dữ liệu giao dịch; sổ cái chỉ ghi thêm.
@@ -171,7 +171,7 @@ công tắc kịch bản mock). Không `any`. Không biến toàn cục `window.
 | Cần gì | Mở file |
 |---|---|
 | **Mọi quy ước code / repo / git / CI / hạ tầng** | `kien-thuc/TECH_STACK_VA_QUY_UOC.md` (TS) — mục 4 backend, 5 frontend, 7 dữ liệu, 8 API, 9 bảo mật, 10 đồng thời, 11 đặt tên, 12 điểm đã chốt, 13 git, 17 checklist S1 |
-| Dữ liệu lưu ở đâu (PG / Redis / MinIO / trình duyệt), 9 bucket | `kien-thuc/LUU_TRU_DU_LIEU.md` |
+| Dữ liệu lưu ở đâu (PG / Redis / Silo / trình duyệt), 9 bucket | `kien-thuc/LUU_TRU_DU_LIEU.md` |
 | Bảng, cột, enum, phương thức entity (SSOT CSDL) | `diagrams/ClassDiagram/ENTITY.md` (rất lớn — grep theo `## <nhóm>.<số>`); giải nghĩa tiếng Việt: `GIAI_NGHIA_ENTITY.md`; Java mẫu: `ClassDiagram/java-code/Diagram01…10*.java` |
 | Đặc tả 87 use case (UC-AUTH/CAT/ORD/PAY/VND/LOG/PRO/SOC/SUP/NOT/ADM/AI) | `diagrams/UseCaseDiagram/Document/Usecase.md`; theo dõi tiến độ UC: `Quản Lý UseCase.xlsx` |
 | Endpoint, request/response, mã lỗi, enum, bản đồ màn → API | `document/API_SPEC.md` (mục 0 quy ước, 14 màn→API, 15 mã lỗi, 16 enum) |

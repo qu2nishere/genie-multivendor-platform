@@ -7,7 +7,7 @@ Sàn thương mại điện tử đa người bán — bản TLCN. Monorepo gồ
 | `server-spring/` | Backend — Spring Boot 3.3 / Java 21, modular monolith 11 module |
 | `server-python/` | AI Worker — FastAPI: KYC (ONNX + OpenCV) + PhoBERT cảm xúc đánh giá |
 | `web/` | Frontend — Astro SSR + React 19 islands + Tailwind |
-| `deploy/` | Docker Compose, Nginx, MinIO / Redis / Postgres, sao lưu |
+| `deploy/` | Docker Compose, Nginx, Silo (kho tệp S3) / Redis / Postgres, sao lưu |
 | `scripts/` | Seed, tải mô hình, giả lập webhook, kiểm i18n |
 | `docs/` | ADR (`docs/adr/`), OpenAPI xuất ra (`docs/openapi/`) |
 
@@ -21,7 +21,7 @@ Yêu cầu: Docker Desktop, JDK 21, Node.js 22, Python 3.12.
 # 0. Công cụ gốc (husky + commitlint)
 npm install
 
-# 1. Hạ tầng: postgres, redis, minio (+ minio-init), mailpit
+# 1. Hạ tầng: postgres, redis, silo (+ silo-init), mailpit
 cp deploy/.env.example deploy/.env
 docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d
 
@@ -41,7 +41,7 @@ cd web && npm ci && npm run dev
 |---|---|
 | Storefront | http://localhost:4321 |
 | API | http://localhost:8080/api/v1 · Swagger UI http://localhost:8080/swagger-ui.html |
-| MinIO Console | http://localhost:9001 |
+| Silo Console (kho tệp) | http://localhost:9001 |
 | Mailpit (xem email OTP) | http://localhost:8025 |
 
 Webhook đối tác khi dev: `cloudflared tunnel --url http://localhost:8080` hoặc `scripts/webhooks/*.http`.
@@ -64,7 +64,7 @@ npm run dev               # http://localhost:4321
 | `PUBLIC_API_URL` | `http://localhost:8080/api/v1` | API gọi từ trình duyệt |
 | `INTERNAL_API_URL` | = `PUBLIC_API_URL` | API gọi khi SSR (trong Docker: `http://backend:8080/api/v1`) |
 | `PUBLIC_WEB_URL` | `http://localhost:4321` | Tên miền công khai — canonical, sitemap, Open Graph |
-| `PUBLIC_S3_URL` | — | Ảnh / tệp trên MinIO |
+| `PUBLIC_S3_URL` | — | Ảnh / tệp trên Silo |
 
 **Dữ liệu mẫu ở chế độ mock**
 
