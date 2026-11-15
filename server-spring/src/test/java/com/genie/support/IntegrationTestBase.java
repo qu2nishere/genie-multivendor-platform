@@ -20,6 +20,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -118,6 +120,9 @@ public abstract class IntegrationTestBase {
     protected FakeEmailSender mails;
 
     @Autowired
+    protected FakeIdentityProviderClient google;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -177,6 +182,7 @@ public abstract class IntegrationTestBase {
     void resetState() {
         clock.set(Instant.parse(START));
         mails.clear();
+        google.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -199,6 +205,19 @@ public abstract class IntegrationTestBase {
         @Primary
         FakeEmailSender fakeEmailSender() {
             return new FakeEmailSender();
+        }
+
+        /** Đứng đầu danh sách {@code IdentityProviderClient} → OAuthLoginService dùng bản giả thay cho Google thật. */
+        @Bean
+        @Order(Ordered.HIGHEST_PRECEDENCE)
+        FakeIdentityProviderClient fakeIdentityProviderClient() {
+            return new FakeIdentityProviderClient();
+        }
+
+        @Bean
+        @Primary
+        FakeAvatarDownloader fakeAvatarDownloader() {
+            return new FakeAvatarDownloader();
         }
     }
 }
