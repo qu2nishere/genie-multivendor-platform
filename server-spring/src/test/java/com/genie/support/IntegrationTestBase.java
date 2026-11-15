@@ -62,7 +62,7 @@ public abstract class IntegrationTestBase {
      * minio/minio khỏi Docker Hub, ADR 0009). Silo giữ API S3, đường dẫn /minio/health/*, biến MINIO_* nên dùng được
      * {@link MinIOContainer}. Bucket tạo trong {@link #createBuckets()}.
      */
-    protected static final MinIOContainer MINIO = new MinIOContainer(
+    protected static final MinIOContainer SILO = new MinIOContainer(
             DockerImageName.parse("pgsty/silo:RELEASE.2026-10-26T00-00-00Z").asCompatibleSubstituteFor("minio/minio"));
 
     static {
@@ -70,28 +70,28 @@ public abstract class IntegrationTestBase {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         POSTGRES.start();
         REDIS.start();
-        MINIO.start();
+        SILO.start();
         createBuckets();
     }
 
-    /** Bucket cần cho test (bản thu nhỏ của deploy/minio/init.sh). */
+    /** Bucket cần cho test (bản thu nhỏ của deploy/silo/init.sh). */
     private static void createBuckets() {
         try {
-            MinioClient client = minioClient();
+            MinioClient client = siloClient();
             for (String bucket : new String[] {"avatar-assets"}) {
                 if (!client.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())) {
                     client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
                 }
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Không tạo được bucket MinIO cho test", e);
+            throw new IllegalStateException("Không tạo được bucket Silo cho test", e);
         }
     }
 
-    /** Client MinIO để test kiểm tệp trực tiếp (quyền root của container). */
-    protected static MinioClient minioClient() {
-        return MinioClient.builder().endpoint(MINIO.getS3URL())
-                .credentials(MINIO.getUserName(), MINIO.getPassword()).build();
+    /** Client S3 tới Silo để test kiểm tệp trực tiếp (quyền root của container). */
+    protected static MinioClient siloClient() {
+        return MinioClient.builder().endpoint(SILO.getS3URL())
+                .credentials(SILO.getUserName(), SILO.getPassword()).build();
     }
 
     @DynamicPropertySource
@@ -102,10 +102,10 @@ public abstract class IntegrationTestBase {
         registry.add("spring.data.redis.host", REDIS::getHost);
         registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(6379));
         registry.add("spring.data.redis.password", () -> "");
-        registry.add("genie.storage.endpoint", MINIO::getS3URL);
-        registry.add("genie.storage.public-url", MINIO::getS3URL);
-        registry.add("genie.storage.access-key", MINIO::getUserName);
-        registry.add("genie.storage.secret-key", MINIO::getPassword);
+        registry.add("genie.storage.endpoint", SILO::getS3URL);
+        registry.add("genie.storage.public-url", SILO::getS3URL);
+        registry.add("genie.storage.access-key", SILO::getUserName);
+        registry.add("genie.storage.secret-key", SILO::getPassword);
     }
 
     public static final String START = "2026-06-08T07:00:00Z";

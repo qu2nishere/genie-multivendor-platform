@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Cổng lưu trữ tệp kiểu S3 (cài đặt: {@link MinioObjectStorage}). Tệp KHÔNG đi qua backend: trình duyệt tải thẳng lên
+ * Cổng lưu trữ tệp kiểu S3 (cài đặt: {@link SiloObjectStorage}). Tệp KHÔNG đi qua backend: trình duyệt tải thẳng lên
  * bằng link có chữ ký, backend chỉ ký link, kiểm tra và di chuyển tệp (TECH_STACK 5.4).
  * Lỗi kết nối kho tệp → {@code 503 GNE-SYS-5030}.
  */

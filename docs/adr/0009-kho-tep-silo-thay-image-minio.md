@@ -20,8 +20,10 @@ MinIO Inc. ngừng phân phối bản cộng đồng: repo GitHub `minio/minio` 
 - **Bỏ hẳn MinIO khỏi Docker**: dịch vụ `minio` → `silo`, `minio-init` → `silo-init`, volume `miniodata` → `silodata`,
   script `deploy/minio/init.sh` → `deploy/silo/init.sh`, nginx `s3.conf` trỏ `silo:9000`, `backup.sh silo`,
   tài khoản root mặc định `siloadmin`.
-- Silo giữ nguyên API S3 / admin, đường dẫn `/minio/*`, biến `MINIO_*`, định dạng dữ liệu `.minio.sys` → **không đổi**
-  code Java (`MinioObjectStorage` — tên theo SDK S3 `io.minio`, chạy với mọi kho S3) và cấu hình `genie.storage.*`.
+- Silo giữ nguyên API S3 / admin, đường dẫn `/minio/*`, biến `MINIO_*`, định dạng dữ liệu `.minio.sys` → code Java chỉ
+  đổi tên: `MinioObjectStorage` → `SiloObjectStorage` (2026-11-15; vẫn gọi qua SDK S3 `io.minio` vì Silo giữ API S3),
+  không đổi logic và cấu hình `genie.storage.*`. Tên lớp thư viện (`MinioClient`, Testcontainers `MinIOContainer`) và
+  mã lỗi `GNE-MINIO-5003` (API_SPEC) giữ nguyên.
   Các biến `MINIO_ROOT_*` (Silo bắt buộc) và `MINIO_ENDPOINT`, `MINIO_APP_*` (ứng dụng đọc trong `application*.yml`)
   giữ tên. VPS: `application-prod.yml` ghi cứng `genie.storage.endpoint: http://minio:9000` → compose đặt
   `GENIE_STORAGE_ENDPOINT=http://silo:9000` để ghi đè (không sửa yml).

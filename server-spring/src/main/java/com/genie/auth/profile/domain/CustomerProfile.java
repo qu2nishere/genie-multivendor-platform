@@ -116,7 +116,7 @@ public class CustomerProfile {
     public static final int MAX_AVATAR_URL = 500;
 
     /**
-     * Đổi ảnh đại diện — UC-AUTH-08. {@code avatarUrl} là URL công khai: ảnh MinIO
+     * Đổi ảnh đại diện — UC-AUTH-08. {@code avatarUrl} là URL công khai: ảnh Silo
      * ({@code <PUBLIC_S3_URL>/avatar-assets/user/{id}/{uuid}.jpg}, sau khi chuyển khỏi {@code tmp/}) hoặc ảnh Google;
      * {@code null} = gỡ ảnh.
      */

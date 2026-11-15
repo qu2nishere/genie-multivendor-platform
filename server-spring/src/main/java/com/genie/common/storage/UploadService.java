@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
  * Tải tệp qua link có chữ ký (API_SPEC 4.1, plan AUTH A11.01):
  * <ol>
  *   <li>{@link #issue}: kiểm loại / dung lượng khai báo → link PUT tới {@code tmp/user/{userId}/{uuid}.{ext}};</li>
- *   <li>trình duyệt PUT thẳng lên MinIO;</li>
+ *   <li>trình duyệt PUT thẳng lên Silo;</li>
  *   <li>nghiệp vụ dùng tệp (vd. đổi ảnh đại diện) gọi {@link #promote}: kiểm tệp có thật, thuộc đúng người, đúng loại,
  *       đúng dung lượng → chuyển sang {@code user/{userId}/{uuid}.{ext}}.</li>
  * </ol>
- * Tệp bỏ dở trong {@code tmp/} được MinIO tự xóa sau 1 ngày (lifecycle — deploy/minio/init.sh).
+ * Tệp bỏ dở trong {@code tmp/} được Silo tự xóa sau 1 ngày (lifecycle — deploy/silo/init.sh).
  */
 @Service
 public class UploadService {

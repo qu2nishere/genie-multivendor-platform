@@ -56,14 +56,14 @@ class OAuthLoginIT extends IntegrationTestBase {
         assertThat(user.hasPassword()).isFalse();
         assertThat(user.getEmailVerifiedAt()).isNotNull();
         String avatar = customerProfileRepository.findByUserId(user.getId()).orElseThrow().getAvatarUrl();
-        String prefix = MINIO.getS3URL() + "/avatar-assets/";
+        String prefix = SILO.getS3URL() + "/avatar-assets/";
         assertThat(avatar).startsWith(prefix + "user/" + user.getId() + "/").endsWith(".png");   // ảnh Google lưu ở Silo
         assertThat(existsInSilo(avatar.substring(prefix.length()))).isTrue();
     }
 
     private static boolean existsInSilo(String key) throws Exception {
         try {
-            minioClient().statObject(StatObjectArgs.builder().bucket("avatar-assets").object(key).build());
+            siloClient().statObject(StatObjectArgs.builder().bucket("avatar-assets").object(key).build());
             return true;
         } catch (ErrorResponseException e) {
             return false;
@@ -80,7 +80,7 @@ class OAuthLoginIT extends IntegrationTestBase {
 
         var profile = customerProfileRepository.findByUserId(user.getId()).orElseThrow();
         assertThat(profile.getFullName()).isEqualTo("Người dùng test");                         // đã có tên → giữ
-        assertThat(profile.getAvatarUrl()).startsWith(MINIO.getS3URL() + "/avatar-assets/user/" + user.getId() + "/");
+        assertThat(profile.getAvatarUrl()).startsWith(SILO.getS3URL() + "/avatar-assets/user/" + user.getId() + "/");
     }
 
     @Test
