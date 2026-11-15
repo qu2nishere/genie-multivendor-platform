@@ -5,6 +5,7 @@ import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
 import { placedStore } from '@/shared/api/mock/placed';
 import { MOCK_USER } from '@/shared/auth/session';
 import { maskEmail } from '@/shared/lib/mask';
+import { isMocked } from '@/shared/config/env';
 import { readValue } from '@/shared/lib/storage';
 import type {
   DeletionRequest,
@@ -17,6 +18,9 @@ import type {
   StepUpProof,
   StepUpPurpose,
 } from '../domain/account.types';
+
+/** Hồ sơ (GET / PATCH /me/profile) nối API thật khi `PUBLIC_REAL_API` có `profile`; phần còn lại của tài khoản vẫn theo USE_MOCK. */
+const PROFILE_MOCK = isMocked('profile');
 
 // ---- DTO (snake_case) ----
 interface ProfileDto {
@@ -216,7 +220,7 @@ function mockCheckOtp(p: StepUpProof, purpose: StepUpPurpose) {
 
 // ---- API ----
 export async function getProfile(): Promise<Profile> {
-  if (USE_MOCK) {
+  if (PROFILE_MOCK) {
     await mockDelay(120);
     return toProfile(db.get().profile);
   }
@@ -224,7 +228,7 @@ export async function getProfile(): Promise<Profile> {
 }
 
 export async function updateProfile(p: ProfilePatch): Promise<Profile> {
-  if (USE_MOCK) {
+  if (PROFILE_MOCK) {
     await mockDelay(300);
     const cur = db.get().profile;
     const next: ProfileDto = {

@@ -10,8 +10,12 @@ import {
   type UploadIssue,
   type UploadPurpose,
 } from '@/shared/lib/upload.rules';
+import { isMocked } from '@/shared/config/env';
 import { api } from './http';
-import { mockDelay, USE_MOCK } from './mock';
+import { mockDelay } from './mock';
+
+/** Tải tệp lên MinIO thật khi `PUBLIC_REAL_API` có `upload`. */
+const USE_MOCK = isMocked('upload');
 
 export interface UploadedFile {
   objectKey: string;
