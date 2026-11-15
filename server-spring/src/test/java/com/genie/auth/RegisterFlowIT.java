@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.genie.auth.profile.domain.User;
+import com.genie.common.mail.MailTemplate;
 import com.genie.support.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -36,6 +37,8 @@ class RegisterFlowIT extends IntegrationTestBase {
         assertThat(sent.getResponse().getStatus()).isEqualTo(202);
         assertThat(json(sent, "$.data.purpose")).isEqualTo("REGISTER");
         assertThat(json(sent, "$.data.expires_in")).isEqualTo("300");
+        var otpMail = mails.last(email, MailTemplate.OTP).orElseThrow();                  // email chào đúng tên đăng ký
+        assertThat(otpMail.variables()).containsEntry("name", "Nguyễn Văn A").containsEntry("expiresMinutes", 5L);
         assertThat(userRepository.findByEmail(email)).isEmpty();           // chưa ghi gì vào PostgreSQL
 
         MvcResult done = verify(json(sent, "$.data.challenge_id"), mails.lastOtp(email));

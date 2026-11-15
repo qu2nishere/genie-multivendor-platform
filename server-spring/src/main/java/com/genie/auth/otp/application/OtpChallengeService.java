@@ -1,5 +1,6 @@
 package com.genie.auth.otp.application;
 
+import com.genie.auth.profile.application.AccountSummaryService;
 import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
 import com.genie.common.mail.EmailSender;
@@ -46,9 +47,14 @@ public class OtpChallengeService {
     private final EmailSender emailSender;
     private final Clock clock;
     private final String pepper;
+    private final AccountSummaryService accounts;
+
+    /** Khóa trong {@code data} của challenge: tên người nhận khi chưa có tài khoản (đăng ký). */
+    public static final String DATA_NAME = "name";
 
     public OtpChallengeService(OtpStore store, RateLimiter rateLimiter, EmailSender emailSender, Clock clock,
-                               SecurityProperties props) {
+                               SecurityProperties props, AccountSummaryService accounts) {
+        this.accounts = accounts;
         this.store = store;
         this.rateLimiter = rateLimiter;
         this.emailSender = emailSender;
@@ -155,15 +161,40 @@ public class OtpChallengeService {
     }
 
     private void send(OtpChallenge challenge, String code) {
+        var locale = LocaleContextHolder.getLocale();
+        boolean english = locale != null && "en".equals(locale.getLanguage());
         try {
             emailSender.send(challenge.email(), MailTemplate.OTP,
-                    Map.of("otp", code, "expiresMinutes", TTL.toMinutes(), "purpose", challenge.purpose().name()),
-                    LocaleContextHolder.getLocale());
+                    Map.of("otp", code, "expiresMinutes", TTL.toMinutes(), "purpose", challenge.purpose().name(),
+                            "action", challenge.purpose().action(english), "name", recipientName(challenge)),
+                    locale);
         } catch (MailException e) {
             log.error("Gửi OTP {} tới {} thất bại: {}", challenge.purpose(), mask(challenge.email()), e.getMessage());
             store.delete(challenge.id());
             throw new BusinessException(ErrorCode.SERVICE_UNAVAILABLE, "Chưa gửi được email, vui lòng thử lại.");
         }
+    }
+
+    /**
+     * Tên chào trong email: tên khai báo khi đăng ký (lưu trong challenge) → tên hồ sơ của tài khoản → phần trước @.
+     */
+    private String recipientName(OtpChallenge c) {
+        String fromData = c.data() == null ? null : c.data().get(DATA_NAME);
+        if (fromData != null && !fromData.isBlank()) {
+            return fromData.trim();
+        }
+        if (c.userId() != null) {
+            try {
+                String fullName = accounts.summaryOf(c.userId()).fullName();
+                if (fullName != null && !fullName.isBlank()) {
+                    return fullName;
+                }
+            } catch (RuntimeException e) {
+                log.debug("Không lấy được tên người nhận OTP: {}", e.getMessage());
+            }
+        }
+        int at = c.email().indexOf('@');
+        return at > 0 ? c.email().substring(0, at) : c.email();
     }
 
     private String hash(String id, String code) {
