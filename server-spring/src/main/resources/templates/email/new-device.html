@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:attr="lang=${lang}">
+<head><meta charset="utf-8"><title>Genie</title></head>
+<body style="font-family:Arial,sans-serif;color:#222;line-height:1.5">
+  <h2 th:text="${appName}">Genie</h2>
+  <th:block th:if="${lang == 'en'}">
+    <p>Your Genie account was just signed in on a new device:</p>
+  </th:block>
+  <th:block th:unless="${lang == 'en'}">
+    <p>Tài khoản Genie của bạn vừa đăng nhập trên thiết bị lạ:</p>
+  </th:block>
+  <ul>
+    <li th:text="${device}">Windows PC · Chrome</li>
+    <li th:text="${ip}">IP</li>
+    <li th:text="${loginAt}">thời điểm</li>
+  </ul>
+  <p th:if="${lang == 'en'}">If this was not you, change your password right away.</p>
+  <p th:unless="${lang == 'en'}">Nếu không phải bạn, hãy đổi mật khẩu ngay.</p>
+  <p style="color:#888;font-size:12px" th:text="${lang == 'en'} ? 'Automated email from Genie — please do not reply.' : 'Email tự động từ Genie — vui lòng không trả lời.'">Email tự động</p>
+</body>
+</html>

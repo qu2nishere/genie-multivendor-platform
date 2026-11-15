@@ -13,6 +13,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_S3_URL?: string;
   readonly INTERNAL_API_URL?: string;
   readonly PUBLIC_USE_MOCK?: string;
+  readonly PUBLIC_REAL_API?: string;
 }
 
 interface ImportMeta {

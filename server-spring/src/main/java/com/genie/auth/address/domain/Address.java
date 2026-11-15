@@ -82,4 +82,32 @@ public class Address {
         this.isDeleted = true;
         this.isDefault = false;
     }
+
+    // ===== Bổ sung cho phân hệ AUTH (plan/2026-11-14/auth.md A03.04) =====
+
+    /** Bỏ cờ mặc định — UC-AUTH-09 */
+    public void unmarkDefault() {
+        this.isDefault = false;
+    }
+
+    /** Sửa toàn bộ nội dung địa chỉ (tên hành chính do server tra từ mã GHN) — UC-AUTH-09 */
+    public void update(String recipientName, String phoneNumber, String addressLine,
+                       Integer provinceId, String province, Integer districtId, String district,
+                       String wardCode, String ward, AddressLabel label) {
+        if (Boolean.TRUE.equals(this.isDeleted)) throw new IllegalStateException("Địa chỉ đã xóa");
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
+        this.addressLine = addressLine;
+        this.provinceId = provinceId;
+        this.province = province;
+        this.districtId = districtId;
+        this.district = district;
+        this.wardCode = wardCode;
+        this.ward = ward;
+        this.label = label == null ? AddressLabel.HOME : label;
+    }
+
+    public boolean isDefaultAddress() {
+        return Boolean.TRUE.equals(this.isDefault);
+    }
 }

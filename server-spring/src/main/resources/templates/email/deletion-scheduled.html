@@ -1,0 +1,10 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:attr="lang=${lang}">
+<head><meta charset="utf-8"><title>Genie</title></head>
+<body style="font-family:Arial,sans-serif;color:#222;line-height:1.5">
+  <h2 th:text="${appName}">Genie</h2>
+  <p th:if="${lang == 'en'}">We received your request to delete your Genie account. Your personal data will be anonymized on <strong th:text="${anonymizeAt}">date</strong>. Sign in and choose "Cancel deletion" before then to keep your account.</p>
+  <p th:unless="${lang == 'en'}">Genie đã nhận yêu cầu xóa tài khoản của bạn. Dữ liệu cá nhân sẽ được ẩn danh vào <strong th:text="${anonymizeAt}">ngày</strong>. Đăng nhập và chọn "Hủy yêu cầu xóa" trước thời điểm đó nếu bạn muốn giữ tài khoản.</p>
+  <p style="color:#888;font-size:12px" th:text="${lang == 'en'} ? 'Automated email from Genie — please do not reply.' : 'Email tự động từ Genie — vui lòng không trả lời.'">Email tự động</p>
+</body>
+</html>

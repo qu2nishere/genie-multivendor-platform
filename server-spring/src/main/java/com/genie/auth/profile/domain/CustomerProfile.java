@@ -81,4 +81,40 @@ public class CustomerProfile {
         this.anonymizedAt = now;
     }
 
+    // ===== Bổ sung cho phân hệ AUTH (plan/2026-11-14/auth.md A03.03) =====
+
+    /**
+     * Tạo hồ sơ cho user vừa lưu (đã có id). Gán CẢ {@code userId} (cột được ghi) lẫn {@code user}
+     * (quan hệ {@code optional = false}, chỉ đọc) — UC-AUTH-01, UC-AUTH-03.
+     */
+    public static CustomerProfile create(User user, String fullName, String phoneNumber, String preferredLanguage) {
+        if (user.getId() == null) throw new IllegalStateException("User phải được lưu trước khi tạo hồ sơ");
+        return CustomerProfile.builder()
+                .userId(user.getId())
+                .user(user)
+                .fullName(fullName)
+                .phoneNumber(phoneNumber)
+                .preferredLanguage(preferredLanguage)
+                .build();
+    }
+
+    /** Cập nhật hồ sơ (null = giữ nguyên) — UC-AUTH-08 */
+    public void updateProfile(String fullName, String phoneNumber, Gender gender, LocalDate dateOfBirth,
+                              String bio, String preferredLanguage) {
+        if (fullName != null) {
+            if (fullName.isBlank()) throw new IllegalArgumentException("Họ tên không được rỗng");
+            this.fullName = fullName.trim();
+        }
+        if (phoneNumber != null) this.phoneNumber = phoneNumber.isBlank() ? null : phoneNumber.trim();
+        if (gender != null) this.gender = gender;
+        if (dateOfBirth != null) this.dateOfBirth = dateOfBirth;
+        if (bio != null) this.bio = bio.isBlank() ? null : bio;
+        if (preferredLanguage != null) this.preferredLanguage = preferredLanguage;
+    }
+
+    /** Đổi ảnh đại diện (URL công khai sau khi chuyển khỏi tmp/) — UC-AUTH-08 */
+    public void changeAvatar(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
 }

@@ -1,7 +1,9 @@
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { MOCK_USER, type SessionUser } from '@/shared/auth/session';
 import type { AuthSession, OtpChallenge } from '../domain/auth.types';
 import type { AuthTokensDto, OtpChallengeDto } from './auth.dto';
+
+const USE_MOCK = isMocked('auth');
 
 export const toChallenge = (d: OtpChallengeDto): OtpChallenge => ({
   id: d.challenge_id,

@@ -16,7 +16,8 @@ export type OtpPurpose = 'LOGIN' | 'REGISTER' | 'ACCOUNT_UNLOCK' | 'PASSWORD_RES
 export const isEmail = (v: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
 /** Số điện thoại Việt Nam: 0 + 9–10 chữ số (prototype /^0\d{8,10}$/, bỏ khoảng trắng). */
-export const isPhoneVN = (v: string): boolean => /^0\d{8,10}$/.test(v.replace(/\s/g, ''));
+/** Khớp backend (RegistrationRequest.phone_number): 10–11 chữ số, bắt đầu bằng 0. */
+export const isPhoneVN = (v: string): boolean => /^0\d{9,10}$/.test(v.replace(/\s/g, ''));
 
 export const remainingAttempts = (fails: number): number => Math.max(0, MAX_ATTEMPTS - fails);
 

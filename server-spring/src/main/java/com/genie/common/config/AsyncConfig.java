@@ -1,7 +1,15 @@
 package com.genie.common.config;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
+
 /**
- * Shared kernel (common.config) — không chứa nghiệp vụ phân hệ. TODO: hiện thực.
+ * Bật {@code @Async} (listener AFTER_COMMIT gửi email / thông báo — TS 4.5) và {@code @Retryable} (TS 10.2).
+ * Executor dùng {@code spring.task.execution.*} của Spring Boot.
  */
+@Configuration
+@EnableAsync
+@EnableRetry
 public class AsyncConfig {
 }

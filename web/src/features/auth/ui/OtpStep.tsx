@@ -2,7 +2,7 @@
 // gửi lại sau 60 giây, báo số lần thử còn lại; sai lần thứ 5 → onExhausted (khóa / hủy đăng ký).
 import { useEffect, useState } from 'react';
 import { errorMessage, toApiError, type ApiError } from '@/shared/api/errors';
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import type { SessionUser } from '@/shared/auth/session';
 import { useCountdown } from '@/shared/hooks/useCountdown';
 import { useT } from '@/shared/hooks/useT';
@@ -12,6 +12,8 @@ import { useResendOtp, useVerifyOtp } from '../application/useAuth';
 import { OTP_LENGTH } from '../domain/auth.rules';
 import type { OtpChallenge, VerifyResult } from '../domain/auth.types';
 import { AuthHeading, BackButton, DemoHint } from './AuthParts';
+
+const USE_MOCK = isMocked('auth');
 
 export interface OtpStepProps {
   email: string;

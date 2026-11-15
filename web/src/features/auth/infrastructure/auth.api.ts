@@ -1,7 +1,8 @@
 // Xác thực (API_SPEC §2). Mock khi USE_MOCK. Mọi lỗi là ApiError mã GNE-AUTH-* / GNE-RAT-4290,
 // UI dịch qua shared/api/errors.ts (G09.13).
 import { api, request } from '@/shared/api/http';
-import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import type { OtpPurpose } from '../domain/auth.rules';
 import type { SessionUser } from '@/shared/auth/session';
 import type { AuthSession, OtpChallenge, SocialProvider, VerifyResult } from '../domain/auth.types';
@@ -18,6 +19,8 @@ import {
 } from './auth.mock';
 
 const noAuth = { auth: false } as const;
+/** Phân hệ AUTH nối API thật khi `PUBLIC_REAL_API` có `auth`. */
+const USE_MOCK = isMocked('auth');
 
 /** POST /auth/sessions — đăng nhập bằng mật khẩu. */
 export async function login(email: string, password: string): Promise<AuthSession<SessionUser>> {

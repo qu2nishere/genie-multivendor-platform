@@ -3,7 +3,7 @@
 // mở khóa bằng OTP qua email. Xong → gộp giỏ khách, chuyển về `next`.
 import { useState, type FormEvent } from 'react';
 import { errorMessage, toApiError } from '@/shared/api/errors';
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import type { SessionUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
@@ -17,6 +17,8 @@ import { AuthHeading, DemoHint, Notice, OrDivider } from './AuthParts';
 import { LockedState, lockSecondsFrom } from './LockedState';
 import { OtpStep } from './OtpStep';
 import { SocialButtons } from './SocialButtons';
+
+const USE_MOCK = isMocked('auth');
 
 export interface LoginFormProps {
   next: string | null;

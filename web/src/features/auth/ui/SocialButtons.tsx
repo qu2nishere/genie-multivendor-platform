@@ -3,13 +3,15 @@
 // Mock: hộp "Tiếp tục với …" (mô phỏng) rồi đăng nhập luôn. Không dựng bảng mô phỏng GoogleFlow (D5).
 import { useState } from 'react';
 import { errorMessage } from '@/shared/api/errors';
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { env } from '@/shared/config/env';
 import { useT } from '@/shared/hooks/useT';
 import { Button, Modal, toast } from '@/shared/ui';
 import { completeLogin } from './completeLogin';
 import type { SocialProvider } from '../domain/auth.types';
 import { finishOAuth, oauthStartUrl } from '../application/useAuth';
+
+const USE_MOCK = isMocked('auth');
 
 const LABEL: Record<SocialProvider, string> = { google: 'Google', apple: 'Apple' };
 
