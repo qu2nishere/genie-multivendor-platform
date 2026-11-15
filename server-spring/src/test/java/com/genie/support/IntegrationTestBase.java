@@ -30,7 +30,11 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -51,12 +55,41 @@ public abstract class IntegrationTestBase {
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16");
     static final GenericContainer<?> REDIS = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
             .withExposedPorts(6379);
+    /**
+     * Kho S3 cùng image với deploy/docker-compose.local.yml: Silo — fork cộng đồng của MinIO (MinIO đã xóa image
+     * minio/minio khỏi Docker Hub, ADR 0009). Silo giữ API S3, đường dẫn /minio/health/*, biến MINIO_* nên dùng được
+     * {@link MinIOContainer}. Bucket tạo trong {@link #createBuckets()}.
+     */
+    protected static final MinIOContainer MINIO = new MinIOContainer(
+            DockerImageName.parse("pgsty/silo:RELEASE.2026-10-26T00-00-00Z").asCompatibleSubstituteFor("minio/minio"));
 
     static {
         // JVM Windows / macOS có thể mặc định "Asia/Saigon" — tên PostgreSQL 16 không nhận; dự án lưu UTC.
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         POSTGRES.start();
         REDIS.start();
+        MINIO.start();
+        createBuckets();
+    }
+
+    /** Bucket cần cho test (bản thu nhỏ của deploy/minio/init.sh). */
+    private static void createBuckets() {
+        try {
+            MinioClient client = minioClient();
+            for (String bucket : new String[] {"avatar-assets"}) {
+                if (!client.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())) {
+                    client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+                }
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Không tạo được bucket MinIO cho test", e);
+        }
+    }
+
+    /** Client MinIO để test kiểm tệp trực tiếp (quyền root của container). */
+    protected static MinioClient minioClient() {
+        return MinioClient.builder().endpoint(MINIO.getS3URL())
+                .credentials(MINIO.getUserName(), MINIO.getPassword()).build();
     }
 
     @DynamicPropertySource
@@ -67,6 +100,10 @@ public abstract class IntegrationTestBase {
         registry.add("spring.data.redis.host", REDIS::getHost);
         registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(6379));
         registry.add("spring.data.redis.password", () -> "");
+        registry.add("genie.storage.endpoint", MINIO::getS3URL);
+        registry.add("genie.storage.public-url", MINIO::getS3URL);
+        registry.add("genie.storage.access-key", MINIO::getUserName);
+        registry.add("genie.storage.secret-key", MINIO::getPassword);
     }
 
     public static final String START = "2026-06-08T07:00:00Z";

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Tải mô hình ONNX KYC (YuNet, SFace) + PhoBERT đúng phiên bản vào server-python/models/
-# Nguồn: bucket MinIO ml-models hoặc GitHub Release — *.onnx KHÔNG commit (TECH_STACK mục 2.2)
+# Nguồn: bucket ml-models trên Silo hoặc GitHub Release — *.onnx KHÔNG commit (TECH_STACK mục 2.2)
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 DEST=${MODELS_DIR:-$ROOT/server-python/models}
 MODEL_VERSION=${MODEL_VERSION:-v1}
 # Ví dụ: https://github.com/<org>/genie-platform/releases/download/models-v1
-BASE_URL=${MODELS_BASE_URL:?Đặt MODELS_BASE_URL (GitHub Release hoặc URL MinIO ml-models)}
+BASE_URL=${MODELS_BASE_URL:?Đặt MODELS_BASE_URL (GitHub Release hoặc URL Silo ml-models)}
 
 FILES=(
   "face_detection_yunet_2023mar.onnx"
