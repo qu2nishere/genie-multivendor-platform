@@ -4,7 +4,7 @@
 // - Cookie thường `genie_logged_in=1` chỉ là gợi ý cho middleware chuyển hướng (UX), không phải bằng chứng.
 // - Chế độ mock (D3): refresh trả người dùng mẫu khi cờ cookie đang bật.
 import { atom } from 'nanostores';
-import { env } from '@/shared/config/env';
+import { env, isMocked } from '@/shared/config/env';
 import { clearUserData } from '@/shared/lib/storage';
 import { PERMISSIONS, TITLE_PRESETS, type PermissionCode, type Role } from './permissions';
 
@@ -130,9 +130,23 @@ export const mockUserFor = (pathname: string): SessionUser =>
 
 let refreshing: Promise<boolean> | null = null;
 
+/** $AuthTokens (API_SPEC 1) — backend trả kèm `user` tối thiểu cả khi làm mới. */
 interface RefreshResponse {
-  data: { access_token: string; user: SessionUser };
+  data: {
+    access_token: string;
+    user: { id: number; role: Role; full_name: string; avatar_url: string | null };
+  };
 }
+
+/** `user` của $AuthTokens → SessionUser (email, quyền chi tiết nạp sau từ /me khi có). */
+const fromAuthUser = (u: RefreshResponse['data']['user']): SessionUser => ({
+  id: u.id,
+  name: u.full_name,
+  email: '',
+  avatar_url: u.avatar_url,
+  roles: [u.role],
+  permissions: [],
+});
 
 /**
  * Làm mới access token MỘT lần (các lời gọi đồng thời dùng chung một promise).
@@ -142,7 +156,7 @@ export function refreshAccessToken(): Promise<boolean> {
   if (refreshing) return refreshing;
   refreshing = (async () => {
     try {
-      if (env.PUBLIC_USE_MOCK) {
+      if (isMocked('auth')) {
         if (!hasLoggedInHint()) {
           $session.set({ status: 'guest' });
           return false;
@@ -160,7 +174,7 @@ export function refreshAccessToken(): Promise<boolean> {
         return false;
       }
       const body = (await res.json()) as RefreshResponse;
-      setSession(body.data.access_token, body.data.user);
+      setSession(body.data.access_token, fromAuthUser(body.data.user));
       return true;
     } catch {
       $session.set({ status: 'guest' });

@@ -12,6 +12,8 @@ const schema = z.object({
   PUBLIC_S3_URL: z.string().url().optional(),
   INTERNAL_API_URL: z.string().url().optional(),
   PUBLIC_USE_MOCK: bool,
+  /** Feature đã nối backend thật dù đang bật mock, cách nhau dấu phẩy (vd. `auth,account`). */
+  PUBLIC_REAL_API: z.string().default(''),
 });
 
 export type Env = z.infer<typeof schema>;
@@ -25,4 +27,18 @@ export const env: Env = schema.parse({
   INTERNAL_API_URL: empty(import.meta.env.INTERNAL_API_URL),
   // Chưa có backend (plan D3): mặc định bật mock khi biến không được đặt
   PUBLIC_USE_MOCK: import.meta.env.PUBLIC_USE_MOCK ?? 'true',
+  PUBLIC_REAL_API: empty(import.meta.env.PUBLIC_REAL_API),
 });
+
+const realApi = new Set(
+  env.PUBLIC_REAL_API.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+
+/**
+ * Nối backend dần từng phân hệ: feature dùng mock khi PUBLIC_USE_MOCK bật VÀ không có trong
+ * PUBLIC_REAL_API. Ví dụ `PUBLIC_USE_MOCK=true` + `PUBLIC_REAL_API=auth` → đăng ký / đăng nhập gọi API
+ * thật, trang chủ, sản phẩm… vẫn mock (backend chưa có các API đó).
+ */
+export const isMocked = (feature: string): boolean => env.PUBLIC_USE_MOCK && !realApi.has(feature);
