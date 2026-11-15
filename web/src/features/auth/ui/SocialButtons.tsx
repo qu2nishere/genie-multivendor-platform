@@ -52,18 +52,15 @@ export function SocialButtons({ next }: { next: string | null }) {
       setSso(p);
       return;
     }
-    // state / nonce / PKCE do backend sinh; next đi kèm địa chỉ callback
-    const callback = new URL('/auth/oauth-callback', window.location.origin);
-    callback.searchParams.set('provider', p);
-    if (next) callback.searchParams.set('next', next);
-    window.location.assign(oauthStartUrl(p, env.PUBLIC_API_URL, callback.href));
+    // state / nonce / PKCE do backend sinh; `next` backend giữ trong state, callback cố định
+    window.location.assign(oauthStartUrl(p, env.PUBLIC_API_URL, next));
   };
 
   const continueMock = async () => {
     if (!sso) return;
     setBusy(true);
     try {
-      const r = await finishOAuth(sso, 'mock-code', 'mock-state', window.location.href);
+      const r = await finishOAuth(sso, 'mock-code', 'mock-state');
       await completeLogin(r.session, next);
     } catch (e) {
       toast.error(errorMessage(e, t));

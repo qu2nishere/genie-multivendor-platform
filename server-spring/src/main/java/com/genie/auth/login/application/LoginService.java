@@ -144,14 +144,14 @@ public class LoginService {
         return new AuthResult(session, summaries.summaryOf(user));
     }
 
-    BusinessException lockedError(User user) {
+    public BusinessException lockedError(User user) {
         Map<String, Object> details = new HashMap<>();
         details.put("locked_until", user.getLockedUntil());
         details.put("locked_by", lockStatus.lockedBy(user.getId()));
         return new BusinessException(ErrorCode.ACCOUNT_LOCKED, details);
     }
 
-    static BusinessException suspendedError(User user) {
+    public static BusinessException suspendedError(User user) {
         Map<String, Object> details = new HashMap<>();
         details.put("reason", user.getSuspensionReason());
         details.put("until", user.getSuspendedUntil());

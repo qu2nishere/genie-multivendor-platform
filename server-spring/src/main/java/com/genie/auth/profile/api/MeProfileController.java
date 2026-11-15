@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Hồ sơ của tôi (API_SPEC 3.1, UC-AUTH-08): xem / sửa thông tin và đổi ảnh đại diện.
- * Đổi ảnh: {@code POST /uploads/presigned-urls {purpose: AVATAR}} → PUT lên MinIO →
+ * Đổi ảnh: {@code POST /uploads/presigned-urls {purpose: AVATAR}} → PUT lên Silo →
  * {@code PATCH /me/profile {avatar_object_key}}.
  */
 @RestController

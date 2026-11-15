@@ -31,4 +31,6 @@ export interface ResetTokenDto {
 export interface OAuthResultDto {
   result: 'LOGGED_IN' | 'LINKED' | 'CREATED';
   tokens: AuthTokensDto;
+  /** Trang quay về đã gửi lúc bắt đầu (backend giữ trong state). */
+  next?: string | null;
 }

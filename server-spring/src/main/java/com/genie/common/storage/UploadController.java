@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {@code POST /api/v1/uploads/presigned-urls} (API_SPEC 4.1) — xin link tải tệp lên MinIO. Cần đăng nhập.
+ * {@code POST /api/v1/uploads/presigned-urls} (API_SPEC 4.1) — xin link tải tệp lên Silo. Cần đăng nhập.
  * Phản hồi khớp {@code web/src/shared/api/upload.ts}: {@code {upload_url, method, headers, object_key, expires_at}}.
  */
 @RestController
@@ -39,7 +39,7 @@ public class UploadController {
             @NotNull @Positive Long contentLength) {
     }
 
-    @Operation(summary = "API 4.1 — Xin link có chữ ký để tải tệp thẳng lên MinIO")
+    @Operation(summary = "API 4.1 — Xin link có chữ ký để tải tệp thẳng lên Silo")
     @PostMapping("/presigned-urls")
     public ResponseEntity<ApiResponse<UploadService.IssuedUpload>> presign(@CurrentUser AuthUser me,
                                                                           @Valid @RequestBody PresignRequest body) {

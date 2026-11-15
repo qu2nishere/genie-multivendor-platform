@@ -15,7 +15,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
- * Hồ sơ người mua — UC-AUTH-08 (plan AUTH A11.03). Ảnh đại diện: nhận khóa tệp vừa tải lên MinIO → kiểm và chuyển khỏi
+ * Hồ sơ người mua — UC-AUTH-08 (plan AUTH A11.03). Ảnh đại diện: nhận khóa tệp vừa tải lên Silo → kiểm và chuyển khỏi
  * {@code tmp/} ({@link UploadService#promote}) → lưu URL công khai vào {@code customer_profiles.avatar_url} → SAU KHI
  * giao dịch thành công mới xóa ảnh cũ (rollback thì ảnh cũ vẫn còn dùng được).
  */

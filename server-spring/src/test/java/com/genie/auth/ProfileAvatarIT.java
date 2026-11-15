@@ -19,7 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 /**
- * UC-AUTH-08 đổi ảnh đại diện qua MinIO thật (plan AUTH A11.01, A11.03, A11.05): xin link → PUT lên MinIO →
+ * UC-AUTH-08 đổi ảnh đại diện qua Silo thật (plan AUTH A11.01, A11.03, A11.05): xin link → PUT lên Silo →
  * {@code PATCH /me/profile} lưu URL vào {@code customer_profiles.avatar_url}.
  */
 class ProfileAvatarIT extends IntegrationTestBase {
@@ -35,8 +35,8 @@ class ProfileAvatarIT extends IntegrationTestBase {
                 .andReturn();
     }
 
-    /** Giống trình duyệt: PUT thẳng lên MinIO bằng link đã ký. */
-    private int putToMinio(MvcResult presigned, byte[] body) throws Exception {
+    /** Giống trình duyệt: PUT thẳng lên Silo bằng link đã ký. */
+    private int putToSilo(MvcResult presigned, byte[] body) throws Exception {
         HttpRequest put = HttpRequest.newBuilder(URI.create(json(presigned, "$.data.upload_url")))
                 .header("Content-Type", json(presigned, "$.data.headers['Content-Type']"))
                 .PUT(HttpRequest.BodyPublishers.ofByteArray(body)).build();
@@ -49,9 +49,9 @@ class ProfileAvatarIT extends IntegrationTestBase {
                 .andReturn();
     }
 
-    private static boolean existsInMinio(String key) throws Exception {
+    private static boolean existsInSilo(String key) throws Exception {
         try {
-            minioClient().statObject(StatObjectArgs.builder().bucket("avatar-assets").object(key).build());
+            siloClient().statObject(StatObjectArgs.builder().bucket("avatar-assets").object(key).build());
             return true;
         } catch (ErrorResponseException e) {
             return false;
@@ -69,23 +69,23 @@ class ProfileAvatarIT extends IntegrationTestBase {
         String tmpKey = json(presigned, "$.data.object_key");
         assertThat(tmpKey).startsWith("tmp/user/" + user.getId() + "/").endsWith(".png");
         assertThat(json(presigned, "$.data.method")).isEqualTo("PUT");
-        assertThat(putToMinio(presigned, PNG)).isEqualTo(200);
+        assertThat(putToSilo(presigned, PNG)).isEqualTo(200);
 
         MvcResult updated = patchAvatar(token, tmpKey);
         assertThat(updated.getResponse().getStatus()).isEqualTo(200);
         String finalKey = tmpKey.substring("tmp/".length());
-        String expectedUrl = MINIO.getS3URL() + "/avatar-assets/" + finalKey;
+        String expectedUrl = SILO.getS3URL() + "/avatar-assets/" + finalKey;
         assertThat(json(updated, "$.data.avatar_url")).isEqualTo(expectedUrl);
         assertThat(jdbc.queryForObject("SELECT avatar_url FROM customer_profiles WHERE user_id = ?", String.class,
                 user.getId())).isEqualTo(expectedUrl);
-        assertThat(existsInMinio(tmpKey)).isFalse();
-        assertThat(existsInMinio(finalKey)).isTrue();
+        assertThat(existsInSilo(tmpKey)).isFalse();
+        assertThat(existsInSilo(finalKey)).isTrue();
 
         // Ảnh mới thay ảnh cũ → ảnh cũ bị xóa sau khi lưu xong
         MvcResult second = presign(token, "image/jpeg", PNG.length);
-        assertThat(putToMinio(second, PNG)).isEqualTo(200);
+        assertThat(putToSilo(second, PNG)).isEqualTo(200);
         assertThat(patchAvatar(token, json(second, "$.data.object_key")).getResponse().getStatus()).isEqualTo(200);
-        assertThat(existsInMinio(finalKey)).isFalse();
+        assertThat(existsInSilo(finalKey)).isFalse();
 
         MvcResult profile = mvc.perform(get("/api/v1/me/profile").header(HttpHeaders.AUTHORIZATION, bearer(token)))
                 .andReturn();
@@ -118,7 +118,7 @@ class ProfileAvatarIT extends IntegrationTestBase {
         String tokenB = accessTokenOf(login(b, PASSWORD));
 
         MvcResult presignedA = presign(tokenA, "image/png", PNG.length);
-        assertThat(putToMinio(presignedA, PNG)).isEqualTo(200);
+        assertThat(putToSilo(presignedA, PNG)).isEqualTo(200);
         String keyOfA = json(presignedA, "$.data.object_key");
 
         assertThat(patchAvatar(tokenB, keyOfA).getResponse().getStatus()).isEqualTo(422);      // tệp của người khác

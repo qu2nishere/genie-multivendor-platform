@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
  * Tải tệp qua link có chữ ký (API_SPEC 4.1, plan AUTH A11.01):
  * <ol>
  *   <li>{@link #issue}: kiểm loại / dung lượng khai báo → link PUT tới {@code tmp/user/{userId}/{uuid}.{ext}};</li>
- *   <li>trình duyệt PUT thẳng lên MinIO;</li>
+ *   <li>trình duyệt PUT thẳng lên Silo;</li>
  *   <li>nghiệp vụ dùng tệp (vd. đổi ảnh đại diện) gọi {@link #promote}: kiểm tệp có thật, thuộc đúng người, đúng loại,
  *       đúng dung lượng → chuyển sang {@code user/{userId}/{uuid}.{ext}}.</li>
  * </ol>
- * Tệp bỏ dở trong {@code tmp/} được MinIO tự xóa sau 1 ngày (lifecycle — deploy/minio/init.sh).
+ * Tệp bỏ dở trong {@code tmp/} được Silo tự xóa sau 1 ngày (lifecycle — deploy/silo/init.sh).
  */
 @Service
 public class UploadService {
@@ -83,6 +83,21 @@ public class UploadService {
         String finalKey = tmpKey.substring(TMP_PREFIX.length());
         storage.move(purpose.bucket(), tmpKey, finalKey);
         return new StoredFile(finalKey, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), finalKey) : null);
+    }
+
+    /**
+     * Lưu tệp do backend tự lấy về (không qua link ký) — vd. ảnh đại diện Google khi đăng nhập lần đầu. Vẫn kiểm loại /
+     * dung lượng theo {@code purpose}; khóa {@code user/{userId}/{uuid}.{ext}} như tệp người dùng tải lên.
+     */
+    public StoredFile storeImported(long userId, UploadPurpose purpose, byte[] data, String contentType) {
+        String type = normalize(contentType);
+        if (data == null || data.length == 0 || !purpose.accepts(type) || data.length > purpose.maxBytes()) {
+            throw invalid("file", "Tệp không đúng định dạng hoặc vượt quá dung lượng cho phép.",
+                    Map.of("allowed_types", purpose.contentTypes(), "max_bytes", purpose.maxBytes()));
+        }
+        String key = "user/" + userId + "/" + UUID.randomUUID() + "." + UploadPurpose.extensionOf(type);
+        storage.put(purpose.bucket(), key, data, type);
+        return new StoredFile(key, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), key) : null);
     }
 
     /** Khóa của một URL công khai do chính kho này cấp (để xóa ảnh cũ); rỗng nếu là URL ngoài (vd. ảnh Google). */

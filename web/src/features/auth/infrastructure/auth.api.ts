@@ -140,13 +140,17 @@ export async function logout(): Promise<void> {
   await api.delete('/auth/sessions/current');
 }
 
-/** Bắt đầu đăng nhập Google / Apple: địa chỉ trang ủy quyền của backend (302 sang nhà cung cấp). */
+/**
+ * Bắt đầu đăng nhập Google: địa chỉ backend (302 sang Google). Callback cố định `/auth/oauth-callback`
+ * (trùng URI khai báo ở Google Cloud); trang quay về `next` do backend giữ trong state.
+ */
 export function oauthAuthorizeUrl(
   provider: SocialProvider,
   apiBase: string,
-  callback: string,
+  next: string | null,
 ): string {
-  return `${apiBase}/auth/oauth/${provider}/authorize?redirect_uri=${encodeURIComponent(callback)}`;
+  const query = next ? `?next=${encodeURIComponent(next)}` : '';
+  return `${apiBase}/auth/oauth/${provider}/authorize${query}`;
 }
 
 /** POST /auth/oauth/{provider}/token — hoàn tất ở trang callback. */
@@ -154,16 +158,15 @@ export async function completeOAuth(
   provider: SocialProvider,
   code: string,
   state: string,
-  redirectUri: string,
-): Promise<{ result: OAuthResultDto['result']; session: AuthSession<SessionUser> }> {
+): Promise<{
+  result: OAuthResultDto['result'];
+  session: AuthSession<SessionUser>;
+  next: string | null;
+}> {
   if (USE_MOCK) {
     await mockDelay(500);
-    return { result: 'LOGGED_IN', session: toSession(mockTokens()) };
+    return { result: 'LOGGED_IN', session: toSession(mockTokens()), next: null };
   }
-  const r = await api.post<OAuthResultDto>(
-    `/auth/oauth/${provider}/token`,
-    { code, state, redirect_uri: redirectUri },
-    noAuth,
-  );
-  return { result: r.result, session: toSession(r.tokens) };
+  const r = await api.post<OAuthResultDto>(`/auth/oauth/${provider}/token`, { code, state }, noAuth);
+  return { result: r.result, session: toSession(r.tokens), next: r.next ?? null };
 }
