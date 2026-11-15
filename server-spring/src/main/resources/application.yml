@@ -25,6 +25,7 @@ spring:
     placeholders:
       bootstrap_admin_email: ${BOOTSTRAP_ADMIN_EMAIL:admin@genie.local}
       bootstrap_admin_password_hash: ${BOOTSTRAP_ADMIN_PASSWORD_HASH:}
+      seed_demo: ${GENIE_SEED_DEMO:false}      # R__seed_demo.sql chỉ chạy khi true (profile local / demo)
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -35,6 +36,10 @@ spring:
     port: ${SMTP_PORT:1025}
     username: ${SMTP_USER:}
     password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.connectiontimeout: 10000   # TS 10.2: SMTP timeout 10 s
+      mail.smtp.timeout: 10000
+      mail.smtp.writetimeout: 10000
   servlet:
     multipart:
       enabled: false              # không upload qua Spring — Presigned URL MinIO
@@ -68,6 +73,9 @@ genie:
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
     refresh-token-ttl: 7d
+    cookie-secure: ${AUTH_COOKIE_SECURE:true}
+    cors-origins: ${CORS_ALLOWED_ORIGINS:${PUBLIC_WEB_URL:http://localhost:4321}}
+    otp-pepper: ${OTP_PEPPER}
     internal-token: ${INTERNAL_TOKEN}
     kyc-aes-key: ${KYC_AES_KEY}
     wallet-hmac-secret: ${WALLET_HMAC_SECRET}

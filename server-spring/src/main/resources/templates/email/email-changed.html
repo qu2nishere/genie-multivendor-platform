@@ -1,0 +1,10 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:attr="lang=${lang}">
+<head><meta charset="utf-8"><title>Genie</title></head>
+<body style="font-family:Arial,sans-serif;color:#222;line-height:1.5">
+  <h2 th:text="${appName}">Genie</h2>
+  <p th:if="${lang == 'en'}">The sign-in email of your Genie account was changed to <strong th:text="${newEmail}">email</strong>. If this was not you, contact Genie support immediately.</p>
+  <p th:unless="${lang == 'en'}">Email đăng nhập tài khoản Genie của bạn đã được đổi thành <strong th:text="${newEmail}">email</strong>. Nếu không phải bạn, hãy liên hệ CSKH Genie ngay.</p>
+  <p style="color:#888;font-size:12px" th:text="${lang == 'en'} ? 'Automated email from Genie — please do not reply.' : 'Email tự động từ Genie — vui lòng không trả lời.'">Email tự động</p>
+</body>
+</html>

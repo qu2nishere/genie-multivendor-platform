@@ -2,8 +2,10 @@ package com.genie.auth.profile.domain;
 
 import com.genie.common.domain.UserRole;
 import jakarta.persistence.*;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Locale;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -69,6 +71,9 @@ public class User {
 
     @Column(length = 255)
     private String oauthProviderId;           // NULLABLE — ID của user bên phía nhà cung cấp OAuth (claim `sub`, cố định kể cả khi đổi email bên Google); UNIQUE cùng oauthProvider — một tài khoản Google / Apple chỉ gắn với một user
+
+    // ---- Xóa tài khoản (UC-AUTH-10) — bổ sung plan AUTH D7, V14__auth_additions.sql ----
+    private OffsetDateTime deletionRequestedAt; // NULLABLE — Thời điểm khách xác nhận xóa tài khoản; Cron ẩn danh sau 30 ngày. NULL = không có yêu cầu
 
 
     // ===== QUAN HỆ =====
@@ -136,7 +141,97 @@ public class User {
         this.status = AccountStatus.ANONYMIZED;
         this.email = "deleted_user_" + this.id + "@anonymized.local";
         this.password = null;
+        this.oauthProvider = null;      // plan AUTH D19 — ENTITY.md gốc chỉ xóa oauthProviderId
         this.oauthProviderId = null;
+    }
+
+    // ===== Bổ sung cho phân hệ AUTH (plan/2026-11-14/auth.md A03.01) =====
+
+    /** Chuẩn hóa email trước khi lưu / tìm: bỏ khoảng trắng, chữ thường (plan AUTH D21). */
+    public static String normalizeEmail(String email) {
+        return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    /** Tạo tài khoản người mua đã xác minh email (sau OTP đăng ký / đăng nhập Google) — UC-AUTH-01, UC-AUTH-03 */
+    public static User newCustomer(String email, String passwordHash, OffsetDateTime now) {
+        return User.builder()
+                .email(normalizeEmail(email))
+                .password(passwordHash)
+                .role(UserRole.CUSTOMER)
+                .status(AccountStatus.ACTIVE)
+                .emailVerifiedAt(now)
+                .failedLoginAttempts(0)
+                .build();
+    }
+
+    /** Có mật khẩu (false với tài khoản chỉ đăng nhập Google / Apple) — UC-AUTH-03, UC-AUTH-06 */
+    public boolean hasPassword() {
+        return this.password != null;
+    }
+
+    /** Đang hoạt động bình thường (không đình chỉ / ẩn danh / xóa) — UC-AUTH-02 */
+    public boolean isActive() {
+        return this.status == AccountStatus.ACTIVE;
+    }
+
+    /** Đặt / đổi mật khẩu (đã băm Argon2id) — UC-AUTH-04, UC-AUTH-06 */
+    public void changePassword(String passwordHash) {
+        if (passwordHash == null || passwordHash.isBlank()) throw new IllegalArgumentException("Mật khẩu băm rỗng");
+        this.password = passwordHash;
+    }
+
+    /** Đánh dấu đã xác minh email (lần đầu) — UC-AUTH-01 */
+    public void verifyEmail(OffsetDateTime now) {
+        if (this.emailVerifiedAt == null) this.emailVerifiedAt = now;
+    }
+
+    /** Đổi email đăng nhập sau khi xác minh OTP gửi tới email mới — UC-AUTH-08 */
+    public void changeEmail(String newEmail, OffsetDateTime now) {
+        this.email = normalizeEmail(newEmail);
+        this.emailVerifiedAt = now;
+    }
+
+    /** Gắn tài khoản Google / Apple — UC-AUTH-03 (ENTITY chỉ có một cặp provider — plan AUTH D16) */
+    public void linkIdentity(String provider, String subject) {
+        if (this.oauthProvider != null) throw new IllegalStateException("Tài khoản đã liên kết " + this.oauthProvider);
+        this.oauthProvider = provider;
+        this.oauthProviderId = subject;
+    }
+
+    /** Gỡ liên kết — không cho gỡ cách đăng nhập duy nhất — UC-AUTH-03 */
+    public void unlinkIdentity() {
+        if (!hasPassword()) throw new IllegalStateException("Không thể gỡ cách đăng nhập duy nhất");
+        this.oauthProvider = null;
+        this.oauthProviderId = null;
+    }
+
+    /** Khóa tạm một khoảng (sai OTP đăng nhập 5 lần) — UC-AUTH-02 luồng 1a */
+    public void lockFor(Duration duration, OffsetDateTime now) {
+        this.lockedUntil = now.plus(duration);
+        this.failedLoginAttempts = 0;
+    }
+
+    /** Mở khóa tạm (xác minh qua email / đặt lại mật khẩu) — UC-AUTH-02, UC-AUTH-04 */
+    public void clearLock() {
+        this.lockedUntil = null;
+        this.failedLoginAttempts = 0;
+    }
+
+    /** Ghi yêu cầu xóa tài khoản — UC-AUTH-10 */
+    public void requestDeletion(OffsetDateTime now) {
+        if (this.deletionRequestedAt != null) throw new IllegalStateException("Đã có yêu cầu xóa tài khoản");
+        if (this.status == AccountStatus.ANONYMIZED || this.status == AccountStatus.DELETED) throw new IllegalStateException("Tài khoản đã xóa");
+        this.deletionRequestedAt = now;
+    }
+
+    /** Hủy yêu cầu xóa trong 30 ngày — UC-AUTH-10 */
+    public void cancelDeletion() {
+        if (this.deletionRequestedAt == null) throw new IllegalStateException("Không có yêu cầu xóa tài khoản");
+        this.deletionRequestedAt = null;
+    }
+
+    public boolean isPendingDeletion() {
+        return this.deletionRequestedAt != null;
     }
 
 }

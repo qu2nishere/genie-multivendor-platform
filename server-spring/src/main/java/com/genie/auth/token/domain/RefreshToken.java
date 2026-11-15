@@ -44,6 +44,12 @@ public class RefreshToken {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;          // Thời điểm đăng nhập tạo ra phiên này
+
+    // ---- Phiên đăng nhập ổn định qua các lần xoay vòng (plan AUTH D6, V14__auth_additions.sql) ----
+    @Column(name = "family_id", nullable = false)
+    private Long familyId;                    // Mã phiên: mọi token sinh ra do xoay vòng từ cùng một lần đăng nhập chung family_id (seq refresh_token_family_seq). Là `id` ở GET /me/sessions và claim `sid` của access token
+
+    private OffsetDateTime lastUsedAt;         // NULLABLE — Lần làm mới gần nhất ("Hoạt động lần cuối" ở màn Thiết bị)
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
@@ -56,5 +62,36 @@ public class RefreshToken {
     public void revoke(String reason, OffsetDateTime now) {
         this.revokedAt = now;
         this.revokedReason = reason;
+    }
+
+    // ===== Bổ sung cho phân hệ AUTH (plan/2026-11-14/auth.md A03.05) =====
+
+    public static final int MAX_DEVICE_INFO = 255;
+
+    /**
+     * Phát token mới (chỉ lưu bản băm). {@code deviceInfo} cắt còn 255 ký tự (cột NOT NULL VARCHAR(255) — User-Agent
+     * thường dài hơn); thiếu IP / User-Agent thì ghi giá trị giữ chỗ vì cột NOT NULL.
+     */
+    public static RefreshToken issue(Long userId, Long familyId, String tokenHash, String deviceInfo, String ipAddress,
+                                     OffsetDateTime expiresAt) {
+        String device = deviceInfo == null || deviceInfo.isBlank() ? "unknown" : deviceInfo;
+        if (device.length() > MAX_DEVICE_INFO) device = device.substring(0, MAX_DEVICE_INFO);
+        return RefreshToken.builder()
+                .userId(userId)
+                .familyId(familyId)
+                .tokenHash(tokenHash)
+                .deviceInfo(device)
+                .ipAddress(ipAddress == null || ipAddress.isBlank() ? "0.0.0.0" : ipAddress)
+                .expiresAt(expiresAt)
+                .build();
+    }
+
+    /** Ghi nhận lần dùng gần nhất — UC-AUTH-11 */
+    public void touch(OffsetDateTime now) {
+        this.lastUsedAt = now;
+    }
+
+    public boolean isRevokedFor(String reason) {
+        return this.revokedAt != null && reason.equals(this.revokedReason);
     }
 }

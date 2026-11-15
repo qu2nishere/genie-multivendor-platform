@@ -1,0 +1,25 @@
+# Profile test cho *IT dùng IntegrationTestBase (PostgreSQL + Redis Testcontainers — địa chỉ nạp ở @DynamicPropertySource)
+spring:
+  flyway:
+    placeholders:
+      bootstrap_admin_email: bootstrap@genie.test
+      bootstrap_admin_password_hash: '$argon2id$v=19$m=19456,t=2,p=1$ZebNGoJ3c4LESBr+rpyuLQ$9pb9gk4E8gkfmpVrHDFU7QHxJBsSLf1b8ysu6AWoH4M'    # mật khẩu Genie@123
+      seed_demo: true                            # có sẵn tài khoản mẫu R__seed_demo.sql cho test đăng nhập
+  mail:
+    host: localhost
+    port: 3025                                   # không dùng — FakeEmailSender thay SMTP
+
+genie:
+  version: test
+  security:
+    jwt-secret: test-secret-0123456789-test-secret-0123456789
+    internal-token: test-internal-token
+    otp-pepper: test-otp-pepper
+    cookie-secure: false
+    cors-origins: http://localhost:4321
+  scheduling:
+    enabled: false
+
+logging:
+  level:
+    com.genie: INFO
