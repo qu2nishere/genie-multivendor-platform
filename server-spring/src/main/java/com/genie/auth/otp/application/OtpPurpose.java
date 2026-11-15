@@ -23,4 +23,21 @@ public enum OtpPurpose {
         return this == PASSWORD_CHANGE || this == ACCOUNT_DELETION || this == WITHDRAWAL
                 || this == PAYOUT_ACCOUNT_UPDATE || this == PAYOUT_ACCOUNT_DELETE;
     }
+
+    /** Việc khách đang làm, chèn vào email OTP: "Bạn đang {action}." / "You are {action}." */
+    public String action(boolean english) {
+        return switch (this) {
+            case REGISTER -> english ? "creating your Genie Shop account" : "tạo tài khoản Genie Shop";
+            case LOGIN -> english ? "signing in to Genie Shop" : "đăng nhập vào Genie Shop";
+            case PASSWORD_RESET -> english ? "resetting your password" : "đặt lại mật khẩu";
+            case PASSWORD_CHANGE -> english ? "changing your password" : "đổi mật khẩu";
+            case ACCOUNT_DELETION -> english ? "requesting to delete your account" : "yêu cầu xóa tài khoản";
+            case WITHDRAWAL -> english ? "withdrawing money from your shop wallet" : "rút tiền từ ví shop";
+            case PAYOUT_ACCOUNT_UPDATE -> english ? "updating your payout bank account" : "cập nhật tài khoản nhận tiền";
+            case PAYOUT_ACCOUNT_DELETE -> english ? "removing your payout bank account" : "xóa tài khoản nhận tiền";
+            case SHOP_REGISTRATION -> english ? "registering your shop on Genie" : "đăng ký mở shop trên Genie";
+            case EMAIL_CHANGE -> english ? "changing your sign-in email" : "đổi email đăng nhập";
+            case ACCOUNT_UNLOCK -> english ? "unlocking your account" : "mở khóa tài khoản";
+        };
+    }
 }

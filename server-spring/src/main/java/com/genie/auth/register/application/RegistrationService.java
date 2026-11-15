@@ -87,7 +87,7 @@ public class RegistrationService {
         } catch (DataAccessException e) {
             throw new BusinessException(ErrorCode.SERVICE_UNAVAILABLE);
         }
-        return otps.issue(OtpPurpose.REGISTER, email, null, Map.of());
+        return otps.issue(OtpPurpose.REGISTER, email, null, Map.of(OtpChallengeService.DATA_NAME, pending.fullName()));
     }
 
     /** Xác minh OTP đăng ký → tạo tài khoản và đăng nhập ({@code 201 $AuthTokens}). */
