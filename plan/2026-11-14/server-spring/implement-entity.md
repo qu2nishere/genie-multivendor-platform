@@ -376,6 +376,7 @@
 - P12 · `UserWishlist` · đối chiếu Phụ lục B.1: thiếu 2 FK `user_wishlists.user_id` (◆ → CASCADE), `product_id` vì chú thích trường không ghi dạng `FK → bảng.id` · thêm vào cuối V2 · đã làm
 - P12 · `common/audit/AuditLogger`, `common/domain/Money`, `Haversine` · vẫn là stub `TODO` — là service / tiện ích, không phải entity, ngoài phạm vi checklist · để lại
 - P12 · Phụ lục E · thực tế 203 dòng phương thức (tài liệu ghi 202) — code khớp đủ 203 · ghi nhận
+- Sau P12 · `User`, `RefreshToken`, `AuditAction` + `CustomerProfile`, `Address` · plan AUTH bổ sung cột qua `V14__auth_additions.sql` (`users.deletion_requested_at`, `refresh_tokens.family_id`, `last_used_at`), 8 giá trị `AuditAction`, phương thức nghiệp vụ mới và `anonymize()` xóa cả `oauthProvider` (ADR 0007) · cần đưa vào ENTITY.md 1.1 / 1.2 / 1.3 / 1.7 / Phụ lục A, E (plan AUTH A00.04) · đang làm
 
 ---
 
