@@ -77,11 +77,17 @@ Theme: `?theme=genie|classic|dongho|dongson|hoian|polymer|buudien|saigon|sleeve`
   - `type`: feat · fix · perf · refactor · test · docs · build · ci · chore · revert
   - `scope` (cố định, `commitlint.config.cjs`): auth · catalog · order · payment · vendor · shipping · promotion ·
     social · support · notification · admin · common · web · seller-ui · admin-ui · ai-worker · db · deploy · deps · release · api
-  - `subject`: **tiếng Anh**, mệnh lệnh, **chữ thường**, không dấu chấm cuối; header ≤ 100 ký tự. Body được viết tiếng Việt.
+  - `subject`: **tiếng Anh**, mệnh lệnh, **chữ thường**, không dấu chấm cuối; header ≤ 100 ký tự. **Body cũng viết tiếng Anh** (toàn bộ nội dung commit bằng tiếng Anh).
   - Chưa có mã Jira thì bỏ `[#GNE-…]` (lịch sử hiện tại đều bỏ).
 - PR vào `develop`, squash merge, CI xanh, ≥ 2 duyệt, PR ≤ ~400 dòng. Release: tag `vX.Y.Z` trên `main`.
 - **Không** `--no-verify`, không `--author`. Một commit = một thay đổi logic, build được, test xanh.
 - Ví dụ: `feat(seller-ui): add voucher and flash sale screens`, `fix(web): resolve hydration issue on cart`.
+
+**Quy trình commit / PR khi làm cùng Claude (bắt buộc):**
+1. **Chỉ đưa lệnh `git commit` khi người dùng yêu cầu** — làm xong việc thì báo kết quả, không tự đưa lệnh commit, không tự commit / push.
+2. Khi được yêu cầu: chia commit theo từng thay đổi logic, `git add` đúng từng file (không `git add .`), mỗi lệnh có chú thích `#` tiếng Việt giải thích commit dùng để làm gì; nội dung commit (tiêu đề + body) bằng tiếng Anh.
+3. Tác giả commit là người dùng (`Khoa18062005`). **Không** thêm dòng `Co-Authored-By: Claude`, `Claude-Session` hay bất kỳ dấu vết AI nào vào commit / PR.
+4. **Đưa lệnh commit xong mới hỏi lại** người dùng có cần tạo nội dung PR không — chỉ viết nội dung PR khi người dùng đồng ý. PR luôn vào `develop` (không phải `main`), theo mẫu `.github/pull_request_template.md`, tiêu đề PR đúng chuẩn commit (CI kiểm bằng commitlint).
 
 ## 5. Quy ước FRONTEND `web/` (Astro 5 SSR + React 19 islands + Tailwind 3, TS strict)
 
