@@ -11,7 +11,7 @@ public enum MailTemplate {
     /** Biến: {@code otp}, {@code expiresMinutes}, {@code purpose} (mã OtpPurpose). */
     OTP("otp", "Mã xác thực Genie", "Your Genie verification code"),
     /** Biến: {@code changedAt}. */
-    PASSWORD_CHANGED("password-changed", "Mật khẩu Genie của bạn vừa được thay đổi", "Your Genie password was changed"),
+    PASSWORD_CHANGED("password-changed", "Mật khẩu Genie Shop của bạn vừa được thay đổi", "Your Genie Shop password was changed"),
     /** Biến: {@code device}, {@code ip}, {@code loginAt}. */
     NEW_DEVICE_LOGIN("new-device", "Đăng nhập Genie từ thiết bị mới", "New sign-in to your Genie account"),
     /** Biến: {@code newEmail}. */
