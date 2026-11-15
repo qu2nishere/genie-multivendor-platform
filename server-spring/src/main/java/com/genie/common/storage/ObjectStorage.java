@@ -21,6 +21,9 @@ public interface ObjectStorage {
     /** Thông tin tệp đã tải lên; rỗng nếu chưa có / đã bị dọn. */
     Optional<StoredObject> stat(String bucket, String objectKey);
 
+    /** Ghi tệp do chính backend tạo / tải về (vd. ảnh đại diện Google). */
+    void put(String bucket, String objectKey, byte[] data, String contentType);
+
     /** Chuyển tệp trong cùng bucket (copy rồi xóa bản gốc). */
     void move(String bucket, String sourceKey, String targetKey);
 

@@ -6,11 +6,13 @@ import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
 import io.minio.StatObjectResponse;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
+import java.io.ByteArrayInputStream;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Map;
@@ -89,6 +91,16 @@ public class MinioObjectStorage implements ObjectStorage {
         } catch (Exception e) {
             throw unavailable(e);
         }
+    }
+
+    @Override
+    public void put(String bucket, String objectKey, byte[] data, String contentType) {
+        call(() -> client.putObject(PutObjectArgs.builder()
+                .bucket(bucket)
+                .object(objectKey)
+                .stream(new ByteArrayInputStream(data), data.length, -1)
+                .contentType(contentType)
+                .build()));
     }
 
     @Override

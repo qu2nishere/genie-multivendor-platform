@@ -85,6 +85,21 @@ public class UploadService {
         return new StoredFile(finalKey, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), finalKey) : null);
     }
 
+    /**
+     * Lưu tệp do backend tự lấy về (không qua link ký) — vd. ảnh đại diện Google khi đăng nhập lần đầu. Vẫn kiểm loại /
+     * dung lượng theo {@code purpose}; khóa {@code user/{userId}/{uuid}.{ext}} như tệp người dùng tải lên.
+     */
+    public StoredFile storeImported(long userId, UploadPurpose purpose, byte[] data, String contentType) {
+        String type = normalize(contentType);
+        if (data == null || data.length == 0 || !purpose.accepts(type) || data.length > purpose.maxBytes()) {
+            throw invalid("file", "Tệp không đúng định dạng hoặc vượt quá dung lượng cho phép.",
+                    Map.of("allowed_types", purpose.contentTypes(), "max_bytes", purpose.maxBytes()));
+        }
+        String key = "user/" + userId + "/" + UUID.randomUUID() + "." + UploadPurpose.extensionOf(type);
+        storage.put(purpose.bucket(), key, data, type);
+        return new StoredFile(key, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), key) : null);
+    }
+
     /** Khóa của một URL công khai do chính kho này cấp (để xóa ảnh cũ); rỗng nếu là URL ngoài (vd. ảnh Google). */
     public Optional<String> keyOfPublicUrl(UploadPurpose purpose, String url) {
         if (url == null) {
