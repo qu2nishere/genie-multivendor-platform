@@ -102,14 +102,18 @@ class PasswordFlowIT extends IntegrationTestBase {
     }
 
     @Test
-    void googleOnlyAccountGetsNoResetEmail() throws Exception {
+    void googleOnlyAccountSetsUpPasswordThroughForgotFlow() throws Exception {
         String email = uniqueEmail();
         createCustomer(email, null);   // tạo bằng Google, chưa thiết lập mật khẩu
 
         MvcResult sent = sendOtp("PASSWORD_RESET", email);
         assertThat(sent.getResponse().getStatus()).isEqualTo(202);
-        assertThat(json(sent, "$.data.challenge_id")).startsWith("otp_");
-        assertThat(mailsTo(email)).isEmpty();
+        String token = json(verify(json(sent, "$.data.challenge_id"), mails.lastOtp(email)), "$.data.reset_token");
+        assertThat(reset(token, "NewPass@2026").getResponse().getStatus()).isEqualTo(204);
+
+        assertThat(login(email, "NewPass@2026").getResponse().getStatus()).isEqualTo(201);
+        FakeEmailSender.SentMail mail = waitForMail(email, MailTemplate.PASSWORD_CHANGED);
+        assertThat(mail.variables()).containsEntry("method", "SETUP");
     }
 
     @Test

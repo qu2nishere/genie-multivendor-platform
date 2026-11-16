@@ -164,6 +164,21 @@ class OAuthLoginIT extends IntegrationTestBase {
     }
 
     @Test
+    void temporarilyLockedAccountIsNotLinked() throws Exception {
+        String email = uniqueEmail();
+        createCustomer(email, PASSWORD);
+        for (int i = 0; i < 5; i++) {
+            login(email, "Wrong@123");               // sai 5 lần → khóa tạm 15 phút
+        }
+
+        MvcResult r = signIn("c-locked", new IdentityClaims("sub-l-" + email, email, true, "A", null));
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(423);
+        assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4230");
+        assertThat(userRepository.findByEmail(email).orElseThrow().getOauthProvider()).isNull();
+    }
+
+    @Test
     void accountAlreadyLinkedToAnotherGoogleIsRejected() throws Exception {
         String email = uniqueEmail();
         createCustomer(email, PASSWORD);
