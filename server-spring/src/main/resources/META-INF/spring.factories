@@ -1,0 +1,2 @@
+# Nạp .env của máy dev (thư mục gốc dự án) với độ ưu tiên thấp nhất — com.genie.common.config.DotEnvEnvironmentPostProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=com.genie.common.config.DotEnvEnvironmentPostProcessor
