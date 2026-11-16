@@ -14,6 +14,7 @@ import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
 import com.genie.common.security.ClientInfo;
 import com.genie.common.security.Hashing;
+import com.genie.common.security.RateLimiter;
 import com.genie.common.storage.UploadPurpose;
 import com.genie.common.storage.UploadService;
 import java.net.URLEncoder;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,12 +77,17 @@ public class OAuthLoginService {
     private final String webUrl;
     private final AvatarDownloader avatars;
     private final UploadService uploads;
+    private final PasswordEncoder passwordEncoder;
+    private final RateLimiter rateLimiter;
 
     public OAuthLoginService(List<IdentityProviderClient> clients, OAuthStateStore states, UserRepository users,
                              CustomerProfileRepository profiles, LoginService loginService, AuditLogger audit,
                              ApplicationEventPublisher events, Clock clock,
                              @Value("${genie.web-url:http://localhost:4321}") String webUrl,
-                             AvatarDownloader avatars, UploadService uploads) {
+                             AvatarDownloader avatars, UploadService uploads, PasswordEncoder passwordEncoder,
+                             RateLimiter rateLimiter) {
+        this.passwordEncoder = passwordEncoder;
+        this.rateLimiter = rateLimiter;
         this.avatars = avatars;
         this.uploads = uploads;
         this.clients = clients;
@@ -108,8 +115,108 @@ public class OAuthLoginService {
         String state = Hashing.randomToken(32);
         String nonce = Hashing.randomToken(32);
         String verifier = Hashing.randomToken(48);
-        states.save(state, new OAuthState(provider, nonce, verifier, callbackUrl(), safeNext(next)), STATE_TTL);
+        states.save(state, new OAuthState(provider, nonce, verifier, callbackUrl(), safeNext(next), null), STATE_TTL);
         return client.authorizeUrl(state, nonce, challenge(verifier), callbackUrl());
+    }
+
+    /** Trang quay về sau khi liên kết Google ở Tài khoản › Liên kết đăng nhập. */
+    public static final String LINK_RETURN_PATH = "/account/logins";
+
+    /**
+     * Bắt đầu <b>liên kết</b> Google vào tài khoản đang đăng nhập (A14.04). Gọi bằng XHR có access token (trình duyệt
+     * chuyển hướng không mang token) → trả URL Google; state ghi {@code linkUserId} nên chỉ đúng người này hoàn tất được.
+     */
+    public String startLink(OAuthProvider provider, long userId) {
+        IdentityProviderClient client = client(provider);
+        if (!client.configured()) {
+            throw new BusinessException(ErrorCode.SERVICE_UNAVAILABLE, "Đăng nhập bằng Google chưa được cấu hình.");
+        }
+        String state = Hashing.randomToken(32);
+        String nonce = Hashing.randomToken(32);
+        String verifier = Hashing.randomToken(48);
+        states.save(state, new OAuthState(provider, nonce, verifier, callbackUrl(), LINK_RETURN_PATH, userId),
+                STATE_TTL);
+        return client.authorizeUrl(state, nonce, challenge(verifier), callbackUrl());
+    }
+
+    /**
+     * Hoàn tất liên kết (API_SPEC 3.3 {@code POST /me/identities/{provider}}): state phải là state liên kết của chính
+     * người gọi; email Google chưa xác minh → {@code 403 4032}; <b>email Google phải trùng email tài khoản</b> — khác →
+     * {@code 409 4098} (một người = một tài khoản = một email, đồng nhất với tự liên kết theo email khi đăng nhập; không
+     * gắn được Gmail của người khác hay Gmail đang là tài khoản Genie khác); Google này đã gắn người khác hoặc tài khoản
+     * đã gắn Google khác → {@code 409 4092}. Đã gắn đúng Google này rồi → coi như thành công. Tên / ảnh chỉ điền khi trống.
+     */
+    @Transactional
+    public void link(OAuthProvider provider, long userId, String code, String state, ClientInfo client) {
+        OAuthState saved = states.take(state)
+                .filter(s -> s.provider() == provider && s.linkUserId() != null && s.linkUserId() == userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.OAUTH_INVALID));
+        IdentityClaims claims = client(provider)
+                .exchange(code, saved.codeVerifier(), saved.redirectUri(), saved.nonce());
+        if (claims.subject() == null || claims.subject().isBlank()) {
+            throw new BusinessException(ErrorCode.OAUTH_INVALID);
+        }
+        if (!claims.emailVerified()) {
+            throw new BusinessException(ErrorCode.OAUTH_EMAIL_UNVERIFIED);
+        }
+        Optional<User> owner = users.findByOauthProviderAndOauthProviderId(provider.id(), claims.subject());
+        if (owner.isPresent()) {
+            if (owner.get().getId() == userId) {
+                return;
+            }
+            throw new BusinessException(ErrorCode.IDENTITY_ALREADY_LINKED, Map.of("reason", "IDENTITY_OWNED_BY_OTHER"));
+        }
+        User user = users.findByIdForUpdate(userId).filter(User::isActive)
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
+        String googleEmail = claims.email() == null ? null : User.normalizeEmail(claims.email());
+        if (googleEmail == null || !googleEmail.equals(user.getEmail())) {
+            audit.recordIndependent(AuditAction.OAUTH_LINKED, user.getId(), provider.id(),
+                    Map.of("reason", "EMAIL_MISMATCH"), client, false);
+            throw new BusinessException(ErrorCode.IDENTITY_EMAIL_MISMATCH,
+                    Map.of("account_email", user.getEmail()));
+        }
+        if (user.getOauthProvider() != null) {
+            throw new BusinessException(ErrorCode.IDENTITY_ALREADY_LINKED,
+                    Map.of("reason", "ACCOUNT_LINKED_TO_ANOTHER_" + user.getOauthProvider().toUpperCase()));
+        }
+        user.linkIdentity(provider.id(), claims.subject());
+        flushOrConflict(user);
+        audit.record(AuditAction.OAUTH_LINKED, user.getId(), provider.id(), linkDetails("ACCOUNT", claims), client, true);
+        fillProfileGaps(user, claims);
+    }
+
+    /** Số lần nhập mật khẩu khi gỡ liên kết mỗi phút / tài khoản — dùng chung bộ đếm với "kiểm mật khẩu hiện tại". */
+    static final int MAX_PASSWORD_CHECKS_PER_MINUTE = 10;
+
+    /**
+     * Gỡ liên kết (API_SPEC 3.3): chưa có mật khẩu → {@code 409 4093}; phải nhập lại mật khẩu hiện tại (thao tác nhạy cảm
+     * — người mượn máy đang đăng nhập không gỡ được), sai → {@code 401 GNE-AUTH-4011}, tối đa 10 lần / phút
+     * ({@code 429}). Không gắn provider này → coi như đã gỡ.
+     */
+    @Transactional
+    public void unlink(OAuthProvider provider, long userId, String currentPassword, ClientInfo client) {
+        User user = users.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
+        if (!provider.id().equals(user.getOauthProvider())) {
+            return;
+        }
+        if (!user.hasPassword()) {
+            throw new BusinessException(ErrorCode.LAST_LOGIN_METHOD);
+        }
+        rateLimiter.check("rl:pwverify:" + userId, MAX_PASSWORD_CHECKS_PER_MINUTE, Duration.ofMinutes(1));
+        if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPassword())) {
+            // ghi riêng transaction: transaction chính sẽ rollback vì ném lỗi
+            audit.recordIndependent(AuditAction.OAUTH_UNLINKED, user.getId(), provider.id(),
+                    Map.of("reason", "BAD_PASSWORD"), client, false);
+            throw new BusinessException(ErrorCode.BAD_CREDENTIALS, "Mật khẩu hiện tại không chính xác.");
+        }
+        user.unlinkIdentity();
+        audit.record(AuditAction.OAUTH_UNLINKED, user.getId(), provider.id(), null, client, true);
+    }
+
+    /** Ghi kèm email Google để màn "Liên kết đăng nhập" hiện đúng (bảng users không lưu email Google). */
+    private static Map<String, Object> linkDetails(String source, IdentityClaims claims) {
+        return claims.email() == null ? Map.of("source", source) : Map.of("source", source, "email", claims.email());
     }
 
     /** URL web báo lỗi khi không bắt đầu được (trình duyệt đang được chuyển hướng, không đọc được JSON lỗi). */
@@ -119,7 +226,7 @@ public class OAuthLoginService {
 
     @Transactional
     public OAuthLoginResult complete(OAuthProvider provider, String code, String state, ClientInfo client) {
-        OAuthState saved = states.take(state).filter(s -> s.provider() == provider)
+        OAuthState saved = states.take(state).filter(s -> s.provider() == provider && s.linkUserId() == null)
                 .orElseThrow(() -> new BusinessException(ErrorCode.OAUTH_INVALID));
         IdentityClaims claims = client(provider)
                 .exchange(code, saved.codeVerifier(), saved.redirectUri(), saved.nonce());
@@ -158,7 +265,7 @@ public class OAuthLoginService {
                 user.verifyEmail(now);
             }
             flushOrConflict(user);
-            audit.record(AuditAction.OAUTH_LINKED, user.getId(), provider.id(), Map.of("source", "LOGIN"), client, true);
+            audit.record(AuditAction.OAUTH_LINKED, user.getId(), provider.id(), linkDetails("LOGIN", claims), client, true);
             fillProfileGaps(user, claims);
             return done(OAuthLoginResult.Outcome.LINKED, user, client, saved.next());
         }
@@ -169,7 +276,7 @@ public class OAuthLoginService {
         user = flushOrConflict(user);
         CustomerProfile profile = profiles.save(CustomerProfile.create(user, displayName(claims), null, language()));
         importAvatar(user.getId(), claims.picture()).ifPresent(profile::changeAvatar);
-        audit.record(AuditAction.OAUTH_LINKED, user.getId(), provider.id(), Map.of("source", "SIGN_UP"), client, true);
+        audit.record(AuditAction.OAUTH_LINKED, user.getId(), provider.id(), linkDetails("SIGN_UP", claims), client, true);
         events.publishEvent(new UserRegisteredEvent(user.getId(), provider.name(), now));
         return done(OAuthLoginResult.Outcome.CREATED, user, client, saved.next());
     }
