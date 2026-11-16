@@ -156,6 +156,9 @@ class AccountDeletionIT extends IntegrationTestBase {
                 + "AND user_id = ?", Integer.class, user.getId())).isEqualTo(1);
 
         assertThat(login(email, PASSWORD).getResponse().getStatus()).isEqualTo(401);       // không đăng nhập được nữa
+        // Giới hạn "60 giây mới gửi lại mã" nằm ở Redis (TTL giờ thật, không theo MutableClock): mã xóa tài khoản vừa
+        // gửi tới email này vài giây trước → xóa khóa để giả lập đã qua 30 ngày như ngoài đời.
+        redis.delete("rl:otp:" + email);
         MvcResult again = mvc.perform(post("/api/v1/auth/registrations").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"full_name\":\"Khách mới\",\"email\":\"" + email + "\",\"phone_number\":\"0901234567\","
                         + "\"password\":\"NewUser@2026\",\"accept_terms\":true}")).andReturn();
