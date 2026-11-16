@@ -6,9 +6,9 @@
 > **Cập nhật:** 2026-11-14 (lần 2) — sau khi gộp loạt entity `feature/entity-p00…p12` (PR #28–#51): 65 entity + `V1…V12` đã có thật; A02, A03 viết lại thành "bổ sung", bỏ D1, thêm D20–D22. Chi tiết ở Nhật ký.
 > **Cách dùng:** làm theo thứ tự giai đoạn ở mục 7; mỗi task có mã `Axx.yy`, tick `[x]` và ghi mã commit vào **Nhật ký** (mục 10) ngay khi xong. Quyết định ở mục 2 phải chốt **trước** A01.
 
-## Tiến độ (cập nhật 2026-11-15)
+## Tiến độ (cập nhật 2026-11-16)
 
-> ✅ **Đã build và chạy test** trên máy dev (JDK 21: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`, Docker cho Testcontainers Postgres 16 / Redis 7 / Silo): `./mvnw verify` BUILD SUCCESS. Đã merge vào `develop` qua PR #52 (đăng ký, OTP, đăng nhập, mật khẩu), #53 (hồ sơ, ảnh đại diện, Silo), #54 (email OTP mới). Đăng nhập Google + lấy tên / ảnh Google vào Silo: đã chạy thật với Google, **đang commit** trên `feature/auth` (7 commit, xem A14.09) → PR tiếp theo `feat(auth): sign in with google and import avatar into silo`.
+> ✅ **Đã build và chạy test** trên máy dev (JDK 21: `export JAVA_HOME=$(/usr/libexec/java_home -v 21)`, Docker cho Testcontainers Postgres 16 / Redis 7 / Silo): `./mvnw verify` 58 test BUILD SUCCESS. Đã merge vào `develop`: PR #52 (đăng ký, OTP, đăng nhập, mật khẩu), #53 (hồ sơ, ảnh đại diện, Silo), #54 (email OTP mới), #55 (đăng nhập Google + ảnh Google vào Silo, đổi tên MinIO → Silo), #56 (quên mật khẩu: email cảnh báo mới, test khóa khôi phục). Đã chạy thật: đăng ký, đăng nhập Google, quên mật khẩu.
 
 | Nhóm | Trạng thái | Ghi chú |
 |---|---|---|
@@ -19,12 +19,12 @@
 | A04 Bảo mật lõi | Xong | JWT HS256, Argon2id, CORS, phân quyền theo vai trò |
 | A05 OTP & step-up | Code xong | Step-up dùng `StepUpAspect` (không dùng interceptor); còn `OtpChallengeServiceTest` riêng |
 | A06 Đăng ký (UC-AUTH-01) | **Đã chạy thật — đúng** | Còn A06.04 `auth.http` (tạm hoãn theo yêu cầu) |
-| A07 Đăng nhập, phiên, thiết bị | Code xong | Refresh trả kèm `user` (để web dựng lại phiên khi tải lại trang) |
-| A08 Quên mật khẩu | **Đã chạy thật — đúng**, đủ test | Email cảnh báo đổi mật khẩu làm lại cùng phong cách email OTP |
+| A07 Đăng nhập, phiên, thiết bị | Code xong; thêm `GNE-AUTH-4012` cho tài khoản chỉ Google | Refresh trả kèm `user` (để web dựng lại phiên khi tải lại trang) |
+| A08 Quên mật khẩu | **Xong** — đã chạy thật, đủ test, đã merge (#56) | Email cảnh báo đổi mật khẩu làm lại cùng phong cách email OTP |
 | A09 Đổi mật khẩu | Code xong | |
 | A10 Đóng S1 | 1/5 | `UserFacade` xong; còn OpenAPI, chạy thử với web, cập nhật Excel |
 | A11 Hồ sơ + kho tệp Silo | Một phần — đã test, đã merge (#53) | A11.01 tải tệp lên Silo, A11.03 xem / sửa hồ sơ + ảnh đại diện xong; còn A11.02 `GET /me`, A11.04 đổi email |
-| A14 Google | Đăng nhập Google xong — đã chạy thật, đã test, đang commit | Tên / ảnh Google chỉ điền khi hồ sơ trống, ảnh lưu Silo. Còn A14.04 liên kết / gỡ Google trong trang tài khoản, Apple |
+| A14 Google | Đăng nhập Google xong — đã chạy thật, đã test, đã merge (#55) | Tên / ảnh Google chỉ điền khi hồ sơ trống, ảnh lưu Silo. Còn A14.04 liên kết / gỡ Google trong trang tài khoản, Apple |
 | A12, A14.06+ Địa chỉ, xóa tài khoản | Chưa làm | |
 | A15 Nối web | Một phần (`PUBLIC_REAL_API=auth,upload,profile`) | Đăng ký: số điện thoại khớp backend, refresh đọc `user`; còn `GET /me`, mã lỗi, E2E |
 | A16 Hoàn thiện | Chưa làm | |
@@ -282,13 +282,13 @@ Entity `User` nằm ở `auth/profile/domain` (đã chốt khi dựng entity) �
 - [x] A07.12 `6ef4bc2` — **COMMIT** (tách 2 nếu > 400 dòng) `feat(auth): login with password or otp and rotate refresh tokens` · `feat(auth): list and revoke login sessions`
 
 ### A08 — UC-AUTH-04 Quên mật khẩu
-- [x] A08.01 `POST /auth/otp-challenges` purpose `PASSWORD_RESET`: đang bị khóa khôi phục (`auth:pwreset_lock:{email}`) → vẫn `202` không gửi; email không tồn tại / tài khoản chỉ Google → `202` không gửi (tài khoản chỉ Google dùng "Thiết lập mật khẩu" sau khi đăng nhập Google).
+- [x] A08.01 _(sửa 2026-11-16 theo Kien_Thuc_Can_Nam Phần 20: tài khoản chỉ Google / Apple **vẫn nhận mã** — quên mật khẩu thành "thiết lập mật khẩu qua OTP email", email cảnh báo `method = SETUP`, audit `PASSWORD_RESET {method: SETUP}`)_ `POST /auth/otp-challenges` purpose `PASSWORD_RESET`: đang bị khóa khôi phục (`auth:pwreset_lock:{email}`) → vẫn `202` không gửi; email không tồn tại / tài khoản chỉ Google → `202` không gửi (tài khoản chỉ Google dùng "Thiết lập mật khẩu" sau khi đăng nhập Google).
 - [x] A08.02 Verify `PASSWORD_RESET` → `reset_token` = `rst_` + 32 byte ngẫu nhiên, lưu `auth:reset:{sha256}` = `{user_id}` TTL 600 s → `200 {reset_token, expires_in: 600}`. Sai 5 lần → `auth:pwreset_lock:{email}` 30 phút, `422 GNE-AUTH-4221 {locked_until}`.
 - [x] A08.03 `POST /auth/password-resets`: token không có → `410 GNE-AUTH-4102`; mật khẩu mới trùng hiện tại (`matches`) → `422 GNE-AUTH-4223`; đổi mật khẩu, `clearLock()` (đổi mật khẩu mở khóa — ENTITY 1.1 c), thu hồi mọi refresh token `PASSWORD_CHANGED`, đặt `revoked_before`, xóa token reset (dùng một lần), `PASSWORD_RESET` audit, email `PASSWORD_CHANGED` (AFTER_COMMIT) → `204`.
 - [x] A08.04 _(2026-11-15: test nằm trong `PasswordFlowIT` — 5 ca quên mật khẩu: luồng đầy đủ, email lạ, sai 5 lần → `4221` + khóa 30 phút + đang khóa không gửi thư, tài khoản chỉ Google không nhận thư, email cảnh báo đúng tên + thiết bị; `PasswordChangedEmailTemplateTest` 3 ca)_ Test `PasswordResetIT`: email lạ vẫn 202 và không có thư, luồng đầy đủ, token dùng lần 2 → 410, mật khẩu trùng, phiên cũ bị đá (refresh cũ → 401).
 - [x] A08.05 `6ef4bc2` — **COMMIT** `feat(auth): reset forgotten password with email otp`
 - [x] A08.06 _(thêm 2026-11-15)_ Email cảnh báo `password-changed.html` cùng bố cục email OTP: banner, lời chào tên khách xanh lá, nội dung theo `method` (RESET / CHANGE / SETUP), ô chi tiết (thời điểm, thiết bị, IP, tài khoản), khung vàng "Không phải bạn?" + nút **Đặt lại mật khẩu ngay** (`/auth/forgot?email=`), lời chúc, chữ ký. `PasswordChangedEvent` thêm `ipAddress`, `userAgent` (bản ghi sự kiện, không phải entity); tiêu đề thư "Mật khẩu Genie Shop của bạn vừa được thay đổi".
-- [ ] A08.07 **COMMIT** `feat(auth): include device and ip in password changed event` · `feat(auth): send branded password changed email` · `test(auth): cover password reset lockout and google-only accounts`
+- [x] A08.07 `eab4434` · `913a944` · `bee0120` (+ docs `032247e` · `e407b47`, PR #56) — **COMMIT** `feat(auth): include device and ip in password changed event` · `feat(auth): send branded password changed email` · `test(auth): cover password reset lockout and google-only accounts`
 
 ### A09 — UC-AUTH-06 Đổi / thiết lập mật khẩu
 - [x] A09.01 `POST /me/password/verify` — rate limit `rl:pwverify:{userId}` 10/phút; trả `{valid}`; tài khoản không có mật khẩu → `{valid: false}`.
@@ -400,3 +400,5 @@ Entity `User` nằm ở `auth/profile/domain` (đã chốt khi dựng entity) �
 | 2026-11-15 | Chạy thật đăng nhập Google trên máy dev: sửa 5030 (thiếu `GOOGLE_CLIENT_SECRET` trong Run Configuration IntelliJ — thêm log cảnh báo lúc khởi động) và 401 `invalid_client` (gõ sai client id — sao chép lại từ Google Cloud Console). Client id / secret chỉ nằm trong biến môi trường IntelliJ, không vào git. Chia phần Google thành 7 commit (A14.09); commit không kèm dòng tác giả AI | (đang commit) |
 | 2026-11-15 | Đổi tên còn sót MinIO sang Silo trong code: `MinioObjectStorage` → `SiloObjectStorage`, chú thích `common/storage` + hồ sơ, test (`MINIO` → `SILO`, `minioClient()` → `siloClient()`), ADR 0009. Chỉ đổi tên, không đổi logic. Giữ: tên lớp thư viện `MinioClient` / `MinIOContainer`, biến `MINIO_*` (Silo đọc), mã lỗi `GNE-MINIO-5003` (API_SPEC), chú thích trong `application.yml` và entity module khác (không sửa theo quy tắc). Đăng nhập Google push thành 8 commit, nội dung tiếng Anh | |
 | 2026-11-15 | **Chạy thật quên mật khẩu** (server IntelliJ, Gmail thật, tài khoản `nguyenquockhoa00725005@gmail.com`): xin mã 202 → OTP về Gmail → verify 200 `rst_…` (600 s) → đặt mật khẩu mới 204 → dùng lại token 410 `GNE-AUTH-4102` → đăng nhập mật khẩu mới 201. Gọi API từ trang cùng cổng 8080 vì trình duyệt thử nghiệm chặn trang 4321 gọi sang 8080 (`ERR_BLOCKED_BY_CLIENT`) — hợp đồng API khớp `ForgotForm`. Email cảnh báo làm lại (A08.06), test thêm 3 ca + `PasswordChangedEmailTemplateTest`; `./mvnw verify` 58 test BUILD SUCCESS | |
+| 2026-11-16 | Đối chiếu `HOÀN CHỈNH /kien-thuc/Kien_Thuc_Can_Nam.md` Phần 20 (liên kết tài khoản Google): luồng 3 bước, nhận diện bằng `sub`, từ chối email chưa xác minh / tài khoản khóa — khớp. Sửa 2 chỗ lệch ở chiều ngược (tài khoản tạo bằng Google, `password = NULL`): (1) đăng nhập mật khẩu → `401 GNE-AUTH-4012 {reason: PASSWORD_NOT_SET, provider}` "dùng Google, mã OTP hoặc thiết lập mật khẩu", **không tính lần sai** (không bị khóa oan); web `LoginForm` hiện thông báo + nút "Đăng nhập bằng mã OTP", "Thiết lập mật khẩu" (→ `/auth/forgot`); (2) quên mật khẩu với tài khoản Google gửi OTP và cho đặt mật khẩu lần đầu (email cảnh báo SETUP). Test: `LoginFlowIT` +1, `PasswordFlowIT` (thay ca "không gửi thư" bằng ca thiết lập mật khẩu), `OAuthLoginIT` +1 (email trùng tài khoản khóa tạm → 423, không liên kết). Mã `GNE-AUTH-4012` cần bổ sung vào API_SPEC 15 / Document_Vi 3.7.1 (A00.04). Còn A14.04 liên kết / gỡ Google thủ công | |
+| 2026-11-16 | Web đăng ký: email trùng (`GNE-AUTH-4091`) hiện **hộp thoại** thay cho lỗi đỏ dưới ô email — biểu tượng phong bì, 2 dòng "Email này đã được đăng ký." / "Vui lòng đăng nhập bằng email này để tiếp tục mua sắm cùng Genie.", nút **Đi tới đăng nhập** (`/auth/login?email=`), dấu X / Esc / bấm nền để đóng; vi + en | |
