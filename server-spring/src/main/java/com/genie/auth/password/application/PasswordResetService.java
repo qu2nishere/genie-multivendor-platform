@@ -32,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Quên mật khẩu (UC-AUTH-04, API_SPEC 2.2 / 2.4 / 2.8; plan AUTH A08).
  * <ol>
- *   <li>Xin mã: luôn {@code 202} — email không tồn tại, tài khoản chỉ có Google, đang bị khóa khôi phục thì không gửi thư;</li>
+ *   <li>Xin mã: luôn {@code 202} — email không tồn tại, đang bị khóa khôi phục thì không gửi thư. Tài khoản chỉ có
+ *       Google / Apple (chưa có mật khẩu) VẪN nhận mã: luồng này thành "thiết lập mật khẩu qua OTP email"
+ *       (Kien_Thuc_Can_Nam Phần 20 — tình huống đặc biệt);</li>
  *   <li>mã đúng → {@code reset_token} ({@code rst_…}, 10 phút, dùng một lần, Redis {@code auth:reset:{sha256}});
  *       sai 5 lần → khóa khôi phục email này 30 phút ({@code auth:pwreset_lock:{email}});</li>
  *   <li>đặt mật khẩu mới: khác mật khẩu hiện tại ({@code 422 GNE-AUTH-4223}), mở khóa đăng nhập, thu hồi mọi phiên,
@@ -80,7 +82,7 @@ public class PasswordResetService {
             return otps.issueSilently(OtpPurpose.PASSWORD_RESET, email);
         }
         return users.findByEmail(email)
-                .filter(u -> u.getStatus() == AccountStatus.ACTIVE && u.hasPassword())
+                .filter(u -> u.getStatus() == AccountStatus.ACTIVE)
                 .map(u -> otps.issue(OtpPurpose.PASSWORD_RESET, email, u.getId(), Map.of()))
                 .orElseGet(() -> otps.issueSilently(OtpPurpose.PASSWORD_RESET, email));
     }
@@ -115,7 +117,8 @@ public class PasswordResetService {
         User user = users.findByIdForUpdate(Long.valueOf(userId))
                 .filter(u -> u.getStatus() == AccountStatus.ACTIVE)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESET_TOKEN_EXPIRED));
-        if (user.hasPassword() && passwordEncoder.matches(newPassword, user.getPassword())) {
+        boolean setup = !user.hasPassword();
+        if (!setup && passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new BusinessException(ErrorCode.PASSWORD_REUSED);
         }
         delete(key);
@@ -123,8 +126,8 @@ public class PasswordResetService {
         user.changePassword(passwordEncoder.encode(newPassword));
         user.clearLock();
         sessions.revokeAllSessions(user.getId(), RevokeReason.PASSWORD_CHANGED);
-        audit.record(AuditAction.PASSWORD_RESET, user.getId(), null, null, client, true);
-        events.publishEvent(PasswordChangedEvent.of(user.getId(), user.getEmail(), "RESET", now, client));
+        audit.record(AuditAction.PASSWORD_RESET, user.getId(), null, setup ? Map.of("method", "SETUP") : null, client, true);
+        events.publishEvent(PasswordChangedEvent.of(user.getId(), user.getEmail(), setup ? "SETUP" : "RESET", now, client));
     }
 
     private boolean isRecoveryLocked(String email) {
