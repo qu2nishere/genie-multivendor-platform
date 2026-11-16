@@ -27,6 +27,8 @@ public enum ErrorCode {
     // ===== AUTH (API_SPEC 2, 3, 15) =====
     OAUTH_INVALID("GNE-AUTH-4001", HttpStatus.BAD_REQUEST, "Phiên đăng nhập mạng xã hội không hợp lệ, vui lòng thử lại."),
     BAD_CREDENTIALS("GNE-AUTH-4011", HttpStatus.UNAUTHORIZED, "Email hoặc mật khẩu không chính xác."),
+    PASSWORD_NOT_SET("GNE-AUTH-4012", HttpStatus.UNAUTHORIZED,
+            "Tài khoản đăng nhập bằng Google — dùng Google, đăng nhập bằng mã email hoặc thiết lập mật khẩu."),
     ACCOUNT_SUSPENDED("GNE-AUTH-4031", HttpStatus.FORBIDDEN, "Tài khoản đang bị đình chỉ."),
     OAUTH_EMAIL_UNVERIFIED("GNE-AUTH-4032", HttpStatus.FORBIDDEN, "Email của tài khoản mạng xã hội chưa được xác minh."),
     EMAIL_ALREADY_REGISTERED("GNE-AUTH-4091", HttpStatus.CONFLICT, "Email đã được đăng ký."),

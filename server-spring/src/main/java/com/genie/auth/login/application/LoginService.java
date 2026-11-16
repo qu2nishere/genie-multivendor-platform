@@ -94,6 +94,16 @@ public class LoginService {
             throw lockedError(user);
         }
 
+        // Tài khoản tạo bằng Google / Apple, chưa thiết lập mật khẩu (Kien_Thuc_Can_Nam Phần 20): báo rõ cách đăng nhập
+        // thay vì "sai mật khẩu", và KHÔNG tính là một lần sai — người dùng không bị khóa oan.
+        if (!user.hasPassword()) {
+            audit.record(AuditAction.LOGIN_FAILED, user.getId(), null, Map.of("reason", "NO_PASSWORD"), client, false);
+            Map<String, Object> details = new HashMap<>();
+            details.put("reason", "PASSWORD_NOT_SET");
+            details.put("provider", user.getOauthProvider());
+            throw new BusinessException(ErrorCode.PASSWORD_NOT_SET, details);
+        }
+
         boolean passwordOk = user.hasPassword() && password != null && passwordEncoder.matches(password, user.getPassword());
         if (!passwordOk) {
             user.recordFailedLogin(now);

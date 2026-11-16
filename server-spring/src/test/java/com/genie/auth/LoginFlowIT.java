@@ -65,6 +65,25 @@ class LoginFlowIT extends IntegrationTestBase {
     }
 
     @Test
+    void googleOnlyAccountGetsClearHintAndIsNeverLocked() throws Exception {
+        String email = uniqueEmail();
+        User user = createCustomer(email, null);   // tạo bằng Google, chưa thiết lập mật khẩu
+        user.linkIdentity("google", "sub-nopw-" + email);
+        userRepository.saveAndFlush(user);
+
+        for (int i = 0; i < 6; i++) {               // quá 5 lần vẫn không bị khóa
+            MvcResult r = login(email, "Any@1234");
+            assertThat(r.getResponse().getStatus()).isEqualTo(401);
+            assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4012");
+            assertThat(json(r, "$.details.reason")).isEqualTo("PASSWORD_NOT_SET");
+            assertThat(json(r, "$.details.provider")).isEqualTo("google");
+        }
+        User after = userRepository.findByEmail(email).orElseThrow();
+        assertThat(after.getFailedLoginAttempts()).isIn(null, 0);
+        assertThat(after.getLockedUntil()).isNull();
+    }
+
+    @Test
     void suspendedAccountIsRejectedAfterPasswordCheck() throws Exception {
         String email = uniqueEmail();
         User user = createCustomer(email, PASSWORD);
