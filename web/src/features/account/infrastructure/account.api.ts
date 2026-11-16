@@ -21,6 +21,11 @@ import type {
 
 /** Hồ sơ (GET / PATCH /me/profile) nối API thật khi `PUBLIC_REAL_API` có `profile`; phần còn lại của tài khoản vẫn theo USE_MOCK. */
 const PROFILE_MOCK = isMocked('profile');
+/**
+ * Bảo mật tài khoản — OTP bước 2, đổi / thiết lập mật khẩu, thiết bị đăng nhập, xóa tài khoản — nối API thật khi
+ * `PUBLIC_REAL_API` có `security` (backend AUTH A07, A09, A14.06 đã có). Đổi email, liên kết Google vẫn mock.
+ */
+const SECURITY_MOCK = isMocked('security');
 
 // ---- DTO (snake_case) ----
 interface ProfileDto {
@@ -49,11 +54,12 @@ interface SessionDto {
   last_active_at: string;
   is_current: boolean;
 }
+/** `$OtpChallenge` (API_SPEC 0.7 / 3.5): thời hạn tính bằng giây kể từ lúc nhận. */
 interface ChallengeDto {
   challenge_id: string;
-  masked_target: string;
-  expires_at: string;
-  resend_available_at: string;
+  email_masked: string;
+  expires_in: number;
+  resend_after: number;
 }
 
 const toProfile = (d: ProfileDto): Profile => ({
@@ -89,12 +95,15 @@ const toDevice = (d: SessionDto): Device => ({
   lastActiveAt: d.last_active_at,
   current: d.is_current,
 });
-const toChallenge = (d: ChallengeDto): StepUpChallenge => ({
-  id: d.challenge_id,
-  maskedTarget: d.masked_target,
-  expiresAt: d.expires_at,
-  resendAt: d.resend_available_at,
-});
+const toChallenge = (d: ChallengeDto): StepUpChallenge => {
+  const now = Date.now();
+  return {
+    id: d.challenge_id,
+    maskedTarget: d.email_masked,
+    expiresAt: new Date(now + d.expires_in * 1000).toISOString(),
+    resendAt: new Date(now + d.resend_after * 1000).toISOString(),
+  };
+};
 const otpHeaders = (p: StepUpProof) => ({
   'X-OTP-Challenge-Id': p.challengeId,
   'X-OTP-Code': p.code,
@@ -327,7 +336,7 @@ export async function unlinkGoogle(): Promise<void> {
 
 /** POST /me/password/verify — kiểm tra mật khẩu hiện tại khi đang gõ. */
 export async function verifyPassword(password: string): Promise<boolean> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(250);
     return password === 'Genie@123';
   }
@@ -336,7 +345,7 @@ export async function verifyPassword(password: string): Promise<boolean> {
 
 /** POST /me/otp-challenges — gửi mã bước 2 (xóa tài khoản kiểm đơn đang xử lý trước). */
 export async function requestStepUp(purpose: StepUpPurpose): Promise<StepUpChallenge> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(300);
     if (purpose === 'ACCOUNT_DELETION') {
       const active = mockActiveOrders();
@@ -348,7 +357,7 @@ export async function requestStepUp(purpose: StepUpPurpose): Promise<StepUpChall
 }
 
 export async function resendStepUp(challengeId: string): Promise<StepUpChallenge> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(200);
     const ch = db.get().challenges[challengeId];
     if (!ch) mockFail('GNE-AUTH-4101');
@@ -363,7 +372,7 @@ export async function changePassword(
   next: string,
   proof: StepUpProof,
 ): Promise<void> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(400);
     if (db.get().password && current !== 'Genie@123') mockFail('GNE-AUTH-4011');
     mockCheckOtp(proof, 'PASSWORD_CHANGE');
@@ -378,7 +387,7 @@ export async function changePassword(
 }
 
 export async function listDevices(): Promise<Device[]> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(120);
     return db.get().sessions.map(toDevice);
   }
@@ -387,7 +396,7 @@ export async function listDevices(): Promise<Device[]> {
 
 /** DELETE /me/sessions/{id} hoặc ?scope=others. */
 export async function logoutDevices(id: number | 'others'): Promise<void> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(250);
     save({
       sessions: db.get().sessions.filter((s) => s.is_current || (id !== 'others' && s.id !== id)),
@@ -400,7 +409,7 @@ export async function logoutDevices(id: number | 'others'): Promise<void> {
 
 /** PUT /me/deletion-request 🔐 — ẩn danh sau 30 ngày, hủy được trong thời gian đó. */
 export async function requestDeletion(proof: StepUpProof): Promise<DeletionRequest> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(400);
     mockCheckOtp(proof, 'ACCOUNT_DELETION');
     const now = Date.now();
@@ -420,7 +429,7 @@ export async function requestDeletion(proof: StepUpProof): Promise<DeletionReque
 }
 
 export async function cancelDeletion(): Promise<void> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(250);
     save({ profile: { ...db.get().profile, deletion_request: null } });
     return;

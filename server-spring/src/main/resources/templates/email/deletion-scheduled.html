@@ -1,10 +1,168 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" th:attr="lang=${lang}">
-<head><meta charset="utf-8"><title>Genie</title></head>
-<body style="font-family:Arial,sans-serif;color:#222;line-height:1.5">
-  <h2 th:text="${appName}">Genie</h2>
-  <p th:if="${lang == 'en'}">We received your request to delete your Genie account. Your personal data will be anonymized on <strong th:text="${anonymizeAt}">date</strong>. Sign in and choose "Cancel deletion" before then to keep your account.</p>
-  <p th:unless="${lang == 'en'}">Genie đã nhận yêu cầu xóa tài khoản của bạn. Dữ liệu cá nhân sẽ được ẩn danh vào <strong th:text="${anonymizeAt}">ngày</strong>. Đăng nhập và chọn "Hủy yêu cầu xóa" trước thời điểm đó nếu bạn muốn giữ tài khoản.</p>
-  <p style="color:#888;font-size:12px" th:text="${lang == 'en'} ? 'Automated email from Genie — please do not reply.' : 'Email tự động từ Genie — vui lòng không trả lời.'">Email tự động</p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title th:text="${lang == 'en'} ? 'Your Genie Shop account deletion request' : 'Yêu cầu xóa tài khoản Genie Shop'">Yêu cầu xóa tài khoản Genie Shop</title>
+</head>
+<!--
+  Email xác nhận đã nhận yêu cầu xóa tài khoản (UC-AUTH-10) — cùng bố cục với otp.html.
+  Biến: name, email, requestedAt, anonymizeAt, graceDays, lang; chung (SmtpEmailSender): shopName,
+  brandColor, brandTint, bannerUrl, bannerWidth, bannerHeight, lightUrl, lightWidth, webUrl.
+-->
+<body style="margin:0;padding:0;background-color:#F3F5F4;"
+      th:with="en=${lang == 'en'}">
+  <!-- Dòng xem trước trong hộp thư -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F3F5F4;font-size:1px;line-height:1px;"
+       th:text="${en} ? ('Your Genie Shop account will be anonymized on ' + ${anonymizeAt} + '. You can still cancel before then.')
+                      : ('Tài khoản Genie Shop của bạn sẽ được ẩn danh vào ' + ${anonymizeAt} + '. Bạn vẫn có thể hủy trước ngày này.')">
+    Tài khoản Genie Shop của bạn sẽ được ẩn danh sau 30 ngày.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F3F5F4;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:100%;max-width:600px;background-color:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid #E3E8E6;">
+
+          <!-- Banner Genie Shop -->
+          <tr th:if="${bannerUrl != null}">
+            <td style="padding:0;line-height:0;font-size:0;">
+              <a th:href="${webUrl}" href="#" target="_blank" style="text-decoration:none;">
+                <img th:src="${bannerUrl}" th:width="${bannerWidth}" th:height="${bannerHeight}" th:alt="${shopName}"
+                     src="" width="600" height="200" alt="Genie Shop"
+                     style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;">
+              </a>
+            </td>
+          </tr>
+          <tr th:if="${bannerUrl == null}">
+            <td align="center" th:style="'background-color:' + ${brandColor} + ';padding:36px 24px;'"
+                style="background-color:#1F7356;padding:36px 24px;">
+              <div style="font-family:Arial,Helvetica,sans-serif;font-size:28px;font-weight:bold;color:#FFFFFF;letter-spacing:1px;"
+                   th:text="${shopName}">Genie Shop</div>
+            </td>
+          </tr>
+
+          <!-- Lời chào + nội dung chính -->
+          <tr>
+            <td style="padding:32px 40px 8px 40px;font-family:Arial,Helvetica,sans-serif;color:#1C2B26;">
+              <p style="margin:0 0 16px 0;font-size:18px;line-height:28px;">
+                <span th:text="${en} ? 'Hello' : 'Xin chào'">Xin chào</span>
+                <span th:text="${name}" th:style="'color:' + ${brandColor} + ';background-color:' + ${brandTint}
+                        + ';font-weight:bold;padding:2px 8px;border-radius:6px;'"
+                      style="color:#1F7356;background-color:#E8F5EF;font-weight:bold;padding:2px 8px;border-radius:6px;">Nguyễn Văn A</span>,
+              </p>
+              <p style="margin:0 0 8px 0;font-size:15px;line-height:24px;color:#3D4A45;text-align:justify;">
+                <th:block th:if="${en}">We have received your request to delete your <b th:text="${shopName}">Genie Shop</b> account.
+                  Your account stays usable for <b th:text="${graceDays + ' days'}">30 days</b>; after that your personal data is
+                  <b>permanently anonymized</b> and you can no longer sign in. Your order and payment history is kept as required by law.</th:block>
+                <th:block th:unless="${en}">Chúng tôi đã nhận yêu cầu xóa tài khoản <b th:text="${shopName}">Genie Shop</b> của bạn.
+                  Tài khoản vẫn dùng được trong <b th:text="${graceDays + ' ngày'}">30 ngày</b>; sau đó dữ liệu cá nhân sẽ được
+                  <b>ẩn danh vĩnh viễn</b> và bạn không thể đăng nhập lại. Lịch sử đơn hàng và thanh toán được lưu giữ theo quy định pháp luật.</th:block>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Chi tiết thao tác -->
+          <tr>
+            <td style="padding:16px 40px 8px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     th:style="'background-color:' + ${brandTint} + ';border-radius:10px;'"
+                     style="background-color:#E8F5EF;border-radius:10px;">
+                <tr>
+                  <td style="padding:16px 20px 4px 20px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#3D4A45;text-transform:uppercase;letter-spacing:1px;"
+                      th:text="${en} ? 'Deletion request' : 'Thông tin yêu cầu xóa'">Thông tin yêu cầu xóa</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 20px 16px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:26px;color:#1C2B26;">
+                    <span th:text="${en} ? 'Requested at:' : 'Thời điểm yêu cầu:'">Thời điểm yêu cầu:</span>
+                    <b th:text="${requestedAt}">09:45 22/06/2026</b><br>
+                    <span th:text="${en} ? 'Anonymized on:' : 'Ngày ẩn danh:'">Ngày ẩn danh:</span>
+                    <b th:text="${anonymizeAt}" style="color:#B42318;">22/07/2026</b><br>
+                    <span th:text="${en} ? 'Account:' : 'Tài khoản:'">Tài khoản:</span>
+                    <b th:text="${email}">ban@gmail.com</b>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Không phải bạn? -->
+          <tr>
+            <td style="padding:16px 40px 8px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="background-color:#FFF8E6;border-radius:8px;">
+                <tr>
+                  <td style="padding:14px 16px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;color:#6B5310;text-align:justify;">
+                    <th:block th:if="${en}"><b>Changed your mind?</b> Sign in and choose <b>Cancel deletion</b> on your profile page before
+                      the date above to keep your account. <b>Not you?</b> Cancel right away and change your password.</th:block>
+                    <th:block th:unless="${en}"><b>Bạn đổi ý?</b> Đăng nhập và chọn <b>Hủy yêu cầu xóa</b> ở trang Hồ sơ trước ngày trên để giữ
+                      tài khoản. <b>Không phải bạn yêu cầu?</b> Hãy hủy ngay và đổi mật khẩu.</th:block>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:0 16px 16px 16px;">
+                    <a th:href="${webUrl + '/account/profile'}" href="#" target="_blank"
+                       th:style="'display:inline-block;background-color:' + ${brandColor} + ';color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:8px;'"
+                       style="display:inline-block;background-color:#1F7356;color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:8px;"
+                       th:text="${en} ? 'Keep my account' : 'Giữ lại tài khoản'">Giữ lại tài khoản</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 40px 0 40px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#3D4A45;text-align:justify;">
+              <th:block th:if="${en}">If you do want to leave, no action is needed. Thank you for the time you spent with us.</th:block>
+              <th:block th:unless="${en}">Nếu bạn vẫn muốn rời đi, bạn không cần làm gì thêm. Cảm ơn bạn đã đồng hành cùng chúng tôi.</th:block>
+            </td>
+          </tr>
+
+          <!-- Lời chúc -->
+          <tr>
+            <td style="padding:24px 40px 0 40px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#3D4A45;">
+              <p style="margin:0;">
+                <th:block th:if="${en}">Wishing you and your family good health, and hoping to see you again at Genie&nbsp;Shop!&nbsp;🌿</th:block>
+                <th:block th:unless="${en}">Chúc bạn và gia đình luôn dồi dào sức khỏe, bình an — mong sớm gặp lại bạn ở Genie&nbsp;Shop!&nbsp;🌿</th:block>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Chữ ký + đèn thần -->
+          <tr>
+            <td style="padding:0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td valign="top" style="padding:16px 8px 32px 40px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#3D4A45;">
+                    <p style="margin:0;">
+                      <span th:text="${en} ? 'Warm regards,' : 'Trân trọng,'">Trân trọng,</span><br>
+                      <b th:style="'color:' + ${brandColor} + ';'" style="color:#1F7356;"
+                         th:text="${en} ? ('The ' + ${shopName} + ' team') : ('Đội ngũ ' + ${shopName})">Đội ngũ Genie Shop</b>
+                    </p>
+                  </td>
+                  <td th:if="${lightUrl != null}" valign="bottom" align="right" width="164" style="width:164px;padding:0 16px 0 0;line-height:0;font-size:0;">
+                    <img th:src="${lightUrl}" th:width="${lightWidth}" src="" width="148" alt=""
+                         style="display:block;width:148px;max-width:148px;height:auto;border:0;outline:none;">
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Chân email -->
+          <tr>
+            <td align="center" style="background-color:#F7F9F8;border-top:1px solid #E3E8E6;padding:20px 40px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#8A9691;">
+              <span th:text="${en} ? 'This is an automated security email, please do not reply.' : 'Đây là email bảo mật tự động, vui lòng không trả lời.'">Đây là email bảo mật tự động, vui lòng không trả lời.</span><br>
+              <a th:href="${webUrl}" href="#" target="_blank" th:style="'color:' + ${brandColor} + ';text-decoration:none;'"
+                 style="color:#1F7356;text-decoration:none;" th:text="${shopName}">Genie Shop</a>
+              &nbsp;·&nbsp;© 2026
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>

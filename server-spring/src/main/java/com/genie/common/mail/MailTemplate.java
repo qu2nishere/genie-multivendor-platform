@@ -17,7 +17,7 @@ public enum MailTemplate {
     /** Biến: {@code newEmail}. */
     EMAIL_CHANGED("email-changed", "Email đăng nhập Genie đã thay đổi", "Your Genie sign-in email was changed"),
     /** Biến: {@code anonymizeAt}. */
-    DELETION_SCHEDULED("deletion-scheduled", "Yêu cầu xóa tài khoản Genie", "Your Genie account deletion request");
+    DELETION_SCHEDULED("deletion-scheduled", "Genie Shop đã nhận yêu cầu xóa tài khoản của bạn", "We received your Genie Shop account deletion request");
 
     private final String file;
     private final String subjectVi;

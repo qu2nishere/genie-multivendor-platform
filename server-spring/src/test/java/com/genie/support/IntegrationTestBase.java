@@ -123,6 +123,9 @@ public abstract class IntegrationTestBase {
     protected FakeIdentityProviderClient google;
 
     @Autowired
+    protected FakeAccountDeletionBlocker deletionBlocker;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -183,6 +186,7 @@ public abstract class IntegrationTestBase {
         clock.set(Instant.parse(START));
         mails.clear();
         google.clear();
+        deletionBlocker.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -218,6 +222,12 @@ public abstract class IntegrationTestBase {
         @Primary
         FakeAvatarDownloader fakeAvatarDownloader() {
             return new FakeAvatarDownloader();
+        }
+
+        /** Giả lập module order (chưa có) chặn xóa tài khoản khi còn đơn — mặc định không chặn. */
+        @Bean
+        FakeAccountDeletionBlocker fakeAccountDeletionBlocker() {
+            return new FakeAccountDeletionBlocker();
         }
     }
 }
