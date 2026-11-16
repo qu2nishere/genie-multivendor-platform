@@ -6,6 +6,7 @@ export const ERROR_CODES = [
   'GNE-ADM-4221',
   'GNE-AUTH-4001',
   'GNE-AUTH-4011',
+  'GNE-AUTH-4012',
   'GNE-AUTH-4031',
   'GNE-AUTH-4032',
   'GNE-AUTH-4091',
