@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { errorMessage, isApiError } from '@/shared/api/errors';
-import { USE_MOCK } from '@/shared/api/mock';
+import { markOAuthLinkIntent } from '@/shared/auth/oauth-intent';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatRelative } from '@/shared/lib/format';
@@ -14,6 +14,7 @@ import {
   Button,
   ConfirmDialog,
   Icon,
+  Modal,
   PanelHead,
   PasswordInput,
   Skeleton,
@@ -236,6 +237,22 @@ export function LoginsPanel() {
   const link = useLinkGoogle();
   const unlink = useUnlinkGoogle();
   const [ask, setAsk] = useState<'link' | 'unlink' | null>(null);
+  // Gỡ liên kết là thao tác nhạy cảm → nhập lại mật khẩu hiện tại
+  const [unlinkPw, setUnlinkPw] = useState('');
+  const [unlinkErr, setUnlinkErr] = useState<string | null>(null);
+  const openUnlink = () => {
+    setUnlinkPw('');
+    setUnlinkErr(null);
+    setAsk('unlink');
+  };
+  // Quay về từ Google sau khi liên kết (/account/logins?linked=google) → báo thành công rồi bỏ tham số khỏi URL
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('linked')) return;
+    toast.success(t('account.logins.linked_toast'));
+    url.searchParams.delete('linked');
+    window.history.replaceState(null, '', url.pathname + url.search);
+  }, [t]);
   const d = m.data;
   const google = d?.identities.find((i) => i.provider === 'GOOGLE');
   const count = (d?.password ? 1 : 0) + (google ? 1 : 0);
@@ -258,6 +275,7 @@ export function LoginsPanel() {
       <PanelHead
         id="logins-title"
         icon="user-check"
+        iconTile
         title={t('account.menu.logins')}
         sub={t('account.logins.sub')}
       />
@@ -265,11 +283,8 @@ export function LoginsPanel() {
         <Skeleton lines={4} className="mt-5" />
       ) : (
         <>
-          <p className="m-0 mt-4 mb-1.5 flex gap-2.5 items-start px-[13px] py-[11px] bg-blue-50 rounded-md text-sm text-body leading-normal">
-            <Icon name="info" size={16} className="text-blue-600 flex-none mt-0.5" />
-            <span>{t('account.logins.info', { email: d.email })}</span>
-          </p>
-          <div className={row}>
+          {/* Dòng đầu: PanelHead đã có đường kẻ dưới → bỏ đường kẻ trên để không bị 2 vạch */}
+          <div className={cn(row, '!border-t-0')}>
             <span className={ico}>
               <Icon name="mail" size={19} />
             </span>
@@ -291,12 +306,12 @@ export function LoginsPanel() {
           </div>
           <div className={row}>
             <span className={ico}>
-              <Icon name="user-check" size={19} />
+              <GoogleLogo size={20} />
             </span>
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-sm text-strong">Google</div>
               <div className="flex gap-2.5 flex-wrap mt-[3px] text-xs text-muted">
-                {google ? google.email : t('account.logins.not_linked')}
+                {google?.email}
                 {state(!!google, t(google ? 'account.logins.linked' : 'account.logins.not_linked'))}
               </div>
               {google && !d.password && (
@@ -308,7 +323,7 @@ export function LoginsPanel() {
                 size="sm"
                 variant="ghost"
                 disabled={!d.password}
-                onClick={() => setAsk('unlink')}
+                onClick={openUnlink}
               >
                 {t('account.logins.unlink')}
               </Button>
@@ -325,30 +340,59 @@ export function LoginsPanel() {
           </p>
         </>
       )}
-      <ConfirmDialog
+      <Modal
         open={ask === 'link'}
-        title={t('account.logins.link_title')}
-        message={t('account.logins.link_text', { email: d?.email ?? '' })}
-        confirmLabel={t('account.logins.link')}
-        loading={link.isPending}
-        onCancel={() => setAsk(null)}
-        onConfirm={() => {
-          // Thật: chuyển sang Google OAuth (intent=link) rồi quay về /account/logins với code
-          if (!USE_MOCK) {
-            window.location.assign(
-              `/auth/oauth/google/authorize?intent=link&next=%2Faccount%2Flogins`,
-            );
-            return;
+        onClose={() => setAsk(null)}
+        aria-label={t('account.logins.link_dialog_title')}
+        width={420}
+        className="!rounded-[10px]"
+        bodyClassName="relative !px-8 !py-8 flex flex-col items-center text-center"
+      >
+        <button
+          type="button"
+          onClick={() => setAsk(null)}
+          aria-label={t('ui.close')}
+          data-skip-autofocus
+          className="absolute right-2 top-2 grid h-10 w-10 cursor-pointer place-items-center rounded-md border-0 bg-transparent text-muted hover:bg-gray-100 focus-visible:outline-none focus-visible:shadow-focus"
+        >
+          <Icon name="x" size={20} />
+        </button>
+        <span className="mb-4 grid h-14 w-14 place-items-center rounded-full border border-solid border-line-subtle bg-surface-card shadow-sm">
+          <GoogleLogo size={26} />
+        </span>
+        <p className="m-0 text-[17px] font-semibold leading-snug text-strong">
+          {t('account.logins.link_dialog_title')}
+        </p>
+        <p className="m-0 mt-1.5 text-[15px] leading-relaxed text-strong">
+          {t('account.logins.link_dialog_text')}
+        </p>
+        <span className="mt-3 inline-block max-w-full break-all rounded-md bg-[#E8F5EF] px-3 py-1.5 text-sm font-semibold text-[#1F7356]">
+          {d?.email}
+        </span>
+        <Button
+          block
+          size="lg"
+          className="mt-6 !rounded-[8px]"
+          loading={link.isPending}
+          onClick={() =>
+            link.mutate(undefined, {
+              onSuccess: (url) => {
+                // API thật: sang Google rồi quay về /auth/oauth-callback → /account/logins; mock: đã liên kết
+                if (url) {
+                  markOAuthLinkIntent();
+                  window.location.assign(url);
+                  return;
+                }
+                setAsk(null);
+                toast.success(t('account.logins.linked_toast'));
+              },
+              onError: (e) => toast.error(errorMessage(e, t)),
+            })
           }
-          link.mutate(null, {
-            onSuccess: () => {
-              setAsk(null);
-              toast.success(t('account.logins.linked_toast'));
-            },
-            onError: (e) => toast.error(errorMessage(e, t)),
-          });
-        }}
-      />
+        >
+          {t('account.logins.link_continue')}
+        </Button>
+      </Modal>
       <ConfirmDialog
         open={ask === 'unlink'}
         tone="danger"
@@ -358,16 +402,42 @@ export function LoginsPanel() {
         cancelLabel={t('account.logins.keep')}
         loading={unlink.isPending}
         onCancel={() => setAsk(null)}
-        onConfirm={() =>
-          unlink.mutate(undefined, {
+        onConfirm={() => {
+          if (!unlinkPw) {
+            setUnlinkErr(t('account.password.err.current'));
+            return;
+          }
+          unlink.mutate(unlinkPw, {
             onSuccess: () => {
               setAsk(null);
+              setUnlinkPw('');
               toast.success(t('account.logins.unlinked_toast'));
             },
-            onError: (e) => toast.error(errorMessage(e, t)),
-          })
-        }
-      />
+            onError: (e) => {
+              setUnlinkPw('');
+              setUnlinkErr(
+                isApiError(e) && e.code === 'GNE-AUTH-4011'
+                  ? t('account.password.err.wrong')
+                  : errorMessage(e, t),
+              );
+            },
+          });
+        }}
+      >
+        <div className="mt-3.5">
+          <PasswordInput
+            label={t('account.password.current')}
+            name="unlink-current-password"
+            autoComplete="current-password"
+            value={unlinkPw}
+            onChange={(e) => {
+              setUnlinkPw(e.target.value);
+              setUnlinkErr(null);
+            }}
+            error={unlinkErr ?? undefined}
+          />
+        </div>
+      </ConfirmDialog>
     </section>
   );
 }
@@ -479,5 +549,26 @@ export function DevicesPanel({
         </ul>
       )}
     </section>
+  );
+}
+
+/** Logo Google nhiều màu (giống nút "Tiếp tục với Google" ở trang đăng nhập). */
+function GoogleLogo({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"
+      />
+      <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3-2.33z" />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.95l3 2.33C4.68 5.16 6.66 3.58 9 3.58z"
+      />
+    </svg>
   );
 }

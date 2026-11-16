@@ -96,11 +96,12 @@
     "GNE-WAL-4222": "The account holder name doesn't match the ID card.",
     "GNE-RAT-4290": "Too many attempts. Please try again in a moment.",
     "GNE-AUTH-4001": "The social sign-in session is invalid. Please try again.",
-    "GNE-AUTH-4011": "Incorrect email or password.",
-    "GNE-AUTH-4012": "This account signs in with Google and has no password yet. Continue with Google, sign in with a one-time code or set up a password.",
+    "GNE-AUTH-4011": "Incorrect account or password.",
+    "GNE-AUTH-4012": "Incorrect account or password.",
     "GNE-AUTH-4031": "This account is suspended.",
     "GNE-AUTH-4032": "The Google/Apple account email isn't verified.",
     "GNE-AUTH-4091": "This email is already registered. Sign in or reset your password.",
+    "GNE-AUTH-4098": "The Google account you chose uses a different email from your Genie account. Please choose the Google account with the same email.",
     "GNE-AUTH-4092": "This Google account is linked to another user.",
     "GNE-AUTH-4093": "You can't remove the account's only sign-in method.",
     "GNE-AUTH-4094": "The new email belongs to another account.",
@@ -505,8 +506,6 @@
       "remaining": "{n} attempts left.",
       "demo": "Demo: password {password}",
       "forgot": "Forgot password?",
-      "use_otp": "Sign in with a one-time code",
-      "set_password": "Set up a password",
       "or": "OR",
       "no_account": "No account yet?",
       "register": "Sign up as a buyer",
@@ -573,7 +572,9 @@
     "oauth": {
       "processing": "Finishing sign-in…",
       "error_title": "Couldn't sign you in",
-      "denied": "Sign-in was cancelled or refused by the provider. Please try again."
+      "denied": "Sign-in was cancelled or refused by the provider. Please try again.",
+      "link_error_title": "Couldn't link Google",
+      "back_logins": "Back to sign-in methods"
     }
   },
   "search": {
@@ -1415,7 +1416,6 @@
     },
     "logins": {
       "sub": "Ways to sign in to the same account",
-      "info": "An account has only one password. Google is just another way in: however you sign in, you reach the same account {email} with the same orders, wallet and Points.",
       "password": "Email and password",
       "has_pw": "Password set",
       "no_pw": "No password",
@@ -1427,8 +1427,9 @@
       "keep": "Keep linked",
       "count": "{count} sign-in method(s) enabled",
       "since": "Google linked {when}",
-      "link_title": "Link Google",
-      "link_text": "Genie will open Google sign-in. A Google account with a verified email will be attached to your current account {email}; no new account is created.",
+      "link_dialog_title": "Link your Google account",
+      "link_dialog_text": "Please choose the Google account that uses the same email as your Genie account:",
+      "link_continue": "Continue with Google",
       "unlink_title": "Unlink Google?",
       "unlink_text": "After unlinking, \"Sign in with Google\" will no longer open this account until you link it again. You can still sign in with email and password.",
       "linked_toast": "Google linked. Next time \"Sign in with Google\" opens this account",

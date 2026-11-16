@@ -5,6 +5,7 @@ import { safeNext, type OtpPurpose } from '../domain/auth.rules';
 import type { AuthSession, SocialProvider } from '../domain/auth.types';
 import {
   completeOAuth,
+  linkIdentity,
   login,
   oauthAuthorizeUrl,
   logout,
@@ -36,6 +37,10 @@ export const oauthStartUrl = oauthAuthorizeUrl;
 /** Hoàn tất đăng nhập mạng xã hội ở trang callback. */
 export const finishOAuth = (provider: SocialProvider, code: string, state: string) =>
   completeOAuth(provider, code, state);
+
+/** Hoàn tất liên kết Google vào tài khoản đang đăng nhập (bắt đầu từ Tài khoản › Liên kết đăng nhập). */
+export const finishLink = (provider: SocialProvider, code: string, state: string) =>
+  linkIdentity(provider, code, state);
 
 export function useLogin() {
   return useMutation({

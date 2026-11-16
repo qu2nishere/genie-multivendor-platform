@@ -36,11 +36,29 @@ export interface PanelHeadProps {
   level?: 2 | 3;
   action?: ReactNode;
   id?: string;
+  /** Đặt icon trong ô vuông bo góc nền xám (cùng kiểu icon các dòng bên dưới, vd. trang Liên kết đăng nhập). */
+  iconTile?: boolean;
 }
 
 /** Tiêu đề panel trong trang tài khoản (prototype PanelHead): icon xanh + h4, dòng phụ gạch dưới. */
-export function PanelHead({ icon, title, sub, level = 2, action, id }: PanelHeadProps) {
+export function PanelHead({ icon, title, sub, level = 2, action, id, iconTile }: PanelHeadProps) {
   const H = `h${level}` as 'h2' | 'h3';
+  if (icon && iconTile) {
+    return (
+      <div className={cn('flex items-center gap-3.5', sub && 'pb-4 mb-1 border-b border-line-subtle')}>
+        <span className="w-10 h-10 rounded-md bg-gray-50 grid place-items-center flex-none text-brand-500">
+          <Icon name={icon} size={20} />
+        </span>
+        <div className="flex-1 min-w-0">
+          <H id={id} className="m-0 font-semibold text-xl leading-snug text-strong">
+            {title}
+          </H>
+          {sub && <p className="mt-0.5 mb-0 text-sm text-muted">{sub}</p>}
+        </div>
+        {action}
+      </div>
+    );
+  }
   return (
     <div className={cn(sub && 'pb-3 mb-1 border-b border-line-subtle')}>
       <div className="flex items-center gap-2 flex-wrap">

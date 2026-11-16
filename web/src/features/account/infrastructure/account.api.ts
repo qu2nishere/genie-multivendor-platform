@@ -1,6 +1,6 @@
 // Hồ sơ & bảo mật (API_SPEC 3.2–3.7). Thao tác 🔐 gửi kèm X-OTP-Challenge-Id + X-OTP-Code (0.7).
 // Mock: mã OTP 123456, mật khẩu hiện tại Genie@123, email đã có chủ an.nguyen@gmail.com; giữ trong phiên tab.
-import { api } from '@/shared/api/http';
+import { api, request } from '@/shared/api/http';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
 import { placedStore } from '@/shared/api/mock/placed';
 import { MOCK_USER } from '@/shared/auth/session';
@@ -294,7 +294,7 @@ export async function confirmEmailChange(p: StepUpProof): Promise<{ email: strin
 }
 
 export async function getLoginMethods(): Promise<LoginMethods> {
-  if (USE_MOCK) {
+  if (SECURITY_MOCK) {
     await mockDelay(100);
     const s = db.get();
     return toMethods({
@@ -309,29 +309,36 @@ export async function getLoginMethods(): Promise<LoginMethods> {
 }
 
 /**
- * Liên kết Google. Thật: trình duyệt sang /auth/oauth/google/authorize?intent=link rồi quay về với
- * `code` → POST /me/identities/GOOGLE. Mock: liên kết ngay.
+ * Liên kết Google — bước 1 (API thật): xin URL trang Google (state gắn với tài khoản đang đăng nhập); giao diện đánh
+ * dấu ý định "link" rồi chuyển sang Google; quay về `/auth/oauth-callback` → feature auth gọi
+ * `POST /me/identities/google`. Mock: liên kết ngay, trả `null`.
  */
-export async function linkGoogle(code: string | null): Promise<void> {
-  if (USE_MOCK) {
+export async function linkGoogle(): Promise<string | null> {
+  if (SECURITY_MOCK) {
     await mockDelay(300);
     save({ google: true });
-    return;
+    return null;
   }
-  await api.post('/me/identities/GOOGLE', {
-    code,
-    redirect_uri: `${window.location.origin}/account/logins`,
-  });
+  const r = await api.post<{ authorize_url: string }>('/me/identities/google/authorize');
+  return r.authorize_url;
 }
 
-export async function unlinkGoogle(): Promise<void> {
-  if (USE_MOCK) {
+/**
+ * DELETE /me/identities/google — phải nhập lại mật khẩu hiện tại (sai → 401 GNE-AUTH-4011, quá 10 lần / phút → 429);
+ * chưa có mật khẩu → 409 GNE-AUTH-4093.
+ */
+export async function unlinkGoogle(currentPassword: string): Promise<void> {
+  if (SECURITY_MOCK) {
     await mockDelay(300);
     if (!db.get().password) mockFail('GNE-AUTH-4093');
+    if (currentPassword !== 'Genie@123') mockFail('GNE-AUTH-4011', { status: 401 });
     save({ google: false });
     return;
   }
-  await api.delete('/me/identities/GOOGLE');
+  await request('/me/identities/google', {
+    method: 'DELETE',
+    body: { current_password: currentPassword },
+  });
 }
 
 /** POST /me/password/verify — kiểm tra mật khẩu hiện tại khi đang gõ. */

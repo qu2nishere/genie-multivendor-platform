@@ -38,6 +38,8 @@ public enum ErrorCode {
     PASSWORD_SETUP_REQUIRED("GNE-AUTH-4095", HttpStatus.CONFLICT, "Cần thiết lập mật khẩu trước khi đổi email."),
     ACCOUNT_NOT_LOCKED("GNE-AUTH-4096", HttpStatus.CONFLICT, "Tài khoản không ở trạng thái khóa tạm."),
     CURRENT_SESSION_NOT_REVOCABLE("GNE-AUTH-4097", HttpStatus.CONFLICT, "Dùng đăng xuất để thoát phiên hiện tại."),
+    IDENTITY_EMAIL_MISMATCH("GNE-AUTH-4098", HttpStatus.CONFLICT,
+            "Vui lòng chọn tài khoản Google có email trùng với email tài khoản Genie."),
     OTP_EXPIRED("GNE-AUTH-4101", HttpStatus.GONE, "Mã OTP đã hết hiệu lực."),
     RESET_TOKEN_EXPIRED("GNE-AUTH-4102", HttpStatus.GONE, "Phiên đặt lại mật khẩu đã hết hạn."),
     INVITATION_EXPIRED("GNE-AUTH-4103", HttpStatus.GONE, "Lời mời đã hết hạn."),
