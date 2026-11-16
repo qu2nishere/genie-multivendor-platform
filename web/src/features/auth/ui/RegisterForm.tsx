@@ -1,12 +1,12 @@
 // Đăng ký người mua (prototype auth Register + step "otp") — plan G09.08, island client:load.
-// Họ tên, email (trùng → GNE-AUTH-4091 gợi ý đăng nhập / quên mật khẩu), số điện thoại, mật khẩu có
+// Họ tên, email (trùng → GNE-AUTH-4091: hộp thoại "Email đã được sử dụng" + nút tới trang đăng nhập), số điện thoại, mật khẩu có
 // thanh độ mạnh, nhập lại, đồng ý điều khoản → OTP xác minh email → đăng nhập luôn.
 // Sai OTP 5 lần → quay lại form với thông báo "Đăng ký thất bại".
 import { useState, type FormEvent } from 'react';
 import { errorMessage, toApiError } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { Providers } from '@/shared/providers/Providers';
-import { Button, Checkbox, Input, PasswordInput } from '@/shared/ui';
+import { Button, Checkbox, Icon, Input, Modal, PasswordInput } from '@/shared/ui';
 import { useRegister } from '../application/useAuth';
 import { fieldErrors, registerSchema } from '../domain/auth.schemas';
 import type { OtpChallenge } from '../domain/auth.types';
@@ -48,10 +48,8 @@ function Form({ next }: { next: string | null }) {
         onSuccess: setChallenge,
         onError: (err) => {
           const a = toApiError(err);
-          if (a.code === 'GNE-AUTH-4091') {
-            setTaken(true);
-            setErrors({ email: errorMessage(a, t) });
-          } else setNotice(errorMessage(a, t));
+          if (a.code === 'GNE-AUTH-4091') setTaken(true);
+          else setNotice(errorMessage(a, t));
         },
       },
     );
@@ -86,6 +84,41 @@ function Form({ next }: { next: string | null }) {
           {notice}
         </Notice>
       )}
+      <Modal
+        open={taken}
+        onClose={() => setTaken(false)}
+        aria-label={t('auth.register.taken_title')}
+        width={420}
+        className="!rounded-[10px]"
+        bodyClassName="relative !px-8 !py-8 flex flex-col items-center text-center"
+      >
+        <button
+          type="button"
+          onClick={() => setTaken(false)}
+          aria-label={t('ui.close')}
+          data-skip-autofocus
+          className="absolute right-2 top-2 grid h-10 w-10 cursor-pointer place-items-center rounded-md border-0 bg-transparent text-muted hover:bg-gray-100 focus-visible:outline-none focus-visible:shadow-focus"
+        >
+          <Icon name="x" size={20} />
+        </button>
+        <span className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-[#E8F5EF] text-[#1F7356]">
+          <Icon name="mail" size={26} />
+        </span>
+        <p className="m-0 text-[17px] font-semibold leading-snug text-strong">
+          {t('auth.register.taken_title')}
+        </p>
+        <p className="m-0 mt-1.5 text-[15px] leading-relaxed text-strong">
+          {t('auth.register.taken_text')}
+        </p>
+        <Button
+          block
+          size="lg"
+          className="mt-6 !rounded-[8px]"
+          href={`/auth/login?email=${encodeURIComponent(f.email)}`}
+        >
+          {t('auth.register.go_login')}
+        </Button>
+      </Modal>
       <form className="flex flex-col gap-3.5" onSubmit={submit} noValidate>
         <Input
           label={t('auth.field.name')}
@@ -111,23 +144,6 @@ function Form({ next }: { next: string | null }) {
             error={errors.email || undefined}
             placeholder={t('auth.field.email_ph')}
           />
-          {taken && (
-            <p className="m-0 mt-1.5 text-xs">
-              <a
-                href={`/auth/login?email=${encodeURIComponent(f.email)}`}
-                className="font-semibold text-link"
-              >
-                {t('auth.register.go_login')}
-              </a>{' '}
-              ·{' '}
-              <a
-                href={`/auth/forgot?email=${encodeURIComponent(f.email)}`}
-                className="font-semibold text-link"
-              >
-                {t('auth.login.forgot')}
-              </a>
-            </p>
-          )}
         </div>
         <Input
           label={t('auth.field.phone')}
