@@ -39,8 +39,6 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
-  /** Tài khoản tạo bằng Google chưa có mật khẩu (GNE-AUTH-4012) — gợi ý cách đăng nhập khác. */
-  const [noPassword, setNoPassword] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const login = useLogin();
   const otp = useRequestOtp();
@@ -56,7 +54,6 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     setFormError(null);
-    setNoPassword(null);
     if (mode === 'password') {
       const parsed = loginSchema.safeParse({ email, password });
       if (!parsed.success) {
@@ -74,10 +71,6 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
           setPassword('');
           if (a.code === 'GNE-AUTH-4230') {
             setStep({ name: 'locked', seconds: lockSecondsFrom(a.details), by: 'PASSWORD' });
-            return;
-          }
-          if (a.code === 'GNE-AUTH-4012') {
-            setNoPassword(errorMessage(a, t));
             return;
           }
           const remaining = a.details.remaining_attempts;
@@ -158,7 +151,6 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
         setMode(id);
         setErrors({});
         setFormError(null);
-        setNoPassword(null);
       }}
       className={cn(
         'h-[34px] flex-1 cursor-pointer rounded-sm border-0 text-sm font-semibold max-md:h-11',
@@ -178,31 +170,6 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
         lead={mode === 'otp' ? t('auth.login.lead_otp') : t('auth.login.lead_password')}
       />
       {formError && <Notice tone="error">{formError}</Notice>}
-      {noPassword && (
-        <Notice tone="error">
-          <span className="block">{noPassword}</span>
-          <span className="mt-2.5 flex flex-wrap gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              onClick={() => {
-                setMode('otp');
-                setNoPassword(null);
-              }}
-            >
-              {t('auth.login.use_otp')}
-            </Button>
-            <Button
-              size="sm"
-              variant="secondary"
-              href={`/auth/forgot?email=${encodeURIComponent(email)}`}
-            >
-              {t('auth.login.set_password')}
-            </Button>
-          </span>
-        </Notice>
-      )}
       <div
         className="mb-[18px] flex gap-1 rounded-md bg-gray-100 p-1"
         role="group"

@@ -42,9 +42,9 @@ export const useUpdateProfile = () =>
 export const useRequestEmailChange = () => useMutation({ mutationFn: requestEmailChange });
 export const useConfirmEmailChange = () =>
   useInvalidating((p: StepUpProof) => confirmEmailChange(p), [PROFILE_KEY, METHODS_KEY]);
-export const useLinkGoogle = () =>
-  useInvalidating((code: string | null) => linkGoogle(code), [METHODS_KEY]);
-export const useUnlinkGoogle = () => useInvalidating(() => unlinkGoogle(), [METHODS_KEY]);
+export const useLinkGoogle = () => useInvalidating(() => linkGoogle(), [METHODS_KEY]);
+export const useUnlinkGoogle = () =>
+  useInvalidating((currentPassword: string) => unlinkGoogle(currentPassword), [METHODS_KEY]);
 export const useVerifyPassword = () => useMutation({ mutationFn: verifyPassword });
 export const useRequestStepUp = () =>
   useMutation({ mutationFn: (purpose: StepUpPurpose) => requestStepUp(purpose) });

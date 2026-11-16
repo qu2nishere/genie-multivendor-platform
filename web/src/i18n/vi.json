@@ -96,11 +96,12 @@
     "GNE-WAL-4222": "Tên chủ tài khoản không khớp với CCCD.",
     "GNE-RAT-4290": "Bạn thao tác quá nhanh. Vui lòng thử lại sau ít phút.",
     "GNE-AUTH-4001": "Phiên đăng nhập mạng xã hội không hợp lệ. Vui lòng thử lại.",
-    "GNE-AUTH-4011": "Email hoặc mật khẩu không đúng.",
-    "GNE-AUTH-4012": "Tài khoản này đăng nhập bằng Google và chưa có mật khẩu. Hãy bấm Tiếp tục với Google, đăng nhập bằng mã OTP hoặc thiết lập mật khẩu.",
+    "GNE-AUTH-4011": "Tài khoản hoặc mật khẩu không chính xác.",
+    "GNE-AUTH-4012": "Tài khoản hoặc mật khẩu không chính xác.",
     "GNE-AUTH-4031": "Tài khoản đang bị tạm khóa.",
     "GNE-AUTH-4032": "Email của tài khoản Google/Apple chưa được xác minh.",
     "GNE-AUTH-4091": "Email này đã được đăng ký. Hãy đăng nhập hoặc lấy lại mật khẩu.",
+    "GNE-AUTH-4098": "Tài khoản Google bạn chọn có email khác với email tài khoản Genie. Vui lòng chọn tài khoản Google có cùng email.",
     "GNE-AUTH-4092": "Tài khoản Google này đã gắn với người dùng khác.",
     "GNE-AUTH-4093": "Không thể gỡ cách đăng nhập duy nhất của tài khoản.",
     "GNE-AUTH-4094": "Email mới đã thuộc về tài khoản khác.",
@@ -505,8 +506,6 @@
       "remaining": "Còn {n} lần thử.",
       "demo": "Demo: mật khẩu {password}",
       "forgot": "Quên mật khẩu?",
-      "use_otp": "Đăng nhập bằng mã OTP",
-      "set_password": "Thiết lập mật khẩu",
       "or": "HOẶC",
       "no_account": "Chưa có tài khoản?",
       "register": "Đăng ký người mua",
@@ -573,7 +572,9 @@
     "oauth": {
       "processing": "Đang hoàn tất đăng nhập…",
       "error_title": "Không đăng nhập được",
-      "denied": "Bạn đã hủy hoặc nhà cung cấp từ chối đăng nhập. Vui lòng thử lại."
+      "denied": "Bạn đã hủy hoặc nhà cung cấp từ chối đăng nhập. Vui lòng thử lại.",
+      "link_error_title": "Không liên kết được Google",
+      "back_logins": "Quay lại Liên kết đăng nhập"
     }
   },
   "search": {
@@ -1415,7 +1416,6 @@
     },
     "logins": {
       "sub": "Các cách đăng nhập vào cùng một tài khoản",
-      "info": "Một tài khoản chỉ có một mật khẩu. Google chỉ là thêm một cách đăng nhập: dù vào bằng cách nào, bạn vẫn vào đúng tài khoản {email} với cùng đơn hàng, ví và Điểm.",
       "password": "Email và mật khẩu",
       "has_pw": "Đã có mật khẩu",
       "no_pw": "Chưa có mật khẩu",
@@ -1427,8 +1427,9 @@
       "keep": "Giữ liên kết",
       "count": "{count} cách đăng nhập đang bật",
       "since": "liên kết Google {when}",
-      "link_title": "Liên kết Google",
-      "link_text": "Genie sẽ mở trang đăng nhập Google. Tài khoản Google có email đã xác minh sẽ được gắn vào tài khoản {email} hiện tại, không tạo tài khoản mới.",
+      "link_dialog_title": "Liên kết tài khoản Google",
+      "link_dialog_text": "Vui lòng chọn tài khoản Google có cùng email với tài khoản Genie của bạn:",
+      "link_continue": "Tiếp tục với Google",
       "unlink_title": "Gỡ liên kết Google?",
       "unlink_text": "Sau khi gỡ, bấm \"Đăng nhập Google\" sẽ không vào tài khoản này nữa cho đến khi bạn liên kết lại. Bạn vẫn đăng nhập được bằng email và mật khẩu.",
       "linked_toast": "Đã liên kết Google. Lần sau bấm \"Đăng nhập Google\" là vào tài khoản này",

@@ -131,6 +131,14 @@ export async function resetPassword(resetToken: string, newPassword: string): Pr
   });
 }
 
+/**
+ * Hoàn tất LIÊN KẾT Google vào tài khoản đang đăng nhập (POST /me/identities/{provider}, plan A14.04) — trang callback gọi
+ * khi lần chuyển sang Google bắt đầu từ Tài khoản › Liên kết đăng nhập. Cần đăng nhập (access token tự làm mới).
+ */
+export async function linkIdentity(provider: SocialProvider, code: string, state: string): Promise<void> {
+  await api.post(`/me/identities/${provider}`, { code, state });
+}
+
 /** DELETE /auth/sessions/current. */
 export async function logout(): Promise<void> {
   if (USE_MOCK) {
