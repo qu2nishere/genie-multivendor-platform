@@ -46,7 +46,8 @@ progress là bảng tick + nhật ký có mã commit).
 ```bash
 # gốc repo
 npm install                                   # husky + commitlint + lint-staged
-docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d   # postgres, redis, silo, mailpit
+cp .env.example .env                          # biến máy dev (profile local + CSDL) — docs/cau-hinh-moi-truong.md
+docker compose -f deploy/docker-compose.local.yml up -d   # postgres, redis, silo, mailpit (genie / changeme)
 
 # web/ (Node 22)
 npm run dev          # http://localhost:4321 ; /dev/ui = thư viện component (chỉ dev)
@@ -56,7 +57,7 @@ npm run test:e2e     # playwright trên bản build cổng 4322 (E2E_DEV=1 chạ
 node ../scripts/i18n-lookup.mjs   # tra bản dịch
 
 # server-spring/ (JDK 21)
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+./mvnw spring-boot:run   # JDK 21 (JDK 24+ làm Lombok lỗi); profile local lấy từ .env
 ./mvnw verify        # unit + Testcontainers + ArchUnit
 
 # server-python/ (Python 3.12)
@@ -204,4 +205,5 @@ Trong repo: `README.md` (chạy local), `docs/adr/0001…0006` (quyết định 
 - Khi nối backend: sửa 21 endpoint lệch spec trước (handoff mục 2), thêm trường `product_slug`, `order_id` vào spec (mục 3).
 - `ErrorCode.java` mới có 6 mã; khi thêm mã mới phải thêm cả `web/src/shared/api/error-codes.ts` + khóa `errors.GNE-*` ở vi/en.
 - Dependabot mở PR nâng Astro / Tailwind 4 — không gộp lẫn với việc tính năng.
+- Cấu hình: mọi giá trị theo môi trường đọc từ `.env` (gốc repo, backend tự nạp — `DotEnvEnvironmentPostProcessor`); không ghi mật khẩu vào `application*.yml`. Đổi CSDL Docker / cài máy / cloud = đổi khối trong `.env` — `docs/cau-hinh-moi-truong.md`.
 - Hook husky chạy `lint-staged` qua binary trong `web/node_modules` (cần `npm ci` trong `web/` trước khi commit).

@@ -991,16 +991,20 @@ Certbot (container hoặc cài trên VPS) cấp chứng chỉ Let's Encrypt cho 
 - **Redis:** `deploy/redis/redis.conf` — AOF `everysec`, `requirepass`, `maxmemory 256mb`, `volatile-lru`.
 - **AI Worker:** `scripts/fetch-models.sh` tải mô hình đúng phiên bản trước khi khởi động; `/health` chỉ báo sẵn sàng khi đã nạp xong.
 
-### 16.6 Biến môi trường (`deploy/.env.example`)
+### 16.6 Biến môi trường (`.env.example`, `deploy/.env.example`)
+
+**Nguyên tắc:** mọi giá trị thay đổi theo môi trường đọc từ biến `${TEN_BIEN}` trong `application*.yml`, không ghi cứng; mật khẩu / khóa thật chỉ nằm trong `.env` (máy dev: gốc repo — backend tự đọc qua `DotEnvEnvironmentPostProcessor`, kể cả `SPRING_PROFILES_ACTIVE`; VPS: `deploy/.env`), cả hai bị `.gitignore` chặn. `application-local.yml` chỉ chứa giá trị dự phòng cho máy dev; bí mật ở `application.yml` / `application-prod.yml` không có mặc định (thiếu → backend dừng). CSDL máy dev chọn một trong 3 khối trong `.env`: Docker (mặc định), PostgreSQL cài trên máy, CSDL cloud (`?sslmode=require`, `DB_POOL_SIZE=5`, `GENIE_SEED_DEMO=false`, `GENIE_SCHEDULING_ENABLED=false`). Hướng dẫn đầy đủ + danh mục biến + lỗi thường gặp: `docs/cau-hinh-moi-truong.md` trong repo.
+
 
 | Nhóm | Biến |
 |---|---|
 | Chung | `TAG`, `SPRING_PROFILES_ACTIVE`, `PUBLIC_WEB_URL`, `PUBLIC_API_URL`, `INTERNAL_API_URL`, `PUBLIC_S3_URL` |
-| CSDL / Redis / Silo | `DB_URL`, `DB_USER`, `DB_PASSWORD`, `REDIS_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `MINIO_APP_ACCESS_KEY`, `MINIO_APP_SECRET_KEY` |
+| CSDL / Redis / Silo | `DB_URL`, `DB_USER`, `DB_PASSWORD`, `DB_POOL_SIZE`, `GENIE_SEED_DEMO`, `REDIS_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `MINIO_APP_ACCESS_KEY`, `MINIO_APP_SECRET_KEY` |
 | Bảo mật | `JWT_SECRET` (≥ 256 bit), `KYC_AES_KEY`, `INTERNAL_TOKEN`, `WALLET_HMAC_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD_HASH` |
 | Thanh toán | `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`, `VNPAY_URL`, `VNPAY_RETURN_URL`, `SEPAY_API_KEY`, `SEPAY_ACCOUNT_NUMBER` |
 | Vận chuyển | `GHN_TOKEN`, `GHN_SHOP_ID`, `GHTK_TOKEN`, `VTP_TOKEN`, `JT_KEY` |
-| AI / danh tính / mail | `GEMINI_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `APPLE_*`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` |
+| AI / danh tính / mail | `GEMINI_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ZALO_APP_ID`, `ZALO_APP_SECRET`, `APPLE_*`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM` |
+| Vận hành (tùy chọn) | `LOG_LEVEL_ROOT`, `LOG_LEVEL_GENIE`, `GENIE_SCHEDULING_ENABLED`, `SERVER_PORT`, `HEALTH_SHOW_DETAILS` |
 
 `.env` trên VPS chỉ đọc được bởi người triển khai (`chmod 600`); đổi khóa thì khởi động lại service liên quan.
 
