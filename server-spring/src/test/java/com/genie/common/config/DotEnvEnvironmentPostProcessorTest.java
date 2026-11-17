@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor;
 import org.junit.jupiter.api.io.TempDir;
 
 class DotEnvEnvironmentPostProcessorTest {
@@ -32,5 +33,20 @@ class DotEnvEnvironmentPostProcessorTest {
 
         assertThat(DotEnvEnvironmentPostProcessor.find(module)).isEqualTo(root.resolve(".env"));
         assertThat(DotEnvEnvironmentPostProcessor.find(Files.createDirectories(root.resolve("x/y/z/w")))).isNull();
+    }
+
+    @Test
+    void mapsSpringProfilesActiveSoDotEnvCanChooseTheProfile() {
+        Map<String, Object> v = DotEnvEnvironmentPostProcessor.withSpringAliases(
+                DotEnvEnvironmentPostProcessor.parse(List.of("SPRING_PROFILES_ACTIVE=local", "DB_USER=genie")));
+
+        assertThat(v).containsEntry("spring.profiles.active", "local").containsEntry("SPRING_PROFILES_ACTIVE", "local")
+                .containsEntry("DB_USER", "genie");
+    }
+
+    @Test
+    void runsBeforeSpringReadsApplicationYamlAndProfiles() {
+        assertThat(new DotEnvEnvironmentPostProcessor().getOrder())
+                .isLessThan(ConfigDataEnvironmentPostProcessor.ORDER);
     }
 }

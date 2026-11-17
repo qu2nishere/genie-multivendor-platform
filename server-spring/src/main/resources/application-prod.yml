@@ -1,22 +1,19 @@
-# VPS — mọi giá trị từ deploy/.env (không có giá trị mặc định cho bí mật)
+# Profile prod — VPS chạy deploy/docker-compose.yml. Mọi giá trị đọc từ deploy/.env (mẫu: deploy/.env.example).
+# Bí mật không có mặc định (thiếu → backend dừng). Mặc định dưới đây chỉ là tên service trong mạng Compose.
 spring:
   datasource:
     hikari:
-      maximum-pool-size: 30       # postgres max_connections=50 (TECH_STACK mục 16.2)
+      maximum-pool-size: ${DB_POOL_SIZE:30}     # postgres max_connections=50 (TECH_STACK mục 16.2)
   data:
     redis:
-      host: redis
+      host: ${REDIS_HOST:redis}
   mail:
     properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
+      mail.smtp.auth: ${SMTP_AUTH:true}
+      mail.smtp.starttls.enable: ${SMTP_STARTTLS:true}
 
 genie:
   storage:
-    endpoint: http://minio:9000
+    endpoint: ${MINIO_ENDPOINT:http://silo:9000}   # tên biến MINIO_* giữ nguyên dù dùng Silo (ADR 0009)
   ai-worker:
-    url: http://ai-worker:8000
-
-logging:
-  level:
-    root: INFO
+    url: ${AI_WORKER_URL:http://ai-worker:8000}
