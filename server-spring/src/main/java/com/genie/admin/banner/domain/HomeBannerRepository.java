@@ -40,6 +40,10 @@ public interface HomeBannerRepository extends JpaRepository<HomeBanner, Long>, J
                           @Param("startsAt") OffsetDateTime startsAt, @Param("endsAt") OffsetDateTime endsAt,
                           @Param("now") OffsetDateTime now, @Param("excludeId") long excludeId);
 
+    /** Id các banner đang hiển thị (mọi vị trí) — lọc sự kiện hiển thị / bấm hợp lệ (plan banner D6). */
+    @Query("SELECT b.id FROM HomeBanner b WHERE b.isActive = true AND b.startsAt <= :now AND b.endsAt > :now")
+    List<Long> findLiveIds(@Param("now") OffsetDateTime now);
+
     /** Cộng dồn bộ đếm đã gom từ Redis (job 5 phút — LLD 10). Không đụng {@code updated_at}. */
     @Modifying
     @Query("UPDATE HomeBanner b SET b.impressionCount = b.impressionCount + :imp, b.clickCount = b.clickCount + :clk "
