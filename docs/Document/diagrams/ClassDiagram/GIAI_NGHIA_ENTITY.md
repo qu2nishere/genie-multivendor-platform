@@ -1674,6 +1674,8 @@
 | `updatedAt` | thời điểm cập nhật gần nhất | ngày + giờ (có múi giờ) | Có | Hệ thống tự ghi mỗi lần sửa. |
 
 <a id="adminnotification"></a>
+- **Trạng thái hiển thị** (không lưu, tính bằng `state(now)`): `OFF` (đã tắt tay), `SCHEDULED` (chưa tới giờ), `ENDED` (đã hết giờ), `LIVE` (đang hiện). Chỉ xóa được banner `OFF` / `ENDED`; mỗi vị trí tối đa 8 banner bật có lịch chồng nhau.
+
 ## 10.5 `AdminNotification` — Thông báo nội bộ cho quản trị viên
 
 - **Đọc là:** thông báo quản trị viên
