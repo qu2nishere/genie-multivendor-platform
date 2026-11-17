@@ -467,7 +467,7 @@ Dùng chung cho khách, chủ shop (tài khoản shop chính là tài khoản ng
   "full_name": "Trần Thị Mai",
   "avatar_url": null,
   "email": "mai.tran@gmail.com",
-  "login_methods": { "password": true, "google": true },
+  "login_methods": { "password": true, "google": true, "zalo": false },
   "shop": { "id": 15, "name": "TechZone Official", "logo_url": null, "kyc_status": "VERIFIED" },
   "counters": {
     "cart_items": 11,
@@ -478,7 +478,7 @@ Dùng chung cho khách, chủ shop (tài khoản shop chính là tài khoản ng
   }
 }
 ```
-`shop` = `null` khi chưa mở shop (ẩn mục chuyển tài khoản). Gọi một lần khi tải trang và ngay sau đăng nhập / làm mới token (web dựng `SessionUser` — plan AUTH D18); các bộ đếm cập nhật qua WebSocket (mục 13). Dữ liệu `shop`, `counters` do phân hệ khác cung cấp qua cổng đảo ngược (`AccountShopProvider`, `AccountCounterContributor`) — phân hệ chưa làm thì trả `null` / `0`. *(Chưa hiện thực — 2026-11-16.)*
+`shop` = `null` khi chưa mở shop (ẩn mục chuyển tài khoản). Gọi một lần khi tải trang và ngay sau đăng nhập / làm mới token (web dựng `SessionUser` — plan AUTH D18); các bộ đếm cập nhật qua WebSocket (mục 13). Dữ liệu `shop`, `counters` do phân hệ khác cung cấp qua cổng đảo ngược (`AccountShopProvider`, `AccountCounterContributor`) — phân hệ chưa làm thì trả `null` / `0`. *(Đã hiện thực 2026-11-17 — `MeController`; `login_methods.zalo` thêm theo plan AUTH D23.)*
 
 ### 3.2 Hồ sơ cá nhân
 UC-AUTH-08 · **Màn hình:** Tài khoản › Hồ sơ
