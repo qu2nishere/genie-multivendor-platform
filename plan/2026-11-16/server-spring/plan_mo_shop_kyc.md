@@ -354,7 +354,7 @@ Ký hiệu: `Kxx.yy` = task; `Kxx.Cn` = task commit.
 | Rủi ro | Xử lý |
 |---|---|
 | Hợp đồng Backend ↔ AI Worker lệch nhau khi hai người làm song song | Chốt D6 thành ADR 0011 trước khi viết mã (K00.02 / Y00.02); test hợp đồng hai phía dùng **cùng** tệp JSON mẫu (`docs/api-tests/kyc-contract/*.json`) |
-| Mất khóa `KYC_AES_KEY` → không giải mã được hồ sơ | Khóa nằm trong `deploy/.env` của VPS, sao lưu riêng; README ghi rõ; không đổi khóa khi còn hồ sơ (xoay khóa để DATN) |
+| Mất khóa `KYC_AES_KEY` → không giải mã được hồ sơ | Khóa nằm trong `deploy/.env` của máy chủ production (VPS / EC2 — CSDL RDS, tệp S3), sao lưu riêng; README ghi rõ; không đổi khóa khi còn hồ sơ (xoay khóa để DATN) |
 | Tệp lớn (10 MB) mã hóa trong bộ nhớ làm tốn RAM | Giới hạn 10 MB + xử lý tuần tự từng tệp; test đo (K02.02); backend có ngân sách RAM riêng (TS 16.2) |
 | Hồ sơ kẹt `AI_PROCESSING` khi AI Worker chết | Job timeout 30 giây + chuyển duyệt tay ngay khi gọi lỗi (K05.06, K05.10) |
 | Bản xem tạm (ảnh đã giải mã) tồn tại lâu trên Silo | URL 5 phút + job dọn 10 phút + lifecycle `tmp/` 1 ngày; bucket riêng tư |

@@ -205,6 +205,6 @@ Trong repo: `README.md` (chạy local), `docs/adr/0001…0006` (quyết định 
 - Khi nối backend: sửa 21 endpoint lệch spec trước (handoff mục 2), thêm trường `product_slug`, `order_id` vào spec (mục 3).
 - `ErrorCode.java` mới có 6 mã; khi thêm mã mới phải thêm cả `web/src/shared/api/error-codes.ts` + khóa `errors.GNE-*` ở vi/en.
 - Dependabot mở PR nâng Astro / Tailwind 4 — không gộp lẫn với việc tính năng.
-- Cấu hình: mọi giá trị theo môi trường đọc từ `.env` (gốc repo, backend tự nạp — `DotEnvEnvironmentPostProcessor`); không ghi mật khẩu vào `application*.yml`. Đổi CSDL Docker / cài máy / cloud = đổi khối trong `.env` — `docs/cau-hinh-moi-truong.md`.
+- Cấu hình: mọi giá trị theo môi trường đọc từ `.env` (gốc repo, backend tự nạp — `DotEnvEnvironmentPostProcessor`); không ghi mật khẩu vào `application*.yml`. Đổi CSDL máy dev (Docker / cài máy) = đổi khối trong `.env`; production RDS + S3 chỉ khai ở `deploy/.env` — `docs/cau-hinh-moi-truong.md`.
 - Kho tệp: một cài đặt `S3ObjectStorage` cho cả Silo (dev) và AWS S3 (prod); mã nghiệp vụ dùng tên bucket **logic** (`UploadPurpose.bucket()`), tiền tố `STORAGE_BUCKET_PREFIX` chỉ ghép trong `S3ObjectStorage` — không tự ghép ở nơi khác. Không seed / không trỏ máy dev vào RDS production.
 - Hook husky chạy `lint-staged` qua binary trong `web/node_modules` (cần `npm ci` trong `web/` trước khi commit).

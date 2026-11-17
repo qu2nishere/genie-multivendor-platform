@@ -38,8 +38,10 @@ không phụ thuộc một máy, trong khi máy dev vẫn chạy được không
   Quyền ứng dụng: IAM user theo `deploy/aws/iam-policy.json` (không dùng khóa root).
 - **Sao lưu:** RDS automated backups 7 ngày + snapshot trước release; `backup.sh` chỉ còn `pg_dump` logic từ RDS
   (qua image `postgres:16-alpine`), bỏ `backup.sh silo`.
-- **Seed không bao giờ chạy trên production:** `GENIE_SEED_DEMO=false`; script seed từ chối host `*.rds.amazonaws.com`
-  và kho tệp `*.amazonaws.com` (plan seed N10).
+- **Seed không bao giờ chạy trên production:** `GENIE_SEED_DEMO=false`; script seed chỉ chạy với host local và từ chối
+  mọi host khác (plan seed N10).
+- **`.env` máy dev chỉ có CSDL local** (khối [1] Docker, [2] cài máy) — bỏ khối "CSDL cloud dùng chung"; CSDL production
+  chỉ khai trong `deploy/.env` trên máy chủ.
 
 ## Hệ quả
 

@@ -11,7 +11,7 @@ Sàn thương mại điện tử đa người bán — bản TLCN. Monorepo gồ
 | `scripts/` | Seed, tải mô hình, giả lập webhook, kiểm i18n |
 | `docs/` | ADR (`docs/adr/`), OpenAPI xuất ra (`docs/openapi/`), [cấu hình môi trường](docs/cau-hinh-moi-truong.md), bộ tài liệu dự án (`docs/Document/`) |
 
-Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`. Biến môi trường, `.env`, chọn CSDL (Docker / cài trên máy / cloud): [docs/cau-hinh-moi-truong.md](docs/cau-hinh-moi-truong.md).
+Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`. Biến môi trường, `.env`, chọn CSDL máy dev (Docker / cài trên máy), production RDS + S3: [docs/cau-hinh-moi-truong.md](docs/cau-hinh-moi-truong.md).
 
 ## Chạy local trong 15 phút
 

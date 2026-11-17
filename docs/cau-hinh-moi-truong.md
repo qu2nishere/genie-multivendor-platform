@@ -1,7 +1,7 @@
 # Cấu hình môi trường — `.env` & `application*.yml`
 
 > Áp dụng từ 2026-11-17 (nhánh `feature/env-config-cleanup`). Bổ sung cho TECH_STACK mục 16.6.
-> Đọc khi: mới clone repo, muốn đổi CSDL (Docker / cài trên máy / cloud), gửi email thật, hoặc chuẩn bị triển khai VPS.
+> Đọc khi: mới clone repo, muốn đổi CSDL (Docker / cài trên máy), gửi email thật, hoặc chuẩn bị triển khai VPS.
 
 ## 1. Nguyên tắc
 
@@ -59,7 +59,7 @@ Profile quyết định Spring nạp thêm file `application-<profile>.yml` nào
 | **`test`** | `src/test/resources/application-test.yml` | `./mvnw test` / `verify` | Test tự bật bằng `@ActiveProfiles("test")` (`IntegrationTestBase`) — **không** đặt tay | CSDL / Redis do Testcontainers tạo, `FakeEmailSender`, tắt cron, khóa cố định |
 
 - **Không đặt profile nào** → chỉ có `application.yml` → thiếu `DB_URL`, `JWT_SECRET`… → backend dừng với lỗi `Could not resolve placeholder`. Đây là chủ ý (an toàn), không phải hỏng.
-- **`demo`**: TECH_STACK 16.1 có nhắc "profile `local` / `demo`" nhưng repo **chưa có** `application-demo.yml`. Máy demo hiện dùng `prod` (VPS) hoặc `local` + khối CSDL cloud.
+- **`demo`**: TECH_STACK 16.1 có nhắc "profile `local` / `demo`" nhưng repo **chưa có** `application-demo.yml`. Demo dùng `prod` (production RDS + S3) hoặc chạy `local` trên máy.
 - Có thể bật **nhiều profile** cách nhau dấu phẩy, ví dụ `local,debug-sql` — file sau ghi đè file trước. Hiện chưa cần.
 
 ### Cách chọn profile (cách trên ưu tiên hơn cách dưới)
@@ -80,7 +80,7 @@ Dòng log đầu khi khởi động: `The following 1 profile is active: "local"
 ### Lưu ý
 
 - **Đừng chạy `prod` trên máy dev** trừ khi đã đặt đủ biến bí mật — profile `prod` không có mặc định nên sẽ dừng; và nếu trỏ vào CSDL thật thì mọi cron sẽ chạy thật.
-- Đổi profile **không** đổi CSDL: CSDL do khối `DB_URL` trong `.env` quyết định (mục 5). Profile `local` + khối CSDL cloud là cách chạy máy dev trên CSDL dùng chung.
+- Đổi profile **không** đổi CSDL: CSDL do khối `DB_URL` trong `.env` quyết định (mục 5). Máy dev chỉ trỏ CSDL local (Docker / cài máy); CSDL production (RDS) chỉ khai trong `deploy/.env`.
 
 ## 4. Bắt đầu trên máy mới
 
@@ -120,19 +120,18 @@ phải dấu `:` trong file compose) không đổi. Kiểm tra cổng đang bị
 `lsof -i :5432` (macOS, Linux).
 
 
-## 5. Chọn CSDL — 3 cách
+## 5. Chọn CSDL máy dev — 2 cách
 
-Trong `.env` gốc repo có 3 khối. **Chỉ bật một khối**, comment hai khối còn lại, chạy lại backend.
+Trong `.env` gốc repo có 2 khối. **Chỉ bật một khối**, comment khối còn lại, chạy lại backend. CSDL production (AWS RDS) **không** có ở đây — nó nằm trong `deploy/.env` trên máy chủ (mục 7).
 
 | Khối | Khi nào dùng | `DB_URL` | Lưu ý |
 |---|---|---|---|
 | **[1] Docker** (mặc định) | Bình thường | `jdbc:postgresql://localhost:5432/genie` | `genie` / `changeme` — khớp `docker-compose.local.yml`. Để comment cả khối cũng chạy |
 | **[2] PostgreSQL cài trên máy** | Không muốn dùng Docker | `jdbc:postgresql://localhost:5433/genie` | Tạo DB trước: `CREATE DATABASE genie;`. Nếu chạy song song Docker thì một bên phải đổi cổng (ví dụ 5433). Kho tệp **vẫn là Silo Docker**: `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d redis silo silo-init mailpit` |
-| **[3] CSDL cloud** (Neon, Supabase, Render…) | Cả nhóm dùng chung một DB / demo online | `jdbc:postgresql://<host>:5432/<db>?sslmode=require` | Bắt buộc `sslmode=require`. Thêm `DB_POOL_SIZE=5` (gói miễn phí giới hạn kết nối), `GENIE_SEED_DEMO=false` (không nạp dữ liệu mẫu vào DB chung), `GENIE_SCHEDULING_ENABLED=false` (máy dev không chạy cron lên dữ liệu chung) |
 
 Mọi cách đều để **Flyway tự tạo bảng** (`V1…`) lần chạy đầu — DB phải trống hoặc đúng lịch sử Flyway của repo.
 
-**Không** trỏ máy dev vào **RDS production** (khối [3] chỉ dành cho CSDL cloud thử nghiệm của nhóm): profile `local` nạp dữ liệu mẫu và chạy cron thật lên dữ liệu thật; script seed cũng từ chối host `*.rds.amazonaws.com`.
+**Không** trỏ máy dev vào **RDS production**: profile `local` nạp dữ liệu mẫu và chạy cron thật lên dữ liệu thật; script seed chỉ chạy với host local.
 
 ## 6. Danh mục biến
 
@@ -264,4 +263,3 @@ docker compose up -d                                     # nginx, frontend, back
 | `TypeTag :: UNKNOWN` khi `./mvnw` | Đang dùng JDK > 21 | Đặt `JAVA_HOME` về JDK 21 |
 | OTP không tới Gmail | Thiếu / sai `SMTP_*`, dùng mật khẩu Gmail thay App Password, `MAIL_FROM` khác `SMTP_USER` | Xem mục 6.4; muốn test nhanh thì để trống `SMTP_*` và xem Mailpit |
 | AI Worker trả `401` | `INTERNAL_TOKEN` hai bên khác nhau / `server-python/.env` chưa có | Đặt cùng một giá trị ở `.env` gốc và `server-python/.env` |
-| DB cloud báo `too many connections` | Pool mặc định 20 × số người | `DB_POOL_SIZE=5` |

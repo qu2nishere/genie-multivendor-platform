@@ -994,7 +994,7 @@ Certbot (container hoặc cài trên VPS) cấp chứng chỉ Let's Encrypt cho 
 
 ### 16.6 Biến môi trường (`.env.example`, `deploy/.env.example`)
 
-**Nguyên tắc:** mọi giá trị thay đổi theo môi trường đọc từ biến `${TEN_BIEN}` trong `application*.yml`, không ghi cứng; mật khẩu / khóa thật chỉ nằm trong `.env` (máy dev: gốc repo — backend tự đọc qua `DotEnvEnvironmentPostProcessor`, kể cả `SPRING_PROFILES_ACTIVE`; VPS: `deploy/.env`), cả hai bị `.gitignore` chặn. `application-local.yml` chỉ chứa giá trị dự phòng cho máy dev; bí mật ở `application.yml` / `application-prod.yml` không có mặc định (thiếu → backend dừng). CSDL máy dev chọn một trong 3 khối trong `.env`: Docker (mặc định), PostgreSQL cài trên máy, CSDL cloud (`?sslmode=require`, `DB_POOL_SIZE=5`, `GENIE_SEED_DEMO=false`, `GENIE_SCHEDULING_ENABLED=false`). Hướng dẫn đầy đủ + danh mục biến + lỗi thường gặp: `docs/cau-hinh-moi-truong.md` trong repo.
+**Nguyên tắc:** mọi giá trị thay đổi theo môi trường đọc từ biến `${TEN_BIEN}` trong `application*.yml`, không ghi cứng; mật khẩu / khóa thật chỉ nằm trong `.env` (máy dev: gốc repo — backend tự đọc qua `DotEnvEnvironmentPostProcessor`, kể cả `SPRING_PROFILES_ACTIVE`; VPS: `deploy/.env`), cả hai bị `.gitignore` chặn. `application-local.yml` chỉ chứa giá trị dự phòng cho máy dev; bí mật ở `application.yml` / `application-prod.yml` không có mặc định (thiếu → backend dừng). CSDL máy dev chọn một trong 2 khối trong `.env`: PostgreSQL Docker (mặc định) hoặc cài trên máy; CSDL production (AWS RDS) chỉ khai trong `deploy/.env`. Hướng dẫn đầy đủ + danh mục biến + lỗi thường gặp: `docs/cau-hinh-moi-truong.md` trong repo.
 
 
 | Nhóm | Biến |

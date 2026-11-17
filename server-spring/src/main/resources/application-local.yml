@@ -1,6 +1,6 @@
 # Profile local — máy dev. File này CHỈ chứa giá trị dự phòng ${BIEN:mặc_định} khớp deploy/docker-compose.local.yml
 # (postgres, redis, silo, mailpit) để clone về là chạy được không cần .env.
-# Muốn đổi (DB cài trên máy, DB cloud, Gmail thật…): ghi biến vào .env ở gốc repo (mẫu: .env.example) — KHÔNG sửa file này
+# Muốn đổi (PostgreSQL cài trên máy, đổi cổng, Gmail thật…): ghi biến vào .env ở gốc repo (mẫu: .env.example) — KHÔNG sửa file này
 # và KHÔNG ghi mật khẩu thật vào đây (file này có trên git).
 spring:
   datasource:
@@ -9,7 +9,7 @@ spring:
     password: ${DB_PASSWORD:changeme}
   flyway:
     placeholders:
-      seed_demo: ${GENIE_SEED_DEMO:true}       # trỏ DB cloud dùng chung mà không muốn nạp dữ liệu mẫu → GENIE_SEED_DEMO=false
+      seed_demo: ${GENIE_SEED_DEMO:true}       # không muốn nạp dữ liệu mẫu → GENIE_SEED_DEMO=false trong .env
   data:
     redis:
       password: ${REDIS_PASSWORD:changeme}
