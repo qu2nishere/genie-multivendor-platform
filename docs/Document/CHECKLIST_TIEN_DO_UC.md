@@ -41,7 +41,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | Ký hiệu | Nghĩa | Khi nào dùng |
 |:---:|---|---|
 | `☑` | Xong | Lớp đó hoàn chỉnh cho **toàn bộ** UC |
-| `◐` | Một phần | Mới xong một phần của UC — ví dụ UC-AUTH-03: Google xong nhưng Apple chưa; UC-AUTH-08: hồ sơ + ảnh xong nhưng đổi email chưa. Ghi phần còn thiếu ở dòng chữ nhỏ dưới cột *Trạng thái* |
+| `◐` | Một phần | Mới xong một phần của UC — ví dụ UC-AUTH-03: Google xong nhưng Zalo chưa chạy thật; UC-AUTH-08: hồ sơ + ảnh xong nhưng đổi email chưa. Ghi phần còn thiếu ở dòng chữ nhỏ dưới cột *Trạng thái* |
 | `☐` | Chưa làm | Chưa bắt đầu lớp này |
 | `—` | Không áp dụng | UC chạy nền (cron, webhook, AI — vd UC-ORD-08 hủy đơn quá hạn, UC-PAY-03 IPN / webhook SePay) không có màn hình riêng nên không có **GD** / **Nối**; vẫn phải có **BE**, **Test**, **Chạy** |
 
@@ -85,7 +85,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
 | `UC-AUTH-01` | Đăng ký tài khoản Khách hàng | S1 | `/auth/register` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> |
 | `UC-AUTH-02` | Đăng nhập hệ thống | S1 | `/auth/login` (mật khẩu / OTP), màn tạm khóa | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật (còn GET /me)</sub> |
-| `UC-AUTH-03` | Đăng nhập & Liên kết tài khoản Google / Apple (OAuth2 / OpenID Connect) | S7 | `/auth/login`, `/auth/oauth-callback`, `/account/logins` | ☑ | ◐ | ☑ | ☑ | ◐ | 🟡 Đang triển khai<br><sub>Google xong (đăng nhập, liên kết / gỡ liên kết), Apple chưa làm</sub> |
+| `UC-AUTH-03` | Đăng nhập & Liên kết tài khoản Google / Zalo (OAuth2 / OpenID Connect) | S7 | `/auth/login`, `/auth/oauth-callback`, `/account/logins` | ☑ | ◐ | ☑ | ☑ | ◐ | 🟡 Đang triển khai<br><sub>Google xong (đăng nhập, liên kết / gỡ liên kết). Zalo thay Apple (2026-11-17): code + test đã viết, chưa build; chạy thật tạm dừng — Zalo bắt xác thực domain, chờ tên miền thật</sub> |
 | `UC-AUTH-04` | Khôi phục mật khẩu qua Email OTP (Forgot Password) | S1 | `/auth/forgot` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> |
 | `UC-AUTH-06` | Đổi / Thiết lập mật khẩu | S1 | `/account/password`, Seller › Cài đặt › Bảo mật, Admin › Tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> |
 | `UC-AUTH-08` | Quản lý thông tin hồ sơ cá nhân (Customer Profile) | S2 | `/account/profile`, Admin › Tài khoản | ☑ | ◐ | ◐ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>hồ sơ + ảnh đại diện (Silo) xong; còn GET /me, đổi email</sub> |
@@ -226,7 +226,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 - [ ] `GET /me` — ngữ cảnh tài khoản (vai trò, shop, bộ đếm) để web dựng `SessionUser` đầy đủ (A11.02, A15.01)
 - [ ] Đổi email đăng nhập `POST /me/email-change-requests` (+ `/confirm`) (A11.04)
 - [ ] Sổ địa chỉ + danh mục hành chính GHN + định vị GPS (A12 — UC-AUTH-09)
-- [ ] Apple Sign In sau cờ `genie.oauth.apple.enabled` (A14 — UC-AUTH-03)
+- [ ] ~~Apple Sign In~~ → Đăng nhập Zalo (A14.10, D23 — UC-AUTH-03): build `./mvnw verify` + `npm run verify`; app Zalo đã tạo, `ZALO_APP_ID` / `ZALO_APP_SECRET` đã có trong `.env`; **chờ tên miền thật** để xác thực domain trên Zalo rồi chạy thật
 - [ ] Chạy thật: đăng xuất / thiết bị, đổi mật khẩu, xóa tài khoản (A10.03)
 - [ ] E2E với API thật `tests/e2e/auth-real.spec.ts`, bộ kiểm thử Apidog / Postman, k6 đăng nhập (A15.06, A16)
 - [ ] Phân hệ order / payment / vendor cài cổng `AccountDeletionBlocker` khi làm (UC-AUTH-10)
@@ -252,3 +252,5 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-16 | AUTH-10 | Xóa tài khoản + cron ẩn danh | PR #58 |
 | 2026-11-16 | AUTH-03 | Liên kết / gỡ Google ở trang tài khoản (`GNE-AUTH-4098`) | PR #59 |
 | 2026-11-16 | (tài liệu) | Đồng bộ bộ tài liệu TLCN v1.4 với mã nguồn; tạo checklist này | — |
+| 2026-11-17 | AUTH-03 | Zalo thay Apple: đăng nhập / đăng ký (nhập email + OTP) / liên kết Zalo — code + test viết xong, chưa build; không đổi database | (chưa commit) |
+| 2026-11-17 | AUTH-03 | Tạo app Zalo; Zalo bắt Home URL `https` + xác thực domain (`localhost` bị từ chối) → tạm dừng chạy thật, chờ tên miền thật (bỏ phương án domain tạm ngrok) | — |
