@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (48 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (57 / 57) |
 
 **Cách dùng**
 
@@ -37,15 +37,15 @@
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| B00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-home-banner` |
+| B00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/admin-home-banner` |
 | B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
 | B02 | Miền & truy vấn | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
 | B03 | API quản trị banner | 9 | 1 | 10 / 10 | — | `feature/admin-home-banner` |
 | B04 | API công khai & cache | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
 | B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
-| B06 | Nối giao diện `web/` | 6 | 2 | 7 / 8 | — | `feature/admin-home-banner` |
-| B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **48 / 57** | | |
+| B06 | Nối giao diện `web/` | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
+| B07 | Hoàn thiện use case | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
+| **Tổng** | | **48** | **9** | **57 / 57** | | |
 
 ## B00 — Chuẩn bị
 
@@ -53,7 +53,7 @@
 - [x] **B00.02** Chốt quyết định D1–D9
 - [x] **B00.03** Tạo nhánh
 - [x] **B00.04** Kiểm số migration
-- [ ] **B00.05** Đọc màn mock
+- [x] **B00.05** Đọc màn mock
 
 ## B01 — Tài liệu, migration, hằng số dùng chung
 
@@ -116,17 +116,17 @@
 - [-] **B06.05** Chạy thật hai phía
 - [x] **B06.06** E2E
 - [x] **B06.C1** 🔖 COMMIT `fix(web): send banner events in batches to the spec endpoint` · hash: `9519e9e`
-- [ ] **B06.C2** 🔖 COMMIT `feat(admin-ui): connect banner management to the real api` · hash: `…`
+- [x] **B06.C2** 🔖 COMMIT `feat(admin-ui): connect banner management to the real api` · hash: `6869cb0`
 
 ## B07 — Hoàn thiện use case
 
-- [ ] **B07.01** `docs/api-tests/admin-banner.http`
-- [ ] **B07.02** OpenAPI
-- [ ] **B07.03** Tài liệu nguồn
-- [ ] **B07.04** Tiến độ
-- [ ] **B07.05** `docs/web-backend-handoff.md`
-- [ ] **B07.C1** 🔖 COMMIT `docs(admin): record home banner use case as implemented` · hash: `…`
-- [ ] **B07.06** Mở PR vào `develop`
+- [x] **B07.01** `docs/api-tests/admin-banner.http`
+- [x] **B07.02** OpenAPI
+- [x] **B07.03** Tài liệu nguồn
+- [x] **B07.04** Tiến độ
+- [x] **B07.05** `docs/web-backend-handoff.md`
+- [x] **B07.C1** 🔖 COMMIT `docs(admin): record home banner use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **B07.06** Mở PR vào `develop`
 
 ---
 
@@ -134,11 +134,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-ADM-12` Quản lý banner trang chủ & chiến dịch tĩnh — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-ADM-12` Quản lý banner trang chủ & chiến dịch tĩnh — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-ADM-12 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -164,7 +164,12 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | B06.04 | Màn quản trị: cờ `isMocked('banner')`; mapper nhận `id` số, ngày ISO → `YYYY-MM-DD`, `category` không có `slug`; modal ánh xạ `errors[].field` của 422 về ô (`image_object_key` → ô ảnh…); thêm `GNE-BNR-4091` vào `error-codes.ts` + vi / en. Ảnh tải bằng `uploadFile(f, 'BANNER_IMAGE')` (đã có sẵn) |
 | B06.05 | `[-]` Phần chạy trên trình duyệt chờ người dùng tự thao tác (CLAUDE.md). Cách chạy: web `PUBLIC_USE_MOCK=true`, `PUBLIC_REAL_API=auth,upload,banner`; backend local; đăng nhập `linh.tm@genie.example` (Finance Officer) → `/admin/banners`; ảnh seed cần `scripts/seed/upload-assets.sh` |
 | B06.06 | Thêm kịch bản "tắt / bật lại / xóa banner" vào `tests/e2e/admin.spec.ts` (mock) — 2/2 khổ xanh. Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 318/318, build OK, i18n OK |
+| B00.05 | Đọc màn mock khi nối web (B06.04): bảng 7 cột, 4 trạng thái, modal kiểm lỗi tại ô (`hasImage`, `targetUrl`, `categoryId`, `startsAt` / `endsAt`), CTR client tự chia |
+| B07.02 | `/v3/api-docs` có đủ 7 endpoint banner, summary `UC-ADM-12 — …`. Chạy thật API trên CSDL mới `genie_banner` (V15): tải ảnh thật lên Silo → tạo banner 201 (ảnh ở `banner/1/desktop-…`) → `/public/banners` thấy banner → sự kiện `text/plain` 204, Redis `banner:1:imp|clk` = 1 → xóa khi LIVE 409 → tắt → storefront hết hiện ngay → xóa 204, ảnh Silo bị xóa → 3 dòng `BANNER_CHANGED`. `docs/openapi` trống nên không cập nhật |
+| B07.04 | Checklist: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng) → 🟡; Excel "Đang triển khai". Cổng: `./mvnw verify` BUILD SUCCESS (93 unit + 111 IT) — lần chạy đầu 108 IT lỗi vì Docker Desktop đã tắt sau khi qua ngày, bật lại thì xanh |
+| B07.06 | `[-]` Chưa push / mở PR — chờ người dùng; PR mở sau PR nhật ký kiểm toán (nhánh tách từ `feature/admin-audit-log`) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (48 task, 9 commit, 8 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | B00–B07: V15 `BANNER_CHANGED`, mã lỗi + `BANNER_IMAGE`, luật entity + kiểm liên kết, API quản trị, API công khai + cache Redis, bộ đếm + job, nối web (storefront + quản trị) + E2E, tài liệu; còn chạy thật trên giao diện (B06.05) và mở PR | `4336bc8` `3831bcb` `b674bb6` `a9a4ce5` `e17c094` `031d634` `9519e9e` `6869cb0` |
