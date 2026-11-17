@@ -133,6 +133,9 @@ public abstract class IntegrationTestBase {
     protected FakeAccountDeletionBlocker deletionBlocker;
 
     @Autowired
+    protected FakeAccountContext accountContext;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -195,6 +198,7 @@ public abstract class IntegrationTestBase {
         google.clear();
         zalo.clear();
         deletionBlocker.clear();
+        accountContext.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -243,6 +247,12 @@ public abstract class IntegrationTestBase {
         @Bean
         FakeAccountDeletionBlocker fakeAccountDeletionBlocker() {
             return new FakeAccountDeletionBlocker();
+        }
+
+        /** Giả lập shop + bộ đếm của các module chưa làm cho {@code GET /me} — mặc định trống. */
+        @Bean
+        FakeAccountContext fakeAccountContext() {
+            return new FakeAccountContext();
         }
     }
 }

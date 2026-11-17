@@ -43,8 +43,9 @@ class SecurityIT extends IntegrationTestBase {
     void validTokenPassesSecurity() throws Exception {
         String token = jwtService.issue(1L, UserRole.CUSTOMER, 1L).token();
 
-        // chưa có controller /me (A11) → qua được lớp bảo mật thì nhận 404 chuẩn GNE-SYS-4040
-        mvc.perform(get("/api/v1/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+        // đường dẫn cần đăng nhập nhưng không có controller → qua được lớp bảo mật thì nhận 404 chuẩn GNE-SYS-4040
+        // (trước dùng /me — nay GET /me đã có, plan AUTH A11.02)
+        mvc.perform(get("/api/v1/me/khong-ton-tai").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("GNE-SYS-4040"));
     }
