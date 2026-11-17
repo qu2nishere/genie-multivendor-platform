@@ -79,12 +79,15 @@ class SeedDataIT {
     }
 
     @Test
-    void seedContainsEnoughConsistentData() throws SQLException {
+    void seedContainsEnoughConsistentData() throws SQLException, IOException {
         assertThat(count("SELECT count(*) FROM categories")).isGreaterThanOrEqualTo(23);
         assertThat(count("SELECT count(*) FROM categories WHERE slug IS NULL")).isZero();
         assertThat(count("SELECT count(*) - count(DISTINCT slug) FROM categories")).isZero();
         assertThat(count("SELECT count(*) FROM vendor_profiles WHERE kyc_status = 'VERIFIED'")).isGreaterThanOrEqualTo(6);
-        assertThat(count("SELECT count(*) FROM products WHERE status = 'PUBLISHED'")).isGreaterThanOrEqualTo(20);
+        // mức cơ bản 20 sản phẩm của mock; có file 90 (S08 — sinh tự động) thì ≥ 200
+        boolean bulk = new PathMatchingResourcePatternResolver()
+                .getResources("classpath:db/seed/R__seed_demo_90_*.sql").length > 0;
+        assertThat(count("SELECT count(*) FROM products WHERE status = 'PUBLISHED'")).isGreaterThanOrEqualTo(bulk ? 200 : 20);
         assertThat(count("""
                 SELECT count(*) FROM products p WHERE p.status = 'PUBLISHED' AND (
                     NOT EXISTS (SELECT 1 FROM product_variants v WHERE v.product_id = p.id)
