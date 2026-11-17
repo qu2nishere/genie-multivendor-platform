@@ -1,0 +1,266 @@
+# PROGRESS — Cụm B4: Mở shop & KYC người bán (7 use case)
+
+| | |
+|---|---|
+| **Plan** | [plan_mo_shop_kyc.md](./plan_mo_shop_kyc.md) — chi tiết từng task tra theo mã `Kxx.yy` |
+| **Ngày lập** | 2026-11-16 |
+| **Tổng** | 112 task + 25 commit, 13 giai đoạn |
+| **Nhánh** | `feature/vendor-shop-kyc` |
+| **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
+| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 137) |
+
+**Cách dùng**
+
+- Xong task nào đổi `[ ]` thành `[x]`. Task bỏ qua có lý do: đổi thành `[-]` và ghi lý do ở mục Ghi chú.
+- Task `COMMIT` chỉ tick sau khi qua Cổng kiểm tra (plan mục 6); điền mã commit 7 ký tự vào chỗ `hash`.
+- Thông điệp commit ghi sẵn bên dưới, thêm ` [#GNE-<số>]` vào cuối khi đã có mã Jira.
+- Cập nhật cột "Xong" của bảng Tổng quan và dòng "Cập nhật gần nhất" sau mỗi buổi làm; ghi một dòng vào Nhật ký cuối trang.
+
+---
+
+## Quyết định (plan mục 2)
+
+| # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
+|---|---|:---:|---|
+| D1 | `shop_id` trên API là id nào | ☐ | |
+| D2 | `vendor_profiles` thiếu cột cho màn hình (API 9.1, 10.11, 10.12, 11.3) | ☐ | |
+| D3 | Hành động kiểm toán của vendor | ☐ | |
+| D4 | Purpose tải tệp: LUU_TRU 5.4 liệt kê 4 purpose KYC riêng; API 4.1 dùng **một** `KYC_DOCUMENT` | ☐ | |
+| D5 | Mã hóa & xem ảnh KYC: ảnh đã mã hóa thì Presigned GET trực tiếp không xem được | ☐ | |
+| D6 | Hợp đồng Backend ↔ AI Worker: implement 8.1 (camelCase, worker trả `riskScore`) khác API 12 (`overall`, `checks{5}`, `face_match_score`…) | ☐ | |
+| D7 | Chạy được khi chưa có AI Worker | ☐ | |
+| D8 | "Yêu cầu nhân viên xem xét" (API 10.12: chỉ khi `REJECTED`, `202`, lần 2 → `409 GNE-VND-4096`) cần chuyển `REJECTED → MANUAL_REVIEW` mà entity chưa có | ☐ | |
+| D9 | "Đưa lại vào hàng chờ" (`POST …/requeue` → "Về `PENDING`") | ☐ | |
+| D10 | Gắn nhãn Chính hãng khi duyệt (UC-VND-04 bước 8) — body `approve` của API 11.3 chỉ có `shop_commission_rate` | ☐ | |
+| D11 | Sau khi mở shop: `UserFacade.promoteToVendor` (plan AUTH A10.01) "đổi role + thu hồi phiên", còn API 9.2 bảo client **làm mới token** để có quyền `/seller` | ☐ | |
+| D12 | Đăng ký GHN Shop & danh mục hành chính | ☐ | |
+| D13 | Xác minh chính chủ tài khoản ngân hàng | ☐ | |
+| D14 | `PATCH /seller/settings` chứa khối `auto_reply` (UC-VND-06) và `GET` trả `vacation` (UC-VND-19) — hai UC ngoài cụm | ☐ | |
+| D15 | Số điện thoại / email liên hệ shop và "Họ tên chủ shop" của form mở shop | ☐ | |
+
+## Tổng quan
+
+| Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
+|---|---|---:|---:|---:|---|---|
+| K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 0 / 7 | — | `feature/vendor-shop-kyc` |
+| K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 0 / 10 | — | `feature/vendor-k01-schema` |
+| K02 | Nền module `vendor` | 9 | 3 | 0 / 12 | — | `feature/vendor-k02-foundation` |
+| K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 0 / 11 | — | `feature/vendor-k03-shop-registration` |
+| K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 0 / 12 | — | `feature/vendor-k04-kyc-submission` |
+| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 0 / 17 | — | `feature/vendor-k05-kyc-ai` |
+| K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
+| K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
+| K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 0 / 9 | — | `feature/vendor-k08-payout-account` |
+| K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 0 / 10 | — | `feature/vendor-k09-settings` |
+| K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
+| K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
+| K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
+| **Tổng** | | **112** | **25** | **0 / 137** | | |
+
+## K00 — Chuẩn bị & chốt quyết định
+
+- [ ] **K00.01** Kiểm danh tính git
+- [ ] **K00.02** Chốt quyết định D1–D15
+- [ ] **K00.03** Tạo nhánh tích hợp
+- [ ] **K00.04** Dựng môi trường
+- [ ] **K00.05** Đọc màn mock theo thứ tự luồng
+- [ ] **K00.06** Kiểm số migration
+- [ ] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0010` · hash: `…`
+
+## K01 — Tài liệu, migration `V15`, hằng số dùng chung
+
+- [ ] **K01.01** ENTITY trước (N12)
+- [ ] **K01.02** Đồng bộ `GIAI_NGHIA_ENTITY.md`, `java-code/Diagram01_IdentityAndRbac.java`, `Diagram10_*.java`, `Genie_ClassDiagram_UML25.xmi` (thuộc tính + phương thức + literal mới).
+- [ ] **K01.03** `V15__vendor_kyc_additions.sql`
+- [ ] **K01.04** Entity Java
+- [ ] **K01.05** `ErrorCode`
+- [ ] **K01.06** `UploadPurpose`
+- [ ] **K01.07** Test
+- [ ] **K01.08** Seed
+- [ ] **K01.C1** 🔖 COMMIT `feat(db): add vendor kyc columns, indexes and kyc audit actions` · hash: `…`
+- [ ] **K01.C2** 🔖 COMMIT `feat(common): add vendor error codes and kyc upload purposes` · hash: `…`
+
+## K02 — Nền module `vendor`
+
+- [ ] **K02.01** `AesGcmCipher` (`common/crypto`)
+- [ ] **K02.02** `AesGcmCipherTest`
+- [ ] **K02.03** `ObjectStorage`
+- [ ] **K02.04** `OtpFacade` (scope `auth`)
+- [ ] **K02.05** `SellerContext`
+- [ ] **K02.06** `KycGateInterceptor` + `VendorWebConfig`
+- [ ] **K02.07** `ShopFacade` (cửa công khai
+- [ ] **K02.08** `VendorProfileRepository`
+- [ ] **K02.09** `KycGateIT`
+- [ ] **K02.C1** 🔖 COMMIT `feat(common): add aes-gcm cipher and object read access for kyc files` · hash: `…`
+- [ ] **K02.C2** 🔖 COMMIT `feat(auth): let other modules issue and verify otp challenges` · hash: `…`
+- [ ] **K02.C3** 🔖 COMMIT `feat(vendor): add shop facade, seller context and kyc gate` · hash: `…`
+
+## K03 — Đăng ký mở gian hàng (UC-VND-01)
+
+- [ ] **K03.01** `ShopNamePolicy`
+- [ ] **K03.02** `POST /me/shop-registrations`
+- [ ] **K03.03** `POST /me/shop-registrations/{challenge_id}/confirm`
+- [ ] **K03.04** Factory `VendorProfile.register(…)` + unit test (trạng thái ban đầu đúng UC-VND-01 bước 4).
+- [ ] **K03.05** Vai trò sau khi mở shop (D11, scope `auth`)
+- [ ] **K03.06** Sau commit (`ShopRegisteredEvent`, `AFTER_COMMIT`)
+- [ ] **K03.07** `GET /seller/me` (`SellerShellService`)
+- [ ] **K03.08** `ShopRegistrationIT`
+- [ ] **K03.C1** 🔖 COMMIT `feat(vendor): register a shop with email otp and promote the account to vendor` · hash: `…`
+- [ ] **K03.C2** 🔖 COMMIT `feat(vendor): return seller shell context with kyc status` · hash: `…`
+- [ ] **K03.09** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 1: K01–K03).
+
+## K04 — Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02)
+
+- [ ] **K04.01** `KycDocumentType`
+- [ ] **K04.02** Entity
+- [ ] **K04.03** `KycDossierStorage.seal(vendorProfileId, type, tmpObjectKey)`
+- [ ] **K04.04** `KycDossierStorage.openTemporaryView(encKey, aad)`
+- [ ] **K04.05** `GET /seller/kyc`
+- [ ] **K04.06** `PUT /seller/kyc/draft`
+- [ ] **K04.07** `POST /seller/kyc/submissions`
+- [ ] **K04.08** `POST /seller/kyc/manual-review-requests` (D8)
+- [ ] **K04.09** Thông báo nội bộ
+- [ ] **K04.10** `KycSubmissionIT` (PG + Redis + Silo)
+- [ ] **K04.C1** 🔖 COMMIT `feat(vendor): encrypt kyc documents with aes-gcm before storing them` · hash: `…`
+- [ ] **K04.C2** 🔖 COMMIT `feat(vendor): save kyc draft and submit kyc dossier for verification` · hash: `…`
+
+## K05 — Thẩm định KYC tự động qua AI — phần backend (UC-VND-03)
+
+- [ ] **K05.01** `KycProperties` (`genie.kyc`)
+- [ ] **K05.02** `KycRiskPolicy`
+- [ ] **K05.03** `KycRiskPolicyTest`
+- [ ] **K05.04** `KycVerificationClient` (cổng) + `HttpKycVerificationClient`
+- [ ] **K05.05** `StubKycVerificationClient` (D7)
+- [ ] **K05.06** Listener gửi thẩm định
+- [ ] **K05.07** `KycDecisionService.apply(vendorProfileId, result)`
+- [ ] **K05.08** Chuyển trạng thái theo kết luận
+- [ ] **K05.09** `InternalKycController`
+- [ ] **K05.10** `KycAiTimeoutJob`
+- [ ] **K05.11** `KycNotifier`
+- [ ] **K05.12** `KycDecisionIT`
+- [ ] **K05.13** `KycCallbackIT`
+- [ ] **K05.14** Chạy thử chế độ giả lập
+- [ ] **K05.C1** 🔖 COMMIT `feat(vendor): score kyc risk signals with configurable points and thresholds` · hash: `…`
+- [ ] **K05.C2** 🔖 COMMIT `feat(vendor): send kyc dossiers to the ai worker and apply its result` · hash: `…`
+- [ ] **K05.C3** 🔖 COMMIT `feat(vendor): route stuck or failed ai checks to manual review` · hash: `…`
+
+## K06 — Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04)
+
+- [ ] **K06.01** `KycRejectReason`
+- [ ] **K06.02** Entity
+- [ ] **K06.03** `KycQueryService.search(status, page, size)`
+- [ ] **K06.04** `KycQueryService.detail(id, reviewer)`
+- [ ] **K06.05** `KycReviewService.approve(id, staffId, commissionRate?, isMall?)`
+- [ ] **K06.06** `reject(id, staffId, reasonCode, note)`
+- [ ] **K06.07** `requestSupplement(id, staffId, documents[], note)`
+- [ ] **K06.08** `requeue(id, staffId)`
+- [ ] **K06.09** `AdminKycController`
+- [ ] **K06.10** `KycSupplementExpiryJob`
+- [ ] **K06.11** Email
+- [ ] **K06.12** `KycReviewIT`
+- [ ] **K06.C1** 🔖 COMMIT `feat(vendor): review kyc dossiers manually with approve, reject and supplement` · hash: `…`
+- [ ] **K06.C2** 🔖 COMMIT `feat(vendor): expire kyc supplement requests after seven days` · hash: `…`
+- [ ] **K06.13** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 2: K04–K06).
+
+## K07 — Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05)
+
+- [ ] **K07.01** Kiểm điều kiện
+- [ ] **K07.02** `PickupShopRegistrar` (cổng)
+- [ ] **K07.03** Entity
+- [ ] **K07.04** `PUT /seller/pickup-address`
+- [ ] **K07.05** `PickupAddressIT`
+- [ ] **K07.C1** 🔖 COMMIT `feat(vendor): save pickup address and register the shop with ghn` · hash: `…`
+
+## K08 — Đăng ký tài khoản nhận giải ngân (UC-VND-07)
+
+- [ ] **K08.01** `BankCatalog` + `GET /public/banks`
+- [ ] **K08.02** `BankAccountLookup` (cổng) + `MockBankAccountLookup` (D13)
+- [ ] **K08.03** `POST /seller/payout-account/verification`
+- [ ] **K08.04** Entity
+- [ ] **K08.05** `PUT /seller/payout-account` 🔐
+- [ ] **K08.06** `DELETE /seller/payout-account` 🔐
+- [ ] **K08.07** Điều kiện chung
+- [ ] **K08.08** `PayoutAccountIT`
+- [ ] **K08.C1** 🔖 COMMIT `feat(vendor): verify and save the shop payout bank account with step-up otp` · hash: `…`
+
+## K09 — Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21)
+
+- [ ] **K09.01** `ShopShippingSettings` (cổng ở `vendor.settings.application`)
+- [ ] **K09.02** `VendorShippingSettingsAdapter` (scope `shipping`, ở `shipping/shipment/application`)
+- [ ] **K09.03** Entity
+- [ ] **K09.04** `GET /seller/settings`
+- [ ] **K09.05** `PATCH /seller/settings`
+- [ ] **K09.06** Người bán chưa `VERIFIED` vẫn vào được Cài đặt (UC-VND-21 tiền điều kiện)
+- [ ] **K09.07** `ShopSettingsIT`
+- [ ] **K09.C1** 🔖 COMMIT `feat(shipping): expose shop carrier settings to the vendor module` · hash: `…`
+- [ ] **K09.C2** 🔖 COMMIT `feat(vendor): view and update shop profile and operating settings` · hash: `…`
+- [ ] **K09.08** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 3: K07–K09).
+
+## K10 — Cổng cho module khác & API phụ
+
+- [ ] **K10.01** Cài cổng của plan khác bằng `ShopFacade`
+- [ ] **K10.02** Cổng của AUTH
+- [ ] **K10.03** Sự kiện công khai
+- [ ] **K10.04** `ShopFacade` bổ sung `searchVerified(q, limit)` cho ô chọn shop.
+- [ ] **K10.05** `GET /admin/shops?q&limit=20` (API 11.16
+- [ ] **K10.C1** 🔖 COMMIT `feat(vendor): provide shop lookups for other modules and admin pickers` · hash: `…`
+
+## K11 — Nối giao diện `web/`
+
+- [ ] **K11.01** `seller-onboarding/infrastructure/registration.api.ts`
+- [ ] **K11.02** `seller-onboarding/infrastructure/kyc.api.ts`
+- [ ] **K11.03** `seller-settings/infrastructure/shop.api.ts`
+- [ ] **K11.04** `seller-settings/infrastructure/settings.api.ts`
+- [ ] **K11.05** `admin-kyc/infrastructure/kyc.api.ts`
+- [ ] **K11.06** Kiểm DTO
+- [ ] **K11.07** i18n
+- [ ] **K11.08** Chạy thật hai phía
+- [ ] **K11.09** E2E
+- [ ] **K11.10** `cd web && npm run verify`.
+- [ ] **K11.C1** 🔖 COMMIT `feat(seller-ui): connect shop registration and kyc screens to the real api` · hash: `…`
+- [ ] **K11.C2** 🔖 COMMIT `feat(seller-ui): connect shop settings, pickup address and payout account` · hash: `…`
+- [ ] **K11.C3** 🔖 COMMIT `feat(admin-ui): connect kyc review screens to the real api` · hash: `…`
+
+## K12 — Hoàn thiện cụm
+
+- [ ] **K12.01** Bộ kiểm thử API
+- [ ] **K12.02** Bảo mật nhanh
+- [ ] **K12.03** OpenAPI
+- [ ] **K12.04** Tài liệu nguồn
+- [ ] **K12.05** Tiến độ
+- [ ] **K12.06** Hợp đồng Swagger `genie-api-spec`
+- [ ] **K12.C1** 🔖 COMMIT `test(vendor): add api test collections for shop registration and kyc` · hash: `…`
+- [ ] **K12.C2** 🔖 COMMIT `docs(vendor): record shop and kyc use cases as implemented` · hash: `…`
+- [ ] **K12.07** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc cuối); mẫu PR ghi migration `V15` (chỉ thêm cột / index / giá trị `CHECK`
+
+---
+
+## Chốt plan — tick tiến độ use case
+
+Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
+
+- [ ] `UC-VND-01` Đăng ký mở gian hàng (xong K03 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-02` Tải hồ sơ pháp lý & Giấy tờ định danh KYC (xong K04 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-03` Thẩm định KYC tự động qua AI — tick `◐` khi xong K05 (chế độ giả lập); chỉ `☑` khi plan AI Worker cũng xong (Y07) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-04` Kiểm duyệt thủ công hồ sơ KYC (xong K06 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-05` Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (xong K07 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-07` Đăng ký tài khoản nhận giải ngân (xong K08 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] `UC-VND-21` Cập nhật thông tin gian hàng & cài đặt vận hành (xong K09 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+
+## Ghi chú
+
+Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, việc tồn chuyển sang plan khác.
+
+| Task | Ghi chú |
+|---|---|
+| | |
+
+## Nhật ký
+
+| Ngày | Việc đã làm | Commit |
+|---|---|---|
+| 2026-11-16 | Lập plan + progress (112 task, 25 commit, 13 giai đoạn) — chưa bắt đầu làm | — |
