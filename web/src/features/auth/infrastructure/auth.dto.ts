@@ -29,8 +29,11 @@ export interface ResetTokenDto {
 }
 
 export interface OAuthResultDto {
-  result: 'LOGGED_IN' | 'LINKED' | 'CREATED';
-  tokens: AuthTokensDto;
+  result: 'LOGGED_IN' | 'LINKED' | 'CREATED' | 'SIGNUP_REQUIRED';
+  /** Không có khi SIGNUP_REQUIRED (chưa cấp phiên). */
+  tokens?: AuthTokensDto;
   /** Trang quay về đã gửi lúc bắt đầu (backend giữ trong state). */
   next?: string | null;
+  /** Chỉ có khi SIGNUP_REQUIRED (Zalo chưa có tài khoản). */
+  signup?: { token: string; provider: string; name: string | null; expires_in: number };
 }

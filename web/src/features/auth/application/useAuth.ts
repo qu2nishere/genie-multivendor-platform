@@ -5,6 +5,7 @@ import { safeNext, type OtpPurpose } from '../domain/auth.rules';
 import type { AuthSession, SocialProvider } from '../domain/auth.types';
 import {
   completeOAuth,
+  socialSignup,
   linkIdentity,
   login,
   oauthAuthorizeUrl,
@@ -31,7 +32,7 @@ export async function finishLogin(
   window.location.assign(safeNext(next));
 }
 
-/** Địa chỉ bắt đầu đăng nhập Google / Apple (backend 302 sang nhà cung cấp). */
+/** Địa chỉ bắt đầu đăng nhập Google / Zalo (backend 302 sang nhà cung cấp). */
 export const oauthStartUrl = oauthAuthorizeUrl;
 
 /** Hoàn tất đăng nhập mạng xã hội ở trang callback. */
@@ -50,7 +51,7 @@ export function useLogin() {
 
 export function useRequestOtp() {
   return useMutation({
-    mutationFn: (v: { email: string; purpose: Exclude<OtpPurpose, 'REGISTER'> }) =>
+    mutationFn: (v: { email: string; purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP'> }) =>
       requestOtp(v.email, v.purpose),
   });
 }
@@ -63,6 +64,14 @@ export function useVerifyOtp() {
   return useMutation({
     mutationFn: (v: { challengeId: string; otp: string; email: string }) =>
       verifyOtp(v.challengeId, v.otp, v.email),
+  });
+}
+
+/** Đăng ký bằng Zalo: nhập email cho phiên đăng ký tạm → OTP. */
+export function useSocialSignup() {
+  return useMutation({
+    mutationFn: (v: { provider: SocialProvider; token: string; email: string }) =>
+      socialSignup(v.provider, v.token, v.email),
   });
 }
 

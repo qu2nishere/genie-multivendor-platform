@@ -99,10 +99,10 @@
     "GNE-AUTH-4011": "Incorrect account or password.",
     "GNE-AUTH-4012": "Incorrect account or password.",
     "GNE-AUTH-4031": "This account is suspended.",
-    "GNE-AUTH-4032": "The Google/Apple account email isn't verified.",
+    "GNE-AUTH-4032": "The Google account email isn't verified.",
     "GNE-AUTH-4091": "This email is already registered. Sign in or reset your password.",
     "GNE-AUTH-4098": "The Google account you chose uses a different email from your Genie account. Please choose the Google account with the same email.",
-    "GNE-AUTH-4092": "This Google account is linked to another user.",
+    "GNE-AUTH-4092": "This social account is linked to another user, or your account already links another social account.",
     "GNE-AUTH-4093": "You can't remove the account's only sign-in method.",
     "GNE-AUTH-4094": "The new email belongs to another account.",
     "GNE-AUTH-4101": "The code has expired. Please request a new one.",
@@ -567,14 +567,26 @@
     "social": {
       "title": "Continue with {provider}",
       "continue": "Continue",
-      "text": "Simulated {provider} sign-in window. Genie will receive the name, email and profile picture of {email}. If the email has no account yet, a new one is created."
+      "text": "Simulated {provider} sign-in window. Genie will receive the name, email and profile picture of {email}. If the email has no account yet, a new one is created.",
+      "text_zalo": "Simulated Zalo sign-in window. Zalo doesn't share an email, so the first time you'll enter your email and verify it with a code."
     },
     "oauth": {
       "processing": "Finishing sign-in…",
       "error_title": "Couldn't sign you in",
       "denied": "Sign-in was cancelled or refused by the provider. Please try again.",
-      "link_error_title": "Couldn't link Google",
+      "link_error_title": "Couldn't link the account",
       "back_logins": "Back to sign-in methods"
+    },
+    "social_signup": {
+      "title": "Finish signing up",
+      "title_named": "Hi {name}!",
+      "lead": "{provider} doesn't share your email. Enter your email to get a verification code and create your Genie account.",
+      "submit": "Send verification code",
+      "hint": "Your email is used for order updates and password recovery. Next time just tap {provider} to sign in.",
+      "taken_title": "This email already has an account",
+      "taken_text": "Sign in with this email, then link {provider} under Account › Sign-in methods.",
+      "expired_title": "Sign-up session expired",
+      "expired_text": "Please sign in with {provider} again."
     }
   },
   "search": {
@@ -1421,19 +1433,21 @@
       "no_pw": "No password",
       "linked": "Linked",
       "not_linked": "Not linked",
-      "only_way": "This is your only way to sign in. Set a password first if you want to unlink.",
-      "link": "Link Google",
+      "only_way": "This is your only way to sign in. Set a password first if you want to unlink {provider}.",
+      "link": "Link",
       "unlink": "Unlink",
       "keep": "Keep linked",
       "count": "{count} sign-in method(s) enabled",
-      "since": "Google linked {when}",
-      "link_dialog_title": "Link your Google account",
+      "since": "{provider} linked {when}",
+      "link_dialog_title": "Link your {provider} account",
       "link_dialog_text": "Please choose the Google account that uses the same email as your Genie account:",
-      "link_continue": "Continue with Google",
-      "unlink_title": "Unlink Google?",
-      "unlink_text": "After unlinking, \"Sign in with Google\" will no longer open this account until you link it again. You can still sign in with email and password.",
-      "linked_toast": "Google linked. Next time \"Sign in with Google\" opens this account",
-      "unlinked_toast": "Google unlinked. Sign in with email and password"
+      "link_continue": "Continue with {provider}",
+      "unlink_title": "Unlink {provider}?",
+      "unlink_text": "After unlinking, signing in with {provider} will no longer open this account until you link it again. You can still sign in with email and password.",
+      "linked_toast": "Linked. Next time, signing in with this social account opens this account",
+      "unlinked_toast": "Unlinked. Sign in with email and password",
+      "link_zalo_text": "Zalo doesn't share an email to match, so enter your Genie password to confirm this is your account.",
+      "one_social": "Each account can link one social account. Unlink {provider} first to switch."
     },
     "devices": {
       "sub": "Sessions currently signed in to your account",

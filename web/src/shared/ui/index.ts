@@ -52,6 +52,7 @@ export {
 export { ToastViewport, toast, $toasts, type Toast, type ToastType } from './Toast';
 export { EmptyState, Skeleton, type EmptyStateProps, type SkeletonProps } from './EmptyState';
 export { Spinner, type SpinnerProps } from './Spinner';
+export { GoogleLogo, ZaloMark, SocialLogo, type SocialLogoProvider } from './SocialLogo';
 export { OtpInput, type OtpInputProps } from './OtpInput';
 export { Countdown, type CountdownProps } from './Countdown';
 export { Pagination, pageList, type PaginationProps } from './Pagination';

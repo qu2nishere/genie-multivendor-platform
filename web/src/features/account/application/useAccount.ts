@@ -1,20 +1,25 @@
 // Hồ sơ & bảo mật (TanStack Query) — plan G10.45–G10.53.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ProfilePatch, StepUpProof, StepUpPurpose } from '../domain/account.types';
+import type {
+  IdentityProvider,
+  ProfilePatch,
+  StepUpProof,
+  StepUpPurpose,
+} from '../domain/account.types';
 import {
   cancelDeletion,
   changePassword,
   confirmEmailChange,
   getLoginMethods,
   getProfile,
-  linkGoogle,
+  linkIdentity,
   listDevices,
   logoutDevices,
   requestDeletion,
   requestEmailChange,
   requestStepUp,
   resendStepUp,
-  unlinkGoogle,
+  unlinkIdentity,
   updateProfile,
   verifyPassword,
 } from '../infrastructure/account.api';
@@ -42,9 +47,18 @@ export const useUpdateProfile = () =>
 export const useRequestEmailChange = () => useMutation({ mutationFn: requestEmailChange });
 export const useConfirmEmailChange = () =>
   useInvalidating((p: StepUpProof) => confirmEmailChange(p), [PROFILE_KEY, METHODS_KEY]);
-export const useLinkGoogle = () => useInvalidating(() => linkGoogle(), [METHODS_KEY]);
-export const useUnlinkGoogle = () =>
-  useInvalidating((currentPassword: string) => unlinkGoogle(currentPassword), [METHODS_KEY]);
+export const useLinkIdentity = () =>
+  useInvalidating(
+    (v: { provider: IdentityProvider; currentPassword?: string }) =>
+      linkIdentity(v.provider, v.currentPassword),
+    [METHODS_KEY],
+  );
+export const useUnlinkIdentity = () =>
+  useInvalidating(
+    (v: { provider: IdentityProvider; currentPassword: string }) =>
+      unlinkIdentity(v.provider, v.currentPassword),
+    [METHODS_KEY],
+  );
 export const useVerifyPassword = () => useMutation({ mutationFn: verifyPassword });
 export const useRequestStepUp = () =>
   useMutation({ mutationFn: (purpose: StepUpPurpose) => requestStepUp(purpose) });

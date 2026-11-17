@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Tài khoản › Liên kết đăng nhập (API_SPEC 3.3, UC-AUTH-03, plan A14.04).
+ * Tài khoản › Liên kết đăng nhập (API_SPEC 3.3, UC-AUTH-03, plan A14.04, A14.10).
+ * Liên kết Zalo giống Google nhưng bước {@code authorize} phải gửi {@code {current_password}}.
  * Liên kết Google: {@code POST /me/identities/google/authorize} lấy URL Google (state gắn với người đang đăng nhập) →
  * trình duyệt sang Google → quay về {@code /auth/oauth-callback} → web gọi {@code POST /me/identities/google}
  * với {@code code}, {@code state}.
@@ -46,6 +47,10 @@ public class MeIdentityController {
     public record AuthorizeResponse(String authorizeUrl) {
     }
 
+    /** Zalo bắt buộc {@code current_password} (không có email để đối chiếu); Google bỏ qua. */
+    public record AuthorizeRequest(@Size(max = 128) String currentPassword) {
+    }
+
     public record LinkRequest(@NotBlank @Size(max = 2048) String code, @NotBlank @Size(max = 200) String state) {
     }
 
@@ -58,11 +63,14 @@ public class MeIdentityController {
         return responses.ok(methods.of(me.id()));
     }
 
-    @Operation(summary = "UC-AUTH-03 — Bắt đầu liên kết Google: trả URL trang đăng nhập Google")
+    @Operation(summary = "UC-AUTH-03 — Bắt đầu liên kết Google / Zalo: trả URL trang đăng nhập (Zalo: nhập lại mật khẩu)")
     @PostMapping("/identities/{provider}/authorize")
     public ResponseEntity<ApiResponse<AuthorizeResponse>> authorize(@CurrentUser AuthUser me,
-                                                                   @PathVariable String provider) {
-        String url = oauth.startLink(OAuthProvider.fromPath(provider), me.id());
+                                                                   @PathVariable String provider,
+                                                                   @Valid @RequestBody(required = false)
+                                                                   AuthorizeRequest body, ClientInfo client) {
+        String url = oauth.startLink(OAuthProvider.fromPath(provider), me.id(),
+                body == null ? null : body.currentPassword(), client);
         return ResponseEntity.ok().header(HttpHeaders.CACHE_CONTROL, "no-store")
                 .body(responses.ok(new AuthorizeResponse(url)).getBody());
     }

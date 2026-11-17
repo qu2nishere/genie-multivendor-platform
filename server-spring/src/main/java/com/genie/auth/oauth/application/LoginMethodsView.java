@@ -12,7 +12,10 @@ public record LoginMethodsView(String email, Password password, List<Identity> i
     public record Password(boolean enabled) {
     }
 
-    /** {@code provider}: {@code GOOGLE}; {@code email}: email bên Google lúc liên kết. */
-    public record Identity(String provider, String email, OffsetDateTime linkedAt) {
+    /**
+     * {@code provider}: {@code GOOGLE} | {@code ZALO}; {@code email}: email bên Google lúc liên kết (Zalo: null);
+     * {@code displayName}: tên hiển thị bên nhà cung cấp lúc liên kết (có thể null).
+     */
+    public record Identity(String provider, String email, String displayName, OffsetDateTime linkedAt) {
     }
 }

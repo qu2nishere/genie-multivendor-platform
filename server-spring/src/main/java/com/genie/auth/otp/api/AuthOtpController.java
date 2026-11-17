@@ -2,6 +2,7 @@ package com.genie.auth.otp.api;
 
 import com.genie.auth.login.application.AuthResult;
 import com.genie.auth.login.application.LoginOtpService;
+import com.genie.auth.oauth.application.OAuthSignupService;
 import com.genie.auth.otp.application.IssuedOtp;
 import com.genie.auth.otp.application.OtpChallengeService;
 import com.genie.auth.otp.application.OtpPurpose;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Mã OTP của khách vãng lai (API_SPEC 2.2–2.4): gửi, gửi lại, xác minh — một màn OTP dùng chung cho đăng ký, đăng nhập
  * bằng mã, quên mật khẩu và mở khóa. Kết quả xác minh tùy {@code purpose} của challenge:
- * REGISTER → {@code 201 $AuthTokens}; LOGIN, ACCOUNT_UNLOCK → {@code 200 $AuthTokens}; PASSWORD_RESET → {@code 200 {reset_token, expires_in}}.
+ * REGISTER, OAUTH_SIGNUP (đăng ký bằng Zalo) → {@code 201 $AuthTokens}; LOGIN, ACCOUNT_UNLOCK → {@code 200 $AuthTokens}; PASSWORD_RESET → {@code 200 {reset_token, expires_in}}.
  */
 @RestController
 @RequestMapping("/api/v1/auth/otp-challenges")
@@ -42,11 +43,14 @@ public class AuthOtpController {
     private final LoginOtpService loginOtps;
     private final PasswordResetService passwordResets;
     private final RegistrationService registrations;
+    private final OAuthSignupService oauthSignups;
     private final RefreshCookies cookies;
     private final ApiResponseFactory responses;
 
     public AuthOtpController(OtpChallengeService otps, LoginOtpService loginOtps, PasswordResetService passwordResets,
-                             RegistrationService registrations, RefreshCookies cookies, ApiResponseFactory responses) {
+                             RegistrationService registrations, OAuthSignupService oauthSignups,
+                             RefreshCookies cookies, ApiResponseFactory responses) {
+        this.oauthSignups = oauthSignups;
         this.otps = otps;
         this.loginOtps = loginOtps;
         this.passwordResets = passwordResets;
@@ -77,7 +81,7 @@ public class AuthOtpController {
     @PostMapping("/{challengeId}/resend")
     public ResponseEntity<ApiResponse<OtpChallengeResponse>> resend(@PathVariable String challengeId) {
         otps.peekPurpose(challengeId)
-                .filter(p -> p.isGuestRequestable() || p == OtpPurpose.REGISTER)
+                .filter(p -> p.isGuestRequestable() || p == OtpPurpose.REGISTER || p == OtpPurpose.OAUTH_SIGNUP)
                 .orElseThrow(() -> new BusinessException(ErrorCode.OTP_EXPIRED));
         return responses.accepted(OtpChallengeResponse.from(otps.resend(challengeId)));
     }
@@ -90,6 +94,7 @@ public class AuthOtpController {
                 .orElseThrow(() -> new BusinessException(ErrorCode.OTP_EXPIRED));
         return switch (purpose) {
             case REGISTER -> tokens(HttpStatus.CREATED, registrations.verify(challengeId, body.otp(), client));
+            case OAUTH_SIGNUP -> tokens(HttpStatus.CREATED, oauthSignups.verify(challengeId, body.otp(), client).auth());
             case LOGIN -> tokens(HttpStatus.OK, loginOtps.verifyLogin(challengeId, body.otp(), client));
             case ACCOUNT_UNLOCK -> tokens(HttpStatus.OK, loginOtps.verifyUnlock(challengeId, body.otp(), client));
             case PASSWORD_RESET -> responses.ok(passwordResets.verify(challengeId, body.otp()));

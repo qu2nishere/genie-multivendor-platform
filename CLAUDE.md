@@ -39,7 +39,7 @@ Tài liệu tham chiếu trong code ghi kiểu `TECH_STACK mục 8`, `TS 5.2`, `
 (mẫu: `plan/2026-11-11/web/plan_chuyen_giao_dien.md` + `progress_chuyen_giao_dien.md` — plan có mã task `Gxx.yy`,
 progress là bảng tick + nhật ký có mã commit).
 
-**Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file).
+**Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file). Tiến độ theo use case toàn hệ thống (87 UC, 5 lớp GD / BE / Test / Nối / Chạy): `docs/document/CHECKLIST_TIEN_DO_UC.md`.
 
 ## 3. Lệnh hay dùng
 
@@ -88,6 +88,12 @@ Theme: `?theme=genie|classic|dongho|dongson|hoian|polymer|buudien|saigon|sleeve`
 2. Khi được yêu cầu: chia commit theo từng thay đổi logic, `git add` đúng từng file (không `git add .`), mỗi lệnh có chú thích `#` tiếng Việt giải thích commit dùng để làm gì; nội dung commit (tiêu đề + body) bằng tiếng Anh.
 3. Tác giả commit là người dùng (`Khoa18062005`). **Không** thêm dòng `Co-Authored-By: Claude`, `Claude-Session` hay bất kỳ dấu vết AI nào vào commit / PR.
 4. **Đưa lệnh commit xong mới hỏi lại** người dùng có cần tạo nội dung PR không — chỉ viết nội dung PR khi người dùng đồng ý. PR luôn vào `develop` (không phải `main`), theo mẫu `.github/pull_request_template.md`, tiêu đề PR đúng chuẩn commit (CI kiểm bằng commitlint).
+
+**Cập nhật tiến độ sau mỗi việc (bắt buộc):**
+1. Xong một task trong plan đang chạy (vd `plan/2026-11-14/auth.md`) → tick task, cập nhật bảng **Tiến độ** đầu file và ghi một dòng **Nhật ký** (ngày, việc đã làm, mã commit / PR).
+2. Nếu việc đó làm xong (hoặc xong một phần) một **lớp** của use case liên quan — GD / BE / Test / Nối / Chạy — thì cập nhật luôn `docs/document/CHECKLIST_TIEN_DO_UC.md` theo đúng *Quy trình cập nhật* ở mục 0 của file đó: đổi ô `☐` → `☑` (một phần `◐`, ghi phần thiếu ở dòng chữ nhỏ), cột **Trạng thái**, số liệu **mục 1. Tổng quan** + bảng *Tiến độ theo phân hệ*, mục 3 (việc còn lại), một dòng **mục 5. Nhật ký**.
+3. Đồng bộ cùng trạng thái sang cột *Hiện trạng mã nguồn* trong `docs/document/diagrams/UseCaseDiagram/Quản Lý UseCase.xlsx` và câu *Hiện trạng* của UC trong `Usecase.md` để các nơi khớp nhau.
+4. Chỉ tick **Chạy** khi người dùng đã tự thao tác trên giao diện với hệ thống thật và báo đúng; UC chỉ **✅ Đã triển khai** khi đủ 5 lớp.
 
 ## 5. Quy ước FRONTEND `web/` (Astro 5 SSR + React 19 islands + Tailwind 3, TS strict)
 
