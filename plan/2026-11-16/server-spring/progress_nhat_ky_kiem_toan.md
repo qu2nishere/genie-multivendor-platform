@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-audit-log` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 45) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (14 / 45) |
 
 **Cách dùng**
 
@@ -23,50 +23,50 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | Đường dẫn: UC-ADM-07 bước 1 ghi `GET /api/v1/admin/system-logs?from=&to=&type=&q=`; API 11.10 ghi `GET /admin/audit-logs?from&to&category&q&cursor&limit` | ☐ | |
-| D2 | Ánh xạ `AuditAction` → `AuditCategory` (API 16: `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG`) chưa có ở đâu | ☐ | |
-| D3 | `target` ("KYC-1037 · TravelGear") lấy từ đâu — `system_logs` chỉ có `reference_id` + `details` | ☐ | |
-| D4 | `actor_role`: ví dụ API là `MODERATOR` (chức danh), còn `system_logs.user_role` chụp `STAFF` | ☐ | |
-| D5 | `result`: API có `SUCCESS, FAILED, DENIED`; cột `status` chỉ có `SUCCESS` / `FAILED` | ☐ | |
-| D6 | Xuất CSV: giới hạn bao nhiêu dòng | ☐ | |
-| D7 | Tìm theo `q` (user / IP / mã tham chiếu) | ☐ | |
+| D1 | Đường dẫn: UC-ADM-07 bước 1 ghi `GET /api/v1/admin/system-logs?from=&to=&type=&q=`; API 11.10 ghi `GET /admin/audit-logs?from&to&category&q&cursor&limit` | ☑ | Theo API: `GET /admin/audit-logs`, `/admin/audit-logs/export`; sửa Usecase.md ở L06.03 · 2026-11-17 |
+| D2 | Ánh xạ `AuditAction` → `AuditCategory` (API 16: `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG`) chưa có ở đâu | ☑ | Như đề xuất — `AuditCategory` + `AuditAction.category()` (switch không default) · 2026-11-17 |
+| D3 | `target` ("KYC-1037 · TravelGear") lấy từ đâu — `system_logs` chỉ có `reference_id` + `details` | ☑ | Như đề xuất — `details.target_label` → `reference_id` → `null` · 2026-11-17 |
+| D4 | `actor_role`: ví dụ API là `MODERATOR` (chức danh), còn `system_logs.user_role` chụp `STAFF` | ☑ | Như đề xuất — `STAFF` thay bằng chức danh hiện tại (tra `admin_profiles` một lần / trang) · 2026-11-17 |
+| D5 | `result`: API có `SUCCESS, FAILED, DENIED`; cột `status` chỉ có `SUCCESS` / `FAILED` | ☑ | Như đề xuất — `DENIED` khi `ACCESS_DENIED`; `summary.denied_count` trong bộ lọc · 2026-11-17 |
+| D6 | Xuất CSV: giới hạn bao nhiêu dòng | ☑ | Như đề xuất — 50.000 dòng, BOM UTF-8, `X-Truncated: true` khi cắt · 2026-11-17 |
+| D7 | Tìm theo `q` (user / IP / mã tham chiếu) | ☑ | Như đề xuất — `ILIKE` email / IP / mã tham chiếu; mặc định 7 ngày, tối đa 90 ngày · 2026-11-17 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| L00 | Chuẩn bị | 5 | 0 | 0 / 5 | — | `feature/admin-audit-log` |
-| L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 0 / 5 | — | `feature/admin-audit-log` |
-| L02 | Truy vấn đọc `system_logs` | 5 | 1 | 0 / 6 | — | `feature/admin-audit-log` |
+| L00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-audit-log` |
+| L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
+| L02 | Truy vấn đọc `system_logs` | 5 | 1 | 5 / 6 | — | `feature/admin-audit-log` |
 | L03 | Dịch vụ & API tra cứu | 8 | 1 | 0 / 9 | — | `feature/admin-audit-log` |
 | L04 | Xuất CSV | 4 | 1 | 0 / 5 | — | `feature/admin-audit-log` |
 | L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 0 / 7 | — | `feature/admin-audit-log` |
 | L06 | Hoàn thiện use case | 7 | 1 | 0 / 8 | — | `feature/admin-audit-log` |
-| **Tổng** | | **39** | **6** | **0 / 45** | | |
+| **Tổng** | | **39** | **6** | **14 / 45** | | |
 
 ## L00 — Chuẩn bị
 
-- [ ] **L00.01** Kiểm danh tính git
-- [ ] **L00.02** Chốt quyết định D1–D7
-- [ ] **L00.03** Tạo nhánh
+- [x] **L00.01** Kiểm danh tính git
+- [x] **L00.02** Chốt quyết định D1–D7
+- [x] **L00.03** Tạo nhánh
 - [ ] **L00.04** Dựng dữ liệu thử
-- [ ] **L00.05** Đọc lại màn mock
+- [x] **L00.05** Đọc lại màn mock
 
 ## L01 — Phân loại hành động (`common/audit`)
 
-- [ ] **L01.01** `AuditCategory`
-- [ ] **L01.02** `AuditAction.category()`
-- [ ] **L01.03** `AuditCategory.actions()`
-- [ ] **L01.04** `AuditActionCategoryTest`
-- [ ] **L01.C1** 🔖 COMMIT `feat(common): classify audit actions into categories` · hash: `…`
+- [x] **L01.01** `AuditCategory`
+- [x] **L01.02** `AuditAction.category()`
+- [x] **L01.03** `AuditCategory.actions()`
+- [x] **L01.04** `AuditActionCategoryTest`
+- [x] **L01.C1** 🔖 COMMIT `feat(common): classify audit actions into categories` · hash: `7ca8ef4`
 
 ## L02 — Truy vấn đọc `system_logs`
 
-- [ ] **L02.01** `SystemLogRepository`
-- [ ] **L02.02** `countDenied(from, to, actions, q)`
-- [ ] **L02.03** `streamForExport(from, to, actions, q, max)`
-- [ ] **L02.04** Kiểm `EXPLAIN` trên CSDL local có vài nghìn dòng (chèn tạm bằng `generate_series`)
-- [ ] **L02.05** Luật kiến trúc
+- [x] **L02.01** `SystemLogRepository`
+- [x] **L02.02** `countDenied(from, to, actions, q)`
+- [x] **L02.03** `streamForExport(from, to, actions, q, max)`
+- [x] **L02.04** Kiểm `EXPLAIN` trên CSDL local có vài nghìn dòng (chèn tạm bằng `generate_series`)
+- [x] **L02.05** Luật kiến trúc
 - [ ] **L02.C1** 🔖 COMMIT `feat(common): add read-only keyset queries for system logs` · hash: `…`
 
 ## L03 — Dịch vụ & API tra cứu
@@ -128,9 +128,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| L00.05 | Web gửi `from` / `to` dạng ngày `YYYY-MM-DD` (to tính cả ngày) và đọc `pagination`, `summary` ở cấp gốc của phản hồi; `AuditLogDto.id` khai `number` nhưng `system_logs.id` là UUID chuỗi → sửa DTO web ở L05 |
+| L02.01 | Làm bằng `JpaSpecificationExecutor` + `SystemLogSpecs` (`filter`, `after`, `denied`) thay vì `@Query`: tham số tùy chọn (nhóm, `q`) trong JPQL dễ lỗi suy kiểu `NULL` trên PostgreSQL. `countDenied` = `count(filter.and(denied))`; xuất CSV dùng `findBy(spec, q -> q.sortBy(…).limit(max).stream())` trong transaction chỉ đọc |
+| L02.04 | Chèn tạm 5.000 dòng rồi rollback: trang 51 dòng dùng `Index Scan Backward` trên `idx_system_logs_created_action`, chạy 0,08 ms; đếm `ACCESS_DENIED` chạy Seq Scan 0,5 ms (bảng nhỏ). Không thêm index |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
