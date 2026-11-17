@@ -12,6 +12,9 @@ import com.genie.common.audit.SystemLogRepository;
 import com.genie.common.audit.SystemLogSpecs;
 import com.genie.common.error.InvalidRequestException;
 import com.genie.common.error.InvalidRequestException.Violation;
+import jakarta.persistence.EntityManager;
+import java.io.IOException;
+import java.io.Writer;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -26,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,19 +47,23 @@ public class AuditLogQueryService {
     static final int MAX_LIMIT = 100;
     static final int MAX_Q = 100;
     static final String SYSTEM_ACTOR = "system";
+    /** Tối đa số dòng một lần xuất CSV (D6). */
+    public static final int EXPORT_MAX = 50_000;
     private static final Pattern DATE_ONLY = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
 
     private final SystemLogRepository logs;
     private final AdminProfileRepository adminProfiles;
     private final ObjectMapper objectMapper;
     private final Clock clock;
+    private final EntityManager entityManager;
 
     public AuditLogQueryService(SystemLogRepository logs, AdminProfileRepository adminProfiles, ObjectMapper objectMapper,
-                                Clock clock) {
+                                Clock clock, EntityManager entityManager) {
         this.logs = logs;
         this.adminProfiles = adminProfiles;
         this.objectMapper = objectMapper;
         this.clock = clock;
+        this.entityManager = entityManager;
     }
 
     /** Kết quả trang: dòng + phân trang cursor + {@code denied_count} trong bộ lọc hiện tại. */
@@ -81,6 +89,31 @@ public class AuditLogQueryService {
         List<AuditLogView> items = pageRows.stream().map(r -> toView(r, titles)).toList();
         long denied = logs.count(base.and(SystemLogSpecs.denied()));
         return new SearchResult(new CursorPage<>(items, new CursorPage.Pagination(f.limit(), hasMore, next)), denied);
+    }
+
+    /** Số dòng khớp bộ lọc (để biết bản xuất có bị cắt ở {@link #EXPORT_MAX} dòng không — D6). */
+    @Transactional(readOnly = true)
+    public long count(AuditLogFilter f) {
+        return logs.count(f.base());
+    }
+
+    /**
+     * Ghi CSV tối đa {@code max} dòng theo luồng (không nạp hết vào bộ nhớ): đọc bằng {@code Stream}, ghi xong dòng nào thì
+     * tách dòng đó khỏi persistence context (UC-ADM-07 — Xuất nhật ký; D6).
+     */
+    @Transactional(readOnly = true)
+    public void exportCsv(AuditLogFilter f, int max, Writer writer) throws IOException {
+        Map<Long, String> titles = allStaffTitles();
+        AuditLogCsvWriter csv = new AuditLogCsvWriter(writer);
+        csv.writeHeader();
+        try (Stream<SystemLog> rows = logs.findBy(f.base(),
+                q -> q.sortBy(SystemLogSpecs.NEWEST_FIRST).limit(max).stream())) {
+            for (SystemLog r : (Iterable<SystemLog>) rows::iterator) {
+                csv.writeRow(toView(r, titles));
+                entityManager.detach(r);
+            }
+        }
+        writer.flush();
     }
 
     // ---------- kiểm tham số ----------

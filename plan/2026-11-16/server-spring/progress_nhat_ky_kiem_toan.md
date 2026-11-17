@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-audit-log` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (23 / 45) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (28 / 45) |
 
 **Cách dùng**
 
@@ -38,11 +38,11 @@
 | L00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-audit-log` |
 | L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
 | L02 | Truy vấn đọc `system_logs` | 5 | 1 | 6 / 6 | — | `feature/admin-audit-log` |
-| L03 | Dịch vụ & API tra cứu | 8 | 1 | 8 / 9 | — | `feature/admin-audit-log` |
-| L04 | Xuất CSV | 4 | 1 | 0 / 5 | — | `feature/admin-audit-log` |
+| L03 | Dịch vụ & API tra cứu | 8 | 1 | 9 / 9 | — | `feature/admin-audit-log` |
+| L04 | Xuất CSV | 4 | 1 | 4 / 5 | — | `feature/admin-audit-log` |
 | L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 0 / 7 | — | `feature/admin-audit-log` |
 | L06 | Hoàn thiện use case | 7 | 1 | 0 / 8 | — | `feature/admin-audit-log` |
-| **Tổng** | | **39** | **6** | **23 / 45** | | |
+| **Tổng** | | **39** | **6** | **28 / 45** | | |
 
 ## L00 — Chuẩn bị
 
@@ -79,14 +79,14 @@
 - [x] **L03.06** `AdminAuditLogController`
 - [x] **L03.07** `AuditLogQueryIT`
 - [x] **L03.08** `AuditLogPermissionIT`
-- [ ] **L03.C1** 🔖 COMMIT `feat(admin): search system audit logs with filters and cursor paging` · hash: `…`
+- [x] **L03.C1** 🔖 COMMIT `feat(admin): search system audit logs with filters and cursor paging` · hash: `43a9504`
 
 ## L04 — Xuất CSV
 
-- [ ] **L04.01** `AuditLogCsvWriter`
-- [ ] **L04.02** `GET /api/v1/admin/audit-logs/export`
-- [ ] **L04.03** Giới hạn tần suất xuất
-- [ ] **L04.04** `AuditLogExportIT`
+- [x] **L04.01** `AuditLogCsvWriter`
+- [x] **L04.02** `GET /api/v1/admin/audit-logs/export`
+- [x] **L04.03** Giới hạn tần suất xuất
+- [x] **L04.04** `AuditLogExportIT`
 - [ ] **L04.C1** 🔖 COMMIT `feat(admin): export filtered audit logs as csv` · hash: `…`
 
 ## L05 — Nối giao diện `web/` (scope `admin-ui`)
@@ -135,6 +135,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | L02.04 | Chèn tạm 5.000 dòng rồi rollback: trang 51 dòng dùng `Index Scan Backward` trên `idx_system_logs_created_action`, chạy 0,08 ms; đếm `ACCESS_DENIED` chạy Seq Scan 0,5 ms (bảng nhỏ). Không thêm index |
 | L03.01 | `AuditLogQuery` đặt ở `application` (dùng chung cho tra cứu và xuất CSV). `from` / `to` nhận cả ISO-8601 lẫn ngày `YYYY-MM-DD` (giờ VN, `to` tính hết ngày — khớp web). Thêm dùng chung: `common/error/InvalidRequestException` (422 có `errors[]` theo trường) và `common/api/ApiListResponse` + `ApiResponseFactory.list()` (`pagination`, `summary` ở cấp gốc — API 0.3) |
 | L03.07 | Lần chạy đầu lỗi môi trường: Byte Buddy không tự gắn agent vào JVM (Mockito inline) — chạy lại thì 9/9 xanh, không phải lỗi mã |
+| L04.02 | Ghi thẳng ra `HttpServletResponse` (đồng bộ, vẫn theo luồng: `Stream` + `detach` từng dòng) thay vì `StreamingResponseBody` — tránh xử lý bất đồng bộ làm mất transaction / security context, MockMvc test được. Giới hạn đọc từ `genie.audit.export-max` (mặc định 50.000); test hạ xuống 3 để thử `X-Truncated`. Mở `Access-Control-Expose-Headers: Content-Disposition, X-Truncated` cho web |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

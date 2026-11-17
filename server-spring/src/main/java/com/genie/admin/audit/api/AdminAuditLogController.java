@@ -1,14 +1,25 @@
 package com.genie.admin.audit.api;
 
+import com.genie.admin.audit.application.AuditLogFilter;
 import com.genie.admin.audit.application.AuditLogQuery;
 import com.genie.admin.audit.application.AuditLogQueryService;
 import com.genie.admin.audit.application.AuditLogView;
 import com.genie.common.api.ApiListResponse;
 import com.genie.common.api.ApiResponseFactory;
+import com.genie.common.security.AuthUser;
+import com.genie.common.security.CurrentUser;
+import com.genie.common.security.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +36,20 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasAuthority('VIEW_AUDIT_LOG')")
 public class AdminAuditLogController {
 
+    static final String FILE_NAME = "nhat-ky-he-thong.csv";
+    static final int EXPORT_PER_MINUTE = 5;
+
     private final AuditLogQueryService service;
     private final ApiResponseFactory responses;
+    private final RateLimiter rateLimiter;
+    private final int exportMax;
 
-    public AdminAuditLogController(AuditLogQueryService service, ApiResponseFactory responses) {
+    public AdminAuditLogController(AuditLogQueryService service, ApiResponseFactory responses, RateLimiter rateLimiter,
+                                   @Value("${genie.audit.export-max:" + AuditLogQueryService.EXPORT_MAX + "}") int exportMax) {
         this.service = service;
         this.responses = responses;
+        this.rateLimiter = rateLimiter;
+        this.exportMax = exportMax;
     }
 
     @Operation(summary = "UC-ADM-07 — Tra cứu nhật ký kiểm toán",
@@ -49,5 +68,28 @@ public class AdminAuditLogController {
         ResponseEntity<ApiListResponse<AuditLogView>> body =
                 responses.list(result.page(), Map.of("denied_count", result.deniedCount()));
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body.getBody());
+    }
+
+    @Operation(summary = "UC-ADM-07 — Xuất nhật ký kiểm toán ra CSV",
+            description = "Cùng bộ lọc với tra cứu (không cursor / limit). text/csv UTF-8 có BOM, tối đa 50.000 dòng — bị cắt thì "
+                    + "có header X-Truncated: true. Giới hạn 5 lần / phút / người (429 GNE-RAT-4290).")
+    @GetMapping("/export")
+    public void export(@RequestParam(required = false) String from, @RequestParam(required = false) String to,
+                       @RequestParam(required = false) String category, @RequestParam(required = false) String q,
+                       @CurrentUser AuthUser me, HttpServletResponse response) throws IOException {
+        rateLimiter.check("rl:auditexport:" + me.id(), EXPORT_PER_MINUTE, Duration.ofMinutes(1));
+        AuditLogFilter filter = service.normalize(AuditLogQuery.forExport(from, to, category, q), false);
+        boolean truncated = service.count(filter) > exportMax;
+        response.setStatus(200);
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                .filename(FILE_NAME).build().toString());
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition, X-Truncated");
+        if (truncated) {
+            response.setHeader("X-Truncated", "true");
+        }
+        service.exportCsv(filter, exportMax, response.getWriter());
     }
 }
