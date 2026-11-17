@@ -1,11 +1,23 @@
 # BÁO CÁO PHÂN NHÓM USE CASE THEO MỨC ĐỘ ĐỘC LẬP — GENIE (BẢN TLCN)
 
-> **Ngày lập:** 2026-11-16 · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
+> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-17) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
 > **Mục đích:** chỉ ra use case nào làm riêng được (một plan riêng, chạy song song) mà không chờ hay làm ảnh hưởng use case khác, use case nào phải làm theo cụm hoặc theo chuỗi — làm đầu vào để lập plan trong `plan/<ngày>/<thể loại>/`.
 > **Nguồn đã quét:** quan hệ «include» / «extend», *Tiền điều kiện* và *Thực thể CSDL* của từng use case trong Usecase.md; bảng ánh xạ use case ↔ API ở [API_SPEC.md](document/API_SPEC.md); hiện trạng code `genie-multivendor-platform` (AUTH đã hiện thực; 65 bảng + `V1…V14` có sẵn; `common` đã có Silo, email, nhật ký kiểm toán, phân quyền). Tiến độ từng use case: [CHECKLIST_TIEN_DO_UC.md](CHECKLIST_TIEN_DO_UC.md).
 > **Cách ghi:** mỗi use case ghi **tên đầy đủ** theo Usecase.md, mã đặt trong ngoặc để tra cứu.
 
 ---
+
+## Thành viên & phân công
+
+> Cập nhật 2026-11-17. Cột **Phụ trách** ở bảng mục 3, 4 và dòng *Phụ trách* của từng cụm / chuỗi ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
+
+| Thành viên | Phụ trách | Hiện trạng |
+|---|---|---|
+| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — xem mục 3; còn *Quản lý sổ địa chỉ giao hàng chuẩn GHN* (UC-AUTH-09) và phần còn lại của UC-AUTH-03, 08; plan `plan/2026-11-14/auth.md` |
+| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang lập plan — `plan/2026-11-16/` (8 plan + seed dữ liệu mẫu), chưa bắt đầu code |
+| **Nghiêm Phú Đăng Quân** | Chưa phân công | — |
+
+Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
 
 ## 1. Tiêu chí "độc lập"
 
@@ -33,28 +45,28 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 ## 3. ✅ Use case đã / gần xong (không cần plan mới)
 
-| Use case | Trạng thái | Còn lại |
-|---|---|---|
-| Đăng ký tài khoản Khách hàng (UC-AUTH-01) | ✅ Đã triển khai | — |
-| Đăng nhập hệ thống (UC-AUTH-02) | ✅ Đã triển khai | — |
-| Khôi phục mật khẩu qua Email OTP (UC-AUTH-04) | ✅ Đã triển khai | — |
-| Đổi / Thiết lập mật khẩu (UC-AUTH-06) | 🟡 Code + test xong | Chạy thử thật trên giao diện |
-| Đăng xuất & Quản lý thiết bị đăng nhập (UC-AUTH-11) | 🟡 Code + test xong | Chạy thử thật |
-| Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân — Xóa tài khoản (UC-AUTH-10) | 🟡 Code + test xong | Chạy thử thật; khi làm nhóm C, module đơn hàng / ví cài cổng `AccountDeletionBlocker` |
+| Use case | Trạng thái | Còn lại | Phụ trách |
+|---|---|---|---|
+| Đăng ký tài khoản Khách hàng (UC-AUTH-01) | ✅ Đã triển khai | — | Nguyễn Quốc Khoa |
+| Đăng nhập hệ thống (UC-AUTH-02) | ✅ Đã triển khai | — | Nguyễn Quốc Khoa |
+| Khôi phục mật khẩu qua Email OTP (UC-AUTH-04) | ✅ Đã triển khai | — | Nguyễn Quốc Khoa |
+| Đổi / Thiết lập mật khẩu (UC-AUTH-06) | 🟡 Code + test xong | Chạy thử thật trên giao diện | Nguyễn Quốc Khoa |
+| Đăng xuất & Quản lý thiết bị đăng nhập (UC-AUTH-11) | 🟡 Code + test xong | Chạy thử thật | Nguyễn Quốc Khoa |
+| Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân — Xóa tài khoản (UC-AUTH-10) | 🟡 Code + test xong | Chạy thử thật; khi làm nhóm C, module đơn hàng / ví cài cổng `AccountDeletionBlocker` | Nguyễn Quốc Khoa |
 
 ## 4. 🟢 Nhóm A — Độc lập hoàn toàn (mỗi use case một plan)
 
-| Use case | Vì sao độc lập | Cần chuẩn bị |
-|---|---|---|
-| **Quản lý sổ địa chỉ giao hàng chuẩn GHN** (UC-AUTH-09) | Chỉ ghi `addresses`, `customer_profiles.default_address_id`; không quan hệ use case nào. *Tính phí vận chuyển qua GHN API* sau này chỉ *đọc* địa chỉ | `GHN_TOKEN` hoặc ảnh chụp JSON danh mục hành chính (plan AUTH A12) |
-| **Quản lý thông tin hồ sơ cá nhân** — phần còn lại: `GET /me` + đổi email (UC-AUTH-08) | Bộ đếm / shop lấy qua cổng đảo ngược, mặc định `0` / `null` khi module khác chưa có | Không |
-| **Đăng nhập & Liên kết tài khoản Google / Apple** — phần Apple (UC-AUTH-03) | Chỉ thêm một nhà cung cấp, đã có cờ `genie.oauth.apple.enabled` | Tài khoản Apple Developer (trả phí) — **xem phương án thay thế miễn phí ở mục 4.1** |
-| **Tra cứu nhật ký kiểm toán hệ thống bất biến** (UC-ADM-07) | Chỉ *đọc* `system_logs` — bảng phân hệ AUTH đang ghi thật | Không |
-| **Quản lý banner trang chủ & chiến dịch tĩnh** (UC-ADM-12) | Bảng `home_banners` riêng; storefront chỉ đọc `GET /public/banners` | Thêm purpose `BANNER_IMAGE` ở `UploadPurpose` |
-| **Admin phát thông báo toàn sàn** (UC-NOT-05) | Bảng `platform_notifications`, `user_platform_notification_reads` riêng | Đẩy realtime cần *Thông báo trong ứng dụng thời gian thực* (cụm B6); không có thì vẫn xem được qua danh sách thông báo |
-| **Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh** (UC-PRO-08) + **Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm** (UC-PRO-09) | Chỉ cần user; ghi `daily_checkins`, `user_coins`, `coin_transactions` | Không — nguồn Điểm từ đơn / đánh giá cộng thêm sau |
-| **Quản lý danh sách sản phẩm yêu thích** (UC-CAT-08) | Bảng `user_wishlists` riêng | Seed vài sản phẩm |
-| **Khách hàng theo dõi gian hàng** (UC-SOC-06) | Bảng `shop_follows` riêng | Seed shop đã KYC; thông báo "shop có hàng mới" để sau |
+| Use case | Vì sao độc lập | Cần chuẩn bị | Phụ trách |
+|---|---|---|---|
+| **Quản lý sổ địa chỉ giao hàng chuẩn GHN** (UC-AUTH-09) | Chỉ ghi `addresses`, `customer_profiles.default_address_id`; không quan hệ use case nào. *Tính phí vận chuyển qua GHN API* sau này chỉ *đọc* địa chỉ | `GHN_TOKEN` hoặc ảnh chụp JSON danh mục hành chính (plan AUTH A12) | Nguyễn Quốc Khoa |
+| **Quản lý thông tin hồ sơ cá nhân** — phần còn lại: `GET /me` + đổi email (UC-AUTH-08) | Bộ đếm / shop lấy qua cổng đảo ngược, mặc định `0` / `null` khi module khác chưa có | Không | Nguyễn Quốc Khoa |
+| **Đăng nhập & Liên kết tài khoản Google / Apple** — phần Apple (UC-AUTH-03) | Chỉ thêm một nhà cung cấp, đã có cờ `genie.oauth.apple.enabled` | Tài khoản Apple Developer (trả phí) — **xem phương án thay thế miễn phí ở mục 4.1** | Nguyễn Quốc Khoa |
+| **Tra cứu nhật ký kiểm toán hệ thống bất biến** (UC-ADM-07) | Chỉ *đọc* `system_logs` — bảng phân hệ AUTH đang ghi thật | Không | Nguyễn Ngọc Thiện |
+| **Quản lý banner trang chủ & chiến dịch tĩnh** (UC-ADM-12) | Bảng `home_banners` riêng; storefront chỉ đọc `GET /public/banners` | Thêm purpose `BANNER_IMAGE` ở `UploadPurpose` | Nguyễn Ngọc Thiện |
+| **Admin phát thông báo toàn sàn** (UC-NOT-05) | Bảng `platform_notifications`, `user_platform_notification_reads` riêng | Đẩy realtime cần *Thông báo trong ứng dụng thời gian thực* (cụm B6); không có thì vẫn xem được qua danh sách thông báo | — |
+| **Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh** (UC-PRO-08) + **Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm** (UC-PRO-09) | Chỉ cần user; ghi `daily_checkins`, `user_coins`, `coin_transactions` | Không — nguồn Điểm từ đơn / đánh giá cộng thêm sau | Nguyễn Ngọc Thiện |
+| **Quản lý danh sách sản phẩm yêu thích** (UC-CAT-08) | Bảng `user_wishlists` riêng | Seed vài sản phẩm | Nguyễn Ngọc Thiện |
+| **Khách hàng theo dõi gian hàng** (UC-SOC-06) | Bảng `shop_follows` riêng | Seed shop đã KYC; thông báo "shop có hàng mới" để sau | Nguyễn Ngọc Thiện |
 
 > *Điểm danh nhận Điểm* và *Tra cứu số dư Điểm* dùng chung bảng `user_coins` nên đếm là 2 use case nhưng nên gộp một plan.
 
@@ -98,6 +110,9 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 *Ghi chú:* chỉ đọc `products` + ghi bộ đếm riêng (lượt xem, từ khóa). Chạy trên **seed sản phẩm**, không chờ người bán đăng bán. *Xem chi tiết sản phẩm* «include» *Xem gợi ý sản phẩm tương tự*; *Gợi ý từ khóa* «extend» *Tìm kiếm sản phẩm*; *Xem trang gian hàng* và *Chia sẻ sản phẩm* «extend» *Xem chi tiết sản phẩm*. Cần cụm B2 có cây danh mục (hoặc seed).
 
 ### B4. Mở shop & KYC (7 use case)
+
+*Phụ trách:* **Nguyễn Ngọc Thiện** — đang lập plan: `plan/2026-11-16/server-spring/plan_mo_shop_kyc.md` (backend + nối web) và `plan/2026-11-16/server-python/plan_kyc_ai_worker.md` (AI Worker).
+
 - Đăng ký mở gian hàng — Become a Seller (UC-VND-01)
 - Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02)
 - Thẩm định KYC tự động qua AI — QR, MRZ & Face Match (UC-VND-03)
