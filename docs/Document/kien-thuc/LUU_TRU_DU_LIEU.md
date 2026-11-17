@@ -341,7 +341,14 @@ Giỏ hàng tài khoản · tồn kho · số dư Điểm · suất / số đã 
 
 ---
 
-## 5. Silo — tệp
+## 5. Kho tệp S3 — Silo (máy dev / test) và AWS S3 (production)
+
+> **Cập nhật 2026-11-17 (ADR 0010 trong repo):** production lưu tệp trên **AWS S3** (`ap-southeast-1`), máy dev / test
+> dùng **Silo** — cùng giao thức S3, cùng 9 bucket, cùng quy tắc bên dưới. Khác biệt ở production: tên bucket thật có
+> **tiền tố** `STORAGE_BUCKET_PREFIX` (vd. `genie-prod-product-media`, vì tên bucket S3 là duy nhất toàn cầu) — mã nghiệp
+> vụ và khóa đối tượng vẫn dùng tên logic; URL ảnh công khai dạng `https://<bucket>.s3.ap-southeast-1.amazonaws.com/<key>`;
+> bucket công khai mở bằng bucket policy (trừ `tmp/`), bucket riêng tư bật Block Public Access, mọi bucket SSE-S3 +
+> lifecycle `tmp/` 1 ngày + CORS, `kyc-dossiers` bật versioning — tạo bằng `deploy/aws/s3-init.sh`.
 
 > **Silo** (`pgsty/silo`) là fork cộng đồng của MinIO do Pigsty duy trì, giữ nguyên API S3 / admin — dự án chuyển từ MinIO sang Silo ngày 2026-11-15 vì MinIO ngừng phát hành bản cộng đồng (ADR 0009 trong repo). Code vẫn gọi qua SDK S3 `io.minio`, biến môi trường giữ tên `MINIO_*`; với ứng dụng, Silo chỉ là "một kho S3".
 

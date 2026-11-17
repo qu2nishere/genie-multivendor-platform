@@ -5,6 +5,16 @@
 
 ## 1. Nguyên tắc
 
+**Môi trường chạy ([ADR 0010](adr/0010-production-aws-rds-s3.md)):**
+
+| Môi trường | CSDL | Kho tệp | Cấu hình ở |
+|---|---|---|---|
+| Máy dev / test chạy tay | PostgreSQL 16 **Docker** hoặc **cài thẳng máy** | **Silo** Docker | `.env` gốc repo |
+| Test tự động (`*IT`) | Testcontainers PostgreSQL | Testcontainers Silo | `application-test.yml` |
+| **Production** | **AWS RDS PostgreSQL 16** | **AWS S3** | `deploy/.env` — tạo hạ tầng theo `deploy/aws/README.md` |
+
+Code chỉ có **một** cài đặt kho tệp (`S3ObjectStorage`) cho cả Silo và S3 — khác nhau ở biến môi trường (mục 6.2).
+
 | # | Nguyên tắc |
 |---|---|
 | 1 | **Mọi giá trị thay đổi theo môi trường** (địa chỉ, tài khoản, mật khẩu, khóa bí mật, kích thước pool, mức log, bật / tắt seed và cron) **đọc từ biến môi trường** `${TEN_BIEN}`. Không ghi cứng trong `application*.yml`. |
@@ -19,10 +29,10 @@
 |---|:---:|---|
 | `server-spring/src/main/resources/application.yml` | ✔ | Cấu hình chung mọi môi trường. Toàn bộ giá trị dạng `${BIEN}` hoặc `${BIEN:mặc_định_không_bí_mật}` |
 | `server-spring/src/main/resources/application-local.yml` | ✔ | Profile `local`: **chỉ** giá trị dự phòng cho máy dev (`genie` / `changeme`, Mailpit, khóa dev). Không sửa file này để đổi máy — sửa `.env` |
-| `server-spring/src/main/resources/application-prod.yml` | ✔ | Profile `prod`: pool lớn hơn, SMTP bắt buộc TLS, mặc định là tên service trong mạng Compose (`redis`, `silo`, `ai-worker`) |
+| `server-spring/src/main/resources/application-prod.yml` | ✔ | Profile `prod` (production AWS): **không** có mặc định cho `DB_URL` (RDS), `MINIO_ENDPOINT` (S3), `STORAGE_BUCKET_PREFIX`, khóa; mặc định vùng `ap-southeast-1`, Redis `redis`, AI Worker `ai-worker` (tên service Compose), SMTP bắt buộc TLS |
 | `server-spring/src/test/resources/application-test.yml` | ✔ | Profile `test` cho `*IT` — CSDL / Redis do Testcontainers tạo, không đọc `.env` để chọn DB |
 | `.env.example` → `.env` | mẫu ✔ / thật ✘ | Biến của **máy dev** — backend đọc tự động; Docker Compose local đọc qua `--env-file .env` |
-| `deploy/.env.example` → `deploy/.env` | mẫu ✔ / thật ✘ | Biến của **VPS** (`docker compose` nạp qua `env_file`) |
+| `deploy/.env.example` → `deploy/.env` | mẫu ✔ / thật ✘ | Biến của **production**: RDS, S3, IAM, bí mật — `docker compose` nạp qua `env_file` |
 | `web/.env.example` → `web/.env` | mẫu ✔ / thật ✘ | Biến của **web** (Astro): `PUBLIC_USE_MOCK`, `PUBLIC_REAL_API`, `PUBLIC_API_URL`… |
 | `server-python/.env` | ✘ | Biến của **AI Worker** (`app/core/config.py`): `INTERNAL_TOKEN`, `BACKEND_URL`, `MINIO_*`, `MODELS_DIR` |
 
@@ -45,7 +55,7 @@ Profile quyết định Spring nạp thêm file `application-<profile>.yml` nào
 | Profile | File | Dùng khi | Ai / cái gì bật nó | Đặc điểm |
 |---|---|---|---|---|
 | **`local`** | `application-local.yml` | Chạy backend trên máy dev (IntelliJ, `./mvnw`) | Dòng `SPRING_PROFILES_ACTIVE=local` trong `.env` gốc | Có mặc định cho **mọi** biến (khớp Docker local), log `DEBUG`, nạp dữ liệu mẫu, cookie không cần HTTPS, chi tiết `/actuator/health` |
-| **`prod`** | `application-prod.yml` | VPS / máy demo chạy bằng `deploy/docker-compose.yml` | `docker-compose.yml` tự đặt `SPRING_PROFILES_ACTIVE: prod` | **Không** có mặc định cho bí mật (thiếu → dừng), host là tên service Docker, pool 30, SMTP bắt buộc TLS, không seed |
+| **`prod`** | `application-prod.yml` | Production: app chạy `deploy/docker-compose.yml` trên VPS / EC2, CSDL **RDS**, kho tệp **S3** | `docker-compose.yml` tự đặt `SPRING_PROFILES_ACTIVE: prod` | **Không** có mặc định cho bí mật (thiếu → dừng), host là tên service Docker, pool 30, SMTP bắt buộc TLS, không seed |
 | **`test`** | `src/test/resources/application-test.yml` | `./mvnw test` / `verify` | Test tự bật bằng `@ActiveProfiles("test")` (`IntegrationTestBase`) — **không** đặt tay | CSDL / Redis do Testcontainers tạo, `FakeEmailSender`, tắt cron, khóa cố định |
 
 - **Không đặt profile nào** → chỉ có `application.yml` → thiếu `DB_URL`, `JWT_SECRET`… → backend dừng với lỗi `Could not resolve placeholder`. Đây là chủ ý (an toàn), không phải hỏng.
@@ -117,10 +127,12 @@ Trong `.env` gốc repo có 3 khối. **Chỉ bật một khối**, comment hai 
 | Khối | Khi nào dùng | `DB_URL` | Lưu ý |
 |---|---|---|---|
 | **[1] Docker** (mặc định) | Bình thường | `jdbc:postgresql://localhost:5432/genie` | `genie` / `changeme` — khớp `docker-compose.local.yml`. Để comment cả khối cũng chạy |
-| **[2] PostgreSQL cài trên máy** | Không muốn dùng Docker | `jdbc:postgresql://localhost:5433/genie` | Tạo DB trước: `CREATE DATABASE genie;`. Nếu chạy song song Docker thì một bên phải đổi cổng (ví dụ 5433) |
+| **[2] PostgreSQL cài trên máy** | Không muốn dùng Docker | `jdbc:postgresql://localhost:5433/genie` | Tạo DB trước: `CREATE DATABASE genie;`. Nếu chạy song song Docker thì một bên phải đổi cổng (ví dụ 5433). Kho tệp **vẫn là Silo Docker**: `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d redis silo silo-init mailpit` |
 | **[3] CSDL cloud** (Neon, Supabase, Render…) | Cả nhóm dùng chung một DB / demo online | `jdbc:postgresql://<host>:5432/<db>?sslmode=require` | Bắt buộc `sslmode=require`. Thêm `DB_POOL_SIZE=5` (gói miễn phí giới hạn kết nối), `GENIE_SEED_DEMO=false` (không nạp dữ liệu mẫu vào DB chung), `GENIE_SCHEDULING_ENABLED=false` (máy dev không chạy cron lên dữ liệu chung) |
 
 Mọi cách đều để **Flyway tự tạo bảng** (`V1…`) lần chạy đầu — DB phải trống hoặc đúng lịch sử Flyway của repo.
+
+**Không** trỏ máy dev vào **RDS production** (khối [3] chỉ dành cho CSDL cloud thử nghiệm của nhóm): profile `local` nạp dữ liệu mẫu và chạy cron thật lên dữ liệu thật; script seed cũng từ chối host `*.rds.amazonaws.com`.
 
 ## 6. Danh mục biến
 
@@ -131,7 +143,7 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | Biến | Mặc định dev | Ý nghĩa |
 |---|---|---|
 | `SPRING_PROFILES_ACTIVE` | — (ghi `local` trong `.env`) | `local` máy dev · `prod` VPS · `test` do test tự đặt — xem mục 3 |
-| `DB_URL` | `jdbc:postgresql://localhost:5432/genie` | Chuỗi kết nối JDBC |
+| `DB_URL` | `jdbc:postgresql://localhost:5432/genie` | Chuỗi kết nối JDBC — prod: endpoint **RDS** + `?sslmode=require` |
 | `DB_USER` / `DB_PASSWORD` | `genie` / `changeme` | Tài khoản CSDL |
 | `DB_POOL_SIZE` | `20` (prod `30`) | Số kết nối tối đa HikariCP |
 | `GENIE_SEED_DEMO` | `true` (prod `false`) | Nạp `R__seed_demo.sql` |
@@ -143,10 +155,12 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | Biến | Mặc định dev | Ý nghĩa |
 |---|---|---|
 | `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | `localhost` / `6379` / `changeme` | Redis (prod: host `redis`) |
-| `MINIO_ENDPOINT` | `http://localhost:9000` (prod `http://silo:9000`) | Backend gọi Silo. Tên `MINIO_*` giữ nguyên dù dùng Silo (ADR 0009) |
-| `PUBLIC_S3_URL` | `http://localhost:9000` | Địa chỉ trình duyệt tải / xem tệp |
-| `MINIO_APP_ACCESS_KEY` / `MINIO_APP_SECRET_KEY` | `genie-app` / `changeme` | Tài khoản ứng dụng (do `silo-init` tạo) |
-| `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` | `siloadmin` / `changeme` | Chỉ dùng cho container Silo, backend không đọc |
+| `MINIO_ENDPOINT` | `http://localhost:9000` (prod: **bắt buộc**, `https://s3.ap-southeast-1.amazonaws.com`) | Backend gọi kho tệp — Silo ở dev, AWS S3 ở production. Tên `MINIO_*` giữ nguyên (ADR 0009, 0010) |
+| `PUBLIC_S3_URL` | `http://localhost:9000` (prod: mặc định = `MINIO_ENDPOINT`) | Địa chỉ trình duyệt tải / xem tệp; host `*.amazonaws.com` → URL ảnh dạng `https://<bucket>.s3.<vùng>.amazonaws.com/<key>` |
+| `MINIO_APP_ACCESS_KEY` / `MINIO_APP_SECRET_KEY` | `genie-app` / `changeme` | Dev: tài khoản ứng dụng do `silo-init` tạo; prod: khóa **IAM user** theo `deploy/aws/iam-policy.json` (không dùng khóa root AWS) |
+| `STORAGE_REGION` | `us-east-1` (prod `ap-southeast-1`) | Vùng ký S3 — Silo bỏ qua, AWS phải đúng vùng của bucket |
+| `STORAGE_BUCKET_PREFIX` | trống (prod: **bắt buộc**, vd. `genie-prod-`) | Tên bucket thật = tiền tố + tên logic (`genie-prod-avatar-assets`) — tên bucket S3 là duy nhất toàn cầu; khớp tham số `deploy/aws/s3-init.sh` |
+| `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD` | `siloadmin` / `changeme` | Chỉ cho container Silo máy dev; production không dùng |
 | `SERVER_PORT` | `8080` | Cổng backend |
 | `PUBLIC_WEB_URL` | `http://localhost:4321` | Địa chỉ web (link trong email, redirect OAuth) |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:4321` | Origin được gọi API kèm cookie, nhiều origin cách dấu phẩy |
@@ -210,16 +224,25 @@ Ghi trước để không ai đặt tên khác. Khi làm task tương ứng ph�
 
 `KYC_AES_KEY` mặc định dev (`application-local.yml`) đã là khóa base64 32 byte hợp lệ — sẵn cho task K02.01 kiểm độ dài khóa.
 
-## 7. VPS (profile `prod`)
+## 7. Production — AWS RDS + S3 (profile `prod`)
+
+1. Tạo hạ tầng AWS **một lần** theo [deploy/aws/README.md](../deploy/aws/README.md): RDS PostgreSQL 16, 9 bucket S3
+   (`deploy/aws/s3-init.sh <tiền tố> <vùng> <origin web>`), IAM user cho ứng dụng (`deploy/aws/iam-policy.json`).
+2. Trên VPS / EC2 chạy app:
 
 ```bash
-cd deploy && cp .env.example .env && chmod 600 .env     # rồi ĐỔI mọi giá trị changeme / change-me
-docker compose up -d
+cd deploy && cp .env.example .env && chmod 600 .env     # điền DB_URL (RDS), MINIO_* (S3 + IAM), STORAGE_*, bí mật
+docker compose up -d                                     # nginx, frontend, backend, ai-worker, redis
 ```
 
-- `docker-compose.yml` nạp `deploy/.env` qua `env_file` và tự đặt `SPRING_PROFILES_ACTIVE=prod`, `REDIS_HOST=redis`, `MINIO_ENDPOINT=http://silo:9000`, `AI_WORKER_URL=http://ai-worker:8000`.
-- Postgres, Redis, Silo **không mở cổng ra ngoài** — chỉ nói chuyện trong mạng Compose.
-- Danh sách biến bắt buộc: TECH_STACK mục 16.6.
+- `docker-compose.yml` **không** còn container `postgres`, `silo`: CSDL là RDS, tệp nằm trên S3. Compose tự đặt
+  `SPRING_PROFILES_ACTIVE=prod`, `REDIS_HOST=redis`, `AI_WORKER_URL=http://ai-worker:8000`.
+- Redis, AI Worker **không mở cổng ra ngoài**; RDS chỉ cho security group của máy chạy backend vào cổng 5432.
+- `GENIE_SEED_DEMO=false` — production không bao giờ có dữ liệu mẫu.
+- Sao lưu: RDS automated backups 7 ngày + snapshot trước release; `deploy/backup/backup.sh` thêm bản `pg_dump`.
+- Đổi vùng AWS → đổi đồng bộ `STORAGE_REGION`, `MINIO_ENDPOINT`, `PUBLIC_S3_URL`, tham số `s3-init.sh`, CSP trong
+  `deploy/nginx/conf.d/web.conf`.
+- Danh sách biến: `deploy/.env.example`, TECH_STACK mục 16.6.
 
 ## 8. Bảo mật — điều cần nhớ
 
@@ -233,6 +256,8 @@ docker compose up -d
 | Hiện tượng | Nguyên nhân | Cách sửa |
 |---|---|---|
 | `Could not resolve placeholder 'DB_URL'` / `'JWT_SECRET'` | Chạy không có profile `local` (mục 3) | Thêm `SPRING_PROFILES_ACTIVE=local` vào `.env` (hoặc `-Dspring-boot.run.profiles=local`) |
+| Production: trình duyệt báo lỗi CORS khi tải ảnh lên | Bucket S3 chưa có CORS cho origin web | Chạy lại `deploy/aws/s3-init.sh` với đúng origin |
+| Production: ảnh trả `403 AccessDenied` | Bucket công khai chưa có bucket policy, hoặc đang xem tệp trong `tmp/` / bucket riêng tư bằng URL không ký | Chạy lại `s3-init.sh`; tệp riêng tư phải xem qua link ký |
 | `port is already allocated` khi `docker compose up` | Cổng đã có chương trình khác dùng (thường PostgreSQL cài sẵn) | Đổi cổng qua `.env` — mục 4 *Đổi cổng khi bị chiếm* |
 | Log lặp `HikariPool-1 - Starting...` rồi lỗi kết nối | CSDL chưa chạy / sai cổng | Bật Docker Desktop + `docker compose … up -d`, hoặc kiểm khối CSDL đang bật trong `.env` |
 | `password authentication failed for user "genie"` | Mật khẩu `.env` khác mật khẩu lúc tạo volume Postgres | Sửa `.env` cho khớp, hoặc xóa volume `pgdata` để tạo lại (mất dữ liệu local) |

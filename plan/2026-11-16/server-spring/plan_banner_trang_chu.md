@@ -18,7 +18,7 @@
 |---|---|---|
 | `admin/banner/domain` | `HomeBanner` (17 trường: `title`, `imageUrl`, `mobileImageUrl`, `targetUrl`, `position`, `categoryId`, `sortOrder`, `startsAt`, `endsAt`, `isActive`, `targetAudienceJson`, `createdByAdminId`, `impressionCount`, `clickCount`…; phương thức `isLive(now)`, `deactivate()`, `recordStats(imp, clk)`, `ctr()`), `BannerPosition` (6 giá trị), `HomeBannerRepository` (rỗng) | Toàn bộ `api`, `application`; truy vấn repository |
 | CSDL | `home_banners` (`V10__notification.sql`) có index theo vị trí / thời gian | `CHECK` của `system_logs.action_type` chưa có hành động cho banner (UC: "mọi thay đổi ghi `system_logs`") |
-| `common/storage` | `UploadPurpose` mới có `AVATAR`; `UploadService` (xin URL, `promote`, xóa), `SiloObjectStorage` | Purpose `BANNER_IMAGE` (bucket `content-assets`, jpeg / png / webp, 5 MB, STAFF có `MANAGE_VOUCHER` — API 4.1) |
+| `common/storage` | `UploadPurpose` mới có `AVATAR`; `UploadService` (xin URL, `promote`, xóa), `S3ObjectStorage` | Purpose `BANNER_IMAGE` (bucket `content-assets`, jpeg / png / webp, 5 MB, STAFF có `MANAGE_VOUCHER` — API 4.1) |
 | `common/error/ErrorCode` | Chưa có `GNE-BNR-4091`, `GNE-BNR-4221`, `GNE-BNR-4222` | Thêm 3 mã (đã có trong API 15) |
 | `web/features/promotions` | `banner.api.ts`: `listLiveBanners` (`GET /public/banners`), `trackBanner` (`POST /public/banners/{id}/events` — **lệch spec**: phải là `POST /public/banner-events` gộp lô) | Sửa đường dẫn + gom lô 5 giây |
 | `web/features/admin-marketing` | Màn Banner xong trên mock: `listBanners`, `saveBanner` (`POST` / `PUT`), `setBannerActive` (`PATCH`), `deleteBanner` | Nối API thật; ô chọn shop đích đang dùng `shop.listShops` công khai (handoff mục 4) |

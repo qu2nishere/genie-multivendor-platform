@@ -1,6 +1,7 @@
 # 0009 — Kho tệp: thay MinIO bằng Silo
 
 - **Trạng thái:** Chấp nhận (2026-11-15)
+- **Cập nhật 2026-11-17:** Silo chỉ còn dùng ở máy dev và test; production chuyển sang AWS S3 + RDS — [ADR 0010](0010-production-aws-rds-s3.md). Lớp `SiloObjectStorage` đổi tên `S3ObjectStorage`.
 - **Phạm vi:** `deploy/` (compose local + VPS, `minio/init.sh`, `backup/backup.sh`), test tích hợp `server-spring`
 
 ## Bối cảnh
