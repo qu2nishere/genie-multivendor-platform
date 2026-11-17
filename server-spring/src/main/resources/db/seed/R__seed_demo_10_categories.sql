@@ -1,0 +1,5 @@
+-- Dữ liệu mẫu 10 — danh mục gốc + con, tỷ lệ hoa hồng theo ngành (plan seed 2026-11-16 S02; mock web SEED_ROOT_CATEGORIES,
+-- SEED_SUB_CATEGORIES). Thư mục db/seed chỉ được Flyway nạp khi genie.seed.demo-data=true (GENIE_SEED_DEMO — profile local),
+-- hoặc chạy tay bằng scripts/seed/seed.sh | seed.ps1 (CSDL local, không bao giờ production — ADR 0010).
+-- Nguyên tắc: N1 chạy lại được nhiều lần (NOT EXISTS / ON CONFLICT) · N2 không ghi cứng id, tra bằng khóa tự nhiên (slug, email…)
+-- · N3 SQL thuần — không placeholder Flyway, không lệnh meta psql.
