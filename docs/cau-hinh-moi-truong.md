@@ -21,8 +21,8 @@
 | `server-spring/src/main/resources/application-local.yml` | ✔ | Profile `local`: **chỉ** giá trị dự phòng cho máy dev (`genie` / `changeme`, Mailpit, khóa dev). Không sửa file này để đổi máy — sửa `.env` |
 | `server-spring/src/main/resources/application-prod.yml` | ✔ | Profile `prod`: pool lớn hơn, SMTP bắt buộc TLS, mặc định là tên service trong mạng Compose (`redis`, `silo`, `ai-worker`) |
 | `server-spring/src/test/resources/application-test.yml` | ✔ | Profile `test` cho `*IT` — CSDL / Redis do Testcontainers tạo, không đọc `.env` để chọn DB |
-| `.env.example` → `.env` | mẫu ✔ / thật ✘ | Biến của **máy dev** (backend đọc tự động) |
-| `deploy/.env.example` → `deploy/.env` | mẫu ✔ / thật ✘ | Biến của **VPS** (`docker compose` nạp qua `env_file`) và tùy chọn cho Compose local |
+| `.env.example` → `.env` | mẫu ✔ / thật ✘ | Biến của **máy dev** — backend đọc tự động; Docker Compose local đọc qua `--env-file .env` |
+| `deploy/.env.example` → `deploy/.env` | mẫu ✔ / thật ✘ | Biến của **VPS** (`docker compose` nạp qua `env_file`) |
 | `web/.env.example` → `web/.env` | mẫu ✔ / thật ✘ | Biến của **web** (Astro): `PUBLIC_USE_MOCK`, `PUBLIC_REAL_API`, `PUBLIC_API_URL`… |
 | `server-python/.env` | ✘ | Biến của **AI Worker** (`app/core/config.py`): `INTERNAL_TOKEN`, `BACKEND_URL`, `MINIO_*`, `MODELS_DIR` |
 
@@ -76,12 +76,39 @@ Dòng log đầu khi khởi động: `The following 1 profile is active: "local"
 
 ```bash
 cp .env.example .env                 # gốc repo — đã bật sẵn SPRING_PROFILES_ACTIVE=local + khối CSDL Docker
-docker compose -f deploy/docker-compose.local.yml up -d      # postgres, redis, silo, mailpit (mặc định genie / changeme)
+docker compose --env-file .env -f deploy/docker-compose.local.yml up -d   # postgres, redis, silo, mailpit (genie / changeme)
 cd server-spring && ./mvnw spring-boot:run                   # profile lấy từ .env — không cần -Dspring-boot.run.profiles
 ```
 
 - Cần **JDK 21**. JDK mới hơn (24, 25) làm Lombok lỗi `TypeTag :: UNKNOWN` khi biên dịch → đặt `JAVA_HOME` về JDK 21 hoặc chọn SDK 21 trong IntelliJ.
-- Muốn Compose dùng mật khẩu khác mặc định: `cp deploy/.env.example deploy/.env`, sửa, rồi thêm `--env-file deploy/.env` vào lệnh `docker compose`. Mật khẩu ở `deploy/.env` và `.env` gốc phải **giống nhau**.
+- **Luôn chạy compose với `--env-file .env`:** Docker Compose mặc định chỉ đọc `.env` cạnh file compose (`deploy/.env`), **không** đọc `.env` gốc repo. Có `--env-file .env` thì Docker và backend dùng **cùng một tệp** — đổi mật khẩu / cổng ở một chỗ là cả hai khớp. Đổi `DB_PASSWORD` sau khi Postgres đã tạo dữ liệu thì phải xóa volume `pgdata` (Postgres chỉ đặt mật khẩu lần tạo đầu tiên).
+
+### Đổi cổng khi bị chiếm
+
+Cổng mà Docker mở trên máy dev đọc từ biến, mặc định như bảng dưới. **Không đặt gì thì giữ nguyên.** Báo lỗi
+`port is already allocated` / `Only one usage of each socket address` (ví dụ máy đã cài PostgreSQL thật chiếm 5432) thì
+thêm biến vào `.env` rồi sửa biến của backend cho **cùng cổng**:
+
+| Dịch vụ | Biến cổng Docker | Mặc định | Sửa thêm cho backend / trình duyệt |
+|---|---|---|---|
+| PostgreSQL | `POSTGRES_PORT` | 5432 | `DB_URL=jdbc:postgresql://localhost:<cổng>/genie` |
+| Redis | `REDIS_PORT` | 6379 | Không — backend dùng chung biến `REDIS_PORT` |
+| Silo (API S3) | `SILO_PORT` | 9000 | `MINIO_ENDPOINT` và `PUBLIC_S3_URL` = `http://localhost:<cổng>` (web: `PUBLIC_S3_URL` trong `web/.env`) |
+| Silo console | `SILO_CONSOLE_PORT` | 9001 | Không — chỉ để mở http://localhost:<cổng> |
+| Mailpit SMTP | `MAILPIT_SMTP_PORT` | 1025 | `SMTP_PORT=<cổng>` (khi gửi email vào Mailpit) |
+| Mailpit giao diện | `MAILPIT_UI_PORT` | 8025 | Không — mở http://localhost:<cổng> xem email OTP |
+
+Ví dụ máy đã có PostgreSQL thật ở 5432, cho Docker dùng 5433:
+
+```properties
+POSTGRES_PORT=5433
+DB_URL=jdbc:postgresql://localhost:5433/genie
+```
+
+Rồi chạy lại `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d`. Cổng **trong** container (số bên
+phải dấu `:` trong file compose) không đổi. Kiểm tra cổng đang bị ai chiếm: `netstat -ano | findstr :5432` (Windows) /
+`lsof -i :5432` (macOS, Linux).
+
 
 ## 5. Chọn CSDL — 3 cách
 
@@ -206,6 +233,7 @@ docker compose up -d
 | Hiện tượng | Nguyên nhân | Cách sửa |
 |---|---|---|
 | `Could not resolve placeholder 'DB_URL'` / `'JWT_SECRET'` | Chạy không có profile `local` (mục 3) | Thêm `SPRING_PROFILES_ACTIVE=local` vào `.env` (hoặc `-Dspring-boot.run.profiles=local`) |
+| `port is already allocated` khi `docker compose up` | Cổng đã có chương trình khác dùng (thường PostgreSQL cài sẵn) | Đổi cổng qua `.env` — mục 4 *Đổi cổng khi bị chiếm* |
 | Log lặp `HikariPool-1 - Starting...` rồi lỗi kết nối | CSDL chưa chạy / sai cổng | Bật Docker Desktop + `docker compose … up -d`, hoặc kiểm khối CSDL đang bật trong `.env` |
 | `password authentication failed for user "genie"` | Mật khẩu `.env` khác mật khẩu lúc tạo volume Postgres | Sửa `.env` cho khớp, hoặc xóa volume `pgdata` để tạo lại (mất dữ liệu local) |
 | `TypeTag :: UNKNOWN` khi `./mvnw` | Đang dùng JDK > 21 | Đặt `JAVA_HOME` về JDK 21 |

@@ -47,7 +47,7 @@ progress là bảng tick + nhật ký có mã commit).
 # gốc repo
 npm install                                   # husky + commitlint + lint-staged
 cp .env.example .env                          # biến máy dev (profile local + CSDL) — docs/cau-hinh-moi-truong.md
-docker compose -f deploy/docker-compose.local.yml up -d   # postgres, redis, silo, mailpit (genie / changeme)
+docker compose --env-file .env -f deploy/docker-compose.local.yml up -d   # postgres, redis, silo, mailpit (genie / changeme); cổng đổi được qua .env
 
 # web/ (Node 22)
 npm run dev          # http://localhost:4321 ; /dev/ui = thư viện component (chỉ dev)
