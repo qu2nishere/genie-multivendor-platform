@@ -2706,17 +2706,17 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Admin, hoặc nhân viên được cấp `VIEW_AUDIT_LOG`.
 - **Hậu điều kiện:** Hiển thị nhật ký có phân trang; xuất tệp khi được yêu cầu.
 - **Luồng sự kiện chính:**
-  1. Mở Nhật ký hệ thống → `GET /api/v1/admin/system-logs?from=&to=&type=&q=`.
+  1. Mở Nhật ký hệ thống → `GET /api/v1/admin/audit-logs?from=&to=&category=&q=&cursor=&limit=` (API_SPEC 11.10; mặc định 7 ngày, tối đa 90 ngày / lần).
   2. Lọc theo khoảng thời gian (Hôm nay / 7 ngày / 30 ngày / tùy chọn), loại hành động (Đăng nhập, KYC, Tài chính, Kiểm duyệt, Bảo mật, Cấu hình), từ khóa (user, IP, mã tham chiếu).
   3. Hiển thị: thời gian, user / vai trò, hành động, chi tiết, kết quả (`SUCCESS` / `FAILED` / `DENIED`); dòng tóm tắt "N lần truy cập bị từ chối".
-  4. Phân trang keyset theo (`createdAt`, `id`); "Xuất nhật ký" tạo CSV của bộ lọc hiện tại.
+  4. Phân trang keyset theo (`createdAt`, `id`); "Xuất nhật ký" → `GET /api/v1/admin/audit-logs/export` tạo CSV của bộ lọc hiện tại (UTF-8 có BOM, tối đa 50.000 dòng).
 - **Luồng thay thế / Ngoại lệ:**
   - *Không có bản ghi khớp:* "Không có bản ghi nào khớp bộ lọc".
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - `system_logs` chỉ ghi thêm — cấm `UPDATE` / `DELETE`; lưu tối thiểu 12 tháng.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`admin/audit`: tra cứu + xuất CSV, quyền `VIEW_AUDIT_LOG`) + test xanh, web nối API thật (cờ `PUBLIC_REAL_API=audit`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_nhat_ky_kiem_toan.md`).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 

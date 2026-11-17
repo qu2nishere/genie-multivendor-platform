@@ -39,6 +39,8 @@ Tài liệu tham chiếu trong code ghi kiểu `TECH_STACK mục 8`, `TS 5.2`, `
 (mẫu: `plan/2026-11-11/web/plan_chuyen_giao_dien.md` + `progress_chuyen_giao_dien.md` — plan có mã task `Gxx.yy`,
 progress là bảng tick + nhật ký có mã commit).
 
+**Plan 2026-11-16 (Nguyễn Ngọc Thiện):** `admin/audit` — Nhật ký hệ thống UC-ADM-07 (`GET /admin/audit-logs`, `…/export`) đã có; dùng chung mới: `common/api/ApiListResponse` + `ApiResponseFactory.list()` (danh sách có `pagination` / `summary` ở cấp gốc), `common/error/InvalidRequestException` (422 có `errors[]` theo trường), web `requestBlob` (tải tệp kèm Bearer).
+
 **Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file). Tiến độ theo use case toàn hệ thống (87 UC, 5 lớp GD / BE / Test / Nối / Chạy): `docs/document/CHECKLIST_TIEN_DO_UC.md`.
 
 ## 3. Lệnh hay dùng

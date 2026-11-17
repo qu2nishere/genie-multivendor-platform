@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-audit-log` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (35 / 45) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (45 / 45) |
 
 **Cách dùng**
 
@@ -35,21 +35,21 @@
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| L00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-audit-log` |
+| L00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/admin-audit-log` |
 | L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
 | L02 | Truy vấn đọc `system_logs` | 5 | 1 | 6 / 6 | — | `feature/admin-audit-log` |
 | L03 | Dịch vụ & API tra cứu | 8 | 1 | 9 / 9 | — | `feature/admin-audit-log` |
 | L04 | Xuất CSV | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
-| L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 6 / 7 | — | `feature/admin-audit-log` |
-| L06 | Hoàn thiện use case | 7 | 1 | 0 / 8 | — | `feature/admin-audit-log` |
-| **Tổng** | | **39** | **6** | **35 / 45** | | |
+| L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 7 / 7 | — | `feature/admin-audit-log` |
+| L06 | Hoàn thiện use case | 7 | 1 | 8 / 8 | — | `feature/admin-audit-log` |
+| **Tổng** | | **39** | **6** | **45 / 45** | | |
 
 ## L00 — Chuẩn bị
 
 - [x] **L00.01** Kiểm danh tính git
 - [x] **L00.02** Chốt quyết định D1–D7
 - [x] **L00.03** Tạo nhánh
-- [ ] **L00.04** Dựng dữ liệu thử
+- [x] **L00.04** Dựng dữ liệu thử
 - [x] **L00.05** Đọc lại màn mock
 
 ## L01 — Phân loại hành động (`common/audit`)
@@ -97,18 +97,18 @@
 - [x] **L05.04** Lỗi & trạng thái
 - [-] **L05.05** Chạy thật hai phía
 - [x] **L05.06** `npm run verify` trong `web/`.
-- [ ] **L05.C1** 🔖 COMMIT `feat(admin-ui): connect audit log screen to the real api` · hash: `…`
+- [x] **L05.C1** 🔖 COMMIT `feat(admin-ui): connect audit log screen to the real api` · hash: `f8106de`
 
 ## L06 — Hoàn thiện use case
 
-- [ ] **L06.01** `docs/api-tests/admin-audit-log.http`
-- [ ] **L06.02** OpenAPI
-- [ ] **L06.03** Tài liệu nguồn `docs/Document`
-- [ ] **L06.04** Tiến độ
-- [ ] **L06.05** `docs/web-backend-handoff.md`
-- [ ] **L06.06** `CLAUDE.md` mục 2
-- [ ] **L06.C1** 🔖 COMMIT `docs(admin): record audit log use case as implemented` · hash: `…`
-- [ ] **L06.07** Mở PR vào `develop`
+- [x] **L06.01** `docs/api-tests/admin-audit-log.http`
+- [x] **L06.02** OpenAPI
+- [x] **L06.03** Tài liệu nguồn `docs/Document`
+- [x] **L06.04** Tiến độ
+- [x] **L06.05** `docs/web-backend-handoff.md`
+- [x] **L06.06** `CLAUDE.md` mục 2
+- [x] **L06.C1** 🔖 COMMIT `docs(admin): record audit log use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **L06.07** Mở PR vào `develop`
 
 ---
 
@@ -116,11 +116,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-ADM-07` Tra cứu nhật ký kiểm toán hệ thống bất biến — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-ADM-07` Tra cứu nhật ký kiểm toán hệ thống bất biến — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-ADM-07 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -140,7 +140,13 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | L05.03 | Thêm `requestBlob` + `fileNameOf` ở `shared/api/http.ts` (tải tệp kèm Bearer, làm mới token một lần khi 401) và `downloadBlob` ở `shared/lib/csv.ts`; `exportAuditLogs` trả tệp server (thật) hoặc các dòng (mock); bị cắt thì toast `admin-system.audit.export_truncated` |
 | L05.05 | `[-]` Phần trình duyệt chờ người dùng tự chạy (CLAUDE.md: chỉ tick **Chạy** khi người dùng thao tác). Đã chạy thật phía API với CSDL local + tài khoản seed: `yen.dh` xem được (dòng của nhân viên hiện `CS_SPECIALIST`), `truc.ht` nhận 403, khoảng 320 ngày → 422 `RANGE_TOO_LONG`, xuất CSV có BOM + `Content-Disposition` đúng. Cách chạy: web `PUBLIC_USE_MOCK=true`, `PUBLIC_REAL_API=auth,audit`, đăng nhập `yen.dh@genie.example`, mở `/admin/audit-logs` |
 | L05.06 | `npm run verify` gọi cả chuỗi qua `timeout` thoát 127 trên Git Bash; chạy từng bước: lint 0, astro check 0 lỗi, tsc 0, vitest 316/316, build OK, i18n OK (3266 khóa) |
+| L06.02 | `/v3/api-docs` có 2 endpoint, summary `UC-ADM-07 — …`, mô tả tham số + mã lỗi. Thư mục `docs/openapi` đang trống (repo chưa giữ bản xuất) → không cập nhật |
+| L06.04 | Checklist: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng thao tác trên giao diện) → 🟡 Đang triển khai; Excel cột *Hiện trạng mã nguồn* = "Đang triển khai". Khi chạy thật đúng thì đổi Chạy `☑`, trạng thái ✅ + Excel "Đã triển khai" |
+| L06.C1 | Cổng: `./mvnw verify` BUILD SUCCESS (61 unit + 96 IT). Lần đầu JVM test sập do máy hết RAM (`insufficient memory`, ~3 GB trống khi Docker chạy) → chạy lại với `-DargLine="-Xmx1g"` thì xanh |
+| L06.07 | `[-]` Chưa push / mở PR — chờ người dùng |
+| L00.04 | Dữ liệu thử sinh khi chạy thật API (L05.05): đăng nhập `yen.dh`, `truc.ht` → `LOGIN_SUCCESS`; `truc.ht` gọi `/admin/audit-logs` → `ACCESS_DENIED`. Test tích hợp tự chèn dữ liệu bằng `insertLog` |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (39 task, 6 commit, 7 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | L00–L06: phân nhóm hành động, truy vấn keyset, API tra cứu + xuất CSV, nối web, tài liệu + checklist; còn chạy thật trên giao diện (L05.05) và mở PR | `7ca8ef4` `8a3e67f` `43a9504` `6d90219` `f8106de` |
