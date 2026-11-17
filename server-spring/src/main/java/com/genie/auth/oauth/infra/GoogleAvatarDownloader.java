@@ -2,6 +2,7 @@ package com.genie.auth.oauth.infra;
 
 import com.genie.auth.oauth.application.AvatarDownloader;
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +18,8 @@ import org.springframework.web.client.RestClientException;
 /**
  * Tải ảnh đại diện Google ({@code picture} trong {@code id_token}) để lưu vào Silo.
  * <ul>
- *   <li>Chỉ nhận {@code https://*.googleusercontent.com} — không cho backend bị lợi dụng tải địa chỉ tùy ý (SSRF).</li>
+ *   <li>Chỉ nhận {@code https://*.googleusercontent.com} (Google) và {@code https://*.zadn.vn}, {@code https://*.zdn.vn}
+ *       (ảnh Zalo) — không cho backend bị lợi dụng tải địa chỉ tùy ý (SSRF).</li>
  *   <li>Đổi cỡ {@code =s96-c} thành {@code =s256-c} (ảnh vuông 256 px, nét hơn, vẫn nhỏ).</li>
  *   <li>Chỉ JPEG / PNG, ≤ {@code maxBytes}; timeout 3 s / 5 s.</li>
  * </ul>
@@ -63,7 +65,13 @@ public class GoogleAvatarDownloader implements AvatarDownloader {
         }
     }
 
-    /** {@code https://lh3.googleusercontent.com/a/xyz=s96-c} → bản 256 px; địa chỉ khác → null. */
+    /** Máy chủ ảnh Zalo (CDN của Zalo / VNG). */
+    private static final List<String> ZALO_HOSTS = List.of(".zadn.vn", ".zdn.vn");
+
+    /**
+     * {@code https://lh3.googleusercontent.com/a/xyz=s96-c} → bản 256 px; ảnh Zalo ({@code https://s120-ava-talk.zadn.vn/…})
+     * giữ nguyên; địa chỉ khác → null.
+     */
     static URI allowed(String url) {
         if (url == null || url.isBlank() || url.length() > 2048) {
             return null;
@@ -71,8 +79,14 @@ public class GoogleAvatarDownloader implements AvatarDownloader {
         try {
             URI uri = URI.create(url.trim());
             String host = uri.getHost();
-            if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null
-                    || !host.toLowerCase(Locale.ROOT).endsWith(".googleusercontent.com")) {
+            if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null) {
+                return null;
+            }
+            String h = host.toLowerCase(Locale.ROOT);
+            if (ZALO_HOSTS.stream().anyMatch(h::endsWith)) {
+                return uri;
+            }
+            if (!h.endsWith(".googleusercontent.com")) {
                 return null;
             }
             return URI.create(url.trim().replaceFirst("=s\\d+(-c)?$", "=" + SIZE));
