@@ -40,13 +40,15 @@ public class BannerQueryService {
     private final HomeBannerRepository banners;
     private final UploadService uploads;
     private final ObjectProvider<BannerCategoryLookup> categories;
+    private final BannerCache cache;
     private final Clock clock;
 
     public BannerQueryService(HomeBannerRepository banners, UploadService uploads,
-                              ObjectProvider<BannerCategoryLookup> categories, Clock clock) {
+                              ObjectProvider<BannerCategoryLookup> categories, BannerCache cache, Clock clock) {
         this.banners = banners;
         this.uploads = uploads;
         this.categories = categories;
+        this.cache = cache;
         this.clock = clock;
     }
 
@@ -82,6 +84,30 @@ public class BannerQueryService {
                 .filter(Objects::nonNull).toList());
         OffsetDateTime now = OffsetDateTime.now(clock);
         return rows.map(b -> toView(b, names, now));
+    }
+
+    /**
+     * {@code GET /public/banners} (API_SPEC 5.14): theo từng vị trí, banner {@code LIVE} sắp {@code sort_order} — đọc
+     * cache trước, trượt thì đọc PostgreSQL rồi ghi cache (cache-aside, LUU_TRU 4.5). Vị trí không có banner → mảng rỗng.
+     */
+    @Transactional(readOnly = true)
+    public Map<BannerPosition, List<PublicBannerView>> live(Collection<BannerPosition> positions, Long categoryId) {
+        Map<BannerPosition, List<PublicBannerView>> out = new java.util.LinkedHashMap<>();
+        OffsetDateTime now = OffsetDateTime.now(clock);
+        for (BannerPosition position : positions) {
+            String key = BannerCache.key(position, categoryId);
+            List<PublicBannerView> list = cache.get(key).orElseGet(() -> {
+                List<HomeBanner> rows = position == BannerPosition.CATEGORY_TOP
+                        ? banners.findLiveInCategory(position, categoryId, now)
+                        : banners.findLive(position, now);
+                List<PublicBannerView> views = rows.stream().map(b -> new PublicBannerView(b.getId(), b.getTitle(),
+                        imageUrl(b.getImageUrl()), imageUrl(b.getMobileImageUrl()), b.getTargetUrl())).toList();
+                cache.put(key, views);
+                return views;
+            });
+            out.put(position, list);
+        }
+        return out;
     }
 
     /** Ánh xạ một banner (tra tên danh mục riêng lẻ). */

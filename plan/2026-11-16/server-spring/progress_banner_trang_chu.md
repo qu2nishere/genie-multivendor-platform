@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (28 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (34 / 57) |
 
 **Cách dùng**
 
@@ -40,12 +40,12 @@
 | B00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-home-banner` |
 | B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
 | B02 | Miền & truy vấn | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
-| B03 | API quản trị banner | 9 | 1 | 9 / 10 | — | `feature/admin-home-banner` |
-| B04 | API công khai & cache | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
+| B03 | API quản trị banner | 9 | 1 | 10 / 10 | — | `feature/admin-home-banner` |
+| B04 | API công khai & cache | 5 | 1 | 5 / 6 | — | `feature/admin-home-banner` |
 | B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
 | B06 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
 | B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **28 / 57** | | |
+| **Tổng** | | **48** | **9** | **34 / 57** | | |
 
 ## B00 — Chuẩn bị
 
@@ -87,15 +87,15 @@
 - [x] **B03.07** `AdminBannerController`
 - [x] **B03.08** `BannerAdminIT` (PG + Redis + Silo)
 - [x] **B03.09** `BannerAdminIT` phân quyền
-- [ ] **B03.C1** 🔖 COMMIT `feat(admin): manage home banners with schedule, slot limit and audit log` · hash: `…`
+- [x] **B03.C1** 🔖 COMMIT `feat(admin): manage home banners with schedule, slot limit and audit log` · hash: `a9a4ce5`
 
 ## B04 — API công khai & cache
 
-- [ ] **B04.01** `BannerCache`
-- [ ] **B04.02** `BannerQueryService.live(positions, categoryId, now)`
-- [ ] **B04.03** `PublicBannerController`
-- [ ] **B04.04** Listener xóa cache
-- [ ] **B04.05** `PublicBannerIT`
+- [x] **B04.01** `BannerCache`
+- [x] **B04.02** `BannerQueryService.live(positions, categoryId, now)`
+- [x] **B04.03** `PublicBannerController`
+- [x] **B04.04** Listener xóa cache
+- [x] **B04.05** `PublicBannerIT`
 - [ ] **B04.C1** 🔖 COMMIT `feat(admin): serve live banners by position with redis cache` · hash: `…`
 
 ## B05 — Bộ đếm hiển thị / bấm
@@ -156,6 +156,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | B02.05 | Kiểm cả chuỗi gốc và chuỗi đã giải mã `%xx`: chuỗi gốc cấm khoảng trắng / ký tự điều khiển, chuỗi giải mã chỉ cấm ký tự điều khiển (cho phép `?q=tai%20nghe`); `%` hỏng → từ chối |
 | B03.01 | Kiểm trường ở service (không dùng Bean Validation trên record) để gom đủ `errors[]` một lần: `title`, `image_object_key` (khi tạo), `target_url`, `position`, `category_id` (CATEGORY_TOP), `sort_order`, `starts_at`, `ends_at` (phải sau `starts_at`). Cổng `BannerCategoryLookup` (module catalog cài sau) — chưa có bean thì chỉ kiểm khác null, `category.name = null`. Thêm `common/api/PagePagination` + `ApiResponseFactory.page()` (phân trang số — API 0.4) |
 | B03.03 | Ảnh mới chuyển sang `banner/{id}/{desktop|mobile}-<uuid>.<ext>` bằng `promoteTo`; ảnh cũ xóa sau commit (bỏ qua khóa `seed/`); rollback thì xóa ảnh vừa chuyển. `details.changes` ghi từng trường đổi (`from` / `to`). Gửi lại đúng khóa hiện tại = giữ ảnh |
+| B04.05 | Ca "Redis tắt" kiểm bằng unit test `BannerCacheTest` (mock Redis ném lỗi → `get` rỗng, `put` / `evictAll` không ném) thay vì dừng container Redis dùng chung của mọi IT. Listener xóa cache chạy đồng bộ `AFTER_COMMIT` (lệnh Redis nhỏ) để lần đọc kế tiếp chắc chắn thấy dữ liệu mới |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
