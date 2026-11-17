@@ -1,8 +1,9 @@
 // Nhân viên & phân quyền (11.18), người dùng (11.13), nhật ký (11.10), sửa tài khoản (11.1 PATCH
 // /admin/me). Mock báo lỗi như server: email đã dùng (GNE-ADM-4091), sai đuôi (GNE-ADM-4221), xóa chính
 // mình (GNE-ADM-4092), cấp MANAGE_RBAC cho Staff (GNE-SEC-4031).
-import { api, getPage, request } from '@/shared/api/http';
+import { api, getPage, request, requestBlob } from '@/shared/api/http';
 import { mockDelay, mockFail, paginateCursor, USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import {
   isPermission,
   segregationWarning,
@@ -64,8 +65,8 @@ const toAudit = (d: AuditLogDto): AuditEntry => ({
   actorRole: d.actor_role,
   action: d.action,
   category: d.category,
-  target: d.target,
-  ip: d.ip_address,
+  target: d.target ?? '',
+  ip: d.ip_address ?? '',
   result: d.result,
 });
 
@@ -264,11 +265,14 @@ export interface AuditPage extends CursorPage<AuditEntry> {
 
 const AUDIT_LIMIT = 50;
 
+/** Nhật ký nối API thật khi `PUBLIC_REAL_API` có `audit` (backend UC-ADM-07 — API_SPEC 11.10). */
+const AUDIT_MOCK = isMocked('audit');
+
 /** "Bây giờ" của nhật ký: mock đứng ở ngày chốt dữ liệu mẫu (22/06/2026) như prototype. */
-export const auditNow = (): Date => (USE_MOCK ? AUDIT_NOW : new Date());
+export const auditNow = (): Date => (AUDIT_MOCK ? AUDIT_NOW : new Date());
 
 export async function listAuditLogs(f: AuditQuery, cursor: string | null): Promise<AuditPage> {
-  if (USE_MOCK) {
+  if (AUDIT_MOCK) {
     await mockDelay(180);
     const n = f.q.trim().toLowerCase();
     const rows = AUDIT_DTOS.filter((r) => {
@@ -304,6 +308,33 @@ export async function listAuditLogs(f: AuditQuery, cursor: string | null): Promi
     has_more: p?.has_more ?? false,
     next_cursor: p?.next_cursor ?? null,
     deniedCount: Number((res.summary ?? {}).denied_count ?? 0),
+  };
+}
+
+/**
+ * Xuất nhật ký: API thật trả tệp CSV do server sinh (`GET /admin/audit-logs/export`, tối đa 50.000 dòng —
+ * `truncated` khi bị cắt); mock trả các dòng để trình duyệt tự dựng CSV (handoff mục 4).
+ */
+export type AuditExport =
+  | { kind: 'file'; blob: Blob; fileName: string; truncated: boolean }
+  | { kind: 'rows'; rows: AuditEntry[] };
+
+export async function exportAuditLogs(f: AuditQuery): Promise<AuditExport> {
+  if (AUDIT_MOCK) return { kind: 'rows', rows: await listAllAuditLogs(f) };
+  const file = await requestBlob('/admin/audit-logs/export', {
+    query: {
+      from: f.from ?? undefined,
+      to: f.to ?? undefined,
+      category: f.category ?? undefined,
+      q: f.q.trim() || undefined,
+    },
+    timeout: 60_000,
+  });
+  return {
+    kind: 'file',
+    blob: file.blob,
+    fileName: file.fileName ?? 'nhat-ky-he-thong.csv',
+    truncated: file.headers.get('X-Truncated') === 'true',
   };
 }
 

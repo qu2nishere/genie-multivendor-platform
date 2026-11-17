@@ -25,13 +25,14 @@ export interface PlatformUserDto {
 }
 
 export interface AuditLogDto {
-  id: number;
+  /** system_logs.id — UUID (chuỗi). */
+  id: string;
   created_at: string;
   actor_email: string;
   actor_role: string;
   action: string;
   category: 'AUTH' | 'KYC' | 'FINANCE' | 'MODERATION' | 'SECURITY' | 'CONFIG';
-  target: string;
-  ip_address: string;
+  target: string | null;
+  ip_address: string | null;
   result: 'SUCCESS' | 'FAILED' | 'DENIED';
 }

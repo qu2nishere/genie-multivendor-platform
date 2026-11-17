@@ -259,7 +259,7 @@ export const AUDIT_DTOS: AuditLogDto[] = (
     ],
   ] as A[]
 ).map(([at, actor_email, actor_role, action, category, target, ip_address, result], i) => ({
-  id: 55120 - i,
+  id: String(55120 - i),
   created_at: `${at}+07:00`,
   actor_email,
   actor_role,

@@ -14,6 +14,7 @@ import {
   deleteStaff,
   inviteStaff,
   listAllAuditLogs,
+  exportAuditLogs,
   listAuditLogs,
   listStaff,
   listUsers,
@@ -85,7 +86,7 @@ export const useAuditLogs = (f: AuditQuery) =>
     getNextPageParam: (last) => (last.has_more ? last.next_cursor : null),
     placeholderData: keepPreviousData,
   });
-export { listAllAuditLogs, auditNow };
+export { listAllAuditLogs, exportAuditLogs, auditNow };
 
 // Tài khoản
 export const useUpdateAdminMe = () =>

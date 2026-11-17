@@ -48,7 +48,7 @@ export type AuditCategory = 'AUTH' | 'KYC' | 'FINANCE' | 'MODERATION' | 'SECURIT
 export type AuditResult = 'SUCCESS' | 'FAILED' | 'DENIED';
 
 export interface AuditEntry {
-  id: number;
+  id: string;
   createdAt: string;
   actorEmail: string;
   actorRole: string;

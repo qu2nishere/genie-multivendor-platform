@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-audit-log` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (28 / 45) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (35 / 45) |
 
 **Cách dùng**
 
@@ -39,10 +39,10 @@
 | L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
 | L02 | Truy vấn đọc `system_logs` | 5 | 1 | 6 / 6 | — | `feature/admin-audit-log` |
 | L03 | Dịch vụ & API tra cứu | 8 | 1 | 9 / 9 | — | `feature/admin-audit-log` |
-| L04 | Xuất CSV | 4 | 1 | 4 / 5 | — | `feature/admin-audit-log` |
-| L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 0 / 7 | — | `feature/admin-audit-log` |
+| L04 | Xuất CSV | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
+| L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 6 / 7 | — | `feature/admin-audit-log` |
 | L06 | Hoàn thiện use case | 7 | 1 | 0 / 8 | — | `feature/admin-audit-log` |
-| **Tổng** | | **39** | **6** | **28 / 45** | | |
+| **Tổng** | | **39** | **6** | **35 / 45** | | |
 
 ## L00 — Chuẩn bị
 
@@ -87,16 +87,16 @@
 - [x] **L04.02** `GET /api/v1/admin/audit-logs/export`
 - [x] **L04.03** Giới hạn tần suất xuất
 - [x] **L04.04** `AuditLogExportIT`
-- [ ] **L04.C1** 🔖 COMMIT `feat(admin): export filtered audit logs as csv` · hash: `…`
+- [x] **L04.C1** 🔖 COMMIT `feat(admin): export filtered audit logs as csv` · hash: `6d90219`
 
 ## L05 — Nối giao diện `web/` (scope `admin-ui`)
 
-- [ ] **L05.01** `web/src/features/admin-system/infrastructure/system.api.ts`
-- [ ] **L05.02** `auditNow`
-- [ ] **L05.03** Xuất CSV
-- [ ] **L05.04** Lỗi & trạng thái
-- [ ] **L05.05** Chạy thật hai phía
-- [ ] **L05.06** `npm run verify` trong `web/`.
+- [x] **L05.01** `web/src/features/admin-system/infrastructure/system.api.ts`
+- [x] **L05.02** `auditNow`
+- [x] **L05.03** Xuất CSV
+- [x] **L05.04** Lỗi & trạng thái
+- [-] **L05.05** Chạy thật hai phía
+- [x] **L05.06** `npm run verify` trong `web/`.
 - [ ] **L05.C1** 🔖 COMMIT `feat(admin-ui): connect audit log screen to the real api` · hash: `…`
 
 ## L06 — Hoàn thiện use case
@@ -136,6 +136,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | L03.01 | `AuditLogQuery` đặt ở `application` (dùng chung cho tra cứu và xuất CSV). `from` / `to` nhận cả ISO-8601 lẫn ngày `YYYY-MM-DD` (giờ VN, `to` tính hết ngày — khớp web). Thêm dùng chung: `common/error/InvalidRequestException` (422 có `errors[]` theo trường) và `common/api/ApiListResponse` + `ApiResponseFactory.list()` (`pagination`, `summary` ở cấp gốc — API 0.3) |
 | L03.07 | Lần chạy đầu lỗi môi trường: Byte Buddy không tự gắn agent vào JVM (Mockito inline) — chạy lại thì 9/9 xanh, không phải lỗi mã |
 | L04.02 | Ghi thẳng ra `HttpServletResponse` (đồng bộ, vẫn theo luồng: `Stream` + `detach` từng dòng) thay vì `StreamingResponseBody` — tránh xử lý bất đồng bộ làm mất transaction / security context, MockMvc test được. Giới hạn đọc từ `genie.audit.export-max` (mặc định 50.000); test hạ xuống 3 để thử `X-Truncated`. Mở `Access-Control-Expose-Headers: Content-Disposition, X-Truncated` cho web |
+| L05.01 | Cờ `isMocked('audit')` (`PUBLIC_REAL_API=audit`). `AuditLogDto.id` đổi `number` → `string` (UUID), `target` / `ip_address` cho phép `null`; mock đổi id sang chuỗi |
+| L05.03 | Thêm `requestBlob` + `fileNameOf` ở `shared/api/http.ts` (tải tệp kèm Bearer, làm mới token một lần khi 401) và `downloadBlob` ở `shared/lib/csv.ts`; `exportAuditLogs` trả tệp server (thật) hoặc các dòng (mock); bị cắt thì toast `admin-system.audit.export_truncated` |
+| L05.05 | `[-]` Phần trình duyệt chờ người dùng tự chạy (CLAUDE.md: chỉ tick **Chạy** khi người dùng thao tác). Đã chạy thật phía API với CSDL local + tài khoản seed: `yen.dh` xem được (dòng của nhân viên hiện `CS_SPECIALIST`), `truc.ht` nhận 403, khoảng 320 ngày → 422 `RANGE_TOO_LONG`, xuất CSV có BOM + `Content-Disposition` đúng. Cách chạy: web `PUBLIC_USE_MOCK=true`, `PUBLIC_REAL_API=auth,audit`, đăng nhập `yen.dh@genie.example`, mở `/admin/audit-logs` |
+| L05.06 | `npm run verify` gọi cả chuỗi qua `timeout` thoát 127 trên Git Bash; chạy từng bước: lint 0, astro check 0 lỗi, tsc 0, vitest 316/316, build OK, i18n OK (3266 khóa) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
