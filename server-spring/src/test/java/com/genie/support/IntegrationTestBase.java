@@ -1,5 +1,6 @@
 package com.genie.support;
 
+import com.genie.auth.oauth.application.OAuthProvider;
 import com.genie.auth.profile.domain.CustomerProfile;
 import com.genie.auth.profile.domain.CustomerProfileRepository;
 import com.genie.auth.profile.domain.User;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -120,7 +122,12 @@ public abstract class IntegrationTestBase {
     protected FakeEmailSender mails;
 
     @Autowired
+    @Qualifier("fakeIdentityProviderClient")
     protected FakeIdentityProviderClient google;
+
+    @Autowired
+    @Qualifier("fakeZaloIdentityProviderClient")
+    protected FakeIdentityProviderClient zalo;
 
     @Autowired
     protected FakeAccountDeletionBlocker deletionBlocker;
@@ -186,6 +193,7 @@ public abstract class IntegrationTestBase {
         clock.set(Instant.parse(START));
         mails.clear();
         google.clear();
+        zalo.clear();
         deletionBlocker.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
@@ -216,6 +224,13 @@ public abstract class IntegrationTestBase {
         @Order(Ordered.HIGHEST_PRECEDENCE)
         FakeIdentityProviderClient fakeIdentityProviderClient() {
             return new FakeIdentityProviderClient();
+        }
+
+        /** Zalo giả — cũng đứng trước {@code ZaloIdentityProviderClient} thật. */
+        @Bean
+        @Order(Ordered.HIGHEST_PRECEDENCE)
+        FakeIdentityProviderClient fakeZaloIdentityProviderClient() {
+            return new FakeIdentityProviderClient(OAuthProvider.ZALO);
         }
 
         @Bean

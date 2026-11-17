@@ -9,12 +9,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Google giả cho test: không gọi mạng. Test đăng ký trước {@code code → danh tính}; {@link #authorizeUrl} trả URL giả có
+ * Google / Zalo giả cho test: không gọi mạng. Test đăng ký trước {@code code → danh tính}; {@link #authorizeUrl} trả URL giả có
  * {@code state} để test đọc lại. Đứng TRƯỚC {@code GoogleIdentityProviderClient} trong danh sách (xem {@code TestBeans}).
  */
 public class FakeIdentityProviderClient implements IdentityProviderClient {
 
     private final Map<String, IdentityClaims> identities = new ConcurrentHashMap<>();
+    private final OAuthProvider provider;
+
+    public FakeIdentityProviderClient() {
+        this(OAuthProvider.GOOGLE);
+    }
+
+    public FakeIdentityProviderClient(OAuthProvider provider) {
+        this.provider = provider;
+    }
 
     public void register(String code, IdentityClaims claims) {
         identities.put(code, claims);
@@ -26,7 +35,7 @@ public class FakeIdentityProviderClient implements IdentityProviderClient {
 
     @Override
     public OAuthProvider provider() {
-        return OAuthProvider.GOOGLE;
+        return provider;
     }
 
     @Override
@@ -36,7 +45,8 @@ public class FakeIdentityProviderClient implements IdentityProviderClient {
 
     @Override
     public String authorizeUrl(String state, String nonce, String codeChallenge, String redirectUri) {
-        return "https://accounts.fake/auth?state=" + state + "&code_challenge=" + codeChallenge
+        String host = provider == OAuthProvider.GOOGLE ? "accounts" : provider.id();
+        return "https://" + host + ".fake/auth?state=" + state + "&code_challenge=" + codeChallenge
                 + "&redirect_uri=" + redirectUri;
     }
 
