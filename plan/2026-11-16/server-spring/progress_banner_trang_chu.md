@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (11 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (18 / 57) |
 
 **Cách dùng**
 
@@ -38,14 +38,14 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
 | B00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-home-banner` |
-| B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 7 / 8 | — | `feature/admin-home-banner` |
-| B02 | Miền & truy vấn | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
+| B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
+| B02 | Miền & truy vấn | 6 | 1 | 6 / 7 | — | `feature/admin-home-banner` |
 | B03 | API quản trị banner | 9 | 1 | 0 / 10 | — | `feature/admin-home-banner` |
 | B04 | API công khai & cache | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
 | B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
 | B06 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
 | B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **11 / 57** | | |
+| **Tổng** | | **48** | **9** | **18 / 57** | | |
 
 ## B00 — Chuẩn bị
 
@@ -64,16 +64,16 @@
 - [x] **B01.05** `UploadPurpose.BANNER_IMAGE`
 - [x] **B01.06** Test
 - [x] **B01.C1** 🔖 COMMIT `feat(db): allow banner change action in system logs` · hash: `4336bc8`
-- [ ] **B01.C2** 🔖 COMMIT `feat(common): add banner error codes and banner image upload purpose` · hash: `…`
+- [x] **B01.C2** 🔖 COMMIT `feat(common): add banner error codes and banner image upload purpose` · hash: `3831bcb`
 
 ## B02 — Miền & truy vấn
 
-- [ ] **B02.01** `BannerState`
-- [ ] **B02.02** `HomeBanner`
-- [ ] **B02.03** `HomeBannerTest`
-- [ ] **B02.04** `HomeBannerRepository`
-- [ ] **B02.05** `BannerTargetValidator` (N4)
-- [ ] **B02.06** `BannerTargetValidatorTest`
+- [x] **B02.01** `BannerState`
+- [x] **B02.02** `HomeBanner`
+- [x] **B02.03** `HomeBannerTest`
+- [x] **B02.04** `HomeBannerRepository`
+- [x] **B02.05** `BannerTargetValidator` (N4)
+- [x] **B02.06** `BannerTargetValidatorTest`
 - [ ] **B02.C1** 🔖 COMMIT `feat(admin): add banner state rules and target url validation` · hash: `…`
 
 ## B03 — API quản trị banner
@@ -152,6 +152,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | B00.04 | `develop` tới `V14`; plan [3] merge trước plan [7] → dùng **`V15__banner_audit_action.sql`**, KYC dời sang `V16` (đúng ghi chú README mục 4 — sửa bảng sổ đăng ký trong cùng PR) |
 | B01.01 | ENTITY 10.4 (phương thức `create / state / activate / changeSchedule / changeContent / changeImages / isDeletable`, ảnh lưu khóa đối tượng), Phụ lục A (`BANNER_CHANGED`, `BannerState` không lưu), Phụ lục E; `java-code/Diagram10_*.java`, `GIAI_NGHIA_ENTITY.md`; API 16.2 thêm `BANNER_CHANGED` vào nhóm `CONFIG` |
 | B01.05 | `UploadPurpose.requiredAuthority()` (null = ai đăng nhập cũng được); `UploadController` thiếu quyền ném `AccessDeniedException` → 403 + ghi `ACCESS_DENIED`. Thêm `UploadService.promoteTo(userId, purpose, tmpKey, targetPrefix)` (đặt ảnh ở `banner/{id}/…` — D4) và `publicUrl(purpose, key)`. Test: `BannerUploadIT` (thay cho ca trong `PresignedUploadIT` — repo chưa có lớp này; test tải ảnh đại diện nằm ở `ProfileAvatarIT`) |
+| B02.04 | `findLive` / `findLiveInCategory` (JPQL), `countOverlapping` (D2), `addStats` (`@Modifying`); tìm kiếm Admin dùng `JpaSpecificationExecutor` (ở service — B03.06). Truy vấn được kiểm trong `BannerAdminIT` / `PublicBannerIT` |
+| B02.05 | Kiểm cả chuỗi gốc và chuỗi đã giải mã `%xx`: chuỗi gốc cấm khoảng trắng / ký tự điều khiển, chuỗi giải mã chỉ cấm ký tự điều khiển (cho phép `?q=tai%20nghe`); `%` hỏng → từ chối |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
