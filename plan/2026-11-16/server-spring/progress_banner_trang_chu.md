@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (18 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (28 / 57) |
 
 **Cách dùng**
 
@@ -39,13 +39,13 @@
 |---|---|---:|---:|---:|---|---|
 | B00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-home-banner` |
 | B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
-| B02 | Miền & truy vấn | 6 | 1 | 6 / 7 | — | `feature/admin-home-banner` |
-| B03 | API quản trị banner | 9 | 1 | 0 / 10 | — | `feature/admin-home-banner` |
+| B02 | Miền & truy vấn | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
+| B03 | API quản trị banner | 9 | 1 | 9 / 10 | — | `feature/admin-home-banner` |
 | B04 | API công khai & cache | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
 | B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
 | B06 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
 | B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **18 / 57** | | |
+| **Tổng** | | **48** | **9** | **28 / 57** | | |
 
 ## B00 — Chuẩn bị
 
@@ -74,19 +74,19 @@
 - [x] **B02.04** `HomeBannerRepository`
 - [x] **B02.05** `BannerTargetValidator` (N4)
 - [x] **B02.06** `BannerTargetValidatorTest`
-- [ ] **B02.C1** 🔖 COMMIT `feat(admin): add banner state rules and target url validation` · hash: `…`
+- [x] **B02.C1** 🔖 COMMIT `feat(admin): add banner state rules and target url validation` · hash: `b674bb6`
 
 ## B03 — API quản trị banner
 
-- [ ] **B03.01** `BannerRequest` (record + Bean Validation)
-- [ ] **B03.02** `BannerAdminService.create`
-- [ ] **B03.03** `update`
-- [ ] **B03.04** `setActive(id, active)`
-- [ ] **B03.05** `delete(id)`
-- [ ] **B03.06** `BannerQueryService.search`
-- [ ] **B03.07** `AdminBannerController`
-- [ ] **B03.08** `BannerAdminIT` (PG + Redis + Silo)
-- [ ] **B03.09** `BannerAdminIT` phân quyền
+- [x] **B03.01** `BannerRequest` (record + Bean Validation)
+- [x] **B03.02** `BannerAdminService.create`
+- [x] **B03.03** `update`
+- [x] **B03.04** `setActive(id, active)`
+- [x] **B03.05** `delete(id)`
+- [x] **B03.06** `BannerQueryService.search`
+- [x] **B03.07** `AdminBannerController`
+- [x] **B03.08** `BannerAdminIT` (PG + Redis + Silo)
+- [x] **B03.09** `BannerAdminIT` phân quyền
 - [ ] **B03.C1** 🔖 COMMIT `feat(admin): manage home banners with schedule, slot limit and audit log` · hash: `…`
 
 ## B04 — API công khai & cache
@@ -154,6 +154,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | B01.05 | `UploadPurpose.requiredAuthority()` (null = ai đăng nhập cũng được); `UploadController` thiếu quyền ném `AccessDeniedException` → 403 + ghi `ACCESS_DENIED`. Thêm `UploadService.promoteTo(userId, purpose, tmpKey, targetPrefix)` (đặt ảnh ở `banner/{id}/…` — D4) và `publicUrl(purpose, key)`. Test: `BannerUploadIT` (thay cho ca trong `PresignedUploadIT` — repo chưa có lớp này; test tải ảnh đại diện nằm ở `ProfileAvatarIT`) |
 | B02.04 | `findLive` / `findLiveInCategory` (JPQL), `countOverlapping` (D2), `addStats` (`@Modifying`); tìm kiếm Admin dùng `JpaSpecificationExecutor` (ở service — B03.06). Truy vấn được kiểm trong `BannerAdminIT` / `PublicBannerIT` |
 | B02.05 | Kiểm cả chuỗi gốc và chuỗi đã giải mã `%xx`: chuỗi gốc cấm khoảng trắng / ký tự điều khiển, chuỗi giải mã chỉ cấm ký tự điều khiển (cho phép `?q=tai%20nghe`); `%` hỏng → từ chối |
+| B03.01 | Kiểm trường ở service (không dùng Bean Validation trên record) để gom đủ `errors[]` một lần: `title`, `image_object_key` (khi tạo), `target_url`, `position`, `category_id` (CATEGORY_TOP), `sort_order`, `starts_at`, `ends_at` (phải sau `starts_at`). Cổng `BannerCategoryLookup` (module catalog cài sau) — chưa có bean thì chỉ kiểm khác null, `category.name = null`. Thêm `common/api/PagePagination` + `ApiResponseFactory.page()` (phân trang số — API 0.4) |
+| B03.03 | Ảnh mới chuyển sang `banner/{id}/{desktop|mobile}-<uuid>.<ext>` bằng `promoteTo`; ảnh cũ xóa sau commit (bỏ qua khóa `seed/`); rollback thì xóa ảnh vừa chuyển. `details.changes` ghi từng trường đổi (`from` / `to`). Gửi lại đúng khóa hiện tại = giữ ảnh |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
