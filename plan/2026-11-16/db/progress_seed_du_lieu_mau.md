@@ -6,6 +6,7 @@
 | **Ngày lập** | 2026-11-16 |
 | **Tổng** | 58 task + 10 commit, 9 giai đoạn |
 | **Nhánh** | `feature/db-seed-demo` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 | **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 68) |
 
@@ -57,7 +58,7 @@
 ## S01 — Khung nạp seed cho CSDL bất kỳ
 
 - [ ] **S01.01** Tạo thư mục `server-spring/src/main/resources/db/seed/` + tệp `R__seed_demo_10_categories.sql` rỗng có chú thích đầu file (mục đích, nguyên tắc N1–N3, cách chạy).
-- [ ] **S01.02** `application-local.yml`
+- [ ] **S01.02** Công tắc seed (D1)
 - [ ] **S01.03** `scripts/seed/seed.sh`
 - [ ] **S01.04** `scripts/seed/seed.ps1`
 - [ ] **S01.05** `scripts/seed-local.sh`

@@ -1,49 +1,39 @@
-# Máy dev — hạ tầng chạy bằng deploy/docker-compose.local.yml (postgres, redis, minio, mailpit)
+# Profile local — máy dev. File này CHỈ chứa giá trị dự phòng ${BIEN:mặc_định} khớp deploy/docker-compose.local.yml
+# (postgres, redis, silo, mailpit) để clone về là chạy được không cần .env.
+# Muốn đổi (DB cài trên máy, DB cloud, Gmail thật…): ghi biến vào .env ở gốc repo (mẫu: .env.example) — KHÔNG sửa file này
+# và KHÔNG ghi mật khẩu thật vào đây (file này có trên git).
 spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/genie}
     username: ${DB_USER:genie}
     password: ${DB_PASSWORD:changeme}
   flyway:
-    # R__seed_demo.sql chỉ chạy ở profile local / demo
-    locations: classpath:db/migration
     placeholders:
-      seed_demo: true
+      seed_demo: ${GENIE_SEED_DEMO:true}       # trỏ DB cloud dùng chung mà không muốn nạp dữ liệu mẫu → GENIE_SEED_DEMO=false
   data:
     redis:
       password: ${REDIS_PASSWORD:changeme}
-  mail:
-    # Mặc định: Mailpit (docker-compose.local.yml) — xem OTP ở http://localhost:8025, không cần mật khẩu.
-    # Muốn gửi Gmail thật: đặt biến môi trường (IntelliJ Run Configuration), KHÔNG ghi mật khẩu vào file:
-    #   SMTP_HOST=smtp.gmail.com SMTP_PORT=587 SMTP_USER=<gmail> SMTP_PASSWORD=<app password>
-    #   SMTP_AUTH=true SMTP_STARTTLS=true MAIL_FROM=<gmail>
-    host: ${SMTP_HOST:localhost}
-    port: ${SMTP_PORT:1025}
-    username: ${SMTP_USER:}
-    password: ${SMTP_PASSWORD:}
-    properties:
-      mail.smtp.auth: ${SMTP_AUTH:false}
-      mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
+  # mail: dùng cấu hình chung — mặc định Mailpit localhost:1025 (xem OTP ở http://localhost:8025);
+  # muốn gửi Gmail thật thì đặt SMTP_* + MAIL_FROM trong .env
 
 management:
   endpoint:
     health:
-      show-details: always
+      show-details: ${HEALTH_SHOW_DETAILS:always}
+
+logging:
+  level:
+    com.genie: ${LOG_LEVEL_GENIE:DEBUG}
 
 genie:
-  mail-from: ${MAIL_FROM:no-reply@genie.local}   # gửi qua Gmail: MAIL_FROM phải trùng SMTP_USER
   security:
     jwt-secret: ${JWT_SECRET:local-dev-secret-change-me-local-dev-secret-change-me}
     internal-token: ${INTERNAL_TOKEN:local-internal-token}
-    kyc-aes-key: ${KYC_AES_KEY:local-kyc-key}
+    kyc-aes-key: ${KYC_AES_KEY:Z2VuaWUtbG9jYWwtZGV2LWt5Yy1rZXktMzItYnl0ZXM=}   # base64 32 byte (AES-256) — chỉ dùng máy dev
     wallet-hmac-secret: ${WALLET_HMAC_SECRET:local-wallet-secret}
     otp-pepper: ${OTP_PEPPER:local-otp-pepper}
-    cookie-secure: false            # http://localhost — trình duyệt bỏ cookie Secure trên http (trừ localhost Chrome)
+    cookie-secure: ${AUTH_COOKIE_SECURE:false}   # http://localhost — trình duyệt bỏ cookie Secure trên http
     cors-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4321}
   storage:
     access-key: ${MINIO_APP_ACCESS_KEY:genie-app}
     secret-key: ${MINIO_APP_SECRET_KEY:changeme}
-
-logging:
-  level:
-    com.genie: DEBUG

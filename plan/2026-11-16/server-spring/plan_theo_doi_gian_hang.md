@@ -8,6 +8,7 @@
 | **Tài liệu chuẩn** | UC phân hệ 08 (UC-SOC-06) · API 3.11, 0.3, 0.4, 1 (`$ShopMini`), 15, 17.5 b · ENTITY 9.2 (`ShopFollow`), 1.4 (`VendorProfile.followerCount`) · implement 8.4 · TS 4.4, 8, 9, 10.3, 14 — xem [README](../README.md) |
 | **Phụ thuộc** | Shop đã KYC để thử tay: plan [seed](../db/plan_seed_du_lieu_mau.md) S03 (test tự động **không** phụ thuộc seed) |
 | **Theo dõi tiến độ** | [progress_theo_doi_gian_hang.md](./progress_theo_doi_gian_hang.md) — cùng mã task `Fxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---

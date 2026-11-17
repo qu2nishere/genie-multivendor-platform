@@ -8,6 +8,7 @@
 | **Phục vụ plan** | [Sản phẩm yêu thích](../server-spring/plan_san_pham_yeu_thich.md) · [Theo dõi gian hàng](../server-spring/plan_theo_doi_gian_hang.md) · [Banner trang chủ](../server-spring/plan_banner_trang_chu.md) · [Điểm danh & Điểm Genie](../server-spring/plan_diem_danh_diem_genie.md) (phần Đổi quà) · [Mở shop & KYC](../server-spring/plan_mo_shop_kyc.md) |
 | **Tài liệu chuẩn** | TS 2.6 (`scripts/`), 7.3 (migration), 16.5 (khởi tạo dữ liệu) · ENTITY 13.2 · LUU_TRU 5.5 (đặt tên khóa đối tượng) · implement 3.1 (bảng nội dung seed) — xem [README](../README.md) |
 | **Theo dõi tiến độ** | [progress_seed_du_lieu_mau.md](./progress_seed_du_lieu_mau.md) — cùng mã task `Sxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---
@@ -34,7 +35,7 @@
 | N5 | Dữ liệu **khớp mock của web** (tên shop, tên / giá sản phẩm, slug, banner) để giao diện trước và sau khi nối API thật nhìn giống nhau; tài khoản dùng chung mật khẩu `Genie@123` (băm Argon2id có sẵn trong `R__seed_demo.sql`) | CLAUDE.md mục 3 |
 | N6 | Đúng quy ước dữ liệu: tiền `NUMERIC(19,2)`; thời gian `TIMESTAMPTZ` (`now()`); enum là chuỗi đúng `CHECK`; từ ngữ thương hiệu "Genie", "Điểm", "Chính hãng" | TS 7.1, 11 |
 | N7 | Ảnh **không lưu URL đầy đủ**: cột ảnh lưu khóa đối tượng Silo (`seed/product/<tên>.jpg`…); ảnh mẫu được đẩy lên Silo bằng script riêng | LUU_TRU 5.5, 5.6 |
-| N8 | Seed **chỉ** chạy ở profile `local` / `demo` và khi gọi script thủ công — **không** chạy ở `test` (test tự dựng dữ liệu bằng `TestDataBuilder`) và `prod` | TS 16.1 |
+| N8 | Seed tự động **chỉ** chạy khi `GENIE_SEED_DEMO=true` (mặc định `true` ở profile `local`, `false` ở `prod`; profile `test` luôn tắt) và khi gọi script thủ công — **không** chạy ở `test` (test tự dựng dữ liệu bằng `TestDataBuilder`) và `prod`. Một công tắc cho cả `R__seed_demo.sql` lẫn thư mục `db/seed` — trỏ CSDL cloud dùng chung chỉ cần `GENIE_SEED_DEMO=false` trong `.env` ([docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md) mục 5) | TS 16.1 |
 | N9 | Không sửa `V1…V14`; không sửa nội dung `R__seed_demo.sql` đã merge (giữ nguyên để không đổi checksum trên máy mọi người) — dữ liệu mới nằm ở file mới | TS 7.3 |
 
 ---
@@ -43,7 +44,7 @@
 
 | # | Vấn đề | Đề xuất | Chốt |
 |---|---|---|---|
-| D1 | Đặt file seed mới ở đâu để vừa Flyway chạy được vừa `psql` chạy được | Thư mục mới `server-spring/src/main/resources/db/seed/`, file dạng migration lặp lại `R__seed_demo_<NN>_<ten>.sql`. Profile `local` (và `demo`) thêm `classpath:db/seed` vào `spring.flyway.locations`; profile khác không có thư mục này nên không cần placeholder bảo vệ | ☐ |
+| D1 | Đặt file seed mới ở đâu để vừa Flyway chạy được vừa `psql` chạy được | Thư mục mới `server-spring/src/main/resources/db/seed/`, file dạng migration lặp lại `R__seed_demo_<NN>_<ten>.sql`. **Không** ghi cứng `spring.flyway.locations` theo profile: thêm `common/config/SeedDataFlywayCustomizer` (`FlywayConfigurationCustomizer`) nối `classpath:db/seed` khi `genie.seed.demo-data=true`; giá trị đọc `${GENIE_SEED_DEMO}` (mặc định `false` ở `application.yml`, `true` ở `application-local.yml`, `application-test.yml` đặt cứng `false`) — đúng quy ước mọi giá trị theo môi trường đọc từ biến ([docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md)) | ☐ |
 | D2 | Thứ tự chạy giữa `R__seed_demo` (tài khoản) và file mới | Flyway chạy migration lặp lại theo thứ tự chữ cái của phần mô tả: `seed demo` < `seed demo 10 categories` < `seed demo 20 …` → đặt tên đúng mẫu `R__seed_demo_<NN>_…` là tài khoản luôn chạy trước | ☐ |
 | D3 | Script nạp cho CSDL bất kỳ xử lý placeholder của `R__seed_demo.sql` thế nào | Script thay `${seed_demo}` → `true` bằng `sed` (bash) / `-replace` (PowerShell) khi đổ file đó vào `psql`; các file `db/seed/*` đổ nguyên văn | ☐ |
 | D4 | Số lượng dữ liệu: mock web có 6 shop / 23 danh mục / 20 sản phẩm; implement 3.1 ghi 5 shop / 30 danh mục / ~200 sản phẩm | **Hai mức:** mức *cơ bản* = đúng dữ liệu mock (đủ cho mọi plan ngày 16-11, giao diện khớp); mức *đầy* = thêm ~180 sản phẩm sinh bằng `generate_series` trong file riêng `R__seed_demo_90_bulk_products.sql` (làm sau, cắt được) | ☐ |
@@ -57,7 +58,8 @@
 
 ```
 server-spring/src/main/resources/
-├── application-local.yml                       (sửa) spring.flyway.locations += classpath:db/seed
+├── application.yml · application-local.yml · application-test.yml   (sửa) genie.seed.demo-data: ${GENIE_SEED_DEMO:…} (D1)
+│   (java) common/config/SeedDataFlywayCustomizer.java     (mới) thêm classpath:db/seed khi genie.seed.demo-data=true
 └── db/seed/                                    (mới — SQL thuần, idempotent, không placeholder)
     ├── R__seed_demo_10_categories.sql          danh mục gốc + con, tỷ lệ hoa hồng theo ngành
     ├── R__seed_demo_20_brands_attributes.sql   thương hiệu (có cờ xác minh), thuộc tính lọc theo ngành
@@ -124,18 +126,18 @@ Ký hiệu: `Sxx.yy` = task; `Sxx.Cn` = task commit (làm sau khi qua mục 6).
 - **[S00.01]** Kiểm danh tính git — `git config user.name`, `git config user.email` đúng tài khoản của mình; không đổi config.
 - **[S00.02]** Chốt quyết định D1–D7 — ghi lựa chọn vào đầu file progress.
 - **[S00.03]** Tạo nhánh — `git switch develop && git pull && git switch -c feature/db-seed-demo`.
-- **[S00.04]** Dựng môi trường — `docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d postgres silo silo-init`; xác nhận `psql` vào được (`docker compose … exec postgres psql -U genie -d genie -c '\\dt'` ra 65 bảng sau khi backend chạy một lần).
+- **[S00.04]** Dựng môi trường — `cp .env.example .env` nếu chưa có (khối CSDL [1] Docker — [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md)); `docker compose -f deploy/docker-compose.local.yml up -d postgres silo silo-init`; xác nhận `psql` vào được (`docker compose … exec postgres psql -U genie -d genie -c '\\dt'` ra 65 bảng sau khi backend chạy một lần).
 - **[S00.05]** Tái hiện lỗi script cũ — chạy `scripts/seed-local.sh` trên CSDL trống, xác nhận `SELECT count(*) FROM users` = 0 (placeholder không được thay); ghi vào Ghi chú của progress.
 - **[S00.06]** Lập bảng ánh xạ cột — với mỗi bảng ở mục 4, mở migration tương ứng (`V1`, `V2`, `V4`, `V6`, `V7`, `V10`…) ghi lại cột `NOT NULL` không có mặc định và các `CHECK` enum để seed không vi phạm (lưu vào Ghi chú progress).
 
 ### S01 — Khung nạp seed cho CSDL bất kỳ
 
 - **[S01.01]** Tạo thư mục `server-spring/src/main/resources/db/seed/` + tệp `R__seed_demo_10_categories.sql` rỗng có chú thích đầu file (mục đích, nguyên tắc N1–N3, cách chạy).
-- **[S01.02]** `application-local.yml` — `spring.flyway.locations: classpath:db/migration,classpath:db/seed` (D1); giữ `seed_demo: true`. Kiểm profile khác (`application.yml`, `application-prod.yml`) **không** có `db/seed`.
-- **[S01.03]** `scripts/seed/seed.sh` — tham số qua biến môi trường: `DATABASE_URL` (ưu tiên, dạng `postgresql://user:pass@host:port/db`) hoặc `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`; tùy chọn `--docker` (dùng `docker compose exec -T postgres psql` khi máy không cài `psql`), `--only <NN>` (chạy một file), `--dry-run` (in danh sách file). Trình tự: kiểm kết nối → kiểm bảng `flyway_schema_history` có `V14` (chưa migrate thì dừng kèm hướng dẫn) → đổ `R__seed_demo.sql` sau khi thay `${seed_demo}` → `true` (D3) → đổ lần lượt `db/seed/R__seed_demo_*.sql` theo thứ tự tên → in bảng đếm số dòng các bảng chính. Luôn dùng `-v ON_ERROR_STOP=1`, mỗi file trong một transaction (`--single-transaction`).
+- **[S01.02]** Công tắc seed (D1) — `genie.seed.demo-data: ${GENIE_SEED_DEMO:false}` ở `application.yml`, `${GENIE_SEED_DEMO:true}` ở `application-local.yml`, `false` cứng ở `application-test.yml`; placeholder `seed_demo` đọc cùng giá trị; `SeedDataFlywayCustomizer` nối `classpath:db/seed` khi `true` + unit test (bật → có `db/seed`, tắt → không). Thử: `GENIE_SEED_DEMO=false` trong `.env` → khởi động backend trên CSDL trống không có dòng seed nào.
+- **[S01.03]** `scripts/seed/seed.sh` — **dùng chung biến CSDL với backend** để ai cắm CSDL nào thì seed vào đúng CSDL đó: đọc `DB_URL` (dạng JDBC — script tự đổi sang chuỗi kết nối `psql`, giữ tham số như `sslmode=require`), `DB_USER`, `DB_PASSWORD`; thứ tự lấy: biến môi trường → tệp `.env` gốc repo (khối CSDL đang bật) → mặc định Docker local (`genie` / `changeme`); `DATABASE_URL` (`postgresql://user:pass@host:port/db`) nếu đặt thì ưu tiên nhất; in ra host / tên CSDL (che mật khẩu) trước khi chạy; tùy chọn `--docker` (dùng `docker compose exec -T postgres psql` khi máy không cài `psql`), `--only <NN>` (chạy một file), `--dry-run` (in danh sách file). Trình tự: kiểm kết nối → kiểm bảng `flyway_schema_history` có `V14` (chưa migrate thì dừng kèm hướng dẫn) → đổ `R__seed_demo.sql` sau khi thay `${seed_demo}` → `true` (D3) → đổ lần lượt `db/seed/R__seed_demo_*.sql` theo thứ tự tên → in bảng đếm số dòng các bảng chính. Luôn dùng `-v ON_ERROR_STOP=1`, mỗi file trong một transaction (`--single-transaction`).
 - **[S01.04]** `scripts/seed/seed.ps1` — cùng hành vi cho Windows PowerShell 5.1 (không dùng `&&`, đọc file UTF-8 không BOM, thay placeholder bằng `-replace`, gọi `psql.exe` hoặc `docker compose exec -T`).
 - **[S01.05]** `scripts/seed-local.sh` — rút gọn thành gọi `scripts/seed/seed.sh --docker` (giữ tên cũ để không gãy tài liệu); sửa chú thích đầu file cho đúng nội dung seed thật.
-- **[S01.06]** `scripts/seed/README.md` — 4 cách chạy (Docker local, Postgres cài máy, CSDL của người khác qua `DATABASE_URL`, tự động khi backend chạy profile `local`), danh sách file + thứ tự, bảng tài khoản mẫu (email / vai trò / mật khẩu `Genie@123`), cách xóa dữ liệu seed (xóa volume hoặc `DROP DATABASE`), lưu ý không chạy trên `prod`.
+- **[S01.06]** `scripts/seed/README.md` — 4 cách chạy (Docker local, Postgres cài máy, CSDL của người khác / cloud — chỉ cần bật đúng khối CSDL trong `.env` như backend, tự động khi backend chạy với `GENIE_SEED_DEMO=true`); cập nhật [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md) (`GENIE_SEED_DEMO` điều khiển cả `db/seed`, cách seed CSDL cloud); danh sách file + thứ tự, bảng tài khoản mẫu (email / vai trò / mật khẩu `Genie@123`), cách xóa dữ liệu seed (xóa volume hoặc `DROP DATABASE`), lưu ý không chạy trên `prod`.
 - **[S01.07]** Thử khung — chạy `seed.sh` và `seed.ps1` trên CSDL trống: 5 tài khoản của `R__seed_demo.sql` xuất hiện (lỗi S00.05 đã hết); chạy lần 2 không đổi.
 - **[S01.C1]** COMMIT — `feat(db): add seed runner that works against any postgres database`
 
@@ -164,7 +166,7 @@ Ký hiệu: `Sxx.yy` = task; `Sxx.Cn` = task commit (làm sau khi qua mục 6).
 
 ### S04 — Sản phẩm, SKU, ảnh
 
-- **[S04.01]** `scripts/seed/upload-assets.sh` + `.ps1` (D6) — đẩy `web/public/img/products/*` → `product-media/seed/product/`, `web/public/img/banners/*` → `content-assets/seed/banner/` bằng `mcli` / `mc` của container `silo-init` (`docker compose run --rm -v <thư mục ảnh>:/assets --entrypoint /bin/sh silo-init -c "…mirror…"`); tham số `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` cho Silo không phải Docker local; chạy lại không tải trùng (`mirror --overwrite`).
+- **[S04.01]** `scripts/seed/upload-assets.sh` + `.ps1` (D6) — đẩy `web/public/img/products/*` → `product-media/seed/product/`, `web/public/img/banners/*` → `content-assets/seed/banner/` bằng `mcli` / `mc` của container `silo-init` (`docker compose run --rm -v <thư mục ảnh>:/assets --entrypoint /bin/sh silo-init -c "…mirror…"`); Silo không phải Docker local thì đọc **cùng biến với backend** `MINIO_ENDPOINT`, `MINIO_APP_ACCESS_KEY`, `MINIO_APP_SECRET_KEY` (biến môi trường → `.env` gốc → mặc định Docker); chạy lại không tải trùng (`mirror --overwrite`).
 - **[S04.02]** `R__seed_demo_40_products.sql` — 20 `products` từ `SEED_PRODUCTS`: `vendor_id` (= `users.id` của chủ shop, tra qua `vendor_profiles.shop_name`), `category_id` (slug), `brand_id` (tên), `name`, `slug`, `description` ngắn, `base_price`, `original_price`, `status = 'PUBLISHED'`, `item_condition = 'NEW'`, `sold_count`, `rating_avg`, `rating_count`, `is_pre_order` + số ngày (theo `preorder_days`), cờ freeship nếu có cột; chống trùng theo `slug`.
 - **[S04.03]** `product_variants` — mỗi sản phẩm 1–3 SKU (màu / dung lượng): `sku` duy nhất dạng `SEED-<mã sp>-<mã biến thể>`, `price`, `stock_quantity` (một SKU để tồn 0 để test hết hàng), `attributes_json`; `ON CONFLICT (sku) DO NOTHING`.
 - **[S04.04]** `product_images` — ảnh chính + 1–2 ảnh phụ; `image_url` lưu **khóa đối tượng** `seed/product/<file>` (N7), `display_order`, cờ ảnh chính.

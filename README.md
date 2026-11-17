@@ -9,9 +9,9 @@ Sàn thương mại điện tử đa người bán — bản TLCN. Monorepo gồ
 | `web/` | Frontend — Astro SSR + React 19 islands + Tailwind |
 | `deploy/` | Docker Compose, Nginx, Silo (kho tệp S3) / Redis / Postgres, sao lưu |
 | `scripts/` | Seed, tải mô hình, giả lập webhook, kiểm i18n |
-| `docs/` | ADR (`docs/adr/`), OpenAPI xuất ra (`docs/openapi/`) |
+| `docs/` | ADR (`docs/adr/`), OpenAPI xuất ra (`docs/openapi/`), [cấu hình môi trường](docs/cau-hinh-moi-truong.md), bộ tài liệu dự án (`docs/Document/`) |
 
-Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`.
+Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`. Biến môi trường, `.env`, chọn CSDL (Docker / cài trên máy / cloud): [docs/cau-hinh-moi-truong.md](docs/cau-hinh-moi-truong.md).
 
 ## Chạy local trong 15 phút
 
@@ -21,19 +21,21 @@ Yêu cầu: Docker Desktop, JDK 21, Node.js 22, Python 3.12.
 # 0. Công cụ gốc (husky + commitlint)
 npm install
 
-# 1. Hạ tầng: postgres, redis, silo (+ silo-init), mailpit
-cp deploy/.env.example deploy/.env
-docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d
+# 1. Biến môi trường máy dev (đã bật sẵn profile local + CSDL Docker) — chi tiết: docs/cau-hinh-moi-truong.md
+cp .env.example .env
 
-# 2. Backend (Flyway tự tạo bảng, R__seed_demo.sql nạp dữ liệu demo)
-cd server-spring && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+# 2. Hạ tầng: postgres, redis, silo (+ silo-init), mailpit — mật khẩu mặc định genie / changeme
+docker compose -f deploy/docker-compose.local.yml up -d
 
-# 3. AI Worker
+# 3. Backend — JDK 21 (Flyway tự tạo bảng, R__seed_demo.sql nạp dữ liệu demo; profile lấy từ .env)
+cd server-spring && ./mvnw spring-boot:run
+
+# 4. AI Worker
 ./scripts/fetch-models.sh
 cd server-python && python -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/uvicorn app.main:app --port 8000
 
-# 4. Frontend
+# 5. Frontend
 cd web && npm ci && npm run dev
 ```
 

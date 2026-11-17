@@ -1,8 +1,18 @@
 # CHECKLIST TIẾN ĐỘ USE CASE — GENIE (BẢN TLCN)
 
-> **Cập nhật:** 2026-11-16 · **Nguồn đặc tả:** [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4) · **Nguồn trạng thái:** mã nguồn `genie-multivendor-platform` (plan `plan/2026-11-11/web/` G00–G13, `plan/2026-11-14/auth.md` A00–A16, `docs/web-backend-handoff.md`).
+> **Cập nhật:** 2026-11-17 · **Nguồn đặc tả:** [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4) · **Nguồn trạng thái:** mã nguồn `genie-multivendor-platform` (plan `plan/2026-11-11/web/` G00–G13, `plan/2026-11-14/auth.md` A00–A16, `docs/web-backend-handoff.md`).
 > **Bảng quản lý đầy đủ (tác nhân, quan hệ, lọc):** [Quản Lý UseCase.xlsx](diagrams/UseCaseDiagram/Quản%20Lý%20UseCase.xlsx) — cột *Hiện trạng mã nguồn* đã đồng bộ với file này.
 > **Cách dùng:** mỗi khi xong một lớp của UC thì đổi ô `☐` → `☑` (một phần: `◐`), cập nhật cột Trạng thái và ghi mã commit / PR vào Nhật ký cuối file. Một UC chỉ **Đã triển khai** khi đủ 5 lớp (Definition of Done — implement.md 15.3).
+
+## Thành viên & phân công
+
+> Cập nhật 2026-11-17. Cột **Phụ trách** ở mọi bảng use case bên dưới ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
+
+| Thành viên | Phụ trách | Hiện trạng |
+|---|---|---|
+| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — 3 đã xong, 5 đang làm, 1 chưa bắt đầu (UC-AUTH-09); plan `plan/2026-11-14/auth.md` |
+| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang lập plan — `plan/2026-11-16/` (8 plan + seed dữ liệu mẫu), chưa bắt đầu code |
+| **Nghiêm Phú Đăng Quân** | Chưa phân công | — |
 
 ## 1. Tổng quan
 
@@ -53,6 +63,8 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 🟡 **Đang triển khai** | Có ít nhất một ô BE / Test / Nối / Chạy là `☑` hoặc `◐`, nhưng chưa đủ 5 ô |
 | ✅ **Đã triển khai** | Đủ 5 ô `☑` (UC chạy nền: đủ các ô không phải `—`) — đúng *Definition of Done* ở implement.md 15.3 |
 
+**Cột Phụ trách** — người nhận làm use case (làm đủ 5 lớp, kể cả nối web và chạy thật). `—` = chưa ai nhận. Nhận use case mới: ghi tên ở cột này, ở bảng *Thành viên & phân công* đầu file và cột *Người phụ trách* trong Excel. Chuyển người: sửa cả ba nơi và ghi Nhật ký.
+
 **Ví dụ đọc một dòng:** `UC-AUTH-06 | … | ☑ ☑ ☑ ☑ ☐ | 🟡 Đang triển khai` → màn hình có, backend có, test xanh, web đã gọi API thật; **chỉ còn** chạy thử trên giao diện. Chạy xong, đúng → đổi ô cuối thành `☑`, Trạng thái thành ✅.
 
 **Quy trình cập nhật khi làm xong một lớp**
@@ -81,147 +93,147 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 ### Phân hệ 01 — XÁC THỰC & TÀI KHOẢN NGƯỜI DÙNG (AUTHENTICATION & ACCOUNT)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-AUTH-01` | Đăng ký tài khoản Khách hàng | S1 | `/auth/register` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> |
-| `UC-AUTH-02` | Đăng nhập hệ thống | S1 | `/auth/login` (mật khẩu / OTP), màn tạm khóa | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật; GET /me dựng phiên đầy đủ (2026-11-17)</sub> |
-| `UC-AUTH-03` | Đăng nhập & Liên kết tài khoản Google / Zalo (OAuth2 / OpenID Connect) | S7 | `/auth/login`, `/auth/oauth-callback`, `/account/logins` | ☑ | ◐ | ☑ | ☑ | ◐ | 🟡 Đang triển khai<br><sub>Google xong (đăng nhập, liên kết / gỡ liên kết). Zalo thay Apple (2026-11-17): code + test xong, build xanh; chạy thật tạm dừng — Zalo bắt xác thực domain, chờ tên miền thật</sub> |
-| `UC-AUTH-04` | Khôi phục mật khẩu qua Email OTP (Forgot Password) | S1 | `/auth/forgot` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> |
-| `UC-AUTH-06` | Đổi / Thiết lập mật khẩu | S1 | `/account/password`, Seller › Cài đặt › Bảo mật, Admin › Tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> |
-| `UC-AUTH-08` | Quản lý thông tin hồ sơ cá nhân (Customer Profile) | S2 | `/account/profile`, Admin › Tài khoản | ☑ | ◐ | ◐ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>hồ sơ + ảnh đại diện (Silo) xong; GET /me xong; còn đổi email</sub> |
-| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-AUTH-10` | Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân (Xóa tài khoản) | S7 | `/account/profile` › Xóa tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật; cổng chặn của order / payment chưa cài</sub> |
-| `UC-AUTH-11` | Đăng xuất & Quản lý thiết bị đăng nhập | S1 | Menu Đăng xuất, `/account/devices` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-AUTH-01` | Đăng ký tài khoản Khách hàng | S1 | `/auth/register` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-02` | Đăng nhập hệ thống | S1 | `/auth/login` (mật khẩu / OTP), màn tạm khóa | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật; GET /me dựng phiên đầy đủ (2026-11-17)</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-03` | Đăng nhập & Liên kết tài khoản Google / Zalo (OAuth2 / OpenID Connect) | S7 | `/auth/login`, `/auth/oauth-callback`, `/account/logins` | ☑ | ◐ | ☑ | ☑ | ◐ | 🟡 Đang triển khai<br><sub>Google xong (đăng nhập, liên kết / gỡ liên kết). Zalo thay Apple (2026-11-17): code + test xong, build xanh; chạy thật tạm dừng — Zalo bắt xác thực domain, chờ tên miền thật</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-04` | Khôi phục mật khẩu qua Email OTP (Forgot Password) | S1 | `/auth/forgot` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-06` | Đổi / Thiết lập mật khẩu | S1 | `/account/password`, Seller › Cài đặt › Bảo mật, Admin › Tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-08` | Quản lý thông tin hồ sơ cá nhân (Customer Profile) | S2 | `/account/profile`, Admin › Tài khoản | ☑ | ◐ | ◐ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>hồ sơ + ảnh đại diện (Silo) xong; GET /me xong; còn đổi email</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-10` | Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân (Xóa tài khoản) | S7 | `/account/profile` › Xóa tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật; cổng chặn của order / payment chưa cài</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-11` | Đăng xuất & Quản lý thiết bị đăng nhập | S1 | Menu Đăng xuất, `/account/devices` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
 
 ### Phân hệ 02 — DANH MỤC, SẢN PHẨM & TÌM KIẾM (CATALOG, PRODUCT & SEARCH)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-CAT-01` | Duyệt cây danh mục đa cấp (Category Hierarchy) | S2 | Header danh mục, `/c/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-02` | Tìm kiếm sản phẩm theo từ khóa | S2 | `/search` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-04` | Gợi ý từ khóa tìm kiếm & Xu hướng (Autocomplete & Trending) | S7 | Ô tìm kiếm (gợi ý, xu hướng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-05` | Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí | S2 | `/c/{slug}`, `/search` (bộ lọc, sắp xếp) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-06` | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho | S2 | `/p/{slug}-{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-07` | Xem gợi ý sản phẩm tương tự | S7 | `/p/{slug}-{id}` (tương tự), `/discover` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-08` | Quản lý danh sách sản phẩm yêu thích (Wishlist) | S6 | `/account/wishlist`, tim ở thẻ sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-09` | Thêm mới sản phẩm & Biến thể SKU (Người bán) | S2 | `/seller/products/new` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-10` | Cập nhật thông tin sản phẩm, giá bán & hình ảnh | S2 | `/seller/products/:id/edit` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-11` | Ẩn / Khóa / Xóa mềm sản phẩm | S2 | `/seller/products`, Admin › Danh mục › sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-12` | Kiểm duyệt sản phẩm tự động qua AI (Google Gemini API) | S7 | (nền) kết quả ở `/admin/product-moderation` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-CAT-13` | Kiểm duyệt sản phẩm thủ công theo hàng đợi (Staff Moderator) | S2 | `/admin/product-moderation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-14` | Quản lý danh mục sàn toàn cục & Cấu hình tỷ lệ hoa hồng | S2 | `/admin/catalog`, `/admin/commission` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-15` | Cấu hình bộ thuộc tính chuẩn theo ngành hàng (Category Attributes) | S7 | `/admin/catalog/:id/attributes` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-16` | Xem trang gian hàng (Shop Page) | S2 | `/shop/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-17` | Người bán đề xuất danh mục mới & Duyệt đề xuất | S7 | `/seller/catalog`, `/admin/catalog` (đề xuất) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-CAT-18` | Chia sẻ sản phẩm bằng liên kết (Deeplink) | S7 | Nút Chia sẻ ở `/p/…`, `/shop/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-CAT-01` | Duyệt cây danh mục đa cấp (Category Hierarchy) | S2 | Header danh mục, `/c/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-02` | Tìm kiếm sản phẩm theo từ khóa | S2 | `/search` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-04` | Gợi ý từ khóa tìm kiếm & Xu hướng (Autocomplete & Trending) | S7 | Ô tìm kiếm (gợi ý, xu hướng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-05` | Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí | S2 | `/c/{slug}`, `/search` (bộ lọc, sắp xếp) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-06` | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho | S2 | `/p/{slug}-{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-07` | Xem gợi ý sản phẩm tương tự | S7 | `/p/{slug}-{id}` (tương tự), `/discover` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-08` | Quản lý danh sách sản phẩm yêu thích (Wishlist) | S6 | `/account/wishlist`, tim ở thẻ sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-CAT-09` | Thêm mới sản phẩm & Biến thể SKU (Người bán) | S2 | `/seller/products/new` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-10` | Cập nhật thông tin sản phẩm, giá bán & hình ảnh | S2 | `/seller/products/:id/edit` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-11` | Ẩn / Khóa / Xóa mềm sản phẩm | S2 | `/seller/products`, Admin › Danh mục › sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-12` | Kiểm duyệt sản phẩm tự động qua AI (Google Gemini API) | S7 | (nền) kết quả ở `/admin/product-moderation` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-CAT-13` | Kiểm duyệt sản phẩm thủ công theo hàng đợi (Staff Moderator) | S2 | `/admin/product-moderation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-14` | Quản lý danh mục sàn toàn cục & Cấu hình tỷ lệ hoa hồng | S2 | `/admin/catalog`, `/admin/commission` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-15` | Cấu hình bộ thuộc tính chuẩn theo ngành hàng (Category Attributes) | S7 | `/admin/catalog/:id/attributes` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-16` | Xem trang gian hàng (Shop Page) | S2 | `/shop/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-17` | Người bán đề xuất danh mục mới & Duyệt đề xuất | S7 | `/seller/catalog`, `/admin/catalog` (đề xuất) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-18` | Chia sẻ sản phẩm bằng liên kết (Deeplink) | S7 | Nút Chia sẻ ở `/p/…`, `/shop/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 03 — GIỎ HÀNG, ĐẶT HÀNG & ĐƠN HÀNG (CART, CHECKOUT & ORDERS)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-08` | Tự động hủy đơn quá hạn thanh toán & Hoàn kho (Sweeper Cron) | S3 | (nền) đơn tự hủy ở `/orders` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-ORD-09` | Khách hàng theo dõi chi tiết hành trình đơn hàng | S4 | `/orders`, `/orders/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-10` | Khách hàng yêu cầu hủy đơn hàng | S4 | `/orders/{id}` › Hủy đơn | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-11` | Khách hàng xác nhận "Đã nhận hàng thành công" | S4 | `/orders/{id}` › Đã nhận hàng | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ORD-12` | Hệ thống tự động hoàn tất đơn sau 7 ngày từ khi Delivered | S4 | (nền) trạng thái Hoàn tất | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-08` | Tự động hủy đơn quá hạn thanh toán & Hoàn kho (Sweeper Cron) | S3 | (nền) đơn tự hủy ở `/orders` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-ORD-09` | Khách hàng theo dõi chi tiết hành trình đơn hàng | S4 | `/orders`, `/orders/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-10` | Khách hàng yêu cầu hủy đơn hàng | S4 | `/orders/{id}` › Hủy đơn | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-11` | Khách hàng xác nhận "Đã nhận hàng thành công" | S4 | `/orders/{id}` › Đã nhận hàng | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-12` | Hệ thống tự động hoàn tất đơn sau 7 ngày từ khi Delivered | S4 | (nền) trạng thái Hoàn tất | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
 
 ### Phân hệ 04 — THANH TOÁN, KÝ QUỸ (ESCROW) & SỔ CÁI (PAYMENTS, ESCROW & LEDGER)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-PAY-01` | Khởi tạo thanh toán trực tuyến (VNPay / chuyển khoản VietQR qua SePay) | S3 | `/checkout` (VNPay / VietQR), `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PAY-03` | Xử lý IPN VNPay & webhook SePay idempotent | S3 | (nền) IPN VNPay / webhook SePay | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-PAY-05` | Ghi nhận ký quỹ (Escrow) & Khấu trừ hoa hồng | S3 | (nền) ký quỹ — hiển thị ở `/seller/wallet` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-PAY-06` | Ghi sổ cái tài chính kép bất biến (Financial Ledger) | S3 | (nền) `/admin/ledger` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-PAY-07` | Tự động giải phóng tiền ký quỹ về ví người bán | S4 | (nền) `/seller/wallet` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-PAY-01` | Khởi tạo thanh toán trực tuyến (VNPay / chuyển khoản VietQR qua SePay) | S3 | `/checkout` (VNPay / VietQR), `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PAY-03` | Xử lý IPN VNPay & webhook SePay idempotent | S3 | (nền) IPN VNPay / webhook SePay | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-PAY-05` | Ghi nhận ký quỹ (Escrow) & Khấu trừ hoa hồng | S3 | (nền) ký quỹ — hiển thị ở `/seller/wallet` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-PAY-06` | Ghi sổ cái tài chính kép bất biến (Financial Ledger) | S3 | (nền) `/admin/ledger` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-PAY-07` | Tự động giải phóng tiền ký quỹ về ví người bán | S4 | (nền) `/seller/wallet` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
 
 ### Phân hệ 05 — GIAN HÀNG & THẨM ĐỊNH KYC NGƯỜI BÁN (VENDOR MANAGEMENT & KYC)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-VND-01` | Đăng ký mở gian hàng (Become a Seller) | S2 | `/become-seller` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-02` | Tải hồ sơ pháp lý & Giấy tờ định danh KYC | S2 | `/seller/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-03` | Thẩm định KYC tự động qua AI (QR, MRZ & Face Match) | S2 | (nền) kết quả ở `/seller/kyc`, `/admin/kyc` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-VND-04` | Kiểm duyệt thủ công hồ sơ KYC (Staff / Admin) | S2 | `/admin/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-05` | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID | S2 | `/seller/settings` (kho lấy hàng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-06` | Cấu hình tin nhắn trả lời tự động (Auto-reply) | S7 | `/seller/settings` (tự trả lời) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-07` | Đăng ký tài khoản nhận giải ngân (Payout Bank Account) | S4 | `/seller/settings` (tài khoản nhận tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-08` | Xem báo cáo doanh thu & Phân tích bán hàng (Vendor Analytics) | S6 | `/seller/analytics`, `/seller/` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-19` | Bật chế độ tạm nghỉ bán hàng của shop (Vacation Mode) | S7 | `/seller/settings` (tạm nghỉ) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-20` | Xem ví & sổ giao dịch người bán (Seller Wallet & Escrow Ledger) | S7 | `/seller/wallet` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-VND-21` | Cập nhật thông tin gian hàng & cài đặt vận hành | S7 | `/seller/settings` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-VND-01` | Đăng ký mở gian hàng (Become a Seller) | S2 | `/become-seller` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-02` | Tải hồ sơ pháp lý & Giấy tờ định danh KYC | S2 | `/seller/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-03` | Thẩm định KYC tự động qua AI (QR, MRZ & Face Match) | S2 | (nền) kết quả ở `/seller/kyc`, `/admin/kyc` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-04` | Kiểm duyệt thủ công hồ sơ KYC (Staff / Admin) | S2 | `/admin/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-05` | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID | S2 | `/seller/settings` (kho lấy hàng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-06` | Cấu hình tin nhắn trả lời tự động (Auto-reply) | S7 | `/seller/settings` (tự trả lời) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-VND-07` | Đăng ký tài khoản nhận giải ngân (Payout Bank Account) | S4 | `/seller/settings` (tài khoản nhận tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-08` | Xem báo cáo doanh thu & Phân tích bán hàng (Vendor Analytics) | S6 | `/seller/analytics`, `/seller/` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-VND-19` | Bật chế độ tạm nghỉ bán hàng của shop (Vacation Mode) | S7 | `/seller/settings` (tạm nghỉ) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-VND-20` | Xem ví & sổ giao dịch người bán (Seller Wallet & Escrow Ledger) | S7 | `/seller/wallet` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-VND-21` | Cập nhật thông tin gian hàng & cài đặt vận hành | S7 | `/seller/settings` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
 
 ### Phân hệ 06 — VẬN CHUYỂN QUA ĐỐI TÁC 3PL (SHIPPING VIA 3PL)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-LOG-01` | Tiếp nhận đơn hàng & Đóng gói tại kho shop (Fulfillment) | S4 | `/seller/orders` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-LOG-02` | Đẩy vận đơn sang GHN & In phiếu gửi hàng PDF (Waybill Label) | S4 | `/seller/orders` (đẩy vận đơn, in phiếu) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-LOG-03` | Đồng bộ hành trình giao nhận qua Webhook GHN | S4 | (nền) webhook 3PL — hành trình ở `/orders/{id}` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-LOG-15` | Điều phối đa hãng vận chuyển (Dynamic Carrier Routing) | S7 | (nền) chọn hãng ở `/seller/orders` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-LOG-16` | Người bán xác nhận / từ chối đơn hàng mới | S4 | `/seller/orders` (xác nhận / từ chối) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-LOG-01` | Tiếp nhận đơn hàng & Đóng gói tại kho shop (Fulfillment) | S4 | `/seller/orders` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-LOG-02` | Đẩy vận đơn sang GHN & In phiếu gửi hàng PDF (Waybill Label) | S4 | `/seller/orders` (đẩy vận đơn, in phiếu) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-LOG-03` | Đồng bộ hành trình giao nhận qua Webhook GHN | S4 | (nền) webhook 3PL — hành trình ở `/orders/{id}` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-LOG-15` | Điều phối đa hãng vận chuyển (Dynamic Carrier Routing) | S7 | (nền) chọn hãng ở `/seller/orders` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-LOG-16` | Người bán xác nhận / từ chối đơn hàng mới | S4 | `/seller/orders` (xác nhận / từ chối) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 07 — KHUYẾN MÃI, VOUCHER, FLASH SALE & ĐIỂM (PROMOTIONS, VOUCHERS, FLASH SALE & COINS)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-PRO-01` | Tạo & Quản lý Voucher Gian hàng (Vendor Shop Vouchers) | S5 | `/seller/promotions` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-02` | Tạo & Quản lý Voucher Toàn sàn | S5 | `/admin/vouchers` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-03` | Khách hàng thu thập Voucher vào Kho Voucher cá nhân | S5 | `/account/vouchers`, vé Lưu ở trang chủ / shop / chiến dịch | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-04` | Thuật toán Stacking Voucher 3 Tầng & Điểm tự động khi Checkout | S8 | `/checkout` (Voucher Picker, Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-05` | Tạo chiến dịch Flash Sale & Cấu hình khung giờ vàng | S8 | `/admin/flash-sales`, `/seller/flash-sales` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-06` | Mua hàng Flash Sale chống bán vượt suất | S8 | `/flash-sale`, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-08` | Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (Streak) | S8 | `/account/points` (điểm danh) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-09` | Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm | S8 | `/account/points` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-PRO-10` | Sử dụng Điểm Genie để giảm trừ thanh toán đơn hàng | S8 | `/checkout` (dùng Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-PRO-01` | Tạo & Quản lý Voucher Gian hàng (Vendor Shop Vouchers) | S5 | `/seller/promotions` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-02` | Tạo & Quản lý Voucher Toàn sàn | S5 | `/admin/vouchers` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-03` | Khách hàng thu thập Voucher vào Kho Voucher cá nhân | S5 | `/account/vouchers`, vé Lưu ở trang chủ / shop / chiến dịch | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-04` | Thuật toán Stacking Voucher 3 Tầng & Điểm tự động khi Checkout | S8 | `/checkout` (Voucher Picker, Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-05` | Tạo chiến dịch Flash Sale & Cấu hình khung giờ vàng | S8 | `/admin/flash-sales`, `/seller/flash-sales` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-06` | Mua hàng Flash Sale chống bán vượt suất | S8 | `/flash-sale`, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-PRO-08` | Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (Streak) | S8 | `/account/points` (điểm danh) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-PRO-09` | Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm | S8 | `/account/points` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-PRO-10` | Sử dụng Điểm Genie để giảm trừ thanh toán đơn hàng | S8 | `/checkout` (dùng Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 08 — CHAT, ĐÁNH GIÁ & THEO DÕI SHOP (CHAT, REVIEWS & SHOP FOLLOW)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-SOC-01` | Nhắn tin trò chuyện thời gian thực Khách - Shop (Live Chat) | S6 | `/chat`, `/seller/chat` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SOC-02` | Gửi thẻ sản phẩm, hình ảnh và trạng thái đơn hàng trong chat | S8 | `/chat` (thẻ sản phẩm / đơn / ảnh) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SOC-03` | Đánh giá sản phẩm đã mua & Tải ảnh thực tế (Verified Buyer Review) | S5 | `/orders/{id}` › Đánh giá, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SOC-04` | Người bán phản hồi đánh giá của khách hàng (Vendor Review Reply) | S5 | `/seller/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SOC-05` | Báo cáo đánh giá vi phạm / spam & Kiểm duyệt đánh giá (Review Moderation & Report) | S8 | `/p/…` (báo cáo), `/admin/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SOC-06` | Khách hàng theo dõi gian hàng (Shop Follow) | S8 | `/shop/{id}`, `/account/following` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-AI-07` | Phân tích cảm xúc đánh giá bằng PhoBERT (Sentiment Analysis) | S6 | (nền) chỉ số cảm xúc ở `/seller/analytics`, `/seller/reviews` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-SOC-01` | Nhắn tin trò chuyện thời gian thực Khách - Shop (Live Chat) | S6 | `/chat`, `/seller/chat` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SOC-02` | Gửi thẻ sản phẩm, hình ảnh và trạng thái đơn hàng trong chat | S8 | `/chat` (thẻ sản phẩm / đơn / ảnh) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SOC-03` | Đánh giá sản phẩm đã mua & Tải ảnh thực tế (Verified Buyer Review) | S5 | `/orders/{id}` › Đánh giá, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SOC-04` | Người bán phản hồi đánh giá của khách hàng (Vendor Review Reply) | S5 | `/seller/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SOC-05` | Báo cáo đánh giá vi phạm / spam & Kiểm duyệt đánh giá (Review Moderation & Report) | S8 | `/p/…` (báo cáo), `/admin/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SOC-06` | Khách hàng theo dõi gian hàng (Shop Follow) | S8 | `/shop/{id}`, `/account/following` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-AI-07` | Phân tích cảm xúc đánh giá bằng PhoBERT (Sentiment Analysis) | S6 | (nền) chỉ số cảm xúc ở `/seller/analytics`, `/seller/reviews` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
 
 ### Phân hệ 09 — TRẢ HÀNG, HOÀN TIỀN & KHIẾU NẠI (RETURNS, REFUNDS & DISPUTES)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-SUP-01` | Tạo yêu cầu Trả hàng / Hoàn tiền (Return & Refund Request) | S5 | `/orders/{id}` › Trả hàng / hoàn tiền | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SUP-02` | Người bán tiếp nhận và xử lý yêu cầu trả hàng | S5 | `/seller/returns` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SUP-03` | Nhân viên sàn phân xử tranh chấp khiếu nại (Dispute Arbitration) | S5 | `/admin/refunds` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-SUP-04` | Thực hiện hoàn tiền (VNPay / VietQR / COD) | S5 | `/admin/refunds` (hoàn tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-SUP-01` | Tạo yêu cầu Trả hàng / Hoàn tiền (Return & Refund Request) | S5 | `/orders/{id}` › Trả hàng / hoàn tiền | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SUP-02` | Người bán tiếp nhận và xử lý yêu cầu trả hàng | S5 | `/seller/returns` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SUP-03` | Nhân viên sàn phân xử tranh chấp khiếu nại (Dispute Arbitration) | S5 | `/admin/refunds` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-SUP-04` | Thực hiện hoàn tiền (VNPay / VietQR / COD) | S5 | `/admin/refunds` (hoàn tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 10 — THÔNG BÁO (NOTIFICATIONS)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-NOT-01` | Thông báo trong ứng dụng thời gian thực (WebSocket) | S5 | Chuông + `/account/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-NOT-03` | Gửi email giao dịch tự động | S5 | (nền) email giao dịch | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> |
-| `UC-NOT-05` | Admin phát thông báo toàn sàn (Broadcast Platform Notification) | S8 | `/admin/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-NOT-01` | Thông báo trong ứng dụng thời gian thực (WebSocket) | S5 | Chuông + `/account/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-NOT-03` | Gửi email giao dịch tự động | S5 | (nền) email giao dịch | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
+| `UC-NOT-05` | Admin phát thông báo toàn sàn (Broadcast Platform Notification) | S8 | `/admin/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 11 — QUẢN TRỊ SÀN, NHÂN VIÊN & RÚT TIỀN (PLATFORM ADMIN, STAFF & PAYOUTS)
 
-| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái |
-|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|
-| `UC-ADM-01` | Quản lý danh sách nhân viên nội bộ & Lời mời kích hoạt | S1 | `/admin/staff` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-02` | Phân cấp vai trò & Cấp phát / Thu hồi mã quyền chi tiết (RBAC) | S1 | `/admin/staff` (phân quyền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-03` | Khóa / Mở khóa tài khoản nhân viên và người dùng vi phạm | S6 | `/admin/users`, `/admin/staff` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-04` | Người bán gửi yêu cầu rút tiền từ Ví về Ngân hàng | S4 | `/seller/wallet` (rút tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-05` | Nhân viên sàn phê duyệt & Thực hiện lệnh chuyển khoản (Payout) | S4 | `/admin/withdrawals`, `/admin/cod-reconciliation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-06` | Dashboard doanh thu & ký quỹ toàn sàn | S6 | `/admin/` (Tổng quan) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-07` | Tra cứu nhật ký kiểm toán hệ thống bất biến (System Audit Logs) | S7 | `/admin/audit-logs` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
-| `UC-ADM-12` | Quản lý banner trang chủ & chiến dịch tĩnh (CMS Banner) | S8 | `/admin/banners`, trang chủ, `/campaign/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> |
+| Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
+|---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
+| `UC-ADM-01` | Quản lý danh sách nhân viên nội bộ & Lời mời kích hoạt | S1 | `/admin/staff` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-02` | Phân cấp vai trò & Cấp phát / Thu hồi mã quyền chi tiết (RBAC) | S1 | `/admin/staff` (phân quyền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-03` | Khóa / Mở khóa tài khoản nhân viên và người dùng vi phạm | S6 | `/admin/users`, `/admin/staff` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-04` | Người bán gửi yêu cầu rút tiền từ Ví về Ngân hàng | S4 | `/seller/wallet` (rút tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-05` | Nhân viên sàn phê duyệt & Thực hiện lệnh chuyển khoản (Payout) | S4 | `/admin/withdrawals`, `/admin/cod-reconciliation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-06` | Dashboard doanh thu & ký quỹ toàn sàn | S6 | `/admin/` (Tổng quan) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ADM-07` | Tra cứu nhật ký kiểm toán hệ thống bất biến (System Audit Logs) | S7 | `/admin/audit-logs` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-ADM-12` | Quản lý banner trang chủ & chiến dịch tĩnh (CMS Banner) | S8 | `/admin/banners`, trang chủ, `/campaign/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
 
-## 3. Việc còn lại của phân hệ đang làm (AUTH)
+## 3. Việc còn lại của phân hệ đang làm (AUTH — phụ trách: Nguyễn Quốc Khoa)
 
 - [x] `GET /me` — ngữ cảnh tài khoản (vai trò, shop, bộ đếm) để web dựng `SessionUser` đầy đủ (A11.02, A15.01) — xong 2026-11-17, BUILD SUCCESS
 - [ ] Đổi email đăng nhập `POST /me/email-change-requests` (+ `/confirm`) (A11.04)
@@ -256,3 +268,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-17 | AUTH-03 | Tạo app Zalo; Zalo bắt Home URL `https` + xác thực domain (`localhost` bị từ chối) → tạm dừng chạy thật, chờ tên miền thật (bỏ phương án domain tạm ngrok) | — |
 | 2026-11-17 | AUTH-02, 08 | `GET /me` (ngữ cảnh phiên) + web dựng `SessionUser` từ `/me` sau đăng nhập / làm mới — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-17 | AUTH-02, 03, 08 | `./mvnw verify` 83 test BUILD SUCCESS — `GET /me` (MeQueryIT 4/4), Zalo (ZaloLoginIT 5/5) | (chưa commit) |
+| 2026-11-17 | (phân công) | Thêm cột **Phụ trách** + bảng *Thành viên & phân công*: Nguyễn Quốc Khoa — phân hệ AUTH (9 UC); Nguyễn Ngọc Thiện — 13 UC (ADM-07, ADM-12, PRO-08, PRO-09, CAT-08, SOC-06, VND-01/02/03/04/05/07/21), đang lập plan `plan/2026-11-16`; Nghiêm Phú Đăng Quân — chưa phân công. Đồng bộ cột *Người phụ trách* trong Excel | `feature/env-config-cleanup` |

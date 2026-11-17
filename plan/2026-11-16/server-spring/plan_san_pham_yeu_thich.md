@@ -8,6 +8,7 @@
 | **Tài liệu chuẩn** | UC phân hệ 02 (UC-CAT-08) · API 3.10, 0.3, 0.4, 15, 17.5 b · ENTITY 2.5 (`UserWishlist`), 2.2 (`Product`), 2.3 (`ProductVariant`), 2.4 (`ProductImage`) · LUU_TRU 5.6 · TS 4, 8, 9, 14 — xem [README](../README.md) |
 | **Phụ thuộc** | Dữ liệu sản phẩm để thử tay: plan [seed](../db/plan_seed_du_lieu_mau.md) S02–S04 (test tự động **không** phụ thuộc seed) |
 | **Theo dõi tiến độ** | [progress_san_pham_yeu_thich.md](./progress_san_pham_yeu_thich.md) — cùng mã task `Wxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---

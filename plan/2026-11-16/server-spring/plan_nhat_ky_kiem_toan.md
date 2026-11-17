@@ -7,6 +7,7 @@
 | **Use case** | Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) — Sprint 7 theo implement 1.2, làm sớm vì độc lập |
 | **Tài liệu chuẩn** | UC phân hệ 11 (UC-ADM-07) · API 11.10, 0.3, 0.4, 0.10, 15, 16 · ENTITY 12.1 (`SystemLog`), Phụ lục A (`AuditAction`) · LLD 11.1 · TS 4, 8, 9, 14 — xem [README](../README.md) |
 | **Theo dõi tiến độ** | [progress_nhat_ky_kiem_toan.md](./progress_nhat_ky_kiem_toan.md) — cùng mã task `Lxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---

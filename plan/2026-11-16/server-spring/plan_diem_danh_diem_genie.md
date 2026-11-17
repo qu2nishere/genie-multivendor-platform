@@ -7,6 +7,7 @@
 | **Use case** | Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) · Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) — Sprint 8 theo implement 1.2, làm sớm vì độc lập |
 | **Tài liệu chuẩn** | UC phân hệ 07 (UC-PRO-08, UC-PRO-09) · API 3.13, 0.3, 0.4, 15, 16 · ENTITY 4.7 (`UserCoin`), 4.8 (`CoinTransaction`), 4.9 (`DailyCheckin`), 4.3 (`UserVoucher`) · LLD 9.9, 10 · LUU_TRU 4.6 (khóa ngắn) · TS 4, 7, 8, 10.3, 14 — xem [README](../README.md) |
 | **Theo dõi tiến độ** | [progress_diem_danh_diem_genie.md](./progress_diem_danh_diem_genie.md) — cùng mã task `Pxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---

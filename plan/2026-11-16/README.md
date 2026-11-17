@@ -4,6 +4,8 @@
 > **Tài liệu chuẩn:** bộ tài liệu trong repo `docs/Document/` (TLCN v1.4). Viết tắt dùng trong mọi plan: **TS** = `kien-thuc/TECH_STACK_VA_QUY_UOC.md` · **UC** = `diagrams/UseCaseDiagram/Usecase.md` · **API** = `document/API_SPEC.md` · **ENTITY** = `diagrams/ClassDiagram/ENTITY.md` · **LLD** = `document/LLD.md` · **LUU_TRU** = `kien-thuc/LUU_TRU_DU_LIEU.md` · **implement** = `kien-thuc/implement.md`.
 > Khi các nguồn mâu thuẫn: TS mục 12 → UC / ENTITY → Document_Vi → implement; **đường dẫn và hình dạng request / response lấy theo API** (API mục 17 đã giải thích các chỗ khác UC).
 
+> **Phụ trách toàn bộ 8 plan:** Nguyễn Ngọc Thiện (phân công 2026-11-17). Phân hệ AUTH (`plan/2026-11-14/auth.md`): Nguyễn Quốc Khoa. Bảng phân công: `docs/Document/CHECKLIST_TIEN_DO_UC.md`.
+
 ## 1. Danh sách plan (mỗi plan một progress cùng tên)
 
 | # | Thể loại | Plan | Progress | Use case | Mã task | Nhánh |
@@ -64,6 +66,7 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 
 - **Nhánh:** tách từ `develop` mới nhất, tên `feature/GNE-<số>-<mo-ta>` chữ thường gạch nối; **chưa có mã Jira thì bỏ `GNE-<số>-`** (tiền lệ plan 2026-11-11 D6, plan AUTH). PR vào `develop`, **squash merge**, CI xanh, ≥ 2 duyệt, PR ≤ ~400 dòng (lớn hơn thì tách theo nhóm task — mỗi nhóm đã có commit riêng). Trước khi xin duyệt: `git pull --rebase origin develop` (không merge `develop` ngược vào nhánh nhiều lần — TS 13.2).
 - **Commit:** `<type>(<scope>)!: <subject> [#GNE-<số>]` — `subject` + body **tiếng Anh**, mệnh lệnh, chữ thường, không dấu chấm cuối, header ≤ 100 ký tự; `scope` chỉ trong danh sách `commitlint.config.cjs`. Một commit = một thay đổi logic, build được, test xanh. Migration đi cùng commit dùng nó; chỉ có migration → scope `db`.
+- **Cấu hình:** theo [docs/cau-hinh-moi-truong.md](../../docs/cau-hinh-moi-truong.md) — giá trị đổi theo môi trường (địa chỉ, tài khoản, khóa, bật / tắt) **luôn** là `${BIEN}` trong `application*.yml`, khai thêm vào `.env.example`, `deploy/.env.example` và bảng biến của tài liệu đó trong cùng PR; hằng số nghiệp vụ theo tài liệu (ngưỡng, thời hạn, điểm) để thẳng trong yml. Mật khẩu thật chỉ ở `.env`. Profile máy dev lấy từ `.env` (`SPRING_PROFILES_ACTIVE=local`). Biến mới do các plan này thêm: `AI_WORKER_MODE` ([7]), `GENIE_SEED_DEMO` điều khiển cả `db/seed` ([1]), `server-python/.env` ([8]).
 - **Người commit:** danh tính git đã cấu hình sẵn trong repo (`git config user.name` / `user.email`) — **không** `--author`, **không** `--no-verify`, **không** dòng `Co-Authored-By` hay dấu vết AI trong commit / PR.
 - **Mỗi nhóm task kết thúc bằng một task `COMMIT`**, chỉ làm sau khi qua *Cổng kiểm tra* của plan; xong thì tick ở file progress và điền mã commit 7 ký tự.
 - **Định nghĩa "xong" một use case (TS 13.7):** code + test + migration + OpenAPI (`@Operation(summary = "UC-…")`) + chuỗi i18n vi / en + chạy được end-to-end + cập nhật `CHECKLIST_TIEN_DO_UC.md` và `Quản Lý UseCase.xlsx`.

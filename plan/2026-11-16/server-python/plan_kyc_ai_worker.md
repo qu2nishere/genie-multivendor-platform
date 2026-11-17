@@ -8,6 +8,7 @@
 | **Tài liệu chuẩn** | UC-VND-03 (luồng + ràng buộc) · ENTITY 1.6 (`KycResult`, bảng tín hiệu rủi ro) · API 12 · LLD 7.4 (SD-04), 9.6 · implement Phần 8 · LUU_TRU 5.6–5.7 · TS 2.5, 4.6, 9, 10.2, 14, 16.2 — xem [README](../README.md) |
 | **Phụ thuộc** | Hợp đồng Backend ↔ AI Worker (quyết định D6 của plan Mở shop & KYC = Y-D1 ở đây) phải chốt trước. Không phụ thuộc mã Java: test bằng tệp JSON mẫu + máy chủ callback giả |
 | **Theo dõi tiến độ** | [progress_kyc_ai_worker.md](./progress_kyc_ai_worker.md) — cùng mã task `Yxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---
@@ -136,14 +137,14 @@ Ký hiệu: `Yxx.yy` = task; `Yxx.Cn` = task commit.
 - **[Y00.01]** Kiểm danh tính git — `git config user.name` / `user.email`.
 - **[Y00.02]** Chốt Y-D1…Y-D8 — Y-D1 chốt **cùng người làm backend** (plan Mở shop & KYC K00.02, ADR 0010); ghi vào đầu file progress.
 - **[Y00.03]** Tạo nhánh — `git switch develop && git pull && git switch -c feature/ai-worker-kyc`.
-- **[Y00.04]** Dựng môi trường — Python 3.12, `pip install -e ".[dev]"`, `MODELS_BASE_URL=… scripts/fetch-models.sh`; `pytest` (test health) và `ruff check` xanh; `uvicorn app.main:app --reload` lên được.
+- **[Y00.04]** Dựng môi trường — Python 3.12, `pip install -e ".[dev]"`, `MODELS_BASE_URL=… scripts/fetch-models.sh`; tạo `server-python/.env` (bị `.gitignore` chặn): `INTERNAL_TOKEN` **trùng** backend (dev mặc định `local-internal-token`), `BACKEND_URL=http://localhost:8080`; `pytest` (test health) và `ruff check` xanh; `uvicorn app.main:app --reload` lên được.
 - **[Y00.05]** Đọc tài liệu theo thứ tự — UC-VND-03 → ENTITY 1.6 → LLD 7.4 → implement Phần 8; ghi chỗ implement lệch hợp đồng mới (sửa ở Y09).
 - **[Y00.06]** Viết tệp hợp đồng mẫu — `docs/api-tests/kyc-contract/{verify-request,result-pass,result-partial,result-fail}.json` (dữ liệu giả); báo người làm backend dùng chung.
 - **[Y00.C1]** COMMIT — `docs(ai-worker): add shared kyc contract samples for backend and ai worker`
 
 ### Y01 — Khung: cấu hình, lược đồ, nạp mô hình
 
-- **[Y01.01]** `core/config.py` — thêm `storage_allowed_hosts`, `kyc_download_max_bytes = 12 MB`, `kyc_download_timeout_s = 5`, `kyc_face_match_threshold = 0.363`, `kyc_face_low_threshold = 0.25`, `kyc_liveness_threshold`, `kyc_min_image_side = 600`, `kyc_blur_threshold`, `kyc_max_concurrency = 1`, `callback_retries = 3`, `pipeline_version`; `.env.example` của worker.
+- **[Y01.01]** `core/config.py` — thêm `storage_allowed_hosts`, `kyc_download_max_bytes = 12 MB`, `kyc_download_timeout_s = 5`, `kyc_face_match_threshold = 0.363`, `kyc_face_low_threshold = 0.25`, `kyc_liveness_threshold`, `kyc_min_image_side = 600`, `kyc_blur_threshold`, `kyc_max_concurrency = 1`, `callback_retries = 3`, `pipeline_version` — mỗi giá trị đọc biến môi trường cùng tên viết hoa (`KYC_FACE_MATCH_THRESHOLD`…, pydantic-settings); tạo `server-python/.env.example` liệt kê đủ biến (`INTERNAL_TOKEN`, `BACKEND_URL`, `MINIO_*`, `MODELS_DIR`, `STORAGE_ALLOWED_HOSTS`, `KYC_*`) và thêm mục AI Worker vào [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md).
 - **[Y01.02]** `kyc/signals.py` — hằng số 9 mã tín hiệu worker được phép sinh, đúng chính tả ENTITY 1.6; test so với danh sách trong `docs/api-tests/kyc-contract`.
 - **[Y01.03]** `kyc/schemas.py` — Pydantic v2: `VerifyRequest` (URL phải `http/https`, `identity_number` 12 chữ số, `kyc_id > 0`), `VerifyAccepted`, `Checks` (9 trường `bool | None`), `Signal`, `Extracted`, `ModelInfo`, `KycResultPayload`; cấm trường lạ (`extra = "forbid"`).
 - **[Y01.04]** `test_schemas` — nạp 4 tệp JSON hợp đồng qua lược đồ không lỗi; thiếu trường bắt buộc → lỗi; xuất JSON giữ snake_case và `null`.
@@ -213,7 +214,7 @@ Ký hiệu: `Yxx.yy` = task; `Yxx.Cn` = task commit.
 
 ### Y07 — Ghép với backend
 
-- **[Y07.01]** Chạy hai phía ở local — backend `genie.ai-worker.mode = http`, worker `BACKEND_URL` trỏ backend, cùng `INTERNAL_TOKEN`; `storage_allowed_hosts` = host Silo local.
+- **[Y07.01]** Chạy hai phía ở local — `.env` gốc đặt `AI_WORKER_MODE=http` (backend gọi worker thật, `AI_WORKER_URL=http://localhost:8000`); `server-python/.env`: `BACKEND_URL=http://localhost:8080`, `INTERNAL_TOKEN` trùng backend, `STORAGE_ALLOWED_HOSTS=localhost:9000`. Không sửa `application*.yml`.
 - **[Y07.02]** Kịch bản đạt — nộp hồ sơ bằng thẻ mẫu + selfie cùng người → backend nhận callback → `VERIFIED` (trừ khi rơi mẫu 5%).
 - **[Y07.03]** Kịch bản duyệt tay — thẻ mẫu mờ / không QR → `MANUAL_REVIEW`, màn Admin hiện đúng cờ + tín hiệu.
 - **[Y07.04]** Kịch bản từ chối — QR và MRZ lệch nhau + selfie khác người → `REJECTED`, lý do theo tín hiệu.
