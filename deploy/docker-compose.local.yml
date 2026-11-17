@@ -1,5 +1,15 @@
 # Máy dev: postgres, redis, silo (kho tệp S3) + silo-init, mailpit — backend / web / ai-worker chạy từ IDE (TECH_STACK mục 16.1)
-# Chạy: docker compose -f deploy/docker-compose.local.yml --env-file deploy/.env up -d
+# Chạy (từ gốc repo, dùng CHUNG tệp .env với backend):
+#   docker compose --env-file .env -f deploy/docker-compose.local.yml up -d
+# Cổng trên máy dev đọc từ biến, mặc định như cũ. Cổng bị chiếm (vd. đã cài PostgreSQL thật) → đặt biến trong .env,
+# rồi sửa biến của backend cho cùng cổng — bảng ở docs/cau-hinh-moi-truong.md mục 4 (Đổi cổng khi bị chiếm):
+#   POSTGRES_PORT      (5432) → DB_URL=jdbc:postgresql://localhost:<cổng>/genie
+#   REDIS_PORT         (6379) → backend dùng chung biến này, không phải sửa gì thêm
+#   SILO_PORT          (9000) → MINIO_ENDPOINT và PUBLIC_S3_URL = http://localhost:<cổng>
+#   SILO_CONSOLE_PORT  (9001) → chỉ để mở console trên trình duyệt
+#   MAILPIT_SMTP_PORT  (1025) → SMTP_PORT (khi gửi email vào Mailpit)
+#   MAILPIT_UI_PORT    (8025) → mở http://localhost:<cổng> xem email OTP
+# Số bên phải dấu ":" là cổng trong container — giữ nguyên.
 name: genie-local
 
 services:
@@ -9,14 +19,14 @@ services:
       POSTGRES_DB: genie
       POSTGRES_USER: ${DB_USER:-genie}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
-    ports: ["5432:5432"]
+    ports: ["${POSTGRES_PORT:-5432}:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck: { test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-genie} -d genie"], interval: 5s }
 
   redis:
     image: redis:7-alpine
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-changeme}"]
-    ports: ["6379:6379"]
+    ports: ["${REDIS_PORT:-6379}:6379"]
     volumes: [redisdata:/data]
 
   silo:
@@ -26,7 +36,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-siloadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-changeme}
-    ports: ["9000:9000", "9001:9001"]
+    ports: ["${SILO_PORT:-9000}:9000", "${SILO_CONSOLE_PORT:-9001}:9001"]
     volumes: [silodata:/data]
     healthcheck: { test: ["CMD-SHELL", "silo healthcheck ready || mcli ready local || mc ready local"], interval: 5s }
 
@@ -43,7 +53,7 @@ services:
 
   mailpit:
     image: axllent/mailpit:v1.20
-    ports: ["1025:1025", "8025:8025"]   # SMTP / giao diện xem email OTP
+    ports: ["${MAILPIT_SMTP_PORT:-1025}:1025", "${MAILPIT_UI_PORT:-8025}:8025"]   # SMTP / giao diện xem email OTP
 
 volumes:
   pgdata:
