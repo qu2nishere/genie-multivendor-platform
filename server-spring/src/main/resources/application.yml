@@ -102,6 +102,8 @@ genie:
     presigned-put-ttl: 15m
     presigned-put-kyc-ttl: 10m
     presigned-get-ttl: 5m
+    region: ${STORAGE_REGION:us-east-1}            # Silo bỏ qua; AWS S3 phải đúng vùng của bucket
+    bucket-prefix: ${STORAGE_BUCKET_PREFIX:}       # tên bucket thật = tiền tố + tên logic (AWS: tên bucket duy nhất toàn cầu)
   ai-worker:
     url: ${AI_WORKER_URL:http://localhost:8000}
   payment:
