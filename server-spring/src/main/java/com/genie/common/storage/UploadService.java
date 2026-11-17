@@ -86,6 +86,23 @@ public class UploadService {
     }
 
     /**
+     * Như {@link #promote} nhưng đặt tệp ở khóa do nghiệp vụ chọn: {@code targetPrefix + <uuid>.<ext>} — vd. ảnh banner
+     * {@code banner/{id}/desktop-} (plan banner D4). Vẫn chỉ nhận tệp {@code tmp/user/{userId}/…} của chính người đó.
+     */
+    public StoredFile promoteTo(long userId, UploadPurpose purpose, String tmpKey, String targetPrefix) {
+        StoredFile staged = promote(userId, purpose, tmpKey);
+        String fileName = staged.objectKey().substring(staged.objectKey().lastIndexOf('/') + 1);
+        String finalKey = targetPrefix + fileName;
+        storage.move(purpose.bucket(), staged.objectKey(), finalKey);
+        return new StoredFile(finalKey, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), finalKey) : null);
+    }
+
+    /** URL công khai của một khóa trong bucket của {@code purpose} (bucket công khai). */
+    public String publicUrl(UploadPurpose purpose, String objectKey) {
+        return storage.publicUrl(purpose.bucket(), objectKey);
+    }
+
+    /**
      * Lưu tệp do backend tự lấy về (không qua link ký) — vd. ảnh đại diện Google khi đăng nhập lần đầu. Vẫn kiểm loại /
      * dung lượng theo {@code purpose}; khóa {@code user/{userId}/{uuid}.{ext}} như tệp người dùng tải lên.
      */
