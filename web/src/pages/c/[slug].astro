@@ -76,7 +76,7 @@ const [page, facets, scopeFacets, banners, attrs, verified] = await Promise.all(
   }),
   getFacets({ categoryId: category.id }),
   getFacets({ categoryId: category.id, subcategoryId: sub?.id }),
-  listLiveBanners('CATEGORY_TOP', category.slug),
+  listLiveBanners('CATEGORY_TOP', category.slug, category.id),
   listAttributeFilters(category.id),
   listVerifiedBrands(),
 ]);
