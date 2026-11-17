@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-audit-log` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (14 / 45) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (23 / 45) |
 
 **Cách dùng**
 
@@ -37,12 +37,12 @@
 |---|---|---:|---:|---:|---|---|
 | L00 | Chuẩn bị | 5 | 0 | 4 / 5 | — | `feature/admin-audit-log` |
 | L01 | Phân loại hành động (`common/audit`) | 4 | 1 | 5 / 5 | — | `feature/admin-audit-log` |
-| L02 | Truy vấn đọc `system_logs` | 5 | 1 | 5 / 6 | — | `feature/admin-audit-log` |
-| L03 | Dịch vụ & API tra cứu | 8 | 1 | 0 / 9 | — | `feature/admin-audit-log` |
+| L02 | Truy vấn đọc `system_logs` | 5 | 1 | 6 / 6 | — | `feature/admin-audit-log` |
+| L03 | Dịch vụ & API tra cứu | 8 | 1 | 8 / 9 | — | `feature/admin-audit-log` |
 | L04 | Xuất CSV | 4 | 1 | 0 / 5 | — | `feature/admin-audit-log` |
 | L05 | Nối giao diện `web/` (scope `admin-ui`) | 6 | 1 | 0 / 7 | — | `feature/admin-audit-log` |
 | L06 | Hoàn thiện use case | 7 | 1 | 0 / 8 | — | `feature/admin-audit-log` |
-| **Tổng** | | **39** | **6** | **14 / 45** | | |
+| **Tổng** | | **39** | **6** | **23 / 45** | | |
 
 ## L00 — Chuẩn bị
 
@@ -67,18 +67,18 @@
 - [x] **L02.03** `streamForExport(from, to, actions, q, max)`
 - [x] **L02.04** Kiểm `EXPLAIN` trên CSDL local có vài nghìn dòng (chèn tạm bằng `generate_series`)
 - [x] **L02.05** Luật kiến trúc
-- [ ] **L02.C1** 🔖 COMMIT `feat(common): add read-only keyset queries for system logs` · hash: `…`
+- [x] **L02.C1** 🔖 COMMIT `feat(common): add read-only keyset queries for system logs` · hash: `8a3e67f`
 
 ## L03 — Dịch vụ & API tra cứu
 
-- [ ] **L03.01** `AuditLogQuery` (record tham số)
-- [ ] **L03.02** Con trỏ
-- [ ] **L03.03** `AuditLogView` + ánh xạ từ `SystemLog`: `id`, `created_at`, `actor_email` (`system` khi `user_id` null
-- [ ] **L03.04** `AuditLogQueryService.search(query)`
-- [ ] **L03.05** Tra chức danh nhân viên (D4)
-- [ ] **L03.06** `AdminAuditLogController`
-- [ ] **L03.07** `AuditLogQueryIT`
-- [ ] **L03.08** `AuditLogPermissionIT`
+- [x] **L03.01** `AuditLogQuery` (record tham số)
+- [x] **L03.02** Con trỏ
+- [x] **L03.03** `AuditLogView` + ánh xạ từ `SystemLog`: `id`, `created_at`, `actor_email` (`system` khi `user_id` null
+- [x] **L03.04** `AuditLogQueryService.search(query)`
+- [x] **L03.05** Tra chức danh nhân viên (D4)
+- [x] **L03.06** `AdminAuditLogController`
+- [x] **L03.07** `AuditLogQueryIT`
+- [x] **L03.08** `AuditLogPermissionIT`
 - [ ] **L03.C1** 🔖 COMMIT `feat(admin): search system audit logs with filters and cursor paging` · hash: `…`
 
 ## L04 — Xuất CSV
@@ -133,6 +133,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | L00.05 | Web gửi `from` / `to` dạng ngày `YYYY-MM-DD` (to tính cả ngày) và đọc `pagination`, `summary` ở cấp gốc của phản hồi; `AuditLogDto.id` khai `number` nhưng `system_logs.id` là UUID chuỗi → sửa DTO web ở L05 |
 | L02.01 | Làm bằng `JpaSpecificationExecutor` + `SystemLogSpecs` (`filter`, `after`, `denied`) thay vì `@Query`: tham số tùy chọn (nhóm, `q`) trong JPQL dễ lỗi suy kiểu `NULL` trên PostgreSQL. `countDenied` = `count(filter.and(denied))`; xuất CSV dùng `findBy(spec, q -> q.sortBy(…).limit(max).stream())` trong transaction chỉ đọc |
 | L02.04 | Chèn tạm 5.000 dòng rồi rollback: trang 51 dòng dùng `Index Scan Backward` trên `idx_system_logs_created_action`, chạy 0,08 ms; đếm `ACCESS_DENIED` chạy Seq Scan 0,5 ms (bảng nhỏ). Không thêm index |
+| L03.01 | `AuditLogQuery` đặt ở `application` (dùng chung cho tra cứu và xuất CSV). `from` / `to` nhận cả ISO-8601 lẫn ngày `YYYY-MM-DD` (giờ VN, `to` tính hết ngày — khớp web). Thêm dùng chung: `common/error/InvalidRequestException` (422 có `errors[]` theo trường) và `common/api/ApiListResponse` + `ApiResponseFactory.list()` (`pagination`, `summary` ở cấp gốc — API 0.3) |
+| L03.07 | Lần chạy đầu lỗi môi trường: Byte Buddy không tự gắn agent vào JVM (Mockito inline) — chạy lại thì 9/9 xanh, không phải lỗi mã |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
