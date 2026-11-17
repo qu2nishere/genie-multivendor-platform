@@ -126,7 +126,7 @@ Ký hiệu: `Sxx.yy` = task; `Sxx.Cn` = task commit (làm sau khi qua mục 6).
 - **[S00.01]** Kiểm danh tính git — `git config user.name`, `git config user.email` đúng tài khoản của mình; không đổi config.
 - **[S00.02]** Chốt quyết định D1–D7 — ghi lựa chọn vào đầu file progress.
 - **[S00.03]** Tạo nhánh — `git switch develop && git pull && git switch -c feature/db-seed-demo`.
-- **[S00.04]** Dựng môi trường — `cp .env.example .env` nếu chưa có (khối CSDL [1] Docker — [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md)); `docker compose -f deploy/docker-compose.local.yml up -d postgres silo silo-init`; xác nhận `psql` vào được (`docker compose … exec postgres psql -U genie -d genie -c '\\dt'` ra 65 bảng sau khi backend chạy một lần).
+- **[S00.04]** Dựng môi trường — `cp .env.example .env` nếu chưa có (khối CSDL [1] Docker — [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md)); `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d postgres silo silo-init`; xác nhận `psql` vào được (`docker compose … exec postgres psql -U genie -d genie -c '\\dt'` ra 65 bảng sau khi backend chạy một lần).
 - **[S00.05]** Tái hiện lỗi script cũ — chạy `scripts/seed-local.sh` trên CSDL trống, xác nhận `SELECT count(*) FROM users` = 0 (placeholder không được thay); ghi vào Ghi chú của progress.
 - **[S00.06]** Lập bảng ánh xạ cột — với mỗi bảng ở mục 4, mở migration tương ứng (`V1`, `V2`, `V4`, `V6`, `V7`, `V10`…) ghi lại cột `NOT NULL` không có mặc định và các `CHECK` enum để seed không vi phạm (lưu vào Ghi chú progress).
 

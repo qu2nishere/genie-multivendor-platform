@@ -25,7 +25,7 @@ npm install
 cp .env.example .env
 
 # 2. Hạ tầng: postgres, redis, silo (+ silo-init), mailpit — mật khẩu mặc định genie / changeme
-docker compose -f deploy/docker-compose.local.yml up -d
+docker compose --env-file .env -f deploy/docker-compose.local.yml up -d
 
 # 3. Backend — JDK 21 (Flyway tự tạo bảng, R__seed_demo.sql nạp dữ liệu demo; profile lấy từ .env)
 cd server-spring && ./mvnw spring-boot:run
