@@ -7,6 +7,7 @@
 | **Use case** | Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) — Sprint 8 theo implement 1.2, làm sớm vì độc lập |
 | **Tài liệu chuẩn** | UC phân hệ 11 (UC-ADM-12) · API 5.14, 5.15, 5.17, 5.18, 11.16, 4.1, 0.12, 15 · ENTITY 10.4 (`HomeBanner`), Phụ lục A (`BannerPosition`) · LUU_TRU 4.3–4.4 (cache, bộ đếm), 5.4–5.6 · LLD 10 (job ghi gộp bộ đếm) · TS 4, 8, 9, 10, 14 — xem [README](../README.md) |
 | **Theo dõi tiến độ** | [progress_banner_trang_chu.md](./progress_banner_trang_chu.md) — cùng mã task `Bxx.yy` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 
 ---

@@ -6,6 +6,7 @@
 | **Ngày lập** | 2026-11-16 |
 | **Tổng** | 48 task + 9 commit, 8 giai đoạn |
 | **Nhánh** | `feature/admin-home-banner` |
+| **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
 | **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 57) |
 
