@@ -11,6 +11,7 @@ import type {
   DeletionRequest,
   Device,
   Gender,
+  IdentityProvider,
   LoginMethods,
   Profile,
   ProfilePatch,
@@ -43,7 +44,12 @@ interface ProfileDto {
 interface LoginMethodsDto {
   email: string;
   password: { enabled: boolean };
-  identities: { provider: 'GOOGLE' | 'APPLE'; email: string; linked_at: string }[];
+  identities: {
+    provider: IdentityProvider;
+    email: string | null;
+    display_name?: string | null;
+    linked_at: string;
+  }[];
 }
 interface SessionDto {
   id: number;
@@ -83,6 +89,7 @@ const toMethods = (d: LoginMethodsDto): LoginMethods => ({
   identities: d.identities.map((i) => ({
     provider: i.provider,
     email: i.email,
+    displayName: i.display_name ?? null,
     linkedAt: i.linked_at,
   })),
 });
@@ -128,6 +135,7 @@ const db = mockState('account', () => ({
   } as ProfileDto,
   password: false,
   google: true,
+  zalo: false,
   sessions: [
     {
       id: 501,
@@ -302,40 +310,57 @@ export async function getLoginMethods(): Promise<LoginMethods> {
       password: { enabled: s.password },
       identities: s.google
         ? [{ provider: 'GOOGLE', email: MOCK_USER.email, linked_at: '2024-03-02T10:00:00+07:00' }]
-        : [],
+        : s.zalo
+          ? [{ provider: 'ZALO', email: null, display_name: MOCK_USER.name, linked_at: ago(1) }]
+          : [],
     });
   }
   return toMethods(await api.get<LoginMethodsDto>('/me/login-methods'));
 }
 
+const slug = (p: IdentityProvider) => p.toLowerCase();
+
 /**
- * Liên kết Google — bước 1 (API thật): xin URL trang Google (state gắn với tài khoản đang đăng nhập); giao diện đánh
- * dấu ý định "link" rồi chuyển sang Google; quay về `/auth/oauth-callback` → feature auth gọi
- * `POST /me/identities/google`. Mock: liên kết ngay, trả `null`.
+ * Liên kết Google / Zalo — bước 1 (API thật): xin URL trang nhà cung cấp (state gắn với tài khoản đang đăng nhập); giao
+ * diện đánh dấu ý định "link" rồi chuyển trang; quay về `/auth/oauth-callback` → feature auth gọi
+ * `POST /me/identities/{provider}`. Zalo không có email để đối chiếu → phải gửi mật khẩu hiện tại (sai → 401
+ * GNE-AUTH-4011). Mock: liên kết ngay, trả `null`.
  */
-export async function linkGoogle(): Promise<string | null> {
+export async function linkIdentity(
+  provider: IdentityProvider,
+  currentPassword?: string,
+): Promise<string | null> {
   if (SECURITY_MOCK) {
     await mockDelay(300);
-    save({ google: true });
+    if (provider === 'ZALO' && currentPassword !== 'Genie@123') {
+      mockFail('GNE-AUTH-4011', { status: 401 });
+    }
+    save(provider === 'GOOGLE' ? { google: true } : { zalo: true });
     return null;
   }
-  const r = await api.post<{ authorize_url: string }>('/me/identities/google/authorize');
+  const r = await api.post<{ authorize_url: string }>(
+    `/me/identities/${slug(provider)}/authorize`,
+    provider === 'ZALO' ? { current_password: currentPassword ?? '' } : undefined,
+  );
   return r.authorize_url;
 }
 
 /**
- * DELETE /me/identities/google — phải nhập lại mật khẩu hiện tại (sai → 401 GNE-AUTH-4011, quá 10 lần / phút → 429);
- * chưa có mật khẩu → 409 GNE-AUTH-4093.
+ * DELETE /me/identities/{provider} — phải nhập lại mật khẩu hiện tại (sai → 401 GNE-AUTH-4011, quá 10 lần / phút →
+ * 429); chưa có mật khẩu → 409 GNE-AUTH-4093.
  */
-export async function unlinkGoogle(currentPassword: string): Promise<void> {
+export async function unlinkIdentity(
+  provider: IdentityProvider,
+  currentPassword: string,
+): Promise<void> {
   if (SECURITY_MOCK) {
     await mockDelay(300);
     if (!db.get().password) mockFail('GNE-AUTH-4093');
     if (currentPassword !== 'Genie@123') mockFail('GNE-AUTH-4011', { status: 401 });
-    save({ google: false });
+    save(provider === 'GOOGLE' ? { google: false } : { zalo: false });
     return;
   }
-  await request('/me/identities/google', {
+  await request(`/me/identities/${slug(provider)}`, {
     method: 'DELETE',
     body: { current_password: currentPassword },
   });

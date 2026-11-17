@@ -11,7 +11,8 @@ export const MAX_ATTEMPTS = 5;
 export const LOCK_SECONDS = 900;
 
 /** Mục đích của một lần gửi OTP (POST /auth/otp-challenges). */
-export type OtpPurpose = 'LOGIN' | 'REGISTER' | 'ACCOUNT_UNLOCK' | 'PASSWORD_RESET';
+export type OtpPurpose =
+  'LOGIN' | 'REGISTER' | 'ACCOUNT_UNLOCK' | 'PASSWORD_RESET' | 'OAUTH_SIGNUP';
 
 export const isEmail = (v: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 

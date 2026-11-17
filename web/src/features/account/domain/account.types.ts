@@ -32,10 +32,19 @@ export interface ProfilePatch {
   avatarObjectKey?: string;
 }
 
+/** Mạng xã hội có thể liên kết (plan D17: Apple thay bằng Zalo). Mỗi tài khoản tối đa một (D16). */
+export type IdentityProvider = 'GOOGLE' | 'ZALO';
+
 export interface LoginMethods {
   email: string;
   password: boolean;
-  identities: { provider: 'GOOGLE' | 'APPLE'; email: string; linkedAt: string }[];
+  /** `email`: email Google (Zalo không có → null); `displayName`: tên bên nhà cung cấp lúc liên kết. */
+  identities: {
+    provider: IdentityProvider;
+    email: string | null;
+    displayName: string | null;
+    linkedAt: string;
+  }[];
 }
 
 export type DeviceType = 'DESKTOP' | 'MOBILE' | 'TABLET';

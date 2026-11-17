@@ -5,7 +5,13 @@ import { mockDelay, mockFail } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import type { OtpPurpose } from '../domain/auth.rules';
 import type { SessionUser } from '@/shared/auth/session';
-import type { AuthSession, OtpChallenge, SocialProvider, VerifyResult } from '../domain/auth.types';
+import type {
+  AuthSession,
+  OtpChallenge,
+  SocialProvider,
+  SocialSignup,
+  VerifyResult,
+} from '../domain/auth.types';
 import type { AuthTokensDto, OAuthResultDto, OtpChallengeDto, ResetTokenDto } from './auth.dto';
 import { toChallenge, toSession } from './auth.mapper';
 import {
@@ -37,7 +43,7 @@ export async function login(email: string, password: string): Promise<AuthSessio
 /** POST /auth/otp-challenges — OTP đăng nhập / quên mật khẩu / mở khóa tài khoản. */
 export async function requestOtp(
   email: string,
-  purpose: Exclude<OtpPurpose, 'REGISTER'>,
+  purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP'>,
 ): Promise<OtpChallenge> {
   if (USE_MOCK) {
     await mockDelay(300);
@@ -135,7 +141,11 @@ export async function resetPassword(resetToken: string, newPassword: string): Pr
  * Hoàn tất LIÊN KẾT Google vào tài khoản đang đăng nhập (POST /me/identities/{provider}, plan A14.04) — trang callback gọi
  * khi lần chuyển sang Google bắt đầu từ Tài khoản › Liên kết đăng nhập. Cần đăng nhập (access token tự làm mới).
  */
-export async function linkIdentity(provider: SocialProvider, code: string, state: string): Promise<void> {
+export async function linkIdentity(
+  provider: SocialProvider,
+  code: string,
+  state: string,
+): Promise<void> {
   await api.post(`/me/identities/${provider}`, { code, state });
 }
 
@@ -161,20 +171,77 @@ export function oauthAuthorizeUrl(
   return `${apiBase}/auth/oauth/${provider}/authorize${query}`;
 }
 
-/** POST /auth/oauth/{provider}/token — hoàn tất ở trang callback. */
+export type OAuthOutcome =
+  | {
+      result: 'LOGGED_IN' | 'LINKED' | 'CREATED';
+      session: AuthSession<SessionUser>;
+      next: string | null;
+    }
+  | { result: 'SIGNUP_REQUIRED'; signup: SocialSignup; next: string | null };
+
+/**
+ * POST /auth/oauth/{provider}/token — hoàn tất ở trang callback. Zalo chưa có tài khoản → `SIGNUP_REQUIRED` (chưa đăng
+ * nhập): trang callback hỏi email rồi gọi {@link socialSignup}.
+ */
 export async function completeOAuth(
   provider: SocialProvider,
   code: string,
   state: string,
-): Promise<{
-  result: OAuthResultDto['result'];
-  session: AuthSession<SessionUser>;
-  next: string | null;
-}> {
+): Promise<OAuthOutcome> {
   if (USE_MOCK) {
     await mockDelay(500);
+    if (provider === 'zalo') {
+      return {
+        result: 'SIGNUP_REQUIRED',
+        signup: { provider, token: 'mock-signup', name: 'Trần Thị Mai', expiresIn: 900 },
+        next: null,
+      };
+    }
     return { result: 'LOGGED_IN', session: toSession(mockTokens()), next: null };
   }
-  const r = await api.post<OAuthResultDto>(`/auth/oauth/${provider}/token`, { code, state }, noAuth);
+  const r = await api.post<OAuthResultDto>(
+    `/auth/oauth/${provider}/token`,
+    { code, state },
+    noAuth,
+  );
+  if (r.result === 'SIGNUP_REQUIRED' || !r.tokens) {
+    const s = r.signup;
+    return {
+      result: 'SIGNUP_REQUIRED',
+      signup: {
+        provider,
+        token: s?.token ?? '',
+        name: s?.name ?? null,
+        expiresIn: s?.expires_in ?? 0,
+      },
+      next: r.next ?? null,
+    };
+  }
   return { result: r.result, session: toSession(r.tokens), next: r.next ?? null };
+}
+
+/**
+ * POST /auth/oauth/{provider}/signup — đăng ký bằng Zalo: nhập email → 202 + OTP `OAUTH_SIGNUP` (xác minh ở màn OTP
+ * dùng chung → 201 phiên). Email đã có tài khoản → 409 GNE-AUTH-4091 (`details.next_step = LINK_FROM_ACCOUNT`);
+ * phiên đăng ký hết hạn → 400 GNE-AUTH-4001.
+ */
+export async function socialSignup(
+  provider: SocialProvider,
+  token: string,
+  email: string,
+): Promise<OtpChallenge> {
+  if (USE_MOCK) {
+    await mockDelay(400);
+    if (EXISTING_EMAILS.includes(email.trim().toLowerCase())) {
+      mockFail('GNE-AUTH-4091', { status: 409, details: { next_step: 'LINK_FROM_ACCOUNT' } });
+    }
+    return toChallenge(mockChallenge(email, 'OAUTH_SIGNUP'));
+  }
+  return toChallenge(
+    await api.post<OtpChallengeDto>(
+      `/auth/oauth/${provider}/signup`,
+      { signup_token: token, email: email.trim() },
+      noAuth,
+    ),
+  );
 }

@@ -99,10 +99,10 @@
     "GNE-AUTH-4011": "Tài khoản hoặc mật khẩu không chính xác.",
     "GNE-AUTH-4012": "Tài khoản hoặc mật khẩu không chính xác.",
     "GNE-AUTH-4031": "Tài khoản đang bị tạm khóa.",
-    "GNE-AUTH-4032": "Email của tài khoản Google/Apple chưa được xác minh.",
+    "GNE-AUTH-4032": "Email của tài khoản Google chưa được xác minh.",
     "GNE-AUTH-4091": "Email này đã được đăng ký. Hãy đăng nhập hoặc lấy lại mật khẩu.",
     "GNE-AUTH-4098": "Tài khoản Google bạn chọn có email khác với email tài khoản Genie. Vui lòng chọn tài khoản Google có cùng email.",
-    "GNE-AUTH-4092": "Tài khoản Google này đã gắn với người dùng khác.",
+    "GNE-AUTH-4092": "Tài khoản mạng xã hội này đã gắn với người dùng khác, hoặc tài khoản của bạn đã liên kết một mạng xã hội khác.",
     "GNE-AUTH-4093": "Không thể gỡ cách đăng nhập duy nhất của tài khoản.",
     "GNE-AUTH-4094": "Email mới đã thuộc về tài khoản khác.",
     "GNE-AUTH-4101": "Mã OTP đã hết hạn. Vui lòng gửi lại mã.",
@@ -567,14 +567,26 @@
     "social": {
       "title": "Tiếp tục với {provider}",
       "continue": "Tiếp tục",
-      "text": "Mô phỏng cửa sổ đăng nhập {provider}. Genie sẽ nhận tên, email và ảnh đại diện từ tài khoản {email}. Email chưa có tài khoản thì hệ thống tự tạo tài khoản mới."
+      "text": "Mô phỏng cửa sổ đăng nhập {provider}. Genie sẽ nhận tên, email và ảnh đại diện từ tài khoản {email}. Email chưa có tài khoản thì hệ thống tự tạo tài khoản mới.",
+      "text_zalo": "Mô phỏng cửa sổ đăng nhập Zalo. Zalo không cung cấp email nên lần đầu bạn sẽ nhập email và xác minh bằng mã OTP."
     },
     "oauth": {
       "processing": "Đang hoàn tất đăng nhập…",
       "error_title": "Không đăng nhập được",
       "denied": "Bạn đã hủy hoặc nhà cung cấp từ chối đăng nhập. Vui lòng thử lại.",
-      "link_error_title": "Không liên kết được Google",
+      "link_error_title": "Không liên kết được tài khoản",
       "back_logins": "Quay lại Liên kết đăng nhập"
+    },
+    "social_signup": {
+      "title": "Hoàn tất đăng ký",
+      "title_named": "Chào {name}!",
+      "lead": "{provider} không cung cấp email. Nhập email để nhận mã xác minh và tạo tài khoản Genie.",
+      "submit": "Gửi mã xác minh",
+      "hint": "Email dùng để nhận thông báo đơn hàng và lấy lại mật khẩu. Lần sau chỉ cần bấm {provider} là đăng nhập.",
+      "taken_title": "Email này đã có tài khoản",
+      "taken_text": "Hãy đăng nhập bằng email này, rồi liên kết {provider} ở Tài khoản › Liên kết đăng nhập.",
+      "expired_title": "Phiên đăng ký đã hết hạn",
+      "expired_text": "Vui lòng đăng nhập bằng {provider} lại từ đầu."
     }
   },
   "search": {
@@ -1421,19 +1433,21 @@
       "no_pw": "Chưa có mật khẩu",
       "linked": "Đã liên kết",
       "not_linked": "Chưa liên kết",
-      "only_way": "Đây là cách đăng nhập duy nhất. Thiết lập mật khẩu trước nếu muốn gỡ liên kết.",
-      "link": "Liên kết Google",
+      "only_way": "Đây là cách đăng nhập duy nhất. Thiết lập mật khẩu trước nếu muốn gỡ liên kết {provider}.",
+      "link": "Liên kết",
       "unlink": "Gỡ liên kết",
       "keep": "Giữ liên kết",
       "count": "{count} cách đăng nhập đang bật",
-      "since": "liên kết Google {when}",
-      "link_dialog_title": "Liên kết tài khoản Google",
+      "since": "liên kết {provider} {when}",
+      "link_dialog_title": "Liên kết tài khoản {provider}",
       "link_dialog_text": "Vui lòng chọn tài khoản Google có cùng email với tài khoản Genie của bạn:",
-      "link_continue": "Tiếp tục với Google",
-      "unlink_title": "Gỡ liên kết Google?",
-      "unlink_text": "Sau khi gỡ, bấm \"Đăng nhập Google\" sẽ không vào tài khoản này nữa cho đến khi bạn liên kết lại. Bạn vẫn đăng nhập được bằng email và mật khẩu.",
-      "linked_toast": "Đã liên kết Google. Lần sau bấm \"Đăng nhập Google\" là vào tài khoản này",
-      "unlinked_toast": "Đã gỡ liên kết Google. Bạn đăng nhập bằng email và mật khẩu"
+      "link_continue": "Tiếp tục với {provider}",
+      "unlink_title": "Gỡ liên kết {provider}?",
+      "unlink_text": "Sau khi gỡ, đăng nhập bằng {provider} sẽ không vào tài khoản này nữa cho đến khi bạn liên kết lại. Bạn vẫn đăng nhập được bằng email và mật khẩu.",
+      "linked_toast": "Đã liên kết. Lần sau đăng nhập bằng mạng xã hội này là vào tài khoản này",
+      "unlinked_toast": "Đã gỡ liên kết. Bạn đăng nhập bằng email và mật khẩu",
+      "link_zalo_text": "Zalo không cung cấp email để đối chiếu, vì vậy hãy nhập mật khẩu Genie để xác nhận đây là tài khoản của bạn.",
+      "one_social": "Mỗi tài khoản chỉ liên kết một mạng xã hội. Gỡ liên kết {provider} trước nếu muốn đổi."
     },
     "devices": {
       "sub": "Các phiên đang đăng nhập vào tài khoản của bạn",

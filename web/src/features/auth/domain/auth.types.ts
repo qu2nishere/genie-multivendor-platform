@@ -19,4 +19,14 @@ export interface AuthSession<U = unknown> {
 export type VerifyResult<U = unknown> =
   { kind: 'session'; session: AuthSession<U> } | { kind: 'reset'; resetToken: string };
 
-export type SocialProvider = 'google' | 'apple';
+/** Đăng nhập mạng xã hội (UC-AUTH-03; plan D17: Apple thay bằng Zalo). */
+export type SocialProvider = 'google' | 'zalo';
+
+/** Zalo không trả email → lần đầu phải nhập email + OTP (plan D23). */
+export interface SocialSignup {
+  provider: SocialProvider;
+  token: string;
+  /** Tên lấy từ Zalo (có thể null). */
+  name: string | null;
+  expiresIn: number;
+}

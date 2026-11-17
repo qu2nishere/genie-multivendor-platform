@@ -133,7 +133,7 @@ export function mockVerify(id: string, otp: string): MockVerify {
   if (c.purpose === 'PASSWORD_RESET') return { kind: 'reset', reset_token: `rst_${id}` };
   lockedUntil.delete(key(c.email));
   pwFails.delete(key(c.email));
-  if (c.purpose === 'REGISTER') EXISTING_EMAILS.push(key(c.email));
+  if (c.purpose === 'REGISTER' || c.purpose === 'OAUTH_SIGNUP') EXISTING_EMAILS.push(key(c.email));
   return { kind: 'tokens', tokens: mockTokens() };
 }
 
