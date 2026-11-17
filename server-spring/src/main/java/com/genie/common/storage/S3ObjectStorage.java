@@ -13,6 +13,7 @@ import io.minio.StatObjectResponse;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Map;
@@ -24,28 +25,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link ObjectStorage} trên Silo — kho tệp chuẩn S3, fork của MinIO (gọi qua SDK S3 {@code io.minio} 8.5, ADR 0009). Dùng HAI client:
+ * {@link ObjectStorage} trên kho tệp chuẩn S3, gọi qua SDK {@code io.minio} 8.5: máy dev / test là Silo (fork của MinIO —
+ * ADR 0009), production là AWS S3 (ADR 0010) — chỉ khác cấu hình {@link StorageProperties}. Dùng HAI client:
  * <ul>
- *   <li>{@code client} — gọi Silo thật qua {@code genie.storage.endpoint} (stat, copy, xóa);</li>
+ *   <li>{@code client} — gọi kho tệp thật qua {@code genie.storage.endpoint} (stat, copy, xóa);</li>
  *   <li>{@code signer} — chỉ để KÝ link theo {@code genie.storage.public-url} (địa chỉ trình duyệt thấy). Ký link là
  *       phép tính cục bộ, không gọi mạng (đã đặt sẵn region), nên host công khai không cần truy cập được từ backend.</li>
  * </ul>
+ * Tham số {@code bucket} của mọi phương thức là tên LOGIC ({@code avatar-assets}…); lớp này ghép
+ * {@code genie.storage.bucket-prefix} thành tên bucket thật (prod: {@code genie-prod-avatar-assets}).
  */
 @Component
-public class SiloObjectStorage implements ObjectStorage {
+public class S3ObjectStorage implements ObjectStorage {
 
-    private static final Logger log = LoggerFactory.getLogger(SiloObjectStorage.class);
+    private static final Logger log = LoggerFactory.getLogger(S3ObjectStorage.class);
+    private static final String AWS_HOST_SUFFIX = "amazonaws.com";
     private static final Set<String> MISSING = Set.of("NoSuchKey", "NoSuchObject", "NoSuchBucket");
 
     private final MinioClient client;
     private final MinioClient signer;
     private final String publicBase;
+    private final boolean virtualHostStyle;
+    private final StorageProperties properties;
     private final Clock clock;
 
-    public SiloObjectStorage(StorageProperties properties, Clock clock) {
+    public S3ObjectStorage(StorageProperties properties, Clock clock) {
         this.client = build(properties.endpoint(), properties);
         this.signer = build(properties.publicUrl(), properties);
         this.publicBase = trimSlash(properties.publicUrl());
+        this.virtualHostStyle = isAwsHost(properties.publicUrl());
+        this.properties = properties;
         this.clock = clock;
     }
 
@@ -61,7 +70,7 @@ public class SiloObjectStorage implements ObjectStorage {
     public PresignedUpload presignPut(String bucket, String objectKey, String contentType, Duration ttl) {
         String url = call(() -> signer.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(Method.PUT)
-                .bucket(bucket)
+                .bucket(bucket(bucket))
                 .object(objectKey)
                 .expiry((int) ttl.toSeconds(), TimeUnit.SECONDS)
                 .build()));
@@ -72,7 +81,7 @@ public class SiloObjectStorage implements ObjectStorage {
     public String presignGet(String bucket, String objectKey, Duration ttl) {
         return call(() -> signer.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(Method.GET)
-                .bucket(bucket)
+                .bucket(bucket(bucket))
                 .object(objectKey)
                 .expiry((int) ttl.toSeconds(), TimeUnit.SECONDS)
                 .build()));
@@ -81,7 +90,7 @@ public class SiloObjectStorage implements ObjectStorage {
     @Override
     public Optional<StoredObject> stat(String bucket, String objectKey) {
         try {
-            StatObjectResponse r = client.statObject(StatObjectArgs.builder().bucket(bucket).object(objectKey).build());
+            StatObjectResponse r = client.statObject(StatObjectArgs.builder().bucket(bucket(bucket)).object(objectKey).build());
             return Optional.of(new StoredObject(r.contentType(), r.size()));
         } catch (ErrorResponseException e) {
             if (MISSING.contains(e.errorResponse().code())) {
@@ -96,7 +105,7 @@ public class SiloObjectStorage implements ObjectStorage {
     @Override
     public void put(String bucket, String objectKey, byte[] data, String contentType) {
         call(() -> client.putObject(PutObjectArgs.builder()
-                .bucket(bucket)
+                .bucket(bucket(bucket))
                 .object(objectKey)
                 .stream(new ByteArrayInputStream(data), data.length, -1)
                 .contentType(contentType)
@@ -106,9 +115,9 @@ public class SiloObjectStorage implements ObjectStorage {
     @Override
     public void move(String bucket, String sourceKey, String targetKey) {
         call(() -> client.copyObject(CopyObjectArgs.builder()
-                .bucket(bucket)
+                .bucket(bucket(bucket))
                 .object(targetKey)
-                .source(CopySource.builder().bucket(bucket).object(sourceKey).build())
+                .source(CopySource.builder().bucket(bucket(bucket)).object(sourceKey).build())
                 .build()));
         delete(bucket, sourceKey);
     }
@@ -116,14 +125,32 @@ public class SiloObjectStorage implements ObjectStorage {
     @Override
     public void delete(String bucket, String objectKey) {
         call(() -> {
-            client.removeObject(RemoveObjectArgs.builder().bucket(bucket).object(objectKey).build());
+            client.removeObject(RemoveObjectArgs.builder().bucket(bucket(bucket)).object(objectKey).build());
             return null;
         });
     }
 
+    /**
+     * URL công khai cố định. Silo (dev): {@code <public-url>/<bucket>/<key>}. AWS S3: {@code https://<bucket>.<host>/<key>}
+     * (virtual-host — kiểu AWS khuyến nghị, cùng kiểu SDK dùng khi ký link).
+     */
     @Override
     public String publicUrl(String bucket, String objectKey) {
-        return publicBase + "/" + bucket + "/" + objectKey;
+        String physical = bucket(bucket);
+        if (virtualHostStyle) {
+            URI base = URI.create(publicBase);
+            return base.getScheme() + "://" + physical + "." + base.getAuthority() + "/" + objectKey;
+        }
+        return publicBase + "/" + physical + "/" + objectKey;
+    }
+
+    private String bucket(String logicalBucket) {
+        return properties.physicalBucket(logicalBucket);
+    }
+
+    static boolean isAwsHost(String url) {
+        String host = URI.create(url).getHost();
+        return host != null && (host.equals(AWS_HOST_SUFFIX) || host.endsWith("." + AWS_HOST_SUFFIX));
     }
 
     @FunctionalInterface
@@ -140,7 +167,7 @@ public class SiloObjectStorage implements ObjectStorage {
     }
 
     private static BusinessException unavailable(Exception e) {
-        log.warn("Silo lỗi: {}", e.toString());
+        log.warn("Kho tệp S3 lỗi: {}", e.toString());
         return new BusinessException(ErrorCode.SERVICE_UNAVAILABLE, "Kho tệp tạm thời không phản hồi, vui lòng thử lại.");
     }
 

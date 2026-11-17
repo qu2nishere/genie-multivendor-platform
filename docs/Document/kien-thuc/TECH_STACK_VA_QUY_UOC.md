@@ -39,9 +39,9 @@ flowchart LR
     NG --> FE[web<br/>Astro SSR + React islands]
     NG --> BE[server-spring<br/>Spring Boot modular monolith]
     FE -->|fetch /api/v1| BE
-    BE --> PG[(PostgreSQL 16<br/>nguồn sự thật)]
+    BE --> PG[(PostgreSQL 16<br/>dev: Docker / cài máy · prod: AWS RDS)]
     BE --> RD[(Redis 7<br/>tạm thời · TTL)]
-    BE --> MN[(Silo<br/>tệp)]
+    BE --> MN[(Kho tệp S3<br/>dev: Silo · prod: AWS S3)]
     BE <-->|HTTP nội bộ + token| AI[server-python<br/>AI Worker: KYC · PhoBERT]
     AI --> MN
     BE <--> EXT[VNPay · SePay · GHN/GHTK/VTP/J&T<br/>Gemini · Google/Apple OIDC · SMTP]
@@ -281,16 +281,16 @@ server-python/
 
 ```
 deploy/
-├── docker-compose.yml                # staging / demo trên VPS (mục 16)
+├── docker-compose.yml                # production: nginx, frontend, backend, ai-worker, redis (CSDL = RDS, tệp = S3 — mục 16)
 ├── docker-compose.local.yml          # máy dev: postgres, redis, silo, silo-init, mailpit
 ├── .env.example                      # mọi biến cần có, giá trị giả
 ├── nginx/
 │   ├── nginx.conf                    # gzip, log, giới hạn, header bảo mật chung
-│   └── conf.d/{web.conf, api.conf, s3.conf}
-├── silo/init.sh                     # tạo bucket, chính sách công khai, lifecycle tmp/ 1 ngày
-├── postgres/postgresql.conf          # tham số cho ~2 GB RAM
+│   └── conf.d/{web.conf, api.conf}
+├── silo/init.sh                     # máy dev: tạo bucket, chính sách công khai, lifecycle tmp/ 1 ngày
+├── aws/{README.md, s3-init.sh, iam-policy.json}   # production: RDS, 9 bucket S3, IAM user ứng dụng
 ├── redis/redis.conf                  # AOF, maxmemory 256mb, volatile-lru, requirepass
-├── backup/{backup.sh, restore.sh}    # pg_dump hằng ngày giữ 7 bản, sao lưu Silo hằng tuần
+├── backup/{backup.sh, restore.sh}    # pg_dump từ RDS hằng ngày giữ 7 bản (bổ sung cho RDS automated backups)
 └── scripts/deploy.sh                 # pull image theo TAG, up -d, kiểm health, rollback
 scripts/
 ├── fetch-models.sh                   # tải ONNX KYC + PhoBERT
@@ -330,7 +330,7 @@ scripts/
 |---|---|---|
 | PostgreSQL | **16** (+ `unaccent`, `pg_trgm`) | Nguồn sự thật — 65 bảng |
 | Redis | **7** (AOF bật, có mật khẩu) | OTP, rate limit, idempotency, cache, bộ đếm — **không** là nguồn sự thật |
-| Silo | `pgsty/silo:RELEASE.2026-10-26T00-00-00Z` (chốt tag) | Ảnh, video, hồ sơ KYC, giấy tờ, bằng chứng — Presigned URL |
+| Kho tệp S3 | Máy dev / test: **Silo** `pgsty/silo:RELEASE.2026-10-26T00-00-00Z` (chốt tag); production: **AWS S3** (`ap-southeast-1`, tiền tố bucket `STORAGE_BUCKET_PREFIX` — ADR 0010 trong repo) | Ảnh, video, hồ sơ KYC, giấy tờ, bằng chứng — Presigned URL |
 | Nginx | 1.27-alpine | HTTPS (Let's Encrypt), reverse proxy, phục vụ ảnh công khai |
 | Docker / Compose | Compose v2 | Môi trường local + staging |
 | Mail | Mailpit (local) · Gmail SMTP / Mailtrap (demo) | OTP là kênh duy nhất qua email (ADR-10) |
@@ -667,7 +667,7 @@ public class Order {
 | Dữ liệu cá nhân | Ảnh CCCD mã hóa AES-256-GCM (khóa trong biến môi trường), bucket riêng tư, Presigned GET 5 phút, ghi log khi Staff xem; che CCCD / STK (`0792******34`) | NFR-07 |
 | Đầu vào | Bean Validation; ảnh ≤ 5 MB, video ≤ 30 MB, giấy tờ ≤ 10 MB; kiểm MIME phía server (`statObject`) | 3.6 |
 | Bí mật | `.env` không commit; GitHub Actions Secrets; API key Gemini chỉ ở backend | 3.6 |
-| Hạ tầng | Không publish cổng PostgreSQL / Redis / Silo / AI Worker; Actuator chỉ mạng nội bộ | 4.4, 4.6 |
+| Hạ tầng | Không publish cổng Redis / AI Worker; RDS chỉ mở 5432 cho security group của backend; bucket S3 riêng tư chặn công khai; Actuator chỉ mạng nội bộ | 4.4, 4.6 |
 | Kiểm toán | Ghi `system_logs` cho đăng nhập, khóa tài khoản, đổi / đặt lại mật khẩu, đổi email, liên kết / gỡ Google, thu hồi phiên, yêu cầu / hủy xóa tài khoản, duyệt KYC / sản phẩm, giải ngân, rút tiền, hoàn tiền, đổi hoa hồng, đổi quyền; đăng nhập sai / truy cập bị chặn ghi bằng transaction riêng (`REQUIRES_NEW`) | NFR-08 |
 
 ---
@@ -754,6 +754,7 @@ Mỗi dịch vụ ngoài sau **một interface ở `application`**, cài đặt 
 | 20 | Tài khoản chỉ Google đăng nhập mật khẩu → coi như sai mật khẩu | `401 GNE-AUTH-4012`, không tính lần sai; quên mật khẩu = thiết lập mật khẩu | API_SPEC 2.5, Usecase UC-AUTH-02/04 |
 | 21 | Liên kết Google thủ công gắn được bất kỳ Gmail nào | Email Google phải trùng email tài khoản (`409 GNE-AUTH-4098`); gỡ liên kết phải nhập lại mật khẩu | API_SPEC 3.3, Usecase UC-AUTH-03 |
 | 22 | Xóa tài khoản đăng xuất mọi phiên | Đăng xuất thiết bị **khác**, giữ phiên hiện tại để thấy băng đỏ + nút hủy | API_SPEC 3.7, Usecase UC-AUTH-10 |
+| 23 | Production: tài liệu cũ chạy PostgreSQL + Silo trong Docker trên VPS | **AWS RDS PostgreSQL 16 + AWS S3**; máy dev / test giữ PostgreSQL (Docker hoặc cài máy) + Silo. Code một cài đặt `S3ObjectStorage` (biến `STORAGE_REGION`, `STORAGE_BUCKET_PREFIX`); compose VPS bỏ `postgres`, `silo`, nginx `s3.genie.vn`; `deploy/aws/` tạo bucket + IAM — ADR 0010 trong repo |
 
 ---
 
@@ -946,18 +947,18 @@ Mức nghiêm trọng và thời hạn xử lý: Document_Vi.md mục 4.2.2 (P0 
 
 | Môi trường | Ở đâu | Thành phần | Dữ liệu |
 |---|---|---|---|
-| **local** | Máy từng thành viên | `deploy/docker-compose.local.yml`: postgres, redis, silo + silo-init, mailpit; backend / web / ai-worker chạy từ IDE | `R__seed_demo.sql` |
-| **demo** (staging = production của đồ án) | 1 VPS 4 vCPU / 8 GB / 80 GB SSD | `deploy/docker-compose.yml` đầy đủ | Seed demo + dữ liệu chạy thử |
+| **local** | Máy từng thành viên | PostgreSQL **Docker** hoặc **cài thẳng máy**; `deploy/docker-compose.local.yml`: redis, silo + silo-init, mailpit (+ postgres nếu dùng Docker); backend / web / ai-worker chạy từ IDE | `R__seed_demo.sql` + seed `db/seed` |
+| **production** (cũng dùng để demo) | App: 1 VPS / EC2 4 vCPU / 8 GB; **CSDL: AWS RDS PostgreSQL 16**; **tệp: AWS S3** (`ap-southeast-1`) | `deploy/docker-compose.yml`: nginx, frontend, backend, ai-worker, redis; hạ tầng AWS theo `deploy/aws/README.md` | Không có dữ liệu mẫu (`GENIE_SEED_DEMO=false`) |
 
 | Tên miền | Trỏ tới | Ghi chú |
 |---|---|---|
 | `genie.vn` (+ `www`) | Nginx → `frontend:4321` | Storefront, `/seller/*`, `/admin/*` |
 | `api.genie.vn` | Nginx → `backend:8080` | REST `/api/v1`, WebSocket `/ws`, webhook VNPay / SePay / 3PL |
-| `s3.genie.vn` | Nginx → `silo:9000` | Đọc ảnh công khai + Presigned PUT / GET từ trình duyệt; backend ký URL với endpoint công khai này |
+| `<tiền tố><bucket>.s3.ap-southeast-1.amazonaws.com` | AWS S3 (không qua Nginx) | Đọc ảnh công khai + Presigned PUT / GET từ trình duyệt; CORS khai bằng `deploy/aws/s3-init.sh` |
 
 Có thể đặt DNS sau Cloudflare (miễn phí); khi đó Nginx phải lấy IP thật từ `CF-Connecting-IP` (`set_real_ip_from`) để rate limit đúng người. Domain thật chọn khi chạy thử; khi dev dùng Cloudflare Tunnel (16.7).
 
-### 16.2 Ngân sách tài nguyên trên VPS 8 GB
+### 16.2 Ngân sách tài nguyên trên VPS / EC2 8 GB
 
 | Container | Giới hạn RAM | Ghi chú |
 |---|---|---|
@@ -965,9 +966,9 @@ Có thể đặt DNS sau Cloudflare (miễn phí); khi đó Nginx phải lấy I
 | frontend (Node SSR) | 384 MB | |
 | backend | 2 GB | `-Xms512m -Xmx1536m`, còn lại cho metaspace / thread |
 | ai-worker | 2 GB | Mô hình KYC + PhoBERT ONNX INT8 |
-| postgres | 2 GB | `shared_buffers=512MB`, `effective_cache_size=1536MB`, `max_connections=50` (theo ENTITY.md 13.3) |
+| ~~postgres~~ | — | Chuyển sang **AWS RDS** `db.t4g.micro` (~80 kết nối; backend pool 20) |
 | redis | 320 MB | `maxmemory 256mb` |
-| silo | 512 MB | |
+| ~~silo~~ | — | Chuyển sang **AWS S3** |
 | Hệ điều hành + Docker | ~0,8 GB | Thêm **swap 2 GB** dự phòng |
 
 Mỗi service khai `deploy.resources.limits.memory`, `restart: unless-stopped`, `healthcheck`, log Docker `json-file` `max-size: 10m`, `max-file: 3`.
@@ -976,30 +977,30 @@ Mỗi service khai `deploy.resources.limits.memory`, `restart: unless-stopped`, 
 
 - Chỉ Nginx mở cổng **80 / 443**; HTTP chuyển hết sang HTTPS; HSTS.
 - `api.genie.vn`: proxy `/api/` và `/ws` (header `Upgrade` / `Connection` cho WebSocket, `proxy_read_timeout 3600s`); `client_max_body_size 1m` (API không nhận tệp).
-- `s3.genie.vn`: proxy tới Silo giữ nguyên `Host` (chữ ký Presigned URL phụ thuộc host); `client_max_body_size 35m`; cache ảnh công khai 7 ngày.
+- Không còn `s3.genie.vn` / `s3.conf`: trình duyệt tải / xem tệp thẳng trên AWS S3.
 - `genie.vn`: proxy frontend; tài nguyên `/_astro/*` `Cache-Control: public, max-age=31536000, immutable`; gzip.
-- Header bảo mật: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, Content-Security-Policy cho phép `s3.genie.vn`, `api.genie.vn`, VNPay.
+- Header bảo mật: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`, Content-Security-Policy cho phép `*.s3.ap-southeast-1.amazonaws.com`, `api.genie.vn`, VNPay.
 
 ### 16.4 TLS
 
-Certbot (container hoặc cài trên VPS) cấp chứng chỉ Let's Encrypt cho 3 tên miền bằng webroot; cron gia hạn 2 lần / ngày và `nginx -s reload`. Uptime Kuma cảnh báo khi chứng chỉ còn < 14 ngày.
+Certbot (container hoặc cài trên VPS) cấp chứng chỉ Let's Encrypt cho 2 tên miền (`genie.vn`, `api.genie.vn`) bằng webroot; cron gia hạn 2 lần / ngày và `nginx -s reload`. Uptime Kuma cảnh báo khi chứng chỉ còn < 14 ngày.
 
 ### 16.5 Khởi tạo dữ liệu & dịch vụ
 
-- **PostgreSQL:** Flyway tạo 65 bảng khi backend khởi động; `V13__bootstrap_admin.sql` tạo Admin đầu tiên từ biến môi trường; `R__seed_demo.sql` chỉ chạy ở profile `local` / `demo`.
-- **Silo (`deploy/silo/init.sh`, container chạy một lần):** tạo 9 bucket; `anonymous download` cho `product-media`, `avatar-assets`, `review-media`, `content-assets`; lifecycle xóa `tmp/` sau 1 ngày; tài khoản ứng dụng riêng (không dùng root). Ảnh KYC do backend mã hóa AES-256-GCM khi chuyển từ `tmp/` sang `kyc-dossiers`.
+- **PostgreSQL (dev: Docker / cài máy; prod: AWS RDS):** Flyway tạo 65 bảng khi backend khởi động; `V13__bootstrap_admin.sql` tạo Admin đầu tiên từ biến môi trường; `R__seed_demo.sql` chỉ chạy ở profile `local` / `demo`.
+- **Kho tệp:** production dùng **`deploy/aws/s3-init.sh`** (9 bucket có tiền tố, bucket policy đọc công khai trừ `tmp/`, chặn công khai bucket riêng tư, lifecycle `tmp/` 1 ngày, CORS, SSE-S3, versioning `kyc-dossiers`) + IAM user theo `deploy/aws/iam-policy.json`. Máy dev: **Silo (`deploy/silo/init.sh`, container chạy một lần):** tạo 9 bucket; `anonymous download` cho `product-media`, `avatar-assets`, `review-media`, `content-assets`; lifecycle xóa `tmp/` sau 1 ngày; tài khoản ứng dụng riêng (không dùng root). Ảnh KYC do backend mã hóa AES-256-GCM khi chuyển từ `tmp/` sang `kyc-dossiers`.
 - **Redis:** `deploy/redis/redis.conf` — AOF `everysec`, `requirepass`, `maxmemory 256mb`, `volatile-lru`.
 - **AI Worker:** `scripts/fetch-models.sh` tải mô hình đúng phiên bản trước khi khởi động; `/health` chỉ báo sẵn sàng khi đã nạp xong.
 
 ### 16.6 Biến môi trường (`.env.example`, `deploy/.env.example`)
 
-**Nguyên tắc:** mọi giá trị thay đổi theo môi trường đọc từ biến `${TEN_BIEN}` trong `application*.yml`, không ghi cứng; mật khẩu / khóa thật chỉ nằm trong `.env` (máy dev: gốc repo — backend tự đọc qua `DotEnvEnvironmentPostProcessor`, kể cả `SPRING_PROFILES_ACTIVE`; VPS: `deploy/.env`), cả hai bị `.gitignore` chặn. `application-local.yml` chỉ chứa giá trị dự phòng cho máy dev; bí mật ở `application.yml` / `application-prod.yml` không có mặc định (thiếu → backend dừng). CSDL máy dev chọn một trong 3 khối trong `.env`: Docker (mặc định), PostgreSQL cài trên máy, CSDL cloud (`?sslmode=require`, `DB_POOL_SIZE=5`, `GENIE_SEED_DEMO=false`, `GENIE_SCHEDULING_ENABLED=false`). Hướng dẫn đầy đủ + danh mục biến + lỗi thường gặp: `docs/cau-hinh-moi-truong.md` trong repo.
+**Nguyên tắc:** mọi giá trị thay đổi theo môi trường đọc từ biến `${TEN_BIEN}` trong `application*.yml`, không ghi cứng; mật khẩu / khóa thật chỉ nằm trong `.env` (máy dev: gốc repo — backend tự đọc qua `DotEnvEnvironmentPostProcessor`, kể cả `SPRING_PROFILES_ACTIVE`; VPS: `deploy/.env`), cả hai bị `.gitignore` chặn. `application-local.yml` chỉ chứa giá trị dự phòng cho máy dev; bí mật ở `application.yml` / `application-prod.yml` không có mặc định (thiếu → backend dừng). CSDL máy dev chọn một trong 2 khối trong `.env`: PostgreSQL Docker (mặc định) hoặc cài trên máy; CSDL production (AWS RDS) chỉ khai trong `deploy/.env`. Hướng dẫn đầy đủ + danh mục biến + lỗi thường gặp: `docs/cau-hinh-moi-truong.md` trong repo.
 
 
 | Nhóm | Biến |
 |---|---|
 | Chung | `TAG`, `SPRING_PROFILES_ACTIVE`, `PUBLIC_WEB_URL`, `PUBLIC_API_URL`, `INTERNAL_API_URL`, `PUBLIC_S3_URL` |
-| CSDL / Redis / Silo | `DB_URL`, `DB_USER`, `DB_PASSWORD`, `DB_POOL_SIZE`, `GENIE_SEED_DEMO`, `REDIS_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `MINIO_APP_ACCESS_KEY`, `MINIO_APP_SECRET_KEY` |
+| CSDL / Redis / kho tệp | `DB_URL` (prod: RDS `?sslmode=require`), `DB_USER`, `DB_PASSWORD`, `DB_POOL_SIZE`, `GENIE_SEED_DEMO`, `REDIS_PASSWORD`, `MINIO_ENDPOINT` (prod: `https://s3.<vùng>.amazonaws.com`), `MINIO_APP_ACCESS_KEY`, `MINIO_APP_SECRET_KEY` (prod: khóa IAM), `STORAGE_REGION`, `STORAGE_BUCKET_PREFIX`; chỉ máy dev: `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` |
 | Bảo mật | `JWT_SECRET` (≥ 256 bit), `KYC_AES_KEY`, `INTERNAL_TOKEN`, `WALLET_HMAC_SECRET`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD_HASH` |
 | Thanh toán | `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`, `VNPAY_URL`, `VNPAY_RETURN_URL`, `SEPAY_API_KEY`, `SEPAY_ACCOUNT_NUMBER` |
 | Vận chuyển | `GHN_TOKEN`, `GHN_SHOP_ID`, `GHTK_TOKEN`, `VTP_TOKEN`, `JT_KEY` |
@@ -1020,14 +1021,16 @@ VNPay IPN, SePay, GHN, OAuth Google cần gọi được về máy dev: chạy `
 
 | Việc | Lịch | Giữ |
 |---|---|---|
-| `pg_dump -Fc` → `/backup/pg/YYYY-MM-DD.dump` | 02:00 hằng ngày | 7 bản |
-| `mcli mirror` bucket Silo → `/backup/silo` | Chủ nhật hằng tuần | 2 bản |
+| **RDS automated backups** (khôi phục theo thời điểm) | AWS tự động | 7 ngày |
+| Snapshot RDS thủ công | Trước mỗi release | Đến release sau |
+| `backup.sh`: `pg_dump -Fc` từ RDS → `/backup/pg/YYYY-MM-DD.dump` | 02:00 hằng ngày | 7 bản |
+| S3: SSE-S3 mọi bucket + versioning `kyc-dossiers` (thay `mcli mirror` Silo của bản cũ) | Liên tục | Theo versioning |
 | Đẩy bản sao lưu ra ngoài VPS (rclone → Google Drive / máy nhóm) **(đề xuất)** | Sau mỗi lần sao lưu | 7 ngày |
-| `restore.sh` khôi phục thử vào CSDL tạm | Trước mỗi release và trước buổi bảo vệ | — |
+| `restore.sh` khôi phục thử vào CSDL tạm trên RDS | Trước mỗi release và trước buổi bảo vệ | — |
 
 ### 16.10 Giám sát & nhật ký (Document_Vi 4.6)
 
-- Spring Boot Actuator `/actuator/health` (DB, Redis, Silo), `/actuator/metrics` — chỉ mạng nội bộ.
+- Spring Boot Actuator `/actuator/health` (DB, Redis, kho tệp), `/actuator/metrics` — chỉ mạng nội bộ.
 - **Uptime Kuma** (tài khoản miễn phí bên ngoài hoặc container 128 MB) kiểm `genie.vn`, `api.genie.vn/api/v1/public/health` (endpoint công khai chỉ trả UP / DOWN), IPN endpoint mỗi 1 phút; cảnh báo email.
 - Log JSON (Logback + `logstash-logback-encoder`) có `traceId`, xem bằng `docker compose logs -f backend`; log Docker xoay vòng 10 MB × 3.
 - Job đối soát đêm (sổ cái, `balanceHash`) gửi `ESCROW_DISCREPANCY` vào hộp thư Admin khi lệch.
@@ -1067,6 +1070,7 @@ VNPay IPN, SePay, GHN, OAuth Google cần gọi được về máy dev: chạy `
 
 ## LỊCH SỬ PHIÊN BẢN
 
+- **v1.5 (2026-11-17):** production cố định **AWS RDS PostgreSQL + AWS S3** (sơ đồ mục 1, cây `deploy/` mục 2, bảng mục 3.2, mục 12, mục 16.1–16.6, 16.9, 16.10 — ADR 0010 trong repo); máy dev / test giữ PostgreSQL (Docker hoặc cài máy) + Silo; mọi giá trị theo môi trường đọc từ `.env` (`docs/cau-hinh-moi-truong.md`).
 - **v1.4 (2026-11-16):** đồng bộ với mã nguồn: kho tệp MinIO → **Silo** (mục 3.2, 16, 12 dòng 10 — ADR 0009); cây `common` / `auth` theo code thật (thêm `mail/`, `otp/`, cổng đảo ngược `AuthorityProvider`, `ActorDirectory`); migration `V14__auth_additions.sql`; mục 9 bảo mật theo hiện thực AUTH (Argon2id, cookie, `sid`, ân hạn 10 giây, rate limit kiểm mật khẩu); mục 12 thêm 13 điểm đã chốt khi triển khai (plan AUTH D2–D22).
 
 - **v1.1 (2026-11-06):** viết lại mục 2 (1 repo + 4 cây thư mục: tổng thể, backend, frontend, AI Worker, hạ tầng), mục 5 (Clean theo feature cho Astro + React islands: 4 tầng, chỉ thị hydrate, nanostores, luật ESLint), mục 13 (Gitflow, luật commit, sửa lỗi, SemVer, quy trình release), mục 15 (3 workflow), thêm mục 16 (hạ tầng MVP: tên miền, ngân sách RAM, Nginx, TLS, Silo, biến môi trường, tunnel webhook, bảo vệ máy chủ, sao lưu, giám sát).

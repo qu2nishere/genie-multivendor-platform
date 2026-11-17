@@ -10,6 +10,9 @@
 #   MAILPIT_SMTP_PORT  (1025) → SMTP_PORT (khi gửi email vào Mailpit)
 #   MAILPIT_UI_PORT    (8025) → mở http://localhost:<cổng> xem email OTP
 # Số bên phải dấu ":" là cổng trong container — giữ nguyên.
+# Dùng PostgreSQL cài thẳng trên máy (khối CSDL [2] trong .env) → chỉ bật phần còn lại:
+#   docker compose --env-file .env -f deploy/docker-compose.local.yml up -d redis silo silo-init mailpit
+# Production KHÔNG dùng file này: CSDL = AWS RDS, kho tệp = AWS S3 (ADR 0010, deploy/aws/README.md).
 name: genie-local
 
 services:

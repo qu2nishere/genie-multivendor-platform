@@ -20,7 +20,7 @@
 | `vendor/shop/domain` | `VendorProfile` (≈ 50 trường: thông tin shop, 4 khóa ảnh giấy tờ, `kycStatus` 7 trạng thái, `kycRejectionReason`, `kycVerificationMethod`, `kycVerifiedBy`, `commissionRate`, `pickup*` + `ghnShopId`, `payout*` + `payoutAccountVerifiedAt`, `isMall`, bộ đếm, `preOrderEnabled`, `autoReply*`, `vacation*`); phương thức `submitKyc`, `startAiProcessing`, `routeToManualReview`, `requestSupplement`, `approveKyc`, `rejectKyc`, `isPickupConfigured`, `effectiveCommissionRate`, `verifyPayoutAccount`, `isPayoutAccountVerified`, `startVacation`…; enum `KycStatus`, `KycVerificationMethod`, `BusinessType`; repository rỗng | Toàn bộ `api`, `application`, `infra`. **Thiếu cột** cho: SĐT / email liên hệ của shop, SĐT kho, đồng ý sinh trắc, danh sách giấy tờ cần bổ sung + hạn 7 ngày, "đã yêu cầu nhân viên xem xét", thời điểm đổi tên shop, tên tệp + dung lượng giấy tờ (API 9.1, 10.11, 10.12 cần) |
 | `vendor/kyc/domain` | `KycResult` (dữ liệu trích xuất, 8 cờ kiểm tra, `faceMatchScore`, `livenessScore`, `riskScore`, `riskSignalsJson`, `sampledForReview`, `overallStatus`; `applyRiskScore(score, signals, sampled, 30, 70, now)`, `requiresManualReview`, `isPassed`), `KycOverallResult` | Service chấm điểm, callback |
 | `shipping/shipment/domain` | `VendorShippingConfig` + repository (module **khác**) | Cửa cho `vendor` đọc / ghi cấu hình hãng vận chuyển |
-| `common` | `UploadService` / `SiloObjectStorage` (mới purpose `AVATAR`), `EmailSender`, `AuditLogger`, `InternalTokenFilter` (đã có khung 50 dòng), `AiWorkerHttpClient` (**rỗng — TODO**), `NameNormalizer`, cấu hình `genie.security.kyc-aes-key` (biến `KYC_AES_KEY`; mặc định dev ở `application-local.yml` là khóa base64 32 byte hợp lệ), `genie.ai-worker.url` (`AI_WORKER_URL`), `genie.storage.presigned-put-kyc-ttl = 10m`, `genie.shipping.ghn.*` | Mã hóa AES-256-GCM; purpose KYC / logo / bìa; client AI Worker |
+| `common` | `UploadService` / `S3ObjectStorage` (mới purpose `AVATAR`), `EmailSender`, `AuditLogger`, `InternalTokenFilter` (đã có khung 50 dòng), `AiWorkerHttpClient` (**rỗng — TODO**), `NameNormalizer`, cấu hình `genie.security.kyc-aes-key` (biến `KYC_AES_KEY`; mặc định dev ở `application-local.yml` là khóa base64 32 byte hợp lệ), `genie.ai-worker.url` (`AI_WORKER_URL`), `genie.storage.presigned-put-kyc-ttl = 10m`, `genie.shipping.ghn.*` | Mã hóa AES-256-GCM; purpose KYC / logo / bìa; client AI Worker |
 | `auth` | `OtpChallengeService.issue(purpose, email, userId, payload)` (nội bộ), `OtpFacade.verifyStepUp(…)`, `OtpPurpose` có `SHOP_REGISTRATION`, `PAYOUT_ACCOUNT_UPDATE`, `PAYOUT_ACCOUNT_DELETE`; `UserFacade.promoteToVendor`, `isActive`, `findSummary`; `StepUpPrecondition` (cổng) | `OtpFacade` chưa cho module khác **phát** / **xác minh** OTP có dữ liệu kèm theo |
 | CSDL | `vendor_profiles`, `kyc_results` (`V1`), `vendor_shipping_config` (`V7`) | Migration bổ sung cột (mục 2 — D2) |
 | `web` | `seller-onboarding` (`registerShop`, `confirmShopRegistration`, `getKyc`, `saveKycDraft`, `submitKyc`, `requestManualReview`), `seller-settings` (`getSettings`, `patchSettings`, `savePickupAddress`, `listBanks`, `savePayoutAccount`, `deletePayoutAccount`, `getSellerMe`, `getPayoutAccount`…), `admin-kyc` (6 hàm) — đều xong trên mock; `KycGate` ở Seller Center; E2E `kyc-onboarding.spec.ts` (mock) | Nối API thật |
@@ -118,7 +118,7 @@ web/src/features/{seller-onboarding,seller-settings,admin-kyc}/infrastructure/*.
 web/tests/e2e/kyc-onboarding-real.spec.ts                                                 (mới — chạy khi E2E_REAL_API=1)
 docs/Document/…  ENTITY (1.4, 1.6, 13.1, Phụ lục A, E) · GIAI_NGHIA_ENTITY · java-code/Diagram01 · Class XMI · API_SPEC (0, 4.1, 9, 10.11, 10.12, 11.3, 12, 15)
                  LUU_TRU 5.4–5.7 · implement 8.1 · Usecase.md (7 UC) · CHECKLIST_TIEN_DO_UC.md · Quản Lý UseCase.xlsx
-docs/adr/0010-vendor-kyc-va-hop-dong-ai-worker.md · docs/web-backend-handoff.md · docs/api-tests/vendor-*.http
+docs/adr/0011-vendor-kyc-va-hop-dong-ai-worker.md · docs/web-backend-handoff.md · docs/api-tests/vendor-*.http
 ```
 
 ---
@@ -166,12 +166,12 @@ Ký hiệu: `Kxx.yy` = task; `Kxx.Cn` = task commit.
 ### K00 — Chuẩn bị & chốt quyết định
 
 - **[K00.01]** Kiểm danh tính git — `git config user.name` / `user.email`.
-- **[K00.02]** Chốt quyết định D1–D15 — ghi vào đầu file progress; D6 chốt **cùng người làm AI Worker** (plan AI Worker Y00.02) và ghi thành ADR `docs/adr/0010-vendor-kyc-va-hop-dong-ai-worker.md`.
+- **[K00.02]** Chốt quyết định D1–D15 — ghi vào đầu file progress; D6 chốt **cùng người làm AI Worker** (plan AI Worker Y00.02) và ghi thành ADR `docs/adr/0011-vendor-kyc-va-hop-dong-ai-worker.md`.
 - **[K00.03]** Tạo nhánh tích hợp — `git switch develop && git pull && git switch -c feature/vendor-shop-kyc && git push -u origin feature/vendor-shop-kyc`.
 - **[K00.04]** Dựng môi trường — `.env` gốc (`cp .env.example .env`, khối CSDL [1] Docker; profile `local` lấy từ `.env` — [docs/cau-hinh-moi-truong.md](../../../docs/cau-hinh-moi-truong.md)) + Docker local (postgres, redis, silo, mailpit) + backend + seed (plan seed S01–S06); `./mvnw verify` xanh trước khi viết dòng nào.
 - **[K00.05]** Đọc màn mock theo thứ tự luồng — `/become-seller` → modal OTP → `/seller/kyc` (5 trạng thái băng thông báo, form, tải ảnh, selfie, đồng ý sinh trắc, lưu nháp) → `/seller/settings` → `/admin/kyc` (hàng chờ, chi tiết, trình xem ảnh, 4 hành động); ghi trường giao diện cần và chỗ web đang lệch API.
 - **[K00.06]** Kiểm số migration — `V15` còn trống trên `develop` ([README mục 4](../README.md)); ghi vào progress.
-- **[K00.C1]** COMMIT — `docs(vendor): record kyc and ai worker contract decisions in adr 0010`
+- **[K00.C1]** COMMIT — `docs(vendor): record kyc and ai worker contract decisions in adr 0011`
 
 ### K01 — Tài liệu, migration `V15`, hằng số dùng chung (nhánh `feature/vendor-k01-schema`)
 
@@ -190,7 +190,7 @@ Ký hiệu: `Kxx.yy` = task; `Kxx.Cn` = task commit.
 
 - **[K02.01]** `AesGcmCipher` (`common/crypto`) — `encrypt(plaintext, aad)` → `IV(12) ‖ ciphertext ‖ tag`, `decrypt(blob, aad)`; khóa 256 bit đọc từ `genie.security.kyc-aes-key` (biến `KYC_AES_KEY`, Base64), kiểm độ dài khi khởi động (sai độ dài → backend dừng với thông báo rõ); mặc định dev đã hợp lệ, VPS sinh bằng `openssl rand -base64 32` ghi vào `deploy/.env`; sai khóa / sai AAD / dữ liệu bị sửa → ngoại lệ rõ ràng.
 - **[K02.02]** `AesGcmCipherTest` — mã hóa → giải mã ra đúng dữ liệu; hai lần mã hóa cùng dữ liệu cho bản mã khác nhau (IV ngẫu nhiên); sửa 1 byte → giải mã lỗi; sai AAD → lỗi; tệp 10 MB chạy trong giới hạn bộ nhớ.
-- **[K02.03]** `ObjectStorage` — bổ sung (nếu chưa có) `get(bucket, key)` trả luồng, `put(bucket, key, bytes, contentType)`, `presignGet(bucket, key, ttl)`, `stat`, `remove`; `SiloObjectStorage` cài đặt; test với Silo Testcontainers.
+- **[K02.03]** `ObjectStorage` (cài đặt `S3ObjectStorage` — Silo ở máy dev, AWS S3 ở production, ADR 0010; bucket `kyc-dossiers` trên S3 chặn công khai + SSE + versioning — `deploy/aws/s3-init.sh`) — bổ sung (nếu chưa có) `get(bucket, key)` trả luồng, `put(bucket, key, bytes, contentType)`, `presignGet(bucket, key, ttl)`, `stat`, `remove`; `S3ObjectStorage` cài đặt; test với Silo Testcontainers.
 - **[K02.04]** `OtpFacade` (scope `auth`) — thêm `issue(purpose, email, userId, payload)` trả `$OtpChallenge` và `verify(challengeId, code, expectedPurpose, userId)` trả payload; chỉ cho phép purpose của module khác (`SHOP_REGISTRATION`); giữ nguyên luật 60 giây / 5 lần / 5 phút; test trong `auth`.
 - **[K02.05]** `SellerContext` — tra `VendorProfile` theo `userId` hiện tại (`findByUserId`), không có → `403 GNE-SEC-4030`; trả `vendorProfileId`, `vendorUserId`, `kycStatus` (N10).
 - **[K02.06]** `KycGateInterceptor` + `VendorWebConfig` — áp cho `/api/v1/seller/**`; danh sách ngoại lệ đúng API 0.9 (khai thành hằng số có chú thích nguồn); chưa `VERIFIED` → `403 GNE-VND-4031` kèm `details.kyc_status`.
@@ -353,8 +353,8 @@ Ký hiệu: `Kxx.yy` = task; `Kxx.Cn` = task commit.
 
 | Rủi ro | Xử lý |
 |---|---|
-| Hợp đồng Backend ↔ AI Worker lệch nhau khi hai người làm song song | Chốt D6 thành ADR 0010 trước khi viết mã (K00.02 / Y00.02); test hợp đồng hai phía dùng **cùng** tệp JSON mẫu (`docs/api-tests/kyc-contract/*.json`) |
-| Mất khóa `KYC_AES_KEY` → không giải mã được hồ sơ | Khóa nằm trong `deploy/.env` của VPS, sao lưu riêng; README ghi rõ; không đổi khóa khi còn hồ sơ (xoay khóa để DATN) |
+| Hợp đồng Backend ↔ AI Worker lệch nhau khi hai người làm song song | Chốt D6 thành ADR 0011 trước khi viết mã (K00.02 / Y00.02); test hợp đồng hai phía dùng **cùng** tệp JSON mẫu (`docs/api-tests/kyc-contract/*.json`) |
+| Mất khóa `KYC_AES_KEY` → không giải mã được hồ sơ | Khóa nằm trong `deploy/.env` của máy chủ production (VPS / EC2 — CSDL RDS, tệp S3), sao lưu riêng; README ghi rõ; không đổi khóa khi còn hồ sơ (xoay khóa để DATN) |
 | Tệp lớn (10 MB) mã hóa trong bộ nhớ làm tốn RAM | Giới hạn 10 MB + xử lý tuần tự từng tệp; test đo (K02.02); backend có ngân sách RAM riêng (TS 16.2) |
 | Hồ sơ kẹt `AI_PROCESSING` khi AI Worker chết | Job timeout 30 giây + chuyển duyệt tay ngay khi gọi lỗi (K05.06, K05.10) |
 | Bản xem tạm (ảnh đã giải mã) tồn tại lâu trên Silo | URL 5 phút + job dọn 10 phút + lifecycle `tmp/` 1 ngày; bucket riêng tư |

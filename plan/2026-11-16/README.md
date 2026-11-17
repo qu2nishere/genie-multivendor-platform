@@ -36,7 +36,7 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 
 - Plan **[2], [3], [4]** làm ngay được, song song.
 - Plan **[1]** nên làm trước hoặc song song với [5], [6], [7]: giai đoạn S01–S03 (khung + tài khoản + danh mục) đủ để các plan khác bắt đầu.
-- Plan **[7]** và **[8]** làm song song bởi hai người (backend / AI); hợp đồng chốt ở K00.02 ↔ Y00.02 (ADR 0010), ghép chạy thật ở K05 ↔ Y07.
+- Plan **[7]** và **[8]** làm song song bởi hai người (backend / AI); hợp đồng chốt ở K00.02 ↔ Y00.02 (ADR 0011), ghép chạy thật ở K05 ↔ Y07.
 
 ## 3. Điểm dùng chung — đọc trước khi mở nhánh (tránh conflict)
 

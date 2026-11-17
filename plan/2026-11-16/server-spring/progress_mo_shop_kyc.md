@@ -66,7 +66,7 @@
 - [ ] **K00.04** Dựng môi trường
 - [ ] **K00.05** Đọc màn mock theo thứ tự luồng
 - [ ] **K00.06** Kiểm số migration
-- [ ] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0010` · hash: `…`
+- [ ] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0011` · hash: `…`
 
 ## K01 — Tài liệu, migration `V15`, hằng số dùng chung
 

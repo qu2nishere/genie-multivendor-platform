@@ -7,11 +7,11 @@ Sàn thương mại điện tử đa người bán — bản TLCN. Monorepo gồ
 | `server-spring/` | Backend — Spring Boot 3.3 / Java 21, modular monolith 11 module |
 | `server-python/` | AI Worker — FastAPI: KYC (ONNX + OpenCV) + PhoBERT cảm xúc đánh giá |
 | `web/` | Frontend — Astro SSR + React 19 islands + Tailwind |
-| `deploy/` | Docker Compose, Nginx, Silo (kho tệp S3) / Redis / Postgres, sao lưu |
+| `deploy/` | Máy dev: Compose PostgreSQL / Redis / Silo / Mailpit. Production: Compose app + **AWS RDS + S3** (`deploy/aws/` — ADR 0010), Nginx, sao lưu |
 | `scripts/` | Seed, tải mô hình, giả lập webhook, kiểm i18n |
 | `docs/` | ADR (`docs/adr/`), OpenAPI xuất ra (`docs/openapi/`), [cấu hình môi trường](docs/cau-hinh-moi-truong.md), bộ tài liệu dự án (`docs/Document/`) |
 
-Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`. Biến môi trường, `.env`, chọn CSDL (Docker / cài trên máy / cloud): [docs/cau-hinh-moi-truong.md](docs/cau-hinh-moi-truong.md).
+Quy ước đầy đủ: `TECH_STACK_VA_QUY_UOC.md`. Biến môi trường, `.env`, chọn CSDL máy dev (Docker / cài trên máy), production RDS + S3: [docs/cau-hinh-moi-truong.md](docs/cau-hinh-moi-truong.md).
 
 ## Chạy local trong 15 phút
 

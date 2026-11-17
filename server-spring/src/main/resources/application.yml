@@ -15,7 +15,7 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     hikari:
-      maximum-pool-size: ${DB_POOL_SIZE:20}       # DB cloud gói miễn phí: hạ xuống 5
+      maximum-pool-size: ${DB_POOL_SIZE:20}
   jpa:
     open-in-view: false
     hibernate:
@@ -83,7 +83,7 @@ genie:
   web-url: ${PUBLIC_WEB_URL:http://localhost:4321}
   mail-from: ${MAIL_FROM:no-reply@genie.local}   # gửi qua Gmail: MAIL_FROM phải trùng SMTP_USER
   scheduling:
-    enabled: ${GENIE_SCHEDULING_ENABLED:true}    # false = tắt mọi cron (vd. máy dev trỏ chung DB cloud với người khác)
+    enabled: ${GENIE_SCHEDULING_ENABLED:true}    # false = tắt mọi cron
   security:
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
@@ -102,6 +102,8 @@ genie:
     presigned-put-ttl: 15m
     presigned-put-kyc-ttl: 10m
     presigned-get-ttl: 5m
+    region: ${STORAGE_REGION:us-east-1}            # Silo bỏ qua; AWS S3 phải đúng vùng của bucket
+    bucket-prefix: ${STORAGE_BUCKET_PREFIX:}       # tên bucket thật = tiền tố + tên logic (AWS: tên bucket duy nhất toàn cầu)
   ai-worker:
     url: ${AI_WORKER_URL:http://localhost:8000}
   payment:

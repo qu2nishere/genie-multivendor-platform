@@ -1,4 +1,4 @@
-"""pydantic-settings: INTERNAL_TOKEN, BACKEND_URL, MINIO_*."""
+"""pydantic-settings: INTERNAL_TOKEN, BACKEND_URL, MINIO_*, STORAGE_* — dev: Silo, production: AWS S3 (ADR 0010)."""
 
 from functools import lru_cache
 
@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     minio_access_key: str = ""
     minio_secret_key: str = ""
     minio_secure: bool = False
+    # Tên bucket thật = tiền tố + tên logic (production vd. "genie-prod-"); dev để trống
+    storage_bucket_prefix: str = ""
+    storage_region: str = "us-east-1"
     models_dir: str = "models"
 
 

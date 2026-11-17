@@ -135,7 +135,7 @@ Ký hiệu: `Yxx.yy` = task; `Yxx.Cn` = task commit.
 ### Y00 — Chuẩn bị & chốt hợp đồng
 
 - **[Y00.01]** Kiểm danh tính git — `git config user.name` / `user.email`.
-- **[Y00.02]** Chốt Y-D1…Y-D8 — Y-D1 chốt **cùng người làm backend** (plan Mở shop & KYC K00.02, ADR 0010); ghi vào đầu file progress.
+- **[Y00.02]** Chốt Y-D1…Y-D8 — Y-D1 chốt **cùng người làm backend** (plan Mở shop & KYC K00.02, ADR 0011); ghi vào đầu file progress.
 - **[Y00.03]** Tạo nhánh — `git switch develop && git pull && git switch -c feature/ai-worker-kyc`.
 - **[Y00.04]** Dựng môi trường — Python 3.12, `pip install -e ".[dev]"`, `MODELS_BASE_URL=… scripts/fetch-models.sh`; tạo `server-python/.env` (bị `.gitignore` chặn): `INTERNAL_TOKEN` **trùng** backend (dev mặc định `local-internal-token`), `BACKEND_URL=http://localhost:8080`; `pytest` (test health) và `ruff check` xanh; `uvicorn app.main:app --reload` lên được.
 - **[Y00.05]** Đọc tài liệu theo thứ tự — UC-VND-03 → ENTITY 1.6 → LLD 7.4 → implement Phần 8; ghi chỗ implement lệch hợp đồng mới (sửa ở Y09).
@@ -214,7 +214,7 @@ Ký hiệu: `Yxx.yy` = task; `Yxx.Cn` = task commit.
 
 ### Y07 — Ghép với backend
 
-- **[Y07.01]** Chạy hai phía ở local — `.env` gốc đặt `AI_WORKER_MODE=http` (backend gọi worker thật, `AI_WORKER_URL=http://localhost:8000`); `server-python/.env`: `BACKEND_URL=http://localhost:8080`, `INTERNAL_TOKEN` trùng backend, `STORAGE_ALLOWED_HOSTS=localhost:9000`. Không sửa `application*.yml`.
+- **[Y07.01]** Chạy hai phía ở local — `.env` gốc đặt `AI_WORKER_MODE=http` (backend gọi worker thật, `AI_WORKER_URL=http://localhost:8000`); `server-python/.env`: `BACKEND_URL=http://localhost:8080`, `INTERNAL_TOKEN` trùng backend, `STORAGE_ALLOWED_HOSTS=localhost:9000` (production: `*.s3.ap-southeast-1.amazonaws.com` — AWS S3, ADR 0010; đặt ở Y08.03). Không sửa `application*.yml`.
 - **[Y07.02]** Kịch bản đạt — nộp hồ sơ bằng thẻ mẫu + selfie cùng người → backend nhận callback → `VERIFIED` (trừ khi rơi mẫu 5%).
 - **[Y07.03]** Kịch bản duyệt tay — thẻ mẫu mờ / không QR → `MANUAL_REVIEW`, màn Admin hiện đúng cờ + tín hiệu.
 - **[Y07.04]** Kịch bản từ chối — QR và MRZ lệch nhau + selfie khác người → `REJECTED`, lý do theo tín hiệu.
