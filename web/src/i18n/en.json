@@ -159,6 +159,7 @@
     "GNE-LOG-4221": "The COD statement doesn't balance.",
     "GNE-LOG-5021": "The carrier failed to create the waybill. Please try again.",
     "GNE-LOG-5022": "GHN failed to sync the pickup address. Please try again.",
+    "GNE-BNR-4091": "Banners that are live or scheduled cannot be deleted — turn the banner off first.",
     "GNE-BNR-4221": "This position already has 8 active banners.",
     "GNE-BNR-4222": "Banner links must point to the platform's domain.",
     "GNE-NOT-4091": "This notification has been sent and can't be edited.",

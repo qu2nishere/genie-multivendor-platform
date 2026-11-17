@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (40 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (48 / 57) |
 
 **Cách dùng**
 
@@ -42,10 +42,10 @@
 | B02 | Miền & truy vấn | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
 | B03 | API quản trị banner | 9 | 1 | 10 / 10 | — | `feature/admin-home-banner` |
 | B04 | API công khai & cache | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
-| B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 5 / 6 | — | `feature/admin-home-banner` |
-| B06 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
+| B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
+| B06 | Nối giao diện `web/` | 6 | 2 | 7 / 8 | — | `feature/admin-home-banner` |
 | B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **40 / 57** | | |
+| **Tổng** | | **48** | **9** | **48 / 57** | | |
 
 ## B00 — Chuẩn bị
 
@@ -105,17 +105,17 @@
 - [x] **B05.03** `POST /api/v1/public/banner-events` → `204`; không yêu cầu CSRF / đăng nhập; chấp nhận `Content-Type: text/plain` của `navigator.sendBeacon` (đọc thân như JSON).
 - [x] **B05.04** `BannerStatsFlushJob`
 - [x] **B05.05** `BannerEventIT` + `BannerStatsFlushJobIT`
-- [ ] **B05.C1** 🔖 COMMIT `feat(admin): count banner impressions and clicks through redis` · hash: `…`
+- [x] **B05.C1** 🔖 COMMIT `feat(admin): count banner impressions and clicks through redis` · hash: `031d634`
 
 ## B06 — Nối giao diện `web/`
 
-- [ ] **B06.01** `web/src/shared/api/error-codes.ts` + `vi.json` / `en.json`
-- [ ] **B06.02** `promotions/infrastructure/banner.api.ts`
-- [ ] **B06.03** `trackBanner`
-- [ ] **B06.04** `admin-marketing/infrastructure/marketing.api.ts` (nhóm banner)
-- [ ] **B06.05** Chạy thật hai phía
-- [ ] **B06.06** E2E
-- [ ] **B06.C1** 🔖 COMMIT `fix(web): send banner events in batches to the spec endpoint` · hash: `…`
+- [x] **B06.01** `web/src/shared/api/error-codes.ts` + `vi.json` / `en.json`
+- [x] **B06.02** `promotions/infrastructure/banner.api.ts`
+- [x] **B06.03** `trackBanner`
+- [x] **B06.04** `admin-marketing/infrastructure/marketing.api.ts` (nhóm banner)
+- [-] **B06.05** Chạy thật hai phía
+- [x] **B06.06** E2E
+- [x] **B06.C1** 🔖 COMMIT `fix(web): send banner events in batches to the spec endpoint` · hash: `9519e9e`
 - [ ] **B06.C2** 🔖 COMMIT `feat(admin-ui): connect banner management to the real api` · hash: `…`
 
 ## B07 — Hoàn thiện use case
@@ -159,6 +159,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | B04.05 | Ca "Redis tắt" kiểm bằng unit test `BannerCacheTest` (mock Redis ném lỗi → `get` rỗng, `put` / `evictAll` không ném) thay vì dừng container Redis dùng chung của mọi IT. Listener xóa cache chạy đồng bộ `AFTER_COMMIT` (lệnh Redis nhỏ) để lần đọc kế tiếp chắc chắn thấy dữ liệu mới |
 | B05.02 | Id banner LIVE lấy từ tập Redis `banner:live:ids` (TTL 60 s, xóa cùng `evictAll`) — trượt cache thì `findLiveIds`. Bộ đếm `INCRBY` gộp theo lô bằng pipeline + đánh dấu `banner:stats:dirty` để job biết banner nào cần ghi (không phải quét khóa). Phần tử sự kiện sai (`type` lạ, id lạ / không LIVE) bị bỏ qua, chỉ thân hỏng hoặc > 50 phần tử mới `422` |
 | B05.04 | `@Scheduled(fixedDelay 5 phút, initialDelay 1 phút)`, chạy khi `genie.scheduling.enabled`; `GETDEL` (`getAndDelete`) từng bộ đếm, `addStats` trong `TransactionTemplate`, lỗi DB thì `INCRBY` trả lại + đánh dấu lại |
+| B06.02 | `listLiveBanners(position, categorySlug, categoryId)`: API thật trả map vị trí → mảng `{id, title, image_url, mobile_image_url, target_url}` (mapper `toLiveBanner`); `CATEGORY_TOP` cần `category_id` (trang `/c/[slug]` truyền `category.id`). Cờ `isMocked('banner')` |
+| B06.03 | Hàng đợi trong `banner.api.ts`: gửi mỗi 5 giây hoặc khi đủ 50 sự kiện; `pagehide` / tab ẩn → `navigator.sendBeacon` (`text/plain`). Test `banner.api.test.ts` (giả lập `window` / `document` vì vitest chạy môi trường node, repo không có jsdom) |
+| B06.04 | Màn quản trị: cờ `isMocked('banner')`; mapper nhận `id` số, ngày ISO → `YYYY-MM-DD`, `category` không có `slug`; modal ánh xạ `errors[].field` của 422 về ô (`image_object_key` → ô ảnh…); thêm `GNE-BNR-4091` vào `error-codes.ts` + vi / en. Ảnh tải bằng `uploadFile(f, 'BANNER_IMAGE')` (đã có sẵn) |
+| B06.05 | `[-]` Phần chạy trên trình duyệt chờ người dùng tự thao tác (CLAUDE.md). Cách chạy: web `PUBLIC_USE_MOCK=true`, `PUBLIC_REAL_API=auth,upload,banner`; backend local; đăng nhập `linh.tm@genie.example` (Finance Officer) → `/admin/banners`; ảnh seed cần `scripts/seed/upload-assets.sh` |
+| B06.06 | Thêm kịch bản "tắt / bật lại / xóa banner" vào `tests/e2e/admin.spec.ts` (mock) — 2/2 khổ xanh. Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 318/318, build OK, i18n OK |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

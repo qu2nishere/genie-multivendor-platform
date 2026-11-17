@@ -62,7 +62,8 @@ export interface FlashCampaignDetailDto extends FlashCampaignDto {
 }
 
 export interface AdminBannerDto {
-  id: string;
+  /** API thật trả số; mock dùng mã chuỗi `BN-…`. */
+  id: string | number;
   title: string;
   image_url: string;
   mobile_image_url: string | null;
@@ -74,8 +75,10 @@ export interface AdminBannerDto {
     | 'CATEGORY_TOP'
     | 'FLASH_SALE_TOP'
     | 'POPUP';
-  category: { id: number; name: string; slug: string } | null;
+  /** API thật: `{id, name}` (name có thể null khi chưa có cổng danh mục); mock có thêm `slug`. */
+  category: { id: number; name: string | null; slug?: string } | null;
   sort_order: number;
+  /** Mock: `YYYY-MM-DD`; API thật: ISO-8601 có múi giờ +07:00. */
   starts_at: string;
   ends_at: string;
   is_active: boolean;

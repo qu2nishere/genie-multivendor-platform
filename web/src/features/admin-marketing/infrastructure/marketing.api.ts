@@ -3,6 +3,7 @@
 // email người nhận không tồn tại).
 import { api, getPage, request } from '@/shared/api/http';
 import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import type { Page } from '@/shared/api/types';
 import { isoDateVN as todayVN } from '@/shared/lib/format';
 import {
@@ -272,6 +273,9 @@ export async function reviewFlashItem(
 }
 
 // ---------- 11.16 Banner ----------
+/** Nhóm banner nối API thật khi `PUBLIC_REAL_API` có `banner` (backend UC-ADM-12 — plan 2026-11-16 banner B06.04). */
+const BANNER_MOCK = isMocked('banner');
+
 const withState = (b: BannerRow): AdminBannerDto => ({
   ...b,
   state: bannerStateOf(
@@ -281,7 +285,7 @@ const withState = (b: BannerRow): AdminBannerDto => ({
 });
 
 export async function listBanners(position: BannerPosition | null): Promise<AdminBanner[]> {
-  if (USE_MOCK) {
+  if (BANNER_MOCK) {
     await mockDelay(180);
     return bannersStore
       .get()
@@ -302,7 +306,7 @@ export async function saveBanner(
   category: { id: number; name: string; slug: string } | null,
 ): Promise<void> {
   const target = sitePath(b.targetUrl);
-  if (USE_MOCK) {
+  if (BANNER_MOCK) {
     await mockDelay(300);
     if (!target) mockFail('GNE-BNR-4222');
     const rows = bannersStore.get();
@@ -349,7 +353,7 @@ export async function saveBanner(
 }
 
 export async function setBannerActive(id: string, active: boolean): Promise<void> {
-  if (USE_MOCK) {
+  if (BANNER_MOCK) {
     await mockDelay(150);
     bannersStore.set(
       bannersStore.get().map((x) => (x.id === id ? { ...x, is_active: active } : x)),
@@ -360,7 +364,7 @@ export async function setBannerActive(id: string, active: boolean): Promise<void
 }
 
 export async function deleteBanner(id: string): Promise<void> {
-  if (USE_MOCK) {
+  if (BANNER_MOCK) {
     await mockDelay(150);
     bannersStore.set(bannersStore.get().filter((x) => x.id !== id));
     return;

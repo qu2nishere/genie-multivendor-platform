@@ -103,16 +103,19 @@ export const toCampaignDetail = (d: FlashCampaignDetailDto): FlashCampaignDetail
 });
 
 export const toBanner = (d: AdminBannerDto): AdminBanner => ({
-  id: d.id,
+  id: String(d.id),
   title: d.title,
   imageUrl: d.image_url,
   mobileImageUrl: d.mobile_image_url,
   targetUrl: d.target_url,
   position: d.position,
-  category: d.category,
+  category: d.category
+    ? { id: d.category.id, name: d.category.name ?? '', slug: d.category.slug ?? '' }
+    : null,
   sortOrder: d.sort_order,
-  startsAt: d.starts_at,
-  endsAt: d.ends_at,
+  // màn quản lý làm việc theo ngày; API trả giờ +07:00 nên 10 ký tự đầu là ngày Việt Nam
+  startsAt: d.starts_at.slice(0, 10),
+  endsAt: d.ends_at.slice(0, 10),
   active: d.is_active,
   state: d.state,
   impressions: d.impressions,
