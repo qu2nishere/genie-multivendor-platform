@@ -1,6 +1,6 @@
 // Tầng ứng dụng xác thực (plan G09.04): gọi API, đặt $session, gộp giỏ khách, chuyển về `next`.
 import { useMutation } from '@tanstack/react-query';
-import { clearSession, setSession, type SessionUser } from '@/shared/auth/session';
+import { clearSession, loadSessionUser, setSession, type SessionUser } from '@/shared/auth/session';
 import { safeNext, type OtpPurpose } from '../domain/auth.rules';
 import type { AuthSession, SocialProvider } from '../domain/auth.types';
 import {
@@ -19,7 +19,7 @@ import {
 } from '../infrastructure/auth.api';
 
 /**
- * Nhận phiên mới: lưu phiên, chạy `afterLogin` (UI truyền mergeGuestCart của feature cart — ghép
+ * Nhận phiên mới: nạp ngữ cảnh từ GET /me, lưu phiên, chạy `afterLogin` (UI truyền mergeGuestCart của feature cart — ghép
  * giữa các feature làm ở tầng UI theo TS 5.2), rồi điều hướng về `next`.
  */
 export async function finishLogin(
@@ -27,7 +27,8 @@ export async function finishLogin(
   next: string | null,
   afterLogin?: () => Promise<unknown>,
 ): Promise<void> {
-  setSession(session.accessToken, session.user);
+  // $AuthTokens chỉ có id / vai trò / tên / ảnh → nạp đủ email, shop, có mật khẩu chưa từ GET /me (plan AUTH D18)
+  setSession(session.accessToken, await loadSessionUser(session.accessToken, session.user));
   if (afterLogin) await afterLogin();
   window.location.assign(safeNext(next));
 }

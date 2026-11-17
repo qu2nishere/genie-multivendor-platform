@@ -3,6 +3,8 @@
 //   (trình duyệt tự gửi cookie HttpOnly genie_rt).
 // - Cookie thường `genie_logged_in=1` chỉ là gợi ý cho middleware chuyển hướng (UX), không phải bằng chứng.
 // - Chế độ mock (D3): refresh trả người dùng mẫu khi cờ cookie đang bật.
+// - API thật: sau đăng nhập / làm mới, gọi GET /me để dựng SessionUser đầy đủ — email, vai trò theo cấp bậc, shop,
+//   có mật khẩu chưa (plan AUTH D18, A15.01–A15.02). /me lỗi → giữ thông tin tối thiểu của $AuthTokens.
 import { atom } from 'nanostores';
 import { env, isMocked } from '@/shared/config/env';
 import { clearUserData } from '@/shared/lib/storage';
@@ -148,6 +150,86 @@ const fromAuthUser = (u: RefreshResponse['data']['user']): SessionUser => ({
   permissions: [],
 });
 
+/** `GET /me` (API_SPEC 3.1). */
+export interface MeDto {
+  id: number;
+  role: Role;
+  full_name: string;
+  avatar_url: string | null;
+  email: string;
+  login_methods: { password: boolean; google: boolean; zalo?: boolean };
+  shop: { id: number; name: string; logo_url: string | null; kyc_status: string } | null;
+  counters: {
+    cart_items: number;
+    unread_notifications: number;
+    unread_chats: number;
+    available_vouchers: number;
+    following_shops: number;
+  };
+}
+
+/** Trạng thái KYC của backend → các trạng thái web hiển thị (AI_PROCESSING, MANUAL_REVIEW = đang xét). */
+function toKycStatus(s: string | undefined): KycStatus | undefined {
+  switch (s) {
+    case 'NOT_SUBMITTED':
+    case 'PENDING':
+    case 'SUPPLEMENT_REQUESTED':
+    case 'REJECTED':
+    case 'VERIFIED':
+      return s;
+    case 'AI_PROCESSING':
+    case 'MANUAL_REVIEW':
+      return 'PENDING';
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * `GET /me` → SessionUser. Vai trò theo cấp bậc (RoleHierarchy backend): VENDOR cũng là CUSTOMER (chủ shop vẫn mua
+ * hàng). Quyền chi tiết của STAFF chờ `GET /admin/me/permissions` (module admin); tạm thời ADMIN = đủ 13 quyền.
+ */
+export function sessionUserFromMe(me: MeDto): SessionUser {
+  const roles: Role[] = me.role === 'VENDOR' ? ['CUSTOMER', 'VENDOR'] : [me.role];
+  const kyc = toKycStatus(me.shop?.kyc_status);
+  return {
+    id: me.id,
+    name: me.full_name,
+    email: me.email,
+    avatar_url: me.avatar_url,
+    roles,
+    permissions: me.role === 'ADMIN' ? [...PERMISSIONS] : [],
+    ...(me.shop ? { shop_id: me.shop.id, shop_name: me.shop.name } : {}),
+    ...(kyc ? { kyc_status: kyc } : {}),
+    has_password: me.login_methods.password,
+  };
+}
+
+/** Gọi `GET /me` bằng access token vừa nhận; lỗi / không có mạng → null. */
+async function fetchMe(token: string): Promise<MeDto | null> {
+  try {
+    const res = await fetch(`${env.PUBLIC_API_URL}/me`, {
+      headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
+      credentials: 'include',
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { data?: MeDto };
+    return body.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Bổ sung SessionUser tối thiểu (từ $AuthTokens) bằng `GET /me` — dùng ngay sau đăng nhập (plan AUTH A15.01).
+ * Mock: giữ nguyên người dùng mẫu.
+ */
+export async function loadSessionUser(token: string, fallback: SessionUser): Promise<SessionUser> {
+  if (isMocked('auth')) return fallback;
+  const me = await fetchMe(token);
+  return me ? sessionUserFromMe(me) : fallback;
+}
+
 /**
  * Làm mới access token MỘT lần (các lời gọi đồng thời dùng chung một promise).
  * Trả true nếu có phiên mới.
@@ -174,7 +256,8 @@ export function refreshAccessToken(): Promise<boolean> {
         return false;
       }
       const body = (await res.json()) as RefreshResponse;
-      setSession(body.data.access_token, fromAuthUser(body.data.user));
+      const token = body.data.access_token;
+      setSession(token, await loadSessionUser(token, fromAuthUser(body.data.user)));
       return true;
     } catch {
       $session.set({ status: 'guest' });
