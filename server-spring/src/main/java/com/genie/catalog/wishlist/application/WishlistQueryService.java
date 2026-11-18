@@ -10,6 +10,7 @@ import com.genie.catalog.product.domain.ProductVariantRepository;
 import com.genie.catalog.wishlist.domain.UserWishlist;
 import com.genie.catalog.wishlist.domain.UserWishlistRepository;
 import com.genie.common.api.CursorPage;
+import com.genie.common.domain.Slugs;
 import com.genie.common.error.InvalidRequestException;
 import com.genie.common.storage.ObjectStorage;
 import java.nio.charset.StandardCharsets;
@@ -124,7 +125,8 @@ public class WishlistQueryService {
             boolean inStock = list.stream().anyMatch(v -> available(v) > 0);
             boolean purchasable = p.getStatus() == ProductStatus.PUBLISHED && inStock
                     && !onVacation.contains(p.getVendorId());
-            out.add(new WishlistItemView(id, p.getName(), url(image.get(id)), price, defaultVariant, purchasable));
+            out.add(new WishlistItemView(id, Slugs.slugify(p.getName()), p.getName(), url(image.get(id)), price,
+                    defaultVariant, purchasable));
         }
         return out;
     }

@@ -88,6 +88,7 @@ class WishlistQueryIT extends WishlistTestSupport {
             assertThat(JsonPath.<Integer>read(body, "$.data[3].default_variant_id")).isEqualTo((int) inStock);
             assertThat(JsonPath.<Boolean>read(body, "$.data[3].is_purchasable")).isTrue();
             assertThat(JsonPath.<String>read(body, "$.data[3].image_url")).endsWith("/product-media/seed/product/phone.jpg");
+            assertThat(JsonPath.<String>read(body, "$.data[3].product_slug")).isEqualTo("dien-thoai");
             assertThat(JsonPath.<Boolean>read(body, "$.data[2].is_purchasable")).isFalse();             // hết hàng
             assertThat(JsonPath.<Integer>read(body, "$.data[2].default_variant_id")).isEqualTo((int) firstSku);
             assertThat(JsonPath.<Boolean>read(body, "$.data[1].is_purchasable")).isFalse();             // bị ẩn
