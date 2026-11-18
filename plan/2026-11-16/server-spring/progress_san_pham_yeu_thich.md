@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-wishlist` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (9 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (16 / 38) |
 
 **Cách dùng**
 
@@ -35,12 +35,12 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
 | W00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/catalog-wishlist` |
-| W01 | Miền & truy vấn | 4 | 1 | 4 / 5 | — | `feature/catalog-wishlist` |
-| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
+| W01 | Miền & truy vấn | 4 | 1 | 5 / 5 | — | `feature/catalog-wishlist` |
+| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 6 / 7 | — | `feature/catalog-wishlist` |
 | W03 | Danh sách yêu thích | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
 | W04 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/catalog-wishlist` |
 | W05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/catalog-wishlist` |
-| **Tổng** | | **32** | **6** | **9 / 38** | | |
+| **Tổng** | | **32** | **6** | **16 / 38** | | |
 
 ## W00 — Chuẩn bị
 
@@ -56,16 +56,16 @@
 - [x] **W01.02** `UserWishlist.of(userId, productId, now)`
 - [x] **W01.03** `UserWishlistRepository`
 - [x] **W01.04** `TestDataBuilder`
-- [ ] **W01.C1** 🔖 COMMIT `feat(catalog): add wishlist queries and product test fixtures` · hash: `…`
+- [x] **W01.C1** 🔖 COMMIT `feat(catalog): add wishlist queries and product test fixtures` · hash: `d74ed73`
 
 ## W02 — Thích / bỏ thích & tập ID
 
-- [ ] **W02.01** `WishlistService.add(userId, productId)`
-- [ ] **W02.02** `WishlistService.remove(userId, productId)`
-- [ ] **W02.03** `WishlistQueryService.productIds(userId)`
-- [ ] **W02.04** `MeWishlistController`
-- [ ] **W02.05** `WishlistIT`
-- [ ] **W02.06** `WishlistConcurrencyIT`
+- [x] **W02.01** `WishlistService.add(userId, productId)`
+- [x] **W02.02** `WishlistService.remove(userId, productId)`
+- [x] **W02.03** `WishlistQueryService.productIds(userId)`
+- [x] **W02.04** `MeWishlistController`
+- [x] **W02.05** `WishlistIT`
+- [x] **W02.06** `WishlistConcurrencyIT`
 - [ ] **W02.C1** 🔖 COMMIT `feat(catalog): add and remove wishlist products idempotently` · hash: `…`
 
 ## W03 — Danh sách yêu thích
@@ -122,6 +122,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | W00.04 | `[-]` Không phụ thuộc: test tự dựng dữ liệu bằng `TestDataBuilder` (W01.04); lần chạy API thật (W04.05) tự chèn sản phẩm vào CSDL mới (dữ liệu mẫu nằm ở nhánh seed) |
 | W00.05 | Web: `wishlist.api.ts` gọi `GET /me/wishlist/ids` + `POST /me/wishlist` / `DELETE` (lệch spec); trang `/account/wishlist` ghép ID + `listProductsByIds` — sẽ đổi sang `GET /me/wishlist` |
 | W01.04 | `TestDataBuilder` (trước là khung rỗng) dựng bằng `JdbcTemplate`: `category`, `vendor` (users VENDOR + vendor_profiles VERIFIED), `shopIdOf`, `product`, `variant`, `primaryImage`, `setStatus` — khóa tự nhiên ngẫu nhiên, test không đụng nhau. `ProductVariant` không có `@SQLRestriction` thật → truy vấn tự lọc `deleted_at IS NULL` |
+| W02.04 | `product_id` kiểm bằng `@Positive` trên `@PathVariable` (Spring 6.1 tự kiểm tham số) — `0` hoặc chữ → `422 GNE-VAL-4220` |
+| W02.06 | Ca đồng thời đặt luôn trong `WishlistIT` (`twentyConcurrentLikesKeepOneRowAndMixedTogglesNeverFail`) thay vì lớp `WishlistConcurrencyIT` riêng — dùng chung dữ liệu dựng sẵn; 20 `PUT` song song → 20 lần `204`, 1 dòng; 20 `PUT` / `DELETE` xen kẽ → toàn `204` |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
