@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (135 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (136 / 137) |
 
 **Cách dùng**
 
@@ -55,8 +55,8 @@
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 12 / 13 | — | `feature/web-vendor-integration` |
-| K12 | Hoàn thiện cụm | 7 | 2 | 8 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **135 / 137** | | |
+| K12 | Hoàn thiện cụm | 7 | 2 | 9 / 9 | — | `feature/vendor-shop-kyc` |
+| **Tổng** | | **112** | **25** | **136 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -231,7 +231,7 @@
 - [x] **K12.05** Tiến độ
 - [x] **K12.06** Hợp đồng Swagger `genie-api-spec`
 - [x] **K12.C1** 🔖 COMMIT `test(vendor): add api test collections for shop registration and kyc` · hash: `8da73a7`
-- [ ] **K12.C2** 🔖 COMMIT `docs(vendor): record shop and kyc use cases as implemented` · hash: `…`
+- [x] **K12.C2** 🔖 COMMIT `docs(vendor): record shop and kyc use cases as implemented` · hash: `b98c911`
 - [-] **K12.07** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc cuối); mẫu PR ghi migration `V15` (chỉ thêm cột / index / giá trị `CHECK`
 
 ---
@@ -240,14 +240,14 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-VND-01` Đăng ký mở gian hàng (xong K03 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-02` Tải hồ sơ pháp lý & Giấy tờ định danh KYC (xong K04 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-03` Thẩm định KYC tự động qua AI — tick `◐` khi xong K05 (chế độ giả lập); chỉ `☑` khi plan AI Worker cũng xong (Y07) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-04` Kiểm duyệt thủ công hồ sơ KYC (xong K06 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-01` Đăng ký mở gian hàng (xong K03 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-02` Tải hồ sơ pháp lý & Giấy tờ định danh KYC (xong K04 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-03` Thẩm định KYC tự động qua AI — tick `◐` khi xong K05 (chế độ giả lập); chỉ `☑` khi plan AI Worker cũng xong (Y07) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-04` Kiểm duyệt thủ công hồ sơ KYC (xong K06 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [ ] `UC-VND-05` Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (xong K07 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-07` Đăng ký tài khoản nhận giải ngân (xong K08 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-21` Cập nhật thông tin gian hàng & cài đặt vận hành (xong K09 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] `UC-VND-07` Đăng ký tài khoản nhận giải ngân (xong K08 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-21` Cập nhật thông tin gian hàng & cài đặt vận hành (xong K09 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
 - [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
 - [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
 - [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
