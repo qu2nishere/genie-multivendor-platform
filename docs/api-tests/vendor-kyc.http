@@ -1,0 +1,59 @@
+### UC-VND-02 / UC-VND-03 — Hồ sơ KYC + callback AI Worker (API_SPEC 4.1, 10.12, 12; plan Mở shop & KYC K12.01)
+# Backend local AI_WORKER_MODE=stub: CCCD đuôi 00–29 → VERIFIED, 30–69 → MANUAL_REVIEW, 70–99 → REJECTED (sau ~2 giây).
+@base = http://localhost:8080/api/v1
+@tok = <access_token VENDOR — xem vendor-registration.http bước 4>
+
+### 1. Xin link tải giấy tờ (mỗi giấy tờ 1 lần) — ảnh ≥ 20 KB, ≤ 10 MB; link 10 phút
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "purpose": "KYC_DOCUMENT", "file_name": "cccd-truoc.jpg", "content_type": "image/jpeg", "content_length": 245000 }
+
+# → PUT tệp lên upload_url (header Content-Type như phản hồi), giữ object_key
+
+### 2. ĐÚNG — lưu nháp (mọi trường tùy chọn)
+PUT {{base}}/seller/kyc/draft
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "business_type": "INDIVIDUAL", "identity_number": "079096001210", "representative": "Trần Thị Mai" }
+
+### 3. ĐÚNG — gửi duyệt → 202 {status: PENDING}; giấy tờ mã hóa AES-256-GCM (kyc-dossiers/vendor/{id}/…enc)
+POST {{base}}/seller/kyc/submissions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "business_type": "INDIVIDUAL", "identity_number": "079096001210", "representative": "Trần Thị Mai",
+  "document_object_keys": { "ID_FRONT": "<object_key>", "ID_BACK": "<object_key>", "SELFIE": "<object_key>" },
+  "document_file_names": { "ID_FRONT": "cccd-truoc.jpg", "ID_BACK": "cccd-sau.jpg", "SELFIE": "selfie.jpg" },
+  "biometric_consent": true }
+
+### 4. ĐÚNG — xem hồ sơ (KHÔNG có URL ảnh, Cache-Control: no-store)
+GET {{base}}/seller/kyc
+Authorization: Bearer {{tok}}
+
+### 5. LỖI — thiếu ảnh chân dung → 422 GNE-VND-4223 {missing: ["SELFIE"]}
+POST {{base}}/seller/kyc/submissions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "business_type": "INDIVIDUAL", "identity_number": "079096001210", "representative": "Trần Thị Mai",
+  "document_object_keys": {}, "biometric_consent": true }
+
+### 6. LỖI — nộp khi đang xử lý / đã duyệt → 409 GNE-VND-4095 (gửi lại bước 3)
+
+### 7. Hồ sơ bị từ chối → yêu cầu nhân viên xem xét (202; lần 2 → 409 GNE-VND-4096)
+POST {{base}}/seller/kyc/manual-review-requests
+Authorization: Bearer {{tok}}
+
+### 8. Callback AI Worker (chế độ http — hợp đồng ADR 0011); thiếu / sai X-Internal-Token → 401
+PATCH {{base}}/internal/kyc/<shop_id>/result
+X-Internal-Token: local-internal-token
+Content-Type: application/json
+
+{ "checks": { "qr_code": true, "mrz": true, "mrz_qr_match": true, "cccd_number_valid": true, "expiry_rule_valid": true,
+              "face_match": true, "face_duplicate": null, "national_emblem": null, "fingerprint": null },
+  "face_match_score": 0.91, "liveness_score": 0.88, "signals": [],
+  "extracted": { "identity_number": "079096001210", "full_name": "TRẦN THỊ MAI" },
+  "errors": [], "model": { "pipeline_version": "manual" } }

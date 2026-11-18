@@ -1,0 +1,60 @@
+### UC-VND-01 — Đăng ký mở gian hàng (API_SPEC 9.1–9.2, 10.1; plan 2026-11-16 Mở shop & KYC K12.01)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local, SMTP trỏ Mailpit (http://localhost:8025 — đọc OTP).
+# Tài khoản người mua bất kỳ chưa có shop. Mật khẩu dữ liệu mẫu Genie@123.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập người mua — chép access_token vào @tok
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "<email người mua chưa có shop>", "password": "Genie@123" }
+
+@tok = <access_token bước 1>
+
+### 2. ĐÚNG — gửi đăng ký → 202 $OtpChallenge (OTP tới email của shop)
+POST {{base}}/me/shop-registrations
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shop_name": "Shop Thử Nghiệm", "owner_name": "Trần Thị Mai", "phone_number": "0912345678",
+  "email": "shop-thu@genie.test", "main_category_id": 1, "business_type": "INDIVIDUAL", "accept_terms": true }
+
+@challenge = <challenge_id bước 2>
+
+### 3. ĐÚNG — xác nhận OTP → 201 {shop_id, kyc_status: NOT_SUBMITTED}; tài khoản lên VENDOR, phiên giữ nguyên
+POST {{base}}/me/shop-registrations/{{challenge}}/confirm
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "otp": "<mã trong Mailpit>" }
+
+### 4. Làm mới token (cookie genie_rt) để có quyền /seller
+POST {{base}}/auth/sessions/refresh
+
+### 5. ĐÚNG — khung Seller Center (mở cả khi chưa VERIFIED)
+GET {{base}}/seller/me
+Authorization: Bearer <access_token bước 4>
+
+### 6. LỖI — tên đã dùng (không phân biệt hoa thường / khoảng trắng) hoặc chứa từ cấm → 409 GNE-VND-4094
+POST {{base}}/me/shop-registrations
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shop_name": "  techzone   OFFICIAL ", "owner_name": "A B", "phone_number": "0912345678", "email": "x@genie.test",
+  "main_category_id": 1, "business_type": "INDIVIDUAL", "accept_terms": true }
+
+### 7. LỖI — tài khoản đã có shop → 409 GNE-VND-4093 (gửi lại bước 2 bằng token VENDOR)
+POST {{base}}/me/shop-registrations
+Authorization: Bearer <access_token bước 4>
+Content-Type: application/json
+
+{ "shop_name": "Shop Thứ Hai", "owner_name": "A B", "phone_number": "0912345678", "email": "y@genie.test",
+  "main_category_id": 1, "business_type": "INDIVIDUAL", "accept_terms": true }
+
+### 8. LỖI — chưa đồng ý điều khoản → 422 GNE-VAL-4220
+POST {{base}}/me/shop-registrations
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shop_name": "Shop Khác", "owner_name": "A B", "phone_number": "0912345678", "email": "z@genie.test",
+  "main_category_id": 1, "business_type": "INDIVIDUAL", "accept_terms": false }

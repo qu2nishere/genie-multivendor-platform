@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (125 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (130 / 137) |
 
 **Cách dùng**
 
@@ -48,15 +48,15 @@
 | K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
-| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 16 / 17 | — | `feature/vendor-k05-kyc-ai` |
+| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 17 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 15 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
-| K11 | Nối giao diện `web/` | 10 | 3 | 11 / 13 | — | `feature/web-vendor-integration` |
-| K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **125 / 137** | | |
+| K11 | Nối giao diện `web/` | 10 | 3 | 12 / 13 | — | `feature/web-vendor-integration` |
+| K12 | Hoàn thiện cụm | 7 | 2 | 3 / 9 | — | `feature/vendor-shop-kyc` |
+| **Tổng** | | **112** | **25** | **130 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -140,7 +140,7 @@
 - [x] **K05.11** `KycNotifier`
 - [x] **K05.12** `KycDecisionIT`
 - [x] **K05.13** `KycCallbackIT`
-- [ ] **K05.14** Chạy thử chế độ giả lập
+- [x] **K05.14** Chạy thử chế độ giả lập
 - [x] **K05.C1** 🔖 COMMIT `feat(vendor): score kyc risk signals with configurable points and thresholds` · hash: `6e69ddc`
 - [x] **K05.C2** 🔖 COMMIT `feat(vendor): send kyc dossiers to the ai worker and apply its result` · hash: `4f3019f`
 - [x] **K05.C3** 🔖 COMMIT `feat(vendor): route stuck or failed ai checks to manual review` · hash: `25cfddc`
@@ -220,13 +220,13 @@
 - [x] **K11.10** `cd web && npm run verify`.
 - [x] **K11.C1** 🔖 COMMIT `feat(seller-ui): connect shop registration and kyc screens to the real api` · hash: `6e4cafc`
 - [x] **K11.C2** 🔖 COMMIT `feat(seller-ui): connect shop settings, pickup address and payout account` · hash: `5fb33e5`
-- [ ] **K11.C3** 🔖 COMMIT `feat(admin-ui): connect kyc review screens to the real api` · hash: `…`
+- [x] **K11.C3** 🔖 COMMIT `feat(admin-ui): connect kyc review screens to the real api` · hash: `6063f99`
 
 ## K12 — Hoàn thiện cụm
 
-- [ ] **K12.01** Bộ kiểm thử API
-- [ ] **K12.02** Bảo mật nhanh
-- [ ] **K12.03** OpenAPI
+- [x] **K12.01** Bộ kiểm thử API
+- [x] **K12.02** Bảo mật nhanh
+- [x] **K12.03** OpenAPI
 - [ ] **K12.04** Tài liệu nguồn
 - [ ] **K12.05** Tiến độ
 - [ ] **K12.06** Hợp đồng Swagger `genie-api-spec`
@@ -309,6 +309,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K11.09 | Đã viết `web/tests/e2e/kyc-onboarding-real.spec.ts` (đăng ký qua API + OTP Mailpit → mở shop → nộp KYC CCCD đuôi 10 → chờ giả lập AI duyệt) — **chưa chạy** (cần backend + Mailpit + web cờ thật; chạy cùng K11.08). |
 | K11.10 | eslint 0 lỗi, prettier, `astro check` 0 lỗi, vitest 320/320, `astro build` OK, i18n OK (3272 khóa); `npm run verify` gọi trực tiếp lỗi 127 trên máy này nên chạy từng bước. |
 | K11.08 | Chờ người dùng chạy thật hai phía trên giao diện (không tick thay). |
+| K05.14 | Đã chạy (2026-11-18): jar profile local, DB mới `genie_kyc`, `AI_WORKER_MODE=stub`, SMTP → Mailpit; đăng ký tài khoản → mở shop (OTP Mailpit) → tải 3 ảnh qua presigned PUT Silo → nộp: CCCD đuôi **10 → VERIFIED**, **45 → MANUAL_REVIEW**, **90 → REJECTED** (lý do theo tín hiệu). Log không có ERROR. Lưu ý: `.env` máy dev trỏ SMTP Gmail — lần chạy đầu gửi nhầm 1 OTP tới địa chỉ giả `@genie.test` qua Gmail; chạy thử phải ghi đè `SMTP_HOST=localhost SMTP_PORT=1025`. |
+| K12.02 | Log backend chạy thử không chứa số CCCD; GET không ký tệp `kyc-dossiers/vendor/1/front-….enc` → 403; `Cache-Control: no-store` ở `/seller/kyc`, `/seller/settings`, `/seller/payout-account`, `/admin/kyc-submissions/**` (có IT kiểm). Nhật ký chỉ ghi số tài khoản đã che. |
+| K12.03 | `/v3/api-docs` có đủ 22 endpoint của cụm, summary mang mã UC. Repo không giữ bản xuất OpenAPI. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

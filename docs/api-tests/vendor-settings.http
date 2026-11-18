@@ -1,0 +1,75 @@
+### UC-VND-21 / UC-VND-07 — Cài đặt shop + tài khoản nhận tiền (API_SPEC 10.11; plan Mở shop & KYC K12.01)
+@base = http://localhost:8080/api/v1
+@tok = <access_token VENDOR>
+
+### 1. ĐÚNG — tải toàn bộ trang Cài đặt (mở cả khi chưa VERIFIED)
+GET {{base}}/seller/settings
+Authorization: Bearer {{tok}}
+
+### 2. ĐÚNG — gửi khối nào cập nhật khối đó
+PATCH {{base}}/seller/settings
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shipping": { "carriers": { "GHN": true, "GHTK": true, "VIETTEL_POST": false, "JNT_EXPRESS": false, "GENIE_EXPRESS": false },
+                "free_shipping_enabled": true, "free_shipping_threshold": 99000 },
+  "auto_reply": { "enabled": true, "greeting": "Chào bạn, shop có thể giúp gì?", "away_message": null },
+  "pre_order_enabled": false }
+
+### 3. LỖI — đổi tên lần 2 trong 30 ngày → 409 GNE-VND-4091 {next_rename_allowed_at}
+PATCH {{base}}/seller/settings
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "profile": { "shop_name": "Tên Mới Lần Hai" } }
+
+### 4. LỖI — tắt hết hãng → 422 GNE-VND-4221 (bật tự trả lời không nội dung → 422 GNE-VND-4222)
+PATCH {{base}}/seller/settings
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shipping": { "carriers": { "GHN": false, "GHTK": false, "VIETTEL_POST": false, "JNT_EXPRESS": false, "GENIE_EXPRESS": false },
+                "free_shipping_enabled": false } }
+
+### 5. Danh mục ngân hàng (công khai, cache 1 ngày)
+GET {{base}}/public/banks
+
+### 6. ĐÚNG — xác minh chính chủ (shop VERIFIED; tên so với họ tên KYC)
+POST {{base}}/seller/payout-account/verification
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "bank_code": "VCB", "account_number": "0071000006712", "account_holder": "Trần Thị Mai" }
+
+### 7. LỖI — số tài khoản đuôi 000 (giả lập trả tên khác) → 422 GNE-WAL-4222 {kyc_name}
+POST {{base}}/seller/payout-account/verification
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "bank_code": "VCB", "account_number": "0071000006000", "account_holder": "Trần Thị Mai" }
+
+### 8. Xin OTP bước 2 (thiếu header OTP khi lưu → 422 GNE-AUTH-4222)
+POST {{base}}/me/otp-challenges
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "purpose": "PAYOUT_ACCOUNT_UPDATE" }
+
+### 9. ĐÚNG — lưu tài khoản nhận tiền (server xác minh lại chính chủ)
+PUT {{base}}/seller/payout-account
+Authorization: Bearer {{tok}}
+X-OTP-Challenge-Id: <challenge_id>
+X-OTP-Code: <mã Mailpit>
+Content-Type: application/json
+
+{ "bank_code": "VCB", "account_number": "0071000006712", "account_holder": "Trần Thị Mai" }
+
+### 10. Xem tài khoản hiện tại (số đã che)
+GET {{base}}/seller/payout-account
+Authorization: Bearer {{tok}}
+
+### 11. Xóa tài khoản nhận tiền (OTP PAYOUT_ACCOUNT_DELETE) → 204
+DELETE {{base}}/seller/payout-account
+Authorization: Bearer {{tok}}
+X-OTP-Challenge-Id: <challenge_id PAYOUT_ACCOUNT_DELETE>
+X-OTP-Code: <mã>
