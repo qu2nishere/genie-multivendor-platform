@@ -132,6 +132,7 @@
     "GNE-CAT-4222": "This category requires proof documents.",
     "GNE-CAT-4223": "Required category specifications are missing.",
     "GNE-PRO-4091": "You've already checked in today.",
+    "GNE-PRO-4092": "This voucher is already in your voucher wallet (or you have used up its uses).",
     "GNE-PRO-4221": "Flash Sale price must be at least 15% lower with a valid number of slots.",
     "GNE-PRO-4222": "You don't have enough Points.",
     "GNE-PRO-4223": "Too many products or the Flash Sale registration has closed.",
@@ -1701,6 +1702,7 @@
     "cost": "{points} Points · Orders from {min}",
     "swap": "Redeem",
     "not_enough": "Not enough Points",
+    "missing": "You need {points} more points for this reward.",
     "redeemed": "Redeemed voucher {code} — see it in your Voucher wallet",
     "history": "Points history",
     "checkin": {

@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/promotion-coin-checkin` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (42 / 53) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (47 / 53) |
 
 **Cách dùng**
 
@@ -42,9 +42,9 @@
 | P03 | UC-PRO-08 Điểm danh | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
 | P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
 | P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 7 / 7 | — | `feature/promotion-coin-checkin` |
-| P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
-| P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 0 / 10 | — | `feature/promotion-coin-checkin` |
-| **Tổng** | | **45** | **8** | **42 / 53** | | |
+| P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
+| P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 4 / 10 | — | `feature/promotion-coin-checkin` |
+| **Tổng** | | **45** | **8** | **47 / 53** | | |
 
 ## P00 — Chuẩn bị
 
@@ -108,17 +108,17 @@
 - [x] **P06.03** `CoinExpiryJob`
 - [x] **P06.04** `CoinExpiryJobIT` (`MutableClock`)
 - [x] **P06.05** `web/`
-- [ ] **P06.C1** 🔖 COMMIT `feat(promotion): expire coin lots after twelve months` · hash: `…`
+- [x] **P06.C1** 🔖 COMMIT `feat(promotion): expire coin lots after twelve months` · hash: `959d3f0`
 
 ## P07 — Nối giao diện `web/` & hoàn thiện
 
-- [ ] **P07.01** `web/src/features/coins/infrastructure/coins.api.ts`
-- [ ] **P07.02** `error-codes.ts` + `vi.json` / `en.json`
-- [ ] **P07.03** Chạy thật hai phía
+- [x] **P07.01** `web/src/features/coins/infrastructure/coins.api.ts`
+- [x] **P07.02** `error-codes.ts` + `vi.json` / `en.json`
+- [-] **P07.03** Chạy thật hai phía
 - [ ] **P07.04** `docs/api-tests/coins.http`
 - [ ] **P07.05** Tài liệu nguồn
 - [ ] **P07.06** Tiến độ
-- [ ] **P07.07** `cd web && npm run verify`.
+- [x] **P07.07** `cd web && npm run verify`.
 - [ ] **P07.C1** 🔖 COMMIT `feat(web): connect coin screen to the real api` · hash: `…`
 - [ ] **P07.C2** 🔖 COMMIT `docs(promotion): record coin check-in and coin history use cases as implemented` · hash: `…`
 - [ ] **P07.08** Mở PR vào `develop`
@@ -161,6 +161,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | P06.02 | Migration **`V16__coin_expired_type.sql`** (không phải V17 như plan gốc — D5, sổ đăng ký README đã sửa). `SchemaValidationIT` xanh |
 | P06.03 | Khóa ví bằng native `FOR UPDATE SKIP LOCKED` (`UserCoinRepository.lockSkipLocked`); mỗi người một transaction (`TransactionTemplate`), lỗi một người không chặn người khác. Idempotent nhờ FEFO (dòng `EXPIRED` ăn vào chính lô đã hết hạn) + kiểm `existsByUserIdAndTypeAndReferenceId` |
 | P06.05 | Web chỉ hiện `description` do server trả ("Điểm hết hạn") nên không cần khóa i18n theo loại — chỉ thêm `EXPIRED` vào kiểu `CoinTxnType` |
+| P07.01 | Cờ `isMocked('coins')` cho 5 hàm. Hook làm mới số dư cả khi lỗi (`onSettled`): `409 GNE-PRO-4091` (điểm danh ở tab khác) → nút chuyển "Đã điểm danh"; `422 GNE-PRO-4222` → toast "Bạn còn thiếu N Điểm" (đọc `details.missing` — khóa `coins.missing`); `409 GNE-PRO-4092` → thông điệp lỗi mới. DTO web khớp phản hồi thật (đã đối chiếu khi chạy API) |
+| P07.03 | `[-]` Phần trình duyệt chờ người dùng (CLAUDE.md). Đã chạy thật phía API trên CSDL mới `genie_coin` (V16) với `mai.tran`: ví mới 0 → điểm danh 201 (+100, ô 1) → lần 2 `409 4091` → đổi `COIN500` khi có 100 → `422 4222` `missing 400` → nạp lô 1.000 hết hạn sau 20 ngày → `expiring_soon 1000` → đổi `COIN500` 201 (còn 600) → đổi lại `409 4092` → lịch sử 3 dòng đúng thứ tự; Σ sổ = số dư = 600. Cách chạy giao diện: `PUBLIC_REAL_API=auth,coins`, dữ liệu mẫu nhánh seed (1.250 Điểm + voucher `COIN*`) |
+| P07.07 | Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 318/318, build OK, i18n OK (3269 khóa) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
