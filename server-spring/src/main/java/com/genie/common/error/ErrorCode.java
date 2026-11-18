@@ -52,6 +52,7 @@ public enum ErrorCode {
     // ===== Người dùng (API_SPEC 3.5, 3.8) =====
     ACTIVE_ORDERS_BLOCK_DELETION("GNE-USR-4091", HttpStatus.CONFLICT, "Còn đơn hàng đang xử lý, chưa thể xóa tài khoản."),
     DEFAULT_ADDRESS_NOT_DELETABLE("GNE-USR-4092", HttpStatus.CONFLICT, "Không thể xóa địa chỉ mặc định."),
+    DUPLICATE_ADDRESS("GNE-USR-4093", HttpStatus.CONFLICT, "Địa chỉ này đã có trong sổ địa chỉ."),
 
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
