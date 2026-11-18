@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/social-shop-follow` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (31 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (38 / 38) |
 
 **Cách dùng**
 
@@ -39,9 +39,9 @@
 | F01 | Cổng tra shop & truy vấn | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
 | F02 | Theo dõi / hủy theo dõi | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
 | F03 | Danh sách shop đang theo dõi | 5 | 1 | 6 / 6 | — | `feature/social-shop-follow` |
-| F04 | Nối giao diện `web/` | 6 | 1 | 6 / 7 | — | `feature/social-shop-follow` |
-| F05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/social-shop-follow` |
-| **Tổng** | | **33** | **5** | **31 / 38** | | |
+| F04 | Nối giao diện `web/` | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
+| F05 | Hoàn thiện use case | 5 | 1 | 6 / 6 | — | `feature/social-shop-follow` |
+| **Tổng** | | **33** | **5** | **38 / 38** | | |
 
 ## F00 — Chuẩn bị
 
@@ -88,16 +88,16 @@
 - [x] **F04.04** Trang `/account/following` dùng `summary.total` cho tiêu đề "Shop đang theo dõi (n)".
 - [-] **F04.05** Chạy thật hai phía
 - [x] **F04.06** `cd web && npm run verify`.
-- [ ] **F04.C1** 🔖 COMMIT `fix(web): call shop follow endpoints defined in the api spec` · hash: `…`
+- [x] **F04.C1** 🔖 COMMIT `fix(web): call shop follow endpoints defined in the api spec` · hash: `6cbb283`
 
 ## F05 — Hoàn thiện use case
 
-- [ ] **F05.01** `docs/api-tests/shop-follow.http`
-- [ ] **F05.02** OpenAPI
-- [ ] **F05.03** Tài liệu nguồn
-- [ ] **F05.04** Tiến độ
-- [ ] **F05.C1** 🔖 COMMIT `docs(social): record shop follow use case as implemented` · hash: `…`
-- [ ] **F05.05** Mở PR vào `develop`
+- [x] **F05.01** `docs/api-tests/shop-follow.http`
+- [x] **F05.02** OpenAPI
+- [x] **F05.03** Tài liệu nguồn
+- [x] **F05.04** Tiến độ
+- [x] **F05.C1** 🔖 COMMIT `docs(social): record shop follow use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **F05.05** Mở PR vào `develop`
 
 ---
 
@@ -105,11 +105,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-SOC-06` Khách hàng theo dõi gian hàng — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-SOC-06` Khách hàng theo dõi gian hàng — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-SOC-06 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -133,7 +133,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | F04.04 | Tiêu đề "Shop đang theo dõi (n)" và số đếm ở menu Tài khoản (`AccountNav`) dùng `total` |
 | F04.05 | `[-]` Phần trình duyệt chờ người dùng (CLAUDE.md). Đã chạy thật phía API trên CSDL mới `genie_follow`: `PUT` 2 lần → `follower_count` 1; shop của chính mình → `409 GNE-SOC-4095`; shop lạ → 404; `shop-ids` `[2, 1]`; danh sách đủ `$ShopMini` + `summary.total 2`; `DELETE` 2 lần → 204, bộ đếm = số dòng `shop_follows` ở mọi shop. Cách chạy giao diện: `PUBLIC_REAL_API=auth,follow` |
 | F04.06 | Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 320/320, build OK, i18n OK (3271 khóa); E2E `guest` + `orders` 10/10 |
+| F05.02 | `/v3/api-docs` có đủ 4 endpoint, summary `UC-SOC-06 — …` (kiểm khi chạy API thật ở F04.05) |
+| F05.04 | Checklist UC-SOC-06: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng) → 🟡; Excel "Đang triển khai"; handoff + API 17.5 đánh dấu đã sửa; CLAUDE.md mục 2 + mục 9 (quy ước `shop_id` ≠ `users.id`). Cổng: `./mvnw verify` BUILD SUCCESS (108 unit + 144 IT) |
+| F05.05 | `[-]` Chưa push / mở PR — chờ người dùng; PR mở sau PR wishlist (nhánh tách từ `feature/catalog-wishlist`) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (33 task, 5 commit, 6 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | F00–F05: cổng `ShopFollowDirectory` + cài ở vendor, theo dõi / hủy không đếm sai (đồng thời), danh sách + facade, web sửa endpoint lệch spec + nối API thật, tài liệu; còn chạy thật trên giao diện (F04.05) và mở PR | `58c00d4` `a0ba686` `c0e0aa8` `6cbb283` |

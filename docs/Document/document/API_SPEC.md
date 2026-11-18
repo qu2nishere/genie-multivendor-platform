@@ -708,6 +708,9 @@ UC-SOC-06 · **Màn hình:** nút Theo dõi ở trang Shop & trang chi tiết; T
 [ { "shop": { "id": 15, "name": "TechZone Official", "logo_url": null, "is_mall": true }, "rating_avg": 4.9, "follower_count": 128000 } ]
 ```
 `summary.total` cho "Shop đang theo dõi (3)".
+- `shop_id` = `vendor_profiles.id` (cùng id trả ở 9.2 sau khi mở shop) — không phải `users.id` của chủ shop.
+- Theo dõi được khi shop `kyc_status = VERIFIED` **và** tài khoản chủ shop `ACTIVE`, ngược lại `404 GNE-SYS-4040`; theo dõi shop của chính mình → `409 GNE-SOC-4095`. Shop đã theo dõi rồi mới bị khóa vẫn hủy được và **không** hiện trong danh sách / `shop-ids` / `summary.total`.
+- `PUT` / `DELETE` idempotent; `follower_count` chỉ cộng / trừ khi dòng theo dõi thật sự được thêm / xóa (cùng transaction, không âm). `limit` 1–50; `shop-ids` tối đa 1.000.
 
 #### `PUT /me/following/{shop_id}` · `204` — cộng `follower_count`
 #### `DELETE /me/following/{shop_id}` · `204`
@@ -2894,6 +2897,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-SOC-4092` | 409 | Đơn chưa hoàn thành, chưa đánh giá được | mới |
 | `GNE-SOC-4093` | 409 | Đã báo cáo đánh giá này | mới |
 | `GNE-SOC-4094` | 409 | Shop đã phản hồi đánh giá | mới |
+| `GNE-SOC-4095` | 409 | Theo dõi shop của chính mình | mới |
 | `GNE-SOC-4221` | 422 | Phản hồi chứa số điện thoại | mới |
 | `GNE-VND-4031` | 403 | Shop chưa `VERIFIED` (cổng KYC) | mới |
 | `GNE-VND-4091` | 409 | Đổi tên shop quá 1 lần / 30 ngày | mới |
@@ -3106,7 +3110,7 @@ Khi sinh OpenAPI (`genie-api-spec`) từ tài liệu này, các chỗ còn hở 
 | Mã web đang gọi | Theo spec |
 |---|---|
 | ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` — **đã sửa** (cùng `POST /me/wishlist` → `PUT`; plan 2026-11-16 wishlist W04.01) |
-| `GET/POST/DELETE /me/shop-follows…` | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` |
+| ~~`GET/POST/DELETE /me/shop-follows…`~~ | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` — **đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` |
 | `GET /public/feed` | `GET /public/recommendations` |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar` |

@@ -2268,7 +2268,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Khách đã đăng nhập; không theo dõi chính shop của mình.
 - **Hậu điều kiện:** Tạo / xóa `shop_follows`; cập nhật `VendorProfile.followerCount`.
 - **Luồng sự kiện chính:**
-  1. Khách bấm "Theo dõi" → `POST /api/v1/shops/{vendorId}/follow`.
+  1. Khách bấm "Theo dõi" → `PUT /api/v1/me/following/{shop_id}` (bỏ theo dõi: `DELETE`; cả hai idempotent — API_SPEC 3.11; `shop_id` = `vendor_profiles.id`); tô nút theo `GET /api/v1/me/following/shop-ids`, danh sách `GET /api/v1/me/following`.
   2. Chưa theo dõi: tạo `ShopFollow.of()` (UNIQUE khách + shop), tăng `followerCount`; nút chuyển "Đang theo dõi".
   3. Đã theo dõi: hỏi "Hủy theo dõi Shop?" → xóa dòng, giảm `followerCount`.
   4. Mục Tài khoản → Shop đang theo dõi: danh sách shop (ảnh, nhãn Chính hãng, số người theo dõi), nút "Vào shop".
@@ -2278,7 +2278,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Bấm liên tục:* chống trùng nhờ UNIQUE (không đếm sai `followerCount`).
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`social/follow` + cổng `ShopFollowDirectory` do `vendor` cài: theo dõi / hủy idempotent, `follower_count` chỉ đổi khi dòng thật sự chèn / xóa, danh sách) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=follow`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_theo_doi_gian_hang.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [ShopFollow](../ClassDiagram/ENTITY.md#92-shopfollow--theo-dõi-shop), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân).
 
