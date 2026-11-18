@@ -146,6 +146,7 @@
     "GNE-SOC-4094": "The shop has already replied to this review.",
     "GNE-SOC-4221": "Replies can't contain phone numbers.",
     "GNE-VND-4031": "The shop isn't verified (KYC) yet.",
+    "GNE-VND-4041": "This shop doesn't exist or is no longer active.",
     "GNE-VND-4091": "The shop name can be changed once every 30 days.",
     "GNE-VND-4092": "Orders are still awaiting handover, so break mode can't be turned on.",
     "GNE-VND-4093": "This account already has a shop.",
