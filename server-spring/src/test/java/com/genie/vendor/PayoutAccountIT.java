@@ -87,6 +87,8 @@ class PayoutAccountIT extends KycTestSupport {
                 .andExpect(jsonPath("$.data.account_number_masked").value("•••• •••• 6712"))
                 .andExpect(jsonPath("$.data.account_holder").value("DANG QUOC HUY"))
                 .andExpect(jsonPath("$.data.is_verified").value(true));
+        mvc.perform(get(URL).header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(jsonPath("$.data.account_number_masked").value("•••• •••• 6712"));
         var row = jdbc.queryForMap("SELECT * FROM vendor_profiles WHERE user_id = ?", vendor);
         assertThat(row.get("payout_account_verified_at")).isNotNull();
         String details = jdbc.queryForObject("SELECT details FROM system_logs WHERE action_type = 'PAYOUT_ACCOUNT_CHANGED'",

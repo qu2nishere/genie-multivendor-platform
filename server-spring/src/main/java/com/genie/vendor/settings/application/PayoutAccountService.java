@@ -84,6 +84,12 @@ public class PayoutAccountService implements StepUpPrecondition {
     public record PayoutAccountView(String bankName, String accountHolder, String accountNumberMasked, boolean isVerified) {
     }
 
+    /** Tài khoản nhận tiền hiện tại (null nếu chưa có) — {@code GET /seller/payout-account}. */
+    @Transactional(readOnly = true)
+    public PayoutAccountView current(long userId) {
+        return view(profiles.findById(sellers.current(userId).vendorProfileId()).orElseThrow());
+    }
+
     @Transactional(readOnly = true)
     public Verification verify(long userId, AccountInput in) {
         SellerContext.Seller seller = sellers.requireVerified(userId);

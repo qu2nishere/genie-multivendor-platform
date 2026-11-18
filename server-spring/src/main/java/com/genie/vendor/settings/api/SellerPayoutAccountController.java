@@ -16,6 +16,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,12 @@ public class SellerPayoutAccountController {
         PayoutAccountService.AccountInput toInput() {
             return new PayoutAccountService.AccountInput(bankCode, accountNumber, accountHolder);
         }
+    }
+
+    @Operation(summary = "UC-VND-07 — Tài khoản nhận tiền hiện tại (số tài khoản đã che; null nếu chưa có)")
+    @GetMapping
+    public ResponseEntity<ApiResponse<PayoutAccountService.PayoutAccountView>> current(@CurrentUser AuthUser me) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(responses.ok(payouts.current(me.id())).getBody());
     }
 
     @Operation(summary = "UC-VND-07 — Xác minh chính chủ tài khoản nhận tiền")
