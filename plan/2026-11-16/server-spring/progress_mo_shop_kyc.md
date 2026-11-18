@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (82 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (97 / 137) |
 
 **Cách dùng**
 
@@ -49,14 +49,14 @@
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 16 / 17 | — | `feature/vendor-k05-kyc-ai` |
-| K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 14 / 15 | — | `feature/vendor-k06-kyc-review` |
-| K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
-| K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 0 / 9 | — | `feature/vendor-k08-payout-account` |
+| K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 15 / 15 | — | `feature/vendor-k06-kyc-review` |
+| K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
+| K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 8 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 0 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **82 / 137** | | |
+| **Tổng** | | **112** | **25** | **97 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -160,28 +160,28 @@
 - [x] **K06.11** Email
 - [x] **K06.12** `KycReviewIT`
 - [x] **K06.C1** 🔖 COMMIT `feat(vendor): review kyc dossiers manually with approve, reject and supplement` · hash: `7ea86e8`
-- [ ] **K06.C2** 🔖 COMMIT `feat(vendor): expire kyc supplement requests after seven days` · hash: `…`
+- [x] **K06.C2** 🔖 COMMIT `feat(vendor): expire kyc supplement requests after seven days` · hash: `dcc00d5`
 - [-] **K06.13** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 2: K04–K06).
 
 ## K07 — Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05)
 
-- [ ] **K07.01** Kiểm điều kiện
-- [ ] **K07.02** `PickupShopRegistrar` (cổng)
-- [ ] **K07.03** Entity
-- [ ] **K07.04** `PUT /seller/pickup-address`
-- [ ] **K07.05** `PickupAddressIT`
-- [ ] **K07.C1** 🔖 COMMIT `feat(vendor): save pickup address and register the shop with ghn` · hash: `…`
+- [x] **K07.01** Kiểm điều kiện
+- [-] **K07.02** `PickupShopRegistrar` (cổng)
+- [-] **K07.03** Entity
+- [-] **K07.04** `PUT /seller/pickup-address`
+- [-] **K07.05** `PickupAddressIT`
+- [-] **K07.C1** 🔖 COMMIT `feat(vendor): save pickup address and register the shop with ghn` · hash: `…`
 
 ## K08 — Đăng ký tài khoản nhận giải ngân (UC-VND-07)
 
-- [ ] **K08.01** `BankCatalog` + `GET /public/banks`
-- [ ] **K08.02** `BankAccountLookup` (cổng) + `MockBankAccountLookup` (D13)
-- [ ] **K08.03** `POST /seller/payout-account/verification`
-- [ ] **K08.04** Entity
-- [ ] **K08.05** `PUT /seller/payout-account` 🔐
-- [ ] **K08.06** `DELETE /seller/payout-account` 🔐
-- [ ] **K08.07** Điều kiện chung
-- [ ] **K08.08** `PayoutAccountIT`
+- [x] **K08.01** `BankCatalog` + `GET /public/banks`
+- [x] **K08.02** `BankAccountLookup` (cổng) + `MockBankAccountLookup` (D13)
+- [x] **K08.03** `POST /seller/payout-account/verification`
+- [x] **K08.04** Entity
+- [x] **K08.05** `PUT /seller/payout-account` 🔐
+- [x] **K08.06** `DELETE /seller/payout-account` 🔐
+- [x] **K08.07** Điều kiện chung
+- [x] **K08.08** `PayoutAccountIT`
 - [ ] **K08.C1** 🔖 COMMIT `feat(vendor): verify and save the shop payout bank account with step-up otp` · hash: `…`
 
 ## K09 — Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21)
@@ -292,6 +292,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K06.04 | `checks.national_emblem` / `fingerprint` luôn `null` (chưa có cột — xem K05.07). Thêm trường `is_mall`, `manual_review_requested` vào chi tiết (màn hình cần). `shop_commission_rate` trả theo phần trăm (3 = 3%), lưu tỷ lệ 0.0300. Gọi lại chi tiết sau thao tác duyệt không ghi thêm `KYC_DOCUMENT_VIEWED`. |
 | K06.05 | Hoa hồng riêng 0–50% (cùng giới hạn web `MAX_COMMISSION_RATE`). `request-supplement` nhận 6 loại giấy tờ của API 16.1 (kể cả BUSINESS_REGISTRATION, TAX_NOTICE). |
 | K06.13 | Chưa mở PR — chờ người dùng. |
+| K07.01 | Đã kiểm: **chưa có** danh mục hành chính GHN (`RegionDirectory` / `AddressFacade.resolveRegion` — plan AUTH A12 chưa hiện thực; `auth/address` mới có entity). Theo D12 dừng K07: `PUT /seller/pickup-address` chưa có (cổng KYC đã mở sẵn đường dẫn). Phương thức entity `updatePickup` + cột `pickup_phone` đã có (K01). Làm tiếp K07.02–K07.05 khi A12 merge. |
+| K08.05 | OTP bước 2 qua `@RequireStepUp` (aspect của auth — mã kiểm sau khi body qua `@Valid`). Email `payout-account-changed` gửi sau commit; nhật ký chỉ ghi số tài khoản đã che. |
+| K08.06 | `PayoutAccountService` cài `StepUpPrecondition` cho `PAYOUT_ACCOUNT_DELETE` → chặn ngay khi xin mã nếu cổng `PayoutAccountGuard` (payment, chưa có cài đặt) báo còn lệnh rút chờ. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
