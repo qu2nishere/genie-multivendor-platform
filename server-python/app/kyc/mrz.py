@@ -6,6 +6,8 @@ Dòng 3: HỌ<<TÊN<ĐỆM (không dấu).
 """
 
 import re
+import shutil
+import subprocess
 from dataclasses import dataclass
 
 import cv2
@@ -140,19 +142,40 @@ def _rows(text: str) -> list[str] | None:
     return None
 
 
+_TESSERACT_ARGS = [
+    "stdin",
+    "stdout",
+    "-l",
+    "eng",
+    "--psm",
+    "6",
+    "-c",
+    "tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<",
+]
+
+
+def ocr(gray: np.ndarray) -> str | None:
+    """Gọi ``tesseract stdin stdout`` — ảnh truyền qua bộ nhớ, KHÔNG ghi tệp tạm xuống đĩa (N4)."""
+    exe = shutil.which("tesseract")
+    ok, png = cv2.imencode(".png", gray)
+    if exe is None or not ok:
+        return None
+    try:
+        out = subprocess.run([exe, *_TESSERACT_ARGS], input=png.tobytes(), capture_output=True, timeout=10, check=True)
+    except (subprocess.SubprocessError, OSError):
+        return None
+    return out.stdout.decode("utf-8", "ignore")
+
+
 def read(region: np.ndarray) -> list[str] | None:
     """OCR vùng MRZ (ảnh xám — nhị phân hóa dễ mất ký tự ``<``) → 3 dòng 30 ký tự đã sửa vị trí, hoặc ``None``."""
-    import pytesseract  # nhập muộn: test không cần Tesseract vẫn chạy phần phân tích
-
     gray = region if region.ndim == 2 else cv2.cvtColor(region, cv2.COLOR_BGR2GRAY)
-    config = "--psm 6 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<"
     candidates = [gray]
     if gray.shape[1] < 900:
         candidates.append(cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC))
     for c in candidates:
-        try:
-            text = pytesseract.image_to_string(c, lang="eng", config=config)
-        except pytesseract.TesseractError:
+        text = ocr(c)
+        if text is None:
             return None
         rows = _rows(text)
         if rows:

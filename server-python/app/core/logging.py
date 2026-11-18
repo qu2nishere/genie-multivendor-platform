@@ -8,7 +8,17 @@ except ImportError:  # python-json-logger < 3
     from pythonjsonlogger.jsonlogger import JsonFormatter
 
 
+#: Thư viện tự ghi URL request ở mức INFO — URL ảnh KYC là link ký sẵn (bí mật tạm thời) nên phải tắt (N4)
+NOISY_LOGGERS = ("httpx", "httpcore")
+
+
+def quiet_third_party() -> None:
+    for name in NOISY_LOGGERS:
+        logging.getLogger(name).setLevel(logging.WARNING)
+
+
 def configure_logging(level: int = logging.INFO) -> None:
+    quiet_third_party()
     root = logging.getLogger()
     if any(getattr(h, "_genie", False) for h in root.handlers):
         return

@@ -14,8 +14,7 @@ dependencies = [
     "opencv-python-headless>=4.10",
     "onnxruntime>=1.19",
     "transformers>=4.45",       # tokenizer PhoBERT
-    "python-json-logger>=2.0",
-    "pytesseract>=0.3.13",      # đọc MRZ (Y-D2) — cần gói hệ thống tesseract-ocr
+    "python-json-logger>=2.0",  # MRZ dùng binary tesseract-ocr của hệ thống (Y-D2) qua stdin — không thư viện Python
     "pillow>=10.4",             # giải mã ảnh + sửa hướng EXIF (core/images.py)
 ]
 

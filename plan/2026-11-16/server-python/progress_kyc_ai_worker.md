@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (49 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (58 / 77) |
 
 **Cách dùng**
 
@@ -41,12 +41,12 @@
 | Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 6 / 6 | — | `feature/ai-worker-kyc` |
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 8 / 8 | — | `feature/ai-worker-kyc` |
 | Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 12 / 12 | — | `feature/ai-worker-kyc` |
-| Y05 | Tầng 2: khuôn mặt | 9 | 1 | 9 / 10 | — | `feature/ai-worker-kyc` |
-| Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 0 / 9 | — | `feature/ai-worker-kyc` |
+| Y05 | Tầng 2: khuôn mặt | 9 | 1 | 10 / 10 | — | `feature/ai-worker-kyc` |
+| Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 8 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **49 / 77** | | |
+| **Tổng** | | **65** | **12** | **58 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -114,18 +114,18 @@
 - [x] **Y05.07** `test_face.py` (`@pytest.mark.models`)
 - [-] **Y05.08** Hiệu chỉnh ngưỡng
 - [-] **Y05.09** (Y-D5) Quốc huy / vân tay
-- [ ] **Y05.C1** 🔖 COMMIT `feat(ai-worker): match the id card face against the selfie with yunet and sface` · hash: `…`
+- [x] **Y05.C1** 🔖 COMMIT `feat(ai-worker): match the id card face against the selfie with yunet and sface` · hash: `9123dfb`
 
 ## Y06 — Gom kết quả & điều phối pipeline
 
-- [ ] **Y06.01** `scoring.assemble(steps)`
-- [ ] **Y06.02** `test_scoring.py`
-- [ ] **Y06.03** `service.verify(request)`
-- [ ] **Y06.04** Giới hạn thời gian
-- [ ] **Y06.05** `router.py` `POST /kyc/verify`
-- [ ] **Y06.06** `test_router.py`
-- [ ] **Y06.07** `test_service.py`
-- [ ] **Y06.08** Soát log (N4)
+- [x] **Y06.01** `scoring.assemble(steps)`
+- [x] **Y06.02** `test_scoring.py`
+- [x] **Y06.03** `service.verify(request)`
+- [x] **Y06.04** Giới hạn thời gian
+- [x] **Y06.05** `router.py` `POST /kyc/verify`
+- [x] **Y06.06** `test_router.py`
+- [x] **Y06.07** `test_service.py`
+- [x] **Y06.08** Soát log (N4)
 - [ ] **Y06.C1** 🔖 COMMIT `feat(ai-worker): run the kyc pipeline in the background and report signals to the backend` · hash: `…`
 
 ## Y07 — Ghép với backend
@@ -189,6 +189,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y05.07 | Repo **không có ảnh khuôn mặt người thật được phép dùng** (N10) → ca cùng người / khác người kiểm bằng mô hình giả lập vector (cosine 1.0 / 0.0); test `@pytest.mark.models` dùng YuNet + SFace thật chỉ kiểm nạp mô hình và selfie không có mặt. Cần bổ sung khi nhóm có ảnh đồng ý sử dụng. |
 | Y05.08 | Bỏ qua: chưa có bộ ảnh mặt được phép dùng để đo phân bố điểm — giữ ngưỡng công bố của SFace 0.363 / 0.25 (cấu hình được qua `KYC_FACE_*`). |
 | Y05.09 | Bỏ qua (Y-D5): `national_emblem` / `fingerprint` trả `null`; backend cũng chưa có cột lưu. |
+| Y06.03 | Thời gian một hồ sơ thẻ mẫu (không mô hình mặt): tải 6 ms, QR 79 ms, MRZ 289 ms, tổng ≈ 0.4 giây trong container. Semaphore tạo theo từng event loop. |
+| Y06.08 | Test soát log bắt được 2 chỗ rò: (1) `httpx` tự ghi URL ảnh ký sẵn ở mức INFO → hạ `httpx` / `httpcore` xuống WARNING (`quiet_third_party`); (2) `pytesseract` ghi ảnh ra tệp tạm `/tmp` (trái N4) → bỏ `pytesseract`, gọi thẳng `tesseract stdin stdout` (ảnh qua bộ nhớ). Y-D2 vẫn là Tesseract. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
