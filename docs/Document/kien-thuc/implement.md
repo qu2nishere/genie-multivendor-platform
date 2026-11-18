@@ -556,6 +556,8 @@ Không UPDATE / DELETE bảng `financial_ledger` (thu hồi quyền ở cấp CS
 
 ### 8.1 Hợp đồng Backend ↔ AI Worker
 
+> **Đã thay (2026-11-18, ADR 0011 mục 5):** hợp đồng **snake_case**, AI Worker **không** tính `riskScore` / kết luận — chỉ trả `checks{…}`, `signals[{code}]`, `extracted{…}`, `face_match_score`, `liveness_score`, `errors`, `model`; backend quy đổi điểm theo `genie.kyc.risk.points`, kiểm trùng CCCD, lấy mẫu 5% và chốt. Phần mô tả camelCase bên dưới chỉ còn giá trị lịch sử.
+
 ```http
 POST http://ai-worker:8000/kyc/verify          X-Internal-Token: …
 { "vendorProfileId": 42, "front": "<presigned GET>", "back": "<presigned GET>", "selfie": "<presigned GET>",

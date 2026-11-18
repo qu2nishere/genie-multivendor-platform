@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (130 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (135 / 137) |
 
 **Cách dùng**
 
@@ -55,8 +55,8 @@
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 12 / 13 | — | `feature/web-vendor-integration` |
-| K12 | Hoàn thiện cụm | 7 | 2 | 3 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **130 / 137** | | |
+| K12 | Hoàn thiện cụm | 7 | 2 | 8 / 9 | — | `feature/vendor-shop-kyc` |
+| **Tổng** | | **112** | **25** | **135 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -227,12 +227,12 @@
 - [x] **K12.01** Bộ kiểm thử API
 - [x] **K12.02** Bảo mật nhanh
 - [x] **K12.03** OpenAPI
-- [ ] **K12.04** Tài liệu nguồn
-- [ ] **K12.05** Tiến độ
-- [ ] **K12.06** Hợp đồng Swagger `genie-api-spec`
-- [ ] **K12.C1** 🔖 COMMIT `test(vendor): add api test collections for shop registration and kyc` · hash: `…`
+- [x] **K12.04** Tài liệu nguồn
+- [x] **K12.05** Tiến độ
+- [x] **K12.06** Hợp đồng Swagger `genie-api-spec`
+- [x] **K12.C1** 🔖 COMMIT `test(vendor): add api test collections for shop registration and kyc` · hash: `8da73a7`
 - [ ] **K12.C2** 🔖 COMMIT `docs(vendor): record shop and kyc use cases as implemented` · hash: `…`
-- [ ] **K12.07** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc cuối); mẫu PR ghi migration `V15` (chỉ thêm cột / index / giá trị `CHECK`
+- [-] **K12.07** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc cuối); mẫu PR ghi migration `V15` (chỉ thêm cột / index / giá trị `CHECK`
 
 ---
 
@@ -312,7 +312,12 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K05.14 | Đã chạy (2026-11-18): jar profile local, DB mới `genie_kyc`, `AI_WORKER_MODE=stub`, SMTP → Mailpit; đăng ký tài khoản → mở shop (OTP Mailpit) → tải 3 ảnh qua presigned PUT Silo → nộp: CCCD đuôi **10 → VERIFIED**, **45 → MANUAL_REVIEW**, **90 → REJECTED** (lý do theo tín hiệu). Log không có ERROR. Lưu ý: `.env` máy dev trỏ SMTP Gmail — lần chạy đầu gửi nhầm 1 OTP tới địa chỉ giả `@genie.test` qua Gmail; chạy thử phải ghi đè `SMTP_HOST=localhost SMTP_PORT=1025`. |
 | K12.02 | Log backend chạy thử không chứa số CCCD; GET không ký tệp `kyc-dossiers/vendor/1/front-….enc` → 403; `Cache-Control: no-store` ở `/seller/kyc`, `/seller/settings`, `/seller/payout-account`, `/admin/kyc-submissions/**` (có IT kiểm). Nhật ký chỉ ghi số tài khoản đã che. |
 | K12.03 | `/v3/api-docs` có đủ 22 endpoint của cụm, summary mang mã UC. Repo không giữ bản xuất OpenAPI. |
+| K12.04 | Usecase.md 7 UC (dòng Hiện trạng + bỏ `/vendor/send-otp`), API_SPEC (4.1, 9.2, 10.11 GET payout, 10.12 `document_file_names`, 11.3 `is_mall`, 12 callback mới, lịch sử 1.5), LUU_TRU 5.7, implement 8.1, `docs/cau-hinh-moi-truong.md` (`AI_WORKER_MODE`, `BACKEND_INTERNAL_URL`). LLD chưa sửa (job 01:00 / 15 giây đã ghi trong Javadoc). |
+| K12.05 | CHECKLIST: 6 UC → Đang triển khai (17 / 56 / 11), UC-VND-05 vẫn Chưa (chờ A12); Excel cột S / U; handoff 3 nhóm ghi "đã nối"; CLAUDE.md mục 2 + mục 9 (cổng chờ module khác cài). |
+| K12.06 | Cần đồng bộ hợp đồng Swagger `genie-api-spec` ở đợt sau: thân callback `PATCH /internal/kyc/{id}/result` (ADR 0011), yêu cầu `POST /kyc/verify`, `is_mall` của approve, `GET /admin/shops`, `GET /seller/payout-account`, `document_file_names`. |
+| K12.07 | Chưa mở PR — chờ người dùng (nhánh chồng trên `feature/social-shop-follow`, chưa push). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (112 task, 25 commit, 13 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-18 | Plan Mở shop & KYC: K00–K06, K08–K12 xong (K07 chờ A12); full verify 131 unit + 181 IT xanh; web verify xanh; chạy thử stub 10/45/90 đúng. Còn: chạy thật giao diện (K11.08), PR. | 9e81d28 … 8da73a7 + commit tài liệu |

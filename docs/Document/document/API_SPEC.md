@@ -9,7 +9,7 @@
 | Base URL | `https://api.genie.vn/api/v1` (staging: `https://api.staging.genie.vn/api/v1`) |
 | Định dạng | JSON `snake_case`, UTF-8 |
 | Tài liệu gốc | LLD.md mục 8 & 12, TECH_STACK_VA_QUY_UOC.md mục 8–9, ENTITY.md, Usecase.md, BAO_CAO_DOI_CHIEU_GIAO_DIEN.md |
-| Lịch sử | 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
+| Lịch sử | 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
 
 > **Cách đọc:** mỗi endpoint ghi *màn hình dùng nó*, *quyền*, *mã UC*, rồi tới request/response mẫu. Đối tượng dùng lại nhiều lần được định nghĩa một lần ở **mục 1 (Schema dùng chung)** và gọi bằng tên `$TênSchema` — khi chuyển sang OpenAPI, mỗi `$TênSchema` là một `components/schemas`.
 >
@@ -844,7 +844,7 @@ hoặc `{ "voucher_id": 1 }`. `201` `$Voucher`.
 
 Sai MIME/kích thước → `422 GNE-VAL-4220` ngay khi xin URL; server kiểm tra lại khi nhận `object_key` (`statObject`). URL hết hạn sau 15 phút (KYC 10 phút) → `GNE-MINIO-5003` khi PUT, xin URL mới. URL được ký theo tên miền công khai `PUBLIC_S3_URL` (`https://s3.genie.vn`, Nginx → Silo).
 
-**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
+**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. **2026-11-18 (Mở shop & KYC):** `KYC_DOCUMENT` (`kyc-dossiers` riêng tư, ảnh ≥ 20 KB — nhỏ hơn → `422 {min_bytes}`, link 10 phút, chỉ VENDOR; backend mã hóa AES-256-GCM khi nộp hồ sơ, bản rõ không ở khóa chính thức — ADR 0011), `SHOP_LOGO` / `SHOP_COVER` (`avatar-assets`, chỉ VENDOR, lưu vào `vendor/{shop_id}/{logo|cover}/…`). Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
 
 ---
 
@@ -1547,7 +1547,7 @@ UC-VND-01 · **Màn hình:** Trở thành Người bán (form Tên Shop, Họ t�
 | `409 GNE-VND-4094` | Tên shop đã được dùng |
 
 ### 9.2 `POST /me/shop-registrations/{challenge_id}/confirm`
-`{ "otp": "123456" }` → `201` `{ "shop_id": 15, "kyc_status": "NOT_SUBMITTED" }`. Tài khoản được nâng lên `role = VENDOR` (vẫn mua hàng bình thường — `CUSTOMER < VENDOR`); client làm mới token (`POST /auth/sessions/refresh`) để có quyền `/seller`.
+`{ "otp": "123456" }` → `201` `{ "shop_id": 15, "kyc_status": "NOT_SUBMITTED" }` (`shop_id` = `vendor_profiles.id`). Phiên hiện tại **không** bị thu hồi. Tài khoản được nâng lên `role = VENDOR` (vẫn mua hàng bình thường — `CUSTOMER < VENDOR`); client làm mới token (`POST /auth/sessions/refresh`) để có quyền `/seller`.
 
 ---
 
@@ -2074,7 +2074,7 @@ UC-VND-07 · **Màn hình:** modal "Cập nhật tài khoản nhận tiền" (Ng
 | `PUT /seller/payout-account` 🔐 `PAYOUT_ACCOUNT_UPDATE` | như trên | `200` `payout_account` |
 | `DELETE /seller/payout-account` 🔐 `PAYOUT_ACCOUNT_DELETE` | — | `204`; `409 GNE-WAL-4091` còn lệnh rút đang chờ |
 
-Danh sách ngân hàng: `GET /public/banks` → `[{ "code": "VCB", "name": "Vietcombank" }]` (dùng chung cho modal trả hàng của khách).
+`GET /seller/payout-account` → `payout_account` hoặc `null` (số tài khoản che — thêm 2026-11-18). Danh sách ngân hàng: `GET /public/banks` → `[{ "code": "VCB", "name": "Vietcombank" }]` (dùng chung cho modal trả hàng của khách).
 
 #### Chế độ nghỉ
 UC-VND-19 · **Màn hình:** công tắc "Chế độ nghỉ (Vacation)" → modal "Bật chế độ nghỉ" (mở lại ngày ≤ 30 ngày, tin nhắn tự động; nếu còn đơn chưa bàn giao thì liệt kê)
@@ -2113,6 +2113,8 @@ UC-VND-02, UC-VND-03, UC-VND-04 · **Màn hình:** Hồ sơ KYC (băng trạng t
 }
 ```
 Giấy tờ chưa tải = `null`. Không trả URL ảnh CCCD về lại cho shop (giảm rò rỉ — màn hình chỉ hiện tên tệp và dung lượng).
+
+**Hiện thực (2026-11-18):** thân lưu nháp / gửi duyệt nhận thêm `document_file_names` (tùy chọn, `{ID_FRONT: "cccd.jpg"}`) để màn hình hiện lại tên tệp; tên tệp + dung lượng lưu ở `kyc_documents_meta_json`.
 
 #### `PUT /seller/kyc/draft` — Lưu nháp
 Body như 10.12 submit nhưng mọi trường tùy chọn. `200`.
@@ -2243,7 +2245,7 @@ UC-VND-04 · `REVIEW_KYC` · **Màn hình:** hàng chờ (tab Chờ duyệt / Ch
 
 | Method & Path | Body | Kết quả |
 |---|---|---|
-| `POST /admin/kyc-submissions/{id}/approve` | `{ "shop_commission_rate": 3.0 }` (bỏ trống = theo ngành) | `VERIFIED`, `kyc_verification_method = MANUAL_STAFF` |
+| `POST /admin/kyc-submissions/{id}/approve` | `{ "shop_commission_rate": 3.0, "is_mall": true }` (bỏ trống = theo ngành; hoa hồng cần thêm `UPDATE_COMMISSION`, thiếu → `403`; 0–50%) | `VERIFIED`, `kyc_verification_method = MANUAL_STAFF` |
 | `POST /admin/kyc-submissions/{id}/reject` | `{ "reason_code": "BLURRY_DOCUMENT", "note": "…" }` (`note` bắt buộc khi `OTHER`) | `REJECTED`, thông báo + email shop |
 | `POST /admin/kyc-submissions/{id}/request-supplement` | `{ "documents": ["ID_FRONT", "BUSINESS_LICENSE"], "note": "Ảnh CCCD mặt trước bị mờ…" }` (≥ 1 giấy tờ) | `SUPPLEMENT_REQUESTED`, hạn 7 ngày |
 | `POST /admin/kyc-submissions/{id}/requeue` | — | Về `PENDING` |
@@ -2668,7 +2670,7 @@ Không có màn hình nhưng bắt buộc để các màn hình thanh toán, gia
 | `GET /payments/vnpay/ipn` | VNPay | HMAC-SHA512 | Xác nhận thanh toán → đơn `PAID`, ký quỹ `HELD`. Trả `{"RspCode":"00"}`; sai chữ ký `97`; đã xử lý `02`; lệch tiền `04` (LLD SD-03) |
 | `POST /payments/sepay/webhook` | SePay | Header `Authorization: Apikey …` | Tiền vào nội dung `TR…` → thanh toán VietQR; tiền vào từ hãng vận chuyển → tạo phiên `cod-remittances`; tiền ra `TRWD…` → lệnh rút `COMPLETED`; tiền ra `TRRF…` → hoàn tiền `SUCCESS`. Body theo định dạng SePay (camelCase: `id`, `gateway`, `transactionDate`, `accountNumber`, `code`, `content`, `transferType` `in/out`, `transferAmount`, `accumulated`, `subAccount`, `referenceCode`, `description`), idempotent theo `id`; trả `200 { "success": true }` |
 | `POST /shipping/{carrier}/webhook/{secret}` | GHN, GHTK, ViettelPost, J&T | `secret` trên URL + IP allowlist | `carrier` ∈ `ghn, ghtk, viettel_post, jnt_express`; body là payload gốc của hãng (adapter chuẩn hóa). Ghi `shipment_events`, cập nhật đơn (`DELIVERING`, `DELIVERED`, `DELIVERY_FAILED`, `RETURNING`…); trả `200` `{ "received": true }` |
-| `PATCH /internal/kyc/{id}/result` | AI Worker | `X-Internal-Token` | Body `{ overall: PASS\|PARTIAL\|FAIL, checks: {qr_code, national_emblem, mrz, fingerprint, face_match}, face_match_score, liveness_passed, risk_score, errors[], model }` (cùng cấu trúc `ai_result` ở 11.3) → tự duyệt, chuyển duyệt tay hoặc từ chối; trả `200 { "kyc_status" }` |
+| `PATCH /internal/kyc/{id}/result` | AI Worker | `X-Internal-Token` | **Đã sửa 2026-11-18 (ADR 0011 mục 5):** worker không kết luận. Body `{ checks: {qr_code, mrz, mrz_qr_match, cccd_number_valid, expiry_rule_valid, face_match, face_duplicate, national_emblem, fingerprint} (true/false/null), face_match_score, liveness_score, signals[{code}], extracted{identity_number, full_name, date_of_birth, gender, address, issue_date, expiry_date, legacy_identity_number}, errors[], model{} }` → backend tính điểm theo bảng `genie.kyc.risk.points` và tự duyệt / chuyển duyệt tay / từ chối; idempotent; trả `200 { "kyc_status" }`. Yêu cầu gửi đi: `POST {AI_WORKER_URL}/kyc/verify {kyc_id, documents{id_front, id_back, selfie} (URL 5 phút), declared{identity_number, full_name}, biometric_consent, callback_url}` → `202` |
 | `PATCH /internal/reviews/{id}/sentiment` | AI Worker | `X-Internal-Token` | `{ "label": "NEGATIVE", "score": 0.91, "model": "phobert-genie-v1" }` → `aspect_sentiment_json.overall` |
 | `GET /public/health` | Uptime Kuma | — | `{ "status": "UP" }` — trả nguyên văn, **không** bọc phong bì §0.3 |
 
