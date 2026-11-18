@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (51 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (55 / 137) |
 
 **Cách dùng**
 
@@ -47,8 +47,8 @@
 | K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 10 / 10 | — | `feature/vendor-k01-schema` |
 | K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
-| K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 11 / 12 | — | `feature/vendor-k04-kyc-submission` |
-| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 0 / 17 | — | `feature/vendor-k05-kyc-ai` |
+| K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
+| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 3 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 0 / 9 | — | `feature/vendor-k08-payout-account` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **51 / 137** | | |
+| **Tổng** | | **112** | **25** | **55 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -123,13 +123,13 @@
 - [x] **K04.09** Thông báo nội bộ
 - [x] **K04.10** `KycSubmissionIT` (PG + Redis + Silo)
 - [x] **K04.C1** 🔖 COMMIT `feat(vendor): encrypt kyc documents with aes-gcm before storing them` · hash: `1b3428a`
-- [ ] **K04.C2** 🔖 COMMIT `feat(vendor): save kyc draft and submit kyc dossier for verification` · hash: `…`
+- [x] **K04.C2** 🔖 COMMIT `feat(vendor): save kyc draft and submit kyc dossier for verification` · hash: `a423fc2`
 
 ## K05 — Thẩm định KYC tự động qua AI — phần backend (UC-VND-03)
 
-- [ ] **K05.01** `KycProperties` (`genie.kyc`)
-- [ ] **K05.02** `KycRiskPolicy`
-- [ ] **K05.03** `KycRiskPolicyTest`
+- [x] **K05.01** `KycProperties` (`genie.kyc`)
+- [x] **K05.02** `KycRiskPolicy`
+- [x] **K05.03** `KycRiskPolicyTest`
 - [ ] **K05.04** `KycVerificationClient` (cổng) + `HttpKycVerificationClient`
 - [ ] **K05.05** `StubKycVerificationClient` (D7)
 - [ ] **K05.06** Listener gửi thẩm định
@@ -282,6 +282,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K04.03 | `UploadService.readOwnTmp` kiểm chủ sở hữu / loại / dung lượng (ảnh ≥ 20 KB) rồi đọc nội dung; SELFIE phải là ảnh. Tên tệp hiển thị lấy từ trường mở rộng `document_file_names` (tùy chọn — API 10.12 không có chỗ gửi tên tệp; không gửi thì đặt `front.jpg`…). Metadata `{file_name, size_bytes, content_type}` ở `kyc_documents_meta_json`. Rollback → xóa tệp `.enc` mới; commit → xóa tệp cũ bị thay. |
 | K04.04 | Bản xem tạm ghi vào Redis ZSET `kyc:views` (điểm = thời điểm tạo); `KycViewCleanupJob` mỗi phút xóa bản quá 10 phút. |
 | K04.09 | Cổng `KycAdminNotifier` + listener AFTER_COMMIT; chưa có cài đặt (module notification) → ghi log. |
+| K05.02 | Lấy mẫu qua bean `KycSampler` (test IT thay bằng bản cố định); mỗi mã tín hiệu tính 1 lần; chỉ hồ sơ dưới ngưỡng tự duyệt mới có thể bị lấy mẫu. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
