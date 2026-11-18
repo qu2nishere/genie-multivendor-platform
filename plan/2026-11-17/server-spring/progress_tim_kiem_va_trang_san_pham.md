@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — mới lập plan, chưa bắt đầu (0 / 66) |
+| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C02 (25 / 66), nhánh `feature/catalog-search` |
 
 **Cách dùng**
 
@@ -58,16 +58,16 @@
 
 | Giai đoạn | Nội dung | UC | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---|---:|---:|---:|---|---|
-| C00 | Chuẩn bị | — | 6 | 0 | 0 / 6 | — | `feature/catalog-search` |
-| C01 | Nền: migration, cache, chuẩn hóa | — | 5 | 2 | 0 / 7 | — | `feature/catalog-search` |
-| C02 | Tìm kiếm & lọc | CAT-02, CAT-05 | 10 | 2 | 0 / 12 | — | `feature/catalog-search` |
+| C00 | Chuẩn bị | — | 6 | 0 | 6 / 6 | — | `feature/catalog-search` |
+| C01 | Nền: migration, cache, chuẩn hóa | — | 5 | 2 | 7 / 7 | — | `feature/catalog-search` |
+| C02 | Tìm kiếm & lọc | CAT-02, CAT-05 | 10 | 2 | 12 / 12 | — | `feature/catalog-search` |
 | C03 | Gợi ý & xu hướng | CAT-04 | 6 | 1 | 0 / 7 | — | `feature/catalog-search` |
 | C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 0 / 8 | — | `feature/catalog-product-detail` |
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 0 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 0 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 0 / 11 | — | `feature/web-catalog-real-api` |
 | C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **0 / 66** | | |
+| **Tổng** | | | **54** | **12** | **25 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -75,33 +75,33 @@
 - [x] **C00.02** Chốt quyết định D1–D12
 - [x] **C00.03** Đăng ký `V18` ở README 2026-11-16 mục 4
 - [x] **C00.04** Tạo nhánh `feature/catalog-search`
-- [ ] **C00.05** Dữ liệu thử (≥ 50 sản phẩm seed + script 10.000 sản phẩm giả)
+- [x] **C00.05** Dữ liệu thử (≥ 50 sản phẩm seed + script 10.000 sản phẩm giả)
 - [x] **C00.06** Đọc màn mock `/search`, `/c/…`, `/p/…`, `/shop/…`, dropdown header
 
 ## C01 — Nền: migration, cache, chuẩn hóa
 
-- [ ] **C01.01** `V18__catalog_search_tuning.sql` (trọng số FTS, trigram bỏ dấu, index giá SKU) + ENTITY 13.1
-- [ ] **C01.02** `CacheConfig` — `RedisCacheManager` + TTL theo tên cache
-- [ ] **C01.03** `EtagConfig` — ETag + `Cache-Control` cho `/api/v1/public/**`
-- [ ] **C01.04** `KeywordNormalizer` + `SlugUtil` + test khớp `unaccent()`
-- [ ] **C01.05** `TestDataBuilder` — danh mục, brand, shop, sản phẩm, SKU, ảnh
-- [ ] **C01.C1** 🔖 COMMIT `feat(db): weight product search vector and add unaccent trigram index` · hash: `…`
-- [ ] **C01.C2** 🔖 COMMIT `feat(common): configure redis cache and etag for public api` · hash: `…`
+- [x] **C01.01** `V18__catalog_search_tuning.sql` (trọng số FTS, trigram bỏ dấu, index giá SKU) + ENTITY 13.1
+- [x] **C01.02** `CacheConfig` — `RedisCacheManager` + TTL theo tên cache
+- [x] **C01.03** `EtagConfig` — ETag + `Cache-Control` cho `/api/v1/public/**`
+- [x] **C01.04** `KeywordNormalizer` + `SlugUtil` + test khớp `unaccent()`
+- [x] **C01.05** `TestDataBuilder` — danh mục, brand, shop, sản phẩm, SKU, ảnh
+- [x] **C01.C1** 🔖 COMMIT `feat(db): weight product search vector and add unaccent trigram index` · hash: `4f808a9`
+- [x] **C01.C2** 🔖 COMMIT `feat(common): configure redis cache and etag for public api` · hash: `86e5ddc`
 
 ## C02 — Tìm kiếm & lọc (UC-CAT-02, UC-CAT-05)
 
-- [ ] **C02.01** `ProductSort` + `ProductSearchRequest` (validate)
-- [ ] **C02.02** `ProductSearchSqlBuilder` + test
-- [ ] **C02.03** `ProductSearchService` — FTS tầng 1 + trigram tầng 2
-- [ ] **C02.04** Dựng `$ProductCard` theo lô
-- [ ] **C02.05** `FacetService` — disjunctive facets
-- [ ] **C02.06** Cổng `CatalogShopDirectory`, `ShopVoucherAvailability`
-- [ ] **C02.07** `PublicProductSearchController` + rate limit
-- [ ] **C02.08** `ProductSearchIT`
-- [ ] **C02.09** `FacetIT`
-- [ ] **C02.10** `SearchPerformanceIT` (p95 < 300 ms / 10.000 sản phẩm)
-- [ ] **C02.C1** 🔖 COMMIT `feat(catalog): search products with full text and trigram fallback` · hash: `…`
-- [ ] **C02.C2** 🔖 COMMIT `feat(catalog): add multi criteria filters sorting and facets` · hash: `…`
+- [x] **C02.01** `ProductSort` + `ProductSearchRequest` (validate)
+- [x] **C02.02** `ProductSearchSqlBuilder` + test
+- [x] **C02.03** `ProductSearchService` — FTS tầng 1 + trigram tầng 2
+- [x] **C02.04** Dựng `$ProductCard` theo lô
+- [x] **C02.05** `FacetService` — disjunctive facets
+- [x] **C02.06** Cổng `CatalogShopDirectory`, `ShopVoucherAvailability`
+- [x] **C02.07** `PublicProductSearchController` + rate limit
+- [x] **C02.08** `ProductSearchIT`
+- [x] **C02.09** `FacetIT`
+- [x] **C02.10** `SearchPerformanceIT` (p95 < 300 ms / 10.000 sản phẩm)
+- [x] **C02.C1** 🔖 COMMIT `feat(catalog): search products with full text and trigram fallback` · hash: `a45aedb`
+- [x] **C02.C2** 🔖 COMMIT `feat(catalog): add multi criteria filters sorting and facets` · hash: `fa33542`
 
 ## C03 — Gợi ý & xu hướng (UC-CAT-04)
 
@@ -185,7 +185,14 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 
 | Task | Ghi chú |
 |---|---|
-| | |
+| C00.05 | Không phụ thuộc seed: mọi IT tự dựng dữ liệu bằng `TestDataBuilder`; 10.000 sản phẩm giả sinh bằng `generate_series` ngay trong `SearchPerformanceIT` |
+| C01.02 | Làm khác plan: không dùng `RedisCacheManager` + `@Cacheable` mà viết `common/cache/JsonCache` (StringRedisTemplate + Jackson, chỉ rõ kiểu khi đọc record) — Redis lỗi thì đọc thẳng nguồn (N7). TTL đặt ở từng service |
+| C01.C2 | Thêm `PageResponse` (vỏ danh sách có `pagination` + `summary`, API_SPEC 0.3) và `ApiResponseFactory.page()/body()` trong cùng commit |
+| C01.04 | Thêm commit `08c76cd` `feat(catalog): add keyword normalizer slug util and catalog test fixtures` (normalizer, slug, `TestDataBuilder`, `KeywordNormalizerIT` so 30 mẫu với `unaccent()` của PG, bộ mẫu slug chung `docs/api-tests/slug-samples.json`) |
+| C02.03 | Tầng 1 dùng `to_tsquery('simple', 'tai & nghe:*')` thay `websearch_to_tsquery`: từ khóa đã chuẩn hóa chỉ còn chữ / số nên cú pháp web không còn tác dụng; tsquery tiền tố đã bao luôn khớp nguyên từ. Trang tối đa 100 (API 0.4) thay vì 50 |
+| C02.05 | Lọc thuộc tính dùng `(specs_json ->> code) IN (…)` thay `@>`: khớp cả giá trị số trong JSON; chưa dùng index `jsonb_path_ops` (đủ cho MVP). Chế độ bù gõ sai: facet đếm trên đúng tập kết quả (≤ 105 ID), không còn disjunctive — để giữ p95 |
+| C02.06 | Bỏ cổng `CatalogShopDirectory`: SQL đọc JOIN thẳng `vendor_profiles` (D6) nên không cần đổi `shop_id ↔ vendor_id` qua cổng. Còn cổng `ShopVoucherAvailability` (mặc định chưa hỗ trợ) |
+| C02.10 | Đo 2026-11-18 (10.000 sản phẩm, 36 request, máy dev + Testcontainers): p50 = 29 ms, **p95 = 50 ms**, max 256 ms (request đầu, JIT). Lần đầu p95 = 538 ms → 2 sửa: chỉ JOIN LATERAL giá khi lọc / sắp theo giá; facet chế độ trigram đếm trên tập kết quả. `EXPLAIN` (tắt seq scan) dùng `idx_products_search_vector` và `idx_products_name_unaccent_trgm`; với 10.000 dòng planner tự chọn seq scan (3,5 ms) là hợp lý. Thiếu `ANALYZE users / vendor_profiles` làm planner chọn nested loop ~500 ms — production có autovacuum |
 
 ## Nhật ký
 
@@ -193,3 +200,6 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 |---|---|---|
 | 2026-11-17 | Lập plan + progress (54 task, 12 commit, 9 giai đoạn; stack + thuật toán A1–A13) — chưa bắt đầu làm | — |
 | 2026-11-18 | Phân công Nghiêm Phú Đăng Quân; ghi "đã lập plan `plan/2026-11-17`" + cột Phụ trách cho 7 UC trong `CHECKLIST_TIEN_DO_UC.md` (bảng Thành viên, mục 5 Nhật ký) và cột *Người phụ trách* / sheet *Thành viên* trong `Quản Lý UseCase.xlsx` — trạng thái vẫn ⬜ Chưa triển khai | — |
+| 2026-11-18 | C00 chuẩn bị: nhánh `feature/catalog-search`, chốt D1–D12 theo đề xuất, đăng ký `V18`; commit plan + checklist | `04b866d` |
+| 2026-11-18 | C01 nền: `V18` (trọng số FTS, trigram bỏ dấu, index giá), `JsonCache`, ETag `/public`, `PageResponse`, normalizer + slug + `TestDataBuilder` | `4f808a9` `86e5ddc` `08c76cd` |
+| 2026-11-18 | C02 tìm kiếm & lọc: `GET /public/products` (FTS + trigram, lọc đa tiêu chí, facet, rate limit 60/phút); 7 unit + 16 IT xanh; đo hiệu năng p95 50 ms | `a45aedb` `fa33542` |
