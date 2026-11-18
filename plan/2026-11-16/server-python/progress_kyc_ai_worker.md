@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (71 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (76 / 77) |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 10 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 9 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
-| Y08 | Đóng gói & triển khai | 4 | 2 | 5 / 6 | — | `feature/ai-worker-kyc` |
-| Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **71 / 77** | | |
+| Y08 | Đóng gói & triển khai | 4 | 2 | 6 / 6 | — | `feature/ai-worker-kyc` |
+| Y09 | Tài liệu & kết thúc | 4 | 1 | 4 / 5 | — | `feature/ai-worker-kyc` |
+| **Tổng** | | **65** | **12** | **76 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -145,15 +145,15 @@
 - [x] **Y08.03** `deploy/`
 - [x] **Y08.04** CI
 - [x] **Y08.C1** 🔖 COMMIT `build(ai-worker): package ocr dependencies and verify model checksums` · hash: `10b29b9`
-- [ ] **Y08.C2** 🔖 COMMIT `ci(ai-worker): lint and test the ai worker on pull requests` · hash: `…`
+- [x] **Y08.C2** 🔖 COMMIT `ci(ai-worker): lint and test the ai worker on pull requests` · hash: `832bf60`
 
 ## Y09 — Tài liệu & kết thúc
 
-- [ ] **Y09.01** `server-python/README.md`
-- [ ] **Y09.02** Tài liệu nguồn
-- [ ] **Y09.03** Tiến độ
+- [x] **Y09.01** `server-python/README.md`
+- [x] **Y09.02** Tài liệu nguồn
+- [x] **Y09.03** Tiến độ
 - [ ] **Y09.C1** 🔖 COMMIT `docs(ai-worker): document the kyc pipeline, signals and known limits` · hash: `…`
-- [ ] **Y09.04** Mở PR cuối vào `develop`
+- [-] **Y09.04** Mở PR cuối vào `develop`
 
 ---
 
@@ -202,7 +202,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y08.03 | Compose prod `ai-worker`: `STORAGE_ALLOWED_HOSTS` (mặc định `*.s3.ap-southeast-1.amazonaws.com`) + 4 biến `KYC_*`; vẫn không mở cổng ra ngoài mạng Compose; giữ giới hạn RAM 2g (đo thực tế 250 MiB). |
 | Y08.04 | Job `ai-worker` trong `ci.yml` đã có → thêm cài `tesseract-ocr tesseract-ocr-eng fonts-dejavu-core`, `ruff format --check`, `pytest -m "not models"`. |
 | Y08.02 | `docker build` image thật (1.7 GB — `transformers` + JRE của plan PhoBERT; JRE chưa bỏ vì cụm cảm xúc còn cần) → `/health` = `UP`, `models_loaded: true`, tiến trình chạy bằng user `worker`, Tesseract 5.5.0. |
+| Y09.02 | TECH_STACK 2.5 (Tesseract qua stdin, opencv_zoo + SHA-256), Usecase.md UC-VND-03 Hiện trạng; implement 8.1 + API_SPEC 12 đã sửa ở plan Mở shop & KYC K12.04 (cùng hợp đồng). |
+| Y09.03 | CHECKLIST: UC-VND-03 BE ☑ / Test ☑ (Chạy ☐), dòng Nhật ký; Excel cột U. Việc tồn: `FACE_DUPLICATE` (Y-D4), quốc huy / vân tay (Y-D5), liveness chủ động, bộ ảnh mặt được phép dùng để hiệu chỉnh ngưỡng + ca VERIFIED thật. |
+| Y09.04 | Chưa mở PR — chờ người dùng (nhánh chồng trên `feature/vendor-shop-kyc`, chưa push). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (65 task, 12 commit, 10 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-18 | Plan AI Worker: Y00–Y09 xong (trừ ca cần ảnh mặt thật); 81 test worker xanh, chạy hai phía với backend http: lệch QR/MRZ → REJECTED, selfie không mặt → MANUAL_REVIEW, worker tắt → MANUAL_REVIEW. | 03510c4 … + commit tài liệu |

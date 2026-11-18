@@ -1527,7 +1527,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - **Giới hạn:** thẻ giả in QR/MRZ nhất quán với chính khuôn mặt kẻ gian vẫn có thể qua Tầng 0–1; chỉ đọc chữ ký số chip NFC hoặc xác thực C06 / VNeID chặn được triệt để (ngoài phạm vi đồ án). Rủi ro còn lại được khống chế bằng Tầng 2.
   - Embedding khuôn mặt là dữ liệu sinh trắc học: chỉ lưu vector (không lưu ảnh), xóa cùng hồ sơ KYC theo thời hạn lưu trữ, chỉ chạy khi người bán đã tích đồng ý ở `UC-VND-02`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Đang triển khai (phần backend) — gửi hồ sơ cho AI Worker sau commit, callback `PATCH /internal/kyc/{id}/result`, chấm điểm tín hiệu theo cấu hình (30 / 70, lấy mẫu 5%), DUPLICATE_ID / DECLARED_DATA_MISMATCH, AI lỗi / quá 30 giây → duyệt tay, email kết quả; chế độ giả lập `AI_WORKER_MODE=stub` đã chạy thử. Pipeline AI Worker thật (QR / MRZ / khuôn mặt) thuộc plan `2026-11-16/server-python/plan_kyc_ai_worker.md`.
+  - *Hiện trạng:* Đang triển khai — backend (gửi hồ sơ, chấm điểm tín hiệu, duyệt tay khi AI lỗi / quá 30 giây) và **AI Worker** (`server-python/app/kyc`: QR, MRZ + số kiểm tra, luật số CCCD / hạn thẻ / QR↔MRZ, YuNet + SFace, liveness thụ động; chỉ trả tín hiệu, không kết luận) + test xanh; đã chạy hai phía với thẻ mẫu (lệch QR/MRZ → REJECTED, selfie không mặt → MANUAL_REVIEW, worker tắt → MANUAL_REVIEW). Chưa có: ca VERIFIED qua mặt thật (chưa có ảnh mặt được phép dùng), trùng khuôn mặt (Y-D4), chạy thật trên giao diện.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [KycResult](../ClassDiagram/ENTITY.md#16-kycresult--kết-quả-ocrai-thẩm-định-giấy-tờ), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop).
 
