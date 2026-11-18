@@ -121,6 +121,7 @@ public class CoinQueryService {
             case USED_AT_CHECKOUT -> "Dùng Điểm khi thanh toán";
             case ORDER_REFUND -> "Hoàn lại Điểm đơn bị hủy";
             case VOUCHER_REDEEM -> "Đổi Điểm lấy voucher";
+            case EXPIRED -> "Điểm hết hạn";
         };
     }
 

@@ -30,7 +30,7 @@ public enum FlashSaleStatus { DRAFT, SCHEDULED, ACTIVE, ENDED }   // ← FlashSa
 
 public enum FlashSaleItemStatus { PENDING, APPROVED, REJECTED }   // ← FlashSaleItem.status (sàn duyệt từng sản phẩm đăng ký — TLCN v1.3)
 
-public enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM }   // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
+public enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED }   // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
 
 // ============================== ENTITIES (5) ==============================
 

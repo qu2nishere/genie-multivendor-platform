@@ -974,6 +974,8 @@
 | `createdAt` | thời điểm tạo | ngày + giờ (có múi giờ) | Có | Thời điểm phát sinh. Hệ thống tự ghi khi tạo dòng. |
 
 <a id="dailycheckin"></a>
+- **Điểm hết hạn (`EXPIRED`):** mỗi lần nhận Điểm là một "lô" có hạn 12 tháng; quá hạn mà chưa tiêu hết thì hệ thống tự ghi một dòng trừ loại `EXPIRED` cho phần còn lại (mỗi ngày lúc 00:15).
+
 ## 4.9 `DailyCheckin` — Điểm danh hằng ngày
 
 - **Đọc là:** điểm danh hằng ngày

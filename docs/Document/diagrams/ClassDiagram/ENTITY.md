@@ -3147,6 +3147,7 @@ public class CoinTransaction {
 
 ### 💡 Kiến thức chuyên sâu
 - **Nguồn Điểm của TLCN** (khớp giao diện "Lịch sử Điểm"): điểm danh hằng ngày (`CHECK_IN`, UC-PRO-08), hoàn Điểm theo đơn / voucher hoàn Điểm (`ORDER_CASHBACK`), đánh giá có ảnh (`REVIEW_BONUS`, UC-SOC-03), hoàn lại Điểm khi đơn bị hủy / hoàn tiền (`ORDER_REFUND`). Tiêu Điểm: thanh toán (`USED_AT_CHECKOUT`, tối đa 50% tiền hàng — UC-PRO-10) và đổi Điểm lấy voucher (`VOUCHER_REDEEM`, UC-PRO-09).
+- **Lô hết hạn (`EXPIRED`, V16):** cron 00:15 giờ Việt Nam tính phần còn lại của từng lô cộng đã quá `expiresAt` theo FEFO (lô sắp hết hạn bị tiêu trước) và ghi **một dòng âm** `type = EXPIRED`, `referenceId` = id lô gốc — sổ vẫn chỉ ghi thêm, `Σ amount = UserCoin.balance` luôn đúng; chạy lại không trừ thêm (lô đã có dòng `EXPIRED` tham chiếu thì bỏ qua).
 - **Sổ lô + hết hạn:** mỗi dòng cộng Điểm là một "lô" có `expiresAt`; tiêu Điểm trừ lô sắp hết hạn trước (FEFO). Job hằng ngày ghi dòng âm cho lô hết hạn để `Σ amount = UserCoin.balance` luôn đúng.
 
 ---
@@ -6554,7 +6555,7 @@ enum DiscountType { PERCENTAGE, FIXED_AMOUNT, FREESHIP }                        
 enum FundingParty { PLATFORM, VENDOR, CO_SPONSOR }                                      // ← Voucher.sponsorType, OrderDiscount.fundedBy (CO_SPONSOR: sàn + shop cùng chịu theo Voucher.platformSharePercent)
 enum FlashSaleStatus { DRAFT, SCHEDULED, ACTIVE, ENDED }                                // ← FlashSaleCampaign.status
 enum FlashSaleItemStatus { PENDING, APPROVED, REJECTED }                                 // ← FlashSaleItem.status (TLCN v1.3)
-enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM } // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
+enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED } // ← CoinTransaction.type (EXPIRED: dòng âm trừ phần còn lại của lô hết hạn sau 12 tháng, reference_id = id lô — V16, plan 2026-11-16 Điểm Genie D5; mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
 
 // ==========================================
 // NHÓM 05. ĐƠN HÀNG, PHIÊN & GIỮ CHỖ KHO (4 enum)

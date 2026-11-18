@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/promotion-coin-checkin` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (36 / 53) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (42 / 53) |
 
 **Cách dùng**
 
@@ -41,10 +41,10 @@
 | P02 | Sổ Điểm dùng chung (cộng / trừ theo lô) | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
 | P03 | UC-PRO-08 Điểm danh | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
 | P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
-| P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 6 / 7 | — | `feature/promotion-coin-checkin` |
-| P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
+| P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 7 / 7 | — | `feature/promotion-coin-checkin` |
+| P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
 | P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 0 / 10 | — | `feature/promotion-coin-checkin` |
-| **Tổng** | | **45** | **8** | **36 / 53** | | |
+| **Tổng** | | **45** | **8** | **42 / 53** | | |
 
 ## P00 — Chuẩn bị
 
@@ -99,15 +99,15 @@
 - [x] **P05.04** Ánh xạ `$Voucher` (API mục 1) từ entity `Voucher`
 - [x] **P05.05** `MeCoinController`
 - [x] **P05.06** `CoinRedemptionIT`
-- [ ] **P05.C1** 🔖 COMMIT `feat(promotion): redeem coins for platform vouchers` · hash: `…`
+- [x] **P05.C1** 🔖 COMMIT `feat(promotion): redeem coins for platform vouchers` · hash: `7ad5cd9`
 
 ## P06 — (D5 — cắt được) Hết hạn lô Điểm
 
-- [ ] **P06.01** ENTITY trước
-- [ ] **P06.02** `V17__coin_expired_type.sql`
-- [ ] **P06.03** `CoinExpiryJob`
-- [ ] **P06.04** `CoinExpiryJobIT` (`MutableClock`)
-- [ ] **P06.05** `web/`
+- [x] **P06.01** ENTITY trước
+- [x] **P06.02** `V17__coin_expired_type.sql`
+- [x] **P06.03** `CoinExpiryJob`
+- [x] **P06.04** `CoinExpiryJobIT` (`MutableClock`)
+- [x] **P06.05** `web/`
 - [ ] **P06.C1** 🔖 COMMIT `feat(promotion): expire coin lots after twelve months` · hash: `…`
 
 ## P07 — Nối giao diện `web/` & hoàn thiện
@@ -158,6 +158,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | P05.03 | Khóa `lock:coin:{userId}`; người đó bấm đổi chồng lên lần đang xử lý → `429 GNE-RAT-4290` (không phải lỗi nghiệp vụ). Trong transaction: khóa ví Điểm trước rồi mới kiểm Kho Voucher (xếp hàng theo người dùng) → `debit` → thêm `UserVoucher`; trùng `uk (user_id, voucher_id)` lọt qua khóa → rollback cả phần trừ Điểm, trả `409 4092`. "Đã dùng hết lượt" đếm `voucher_usages` so với `usage_per_user` (D4 điều chỉnh) |
 | P05.04 | `promotion/voucher/application/VoucherView.of(voucher, now, usedUp, saved)` — `$Voucher` (API mục 1); `shop.name`, `included_categories` để trống / `null` tới khi có cổng vendor / catalog (voucher đổi Điểm là voucher sàn `ALL` nên không ảnh hưởng) |
 | P05.06 | 5 luồng đổi cùng quà khi chỉ đủ Điểm cho 1 lần → đúng 1 `201`, các luồng còn lại `429` / `409` / `422`; `Σ amount = balance` |
+| P06.02 | Migration **`V16__coin_expired_type.sql`** (không phải V17 như plan gốc — D5, sổ đăng ký README đã sửa). `SchemaValidationIT` xanh |
+| P06.03 | Khóa ví bằng native `FOR UPDATE SKIP LOCKED` (`UserCoinRepository.lockSkipLocked`); mỗi người một transaction (`TransactionTemplate`), lỗi một người không chặn người khác. Idempotent nhờ FEFO (dòng `EXPIRED` ăn vào chính lô đã hết hạn) + kiểm `existsByUserIdAndTypeAndReferenceId` |
+| P06.05 | Web chỉ hiện `description` do server trả ("Điểm hết hạn") nên không cần khóa i18n theo loại — chỉ thêm `EXPIRED` vào kiểu `CoinTxnType` |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

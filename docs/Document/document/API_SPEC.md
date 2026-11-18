@@ -775,7 +775,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```json
 [ { "id": 7781, "type": "ORDER_CASHBACK", "description": "Hoàn điểm đơn TR-20260608-000041", "amount": 120, "created_at": "2026-06-08T10:00:00+07:00" } ]
 ```
-`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM`; `amount` âm khi tiêu.
+`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` (`EXPIRED` = Điểm của lô quá 12 tháng bị trừ — cron 00:15 hằng ngày); `amount` âm khi tiêu.
 
 #### `GET /public/coin-rewards` — Danh mục quà đổi Điểm
 ```json
@@ -2958,7 +2958,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `VoucherScope` | `ALL, CATEGORY, PRODUCT` |
 | `FundingParty` | `PLATFORM, VENDOR, CO_SPONSOR` |
 | `FlashSaleStatus` | `DRAFT, SCHEDULED, ACTIVE, ENDED` |
-| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM` |
+| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` |
 | `MessageType` | `TEXT, IMAGE, PRODUCT_CARD, ORDER_CARD` |
 | `ReviewReportReason` | `SPAM, OFFENSIVE, FAKE_PURCHASE` |
 | `TrafficSource` | `SEARCH, HOME_FEED, PROMOTION, SHOP_PAGE, EXTERNAL_LINK` |

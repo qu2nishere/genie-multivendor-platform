@@ -13,4 +13,8 @@ public interface UserCoinRepository extends JpaRepository<UserCoin, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM UserCoin c WHERE c.userId = :userId")
     Optional<UserCoin> findByIdForUpdate(@Param("userId") Long userId);
+
+    /** Khóa ví Điểm cho cron, BỎ QUA nếu đang bị khóa ({@code FOR UPDATE SKIP LOCKED} — TS 10.3). */
+    @Query(value = "SELECT * FROM user_coins WHERE user_id = :userId FOR UPDATE SKIP LOCKED", nativeQuery = true)
+    Optional<UserCoin> lockSkipLocked(@Param("userId") Long userId);
 }

@@ -19,7 +19,9 @@ export type CoinTxnType =
   | 'REVIEW_BONUS'
   | 'USED_AT_CHECKOUT'
   | 'ORDER_REFUND'
-  | 'VOUCHER_REDEEM';
+  | 'VOUCHER_REDEEM'
+  /** Lô Điểm quá 12 tháng bị trừ (cron 00:15 — plan 2026-11-16 Điểm Genie D5). */
+  | 'EXPIRED';
 
 export interface CoinTxn {
   id: number;
