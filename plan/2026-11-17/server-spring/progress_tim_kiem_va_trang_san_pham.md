@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C07 trừ C07.08 chạy thật (59 / 66), nhánh `feature/web-catalog-real-api` |
+| **Cập nhật gần nhất** | 2026-11-18 — xong 64 / 66; còn **C07.08** (chạy thật — người phụ trách tự làm) và **C08.05** (mở PR — chờ người phụ trách đồng ý) |
 
 **Cách dùng**
 
@@ -66,8 +66,8 @@
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 5 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 4 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 10 / 11 | — | `feature/web-catalog-real-api` |
-| C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **59 / 66** | | |
+| C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 5 / 6 | — | PR cuối |
+| **Tổng** | | | **54** | **12** | **64 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -155,18 +155,20 @@
 
 ## C08 — Hoàn thiện use case
 
-- [ ] **C08.01** `docs/api-tests/catalog-search.http`
-- [ ] **C08.02** OpenAPI
-- [ ] **C08.03** Tài liệu nguồn (Usecase, API 5.x / 17, ENTITY 13.1, LLD 9 + 10)
-- [ ] **C08.04** Tiến độ (checklist, xlsx, handoff, CLAUDE.md)
-- [ ] **C08.C1** 🔖 COMMIT `docs(catalog): record search and product page use cases as implemented` · hash: `…`
+- [x] **C08.01** `docs/api-tests/catalog-search.http`
+- [x] **C08.02** OpenAPI
+- [x] **C08.03** Tài liệu nguồn (Usecase, API 5.x / 17, ENTITY 13.1, LLD 9 + 10)
+- [x] **C08.04** Tiến độ (checklist, xlsx, handoff, CLAUDE.md)
+- [x] **C08.C1** 🔖 COMMIT `docs(catalog): record search and product page use cases as implemented` · hash: `a8f1c15`
 - [ ] **C08.05** Mở PR vào `develop`
 
 ---
 
 ## Chốt plan — tick tiến độ use case
 
-Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
+Làm **ngay khi xong plan** (hoặc xong từng use case),
+> 2026-11-18: 7 UC đã chuyển 🟡 Đang triển khai trong checklist (BE / Test / Nối); 7 dòng UC dưới đây tick khi **Chạy** xong (C07.08) → ✅.
+> trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
 - [ ] `UC-CAT-02` Tìm kiếm sản phẩm theo từ khóa (sau C02 + C07)
 - [ ] `UC-CAT-04` Gợi ý từ khóa tìm kiếm & Xu hướng (sau C03 + C07)
@@ -175,9 +177,9 @@ Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Doc
 - [ ] `UC-CAT-07` Xem gợi ý sản phẩm tương tự (sau C05 + C07)
 - [ ] `UC-CAT-16` Xem trang gian hàng (sau C06 + C07)
 - [ ] `UC-CAT-18` Chia sẻ sản phẩm bằng liên kết — Deeplink (sau C04 lượt xem + C07.04–C07.05)
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của 7 use case trong `Quản Lý UseCase.xlsx`
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của 7 use case trong `Quản Lý UseCase.xlsx`
 
 ## Ghi chú
 
@@ -211,6 +213,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C07.07 | Vitest mới: `slug.test.ts` (chung bộ mẫu với `SlugUtilTest`), `product.sku.rules.test.ts` (giá / tồn / khóa lựa chọn / deeplink / nguồn lượt xem — cùng ca với `VariantMatrixTest`), `suggest.mapper.test.ts`, OG giá trong `seo.test.ts` |
 | C07.08 | **Chưa chạy — để người phụ trách tự chạy** (CLAUDE.md: chỉ tick Chạy khi người dùng tự thao tác). Máy dev chưa có `.env` / container Genie. Cách chạy: `cp .env.example .env` (điền khóa) → `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d` → `cd server-spring && ./mvnw spring-boot:run` → chèn vài shop VERIFIED + sản phẩm PUBLISHED (plan seed S02–S04 hoặc tay) → `cd web && PUBLIC_REAL_API=product,search,shop npm run dev` → thử tìm có dấu / không dấu / gõ sai, lọc + sắp, dropdown gợi ý, chi tiết chọn SKU hết hàng, tương tự, trang shop, dán link chia sẻ vào Zalo / Facebook Sharing Debugger |
 | C07.09 | `npm ci` lại (node_modules thiếu `@types/node` dù đã khai trong lock — làm `astro check` báo 7 lỗi cũ). Sau đó: eslint 0 lỗi · `astro check` + `tsc` 0 lỗi · Vitest 68 file / 328 test xanh · build OK · i18n 3267 khóa OK · Playwright `guest` + `seo` 22/22 xanh (2 khổ màn hình) |
+| C08.02 | Thêm `CatalogOpenApiIT` (commit `a545337`): `/v3/api-docs` có đủ 10 endpoint, summary chứa đủ 7 mã UC |
+| C08.04 | Checklist: 7 UC → 🟡 Đang triển khai (BE / Test / Nối ☑, Chạy ☐; UC-CAT-05 BE / Nối `◐` — chờ voucher shop + UC-CAT-01), Tổng quan 5 → 12 đang triển khai, 67 → 60 chưa có backend, phân hệ 02 = 0 / 7 / 10, mục 3 thêm việc còn lại của cụm. Excel: cột S = "Đang triển khai" + ghi chú U, sheet Thành viên. CLAUDE.md mục 2 + 9 |
+| C08.05 | **Chưa làm** — theo quy trình repo chỉ push / viết nội dung PR khi người phụ trách yêu cầu. 4 nhánh xếp chồng: `feature/catalog-search` → `feature/catalog-product-detail` → `feature/catalog-shop-page` → `feature/web-catalog-real-api` (mỗi nhánh tách từ nhánh trước) — mở PR vào `develop` theo đúng thứ tự, hoặc gộp một PR từ nhánh cuối |
 
 ## Nhật ký
 
@@ -226,3 +231,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C05 tương tự & gợi ý hôm nay: `/{id}/similar` (ứng viên + chấm điểm + bù anh em), `/recommendations` (seed theo ngày, xen kẽ 3 : 2); 3 unit + 6 IT xanh | `f0c594a` |
 | 2026-11-18 | C06 trang shop: `/public/shops/{id}`, `/public/shops?featured=true`, mã `GNE-VND-4041`; 6 IT xanh; `./mvnw verify` toàn bộ 211 test xanh (1 bỏ qua = test hiệu năng) | `a2c33db` `4fc1468` |
 | 2026-11-18 | C07 nối web: sản phẩm / gợi ý / shop gọi API thật sau cờ `PUBLIC_REAL_API`, BuyBox theo SKU, deeplink `?v={variant_id}&src=share`, OG giá, ghi lượt xem; verify + Playwright 22/22 xanh. C07.08 chạy thật để người phụ trách làm | `ff452e1` `d8e824d` `cafbf78` |
+| 2026-11-18 | C08 hoàn thiện: `catalog-search.http`, `CatalogOpenApiIT`, Usecase / API_SPEC / LLD / handoff, checklist + Excel + CLAUDE.md. Còn C07.08 (chạy thật) và C08.05 (PR) | `a545337` `a8f1c15` |
