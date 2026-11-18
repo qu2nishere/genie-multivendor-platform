@@ -22,7 +22,8 @@ class PublicShopIT extends CatalogITSupport {
         long audio = data.category("Âm thanh", electronics);
         long fashion = data.category("Thời trang", null);
         data.category("Không có hàng", null);
-        var shop = data.shop().name("TechZone Official").mall().rating(4.9).followers(128000).create();
+        var shop = data.shop().name("TechZone Official").mall().rating(4.9).followers(128000)
+                .province(202, "TP. Hồ Chí Minh").create();
         data.product(shop).category(audio).sku(1000, 1).create();
         data.product(shop).category(fashion).sku(1000, 1).create();
         data.product(shop).category(fashion).status("HIDDEN").sku(1000, 1).create();
@@ -34,6 +35,7 @@ class PublicShopIT extends CatalogITSupport {
         assertThat((Double) read(r, "$.data.rating_avg")).isEqualTo(4.9);
         assertThat((Integer) read(r, "$.data.follower_count")).isEqualTo(128000);
         assertThat((Integer) read(r, "$.data.product_count")).isEqualTo(2);
+        assertThat((String) read(r, "$.data.province_name")).isEqualTo("TP. Hồ Chí Minh");
         assertThat((Double) read(r, "$.data.chat_response_rate")).isEqualTo(95.5);
         assertThat((Integer) read(r, "$.data.avg_response_minutes")).isEqualTo(6);
         assertThat((String) read(r, "$.data.joined_at")).isEqualTo("2021-03-02");

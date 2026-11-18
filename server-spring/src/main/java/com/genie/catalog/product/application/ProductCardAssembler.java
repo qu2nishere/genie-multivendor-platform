@@ -25,7 +25,7 @@ public class ProductCardAssembler {
 
     static final String SQL = """
             SELECT p.id, p.name, p.base_price, p.sold, p.rating, p.is_pre_order,
-                   vp.id AS shop_id, vp.shop_name,
+                   vp.id AS shop_id, vp.shop_name, vp.is_mall,
                    (vsc.freeship_threshold IS NOT NULL) AS free_ship,
                    (vp.vacation_starts_at IS NOT NULL AND vp.vacation_starts_at <= :now
                         AND (vp.vacation_ends_at IS NULL OR vp.vacation_ends_at > :now)) AS on_vacation,
@@ -89,7 +89,7 @@ public class ProductCardAssembler {
                 Pricing.discountPercent(price, original),
                 Math.round(rating * 10) / 10.0,
                 rs.getLong("sold"),
-                new ProductCard.ShopRef(rs.getLong("shop_id"), rs.getString("shop_name")),
+                new ProductCard.ShopRef(rs.getLong("shop_id"), rs.getString("shop_name"), rs.getBoolean("is_mall")),
                 rs.getBoolean("free_ship"),
                 rs.getBoolean("is_pre_order"),
                 rs.getBoolean("on_vacation"),

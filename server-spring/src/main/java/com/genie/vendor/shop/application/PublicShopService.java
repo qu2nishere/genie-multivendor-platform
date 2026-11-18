@@ -46,7 +46,7 @@ public class PublicShopService {
 
     /** {@code GET /public/shops/{id}}. */
     public record ShopPage(long id, String name, String logoUrl, String coverUrl, String description, boolean isMall,
-                           boolean isFavorite, double ratingAvg, long followerCount, long productCount,
+                           boolean isFavorite, double ratingAvg, long followerCount, long productCount, String provinceName,
                            Double chatResponseRate, Integer avgResponseMinutes, LocalDate joinedAt, boolean isOnline,
                            Vacation vacation, List<CategoryRef> categories) {
     }
@@ -90,7 +90,7 @@ public class PublicShopService {
         }
         ShopPage p = c.page();
         return new ShopPage(p.id(), p.name(), p.logoUrl(), p.coverUrl(), p.description(), p.isMall(), p.isFavorite(),
-                p.ratingAvg(), p.followerCount(), p.productCount(), p.chatResponseRate(), p.avgResponseMinutes(),
+                p.ratingAvg(), p.followerCount(), p.productCount(), p.provinceName(), p.chatResponseRate(), p.avgResponseMinutes(),
                 p.joinedAt(), false, vacation(c), p.categories());
     }
 
@@ -120,7 +120,7 @@ public class PublicShopService {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 SELECT vp.id, vp.user_id, vp.shop_name, vp.logo_url, vp.cover_url, vp.shop_description, vp.is_mall,
                        vp.is_favorite, vp.rating_avg, vp.follower_count, vp.chat_response_rate, vp.avg_response_minutes,
-                       vp.created_at, vp.vacation_starts_at, vp.vacation_ends_at, vp.vacation_message
+                       vp.pickup_province, vp.created_at, vp.vacation_starts_at, vp.vacation_ends_at, vp.vacation_message
                   FROM vendor_profiles vp JOIN users u ON u.id = vp.user_id
                  WHERE vp.id = ? AND vp.kyc_status = 'VERIFIED' AND u.status = 'ACTIVE'""", shopId);
         if (rows.isEmpty()) {
@@ -146,7 +146,7 @@ public class PublicShopService {
         ShopPage page = new ShopPage(shopId, (String) r.get("shop_name"), url((String) r.get("logo_url")),
                 url((String) r.get("cover_url")), (String) r.get("shop_description"), Boolean.TRUE.equals(r.get("is_mall")),
                 Boolean.TRUE.equals(r.get("is_favorite")), ((Number) r.get("rating_avg")).doubleValue(),
-                ((Number) r.get("follower_count")).longValue(), productCount, rate == null ? null : rate.doubleValue(),
+                ((Number) r.get("follower_count")).longValue(), productCount, (String) r.get("pickup_province"), rate == null ? null : rate.doubleValue(),
                 r.get("avg_response_minutes") == null ? null : ((Number) r.get("avg_response_minutes")).intValue(),
                 created == null ? null : created.atZoneSameInstant(VN).toLocalDate(), false, null, categories);
         return new Cached(page, toOffset(r.get("vacation_starts_at")), toOffset(r.get("vacation_ends_at")),

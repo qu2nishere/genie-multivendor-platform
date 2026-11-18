@@ -129,6 +129,7 @@ class ProductSearchIT extends CatalogITSupport {
         assertThat((Double) read(r, "$.data[0].rating_avg")).isEqualTo(4.8);
         assertThat((Integer) read(r, "$.data[0].sold_count")).isEqualTo(2100);
         assertThat((String) read(r, "$.data[0].shop.name")).isEqualTo("TechZone Official");
+        assertThat((Boolean) read(r, "$.data[0].shop.is_mall")).isFalse();
         assertThat((Boolean) read(r, "$.data[0].is_free_shipping")).isTrue();
         assertThat((Boolean) read(r, "$.data[0].is_shop_on_vacation")).isFalse();
         assertThat((String) read(r, "$.data[0].image_url")).endsWith("/product-media/product/1/main.webp");

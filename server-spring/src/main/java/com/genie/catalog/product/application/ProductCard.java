@@ -20,7 +20,8 @@ public record ProductCard(
         boolean isShopOnVacation,
         FlashSale flashSale) {
 
-    public record ShopRef(long id, String name) {
+    /** {@code isMall} = nhãn "Chính hãng" trên thẻ (như {@code $ShopMini}). */
+    public record ShopRef(long id, String name, boolean isMall) {
     }
 
     public record FlashSale(int soldCount, int totalCount) {
