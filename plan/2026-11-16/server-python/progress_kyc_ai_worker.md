@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (19 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (27 / 77) |
 
 **Cách dùng**
 
@@ -38,15 +38,15 @@
 |---|---|---:|---:|---:|---|---|
 | Y00 | Chuẩn bị & chốt hợp đồng | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
 | Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
-| Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 5 / 6 | — | `feature/ai-worker-kyc` |
-| Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 0 / 8 | — | `feature/ai-worker-kyc` |
+| Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 6 / 6 | — | `feature/ai-worker-kyc` |
+| Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 7 / 8 | — | `feature/ai-worker-kyc` |
 | Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 0 / 12 | — | `feature/ai-worker-kyc` |
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 0 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 0 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **19 / 77** | | |
+| **Tổng** | | **65** | **12** | **27 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -75,17 +75,17 @@
 - [x] **Y02.03** `test_images.py` (dùng `respx`)
 - [x] **Y02.04** `core/callback.py` `send_result(kyc_id, payload)`
 - [x] **Y02.05** `test_callback.py`
-- [ ] **Y02.C1** 🔖 COMMIT `feat(ai-worker): download kyc images safely and call back the backend with retries` · hash: `…`
+- [x] **Y02.C1** 🔖 COMMIT `feat(ai-worker): download kyc images safely and call back the backend with retries` · hash: `42dd2a9`
 
 ## Y03 — Tầng 1: mã QR mặt trước
 
-- [ ] **Y03.01** `tests/fixtures/build_card.py`
-- [ ] **Y03.02** `qr.decode(image)`
-- [ ] **Y03.03** `qr.parse(raw)`
-- [ ] **Y03.04** Phân loại kết quả
-- [ ] **Y03.05** `test_qr.py`
-- [ ] **Y03.06** Chuẩn hóa họ tên
-- [ ] **Y03.07** Đo tỷ lệ đọc QR
+- [x] **Y03.01** `tests/fixtures/build_card.py`
+- [x] **Y03.02** `qr.decode(image)`
+- [x] **Y03.03** `qr.parse(raw)`
+- [x] **Y03.04** Phân loại kết quả
+- [x] **Y03.05** `test_qr.py`
+- [x] **Y03.06** Chuẩn hóa họ tên
+- [x] **Y03.07** Đo tỷ lệ đọc QR
 - [ ] **Y03.C1** 🔖 COMMIT `feat(ai-worker): decode and parse the citizen id qr code` · hash: `…`
 
 ## Y04 — Tầng 1: MRZ mặt sau & các luật đối chiếu
@@ -180,6 +180,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y00.05 | implement 8.1 cũ (camelCase, worker trả `riskScore`) đã đánh dấu thay thế ở plan Mở shop & KYC K12.04. |
 | Y01.05 | Mô hình nạp ở `app/kyc/models.py` vào `app.state.face_models`; `/health` giờ trả `UP` sau lifespan kèm `models_loaded` (thiếu mô hình vẫn UP — tầng 1 chạy được), `LOADING` 503 trước khi khởi động xong. |
 | Y02.01 | Host so khớp kiểu glob (`*.s3.ap-southeast-1.amazonaws.com`), cả dạng `host:port`; giải mã bằng Pillow (sửa hướng EXIF) rồi chuyển OpenCV BGR, cạnh dài ≤ 2000 px — tất cả trong bộ nhớ. |
+| Y03.07 | Tỷ lệ đọc QR trên 32 biến thể thẻ mẫu (xoay 0/90/180/270, thu 75%, tối 70%, mờ nhẹ): **32/32 = 100%** → giữ `cv2.QRCodeDetector`, chưa cần `zxing-cpp`. Lưu ý: thẻ mẫu tự dựng sạch hơn ảnh chụp điện thoại thật — đo lại khi có ảnh thật được phép dùng. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
