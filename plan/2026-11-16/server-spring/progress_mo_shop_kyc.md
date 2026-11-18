@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (67 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (82 / 137) |
 
 **Cách dùng**
 
@@ -48,15 +48,15 @@
 | K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
-| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 15 / 17 | — | `feature/vendor-k05-kyc-ai` |
-| K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
+| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 16 / 17 | — | `feature/vendor-k05-kyc-ai` |
+| K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 14 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 0 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 0 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **67 / 137** | | |
+| **Tổng** | | **112** | **25** | **82 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -143,25 +143,25 @@
 - [ ] **K05.14** Chạy thử chế độ giả lập
 - [x] **K05.C1** 🔖 COMMIT `feat(vendor): score kyc risk signals with configurable points and thresholds` · hash: `6e69ddc`
 - [x] **K05.C2** 🔖 COMMIT `feat(vendor): send kyc dossiers to the ai worker and apply its result` · hash: `4f3019f`
-- [ ] **K05.C3** 🔖 COMMIT `feat(vendor): route stuck or failed ai checks to manual review` · hash: `…`
+- [x] **K05.C3** 🔖 COMMIT `feat(vendor): route stuck or failed ai checks to manual review` · hash: `25cfddc`
 
 ## K06 — Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04)
 
-- [ ] **K06.01** `KycRejectReason`
-- [ ] **K06.02** Entity
-- [ ] **K06.03** `KycQueryService.search(status, page, size)`
-- [ ] **K06.04** `KycQueryService.detail(id, reviewer)`
-- [ ] **K06.05** `KycReviewService.approve(id, staffId, commissionRate?, isMall?)`
-- [ ] **K06.06** `reject(id, staffId, reasonCode, note)`
-- [ ] **K06.07** `requestSupplement(id, staffId, documents[], note)`
-- [ ] **K06.08** `requeue(id, staffId)`
-- [ ] **K06.09** `AdminKycController`
-- [ ] **K06.10** `KycSupplementExpiryJob`
-- [ ] **K06.11** Email
-- [ ] **K06.12** `KycReviewIT`
-- [ ] **K06.C1** 🔖 COMMIT `feat(vendor): review kyc dossiers manually with approve, reject and supplement` · hash: `…`
+- [x] **K06.01** `KycRejectReason`
+- [x] **K06.02** Entity
+- [x] **K06.03** `KycQueryService.search(status, page, size)`
+- [x] **K06.04** `KycQueryService.detail(id, reviewer)`
+- [x] **K06.05** `KycReviewService.approve(id, staffId, commissionRate?, isMall?)`
+- [x] **K06.06** `reject(id, staffId, reasonCode, note)`
+- [x] **K06.07** `requestSupplement(id, staffId, documents[], note)`
+- [x] **K06.08** `requeue(id, staffId)`
+- [x] **K06.09** `AdminKycController`
+- [x] **K06.10** `KycSupplementExpiryJob`
+- [x] **K06.11** Email
+- [x] **K06.12** `KycReviewIT`
+- [x] **K06.C1** 🔖 COMMIT `feat(vendor): review kyc dossiers manually with approve, reject and supplement` · hash: `7ea86e8`
 - [ ] **K06.C2** 🔖 COMMIT `feat(vendor): expire kyc supplement requests after seven days` · hash: `…`
-- [ ] **K06.13** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 2: K04–K06).
+- [-] **K06.13** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 2: K04–K06).
 
 ## K07 — Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05)
 
@@ -287,6 +287,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K05.07 | `kyc_results` không có cột `national_emblem` / `fingerprint` → hai cờ này không lưu (màn duyệt trả `null`); thêm cột để đợt sau (ENTITY trước). Không đồng ý sinh trắc: không lưu điểm khuôn mặt, bỏ tín hiệu FACE_* / LIVENESS_SUSPECT. |
 | K05.10 | Mốc tính quá hạn = `kyc_submitted_at` (listener gửi AI ngay sau commit nộp hồ sơ) — không thêm cột. |
 | K05.12 | Trùng CCCD (+50) rơi vùng 30–69 → `MANUAL_REVIEW` (không phải REJECTED) đúng bảng điểm ENTITY 1.6. |
+| K05.14 | Chưa chạy — gộp vào lần chạy thử backend local (stub) sau K10 cùng các endpoint khác. |
+| K06.01 | Mã lý do theo web (`REJECT_REASONS`): BLURRY_DOCUMENT, INFO_MISMATCH, EXPIRED_DOCUMENT, SUSPECTED_FORGERY, MISSING_LICENSE, OTHER. Lý do lưu = "nhãn: ghi chú". |
+| K06.04 | `checks.national_emblem` / `fingerprint` luôn `null` (chưa có cột — xem K05.07). Thêm trường `is_mall`, `manual_review_requested` vào chi tiết (màn hình cần). `shop_commission_rate` trả theo phần trăm (3 = 3%), lưu tỷ lệ 0.0300. Gọi lại chi tiết sau thao tác duyệt không ghi thêm `KYC_DOCUMENT_VIEWED`. |
+| K06.05 | Hoa hồng riêng 0–50% (cùng giới hạn web `MAX_COMMISSION_RATE`). `request-supplement` nhận 6 loại giấy tờ của API 16.1 (kể cả BUSINESS_REGISTRATION, TAX_NOTICE). |
+| K06.13 | Chưa mở PR — chờ người dùng. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
