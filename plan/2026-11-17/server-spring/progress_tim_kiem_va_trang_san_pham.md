@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C06 (49 / 66; backend đủ 211 test xanh), nhánh `feature/catalog-shop-page` |
+| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C07 trừ C07.08 chạy thật (59 / 66), nhánh `feature/web-catalog-real-api` |
 
 **Cách dùng**
 
@@ -65,9 +65,9 @@
 | C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 8 / 8 | — | `feature/catalog-product-detail` |
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 5 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 4 / 4 | — | `feature/catalog-shop-page` |
-| C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 0 / 11 | — | `feature/web-catalog-real-api` |
+| C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 10 / 11 | — | `feature/web-catalog-real-api` |
 | C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **49 / 66** | | |
+| **Tổng** | | | **54** | **12** | **59 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -141,17 +141,17 @@
 
 ## C07 — Nối giao diện `web/` + Deeplink (UC-CAT-18)
 
-- [ ] **C07.01** `suggest.api.ts` — đường dẫn + DTO 3 nhóm + debounce / abort
-- [ ] **C07.02** `product.api.ts` — facets gộp, similar, recommendations, `recordView`
-- [ ] **C07.03** Trang `/search`, `/c/[slug]` — bộ lọc theo URL params
-- [ ] **C07.04** Trang `/p/[slug]-[id]` — slug 301, 404, `?v=`, `src`, Open Graph giá
-- [ ] **C07.05** `WishShare.tsx` — Web Share API / Clipboard
-- [ ] **C07.06** `shop.api.ts` + `/shop/[id]`
-- [ ] **C07.07** Vitest: mapper, `slug.ts`, khóa giá trị biến thể
+- [x] **C07.01** `suggest.api.ts` — đường dẫn + DTO 3 nhóm + debounce / abort
+- [x] **C07.02** `product.api.ts` — facets gộp, similar, recommendations, `recordView`
+- [x] **C07.03** Trang `/search`, `/c/[slug]` — bộ lọc theo URL params
+- [x] **C07.04** Trang `/p/[slug]-[id]` — slug 301, 404, `?v=`, `src`, Open Graph giá
+- [x] **C07.05** `WishShare.tsx` — Web Share API / Clipboard
+- [x] **C07.06** `shop.api.ts` + `/shop/[id]`
+- [x] **C07.07** Vitest: mapper, `slug.ts`, khóa giá trị biến thể
 - [ ] **C07.08** Chạy thật hai phía (`PUBLIC_REAL_API=catalog,search,shop`)
-- [ ] **C07.09** `npm run verify` + Playwright `/search`, `/p/…`
-- [ ] **C07.C1** 🔖 COMMIT `fix(web): call catalog endpoints defined in the api spec` · hash: `…`
-- [ ] **C07.C2** 🔖 COMMIT `feat(web): share product deeplink with open graph preview` · hash: `…`
+- [x] **C07.09** `npm run verify` + Playwright `/search`, `/p/…`
+- [x] **C07.C1** 🔖 COMMIT `fix(web): call catalog endpoints defined in the api spec` · hash: `d8e824d`
+- [x] **C07.C2** 🔖 COMMIT `feat(web): share product deeplink with open graph preview` · hash: `cafbf78`
 
 ## C08 — Hoàn thiện use case
 
@@ -204,6 +204,13 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C05.02 | Tập nguồn dòng chung tối đa 240 (= 8 trang × 30, khớp giao diện "Trang 2/8"), cache 30 phút theo ngày. Có token → `Cache-Control: private, no-cache` |
 | C06.01 | **Chưa phối hợp** — cần báo Nguyễn Ngọc Thiện (chủ plan Mở shop & KYC): đã thêm `vendor/shop/api/PublicShopController` + `vendor/shop/application/PublicShopService` (chỉ đọc). Khi plan đó có `ShopFacade` / sửa thông tin shop (UC-VND-21) thì gọi `PublicShopService.evict(shopId)` |
 | C06.02 | `product_count` đếm sản phẩm `PUBLISHED` trực tiếp (cột `active_product_count` chưa có sự kiện nào cập nhật). `GET /public/shops?featured=true` trả thêm `logo_url` (API 5.12 chưa có trường này). Cache 10 phút, tạm nghỉ tính lúc trả. Thêm mã `GNE-VND-4041` (API 15 + web + i18n, commit `4fc1468`) |
+| C07.02 | Cờ nối thật theo nhóm: `PUBLIC_REAL_API=product,search,shop` (plan ghi `catalog,search,shop` — đổi vì nhóm `catalog` là cây danh mục UC-CAT-01, chưa có backend). URL / UI vẫn lọc theo **tên** thương hiệu, nơi bán; tầng `infrastructure` gọi `include_facets=true` của cùng phạm vi để đổi tên → id (tên không có → id `-1` = rỗng). `listProductsByIds` gọi chi tiết song song (API không lọc theo id). Thêm commit backend `ff452e1`: `shop.is_mall` trên thẻ, `province_name` ở trang shop |
+| C07.03 | Trang `/search`, `/c/[slug]` không đổi (bộ lọc đã theo URL params từ G08.17). Giới hạn: API 5.3 chỉ nhận **một** `category_id` → chọn nhiều danh mục gốc thì lấy danh mục đầu. Danh mục trên web vẫn là mock (UC-CAT-01 chưa làm) nên `category_id` từ slug mock chưa khớp CSDL thật — lọc danh mục chỉ đúng khi UC-CAT-01 nối thật |
+| C07.04 | BuyBox giá / tồn / khóa lựa chọn theo SKU thật (`stockFor`, `isOptionOut`, `priceOf` theo SKU) — mock giữ luật cũ. `?v=` đọc `variant_id` (UC-CAT-18), vẫn đọc định dạng cũ `0-1`. `src` đọc lúc SSR (BuyBox xóa khỏi URL khi hydrate) → `trackProductView` gửi `fetch keepalive` kèm token nếu có. Trang "không còn bán" gọi `/similar` của chính sản phẩm đó |
+| C07.06 | Trang shop: tab danh mục lấy `shop.categories` (API 5.11), nhãn thời gian phản hồi từ `avg_response_minutes` qua khóa i18n `shop.head.response_minutes/hours`. Mock "không tìm thấy shop" đổi `GNE-CAT-4041` → `GNE-VND-4041`. Phí ship / ngưỡng freeship không có ở API trang shop (tính ở checkout) |
+| C07.07 | Vitest mới: `slug.test.ts` (chung bộ mẫu với `SlugUtilTest`), `product.sku.rules.test.ts` (giá / tồn / khóa lựa chọn / deeplink / nguồn lượt xem — cùng ca với `VariantMatrixTest`), `suggest.mapper.test.ts`, OG giá trong `seo.test.ts` |
+| C07.08 | **Chưa chạy — để người phụ trách tự chạy** (CLAUDE.md: chỉ tick Chạy khi người dùng tự thao tác). Máy dev chưa có `.env` / container Genie. Cách chạy: `cp .env.example .env` (điền khóa) → `docker compose --env-file .env -f deploy/docker-compose.local.yml up -d` → `cd server-spring && ./mvnw spring-boot:run` → chèn vài shop VERIFIED + sản phẩm PUBLISHED (plan seed S02–S04 hoặc tay) → `cd web && PUBLIC_REAL_API=product,search,shop npm run dev` → thử tìm có dấu / không dấu / gõ sai, lọc + sắp, dropdown gợi ý, chi tiết chọn SKU hết hàng, tương tự, trang shop, dán link chia sẻ vào Zalo / Facebook Sharing Debugger |
+| C07.09 | `npm ci` lại (node_modules thiếu `@types/node` dù đã khai trong lock — làm `astro check` báo 7 lỗi cũ). Sau đó: eslint 0 lỗi · `astro check` + `tsc` 0 lỗi · Vitest 68 file / 328 test xanh · build OK · i18n 3267 khóa OK · Playwright `guest` + `seo` 22/22 xanh (2 khổ màn hình) |
 
 ## Nhật ký
 
@@ -218,3 +225,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C04 chi tiết & lượt xem: `/public/products/{id}`, `/{id}/variants`, `POST /{id}/views` + job ghi gộp; 5 unit + 8 IT xanh | `71e8533` `56d938e` |
 | 2026-11-18 | C05 tương tự & gợi ý hôm nay: `/{id}/similar` (ứng viên + chấm điểm + bù anh em), `/recommendations` (seed theo ngày, xen kẽ 3 : 2); 3 unit + 6 IT xanh | `f0c594a` |
 | 2026-11-18 | C06 trang shop: `/public/shops/{id}`, `/public/shops?featured=true`, mã `GNE-VND-4041`; 6 IT xanh; `./mvnw verify` toàn bộ 211 test xanh (1 bỏ qua = test hiệu năng) | `a2c33db` `4fc1468` |
+| 2026-11-18 | C07 nối web: sản phẩm / gợi ý / shop gọi API thật sau cờ `PUBLIC_REAL_API`, BuyBox theo SKU, deeplink `?v={variant_id}&src=share`, OG giá, ghi lượt xem; verify + Playwright 22/22 xanh. C07.08 chạy thật để người phụ trách làm | `ff452e1` `d8e824d` `cafbf78` |
