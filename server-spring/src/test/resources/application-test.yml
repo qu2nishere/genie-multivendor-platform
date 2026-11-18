@@ -15,6 +15,7 @@ genie:
     jwt-secret: test-secret-0123456789-test-secret-0123456789
     internal-token: test-internal-token
     otp-pepper: test-otp-pepper
+    wallet-hmac-secret: test-wallet-secret       # băm số dư ví shop / Điểm (CoinBalanceHasher)
     cookie-secure: false
     cors-origins: http://localhost:4321
   scheduling:

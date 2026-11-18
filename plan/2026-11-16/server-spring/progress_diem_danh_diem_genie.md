@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/promotion-coin-checkin` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 53) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (11 / 53) |
 
 **Cách dùng**
 
@@ -23,45 +23,45 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | Đường dẫn: UC-PRO-09 ghi `GET /api/v1/customer/coins`, `/coins/history`; API 3.13 ghi `/me/coins`, `/me/coins/transactions`, `/me/coins/check-ins`, `/me/coins/redemptions`, `/public/coin-rewards` | ☐ | |
-| D2 | Khóa HMAC của `balance_hash` Điểm — TS 16.6 chỉ có `WALLET_HMAC_SECRET` | ☐ | |
-| D3 | Danh mục quà đổi Điểm ("danh sách do sàn cấu hình") không có bảng | ☐ | |
-| D4 | `user_vouchers` có `UNIQUE (user_id, voucher_id)` → một người chỉ giữ 1 bản mỗi voucher | ☐ | |
-| D5 | Lô Điểm hết hạn: cần dòng âm nhưng `CoinTransactionType` không có loại cho việc này | ☐ | |
-| D6 | `streak_days` trả cho giao diện 7 ô | ☐ | |
-| D7 | LLD 9.9 ghi `UNIQUE(user_id, checkin_date)` (mỗi ngày một dòng) nhưng entity / `V4` là mỗi khách một dòng | ☐ | |
-| D8 | Phát hiện lệch số dư (`verifyHash` sai) | ☐ | |
+| D1 | Đường dẫn: UC-PRO-09 ghi `GET /api/v1/customer/coins`, `/coins/history`; API 3.13 ghi `/me/coins`, `/me/coins/transactions`, `/me/coins/check-ins`, `/me/coins/redemptions`, `/public/coin-rewards` | ☑ | Theo API: `/me/coins`, `/me/coins/transactions`, `/me/coins/check-ins`, `/me/coins/redemptions`, `/public/coin-rewards`; sửa Usecase.md ở P07.05 · 2026-11-17 |
+| D2 | Khóa HMAC của `balance_hash` Điểm — TS 16.6 chỉ có `WALLET_HMAC_SECRET` | ☑ | Như đề xuất — `HMAC-SHA256(wallet-hmac-secret, "coin:" + userId + ":" + balance)` hex chữ thường (khớp seed `R__seed_demo_70`) · 2026-11-17 |
+| D3 | Danh mục quà đổi Điểm ("danh sách do sàn cấu hình") không có bảng | ☑ | Như đề xuất — `genie.coin.rewards[]` `{id, coin-cost, voucher-code}` trỏ `COIN500/1000/2000` · 2026-11-17 |
+| D4 | `user_vouchers` có `UNIQUE (user_id, voucher_id)` → một người chỉ giữ 1 bản mỗi voucher | ☑ | **Điều chỉnh:** bảng `user_vouchers` không lưu "đã dùng" qua entity (`isUsed` là `@Transient` = đã dùng HẾT lượt, ENTITY 4.3) → đếm `voucher_usages` so với `usage_per_user`. Đang giữ voucher (còn lượt) → `409 GNE-PRO-4092`; giữ mà đã hết lượt → cũng `409 GNE-PRO-4092` kèm `details.reason = "USAGE_LIMIT_REACHED"` (cấp lại sẽ vượt giới hạn lượt / người). Không xóa / sửa dòng cũ · 2026-11-17 |
+| D5 | Lô Điểm hết hạn: cần dòng âm nhưng `CoinTransactionType` không có loại cho việc này | ☑ | Làm P06. Migration **`V16__coin_expired_type.sql`** (nhánh coin merge sau banner `V15`, trước KYC → KYC dời sang `V17`; sửa sổ đăng ký README mục 4) · 2026-11-17 |
+| D6 | `streak_days` trả cho giao diện 7 ô | ☑ | Như đề xuất — `streak_days = ((streakCount − 1) mod 7) + 1` khi chuỗi còn hiệu lực, ngược lại 0 · 2026-11-17 |
+| D7 | LLD 9.9 ghi `UNIQUE(user_id, checkin_date)` (mỗi ngày một dòng) nhưng entity / `V4` là mỗi khách một dòng | ☑ | Như đề xuất — theo ENTITY (mỗi khách một dòng), sửa câu LLD 9.9 · 2026-11-17 |
+| D8 | Phát hiện lệch số dư (`verifyHash` sai) | ☑ | Như đề xuất — cổng `CoinAlertPort` (mặc định ghi log lỗi); ghi Điểm → `500 GNE-SYS-5000`, đọc vẫn trả số dư · 2026-11-17 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| P00 | Chuẩn bị | 5 | 0 | 0 / 5 | — | `feature/promotion-coin-checkin` |
-| P01 | Nền: mã lỗi, cấu hình, băm số dư | 6 | 1 | 0 / 7 | — | `feature/promotion-coin-checkin` |
+| P00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/promotion-coin-checkin` |
+| P01 | Nền: mã lỗi, cấu hình, băm số dư | 6 | 1 | 6 / 7 | — | `feature/promotion-coin-checkin` |
 | P02 | Sổ Điểm dùng chung (cộng / trừ theo lô) | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P03 | UC-PRO-08 Điểm danh | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 0 / 7 | — | `feature/promotion-coin-checkin` |
 | P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 0 / 10 | — | `feature/promotion-coin-checkin` |
-| **Tổng** | | **45** | **8** | **0 / 53** | | |
+| **Tổng** | | **45** | **8** | **11 / 53** | | |
 
 ## P00 — Chuẩn bị
 
-- [ ] **P00.01** Kiểm danh tính git
-- [ ] **P00.02** Chốt quyết định D1–D8
-- [ ] **P00.03** Tạo nhánh
-- [ ] **P00.04** Đọc màn mock
-- [ ] **P00.05** Đối chiếu `coins.api.ts`
+- [x] **P00.01** Kiểm danh tính git
+- [x] **P00.02** Chốt quyết định D1–D8
+- [x] **P00.03** Tạo nhánh
+- [x] **P00.04** Đọc màn mock
+- [x] **P00.05** Đối chiếu `coins.api.ts`
 
 ## P01 — Nền: mã lỗi, cấu hình, băm số dư
 
-- [ ] **P01.01** `ErrorCode`
-- [ ] **P01.02** `CoinProperties` (`genie.coin`)
-- [ ] **P01.03** `CoinBalanceHasher`
-- [ ] **P01.04** `CoinBalanceHasherTest`
-- [ ] **P01.05** Repository
-- [ ] **P01.06** Tài liệu
+- [x] **P01.01** `ErrorCode`
+- [x] **P01.02** `CoinProperties` (`genie.coin`)
+- [x] **P01.03** `CoinBalanceHasher`
+- [x] **P01.04** `CoinBalanceHasherTest`
+- [x] **P01.05** Repository
+- [x] **P01.06** Tài liệu
 - [ ] **P01.C1** 🔖 COMMIT `feat(promotion): add coin settings, balance hash and coin error codes` · hash: `…`
 
 ## P02 — Sổ Điểm dùng chung (cộng / trừ theo lô)
@@ -142,9 +142,13 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| P00.03 | Nhánh tách từ `feature/admin-home-banner` (xếp nối tiếp seed → audit → banner → coin) để `ErrorCode`, i18n, số migration không xung đột |
+| P00.05 | Web chờ: `GET /me/coins` đúng API; lịch sử đọc mảng `{id, type, description, amount, created_at}` (`limit` 50 — API cho tối đa 50); quà `{id, coin_cost, voucher_value, min_order_value}`; điểm danh đọc `{reward}`; đổi quà đọc `voucher.code`. Nhánh thật đang dùng `USE_MOCK` → đổi `isMocked("coins")` ở P07 |
+| P03.01 | Lỗi tiềm ẩn đã sửa trong entity: `lastCheckinAt` đọc từ CSDL mang offset UTC (`hibernate.jdbc.time_zone: UTC`) nên `toLocalDate()` lệch ngày Việt Nam lúc 00:00–07:00 → `checkIn(now)` quy `lastCheckinAt` về cùng offset với `now` trước khi so ngày (ghi ENTITY Phụ lục E) |
+| P01.03 | `CoinBalanceHasher` đọc `genie.security.wallet-hmac-secret` bằng `@Value` (không có trong `SecurityProperties`); thêm `seal(coin)` để ghi lại băm. Profile test thêm `wallet-hmac-secret: test-wallet-secret`. Vector cố định trong test khớp băm dữ liệu mẫu `R__seed_demo_70` (`coin:1:1250`, khóa `local-wallet-secret`) |
+| P01.05 | `UserCoinRepository.findByIdForUpdate`, `DailyCheckinRepository.findByCustomerId(ForUpdate)`, `CoinTransactionRepository`: `sumAmount`, `findCreditLots` (hạn tăng dần, lô không hạn cuối), `sumDebits`, `findPage` / `findPageAfter` (keyset), `findUsersWithExpiredLots`, `existsByUserIdAndTypeAndReferenceId` (cho P06) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

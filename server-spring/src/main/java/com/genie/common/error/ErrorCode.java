@@ -58,6 +58,11 @@ public enum ErrorCode {
     BANNER_SLOT_FULL("GNE-BNR-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Vị trí này đã đủ 8 banner đang hiển thị."),
     BANNER_TARGET_FORBIDDEN("GNE-BNR-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Liên kết banner phải là đường dẫn trong sàn."),
 
+    // ===== Điểm Genie (API_SPEC 3.13, 15 — UC-PRO-08, UC-PRO-09) =====
+    ALREADY_CHECKED_IN("GNE-PRO-4091", HttpStatus.CONFLICT, "Hôm nay bạn đã điểm danh rồi."),
+    REWARD_ALREADY_HELD("GNE-PRO-4092", HttpStatus.CONFLICT, "Bạn đang có voucher này trong Kho Voucher."),
+    INSUFFICIENT_COINS("GNE-PRO-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Bạn không đủ Điểm để thực hiện."),
+
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
     FLASH_SALE_SOLD_OUT("GNE-INV-4091", HttpStatus.CONFLICT, "Suất Flash Sale đã hết."),

@@ -3070,7 +3070,7 @@ public class UserCoin {
     private Long version;                     // Optimistic Lock — chống race condition khi trừ Điểm đồng thời
 
     @Column(name = "balance_hash", nullable = false, length = 255)
-    private String balanceHash;               // HMAC-SHA256(userId + balance + secret) — chống can thiệp trực tiếp CSDL
+    private String balanceHash;               // HMAC-SHA256(WALLET_HMAC_SECRET, "coin:" + userId + ":" + balance), hex chữ thường — chống can thiệp trực tiếp CSDL (tiền tố "coin:" để không trùng băm ví shop)
 
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;        // Lần biến động gần nhất

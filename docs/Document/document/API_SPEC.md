@@ -2877,6 +2877,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-VCH-4093` | 409 | Voucher đã có lượt dùng, không xóa được | mới |
 | `GNE-VCH-4221` | 422 | Voucher không áp dụng được (hết hạn, chưa đạt tối thiểu, vượt 85%…) | LLD |
 | `GNE-PRO-4091` | 409 | Đã điểm danh hôm nay | mới |
+| `GNE-PRO-4092` | 409 | Đổi Điểm lấy voucher đang có trong Kho Voucher (còn lượt dùng) hoặc đã dùng hết lượt / người (`details.reason = "USAGE_LIMIT_REACHED"`) | mới |
 | `GNE-PRO-4221` | 422 | Giá Flash không thấp hơn ≥ 15% / số suất không hợp lệ | mới |
 | `GNE-PRO-4222` | 422 | Không đủ Điểm | mới |
 | `GNE-PRO-4223` | 422 | Quá số sản phẩm tối đa / quá hạn đăng ký Flash Sale | mới |
