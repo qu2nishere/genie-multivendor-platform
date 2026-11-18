@@ -1,16 +1,32 @@
-// Bộ chọn Tỉnh → Quận → Phường kiểu GHN (prototype AddressModal.jsx RegionPicker) — plan G10.49:
-// nút mở bảng 3 tab + ô tìm nhanh (lọc phía client), chọn xong cấp nào tự sang cấp sau.
+// Bộ chọn Tỉnh → Phường kiểu GHN (prototype AddressModal.jsx RegionPicker) — plan G10.49:
+// nút mở bảng 2 tab + ô tìm nhanh (lọc phía client), chọn tỉnh xong tự sang phường.
+// Địa giới 2 cấp từ 01/07/2025 — không còn quận / huyện (plan AUTH D25).
 import { useCallback, useRef, useState } from 'react';
 import { useClickOutside } from '@/shared/hooks/useClickOutside';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { Icon } from '@/shared/ui';
-import { useDistricts, useProvinces, useWards } from '../../application/useAddresses';
+import { useProvinces, useWards } from '../../application/useAddresses';
 import type { Region, Ward } from '../../domain/address.types';
+
+/**
+ * Bỏ dấu, chữ thường, gộp khoảng trắng để tìm kiếm không phụ thuộc cách gõ:
+ * "Hoà" (dấu kiểu cũ) và "Hòa" (kiểu mới) là hai chuỗi Unicode khác nhau, macOS còn có thể
+ * gửi dạng tổ hợp (NFD) — sau khi gập đều thành "hoa".
+ */
+export function foldVietnamese(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 export interface RegionValue {
   province: Region | null;
-  district: Region | null;
   ward: Ward | null;
 }
 
@@ -22,7 +38,7 @@ export interface RegionPickerProps {
   describedBy?: string;
 }
 
-type Level = 'province' | 'district' | 'ward';
+type Level = 'province' | 'ward';
 
 export function RegionPicker({ value, onChange, invalid, id, describedBy }: RegionPickerProps) {
   const { t } = useT();
@@ -34,12 +50,17 @@ export function RegionPicker({ value, onChange, invalid, id, describedBy }: Regi
   useClickOutside(ref, close, open);
 
   const provinces = useProvinces(open);
-  const districts = useDistricts(value.province?.id ?? null);
-  const wards = useWards(value.district?.id ?? null);
+  const wards = useWards(value.province?.id ?? null);
+
+  // Sang cấp khác thì xoá ô tìm: từ khoá của cấp trước (vd. "Đồng Nai") không có nghĩa ở cấp sau.
+  const goTo = (next: Level) => {
+    setLevel(next);
+    setQ('');
+  };
 
   const openPanel = () => {
     setOpen(true);
-    setLevel(value.province ? (value.district ? 'ward' : 'district') : 'province');
+    setLevel(value.province ? 'ward' : 'province');
     setQ('');
   };
 
@@ -50,33 +71,22 @@ export function RegionPicker({ value, onChange, invalid, id, describedBy }: Regi
           name: p.name,
           on: p.id === value.province?.id,
           pick: () => {
-            onChange({ province: p, district: null, ward: null });
-            setLevel('district');
+            onChange({ province: p, ward: null });
+            goTo('ward');
           },
         }))
-      : level === 'district'
-        ? (districts.data ?? []).map((d) => ({
-            key: String(d.id),
-            name: d.name,
-            on: d.id === value.district?.id,
-            pick: () => {
-              onChange({ province: value.province, district: d, ward: null });
-              setLevel('ward');
-            },
-          }))
-        : (wards.data ?? []).map((w) => ({
-            key: w.code,
-            name: w.name,
-            on: w.code === value.ward?.code,
-            pick: () => {
-              onChange({ ...value, ward: w });
-              setOpen(false);
-            },
-          }));
-  const shown = options.filter((o) => o.name.toLowerCase().includes(q.trim().toLowerCase()));
-  const display = [value.ward?.name, value.district?.name, value.province?.name]
-    .filter(Boolean)
-    .join(', ');
+      : (wards.data ?? []).map((w) => ({
+          key: w.code,
+          name: w.name,
+          on: w.code === value.ward?.code,
+          pick: () => {
+            onChange({ ...value, ward: w });
+            setOpen(false);
+          },
+        }));
+  const needle = foldVietnamese(q);
+  const shown = options.filter((o) => foldVietnamese(o.name).includes(needle));
+  const display = [value.ward?.name, value.province?.name].filter(Boolean).join(', ');
   const tabs: { id: Level; label: string; enabled: boolean }[] = [
     {
       id: 'province',
@@ -84,14 +94,9 @@ export function RegionPicker({ value, onChange, invalid, id, describedBy }: Regi
       enabled: true,
     },
     {
-      id: 'district',
-      label: value.district?.name ?? t('account.address.region.district'),
-      enabled: !!value.province,
-    },
-    {
       id: 'ward',
       label: value.ward?.name ?? t('account.address.region.ward'),
-      enabled: !!value.district,
+      enabled: !!value.province,
     },
   ];
 
@@ -112,7 +117,12 @@ export function RegionPicker({ value, onChange, invalid, id, describedBy }: Regi
         )}
       >
         <Icon name="map-pin" size={17} className="text-subtle flex-none" />
-        <span className={cn('flex-1 truncate text-base', display ? 'text-strong' : 'text-subtle')}>
+        <span
+          className={cn(
+            'flex-1 truncate',
+            display ? 'text-base text-strong' : 'text-sm text-disabled',
+          )}
+        >
           {display || t('account.address.region.placeholder')}
         </span>
         <Icon
@@ -136,10 +146,7 @@ export function RegionPicker({ value, onChange, invalid, id, describedBy }: Regi
                 role="tab"
                 aria-selected={level === tb.id}
                 disabled={!tb.enabled}
-                onClick={() => {
-                  setLevel(tb.id);
-                  setQ('');
-                }}
+                onClick={() => goTo(tb.id)}
                 className={cn(
                   'flex-1 min-w-0 h-10 px-2 border-0 border-b-2 border-solid bg-transparent truncate text-[12.5px] cursor-pointer',
                   'disabled:cursor-not-allowed disabled:text-disabled',

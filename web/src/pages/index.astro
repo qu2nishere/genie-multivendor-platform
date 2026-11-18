@@ -75,7 +75,8 @@ const vouchers = [
     </h1>
     <p>{t('home.hero.lead')}</p>
     <div class="tr-stage" data-home-stage>
-      <ul class="tr-shelf list-none m-0 p-0" aria-label={t('home.hero.shelf')}>
+      <!-- không dùng m-0: tiện ích Tailwind đè margin-bottom âm của .tr-shelf (bảng đường tiền chồng 1/3 ảnh) -->
+      <ul class="tr-shelf list-none p-0" aria-label={t('home.hero.shelf')}>
         {
           shelfPage.items.map((p, i) => (
             <li class="contents">
