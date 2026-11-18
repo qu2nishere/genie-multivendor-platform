@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (6 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (16 / 137) |
 
 **Cách dùng**
 
@@ -43,8 +43,8 @@
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 6 / 7 | — | `feature/vendor-shop-kyc` |
-| K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 0 / 10 | — | `feature/vendor-k01-schema` |
+| K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 7 / 7 | — | `feature/vendor-shop-kyc` |
+| K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 9 / 10 | — | `feature/vendor-k01-schema` |
 | K02 | Nền module `vendor` | 9 | 3 | 0 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 0 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 0 / 12 | — | `feature/vendor-k04-kyc-submission` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **6 / 137** | | |
+| **Tổng** | | **112** | **25** | **16 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -66,19 +66,19 @@
 - [x] **K00.04** Dựng môi trường
 - [x] **K00.05** Đọc màn mock theo thứ tự luồng
 - [x] **K00.06** Kiểm số migration
-- [ ] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0011` · hash: `…`
+- [x] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0011` · hash: `9e81d28`
 
 ## K01 — Tài liệu, migration `V15`, hằng số dùng chung
 
-- [ ] **K01.01** ENTITY trước (N12)
-- [ ] **K01.02** Đồng bộ `GIAI_NGHIA_ENTITY.md`, `java-code/Diagram01_IdentityAndRbac.java`, `Diagram10_*.java`, `Genie_ClassDiagram_UML25.xmi` (thuộc tính + phương thức + literal mới).
-- [ ] **K01.03** `V15__vendor_kyc_additions.sql`
-- [ ] **K01.04** Entity Java
-- [ ] **K01.05** `ErrorCode`
-- [ ] **K01.06** `UploadPurpose`
-- [ ] **K01.07** Test
-- [ ] **K01.08** Seed
-- [ ] **K01.C1** 🔖 COMMIT `feat(db): add vendor kyc columns, indexes and kyc audit actions` · hash: `…`
+- [x] **K01.01** ENTITY trước (N12)
+- [x] **K01.02** Đồng bộ `GIAI_NGHIA_ENTITY.md`, `java-code/Diagram01_IdentityAndRbac.java`, `Diagram10_*.java`, `Genie_ClassDiagram_UML25.xmi` (thuộc tính + phương thức + literal mới).
+- [x] **K01.03** `V15__vendor_kyc_additions.sql`
+- [x] **K01.04** Entity Java
+- [x] **K01.05** `ErrorCode`
+- [x] **K01.06** `UploadPurpose`
+- [x] **K01.07** Test
+- [-] **K01.08** Seed
+- [x] **K01.C1** 🔖 COMMIT `feat(db): add vendor kyc columns, indexes and kyc audit actions` · hash: `d28250c`
 - [ ] **K01.C2** 🔖 COMMIT `feat(common): add vendor error codes and kyc upload purposes` · hash: `…`
 
 ## K02 — Nền module `vendor`
@@ -265,6 +265,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K00.04 | Postgres dev chạy cổng 5433 (`POSTGRES_PORT=5433`, máy có Postgres khác ở 5432); JDK 21. `./mvnw verify` xanh ở nhánh nền (108 unit + 144 IT, plan Theo dõi gian hàng). |
 | K00.05 | Lệch web ↔ API ghi lại để sửa ở K11: `registerShop` đọc `challenge_id`/`masked_target` (API trả `$OtpChallenge` có `email_masked`); admin-kyc `supplement.due_at` (API: `deadline_at`); `approveKyc` chưa gửi `is_mall`; 3 feature còn dùng `USE_MOCK` toàn cục thay cho `isMocked(<feature>)`. |
 | K00.06 | `V15` (banner) và `V16` (Điểm Genie) đã dùng → migration của cụm này là **`V17__vendor_kyc_additions.sql`** (README mục 4 đã ghi). |
+| K01.02 | XMI: thêm 9 thuộc tính + 17 phương thức `VendorProfile`, tham số mới của `requestSupplement`, literal `AuditAction` (kèm `BANNER_CHANGED` của plan banner còn thiếu); Diagram10 cũng bổ sung `BANNER_CHANGED`. |
+| K01.03 | Migration là `V17__vendor_kyc_additions.sql` (không phải V15). CHECK chép đủ V14 + `BANNER_CHANGED` + 4 giá trị mới. |
+| K01.04 | `approveKyc` / `rejectKyc` siết trạng thái nguồn (`AI_PROCESSING` / `MANUAL_REVIEW`); `setPayoutAccount` không khớp tên thì **không** xóa xác minh của tài khoản cũ (khác `verifyPayoutAccount`). Không thêm `setPreOrderEnabled` (trùng setter Lombok). |
+| K01.06 | Purpose có quyền theo vai trò dùng `requiredAuthority = "ROLE_VENDOR"`; ảnh `KYC_DOCUMENT` < 20 KB → `422 GNE-VAL-4220 {min_bytes}` cả khi xin link lẫn khi nhận tệp (`acceptsSize`). |
+| K01.08 | Bỏ qua: `R__seed_demo_80_kyc_queue.sql` chỉ có trên nhánh `feature/db-seed-demo` (chưa vào develop) và đã tự điền cột mới khi cột tồn tại (S06.07). Chú thích trong tệp đó còn ghi "V15" — sửa thành V17 khi merge nhánh seed. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

@@ -80,7 +80,7 @@ public abstract class IntegrationTestBase {
     private static void createBuckets() {
         try {
             MinioClient client = siloClient();
-            for (String bucket : new String[] {"avatar-assets", "content-assets"}) {
+            for (String bucket : new String[] {"avatar-assets", "content-assets", "kyc-dossiers"}) {
                 if (!client.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())) {
                     client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
                 }

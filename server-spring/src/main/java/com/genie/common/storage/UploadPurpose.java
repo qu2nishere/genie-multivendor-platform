@@ -11,11 +11,25 @@ import java.util.Set;
 public enum UploadPurpose {
 
     /** Ảnh đại diện người dùng — bucket công khai {@code avatar-assets}, JPEG / PNG ≤ 1 MB. */
-    AVATAR("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, true, false, null),
+    AVATAR("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, 0, true, false, null),
 
     /** Ảnh banner trang chủ (UC-ADM-12) — {@code content-assets} công khai, JPEG / PNG / WebP ≤ 5 MB, quyền {@code MANAGE_VOUCHER}. */
-    BANNER_IMAGE("content-assets", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, true, false,
-            "MANAGE_VOUCHER");
+    BANNER_IMAGE("content-assets", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
+            "MANAGE_VOUCHER"),
+
+    /**
+     * Giấy tờ KYC (UC-VND-02; plan Mở shop & KYC D4) — bucket RIÊNG TƯ {@code kyc-dossiers}, PDF / JPEG / PNG ≤ 10 MB,
+     * ảnh ≥ 20 KB (ảnh quá nhỏ không đọc được QR / MRZ), link tải lên 10 phút, chỉ VENDOR. Tệp {@code tmp/} được backend
+     * mã hóa AES-256-GCM khi nộp hồ sơ ({@code KycDossierStorage}) — không bao giờ để bản rõ ở khóa chính thức.
+     */
+    KYC_DOCUMENT("kyc-dossiers", Set.of("application/pdf", "image/jpeg", "image/png"), 10L * 1024 * 1024, 20L * 1024,
+            false, true, "ROLE_VENDOR"),
+
+    /** Logo shop (UC-VND-21) — {@code avatar-assets} công khai, JPEG / PNG ≤ 1 MB, chỉ VENDOR. */
+    SHOP_LOGO("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, 0, true, false, "ROLE_VENDOR"),
+
+    /** Ảnh bìa shop (UC-VND-21) — {@code avatar-assets} công khai, JPEG / PNG ≤ 2 MB, chỉ VENDOR. */
+    SHOP_COVER("avatar-assets", Set.of("image/jpeg", "image/png"), 2L * 1024 * 1024, 0, true, false, "ROLE_VENDOR");
 
     private static final Map<String, String> EXTENSIONS = Map.of(
             "image/jpeg", "jpg",
@@ -28,21 +42,38 @@ public enum UploadPurpose {
     private final String bucket;
     private final Set<String> contentTypes;
     private final long maxBytes;
+    private final long minImageBytes;
     private final boolean publicRead;
     private final boolean sensitive;
     private final String requiredAuthority;
 
-    UploadPurpose(String bucket, Set<String> contentTypes, long maxBytes, boolean publicRead, boolean sensitive,
-                  String requiredAuthority) {
+    UploadPurpose(String bucket, Set<String> contentTypes, long maxBytes, long minImageBytes, boolean publicRead,
+                  boolean sensitive, String requiredAuthority) {
         this.bucket = bucket;
         this.contentTypes = contentTypes;
         this.maxBytes = maxBytes;
+        this.minImageBytes = minImageBytes;
         this.publicRead = publicRead;
         this.sensitive = sensitive;
         this.requiredAuthority = requiredAuthority;
     }
 
-    /** Mã quyền bắt buộc để xin link tải lên ({@code null} = mọi người đã đăng nhập). */
+    /** Dung lượng tối thiểu của tệp ẢNH ({@code image/*}); 0 = không giới hạn. PDF không áp dụng. */
+    public long minImageBytes() {
+        return minImageBytes;
+    }
+
+    /** Tệp loại {@code contentType} có dung lượng {@code size} có nằm trong giới hạn của purpose không. */
+    public boolean acceptsSize(String contentType, long size) {
+        if (size <= 0 || size > maxBytes) {
+            return false;
+        }
+        return minImageBytes <= 0 || contentType == null || !contentType.startsWith("image/") || size >= minImageBytes;
+    }
+
+    /**
+     * Mã quyền bắt buộc để xin link tải lên ({@code null} = mọi người đã đăng nhập); dạng {@code ROLE_VENDOR} = theo vai trò.
+     */
     public String requiredAuthority() {
         return requiredAuthority;
     }

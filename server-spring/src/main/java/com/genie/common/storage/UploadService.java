@@ -57,6 +57,10 @@ public class UploadService {
             throw invalid("content_length", "Tệp vượt quá dung lượng cho phép.",
                     Map.of("max_bytes", purpose.maxBytes()));
         }
+        if (!purpose.acceptsSize(type, contentLength)) {
+            throw invalid("content_length", "Ảnh quá nhỏ, vui lòng chụp lại rõ nét hơn.",
+                    Map.of("min_bytes", purpose.minImageBytes()));
+        }
         String key = TMP_PREFIX + "user/" + userId + "/" + UUID.randomUUID() + "." + UploadPurpose.extensionOf(type);
         Duration ttl = purpose.sensitive() ? properties.presignedPutKycTtl() : properties.presignedPutTtl();
         ObjectStorage.PresignedUpload signed = storage.presignPut(purpose.bucket(), key, type, ttl);
@@ -75,7 +79,8 @@ public class UploadService {
         ObjectStorage.StoredObject stored = storage.stat(purpose.bucket(), tmpKey)
                 .orElseThrow(() -> invalid("object_key", "Tệp chưa được tải lên hoặc đã hết hạn, vui lòng tải lại.",
                         Map.of()));
-        if (!purpose.accepts(normalize(stored.contentType())) || stored.size() > purpose.maxBytes()) {
+        if (!purpose.accepts(normalize(stored.contentType()))
+                || !purpose.acceptsSize(normalize(stored.contentType()), stored.size())) {
             deleteQuietly(purpose, tmpKey);
             throw invalid("object_key", "Tệp không đúng định dạng hoặc vượt quá dung lượng cho phép.",
                     Map.of("allowed_types", purpose.contentTypes(), "max_bytes", purpose.maxBytes()));
