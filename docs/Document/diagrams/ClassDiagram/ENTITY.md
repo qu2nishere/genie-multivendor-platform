@@ -3176,10 +3176,20 @@ public class DailyCheckin {
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
+    /** Bản ghi của khách chưa từng điểm danh (chưa lưu — gọi checkIn rồi mới lưu) — UC-PRO-08 */
+    public static DailyCheckin firstFor(Long customerId) {
+        DailyCheckin d = new DailyCheckin();
+        d.customerId = customerId;
+        d.streakCount = 0;
+        return d;
+    }
+
     /** Điểm danh, tính chuỗi & số Điểm thưởng — UC-PRO-08 */
     public int checkIn(OffsetDateTime now) {
         LocalDate today = now.toLocalDate();
-        LocalDate last = this.lastCheckinAt == null ? null : this.lastCheckinAt.toLocalDate();
+        // quy mốc cũ về cùng offset với now (CSDL trả TIMESTAMPTZ theo UTC) — "ngày" là ngày Việt Nam (now đã ở +07:00)
+        LocalDate last = this.lastCheckinAt == null ? null
+                : this.lastCheckinAt.withOffsetSameInstant(now.getOffset()).toLocalDate();
         if (today.equals(last)) throw new IllegalStateException("Hôm nay đã điểm danh");
         this.streakCount = (last != null && last.plusDays(1).equals(today)) ? this.streakCount + 1 : 1;
         this.lastCheckinAt = now;
@@ -7181,7 +7191,7 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
   4. `CoinTransaction` («PK» id, «FK» userId, «FK» referenceId)
   5. `DailyCheckin` («PK» id, «UQ» customerId)
 * **Các Enum liên kết (3 enum):** `CoinTransactionType`, `FlashSaleItemStatus`, `FlashSaleStatus`.
-* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `FlashSaleCampaign`: schedule(), activate(), isRunning(), end() · `FlashSaleItem`: validateAgainst(), remaining(), reserve(), releaseReservation(), recordSale() · `UserCoin`: earn(), spend(), verifyHash() · `CoinTransaction`: isExpired(), isCredit() · `DailyCheckin`: checkIn()
+* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `FlashSaleCampaign`: schedule(), activate(), isRunning(), end() · `FlashSaleItem`: validateAgainst(), remaining(), reserve(), releaseReservation(), recordSale() · `UserCoin`: earn(), spend(), verifyHash() · `CoinTransaction`: isExpired(), isCredit() · `DailyCheckin`: checkIn(), firstFor()
 * **Ma trận quan hệ:**
   - `FlashSaleCampaign` 0..* → 0..1 `User` (vendor)
   - `FlashSaleCampaign` ◆ 1 — 0..* `FlashSaleItem`

@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/promotion-coin-checkin` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (17 / 53) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (23 / 53) |
 
 **Cách dùng**
 
@@ -38,13 +38,13 @@
 |---|---|---:|---:|---:|---|---|
 | P00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/promotion-coin-checkin` |
 | P01 | Nền: mã lỗi, cấu hình, băm số dư | 6 | 1 | 7 / 7 | — | `feature/promotion-coin-checkin` |
-| P02 | Sổ Điểm dùng chung (cộng / trừ theo lô) | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
-| P03 | UC-PRO-08 Điểm danh | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
+| P02 | Sổ Điểm dùng chung (cộng / trừ theo lô) | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
+| P03 | UC-PRO-08 Điểm danh | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
 | P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 0 / 7 | — | `feature/promotion-coin-checkin` |
 | P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 0 / 10 | — | `feature/promotion-coin-checkin` |
-| **Tổng** | | **45** | **8** | **17 / 53** | | |
+| **Tổng** | | **45** | **8** | **23 / 53** | | |
 
 ## P00 — Chuẩn bị
 
@@ -71,15 +71,15 @@
 - [x] **P02.03** Tính lô còn lại (FEFO)
 - [x] **P02.04** `CoinLedgerServiceTest` (unit, repository giả)
 - [x] **P02.05** `CoinFacade`
-- [ ] **P02.C1** 🔖 COMMIT `feat(promotion): add coin ledger with expiring lots and balance integrity check` · hash: `…`
+- [x] **P02.C1** 🔖 COMMIT `feat(promotion): add coin ledger with expiring lots and balance integrity check` · hash: `7699288`
 
 ## P03 — UC-PRO-08 Điểm danh
 
-- [ ] **P03.01** `DailyCheckinTest` (unit, bổ sung cho entity đã có)
-- [ ] **P03.02** `CheckInService.checkIn(userId)`
-- [ ] **P03.03** `MeCoinController`
-- [ ] **P03.04** `CheckInIT` (PG + Redis, `MutableClock`)
-- [ ] **P03.05** `CheckInIT` đồng thời
+- [x] **P03.01** `DailyCheckinTest` (unit, bổ sung cho entity đã có)
+- [x] **P03.02** `CheckInService.checkIn(userId)`
+- [x] **P03.03** `MeCoinController`
+- [x] **P03.04** `CheckInIT` (PG + Redis, `MutableClock`)
+- [x] **P03.05** `CheckInIT` đồng thời
 - [ ] **P03.C1** 🔖 COMMIT `feat(promotion): check in daily to earn coins with a seven day streak` · hash: `…`
 
 ## P04 — UC-PRO-09 Tra cứu số dư & lịch sử
@@ -151,6 +151,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | P01.05 | `UserCoinRepository.findByIdForUpdate`, `DailyCheckinRepository.findByCustomerId(ForUpdate)`, `CoinTransactionRepository`: `sumAmount`, `findCreditLots` (hạn tăng dần, lô không hạn cuối), `sumDebits`, `findPage` / `findPageAfter` (keyset), `findUsersWithExpiredLots`, `existsByUserIdAndTypeAndReferenceId` (cho P06) |
 | P02.01 | `credit` / `debit` mở `Propagation.MANDATORY` — bắt buộc nằm trong transaction của nghiệp vụ gọi (Điểm là tiền). Ví Điểm chưa có thì tạo `balance 0` + băm rồi khóa lại. Băm lệch → báo `CoinAlertPort` (nếu có bean) + log lỗi, ném `500 GNE-SYS-5000`; thiếu Điểm → `422 GNE-PRO-4222` kèm `details {balance, required, missing}` (web hiện "còn thiếu N Điểm") |
 | P02.03 | `CoinLots.remainingLots` (FEFO, lô không hạn xếp cuối) + `expiringBetween(now, until)` — bỏ lô đã quá hạn (để job hết hạn xử lý) |
+| P03.02 | Khóa `lock:checkin:{userId}` bằng `setIfAbsent(…, 5s)`, giải phóng trong `finally`; Redis lỗi → `503 GNE-SYS-5030`. Transaction mở bằng `TransactionTemplate` (khóa Redis bọc ngoài transaction). Lần điểm danh đầu tạo `DailyCheckin.firstFor` (entity mới — ENTITY 4.9, Phụ lục E); trùng `uk_daily_checkin_customer` cũng trả `409`. Nhãn sổ "Điểm danh ngày {ô}" theo D6. `CoinTime`: giờ VN, nửa đêm kế tiếp, `streak_days` (D6) |
+| P03.04 | `created_at` của sổ do `@CreationTimestamp` lấy giờ thật JVM (không theo `MutableClock`) nên test so hạn lô với thời điểm điểm danh thay vì `created_at`. 10 luồng đồng thời: đúng 1 lần `201`, 9 lần `409`, 1 dòng `CHECK_IN` |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
