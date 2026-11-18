@@ -7,11 +7,13 @@ import com.genie.common.security.AuthUser;
 import com.genie.common.security.CurrentUser;
 import com.genie.promotion.coin.application.CheckInService;
 import com.genie.promotion.coin.application.CoinQueryService;
+import com.genie.promotion.coin.application.CoinRedemptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +28,14 @@ public class MeCoinController {
 
     private final CheckInService checkIns;
     private final CoinQueryService query;
+    private final CoinRedemptionService redemptions;
     private final ApiResponseFactory responses;
 
-    public MeCoinController(CheckInService checkIns, CoinQueryService query, ApiResponseFactory responses) {
+    public MeCoinController(CheckInService checkIns, CoinQueryService query, CoinRedemptionService redemptions,
+                            ApiResponseFactory responses) {
         this.checkIns = checkIns;
         this.query = query;
+        this.redemptions = redemptions;
         this.responses = responses;
     }
 
@@ -48,6 +53,18 @@ public class MeCoinController {
             @RequestParam(required = false) Integer limit) {
         var body = responses.list(query.transactions(me.id(), cursor, limit), null).getBody();
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
+    }
+
+    public record RedemptionRequest(@jakarta.validation.constraints.NotNull Long rewardId) {
+    }
+
+    @Operation(summary = "UC-PRO-09 — Đổi Điểm lấy voucher",
+            description = "201 {voucher: $Voucher, balance}; 404 quà không có; 409 GNE-PRO-4092 đang có voucher này; "
+                    + "422 GNE-PRO-4222 không đủ Điểm.")
+    @PostMapping("/redemptions")
+    public ResponseEntity<ApiResponse<CoinRedemptionService.RedemptionResult>> redeem(
+            @CurrentUser AuthUser me, @jakarta.validation.Valid @RequestBody RedemptionRequest body) {
+        return responses.created(redemptions.redeem(me.id(), body.rewardId()));
     }
 
     @Operation(summary = "UC-PRO-08 — Điểm danh nhận Điểm",
