@@ -56,6 +56,9 @@ public enum ErrorCode {
     // ===== Danh mục & sản phẩm (API_SPEC 5, 15) =====
     PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn được bán."),
 
+    // ===== Gian hàng (API_SPEC 5.11, 15) =====
+    SHOP_UNAVAILABLE("GNE-VND-4041", HttpStatus.NOT_FOUND, "Gian hàng không tồn tại hoặc đã ngừng hoạt động."),
+
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
     FLASH_SALE_SOLD_OUT("GNE-INV-4091", HttpStatus.CONFLICT, "Suất Flash Sale đã hết."),

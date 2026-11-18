@@ -2888,6 +2888,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-SOC-4094` | 409 | Shop đã phản hồi đánh giá | mới |
 | `GNE-SOC-4221` | 422 | Phản hồi chứa số điện thoại | mới |
 | `GNE-VND-4031` | 403 | Shop chưa `VERIFIED` (cổng KYC) | mới |
+| `GNE-VND-4041` | 404 | Gian hàng không tồn tại, chưa duyệt KYC hoặc đã ngừng hoạt động (trang shop công khai 5.11) | mới (v1.5) |
 | `GNE-VND-4091` | 409 | Đổi tên shop quá 1 lần / 30 ngày | mới |
 | `GNE-VND-4092` | 409 | Còn đơn chưa bàn giao, chưa bật chế độ nghỉ được | mới |
 | `GNE-VND-4093` | 409 | Tài khoản đã có shop | mới |
