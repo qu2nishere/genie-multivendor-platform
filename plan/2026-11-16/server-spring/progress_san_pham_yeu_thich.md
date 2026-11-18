@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-wishlist` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (16 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (23 / 38) |
 
 **Cách dùng**
 
@@ -36,11 +36,11 @@
 |---|---|---:|---:|---:|---|---|
 | W00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/catalog-wishlist` |
 | W01 | Miền & truy vấn | 4 | 1 | 5 / 5 | — | `feature/catalog-wishlist` |
-| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 6 / 7 | — | `feature/catalog-wishlist` |
-| W03 | Danh sách yêu thích | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
+| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 7 / 7 | — | `feature/catalog-wishlist` |
+| W03 | Danh sách yêu thích | 6 | 1 | 6 / 7 | — | `feature/catalog-wishlist` |
 | W04 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/catalog-wishlist` |
 | W05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/catalog-wishlist` |
-| **Tổng** | | **32** | **6** | **16 / 38** | | |
+| **Tổng** | | **32** | **6** | **23 / 38** | | |
 
 ## W00 — Chuẩn bị
 
@@ -66,16 +66,16 @@
 - [x] **W02.04** `MeWishlistController`
 - [x] **W02.05** `WishlistIT`
 - [x] **W02.06** `WishlistConcurrencyIT`
-- [ ] **W02.C1** 🔖 COMMIT `feat(catalog): add and remove wishlist products idempotently` · hash: `…`
+- [x] **W02.C1** 🔖 COMMIT `feat(catalog): add and remove wishlist products idempotently` · hash: `1a102b5`
 
 ## W03 — Danh sách yêu thích
 
-- [ ] **W03.01** `WishlistShopAvailability`
-- [ ] **W03.02** `WishlistQueryService.list(userId, cursor, limit)`
-- [ ] **W03.03** `summary.total` = `countByUserId` (API 3.10); phân trang cursor theo API 0.4.
-- [ ] **W03.04** `MeWishlistController`
-- [ ] **W03.05** `WishlistQueryIT`
-- [ ] **W03.06** `WishlistFacade.userIdsWishing(productId)` (D6)
+- [x] **W03.01** `WishlistShopAvailability`
+- [x] **W03.02** `WishlistQueryService.list(userId, cursor, limit)`
+- [x] **W03.03** `summary.total` = `countByUserId` (API 3.10); phân trang cursor theo API 0.4.
+- [x] **W03.04** `MeWishlistController`
+- [x] **W03.05** `WishlistQueryIT`
+- [x] **W03.06** `WishlistFacade.userIdsWishing(productId)` (D6)
 - [ ] **W03.C1** 🔖 COMMIT `feat(catalog): list wishlist products with price and purchasable flag` · hash: `…`
 
 ## W04 — Nối giao diện `web/`
@@ -124,6 +124,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | W01.04 | `TestDataBuilder` (trước là khung rỗng) dựng bằng `JdbcTemplate`: `category`, `vendor` (users VENDOR + vendor_profiles VERIFIED), `shopIdOf`, `product`, `variant`, `primaryImage`, `setStatus` — khóa tự nhiên ngẫu nhiên, test không đụng nhau. `ProductVariant` không có `@SQLRestriction` thật → truy vấn tự lọc `deleted_at IS NULL` |
 | W02.04 | `product_id` kiểm bằng `@Positive` trên `@PathVariable` (Spring 6.1 tự kiểm tham số) — `0` hoặc chữ → `422 GNE-VAL-4220` |
 | W02.06 | Ca đồng thời đặt luôn trong `WishlistIT` (`twentyConcurrentLikesKeepOneRowAndMixedTogglesNeverFail`) thay vì lớp `WishlistConcurrencyIT` riêng — dùng chung dữ liệu dựng sẵn; 20 `PUT` song song → 20 lần `204`, 1 dòng; 20 `PUT` / `DELETE` xen kẽ → toàn `204` |
+| W03.02 | Nạp theo lô bằng **projection** (`ProductSummaryRows`: `ProductRow`, `VariantRow`, `ImageRow`) chứ không nạp entity — `Product.category` và `ProductVariant.product` là `@ManyToOne` EAGER sẽ sinh truy vấn phụ. Ảnh: `ImageRow` của gallery chung (ảnh chính trước, rồi `display_order`); URL ghép bằng `ObjectStorage.publicUrl("product-media", key)`, khóa đã là URL `http(s)` thì giữ nguyên. `WishlistService.add` cũng đổi sang `findStatus` (không nạp entity) |
+| W03.05 | Bật `hibernate.generate_statistics` riêng cho `WishlistQueryIT`: một trang 20 dòng (25 sản phẩm × 2 SKU) ≤ 6 câu SQL. Shop nghỉ kiểm bằng cài đặt giả `WishlistShopAvailability` (`@Primary` trong test). Lần chạy đầu sập vì máy hết RAM (ứng dụng khác đang chạy) — chạy lại sau khi giải phóng thì xanh |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

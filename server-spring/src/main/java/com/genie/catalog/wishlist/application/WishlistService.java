@@ -30,7 +30,7 @@ public class WishlistService {
     /** Chỉ thích được sản phẩm đang bán ({@code PUBLISHED}); không có / không bán → {@code 404 GNE-CAT-4042} (D2). */
     @Transactional
     public void add(long userId, long productId) {
-        boolean onSale = products.findById(productId).map(p -> p.getStatus() == ProductStatus.PUBLISHED).orElse(false);
+        boolean onSale = products.findStatus(productId).map(st -> st == ProductStatus.PUBLISHED).orElse(false);
         if (!onSale) {
             throw new BusinessException(ErrorCode.PRODUCT_UNAVAILABLE);
         }
