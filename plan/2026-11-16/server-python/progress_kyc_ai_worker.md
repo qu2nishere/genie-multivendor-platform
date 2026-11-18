@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (34 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (39 / 77) |
 
 **Cách dùng**
 
@@ -40,13 +40,13 @@
 | Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
 | Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 6 / 6 | — | `feature/ai-worker-kyc` |
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 8 / 8 | — | `feature/ai-worker-kyc` |
-| Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 6 / 12 | — | `feature/ai-worker-kyc` |
+| Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 11 / 12 | — | `feature/ai-worker-kyc` |
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 0 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 0 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **34 / 77** | | |
+| **Tổng** | | **65** | **12** | **39 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -96,11 +96,11 @@
 - [x] **Y04.04** `mrz.parse(lines)`
 - [x] **Y04.05** `test_mrz.py`
 - [x] **Y04.06** Đo tỷ lệ đọc MRZ trên bộ ảnh biến thể; ghi vào Ghi chú; quyết định giữ Tesseract hay đổi (Y-D2).
-- [ ] **Y04.07** `rules.check_id_structure(identity_number, date_of_birth, gender)`
-- [ ] **Y04.08** `rules.check_expiry(date_of_birth, issue_date, expiry_date)`
-- [ ] **Y04.09** `rules.match_qr_mrz(qr, mrz)`
-- [ ] **Y04.10** `test_rules.py`
-- [ ] **Y04.C1** 🔖 COMMIT `feat(ai-worker): read the id card mrz and validate its check digits` · hash: `…`
+- [x] **Y04.07** `rules.check_id_structure(identity_number, date_of_birth, gender)`
+- [x] **Y04.08** `rules.check_expiry(date_of_birth, issue_date, expiry_date)`
+- [x] **Y04.09** `rules.match_qr_mrz(qr, mrz)`
+- [x] **Y04.10** `test_rules.py`
+- [x] **Y04.C1** 🔖 COMMIT `feat(ai-worker): read the id card mrz and validate its check digits` · hash: `a066346`
 - [ ] **Y04.C2** 🔖 COMMIT `feat(ai-worker): cross-check qr, mrz, id number structure and expiry rule` · hash: `…`
 
 ## Y05 — Tầng 2: khuôn mặt
@@ -183,6 +183,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y03.07 | Tỷ lệ đọc QR trên 32 biến thể thẻ mẫu (xoay 0/90/180/270, thu 75%, tối 70%, mờ nhẹ): **32/32 = 100%** → giữ `cv2.QRCodeDetector`, chưa cần `zxing-cpp`. Lưu ý: thẻ mẫu tự dựng sạch hơn ảnh chụp điện thoại thật — đo lại khi có ảnh thật được phép dùng. |
 | Y04.02 | Định vị dải MRZ (blackhat + gradient) dễ cắt thiếu dòng → `read_image` thử: vùng định vị → nửa dưới ảnh, ở 4 hướng; chọn 3 dòng bắt đầu từ dòng `ID`. OCR trên ảnh **xám** (nhị phân Otsu làm mất ký tự `<`). |
 | Y04.06 | Tỷ lệ đọc MRZ hợp lệ (đúng mọi số kiểm tra) trên 36 biến thể (lật 180°, thu 80/60%, tối 70%, mờ 3/5): **36/36 = 100%** với Tesseract 5.5 dữ liệu `eng` + whitelist → giữ Tesseract. Thẻ mẫu vẽ bằng DejaVu Sans Mono (không có phông OCR-B); ảnh thật cần đo lại. |
+| Y04.08 | Mốc hạn thẻ: sinh nhật 25 / 40 / 60 kế tiếp; cấp từ (mốc − 2 năm) thì sang mốc sau; cấp từ 58 tuổi → không thời hạn (MRZ `<<<<<<` hoặc ngày ≥ 2090 coi là đúng). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
