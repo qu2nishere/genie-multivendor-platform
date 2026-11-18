@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (6 / 77) |
 
 **Cách dùng**
 
@@ -23,20 +23,20 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| Y-D1 | Hợp đồng với backend (trùng D6 của plan Mở shop & KYC) | ☐ | |
-| Y-D2 | Đọc ký tự MRZ — repo chưa có thư viện OCR | ☐ | |
-| Y-D3 | Giải mã QR | ☐ | |
-| Y-D4 | Tín hiệu khuôn mặt trùng shop khác (`FACE_DUPLICATE`) cần kho vector khuôn mặt — chưa có cột / nơi lưu | ☐ | |
-| Y-D5 | Quốc huy (`national_emblem`) và vân tay (`fingerprint`) — 2 cờ của ENTITY 1.6 | ☐ | |
-| Y-D6 | Ngưỡng khớp mặt SFace (cosine) | ☐ | |
-| Y-D7 | "Liveness" phía máy chủ (chỉ có 1 ảnh selfie tĩnh) | ☐ | |
-| Y-D8 | Cách lấy ảnh | ☐ | |
+| Y-D1 | Hợp đồng với backend (trùng D6 của plan Mở shop & KYC) | ☑ | Theo đề xuất — chốt cùng backend ở ADR 0011 mục 5; mẫu `docs/api-tests/kyc-contract/` (backend có `KycContractIT` đọc trực tiếp) · 2026-11-18 |
+| Y-D2 | Đọc ký tự MRZ — repo chưa có thư viện OCR | ☑ | Tesseract 5 + `pytesseract`, dữ liệu **`eng`** (gói Debian `tesseract-ocr-eng`) với whitelist `A–Z0–9<` thay cho `mrz.traineddata` (không có trong gói hệ thống); đo ở Y04.06 · 2026-11-18 |
+| Y-D3 | Giải mã QR | ☑ | Theo đề xuất: `cv2.QRCodeDetector` + tiền xử lý nhiều mức; đo ở Y03.07 · 2026-11-18 |
+| Y-D4 | Tín hiệu khuôn mặt trùng shop khác (`FACE_DUPLICATE`) cần kho vector khuôn mặt — chưa có cột / nơi lưu | ☑ | Theo đề xuất: đợt này `face_duplicate = null` · 2026-11-18 |
+| Y-D5 | Quốc huy (`national_emblem`) và vân tay (`fingerprint`) — 2 cờ của ENTITY 1.6 | ☑ | Đợt này trả `null` cho `national_emblem` / `fingerprint` (backend cũng chưa có cột lưu — plan Mở shop & KYC K05.07) · 2026-11-18 |
+| Y-D6 | Ngưỡng khớp mặt SFace (cosine) | ☑ | Theo đề xuất: 0.363 / 0.25 (biến môi trường) · 2026-11-18 |
+| Y-D7 | "Liveness" phía máy chủ (chỉ có 1 ảnh selfie tĩnh) | ☑ | Theo đề xuất: chất lượng thụ động (độ nét, cỡ mặt, đúng 1 mặt, moiré) · 2026-11-18 |
+| Y-D8 | Cách lấy ảnh | ☑ | Theo đề xuất: tải qua URL ký sẵn, 12 MB, 5 giây, jpeg / png, host thuộc `STORAGE_ALLOWED_HOSTS` · 2026-11-18 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| Y00 | Chuẩn bị & chốt hợp đồng | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
+| Y00 | Chuẩn bị & chốt hợp đồng | 6 | 1 | 6 / 7 | — | `feature/ai-worker-kyc` |
 | Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 0 / 8 | — | `feature/ai-worker-kyc` |
@@ -46,16 +46,16 @@
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **0 / 77** | | |
+| **Tổng** | | **65** | **12** | **6 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
-- [ ] **Y00.01** Kiểm danh tính git
-- [ ] **Y00.02** Chốt Y-D1…Y-D8
-- [ ] **Y00.03** Tạo nhánh
-- [ ] **Y00.04** Dựng môi trường
-- [ ] **Y00.05** Đọc tài liệu theo thứ tự
-- [ ] **Y00.06** Viết tệp hợp đồng mẫu
+- [x] **Y00.01** Kiểm danh tính git
+- [x] **Y00.02** Chốt Y-D1…Y-D8
+- [x] **Y00.03** Tạo nhánh
+- [x] **Y00.04** Dựng môi trường
+- [x] **Y00.05** Đọc tài liệu theo thứ tự
+- [x] **Y00.06** Viết tệp hợp đồng mẫu
 - [ ] **Y00.C1** 🔖 COMMIT `docs(ai-worker): add shared kyc contract samples for backend and ai worker` · hash: `…`
 
 ## Y01 — Khung: cấu hình, lược đồ, nạp mô hình
@@ -173,9 +173,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| Y00.03 | Nhánh `feature/ai-worker-kyc` tách từ `feature/vendor-shop-kyc` (dùng chung ADR 0011 + hợp đồng) — PR merge sau nhánh đó. |
+| Y00.04 | Máy chỉ có Python 3.13 (dự án `>=3.12,<3.13`) và không có Tesseract → chạy test trong image dev `python:3.12-slim` + `tesseract-ocr` (Tesseract 5.5.0), mount mã nguồn — không cài thêm lên máy. Mô hình YuNet / SFace tải từ opencv_zoo vào `server-python/models/` (bị `.gitignore` chặn). SHA-256: yunet `8f2383e4…2552fa4`, sface `0ba9fbfa…7c34e79`. |
+| Y00.05 | implement 8.1 cũ (camelCase, worker trả `riskScore`) đã đánh dấu thay thế ở plan Mở shop & KYC K12.04. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

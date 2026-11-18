@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "qr_code": true,
+    "mrz": true,
+    "mrz_qr_match": false,
+    "cccd_number_valid": true,
+    "expiry_rule_valid": true,
+    "face_match": false,
+    "face_duplicate": null,
+    "national_emblem": null,
+    "fingerprint": null
+  },
+  "face_match_score": 0.12,
+  "liveness_score": 0.91,
+  "signals": [
+    {
+      "code": "QR_MRZ_MISMATCH"
+    },
+    {
+      "code": "FACE_SCORE_LOW"
+    }
+  ],
+  "extracted": {
+    "identity_number": "079190000012",
+    "full_name": "PHẠM THỊ LAN",
+    "date_of_birth": "12041990",
+    "gender": "Nữ",
+    "address": "Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh",
+    "issue_date": "10052021",
+    "expiry_date": "12042030",
+    "legacy_identity_number": null
+  },
+  "errors": [],
+  "model": {
+    "yunet": "face_detection_yunet_2023mar",
+    "sface": "face_recognition_sface_2021dec",
+    "pipeline_version": "kyc-1.0.0"
+  }
+}
