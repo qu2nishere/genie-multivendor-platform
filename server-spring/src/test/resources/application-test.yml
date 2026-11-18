@@ -21,6 +21,8 @@ genie:
     cors-origins: http://localhost:4321
   scheduling:
     enabled: false
+  ai-worker:
+    mode: stub                                   # test thay client bằng FakeKycVerificationClient (@Primary)
 
 logging:
   level:

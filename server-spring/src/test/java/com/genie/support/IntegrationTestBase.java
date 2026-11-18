@@ -136,6 +136,12 @@ public abstract class IntegrationTestBase {
     protected FakeAccountContext accountContext;
 
     @Autowired
+    protected FakeKycVerificationClient aiWorker;
+
+    @Autowired
+    protected FakeKycSampler kycSampler;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -199,6 +205,8 @@ public abstract class IntegrationTestBase {
         zalo.clear();
         deletionBlocker.clear();
         accountContext.clear();
+        aiWorker.clear();
+        kycSampler.set(false);
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -247,6 +255,20 @@ public abstract class IntegrationTestBase {
         @Bean
         FakeAccountDeletionBlocker fakeAccountDeletionBlocker() {
             return new FakeAccountDeletionBlocker();
+        }
+
+        /** AI Worker giả (plan Mở shop & KYC K05.12) — thay HttpKycVerificationClient / StubKycVerificationClient. */
+        @Bean
+        @Primary
+        FakeKycVerificationClient fakeKycVerificationClient() {
+            return new FakeKycVerificationClient();
+        }
+
+        /** Lấy mẫu hậu kiểm KYC cố định (mặc định không lấy mẫu). */
+        @Bean
+        @Primary
+        FakeKycSampler fakeKycSampler() {
+            return new FakeKycSampler();
         }
 
         /** Giả lập shop + bộ đếm của các module chưa làm cho {@code GET /me} — mặc định trống. */

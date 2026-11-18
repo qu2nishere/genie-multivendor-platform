@@ -26,6 +26,8 @@ logging:
     com.genie: ${LOG_LEVEL_GENIE:DEBUG}
 
 genie:
+  ai-worker:
+    mode: ${AI_WORKER_MODE:stub}                  # máy dev: giả lập AI Worker (ADR 0011 mục 6); chạy cùng AI Worker thật → AI_WORKER_MODE=http
   security:
     jwt-secret: ${JWT_SECRET:local-dev-secret-change-me-local-dev-secret-change-me}
     internal-token: ${INTERNAL_TOKEN:local-internal-token}
