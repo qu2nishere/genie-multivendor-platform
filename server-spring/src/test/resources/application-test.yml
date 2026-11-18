@@ -16,6 +16,7 @@ genie:
     internal-token: test-internal-token
     otp-pepper: test-otp-pepper
     wallet-hmac-secret: test-wallet-secret       # băm số dư ví shop / Điểm (CoinBalanceHasher)
+    kyc-aes-key: dGVzdC1reWMtYWVzLWtleS0zMi1ieXRlcy0wMDAwMDA=   # base64 32 byte — mã hóa giấy tờ KYC (AesGcmCipher)
     cookie-secure: false
     cors-origins: http://localhost:4321
   scheduling:

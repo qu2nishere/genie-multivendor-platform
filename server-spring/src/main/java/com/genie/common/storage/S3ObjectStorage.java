@@ -4,6 +4,8 @@ import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
 import io.minio.CopyObjectArgs;
 import io.minio.CopySource;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -92,6 +94,20 @@ public class S3ObjectStorage implements ObjectStorage {
         try {
             StatObjectResponse r = client.statObject(StatObjectArgs.builder().bucket(bucket(bucket)).object(objectKey).build());
             return Optional.of(new StoredObject(r.contentType(), r.size()));
+        } catch (ErrorResponseException e) {
+            if (MISSING.contains(e.errorResponse().code())) {
+                return Optional.empty();
+            }
+            throw unavailable(e);
+        } catch (Exception e) {
+            throw unavailable(e);
+        }
+    }
+
+    @Override
+    public Optional<byte[]> get(String bucket, String objectKey) {
+        try (GetObjectResponse in = client.getObject(GetObjectArgs.builder().bucket(bucket(bucket)).object(objectKey).build())) {
+            return Optional.of(in.readAllBytes());
         } catch (ErrorResponseException e) {
             if (MISSING.contains(e.errorResponse().code())) {
                 return Optional.empty();
