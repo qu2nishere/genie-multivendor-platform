@@ -4,6 +4,7 @@ import com.genie.catalog.product.application.ProductCard;
 import com.genie.catalog.search.application.ProductSearchCriteria;
 import com.genie.catalog.search.application.ProductSearchService;
 import com.genie.catalog.search.application.SearchFacets;
+import com.genie.catalog.search.application.SearchKeywordCounter;
 import com.genie.catalog.search.domain.KeywordNormalizer;
 import com.genie.catalog.search.domain.ProductSort;
 import com.genie.common.api.ApiResponseFactory;
@@ -41,12 +42,14 @@ public class PublicProductSearchController {
     static final Pattern ATTR_CODE = Pattern.compile("^[a-z][a-z0-9_]*$");
 
     private final ProductSearchService search;
+    private final SearchKeywordCounter keywordCounter;
     private final RateLimiter rateLimiter;
     private final ApiResponseFactory responses;
 
-    public PublicProductSearchController(ProductSearchService search, RateLimiter rateLimiter,
-                                         ApiResponseFactory responses) {
+    public PublicProductSearchController(ProductSearchService search, SearchKeywordCounter keywordCounter,
+                                         RateLimiter rateLimiter, ApiResponseFactory responses) {
         this.search = search;
+        this.keywordCounter = keywordCounter;
         this.rateLimiter = rateLimiter;
         this.responses = responses;
     }
@@ -80,6 +83,10 @@ public class PublicProductSearchController {
                 priceMin, priceMax, ratingMin, isMall, freeShipping, hasShopVoucher, attributes(all), discountMin, sort,
                 includeFacets, page, size);
         ProductSearchService.SearchResult result = search.search(criteria);
+
+        if (page == 1 && result.totalItems() > 0 && shopId == null) {
+            keywordCounter.record(KeywordNormalizer.normalize(q), client);   // UC-CAT-04 bước 5 — chỉ đếm lượt tìm toàn sàn có kết quả
+        }
 
         Object summary = includeFacets ? new SearchFacets.Summary(result.facets()) : null;
         return responses.page(result.items(), PageResponse.Pagination.of(page, size, result.totalItems()), summary);
