@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/promotion-coin-checkin` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (23 / 53) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (29 / 53) |
 
 **Cách dùng**
 
@@ -39,12 +39,12 @@
 | P00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/promotion-coin-checkin` |
 | P01 | Nền: mã lỗi, cấu hình, băm số dư | 6 | 1 | 7 / 7 | — | `feature/promotion-coin-checkin` |
 | P02 | Sổ Điểm dùng chung (cộng / trừ theo lô) | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
-| P03 | UC-PRO-08 Điểm danh | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
-| P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
+| P03 | UC-PRO-08 Điểm danh | 5 | 1 | 6 / 6 | — | `feature/promotion-coin-checkin` |
+| P04 | UC-PRO-09 Tra cứu số dư & lịch sử | 5 | 1 | 5 / 6 | — | `feature/promotion-coin-checkin` |
 | P05 | UC-PRO-09 Đổi quà (đổi Điểm lấy voucher) | 6 | 1 | 0 / 7 | — | `feature/promotion-coin-checkin` |
 | P06 | (D5 — cắt được) Hết hạn lô Điểm | 5 | 1 | 0 / 6 | — | `feature/promotion-coin-checkin` |
 | P07 | Nối giao diện `web/` & hoàn thiện | 8 | 2 | 0 / 10 | — | `feature/promotion-coin-checkin` |
-| **Tổng** | | **45** | **8** | **23 / 53** | | |
+| **Tổng** | | **45** | **8** | **29 / 53** | | |
 
 ## P00 — Chuẩn bị
 
@@ -80,15 +80,15 @@
 - [x] **P03.03** `MeCoinController`
 - [x] **P03.04** `CheckInIT` (PG + Redis, `MutableClock`)
 - [x] **P03.05** `CheckInIT` đồng thời
-- [ ] **P03.C1** 🔖 COMMIT `feat(promotion): check in daily to earn coins with a seven day streak` · hash: `…`
+- [x] **P03.C1** 🔖 COMMIT `feat(promotion): check in daily to earn coins with a seven day streak` · hash: `b525f6e`
 
 ## P04 — UC-PRO-09 Tra cứu số dư & lịch sử
 
-- [ ] **P04.01** `CoinQueryService.summary(userId, now)`
-- [ ] **P04.02** Kiểm toàn vẹn khi đọc
-- [ ] **P04.03** `CoinQueryService.transactions(userId, cursor, limit)`
-- [ ] **P04.04** `MeCoinController`
-- [ ] **P04.05** `CoinQueryIT`
+- [x] **P04.01** `CoinQueryService.summary(userId, now)`
+- [x] **P04.02** Kiểm toàn vẹn khi đọc
+- [x] **P04.03** `CoinQueryService.transactions(userId, cursor, limit)`
+- [x] **P04.04** `MeCoinController`
+- [x] **P04.05** `CoinQueryIT`
 - [ ] **P04.C1** 🔖 COMMIT `feat(promotion): show coin balance, expiring coins and transaction history` · hash: `…`
 
 ## P05 — UC-PRO-09 Đổi quà (đổi Điểm lấy voucher)
@@ -153,6 +153,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | P02.03 | `CoinLots.remainingLots` (FEFO, lô không hạn xếp cuối) + `expiringBetween(now, until)` — bỏ lô đã quá hạn (để job hết hạn xử lý) |
 | P03.02 | Khóa `lock:checkin:{userId}` bằng `setIfAbsent(…, 5s)`, giải phóng trong `finally`; Redis lỗi → `503 GNE-SYS-5030`. Transaction mở bằng `TransactionTemplate` (khóa Redis bọc ngoài transaction). Lần điểm danh đầu tạo `DailyCheckin.firstFor` (entity mới — ENTITY 4.9, Phụ lục E); trùng `uk_daily_checkin_customer` cũng trả `409`. Nhãn sổ "Điểm danh ngày {ô}" theo D6. `CoinTime`: giờ VN, nửa đêm kế tiếp, `streak_days` (D6) |
 | P03.04 | `created_at` của sổ do `@CreationTimestamp` lấy giờ thật JVM (không theo `MutableClock`) nên test so hạn lô với thời điểm điểm danh thay vì `created_at`. 10 luồng đồng thời: đúng 1 lần `201`, 9 lần `409`, 1 dòng `CHECK_IN` |
+| P04.01 | `expiring_soon` = `null` khi không có Điểm nào sắp hết hạn (web đã nhận `null`); `next_check_in_at` luôn là 00:00 hôm sau giờ VN. Lịch sử trả vỏ danh sách (`pagination` cấp gốc — API 0.3/0.4), `limit` 1–50 |
+| P04.05 | IDOR: gửi kèm `?user_id=<người khác>` vẫn chỉ thấy dòng của mình. Số dư bị sửa thẳng CSDL: `GET` vẫn trả 200 (+ log lỗi / cổng báo động), điểm danh → `500 GNE-SYS-5000`, sổ không đổi |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
