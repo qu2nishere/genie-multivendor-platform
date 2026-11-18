@@ -217,20 +217,28 @@
 | `id` | mã định danh (khóa chính) | số nguyên lớn | Có | Khoá chính. Khóa chính, CSDL tự tăng khi thêm dòng mới — không tự nhập. |
 | `userId` | mã người dùng | số nguyên lớn | Có | FK → users.id — UNIQUE, 1 tài khoản chỉ mở được 1 shop. **Khóa ngoại** → bảng của `User`. Giá trị **không được trùng** giữa các dòng. |
 | `shopName` | tên shop | chuỗi ≤ 255 ký tự | Có | Tên cửa hàng hiển thị cho khách. |
+| `shopNameChangedAt` | thời điểm đổi tên shop gần nhất | ngày + giờ (có múi giờ) | Không | Đổi tên shop tối đa 1 lần / 30 ngày (UC-VND-21); NULL = chưa đổi lần nào. *(V17)* |
 | `categoryId` | mã danh mục | số nguyên lớn | Không | FK → categories.id, ngành hàng chính của shop. **Khóa ngoại** → bảng của `Category`. |
 | `businessType` | loại hình kinh doanh | danh sách cố định `BusinessType` | Không | INDIVIDUAL (cá nhân) / HOUSEHOLD (hộ KD) / BUSINESS (doanh nghiệp). Giá trị: `INDIVIDUAL` (cá nhân), `HOUSEHOLD` (hộ kinh doanh), `BUSINESS` (doanh nghiệp). |
 | `identityCode` | số CCCD / CMND | chuỗi ≤ 255 ký tự | Không | Số CCCD/CMND của chủ shop (dùng đối chiếu KYC). |
 | `taxCode` | mã số thuế | chuỗi ≤ 255 ký tự | Không | Mã số thuế (bắt buộc với hộ KD và doanh nghiệp). |
 | `representative` | người đại diện pháp luật | chuỗi ≤ 255 ký tự | Không | Họ tên người đại diện pháp luật. |
+| `contactPhone` | số điện thoại liên hệ của shop | chuỗi ≤ 20 ký tự | Không | SĐT nhập ở form Mở shop (API 9.1). *(V17)* |
+| `contactEmail` | email liên hệ của shop | chuỗi ≤ 255 ký tự | Không | Email nhập ở form Mở shop — mã OTP mở shop gửi tới email này. *(V17)* |
 | `coverUrl` | ảnh bìa shop | chuỗi ≤ 255 ký tự | Không | Ảnh bìa trang shop. |
 | `shopDescription` | mô tả shop | văn bản dài | Không | Mô tả giới thiệu về shop. |
 | `logoUrl` | logo shop | chuỗi ≤ 500 ký tự | Không | Logo/avatar của shop. |
-| `idFrontUrl` | ảnh mặt trước CCCD | chuỗi ≤ 500 ký tự | Không | Ảnh MẶT TRƯỚC CCCD. |
-| `idBackUrl` | ảnh mặt sau CCCD | chuỗi ≤ 500 ký tự | Không | Ảnh MẶT SAU CCCD. |
-| `licenseUrl` | ảnh giấy phép kinh doanh | chuỗi ≤ 500 ký tự | Không | Ảnh giấy phép kinh doanh. |
-| `selfieUrl` | ảnh chân dung tự chụp | chuỗi ≤ 500 ký tự | Không | Ảnh chân dung tự chụp, dùng so khớp khuôn mặt với CCCD. |
+| `idFrontUrl` | ảnh mặt trước CCCD | chuỗi ≤ 500 ký tự | Không | Ảnh MẶT TRƯỚC CCCD. Từ V17 lưu **khóa đối tượng đã mã hóa AES-256-GCM** trong `kyc-dossiers` (không phải URL xem được). |
+| `idBackUrl` | ảnh mặt sau CCCD | chuỗi ≤ 500 ký tự | Không | Ảnh MẶT SAU CCCD. Từ V17 lưu **khóa đối tượng đã mã hóa AES-256-GCM** trong `kyc-dossiers` (không phải URL xem được). |
+| `licenseUrl` | ảnh giấy phép kinh doanh | chuỗi ≤ 500 ký tự | Không | Ảnh giấy phép kinh doanh. Từ V17 lưu **khóa đối tượng đã mã hóa AES-256-GCM** trong `kyc-dossiers` (không phải URL xem được). |
+| `selfieUrl` | ảnh chân dung tự chụp | chuỗi ≤ 500 ký tự | Không | Ảnh chân dung tự chụp, dùng so khớp khuôn mặt với CCCD. Từ V17 lưu **khóa đối tượng đã mã hóa AES-256-GCM** trong `kyc-dossiers` (không phải URL xem được). |
+| `kycDocumentsMetaJson` | thông tin tệp giấy tờ | JSON | Không | Tên tệp + dung lượng gốc từng giấy tờ — màn KYC của người bán chỉ hiện thông tin này, không bao giờ trả lại URL ảnh. *(V17)* |
+| `kycBiometricConsent` | đồng ý xử lý sinh trắc | đúng / sai | Có | Người bán đồng ý so khớp khuôn mặt; `false` → hồ sơ luôn chuyển nhân viên đối chiếu. Mặc định: `false`. *(V17)* |
 | `kycStatus` | trạng thái KYC | danh sách cố định `KycStatus` | Có | NOT_SUBMITTED /| Có | UNFUNDED | PENDING | FUNDED | FAILED — gán UNFUNDED khi tạo đơn./ AI_PROCESSING / MANUAL_REVIEW / VERIFIED / REJECTED / SUPPLEMENT_REQUESTED (7 trạng thái). Giá trị: `NOT_SUBMITTED` (chưa nộp), `PENDING` (đang chờ), `AI_PROCESSING` (AI đang xử lý), `MANUAL_REVIEW` (chờ duyệt tay), `VERIFIED` (đã xác minh), `REJECTED` (bị từ chối), `SUPPLEMENT_REQUESTED` (yêu cầu bổ sung). |
 | `kycRejectionReason` | lý do từ chối KYC | văn bản dài | Không | Lý do bị từ chối, để vendor biết đường sửa. |
+| `kycSupplementDocumentsJson` | giấy tờ cần bổ sung | JSON | Không | Danh sách giấy tờ nhân viên yêu cầu bổ sung, vd `["ID_FRONT"]`. *(V17)* |
+| `kycSupplementDeadlineAt` | hạn bổ sung hồ sơ | ngày + giờ (có múi giờ) | Không | Yêu cầu bổ sung + 7 ngày; quá hạn → hồ sơ bị từ chối. *(V17)* |
+| `kycManualReviewRequestedAt` | thời điểm yêu cầu nhân viên xem xét | ngày + giờ (có múi giờ) | Không | Người bán bị từ chối bấm "Yêu cầu nhân viên xem xét" (1 lần / hồ sơ). *(V17)* |
 | `kycVerificationMethod` | cách duyệt KYC | danh sách cố định `KycVerificationMethod` | Không | OCR_AUTO (AI duyệt) / MANUAL_STAFF (người duyệt) / BIOMETRIC_FACIAL (sinh trắc khuôn mặt). Giá trị: `OCR_AUTO` (AI tự duyệt), `MANUAL_STAFF` (nhân viên duyệt tay), `BIOMETRIC_FACIAL` (sinh trắc khuôn mặt). |
 | `kycVerifiedBy` | người duyệt KYC | số nguyên lớn | Không | ID staff đã duyệt (KHÔNG đặt FK, xem giải thích bên dưới). |
 | `commissionRate` | tỷ lệ hoa hồng | tỷ lệ (vd 0.0500 = 5%) | Không | Tỷ lệ hoa hồng THƯƠNG LƯỢNG RIÊNG của shop (VD: 0.0300 = 3%). NULL = không có thỏa thuận riêng → dùng Category.commissionRate → mặc định toàn sàn 5% (xem effectiveCommissionRate()). |
@@ -243,6 +251,7 @@
 | `pickupWardCode` | mã phường / xã của kho lấy hàng (GHN) | chuỗi ≤ 50 ký tự | Không | Mã phường/xã kho hàng (GHN). |
 | `pickupWard` | tên phường / xã của kho lấy hàng | chuỗi ≤ 100 ký tự | Không | Tên phường/xã kho hàng (cache hiển thị). |
 | `pickupAddressLine` | địa chỉ chi tiết của kho lấy hàng | chuỗi ≤ 500 ký tự | Không | Địa chỉ chi tiết kho hàng để shipper tới lấy. |
+| `pickupPhone` | số điện thoại tại kho lấy hàng | chuỗi ≤ 20 ký tự | Không | SĐT người liên hệ ở kho, gửi kèm khi đăng ký shop với GHN (UC-VND-05). *(V17)* |
 | `ghnShopId` | mã cửa hàng bên GHN | số nguyên | Không | ID shop do GHN cấp sau khi gọi API đăng ký (UC-VND-05); NULL khi mới mở shop (UC-VND-01). |
 | `payoutBankName` | ngân hàng nhận tiền | chuỗi ≤ 100 ký tự | Không | Tên ngân hàng nhận tiền rút. |
 | `payoutBankAccountNumber` | số tài khoản nhận tiền | chuỗi ≤ 50 ký tự | Không | Số tài khoản ngân hàng. |

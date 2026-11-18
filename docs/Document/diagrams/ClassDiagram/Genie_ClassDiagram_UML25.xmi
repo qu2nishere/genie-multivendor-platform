@@ -617,6 +617,51 @@
             <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_8CD78871_C543_59A1_BAD6_D647DA82B0B9" value="1"/>
             <type xmi:idref="EAID_F12B2D1D_FEAD_58DF_BA3C_B6B97242B6D7"/>
           </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_04DB7347_0850_5FB1_9FCE_37D34981B47A" name="shopNameChangedAt" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_6A44D4F8_5F13_510B_882A_792DF33E1DF9" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_7A6CF854_78AF_5D4B_9D8B_D549EBEF5424" value="1"/>
+            <type xmi:idref="EAJava_OffsetDateTime"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_F2A41767_8E7C_51C3_92C8_AED69A1AFD42" name="contactPhone" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_77F970A9_82B4_5942_9378_CBDF88EF04FC" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_A6891DB6_AD9E_54D8_86C2_520C46006E59" value="1"/>
+            <type xmi:idref="EAJava_String"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_116642F0_455F_5E10_9547_12D223E89E28" name="contactEmail" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_582596FF_DAA4_510E_94D6_2256BFF1D241" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_EF568886_32DC_5334_AB49_97ADF71D674C" value="1"/>
+            <type xmi:idref="EAJava_String"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_B4EA901E_04B9_5F67_B51B_0920C975007C" name="kycDocumentsMetaJson" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_C9525999_7085_5385_8086_890B54F8CA53" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_31179442_D1C3_5BFC_8D4E_7DEF326912BC" value="1"/>
+            <type xmi:idref="EAJava_String"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_F91EA719_BCA7_5DD0_AA85_26CF3D2A8F51" name="kycBiometricConsent" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_77D1DC15_729D_5254_AA49_7EBA6F6E101A" value="1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_104AB5CE_4939_51C1_93D6_611A1EB2B33E" value="1"/>
+            <type xmi:idref="EAJava_Boolean"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_48B24EEA_E4E6_56EF_AF23_C3457543047F" name="kycSupplementDocumentsJson" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_EACFAE11_6972_52E6_B847_9AC6A90A1659" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_6040AD2A_F6DE_52A3_A2A4_AC82A84B2E9C" value="1"/>
+            <type xmi:idref="EAJava_String"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_917613C3_F91E_5961_B68B_FD57C844C68A" name="kycSupplementDeadlineAt" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_739DD4F3_13D3_5F78_BE3E_5509010AF275" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_52FE8778_2972_5685_B3C5_4B337C442719" value="1"/>
+            <type xmi:idref="EAJava_OffsetDateTime"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_BC26EF60_F9A8_5D0E_9BE4_7A2B07CBD649" name="kycManualReviewRequestedAt" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_9E7134CE_3924_5F56_B1EF_5AA8B491181B" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_0E0B036A_EFF5_5546_BA11_D8F956BCA665" value="1"/>
+            <type xmi:idref="EAJava_OffsetDateTime"/>
+          </ownedAttribute>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="EAID_F6D25755_5871_548D_98AC_DCCC68CBB182" name="pickupPhone" visibility="private" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_BDBE2CD3_D345_5B93_8B21_15D6E867FB05" value="0"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_DAC4CA1F_5135_5547_B1B9_83B4BBCA682D" value="1"/>
+            <type xmi:idref="EAJava_String"/>
+          </ownedAttribute>
           <ownedOperation xmi:id="EAID_C2619BCF_4949_5E9E_B1C3_26BB10DB2A1F" name="submitKyc" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
             <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_0FF1149A_4493_5D3D_A9D3_77CB822D6743" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
           </ownedOperation>
@@ -625,7 +670,9 @@
           <ownedOperation xmi:id="EAID_8AA7C3A8_B995_52FC_8E36_91C7B57E3DBF" name="routeToManualReview" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
           </ownedOperation>
           <ownedOperation xmi:id="EAID_0430DD46_CA1D_5C9C_8AF6_30DA5143291E" name="requestSupplement" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_F9A85F39_2634_5E1D_AF80_ECDA85CC9556" name="documentsJson" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
             <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_99E8DD3D_6F6C_5A50_B329_7D52DF2A5A04" name="note" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_7396CCAF_B662_532F_9087_B4108A6A9C18" name="deadline" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
           </ownedOperation>
           <ownedOperation xmi:id="EAID_ECF24E3B_1697_5E70_9098_B83F7F63FC1E" name="approveKyc" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
             <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_6A2CB64D_5830_5F7C_8A8B_52E1ADE2D734" name="staffId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Long"/></ownedParameter>
@@ -669,6 +716,91 @@
           <ownedOperation xmi:id="EAID_DE0813FC_AF13_513E_9C96_35B947D51BCA" name="isOnVacation" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
             <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_5C0B45BA_3E3C_57F0_9FFE_A78AD855A785" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
             <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_3FB82FEC_B8B4_5F4E_B7AC_F6E70249322C" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_9ED68605_0334_5D32_B611_E4C0D7625B04" name="register" visibility="public" concurrency="sequential" isStatic="true" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_1B03EEA1_BFFB_547F_B20A_436ACC90A7D8" name="userId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Long"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_FE7CD437_69EE_5E85_B1C5_2B07B78DCC29" name="shopName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_FF8D67D3_4AFC_5585_B966_FCFC6C7CB5DB" name="categoryId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Long"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_24A0DDF6_0ED7_5A9B_8268_AEBDA76774BD" name="businessType" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAID_E81467D0_2B96_5863_A0A3_CCF102543F46"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_0D5E5EF0_EB20_521F_A355_0E33D909B947" name="representative" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_CD65B88F_9B57_5080_8AF0_9909C1C24AE0" name="contactPhone" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_9A71E17E_9471_53B7_B17D_63F83D4A475E" name="contactEmail" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_C19DC891_E2C2_5D83_B48F_760578B2660C" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAID_769330C1_72C2_5E43_9D4D_839B04975810"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_F7D9453D_29DF_5152_B526_70F083D78BE0" name="isKycEditable" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_6716CB65_AFAD_5637_AD93_D6BCA7A917CF" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_4441B9B1_CBF8_502C_B8B7_279DEFB8B6F7" name="saveKycDraft" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_03237E11_78C2_571D_8E2E_A9105E2BAB5A" name="identityCode" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_15C14CE0_52A7_56A4_96DC_D87F6C796B24" name="taxCode" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_AD805BC6_E07A_5C89_AE2E_24D6D1E9BD68" name="representative" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_9BD248F0_6615_550F_AE87_5D8DEDCDE9AE" name="shopName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_C71173F8_D932_51D3_AAE3_7E0272AA8577" name="businessType" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAID_E81467D0_2B96_5863_A0A3_CCF102543F46"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_555B3757_DE73_59E2_848B_FAF8F250B632" name="biometricConsent" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_0303B32F_5288_5725_9887_FFC08860C5B6" name="attachKycDocuments" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_E05624D1_E18A_519F_B2A1_A9F0C6CA245E" name="idFrontKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_B056004A_8685_5853_8BEF_30E52EEC3923" name="idBackKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_43FF77B9_2628_525F_ADA1_FC192F5D07D5" name="licenseKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_07DFEA83_ED38_5484_BB6B_48F6F82335FB" name="selfieKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_6F558FA8_EC0E_5DEC_B75C_C321A69ABFA6" name="documentsMetaJson" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_D0A1C3CD_4FB1_5988_9A83_B52332C66193" name="requestManualReview" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_DC22DDE3_66B9_582A_944A_44EB4EEE7F88" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_9C71C04A_B5F3_50DF_887A_C4D48C87CCCA" name="isManualReviewRequested" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_BC49A7C9_0787_52DB_AA84_F968FB6E5F2E" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_6965FC97_5843_5CEB_89F6_65B8FEEF8712" name="expireSupplement" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_013B243B_5493_564B_81C2_06F693AB7A25" name="reason" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_D7BFA187_6E53_5361_93C5_8B3C5A6D71EC" name="requeueForReview" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_2533A561_0B98_5B65_AC91_21E947A629E0" name="markAsMall" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_9362CC29_1811_5DE8_8B99_08B55AB443DE" name="mall" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_52220A06_F306_5DC3_B1F3_4235161CA1B2" name="setNegotiatedCommission" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_84422922_7EB7_54FE_9628_438C55680168" name="rate" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_BigDecimal"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_20909EED_051B_56B3_B43B_D02E66FE7065" name="nextRenameAllowedAt" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_98EAE246_E2D9_5CAF_B29C_A91BEA0A3A59" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_9EEAB0C5_4EC0_57D3_A7A3_289FAEF47B71" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_A9B5DF5C_CD45_5B31_B43C_356D69CBF5A2" name="renameShop" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_578AD0D3_A2B8_5A1F_A0F2_0803FAC69B95" name="newName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_85B8118C_EC15_5222_AE78_8CAEA2F5918B" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_01046F49_B61C_5DF6_AB78_A382497F07CB" name="updateBranding" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_F6EFC5DD_19CC_54CA_9678_2EA50CB59130" name="description" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_CEED81A0_E48D_5D8B_830D_2A60396DE9BA" name="logoKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_77F40D38_0272_5C45_8826_55CD12495E5B" name="coverKey" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_6D51E04D_7399_53C5_A66B_664C9FDA0CE7" name="configureAutoReply" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_C9E44994_ECF6_56B0_9109_D8EDFD2A999C" name="enabled" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_7A1348A8_78F8_5C41_9204_D6376D56D0B7" name="greeting" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_BBDC92CD_3436_550D_B976_22955E1EBAE9" name="awayMessage" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_467BA356_B08D_50E3_AF12_623A172F946C" name="updatePickup" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_42FC724B_65C0_5E9D_89CF_C4DB77CB0133" name="phone" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_DE6AA448_86F3_51AD_B074_CEE1D7D5C290" name="provinceId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Integer"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_9AED4B57_03BD_528A_B031_C7ABAD0F0B2E" name="provinceName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_5BEC578B_E4DC_5745_AD1F_456B057C927B" name="districtId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Integer"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_40AD1563_D85E_5672_B43B_FA803E3D29DD" name="districtName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_C95CB778_F74A_56C9_89BF_0A9BE0A89D0B" name="wardCode" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_393ADDDD_EB37_502A_BCC5_E0BEA528A4E7" name="wardName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_8DE5F9F8_EED2_5353_AFFF_F5C22E7C4DA0" name="addressLine" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_061A5B5F_CB6D_5B27_B09E_ED901BCC5638" name="ghnShopId" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_Integer"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_41F6E77E_AF8F_5A45_A1F0_6DD201EDB5BD" name="setPayoutAccount" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_16110696_8A53_57FC_88D9_B0E8B364B838" name="bankName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_1AFA8BE0_81FB_5DF1_B593_C496CDE23BEE" name="accountNumber" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_FAD9FF46_8451_5C67_89C7_665E0F2C07C4" name="holderName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_67ED7EA6_F2E1_538B_8891_845D389F5013" name="bankReturnedHolderName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_299BE672_098A_563A_BE25_7337F08D18B3" name="kycFullName" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_String"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_3AFACBB8_B08B_57E4_9B5B_85AC5B888594" name="now" direction="in" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_OffsetDateTime"/></ownedParameter>
+            <ownedParameter xmi:type="uml:Parameter" xmi:id="EAID_1203B0D3_5506_5DD9_884B_E061BFE37310" name="return" direction="return" isStream="false" isException="false" isOrdered="false" isUnique="true"><type xmi:idref="EAJava_boolean"/></ownedParameter>
+          </ownedOperation>
+          <ownedOperation xmi:id="EAID_E8DF805D_29A4_5F7B_B7AF_732CD42F5BAC" name="clearPayoutAccount" visibility="public" concurrency="sequential" isStatic="false" isAbstract="false" isQuery="false">
           </ownedOperation>
         </packagedElement>
         <packagedElement xmi:type="uml:Class" xmi:id="EAID_F2F916E8_64AE_514B_9CBC_BBFDD6874882" name="AdminProfile" visibility="public" isAbstract="false">
@@ -6656,6 +6788,11 @@
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_3BD19285_B737_4493_87DA_9EA5864F7FE3" name="SESSION_REVOKED"/>
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_7FADB3BE_8AB6_4C1D_8707_524DD9503DC8" name="ACCOUNT_DELETION_REQUESTED"/>
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_1CBF118A_E383_4961_8612_BD2377A49E14" name="ACCOUNT_DELETION_CANCELLED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_B2D431AB_2EB8_5525_8777_03F5A398654A" name="BANNER_CHANGED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_46C91D63_2240_5DD9_B815_0AE2F22EEC48" name="KYC_SUPPLEMENT_REQUESTED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_90891C0E_C6AF_5C35_BE22_61CE575A879B" name="KYC_REQUEUED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_D3BAB954_C4A3_59EB_8F67_024FF14CEC8E" name="KYC_DOCUMENT_VIEWED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_AC3345D9_886A_540F_B794_F45F1BD8B3E2" name="PAYOUT_ACCOUNT_CHANGED"/>
         </packagedElement>
         <packagedElement xmi:type="uml:Association" xmi:id="EAID_A97CD29B_2FC4_53D1_994C_DFFFD7642CB6" name="userId" visibility="public">
           <memberEnd xmi:idref="EAID_097B3F05_CF45_5175_86F7_8B83C6C0A944"/>
