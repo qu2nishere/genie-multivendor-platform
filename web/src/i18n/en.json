@@ -145,6 +145,7 @@
     "GNE-SOC-4092": "The order isn't complete yet, so it can't be reviewed.",
     "GNE-SOC-4093": "You've already reported this review.",
     "GNE-SOC-4094": "The shop has already replied to this review.",
+    "GNE-SOC-4095": "You cannot follow your own shop.",
     "GNE-SOC-4221": "Replies can't contain phone numbers.",
     "GNE-VND-4031": "The shop isn't verified (KYC) yet.",
     "GNE-VND-4091": "The shop name can be changed once every 30 days.",
@@ -1121,6 +1122,7 @@
       "view": "View shop"
     },
     "follow": {
+      "gone": "This shop is no longer active.",
       "done": "Following {shop}",
       "undone": "Unfollowed {shop}",
       "confirm_title": "Unfollow this shop?",

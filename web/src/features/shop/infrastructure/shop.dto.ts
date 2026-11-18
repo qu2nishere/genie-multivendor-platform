@@ -19,3 +19,10 @@ export interface ShopDto {
   vacation: { until: string; message: string } | null;
   followed: boolean;
 }
+
+/** GET /me/following (API_SPEC 3.11) — một dòng "Shop đang theo dõi"; `shop.id` = vendor_profiles.id. */
+export interface FollowedShopDto {
+  shop: { id: number; name: string; logo_url: string | null; is_mall: boolean };
+  rating_avg: number;
+  follower_count: number;
+}

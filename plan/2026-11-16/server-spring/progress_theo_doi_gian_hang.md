@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/social-shop-follow` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (24 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (31 / 38) |
 
 **Cách dùng**
 
@@ -38,10 +38,10 @@
 | F00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/social-shop-follow` |
 | F01 | Cổng tra shop & truy vấn | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
 | F02 | Theo dõi / hủy theo dõi | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
-| F03 | Danh sách shop đang theo dõi | 5 | 1 | 5 / 6 | — | `feature/social-shop-follow` |
-| F04 | Nối giao diện `web/` | 6 | 1 | 0 / 7 | — | `feature/social-shop-follow` |
+| F03 | Danh sách shop đang theo dõi | 5 | 1 | 6 / 6 | — | `feature/social-shop-follow` |
+| F04 | Nối giao diện `web/` | 6 | 1 | 6 / 7 | — | `feature/social-shop-follow` |
 | F05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/social-shop-follow` |
-| **Tổng** | | **33** | **5** | **24 / 38** | | |
+| **Tổng** | | **33** | **5** | **31 / 38** | | |
 
 ## F00 — Chuẩn bị
 
@@ -78,16 +78,16 @@
 - [x] **F03.03** `MeFollowingController`
 - [x] **F03.04** `ShopFollowFacade`
 - [x] **F03.05** `ShopFollowQueryIT`
-- [ ] **F03.C1** 🔖 COMMIT `feat(social): list followed shops with rating and follower count` · hash: `…`
+- [x] **F03.C1** 🔖 COMMIT `feat(social): list followed shops with rating and follower count` · hash: `c0e0aa8`
 
 ## F04 — Nối giao diện `web/`
 
-- [ ] **F04.01** `shop/infrastructure/shop.api.ts`
-- [ ] **F04.02** `error-codes.ts` + `vi.json` / `en.json`
-- [ ] **F04.03** Trạng thái & lỗi
-- [ ] **F04.04** Trang `/account/following` dùng `summary.total` cho tiêu đề "Shop đang theo dõi (n)".
-- [ ] **F04.05** Chạy thật hai phía
-- [ ] **F04.06** `cd web && npm run verify`.
+- [x] **F04.01** `shop/infrastructure/shop.api.ts`
+- [x] **F04.02** `error-codes.ts` + `vi.json` / `en.json`
+- [x] **F04.03** Trạng thái & lỗi
+- [x] **F04.04** Trang `/account/following` dùng `summary.total` cho tiêu đề "Shop đang theo dõi (n)".
+- [-] **F04.05** Chạy thật hai phía
+- [x] **F04.06** `cd web && npm run verify`.
 - [ ] **F04.C1** 🔖 COMMIT `fix(web): call shop follow endpoints defined in the api spec` · hash: `…`
 
 ## F05 — Hoàn thiện use case
@@ -128,6 +128,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | F02.06 | Ca đồng thời đặt trong `ShopFollowIT.concurrentFollowsNeverMiscount` (không tách lớp riêng): 20 request cùng một người → `follower_count` +1; 20 người khác nhau → +20; 40 theo dõi / hủy xen kẽ → `follower_count` = số dòng `shop_follows`. Test cũng khẳng định `shop_id` ≠ `users.id` chủ shop (D1) |
 | F03.01 | Mã `GET /me/following` (`ShopFollowQueryService.list`, endpoint trong `MeFollowingController`) đã đi cùng commit F02 vì chung lớp; commit F03 thêm `ShopFollowFacade` + `ShopFollowQueryIT`. Thông tin shop nạp một lần / trang qua cổng (`findByUserIdIn` + `activeAmong` — 2 câu cho cả trang) |
 | F03.02 | `summary.total` = số shop CÒN hiển thị được trong tối đa 1.000 shop đang theo dõi (shop bị khóa không đếm — D4); `ShopFollowFacade.countFollowing` là bộ đếm thô (đếm cả shop bị khóa) cho `GET /me` sau này |
+| F04.01 | Cờ `isMocked('follow')` chỉ cho nhóm theo dõi; `getShop` / `listShops` công khai giữ `USE_MOCK`. `listFollowedShops` trả `{items, total}` (DTO `FollowedShopDto` + mapper `fromFollowedShop`, có test); thêm `fetchFollowedShopIds` + hook `useFollowedShopIds` — nút Theo dõi dùng tập ID (đúng cả khi theo dõi > 50 shop); `setFollow` → `PUT` / `DELETE /me/following/{id}` |
+| F04.03 | Nút Theo dõi giữ kiểu cập nhật hiện có (tải lại tập ID sau khi đổi — không cộng / trừ lạc quan số người theo dõi vì trang shop còn mock). `404` → toast `shop.follow.gone` "Shop này hiện không còn hoạt động"; `409 GNE-SOC-4095` qua `errors.*`; chưa đăng nhập → lời nhắc đăng nhập (có sẵn) |
+| F04.04 | Tiêu đề "Shop đang theo dõi (n)" và số đếm ở menu Tài khoản (`AccountNav`) dùng `total` |
+| F04.05 | `[-]` Phần trình duyệt chờ người dùng (CLAUDE.md). Đã chạy thật phía API trên CSDL mới `genie_follow`: `PUT` 2 lần → `follower_count` 1; shop của chính mình → `409 GNE-SOC-4095`; shop lạ → 404; `shop-ids` `[2, 1]`; danh sách đủ `$ShopMini` + `summary.total 2`; `DELETE` 2 lần → 204, bộ đếm = số dòng `shop_follows` ở mọi shop. Cách chạy giao diện: `PUBLIC_REAL_API=auth,follow` |
+| F04.06 | Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 320/320, build OK, i18n OK (3271 khóa); E2E `guest` + `orders` 10/10 |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

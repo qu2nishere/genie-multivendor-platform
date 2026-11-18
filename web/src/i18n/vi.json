@@ -145,6 +145,7 @@
     "GNE-SOC-4092": "Đơn chưa hoàn thành, chưa thể đánh giá.",
     "GNE-SOC-4093": "Bạn đã báo cáo đánh giá này.",
     "GNE-SOC-4094": "Shop đã phản hồi đánh giá này.",
+    "GNE-SOC-4095": "Không thể theo dõi shop của chính mình.",
     "GNE-SOC-4221": "Phản hồi không được chứa số điện thoại.",
     "GNE-VND-4031": "Shop chưa được xác minh (KYC).",
     "GNE-VND-4091": "Chỉ được đổi tên shop 1 lần trong 30 ngày.",
@@ -1121,6 +1122,7 @@
       "view": "Xem shop"
     },
     "follow": {
+      "gone": "Shop này hiện không còn hoạt động.",
       "done": "Đã theo dõi {shop}",
       "undone": "Đã hủy theo dõi {shop}",
       "confirm_title": "Hủy theo dõi Shop?",
