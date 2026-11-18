@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (39 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (51 / 137) |
 
 **Cách dùng**
 
@@ -46,8 +46,8 @@
 | K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 7 / 7 | — | `feature/vendor-shop-kyc` |
 | K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 10 / 10 | — | `feature/vendor-k01-schema` |
 | K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
-| K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 10 / 11 | — | `feature/vendor-k03-shop-registration` |
-| K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 0 / 12 | — | `feature/vendor-k04-kyc-submission` |
+| K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
+| K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 11 / 12 | — | `feature/vendor-k04-kyc-submission` |
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 0 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **39 / 137** | | |
+| **Tổng** | | **112** | **25** | **51 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -107,22 +107,22 @@
 - [x] **K03.07** `GET /seller/me` (`SellerShellService`)
 - [x] **K03.08** `ShopRegistrationIT`
 - [x] **K03.C1** 🔖 COMMIT `feat(vendor): register a shop with email otp and promote the account to vendor` · hash: `d9700f1`
-- [ ] **K03.C2** 🔖 COMMIT `feat(vendor): return seller shell context with kyc status` · hash: `…`
+- [x] **K03.C2** 🔖 COMMIT `feat(vendor): return seller shell context with kyc status` · hash: `5e80822`
 - [-] **K03.09** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 1: K01–K03).
 
 ## K04 — Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02)
 
-- [ ] **K04.01** `KycDocumentType`
-- [ ] **K04.02** Entity
-- [ ] **K04.03** `KycDossierStorage.seal(vendorProfileId, type, tmpObjectKey)`
-- [ ] **K04.04** `KycDossierStorage.openTemporaryView(encKey, aad)`
-- [ ] **K04.05** `GET /seller/kyc`
-- [ ] **K04.06** `PUT /seller/kyc/draft`
-- [ ] **K04.07** `POST /seller/kyc/submissions`
-- [ ] **K04.08** `POST /seller/kyc/manual-review-requests` (D8)
-- [ ] **K04.09** Thông báo nội bộ
-- [ ] **K04.10** `KycSubmissionIT` (PG + Redis + Silo)
-- [ ] **K04.C1** 🔖 COMMIT `feat(vendor): encrypt kyc documents with aes-gcm before storing them` · hash: `…`
+- [x] **K04.01** `KycDocumentType`
+- [x] **K04.02** Entity
+- [x] **K04.03** `KycDossierStorage.seal(vendorProfileId, type, tmpObjectKey)`
+- [x] **K04.04** `KycDossierStorage.openTemporaryView(encKey, aad)`
+- [x] **K04.05** `GET /seller/kyc`
+- [x] **K04.06** `PUT /seller/kyc/draft`
+- [x] **K04.07** `POST /seller/kyc/submissions`
+- [x] **K04.08** `POST /seller/kyc/manual-review-requests` (D8)
+- [x] **K04.09** Thông báo nội bộ
+- [x] **K04.10** `KycSubmissionIT` (PG + Redis + Silo)
+- [x] **K04.C1** 🔖 COMMIT `feat(vendor): encrypt kyc documents with aes-gcm before storing them` · hash: `1b3428a`
 - [ ] **K04.C2** 🔖 COMMIT `feat(vendor): save kyc draft and submit kyc dossier for verification` · hash: `…`
 
 ## K05 — Thẩm định KYC tự động qua AI — phần backend (UC-VND-03)
@@ -278,6 +278,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K03.05 | `UserFacade.promoteToVendor` bỏ `revokeAllSessions(ROLE_CHANGED)`; refresh cấp token đọc `users.role` → test `ShopRegistrationIT` refresh bằng cookie cũ rồi gọi `GET /seller/me` được; token CUSTOMER cũ vẫn mua hàng. |
 | K03.06 | `ShopBootstrapListener` (AFTER_COMMIT, mỗi cài đặt một transaction REQUIRES_NEW, lỗi chỉ ghi log). Chưa có cài đặt nào — `shipping` cài ở K09.02; ví shop chờ module `payment`. |
 | K03.09 | Chưa mở PR — chờ người dùng (nhánh chưa push; PR phải merge sau chuỗi plan 2–6). |
+| K04.02 | Phương thức entity đã thêm ở K01.04 (cùng commit migration); unit test bảng chuyển trạng thái `VendorProfileTest` (commit K03.C1). |
+| K04.03 | `UploadService.readOwnTmp` kiểm chủ sở hữu / loại / dung lượng (ảnh ≥ 20 KB) rồi đọc nội dung; SELFIE phải là ảnh. Tên tệp hiển thị lấy từ trường mở rộng `document_file_names` (tùy chọn — API 10.12 không có chỗ gửi tên tệp; không gửi thì đặt `front.jpg`…). Metadata `{file_name, size_bytes, content_type}` ở `kyc_documents_meta_json`. Rollback → xóa tệp `.enc` mới; commit → xóa tệp cũ bị thay. |
+| K04.04 | Bản xem tạm ghi vào Redis ZSET `kyc:views` (điểm = thời điểm tạo); `KycViewCleanupJob` mỗi phút xóa bản quá 10 phút. |
+| K04.09 | Cổng `KycAdminNotifier` + listener AFTER_COMMIT; chưa có cài đặt (module notification) → ghi log. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
