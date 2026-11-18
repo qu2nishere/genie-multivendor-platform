@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C02 (25 / 66), nhánh `feature/catalog-search` |
+| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C03 (32 / 66), nhánh `feature/catalog-search` |
 
 **Cách dùng**
 
@@ -61,13 +61,13 @@
 | C00 | Chuẩn bị | — | 6 | 0 | 6 / 6 | — | `feature/catalog-search` |
 | C01 | Nền: migration, cache, chuẩn hóa | — | 5 | 2 | 7 / 7 | — | `feature/catalog-search` |
 | C02 | Tìm kiếm & lọc | CAT-02, CAT-05 | 10 | 2 | 12 / 12 | — | `feature/catalog-search` |
-| C03 | Gợi ý & xu hướng | CAT-04 | 6 | 1 | 0 / 7 | — | `feature/catalog-search` |
+| C03 | Gợi ý & xu hướng | CAT-04 | 6 | 1 | 7 / 7 | — | `feature/catalog-search` |
 | C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 0 / 8 | — | `feature/catalog-product-detail` |
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 0 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 0 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 0 / 11 | — | `feature/web-catalog-real-api` |
 | C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **25 / 66** | | |
+| **Tổng** | | | **54** | **12** | **32 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -105,13 +105,13 @@
 
 ## C03 — Gợi ý & xu hướng (UC-CAT-04)
 
-- [ ] **C03.01** `SearchKeywordCounter` (dedupe + ZINCRBY + pending)
-- [ ] **C03.02** `SearchKeywordFlushJob` (5 phút, UPSERT)
-- [ ] **C03.03** `TrendingService` (ZUNIONSTORE + blocklist + dự phòng SQL)
-- [ ] **C03.04** `SuggestionService` (2 danh mục / 2 shop / 5 sản phẩm)
-- [ ] **C03.05** `PublicSearchController` — `/suggestions`, `/trending`
-- [ ] **C03.06** `SuggestionIT` + `TrendingIT`
-- [ ] **C03.C1** 🔖 COMMIT `feat(catalog): add search suggestions and trending keywords` · hash: `…`
+- [x] **C03.01** `SearchKeywordCounter` (dedupe + ZINCRBY + pending)
+- [x] **C03.02** `SearchKeywordFlushJob` (5 phút, UPSERT)
+- [x] **C03.03** `TrendingService` (ZUNIONSTORE + blocklist + dự phòng SQL)
+- [x] **C03.04** `SuggestionService` (2 danh mục / 2 shop / 5 sản phẩm)
+- [x] **C03.05** `PublicSearchController` — `/suggestions`, `/trending`
+- [x] **C03.06** `SuggestionIT` + `TrendingIT`
+- [x] **C03.C1** 🔖 COMMIT `feat(catalog): add search suggestions and trending keywords` · hash: `ac22d10`
 
 ## C04 — Chi tiết sản phẩm & lượt xem (UC-CAT-06)
 
@@ -193,6 +193,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C02.05 | Lọc thuộc tính dùng `(specs_json ->> code) IN (…)` thay `@>`: khớp cả giá trị số trong JSON; chưa dùng index `jsonb_path_ops` (đủ cho MVP). Chế độ bù gõ sai: facet đếm trên đúng tập kết quả (≤ 105 ID), không còn disjunctive — để giữ p95 |
 | C02.06 | Bỏ cổng `CatalogShopDirectory`: SQL đọc JOIN thẳng `vendor_profiles` (D6) nên không cần đổi `shop_id ↔ vendor_id` qua cổng. Còn cổng `ShopVoucherAvailability` (mặc định chưa hỗ trợ) |
 | C02.10 | Đo 2026-11-18 (10.000 sản phẩm, 36 request, máy dev + Testcontainers): p50 = 29 ms, **p95 = 50 ms**, max 256 ms (request đầu, JIT). Lần đầu p95 = 538 ms → 2 sửa: chỉ JOIN LATERAL giá khi lọc / sắp theo giá; facet chế độ trigram đếm trên tập kết quả. `EXPLAIN` (tắt seq scan) dùng `idx_products_search_vector` và `idx_products_name_unaccent_trgm`; với 10.000 dòng planner tự chọn seq scan (3,5 ms) là hợp lý. Thiếu `ANALYZE users / vendor_profiles` làm planner chọn nested loop ~500 ms — production có autovacuum |
+| C03.01 | Đếm đồng bộ (không `@Async`): 3 lệnh Redis nhanh, bọc try/catch — test xác định được. Chỉ đếm lượt tìm toàn sàn, trang 1, có kết quả; từ khóa lưu bản chuẩn hóa còn dấu (hiển thị ở Xu hướng) |
+| C03.02 | Xóa `search:kw:flushing` trong `afterCommit` — DB rollback thì giữ lại để lần sau ghi; `flush()` public để test gọi (cron tắt trong test) |
+| C03.04 | API 5.4 không có trường "từ khóa phổ biến khớp tiền tố" (UC-CAT-04 bước 3) → không trả; client dùng `/trending` khi ô trống |
 
 ## Nhật ký
 
@@ -203,3 +206,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C00 chuẩn bị: nhánh `feature/catalog-search`, chốt D1–D12 theo đề xuất, đăng ký `V18`; commit plan + checklist | `04b866d` |
 | 2026-11-18 | C01 nền: `V18` (trọng số FTS, trigram bỏ dấu, index giá), `JsonCache`, ETag `/public`, `PageResponse`, normalizer + slug + `TestDataBuilder` | `4f808a9` `86e5ddc` `08c76cd` |
 | 2026-11-18 | C02 tìm kiếm & lọc: `GET /public/products` (FTS + trigram, lọc đa tiêu chí, facet, rate limit 60/phút); 7 unit + 16 IT xanh; đo hiệu năng p95 50 ms | `a45aedb` `fa33542` |
+| 2026-11-18 | C03 gợi ý & xu hướng: `/public/search/suggestions`, `/public/search/trending`, bộ đếm Redis ZSET + job ghi gộp 5 phút; 9 IT xanh | `ac22d10` |
