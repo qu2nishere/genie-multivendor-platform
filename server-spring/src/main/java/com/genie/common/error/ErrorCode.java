@@ -56,6 +56,9 @@ public enum ErrorCode {
     // ===== Danh mục & sản phẩm (API_SPEC 15) =====
     PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn bán."),
 
+    // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
+    CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),
+
     // ===== Banner trang chủ (API_SPEC 11.16, 15 — UC-ADM-12) =====
     BANNER_NOT_DELETABLE("GNE-BNR-4091", HttpStatus.CONFLICT, "Không thể xóa banner đang hiển thị hoặc đã lên lịch — hãy tắt trước."),
     BANNER_SLOT_FULL("GNE-BNR-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Vị trí này đã đủ 8 banner đang hiển thị."),

@@ -51,6 +51,12 @@ public class UserFacade {
         return users.findById(userId).map(User::isActive).orElse(false);
     }
 
+    /** Các id đang ACTIVE trong tập đưa vào — một truy vấn cho cả trang (vd. lọc shop có chủ còn hoạt động). */
+    @Transactional(readOnly = true)
+    public java.util.Set<Long> activeAmong(java.util.Collection<Long> userIds) {
+        return userIds.isEmpty() ? java.util.Set.of() : new java.util.HashSet<>(users.findActiveIds(userIds));
+    }
+
     @Transactional(readOnly = true)
     public Optional<String> emailOf(long userId) {
         return users.findById(userId).map(User::getEmail);
