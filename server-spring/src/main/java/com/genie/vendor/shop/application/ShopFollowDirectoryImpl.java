@@ -1,7 +1,6 @@
 package com.genie.vendor.shop.application;
 
 import com.genie.auth.profile.application.UserFacade;
-import com.genie.common.storage.ObjectStorage;
 import com.genie.social.follow.application.ShopFollowDirectory;
 import com.genie.vendor.shop.domain.KycStatus;
 import com.genie.vendor.shop.domain.VendorProfile;
@@ -17,23 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Cài cổng {@link ShopFollowDirectory} của module {@code social} bằng dữ liệu {@code vendor_profiles} (plan theo dõi gian hàng
- * D5, F01.04). Khi plan Mở shop & KYC có {@code ShopFacade} thì lớp này gọi lại nó thay vì truy vấn repository trực tiếp.
+ * D5, F01.04). Ảnh logo dựng qua {@link ShopFacade#mediaUrl} (plan Mở shop & KYC K10.01) — cùng luật URL với mọi nơi khác.
  * Shop theo dõi được: {@code VERIFIED} + chủ shop {@code ACTIVE} (D4).
  */
 @Component
 public class ShopFollowDirectoryImpl implements ShopFollowDirectory {
 
-    /** Bucket ảnh logo shop (LUU_TRU 5) — cột lưu khóa đối tượng thì ghép URL công khai. */
-    static final String SHOP_MEDIA = "content-assets";
-
     private final VendorProfileRepository profiles;
     private final UserFacade users;
-    private final ObjectStorage storage;
+    private final ShopFacade shops;
 
-    public ShopFollowDirectoryImpl(VendorProfileRepository profiles, UserFacade users, ObjectStorage storage) {
+    public ShopFollowDirectoryImpl(VendorProfileRepository profiles, UserFacade users, ShopFacade shops) {
         this.profiles = profiles;
         this.users = users;
-        this.storage = storage;
+        this.shops = shops;
     }
 
     @Override
@@ -64,7 +60,7 @@ public class ShopFollowDirectoryImpl implements ShopFollowDirectory {
             if (p.getKycStatus() != KycStatus.VERIFIED || !active.contains(p.getUserId())) {
                 continue;   // shop bị khóa / chưa xác minh: không hiện trong danh sách (D4)
             }
-            out.put(p.getUserId(), new FollowedShopView(p.getId(), p.getShopName(), logo(p.getLogoUrl()),
+            out.put(p.getUserId(), new FollowedShopView(p.getId(), p.getShopName(), shops.mediaUrl(p.getLogoUrl()),
                     Boolean.TRUE.equals(p.getIsMall()), p.getRatingAvg() == null ? 0 : p.getRatingAvg().doubleValue(),
                     p.getFollowerCount() == null ? 0 : p.getFollowerCount()));
         }
@@ -75,12 +71,5 @@ public class ShopFollowDirectoryImpl implements ShopFollowDirectory {
     @Transactional
     public void adjustFollowerCount(long vendorUserId, int delta) {
         profiles.adjustFollowerCount(vendorUserId, delta);
-    }
-
-    private String logo(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return value.startsWith("http://") || value.startsWith("https://") ? value : storage.publicUrl(SHOP_MEDIA, value);
     }
 }

@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (107 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (113 / 137) |
 
 **Cách dùng**
 
@@ -52,11 +52,11 @@
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 15 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
-| K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 9 / 10 | — | `feature/vendor-k09-settings` |
-| K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
+| K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
+| K10 | Cổng cho module khác & API phụ | 5 | 1 | 5 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **107 / 137** | | |
+| **Tổng** | | **112** | **25** | **113 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -194,16 +194,16 @@
 - [x] **K09.06** Người bán chưa `VERIFIED` vẫn vào được Cài đặt (UC-VND-21 tiền điều kiện)
 - [x] **K09.07** `ShopSettingsIT`
 - [x] **K09.C1** 🔖 COMMIT `feat(shipping): expose shop carrier settings to the vendor module` · hash: `878ecd7`
-- [ ] **K09.C2** 🔖 COMMIT `feat(vendor): view and update shop profile and operating settings` · hash: `…`
+- [x] **K09.C2** 🔖 COMMIT `feat(vendor): view and update shop profile and operating settings` · hash: `4d28102`
 - [-] **K09.08** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 3: K07–K09).
 
 ## K10 — Cổng cho module khác & API phụ
 
-- [ ] **K10.01** Cài cổng của plan khác bằng `ShopFacade`
-- [ ] **K10.02** Cổng của AUTH
-- [ ] **K10.03** Sự kiện công khai
-- [ ] **K10.04** `ShopFacade` bổ sung `searchVerified(q, limit)` cho ô chọn shop.
-- [ ] **K10.05** `GET /admin/shops?q&limit=20` (API 11.16
+- [x] **K10.01** Cài cổng của plan khác bằng `ShopFacade`
+- [x] **K10.02** Cổng của AUTH
+- [x] **K10.03** Sự kiện công khai
+- [x] **K10.04** `ShopFacade` bổ sung `searchVerified(q, limit)` cho ô chọn shop.
+- [x] **K10.05** `GET /admin/shops?q&limit=20` (API 11.16
 - [ ] **K10.C1** 🔖 COMMIT `feat(vendor): provide shop lookups for other modules and admin pickers` · hash: `…`
 
 ## K11 — Nối giao diện `web/`
@@ -299,6 +299,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K09.03 | Phương thức entity đã thêm ở K01.04; unit test `VendorProfileTest`. |
 | K09.05 | Logo / bìa lưu URL công khai đầy đủ (`avatar-assets/vendor/{shopId}/{logo|cover}/…`) — `ShopFacade.mediaUrl` vẫn đọc được khóa tương đối của dữ liệu mẫu. `description = ""` để xóa mô tả. |
 | K09.08 | Chưa mở PR — chờ người dùng. |
+| K10.01 | `VendorShopPorts` cài `WishlistShopAvailability` (shop đang nghỉ) + `AccountShopProvider` (`GET /me → shop`); `ShopFollowDirectoryImpl` dùng `ShopFacade.mediaUrl`. Bean giả trong `WishlistQueryIT` vẫn `@Primary` nên test cũ không đổi. |
+| K10.02 | `GET /me` (A11.02) đã có → cài luôn `AccountShopProvider` (không cần ghi CLAUDE.md mục 9). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
