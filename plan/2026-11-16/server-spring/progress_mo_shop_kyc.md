@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (6 / 137) |
 
 **Cách dùng**
 
@@ -23,27 +23,27 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | `shop_id` trên API là id nào | ☐ | |
-| D2 | `vendor_profiles` thiếu cột cho màn hình (API 9.1, 10.11, 10.12, 11.3) | ☐ | |
-| D3 | Hành động kiểm toán của vendor | ☐ | |
-| D4 | Purpose tải tệp: LUU_TRU 5.4 liệt kê 4 purpose KYC riêng; API 4.1 dùng **một** `KYC_DOCUMENT` | ☐ | |
-| D5 | Mã hóa & xem ảnh KYC: ảnh đã mã hóa thì Presigned GET trực tiếp không xem được | ☐ | |
-| D6 | Hợp đồng Backend ↔ AI Worker: implement 8.1 (camelCase, worker trả `riskScore`) khác API 12 (`overall`, `checks{5}`, `face_match_score`…) | ☐ | |
-| D7 | Chạy được khi chưa có AI Worker | ☐ | |
-| D8 | "Yêu cầu nhân viên xem xét" (API 10.12: chỉ khi `REJECTED`, `202`, lần 2 → `409 GNE-VND-4096`) cần chuyển `REJECTED → MANUAL_REVIEW` mà entity chưa có | ☐ | |
-| D9 | "Đưa lại vào hàng chờ" (`POST …/requeue` → "Về `PENDING`") | ☐ | |
-| D10 | Gắn nhãn Chính hãng khi duyệt (UC-VND-04 bước 8) — body `approve` của API 11.3 chỉ có `shop_commission_rate` | ☐ | |
-| D11 | Sau khi mở shop: `UserFacade.promoteToVendor` (plan AUTH A10.01) "đổi role + thu hồi phiên", còn API 9.2 bảo client **làm mới token** để có quyền `/seller` | ☐ | |
-| D12 | Đăng ký GHN Shop & danh mục hành chính | ☐ | |
-| D13 | Xác minh chính chủ tài khoản ngân hàng | ☐ | |
-| D14 | `PATCH /seller/settings` chứa khối `auto_reply` (UC-VND-06) và `GET` trả `vacation` (UC-VND-19) — hai UC ngoài cụm | ☐ | |
-| D15 | Số điện thoại / email liên hệ shop và "Họ tên chủ shop" của form mở shop | ☐ | |
+| D1 | `shop_id` trên API là id nào | ☑ | Theo đề xuất: `shop_id` = `vendor_profiles.id`; `ShopFacade` đổi hai chiều (ADR 0011) · 2026-11-18 |
+| D2 | `vendor_profiles` thiếu cột cho màn hình (API 9.1, 10.11, 10.12, 11.3) | ☑ | Theo đề xuất, nhưng migration là **`V17__vendor_kyc_additions.sql`** (V15 = banner, V16 = Điểm Genie đã dùng — sổ đăng ký README mục 4) · 2026-11-18 |
+| D3 | Hành động kiểm toán của vendor | ☑ | Theo đề xuất: 4 giá trị trong V17; CHECK chép đủ V14 + `BANNER_CHANGED`; `AuditAction.category()` KYC ×3, FINANCE ×1 · 2026-11-18 |
+| D4 | Purpose tải tệp: LUU_TRU 5.4 liệt kê 4 purpose KYC riêng; API 4.1 dùng **một** `KYC_DOCUMENT` | ☑ | Theo đề xuất (API 4.1): `KYC_DOCUMENT`, `SHOP_LOGO`, `SHOP_COVER` · 2026-11-18 |
+| D5 | Mã hóa & xem ảnh KYC: ảnh đã mã hóa thì Presigned GET trực tiếp không xem được | ☑ | Theo đề xuất: mã hóa AES-256-GCM tầng ứng dụng + bản giải mã tạm 5 phút (ADR 0011 mục 4) · 2026-11-18 |
+| D6 | Hợp đồng Backend ↔ AI Worker: implement 8.1 (camelCase, worker trả `riskScore`) khác API 12 (`overall`, `checks{5}`, `face_match_score`…) | ☑ | Theo đề xuất — hợp đồng snake_case ghi ở ADR 0011 mục 5 (trùng Y-D1 plan AI Worker; cùng người làm hai phía) · 2026-11-18 |
+| D7 | Chạy được khi chưa có AI Worker | ☑ | Theo đề xuất: `AI_WORKER_MODE` = `stub` (local) / `http` (prod) · 2026-11-18 |
+| D8 | "Yêu cầu nhân viên xem xét" (API 10.12: chỉ khi `REJECTED`, `202`, lần 2 → `409 GNE-VND-4096`) cần chuyển `REJECTED → MANUAL_REVIEW` mà entity chưa có | ☑ | Theo đề xuất: `requestManualReview(now)` chỉ từ `REJECTED`, 1 lần · 2026-11-18 |
+| D9 | "Đưa lại vào hàng chờ" (`POST …/requeue` → "Về `PENDING`") | ☑ | Theo đề xuất: `requeueForReview()` → `MANUAL_REVIEW`, không chạy lại AI · 2026-11-18 |
+| D10 | Gắn nhãn Chính hãng khi duyệt (UC-VND-04 bước 8) — body `approve` của API 11.3 chỉ có `shop_commission_rate` | ☑ | Theo đề xuất: thêm `is_mall`; hoa hồng cần thêm `UPDATE_COMMISSION` · 2026-11-18 |
+| D11 | Sau khi mở shop: `UserFacade.promoteToVendor` (plan AUTH A10.01) "đổi role + thu hồi phiên", còn API 9.2 bảo client **làm mới token** để có quyền `/seller` | ☑ | Theo đề xuất: `promoteToVendor` không thu hồi phiên; refresh cấp token VENDOR (sửa ở K03.05) · 2026-11-18 |
+| D12 | Đăng ký GHN Shop & danh mục hành chính | ☑ | Theo đề xuất: cổng `PickupShopRegistrar` + bản giả lập khi thiếu `GHN_TOKEN`; K07 phụ thuộc A12 (kiểm ở K07.01) · 2026-11-18 |
+| D13 | Xác minh chính chủ tài khoản ngân hàng | ☑ | Theo đề xuất: `BankAccountLookup` giả lập, số TK đuôi `000` → tên khác · 2026-11-18 |
+| D14 | `PATCH /seller/settings` chứa khối `auto_reply` (UC-VND-06) và `GET` trả `vacation` (UC-VND-19) — hai UC ngoài cụm | ☑ | Theo đề xuất: lưu / trả `auto_reply`, `vacation` chỉ đọc; hành vi để cụm khác · 2026-11-18 |
+| D15 | Số điện thoại / email liên hệ shop và "Họ tên chủ shop" của form mở shop | ☑ | Theo đề xuất: `owner_name` → `representative`, `phone_number` → `contact_phone`, `email` → `contact_email` (OTP gửi tới đây) · 2026-11-18 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 0 / 7 | — | `feature/vendor-shop-kyc` |
+| K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 6 / 7 | — | `feature/vendor-shop-kyc` |
 | K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 0 / 10 | — | `feature/vendor-k01-schema` |
 | K02 | Nền module `vendor` | 9 | 3 | 0 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 0 / 11 | — | `feature/vendor-k03-shop-registration` |
@@ -56,16 +56,16 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **0 / 137** | | |
+| **Tổng** | | **112** | **25** | **6 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
-- [ ] **K00.01** Kiểm danh tính git
-- [ ] **K00.02** Chốt quyết định D1–D15
-- [ ] **K00.03** Tạo nhánh tích hợp
-- [ ] **K00.04** Dựng môi trường
-- [ ] **K00.05** Đọc màn mock theo thứ tự luồng
-- [ ] **K00.06** Kiểm số migration
+- [x] **K00.01** Kiểm danh tính git
+- [x] **K00.02** Chốt quyết định D1–D15
+- [x] **K00.03** Tạo nhánh tích hợp
+- [x] **K00.04** Dựng môi trường
+- [x] **K00.05** Đọc màn mock theo thứ tự luồng
+- [x] **K00.06** Kiểm số migration
 - [ ] **K00.C1** 🔖 COMMIT `docs(vendor): record kyc and ai worker contract decisions in adr 0011` · hash: `…`
 
 ## K01 — Tài liệu, migration `V15`, hằng số dùng chung
@@ -258,9 +258,13 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| K00.01 | Danh tính git của repo: `Thien211105` (không `--author`, không `Co-Authored-By`). |
+| K00.03 | Nhánh `feature/vendor-shop-kyc` tách từ `feature/social-shop-follow` (chồng nhánh như các plan trước — PR phải merge sau plan Theo dõi gian hàng); làm thẳng trên nhánh tích hợp, không tách nhánh con theo giai đoạn (commit vẫn theo từng task COMMIT). Chưa push. |
+| K00.04 | Postgres dev chạy cổng 5433 (`POSTGRES_PORT=5433`, máy có Postgres khác ở 5432); JDK 21. `./mvnw verify` xanh ở nhánh nền (108 unit + 144 IT, plan Theo dõi gian hàng). |
+| K00.05 | Lệch web ↔ API ghi lại để sửa ở K11: `registerShop` đọc `challenge_id`/`masked_target` (API trả `$OtpChallenge` có `email_masked`); admin-kyc `supplement.due_at` (API: `deadline_at`); `approveKyc` chưa gửi `is_mall`; 3 feature còn dùng `USE_MOCK` toàn cục thay cho `isMocked(<feature>)`. |
+| K00.06 | `V15` (banner) và `V16` (Điểm Genie) đã dùng → migration của cụm này là **`V17__vendor_kyc_additions.sql`** (README mục 4 đã ghi). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

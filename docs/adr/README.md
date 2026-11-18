@@ -15,6 +15,7 @@ Quyết định đã thay thế thì đổi trạng thái thành `Thay bằng NN
 | [0008](0008-common-mail-audit-va-cong-dao-nguoc.md) | `common`: gửi email, nhật ký, bảo mật và cổng đảo ngược giữa module | Chấp nhận | 2026-11-14 |
 | [0009](0009-kho-tep-silo-thay-image-minio.md) | Kho tệp: thay MinIO (ngừng phát hành) bằng Silo (máy dev / test; production xem 0010) | Chấp nhận | 2026-11-15 |
 | [0010](0010-production-aws-rds-s3.md) | Production cố định AWS RDS + S3; dev / test dùng PostgreSQL (Docker hoặc cài máy) + Silo | Chấp nhận | 2026-11-17 |
+| [0011](0011-vendor-kyc-va-hop-dong-ai-worker.md) | Mở shop & KYC: mã hóa hồ sơ AES-256-GCM, hợp đồng snake_case Backend ↔ AI Worker (worker không kết luận) | Chấp nhận | 2026-11-18 |
 
 Nguồn: plan chuyển giao diện `plan/2026-11-11/web/plan_chuyen_giao_dien.md` (mục 2, 3) và nhật ký
 `progress_chuyen_giao_dien.md`.
