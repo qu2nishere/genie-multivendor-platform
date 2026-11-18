@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/social-shop-follow` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (11 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (18 / 38) |
 
 **Cách dùng**
 
@@ -36,12 +36,12 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
 | F00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/social-shop-follow` |
-| F01 | Cổng tra shop & truy vấn | 6 | 1 | 6 / 7 | — | `feature/social-shop-follow` |
-| F02 | Theo dõi / hủy theo dõi | 6 | 1 | 0 / 7 | — | `feature/social-shop-follow` |
+| F01 | Cổng tra shop & truy vấn | 6 | 1 | 7 / 7 | — | `feature/social-shop-follow` |
+| F02 | Theo dõi / hủy theo dõi | 6 | 1 | 6 / 7 | — | `feature/social-shop-follow` |
 | F03 | Danh sách shop đang theo dõi | 5 | 1 | 0 / 6 | — | `feature/social-shop-follow` |
 | F04 | Nối giao diện `web/` | 6 | 1 | 0 / 7 | — | `feature/social-shop-follow` |
 | F05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/social-shop-follow` |
-| **Tổng** | | **33** | **5** | **11 / 38** | | |
+| **Tổng** | | **33** | **5** | **18 / 38** | | |
 
 ## F00 — Chuẩn bị
 
@@ -59,16 +59,16 @@
 - [x] **F01.04** `ShopFollowDirectoryImpl` (ở `vendor.shop.application`)
 - [x] **F01.05** `ShopFollowRepository`
 - [x] **F01.06** `ModuleBoundaryTest`
-- [ ] **F01.C1** 🔖 COMMIT `feat(vendor): expose shop lookup and follower counter for shop follow` · hash: `…`
+- [x] **F01.C1** 🔖 COMMIT `feat(vendor): expose shop lookup and follower counter for shop follow` · hash: `58c00d4`
 
 ## F02 — Theo dõi / hủy theo dõi
 
-- [ ] **F02.01** `ShopFollowService.follow(userId, shopId)`
-- [ ] **F02.02** `ShopFollowService.unfollow(userId, shopId)`
-- [ ] **F02.03** `ShopFollowQueryService.shopIds(userId)`
-- [ ] **F02.04** `MeFollowingController`
-- [ ] **F02.05** `ShopFollowIT`
-- [ ] **F02.06** `ShopFollowConcurrencyIT`
+- [x] **F02.01** `ShopFollowService.follow(userId, shopId)`
+- [x] **F02.02** `ShopFollowService.unfollow(userId, shopId)`
+- [x] **F02.03** `ShopFollowQueryService.shopIds(userId)`
+- [x] **F02.04** `MeFollowingController`
+- [x] **F02.05** `ShopFollowIT`
+- [x] **F02.06** `ShopFollowConcurrencyIT`
 - [ ] **F02.C1** 🔖 COMMIT `feat(social): follow and unfollow shops without miscounting followers` · hash: `…`
 
 ## F03 — Danh sách shop đang theo dõi
@@ -125,6 +125,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | F01.02 | Cổng đổi tên phương thức danh sách thành `findVisibleByVendorUserIds` (lọc luôn shop không hiển thị được — D4) |
 | F01.04 | Kiểm chủ shop `ACTIVE` theo lô: thêm `UserFacade.activeAmong(ids)` + `UserRepository.findActiveIds` (module `auth`, chỉ bổ sung) — tránh gọi `isActive` 50 lần mỗi trang. Logo: cột lưu khóa đối tượng thì ghép URL bucket `content-assets`, đã là URL thì giữ nguyên |
 | F01.06 | `ModuleBoundaryTest` xanh: `vendor` → `social.application` (cổng) và `vendor` → `auth.application` (`UserFacade`) đều qua tầng application; `social` không import `vendor` → không vòng |
+| F02.06 | Ca đồng thời đặt trong `ShopFollowIT.concurrentFollowsNeverMiscount` (không tách lớp riêng): 20 request cùng một người → `follower_count` +1; 20 người khác nhau → +20; 40 theo dõi / hủy xen kẽ → `follower_count` = số dòng `shop_follows`. Test cũng khẳng định `shop_id` ≠ `users.id` chủ shop (D1) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
