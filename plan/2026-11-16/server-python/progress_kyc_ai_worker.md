@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (76 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (77 / 77) |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 9 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 6 / 6 | — | `feature/ai-worker-kyc` |
-| Y09 | Tài liệu & kết thúc | 4 | 1 | 4 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **76 / 77** | | |
+| Y09 | Tài liệu & kết thúc | 4 | 1 | 5 / 5 | — | `feature/ai-worker-kyc` |
+| **Tổng** | | **65** | **12** | **77 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -152,7 +152,7 @@
 - [x] **Y09.01** `server-python/README.md`
 - [x] **Y09.02** Tài liệu nguồn
 - [x] **Y09.03** Tiến độ
-- [ ] **Y09.C1** 🔖 COMMIT `docs(ai-worker): document the kyc pipeline, signals and known limits` · hash: `…`
+- [x] **Y09.C1** 🔖 COMMIT `docs(ai-worker): document the kyc pipeline, signals and known limits` · hash: `3e6b2fa`
 - [-] **Y09.04** Mở PR cuối vào `develop`
 
 ---
