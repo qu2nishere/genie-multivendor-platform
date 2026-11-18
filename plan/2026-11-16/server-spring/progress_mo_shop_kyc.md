@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (97 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (107 / 137) |
 
 **Cách dùng**
 
@@ -51,12 +51,12 @@
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 16 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 15 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
-| K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 8 / 9 | — | `feature/vendor-k08-payout-account` |
-| K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 0 / 10 | — | `feature/vendor-k09-settings` |
+| K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
+| K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 9 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **97 / 137** | | |
+| **Tổng** | | **112** | **25** | **107 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -182,20 +182,20 @@
 - [x] **K08.06** `DELETE /seller/payout-account` 🔐
 - [x] **K08.07** Điều kiện chung
 - [x] **K08.08** `PayoutAccountIT`
-- [ ] **K08.C1** 🔖 COMMIT `feat(vendor): verify and save the shop payout bank account with step-up otp` · hash: `…`
+- [x] **K08.C1** 🔖 COMMIT `feat(vendor): verify and save the shop payout bank account with step-up otp` · hash: `ce5830c`
 
 ## K09 — Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21)
 
-- [ ] **K09.01** `ShopShippingSettings` (cổng ở `vendor.settings.application`)
-- [ ] **K09.02** `VendorShippingSettingsAdapter` (scope `shipping`, ở `shipping/shipment/application`)
-- [ ] **K09.03** Entity
-- [ ] **K09.04** `GET /seller/settings`
-- [ ] **K09.05** `PATCH /seller/settings`
-- [ ] **K09.06** Người bán chưa `VERIFIED` vẫn vào được Cài đặt (UC-VND-21 tiền điều kiện)
-- [ ] **K09.07** `ShopSettingsIT`
-- [ ] **K09.C1** 🔖 COMMIT `feat(shipping): expose shop carrier settings to the vendor module` · hash: `…`
+- [x] **K09.01** `ShopShippingSettings` (cổng ở `vendor.settings.application`)
+- [x] **K09.02** `VendorShippingSettingsAdapter` (scope `shipping`, ở `shipping/shipment/application`)
+- [x] **K09.03** Entity
+- [x] **K09.04** `GET /seller/settings`
+- [x] **K09.05** `PATCH /seller/settings`
+- [x] **K09.06** Người bán chưa `VERIFIED` vẫn vào được Cài đặt (UC-VND-21 tiền điều kiện)
+- [x] **K09.07** `ShopSettingsIT`
+- [x] **K09.C1** 🔖 COMMIT `feat(shipping): expose shop carrier settings to the vendor module` · hash: `878ecd7`
 - [ ] **K09.C2** 🔖 COMMIT `feat(vendor): view and update shop profile and operating settings` · hash: `…`
-- [ ] **K09.08** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 3: K07–K09).
+- [-] **K09.08** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 3: K07–K09).
 
 ## K10 — Cổng cho module khác & API phụ
 
@@ -295,6 +295,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K07.01 | Đã kiểm: **chưa có** danh mục hành chính GHN (`RegionDirectory` / `AddressFacade.resolveRegion` — plan AUTH A12 chưa hiện thực; `auth/address` mới có entity). Theo D12 dừng K07: `PUT /seller/pickup-address` chưa có (cổng KYC đã mở sẵn đường dẫn). Phương thức entity `updatePickup` + cột `pickup_phone` đã có (K01). Làm tiếp K07.02–K07.05 khi A12 merge. |
 | K08.05 | OTP bước 2 qua `@RequireStepUp` (aspect của auth — mã kiểm sau khi body qua `@Valid`). Email `payout-account-changed` gửi sau commit; nhật ký chỉ ghi số tài khoản đã che. |
 | K08.06 | `PayoutAccountService` cài `StepUpPrecondition` cho `PAYOUT_ACCOUNT_DELETE` → chặn ngay khi xin mã nếu cổng `PayoutAccountGuard` (payment, chưa có cài đặt) báo còn lệnh rút chờ. |
+| K09.02 | `VendorShippingSettingsAdapter` (shipping) cài cả `ShopShippingSettings` lẫn `ShopBootstrapContributor` → mở shop xong có `vendor_shipping_config` (GHN, GHTK bật) — kiểm trong `ShopRegistrationIT`. `free_shipping_enabled` không có cột: bật = có ngưỡng. |
+| K09.03 | Phương thức entity đã thêm ở K01.04; unit test `VendorProfileTest`. |
+| K09.05 | Logo / bìa lưu URL công khai đầy đủ (`avatar-assets/vendor/{shopId}/{logo|cover}/…`) — `ShopFacade.mediaUrl` vẫn đọc được khóa tương đối của dữ liệu mẫu. `description = ""` để xóa mô tả. |
+| K09.08 | Chưa mở PR — chờ người dùng. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|

@@ -97,6 +97,11 @@ class ShopRegistrationIT extends IntegrationTestBase {
         assertThat(row.get("contact_email")).isEqualTo(shopEmail);
         assertThat(row.get("commission_rate")).isNull();
         assertThat(row.get("ghn_shop_id")).isNull();
+        // K03.06 / K09.02: cấu hình vận chuyển mặc định (GHN, GHTK bật) được tạo sau commit
+        var cfg = jdbc.queryForMap("SELECT ghn_enabled, ghtk_enabled, vtp_enabled FROM vendor_shipping_config WHERE vendor_id = ?",
+                userId);
+        assertThat(cfg.get("ghn_enabled")).isEqualTo(true);
+        assertThat(cfg.get("vtp_enabled")).isEqualTo(false);
 
         // D11: phiên KHÔNG bị thu hồi — refresh cấp token mang VENDOR và vào được Seller Center
         MvcResult refreshed = mvc.perform(post("/api/v1/auth/sessions/refresh").cookie(refreshCookie)).andReturn();
