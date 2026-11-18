@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (16 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (28 / 137) |
 
 **Cách dùng**
 
@@ -44,8 +44,8 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
 | K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 7 / 7 | — | `feature/vendor-shop-kyc` |
-| K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 9 / 10 | — | `feature/vendor-k01-schema` |
-| K02 | Nền module `vendor` | 9 | 3 | 0 / 12 | — | `feature/vendor-k02-foundation` |
+| K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 10 / 10 | — | `feature/vendor-k01-schema` |
+| K02 | Nền module `vendor` | 9 | 3 | 11 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 0 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 0 / 12 | — | `feature/vendor-k04-kyc-submission` |
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 0 / 17 | — | `feature/vendor-k05-kyc-ai` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **16 / 137** | | |
+| **Tổng** | | **112** | **25** | **28 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -79,21 +79,21 @@
 - [x] **K01.07** Test
 - [-] **K01.08** Seed
 - [x] **K01.C1** 🔖 COMMIT `feat(db): add vendor kyc columns, indexes and kyc audit actions` · hash: `d28250c`
-- [ ] **K01.C2** 🔖 COMMIT `feat(common): add vendor error codes and kyc upload purposes` · hash: `…`
+- [x] **K01.C2** 🔖 COMMIT `feat(common): add vendor error codes and kyc upload purposes` · hash: `351ba0b`
 
 ## K02 — Nền module `vendor`
 
-- [ ] **K02.01** `AesGcmCipher` (`common/crypto`)
-- [ ] **K02.02** `AesGcmCipherTest`
-- [ ] **K02.03** `ObjectStorage`
-- [ ] **K02.04** `OtpFacade` (scope `auth`)
-- [ ] **K02.05** `SellerContext`
-- [ ] **K02.06** `KycGateInterceptor` + `VendorWebConfig`
-- [ ] **K02.07** `ShopFacade` (cửa công khai
-- [ ] **K02.08** `VendorProfileRepository`
-- [ ] **K02.09** `KycGateIT`
-- [ ] **K02.C1** 🔖 COMMIT `feat(common): add aes-gcm cipher and object read access for kyc files` · hash: `…`
-- [ ] **K02.C2** 🔖 COMMIT `feat(auth): let other modules issue and verify otp challenges` · hash: `…`
+- [x] **K02.01** `AesGcmCipher` (`common/crypto`)
+- [x] **K02.02** `AesGcmCipherTest`
+- [x] **K02.03** `ObjectStorage`
+- [x] **K02.04** `OtpFacade` (scope `auth`)
+- [x] **K02.05** `SellerContext`
+- [x] **K02.06** `KycGateInterceptor` + `VendorWebConfig`
+- [x] **K02.07** `ShopFacade` (cửa công khai
+- [x] **K02.08** `VendorProfileRepository`
+- [x] **K02.09** `KycGateIT`
+- [x] **K02.C1** 🔖 COMMIT `feat(common): add aes-gcm cipher and object read access for kyc files` · hash: `7571971`
+- [x] **K02.C2** 🔖 COMMIT `feat(auth): let other modules issue and verify otp challenges` · hash: `37c0cd3`
 - [ ] **K02.C3** 🔖 COMMIT `feat(vendor): add shop facade, seller context and kyc gate` · hash: `…`
 
 ## K03 — Đăng ký mở gian hàng (UC-VND-01)
@@ -270,6 +270,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K01.04 | `approveKyc` / `rejectKyc` siết trạng thái nguồn (`AI_PROCESSING` / `MANUAL_REVIEW`); `setPayoutAccount` không khớp tên thì **không** xóa xác minh của tài khoản cũ (khác `verifyPayoutAccount`). Không thêm `setPreOrderEnabled` (trùng setter Lombok). |
 | K01.06 | Purpose có quyền theo vai trò dùng `requiredAuthority = "ROLE_VENDOR"`; ảnh `KYC_DOCUMENT` < 20 KB → `422 GNE-VAL-4220 {min_bytes}` cả khi xin link lẫn khi nhận tệp (`acceptsSize`). |
 | K01.08 | Bỏ qua: `R__seed_demo_80_kyc_queue.sql` chỉ có trên nhánh `feature/db-seed-demo` (chưa vào develop) và đã tự điền cột mới khi cột tồn tại (S06.07). Chú thích trong tệp đó còn ghi "V15" — sửa thành V17 khi merge nhánh seed. |
+| K02.03 | `ObjectStorage.get(bucket, key)` đọc cả tệp vào bộ nhớ (giấy tờ ≤ 10 MB); `put` / `stat` / `presignGet` / `delete` đã có. Test `ObjectStorageIT` trên Silo; bucket `kyc-dossiers` thêm vào `IntegrationTestBase`. |
+| K02.04 | `OtpFacade.issue` / `verify` chỉ mở cho `SHOP_REGISTRATION` (`FOREIGN_PURPOSES`); gửi lại mã dùng `POST /me/otp-challenges/{id}/resend` có sẵn (kiểm đúng chủ challenge). |
+| K02.08 | `findStuckAiProcessing` tính hạn 30 giây từ `kyc_submitted_at` (nộp xong là gửi AI ngay trong listener sau commit) — không cần thêm cột. |
+| K02.09 | Controller thăm dò `/api/v1/seller/__kyc-gate-probe` chỉ có trong `src/test`. Màn mở (me, kyc, settings, pickup, payout) được kiểm "không trả GNE-VND-4031" — endpoint chưa có thì 404. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
