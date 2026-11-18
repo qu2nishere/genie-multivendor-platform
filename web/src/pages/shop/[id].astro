@@ -40,8 +40,15 @@ const [allOfShop, roots, vouchers] = await Promise.all([
   listRootCategories(),
   listShopVouchers(shop.id),
 ]);
+// API thật trả sẵn danh mục gốc của shop (API_SPEC 5.11) → tab dùng id; mock: suy từ sản phẩm như prototype
 const catIds = Array.from(new Set(allOfShop.items.map((p) => p.categoryId)));
-const cats = roots.filter((c) => catIds.includes(c.id));
+const cats = shop.categories
+  ? shop.categories.map((c) => ({ id: c.id, slug: `cat-${c.id}`, name: c.name }))
+  : roots.filter((c) => catIds.includes(c.id));
+const responseLabel =
+  shop.responseMinutes != null
+    ? t(shop.responseMinutes <= 60 ? 'shop.head.response_minutes' : 'shop.head.response_hours')
+    : shop.responseTime;
 const tabs = [
   { id: 'all', label: t('shop.tab.all') },
   { id: 'new', label: t('shop.tab.new') },
@@ -152,7 +159,7 @@ const canonical = canonicalUrl(path, Astro.url.searchParams);
             }
           </div>
           <div class="mt-[5px] text-sm text-muted">
-            {t('shop.head.meta', { year: shop.joinedYear, time: shop.responseTime })}
+            {t('shop.head.meta', { year: shop.joinedYear, time: responseLabel })}
           </div>
           <div class="mt-[3px] text-sm text-muted">{shop.description}</div>
           <dl class="m-0 mt-2 hidden flex-wrap gap-x-4 gap-y-1 text-xs text-muted max-md:flex">

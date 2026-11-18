@@ -1130,6 +1130,8 @@
     "empty": "Shop chưa có sản phẩm nào ở mục này.",
     "head": {
       "meta": "Online · Tham gia từ {year} · Phản hồi {time}",
+      "response_minutes": "trong vài phút",
+      "response_hours": "trong vài giờ",
       "reopen": "Dự kiến mở lại ngày {until}."
     },
     "stat": {

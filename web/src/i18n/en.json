@@ -1130,6 +1130,8 @@
     "empty": "This shop has no products in this section yet.",
     "head": {
       "meta": "Online · Joined {year} · Replies {time}",
+      "response_minutes": "within minutes",
+      "response_hours": "within hours",
       "reopen": "Expected to reopen on {until}."
     },
     "stat": {
