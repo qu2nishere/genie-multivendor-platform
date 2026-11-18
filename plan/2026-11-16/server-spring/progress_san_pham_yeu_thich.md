@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-wishlist` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (9 / 38) |
 
 **Cách dùng**
 
@@ -23,39 +23,39 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | UC-CAT-08 bước 2–3: `POST /api/v1/customer/wishlist` kiểu bật / tắt (toggle); API 3.10: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids` | ☐ | |
-| D2 | Thích sản phẩm không còn bán / không tồn tại | ☐ | |
-| D3 | `is_purchasable = false` "khi shop đang nghỉ / sản phẩm hết bán" — trạng thái nghỉ của shop ở module `vendor` | ☐ | |
-| D4 | `price`, `default_variant_id`, `image_url` lấy thế nào | ☐ | |
-| D5 | Giới hạn số sản phẩm yêu thích | ☐ | |
-| D6 | UC mục đích có "nhận thông báo khi sản phẩm giảm giá" | ☐ | |
+| D1 | UC-CAT-08 bước 2–3: `POST /api/v1/customer/wishlist` kiểu bật / tắt (toggle); API 3.10: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids` | ☑ | Theo API: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids`; sửa Usecase.md ở W05.03 · 2026-11-17 |
+| D2 | Thích sản phẩm không còn bán / không tồn tại | ☑ | Như đề xuất — thích sản phẩm không tồn tại / không `PUBLISHED` → `404 GNE-CAT-4042`; đã thích rồi mới bị ẩn → vẫn hiện, `is_purchasable = false`, bỏ thích bình thường · 2026-11-17 |
+| D3 | `is_purchasable = false` "khi shop đang nghỉ / sản phẩm hết bán" — trạng thái nghỉ của shop ở module `vendor` | ☑ | Như đề xuất — cổng `WishlistShopAvailability` (mặc định không shop nào nghỉ); `is_purchasable` = `PUBLISHED` + còn SKU có tồn + shop không nghỉ · 2026-11-17 |
+| D4 | `price`, `default_variant_id`, `image_url` lấy thế nào | ☑ | Như đề xuất — `price` = giá thấp nhất của SKU chưa xóa (không có SKU → `base_price`); `default_variant_id` = SKU còn tồn rẻ nhất (hết hàng → SKU đầu tiên); `image_url` = ảnh chính (không có cờ chính → ảnh `display_order` nhỏ nhất) · 2026-11-17 |
+| D5 | Giới hạn số sản phẩm yêu thích | ☑ | Như đề xuất — không giới hạn; `product-ids` trả tối đa 1.000 ID mới nhất · 2026-11-17 |
+| D6 | UC mục đích có "nhận thông báo khi sản phẩm giảm giá" | ☑ | Như đề xuất — ngoài phạm vi; có sẵn `WishlistFacade.userIdsWishing(productId)` · 2026-11-17 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| W00 | Chuẩn bị | 5 | 0 | 0 / 5 | — | `feature/catalog-wishlist` |
-| W01 | Miền & truy vấn | 4 | 1 | 0 / 5 | — | `feature/catalog-wishlist` |
+| W00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/catalog-wishlist` |
+| W01 | Miền & truy vấn | 4 | 1 | 4 / 5 | — | `feature/catalog-wishlist` |
 | W02 | Thích / bỏ thích & tập ID | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
 | W03 | Danh sách yêu thích | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
 | W04 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/catalog-wishlist` |
 | W05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/catalog-wishlist` |
-| **Tổng** | | **32** | **6** | **0 / 38** | | |
+| **Tổng** | | **32** | **6** | **9 / 38** | | |
 
 ## W00 — Chuẩn bị
 
-- [ ] **W00.01** Kiểm danh tính git
-- [ ] **W00.02** Chốt quyết định D1–D6
-- [ ] **W00.03** Tạo nhánh
-- [ ] **W00.04** Kiểm dữ liệu thử
-- [ ] **W00.05** Đọc màn mock
+- [x] **W00.01** Kiểm danh tính git
+- [x] **W00.02** Chốt quyết định D1–D6
+- [x] **W00.03** Tạo nhánh
+- [-] **W00.04** Kiểm dữ liệu thử
+- [x] **W00.05** Đọc màn mock
 
 ## W01 — Miền & truy vấn
 
-- [ ] **W01.01** `ErrorCode`
-- [ ] **W01.02** `UserWishlist.of(userId, productId, now)`
-- [ ] **W01.03** `UserWishlistRepository`
-- [ ] **W01.04** `TestDataBuilder`
+- [x] **W01.01** `ErrorCode`
+- [x] **W01.02** `UserWishlist.of(userId, productId, now)`
+- [x] **W01.03** `UserWishlistRepository`
+- [x] **W01.04** `TestDataBuilder`
 - [ ] **W01.C1** 🔖 COMMIT `feat(catalog): add wishlist queries and product test fixtures` · hash: `…`
 
 ## W02 — Thích / bỏ thích & tập ID
@@ -116,9 +116,12 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| W00.03 | Nhánh tách từ `feature/promotion-coin-checkin` (xếp nối tiếp seed → audit → banner → coin → wishlist) |
+| W00.04 | `[-]` Không phụ thuộc: test tự dựng dữ liệu bằng `TestDataBuilder` (W01.04); lần chạy API thật (W04.05) tự chèn sản phẩm vào CSDL mới (dữ liệu mẫu nằm ở nhánh seed) |
+| W00.05 | Web: `wishlist.api.ts` gọi `GET /me/wishlist/ids` + `POST /me/wishlist` / `DELETE` (lệch spec); trang `/account/wishlist` ghép ID + `listProductsByIds` — sẽ đổi sang `GET /me/wishlist` |
+| W01.04 | `TestDataBuilder` (trước là khung rỗng) dựng bằng `JdbcTemplate`: `category`, `vendor` (users VENDOR + vendor_profiles VERIFIED), `shopIdOf`, `product`, `variant`, `primaryImage`, `setStatus` — khóa tự nhiên ngẫu nhiên, test không đụng nhau. `ProductVariant` không có `@SQLRestriction` thật → truy vấn tự lọc `deleted_at IS NULL` |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
