@@ -2,7 +2,10 @@
 
 import logging
 
-from pythonjsonlogger import jsonlogger
+try:
+    from pythonjsonlogger.json import JsonFormatter
+except ImportError:  # python-json-logger < 3
+    from pythonjsonlogger.jsonlogger import JsonFormatter
 
 
 def configure_logging(level: int = logging.INFO) -> None:
@@ -10,7 +13,7 @@ def configure_logging(level: int = logging.INFO) -> None:
     if any(getattr(h, "_genie", False) for h in root.handlers):
         return
     handler = logging.StreamHandler()
-    handler.setFormatter(jsonlogger.JsonFormatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+    handler.setFormatter(JsonFormatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
     handler._genie = True  # type: ignore[attr-defined]
     root.addHandler(handler)
     root.setLevel(level)

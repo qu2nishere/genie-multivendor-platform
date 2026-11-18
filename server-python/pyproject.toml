@@ -16,6 +16,7 @@ dependencies = [
     "transformers>=4.45",       # tokenizer PhoBERT
     "python-json-logger>=2.0",
     "pytesseract>=0.3.13",      # đọc MRZ (Y-D2) — cần gói hệ thống tesseract-ocr
+    "pillow>=10.4",             # giải mã ảnh + sửa hướng EXIF (core/images.py)
 ]
 
 [project.optional-dependencies]
@@ -25,7 +26,6 @@ dev = [
     "ruff>=0.7",
     "respx>=0.21",
     "qrcode>=7.4",              # dựng thẻ mẫu cho test (N10)
-    "pillow>=10.4",
 ]
 
 [build-system]

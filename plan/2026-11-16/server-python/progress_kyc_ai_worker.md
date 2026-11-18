@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (13 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (19 / 77) |
 
 **Cách dùng**
 
@@ -37,8 +37,8 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
 | Y00 | Chuẩn bị & chốt hợp đồng | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
-| Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 6 / 7 | — | `feature/ai-worker-kyc` |
-| Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 0 / 6 | — | `feature/ai-worker-kyc` |
+| Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
+| Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 5 / 6 | — | `feature/ai-worker-kyc` |
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 0 / 8 | — | `feature/ai-worker-kyc` |
 | Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 0 / 12 | — | `feature/ai-worker-kyc` |
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 0 / 10 | — | `feature/ai-worker-kyc` |
@@ -46,7 +46,7 @@
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **13 / 77** | | |
+| **Tổng** | | **65** | **12** | **19 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -66,15 +66,15 @@
 - [x] **Y01.04** `test_schemas`
 - [x] **Y01.05** `main.py` `lifespan`
 - [x] **Y01.06** `health`
-- [ ] **Y01.C1** 🔖 COMMIT `feat(ai-worker): add kyc contract schemas, settings and model loading` · hash: `…`
+- [x] **Y01.C1** 🔖 COMMIT `feat(ai-worker): add kyc contract schemas, settings and model loading` · hash: `2908fe5`
 
 ## Y02 — Tải ảnh an toàn & gọi lại backend
 
-- [ ] **Y02.01** `core/images.py` `fetch_image(url)`
-- [ ] **Y02.02** `assess_quality(image)`
-- [ ] **Y02.03** `test_images.py` (dùng `respx`)
-- [ ] **Y02.04** `core/callback.py` `send_result(kyc_id, payload)`
-- [ ] **Y02.05** `test_callback.py`
+- [x] **Y02.01** `core/images.py` `fetch_image(url)`
+- [x] **Y02.02** `assess_quality(image)`
+- [x] **Y02.03** `test_images.py` (dùng `respx`)
+- [x] **Y02.04** `core/callback.py` `send_result(kyc_id, payload)`
+- [x] **Y02.05** `test_callback.py`
 - [ ] **Y02.C1** 🔖 COMMIT `feat(ai-worker): download kyc images safely and call back the backend with retries` · hash: `…`
 
 ## Y03 — Tầng 1: mã QR mặt trước
@@ -179,6 +179,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y00.04 | Máy chỉ có Python 3.13 (dự án `>=3.12,<3.13`) và không có Tesseract → chạy test trong image dev `python:3.12-slim` + `tesseract-ocr` (Tesseract 5.5.0), mount mã nguồn — không cài thêm lên máy. Mô hình YuNet / SFace tải từ opencv_zoo vào `server-python/models/` (bị `.gitignore` chặn). SHA-256: yunet `8f2383e4…2552fa4`, sface `0ba9fbfa…7c34e79`. |
 | Y00.05 | implement 8.1 cũ (camelCase, worker trả `riskScore`) đã đánh dấu thay thế ở plan Mở shop & KYC K12.04. |
 | Y01.05 | Mô hình nạp ở `app/kyc/models.py` vào `app.state.face_models`; `/health` giờ trả `UP` sau lifespan kèm `models_loaded` (thiếu mô hình vẫn UP — tầng 1 chạy được), `LOADING` 503 trước khi khởi động xong. |
+| Y02.01 | Host so khớp kiểu glob (`*.s3.ap-southeast-1.amazonaws.com`), cả dạng `host:port`; giải mã bằng Pillow (sửa hướng EXIF) rồi chuyển OpenCV BGR, cạnh dài ≤ 2000 px — tất cả trong bộ nhớ. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
