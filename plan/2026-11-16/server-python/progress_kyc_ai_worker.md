@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (58 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (70 / 77) |
 
 **Cách dùng**
 
@@ -42,11 +42,11 @@
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 8 / 8 | — | `feature/ai-worker-kyc` |
 | Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 12 / 12 | — | `feature/ai-worker-kyc` |
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 10 / 10 | — | `feature/ai-worker-kyc` |
-| Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 8 / 9 | — | `feature/ai-worker-kyc` |
-| Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
-| Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
+| Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 9 / 9 | — | `feature/ai-worker-kyc` |
+| Y07 | Ghép với backend | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
+| Y08 | Đóng gói & triển khai | 4 | 2 | 4 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **58 / 77** | | |
+| **Tổng** | | **65** | **12** | **70 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -126,24 +126,24 @@
 - [x] **Y06.06** `test_router.py`
 - [x] **Y06.07** `test_service.py`
 - [x] **Y06.08** Soát log (N4)
-- [ ] **Y06.C1** 🔖 COMMIT `feat(ai-worker): run the kyc pipeline in the background and report signals to the backend` · hash: `…`
+- [x] **Y06.C1** 🔖 COMMIT `feat(ai-worker): run the kyc pipeline in the background and report signals to the backend` · hash: `711c396`
 
 ## Y07 — Ghép với backend
 
-- [ ] **Y07.01** Chạy hai phía ở local
-- [ ] **Y07.02** Kịch bản đạt
-- [ ] **Y07.03** Kịch bản duyệt tay
-- [ ] **Y07.04** Kịch bản từ chối
-- [ ] **Y07.05** Kịch bản lỗi
-- [ ] **Y07.06** Đo
-- [ ] **Y07.C1** 🔖 COMMIT `fix(ai-worker): align kyc pipeline with the backend after end-to-end runs` · hash: `…`
+- [x] **Y07.01** Chạy hai phía ở local
+- [-] **Y07.02** Kịch bản đạt
+- [x] **Y07.03** Kịch bản duyệt tay
+- [x] **Y07.04** Kịch bản từ chối
+- [x] **Y07.05** Kịch bản lỗi
+- [x] **Y07.06** Đo
+- [-] **Y07.C1** 🔖 COMMIT `fix(ai-worker): align kyc pipeline with the backend after end-to-end runs` · hash: `…`
 
 ## Y08 — Đóng gói & triển khai
 
-- [ ] **Y08.01** `scripts/fetch-models.sh`
-- [ ] **Y08.02** Dockerfile
-- [ ] **Y08.03** `deploy/`
-- [ ] **Y08.04** CI
+- [x] **Y08.01** `scripts/fetch-models.sh`
+- [x] **Y08.02** Dockerfile
+- [x] **Y08.03** `deploy/`
+- [x] **Y08.04** CI
 - [ ] **Y08.C1** 🔖 COMMIT `build(ai-worker): package ocr dependencies and verify model checksums` · hash: `…`
 - [ ] **Y08.C2** 🔖 COMMIT `ci(ai-worker): lint and test the ai worker on pull requests` · hash: `…`
 
@@ -191,6 +191,17 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y05.09 | Bỏ qua (Y-D5): `national_emblem` / `fingerprint` trả `null`; backend cũng chưa có cột lưu. |
 | Y06.03 | Thời gian một hồ sơ thẻ mẫu (không mô hình mặt): tải 6 ms, QR 79 ms, MRZ 289 ms, tổng ≈ 0.4 giây trong container. Semaphore tạo theo từng event loop. |
 | Y06.08 | Test soát log bắt được 2 chỗ rò: (1) `httpx` tự ghi URL ảnh ký sẵn ở mức INFO → hạ `httpx` / `httpcore` xuống WARNING (`quiet_third_party`); (2) `pytesseract` ghi ảnh ra tệp tạm `/tmp` (trái N4) → bỏ `pytesseract`, gọi thẳng `tesseract stdin stdout` (ảnh qua bộ nhớ). Y-D2 vẫn là Tesseract. |
+| Y07.01 | Chạy 2026-11-18: backend jar (DB mới `genie_ai`, `AI_WORKER_MODE=http`, `BACKEND_INTERNAL_URL=http://host.docker.internal:8080`, `PUBLIC_S3_URL=http://host.docker.internal:9000` để link ký đúng host worker thấy) ↔ worker container (`STORAGE_ALLOWED_HOSTS=host.docker.internal:9000`, mô hình thật). Không sửa `application*.yml`. |
+| Y07.02 | Bỏ qua: cần cặp ảnh thẻ + selfie cùng một người thật (được phép dùng) — repo không có. Thẻ mẫu tự dựng có ô ảnh xám nên không thể ra VERIFIED qua đường thật; tầng 1 của thẻ chuẩn ra đủ 5 cờ `true` (QR, MRZ, QR↔MRZ, cấu trúc số, hạn thẻ). |
+| Y07.03 | Thẻ chuẩn + selfie không có mặt → `LIVENESS_SUSPECT` 40 → `MANUAL_REVIEW`; ảnh hỏng (byte rác) → `NOT_AN_IMAGE` → `UNREADABLE_IMAGE` 30 → `MANUAL_REVIEW`. Thẻ mờ không QR + selfie không mặt → 30 + 40 = 70 → `REJECTED` (lý do theo tín hiệu). |
+| Y07.04 | Mặt sau MRZ ghi tên khác QR → `QR_MRZ_MISMATCH` 60 + `LIVENESS_SUSPECT` 40 = 100 → `REJECTED`; nhân viên vẫn thấy cờ `mrz_qr_match = false`. |
+| Y07.05 | Tắt worker → backend gọi lỗi ngay → `MANUAL_REVIEW` + `errors = ["AI_WORKER_UNAVAILABLE"]` (không phải chờ 30 giây). Ca callback muộn / quá 30 giây đã có IT backend (`KycCallbackIT`). |
+| Y07.06 | Pipeline ≈ 0.6–1.8 giây từ lúc nộp tới khi backend có kết quả (MRZ ≈ 0.3–0.6 s là bước nặng nhất); RAM worker 250 MiB khi đã nạp YuNet + SFace — trong ngân sách TS 16.2. |
+| Y07.C1 | Không có thay đổi mã sau khi chạy hai phía (không có lỗi lệch hợp đồng) → không tạo commit sửa. |
+| Y08.01 | `scripts/models.sha256` (YuNet, SFace); sai → xóa tệp, thoát 1 (đã thử bằng tệp bị sửa). Không đặt `MODELS_BASE_URL` thì YuNet / SFace tải từ opencv_zoo; `SKIP_PHOBERT=1` bỏ PhoBERT (chưa có bản phát hành). |
+| Y08.03 | Compose prod `ai-worker`: `STORAGE_ALLOWED_HOSTS` (mặc định `*.s3.ap-southeast-1.amazonaws.com`) + 4 biến `KYC_*`; vẫn không mở cổng ra ngoài mạng Compose; giữ giới hạn RAM 2g (đo thực tế 250 MiB). |
+| Y08.04 | Job `ai-worker` trong `ci.yml` đã có → thêm cài `tesseract-ocr tesseract-ocr-eng fonts-dejavu-core`, `ruff format --check`, `pytest -m "not models"`. |
+| Y08.02 | `docker build` image thật (1.7 GB — `transformers` + JRE của plan PhoBERT; JRE chưa bỏ vì cụm cảm xúc còn cần) → `/health` = `UP`, `models_loaded: true`, tiến trình chạy bằng user `worker`, Tesseract 5.5.0. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
