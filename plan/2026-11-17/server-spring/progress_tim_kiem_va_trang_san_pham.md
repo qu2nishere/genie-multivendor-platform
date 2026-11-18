@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C03 (32 / 66), nhánh `feature/catalog-search` |
+| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C04 (40 / 66), nhánh `feature/catalog-product-detail` (tách từ `feature/catalog-search`) |
 
 **Cách dùng**
 
@@ -62,12 +62,12 @@
 | C01 | Nền: migration, cache, chuẩn hóa | — | 5 | 2 | 7 / 7 | — | `feature/catalog-search` |
 | C02 | Tìm kiếm & lọc | CAT-02, CAT-05 | 10 | 2 | 12 / 12 | — | `feature/catalog-search` |
 | C03 | Gợi ý & xu hướng | CAT-04 | 6 | 1 | 7 / 7 | — | `feature/catalog-search` |
-| C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 0 / 8 | — | `feature/catalog-product-detail` |
+| C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 8 / 8 | — | `feature/catalog-product-detail` |
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 0 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 0 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 0 / 11 | — | `feature/web-catalog-real-api` |
 | C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **32 / 66** | | |
+| **Tổng** | | | **54** | **12** | **40 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -115,14 +115,14 @@
 
 ## C04 — Chi tiết sản phẩm & lượt xem (UC-CAT-06)
 
-- [ ] **C04.01** `VariantMatrixBuilder` + test
-- [ ] **C04.02** `ProductDetailService` (cache tĩnh, tồn đọc riêng)
-- [ ] **C04.03** `PublicProductController` — `/products/{id}`, `/products/{id}/variants`
-- [ ] **C04.04** `ProductViewCounter` + `ProductViewFlushJob` + `RecentCategoryTracker`
-- [ ] **C04.05** `PublicProductViewController` — `POST /products/{id}/views`
-- [ ] **C04.06** `ProductDetailIT` + `ProductViewIT`
-- [ ] **C04.C1** 🔖 COMMIT `feat(catalog): show product detail with sku matrix and available stock` · hash: `…`
-- [ ] **C04.C2** 🔖 COMMIT `feat(catalog): count product views by traffic source` · hash: `…`
+- [x] **C04.01** `VariantMatrixBuilder` + test
+- [x] **C04.02** `ProductDetailService` (cache tĩnh, tồn đọc riêng)
+- [x] **C04.03** `PublicProductController` — `/products/{id}`, `/products/{id}/variants`
+- [x] **C04.04** `ProductViewCounter` + `ProductViewFlushJob` + `RecentCategoryTracker`
+- [x] **C04.05** `PublicProductViewController` — `POST /products/{id}/views`
+- [x] **C04.06** `ProductDetailIT` + `ProductViewIT`
+- [x] **C04.C1** 🔖 COMMIT `feat(catalog): show product detail with sku matrix and available stock` · hash: `71e8533`
+- [x] **C04.C2** 🔖 COMMIT `feat(catalog): count product views by traffic source` · hash: `56d938e`
 
 ## C05 — Tương tự & gợi ý hôm nay (UC-CAT-07)
 
@@ -196,6 +196,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C03.01 | Đếm đồng bộ (không `@Async`): 3 lệnh Redis nhanh, bọc try/catch — test xác định được. Chỉ đếm lượt tìm toàn sàn, trang 1, có kết quả; từ khóa lưu bản chuẩn hóa còn dấu (hiển thị ở Xu hướng) |
 | C03.02 | Xóa `search:kw:flushing` trong `afterCommit` — DB rollback thì giữ lại để lần sau ghi; `flush()` public để test gọi (cron tắt trong test) |
 | C03.04 | API 5.4 không có trường "từ khóa phổ biến khớp tiền tố" (UC-CAT-04 bước 3) → không trả; client dùng `/trending` khi ô trống |
+| C04.01 | `VariantMatrix` đặt ở `catalog/product/domain` (hàm thuần). Thứ tự nhóm theo khóa của `attributes_json` — JSONB tự sắp khóa (ngắn trước) nên có thể khác thứ tự người bán nhập; khi có UC-CAT-09/15 nên lấy theo `category_attributes.is_variant_axis` + `display_order` |
+| C04.02 | Đọc bằng `JdbcTemplate` (không JPA) cho đồng bộ với tìm kiếm và tránh N+1. Shop tạm nghỉ tính lúc trả (không theo cache). `description_html` trả nguyên văn — **phải lọc HTML khi lưu** ở UC-CAT-09 (XSS), web hiển thị cũng cần lọc. `evict(id)` sẵn cho plan sản phẩm người bán gọi khi sửa / ẩn |
+| C04.03 | HTTP `Cache-Control: no-cache` + ETag thay vì `max-age=300` (API 0.12) — trình duyệt / CDN luôn hỏi lại để tồn không cũ (D11); cache 5 phút nằm phía máy chủ |
+| C04.05 | `source` sai → 422; sản phẩm không còn bán → 404. Web gửi bằng `fetch(..., {keepalive: true})` (JSON) thay `sendBeacon` vì `sendBeacon` kiểu `application/json` bị chặn CORS preflight khi khác origin |
 
 ## Nhật ký
 
@@ -207,3 +211,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C01 nền: `V18` (trọng số FTS, trigram bỏ dấu, index giá), `JsonCache`, ETag `/public`, `PageResponse`, normalizer + slug + `TestDataBuilder` | `4f808a9` `86e5ddc` `08c76cd` |
 | 2026-11-18 | C02 tìm kiếm & lọc: `GET /public/products` (FTS + trigram, lọc đa tiêu chí, facet, rate limit 60/phút); 7 unit + 16 IT xanh; đo hiệu năng p95 50 ms | `a45aedb` `fa33542` |
 | 2026-11-18 | C03 gợi ý & xu hướng: `/public/search/suggestions`, `/public/search/trending`, bộ đếm Redis ZSET + job ghi gộp 5 phút; 9 IT xanh | `ac22d10` |
+| 2026-11-18 | C04 chi tiết & lượt xem: `/public/products/{id}`, `/{id}/variants`, `POST /{id}/views` + job ghi gộp; 5 unit + 8 IT xanh | `71e8533` `56d938e` |
