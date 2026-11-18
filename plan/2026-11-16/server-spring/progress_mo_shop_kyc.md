@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (28 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (39 / 137) |
 
 **Cách dùng**
 
@@ -45,8 +45,8 @@
 |---|---|---:|---:|---:|---|---|
 | K00 | Chuẩn bị & chốt quyết định | 6 | 1 | 7 / 7 | — | `feature/vendor-shop-kyc` |
 | K01 | Tài liệu, migration `V15`, hằng số dùng chung | 8 | 2 | 10 / 10 | — | `feature/vendor-k01-schema` |
-| K02 | Nền module `vendor` | 9 | 3 | 11 / 12 | — | `feature/vendor-k02-foundation` |
-| K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 0 / 11 | — | `feature/vendor-k03-shop-registration` |
+| K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
+| K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 10 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 0 / 12 | — | `feature/vendor-k04-kyc-submission` |
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 0 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **28 / 137** | | |
+| **Tổng** | | **112** | **25** | **39 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -94,21 +94,21 @@
 - [x] **K02.09** `KycGateIT`
 - [x] **K02.C1** 🔖 COMMIT `feat(common): add aes-gcm cipher and object read access for kyc files` · hash: `7571971`
 - [x] **K02.C2** 🔖 COMMIT `feat(auth): let other modules issue and verify otp challenges` · hash: `37c0cd3`
-- [ ] **K02.C3** 🔖 COMMIT `feat(vendor): add shop facade, seller context and kyc gate` · hash: `…`
+- [x] **K02.C3** 🔖 COMMIT `feat(vendor): add shop facade, seller context and kyc gate` · hash: `e91ac45`
 
 ## K03 — Đăng ký mở gian hàng (UC-VND-01)
 
-- [ ] **K03.01** `ShopNamePolicy`
-- [ ] **K03.02** `POST /me/shop-registrations`
-- [ ] **K03.03** `POST /me/shop-registrations/{challenge_id}/confirm`
-- [ ] **K03.04** Factory `VendorProfile.register(…)` + unit test (trạng thái ban đầu đúng UC-VND-01 bước 4).
-- [ ] **K03.05** Vai trò sau khi mở shop (D11, scope `auth`)
-- [ ] **K03.06** Sau commit (`ShopRegisteredEvent`, `AFTER_COMMIT`)
-- [ ] **K03.07** `GET /seller/me` (`SellerShellService`)
-- [ ] **K03.08** `ShopRegistrationIT`
-- [ ] **K03.C1** 🔖 COMMIT `feat(vendor): register a shop with email otp and promote the account to vendor` · hash: `…`
+- [x] **K03.01** `ShopNamePolicy`
+- [x] **K03.02** `POST /me/shop-registrations`
+- [x] **K03.03** `POST /me/shop-registrations/{challenge_id}/confirm`
+- [x] **K03.04** Factory `VendorProfile.register(…)` + unit test (trạng thái ban đầu đúng UC-VND-01 bước 4).
+- [x] **K03.05** Vai trò sau khi mở shop (D11, scope `auth`)
+- [x] **K03.06** Sau commit (`ShopRegisteredEvent`, `AFTER_COMMIT`)
+- [x] **K03.07** `GET /seller/me` (`SellerShellService`)
+- [x] **K03.08** `ShopRegistrationIT`
+- [x] **K03.C1** 🔖 COMMIT `feat(vendor): register a shop with email otp and promote the account to vendor` · hash: `d9700f1`
 - [ ] **K03.C2** 🔖 COMMIT `feat(vendor): return seller shell context with kyc status` · hash: `…`
-- [ ] **K03.09** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 1: K01–K03).
+- [-] **K03.09** Mở PR `feature/vendor-shop-kyc` → `develop` (mốc 1: K01–K03).
 
 ## K04 — Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02)
 
@@ -274,6 +274,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K02.04 | `OtpFacade.issue` / `verify` chỉ mở cho `SHOP_REGISTRATION` (`FOREIGN_PURPOSES`); gửi lại mã dùng `POST /me/otp-challenges/{id}/resend` có sẵn (kiểm đúng chủ challenge). |
 | K02.08 | `findStuckAiProcessing` tính hạn 30 giây từ `kyc_submitted_at` (nộp xong là gửi AI ngay trong listener sau commit) — không cần thêm cột. |
 | K02.09 | Controller thăm dò `/api/v1/seller/__kyc-gate-probe` chỉ có trong `src/test`. Màn mở (me, kyc, settings, pickup, payout) được kiểm "không trả GNE-VND-4031" — endpoint chưa có thì 404. |
+| K03.02 | Không dùng cổng `ShopCategoryLookup`: module `vendor` sẽ cài cổng `WishlistShopAvailability` của `catalog` (K10.01) nên `catalog` cài ngược cổng của `vendor` sẽ thành vòng phụ thuộc (ArchUnit). Thay bằng `catalog.category.application.CategoryFacade.isActive` (vendor → catalog một chiều). Danh mục không tồn tại / đang ẩn → `422 {field: main_category_id}`. |
+| K03.05 | `UserFacade.promoteToVendor` bỏ `revokeAllSessions(ROLE_CHANGED)`; refresh cấp token đọc `users.role` → test `ShopRegistrationIT` refresh bằng cookie cũ rồi gọi `GET /seller/me` được; token CUSTOMER cũ vẫn mua hàng. |
+| K03.06 | `ShopBootstrapListener` (AFTER_COMMIT, mỗi cài đặt một transaction REQUIRES_NEW, lỗi chỉ ghi log). Chưa có cài đặt nào — `shipping` cài ở K09.02; ví shop chờ module `payment`. |
+| K03.09 | Chưa mở PR — chờ người dùng (nhánh chưa push; PR phải merge sau chuỗi plan 2–6). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
