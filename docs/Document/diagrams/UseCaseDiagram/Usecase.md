@@ -578,7 +578,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được mở rộng bởi `UC-CAT-04` (điểm «Nhập từ khóa»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Index `GIN (search_vector)` và `GIN (name gin_trgm_ops)` (ENTITY.md mục 13.1); giới hạn 60 request / phút / IP bằng bộ đếm Redis.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku).
 
@@ -592,8 +592,8 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Người dùng ở trang có ô tìm kiếm (header storefront).
 - **Hậu điều kiện:** Hiển thị tối đa 10 từ khóa phổ biến / gợi ý; lượt tìm được đếm cho thống kê.
 - **Luồng sự kiện chính:**
-  1. Khi trang tải, ô tìm kiếm hiển thị dãy **từ khóa phổ biến**: top 5–10 `search_keyword_stats` có `searchCount` cao nhất 7 ngày gần nhất (bỏ từ `isBlocked`), cache Redis 1 giờ.
-  2. Khi người dùng gõ từ 2 ký tự, client chờ 250 ms rồi gọi `GET /api/v1/search/suggest?q=…`.
+  1. Khi trang tải, ô tìm kiếm hiển thị dãy **từ khóa phổ biến** (`GET /api/v1/public/search/trending`): top 5–10 từ khóa 24 giờ qua — Redis Sorted Set hôm nay (trọng số 1) + hôm qua (trọng số 0,5), bỏ từ `isBlocked`, cache 10 phút; Redis trống thì cộng `search_keyword_stats` (API_SPEC 5.4b).
+  2. Khi người dùng gõ từ 2 ký tự, client chờ 250 ms rồi gọi `GET /api/v1/public/search/suggestions?q=…` (API_SPEC 5.4).
   3. Backend trả gợi ý theo tiền tố: từ khóa phổ biến khớp tiền tố + tên sản phẩm / danh mục khớp (`pg_trgm` + `unaccent`, giới hạn 10).
   4. Người dùng bấm một từ khóa → thực hiện tìm kiếm (UC-CAT-02).
   5. Mỗi lượt tìm hợp lệ tăng bộ đếm Redis `search:kw:{ngày}`; job 5 phút cộng dồn vào `search_keyword_stats` (`SearchKeywordStat.accumulate()`).
@@ -603,7 +603,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - TLCN dùng full-text PostgreSQL (`tsvector` + `pg_trgm`), không dùng Elasticsearch / Redis Trie như bản DATN.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [SearchKeywordStat](../ClassDiagram/ENTITY.md#211-searchkeywordstat--thống-kê-từ-khóa-tìm-kiếm-theo-ngày), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -623,14 +623,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
      - Địa điểm gian hàng (theo Tỉnh/Thành phố của kho người bán).
      - Thương hiệu / Danh mục con.
      - Tình trạng khuyến mãi (shop đang có voucher).
-  2. Người dùng chọn tiêu chí sắp xếp: Phổ biến nhất, Bán chạy nhất, Giá tăng dần, Giá giảm dần, Hàng mới về.
+  2. Người dùng chọn tiêu chí sắp xếp: Phổ biến nhất, Bán chạy nhất, Giá tăng dần, Giá giảm dần, Hàng mới về (`sort` = `RELEVANCE` / `BEST_SELLING` / `PRICE_ASC` / `PRICE_DESC` / `NEWEST`; "Phổ biến nhất" = `RELEVANCE` khi có từ khóa, `BEST_SELLING` khi không — API_SPEC 5.3).
   3. Client cập nhật URL params và gửi request đến Backend.
   4. Backend dựng câu truy vấn kết hợp các facet filters và order clauses, trả về danh sách phân trang.
   5. Bộ lọc bổ sung theo giao diện: **Shop Chính Hãng** (`VendorProfile.isMall`), **Chính hãng** (shop `isMall` hoặc thương hiệu đã xác minh `Brand.isVerified`), **Thương hiệu** (`brandId`), **Miễn phí vận chuyển** (shop có `freeshipThreshold`), số sao (≥ N★), khoảng giá, thuộc tính `isFilterable` của ngành (UC-CAT-15).
   6. Tìm **trong shop** (từ trang shop) ↔ "Mở rộng tìm toàn sàn"; sắp xếp Liên quan / Mới nhất / Bán chạy / Giá.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -645,7 +645,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Hiển thị trang Product Detail Page (PDP); tăng biến đếm lượt xem trong Redis.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm vào thẻ sản phẩm từ trang chủ hoặc danh mục.
-  2. Client gọi `GET /api/v1/products/{id}`.
+  2. Client gọi `GET /api/v1/public/products/{id}` (API_SPEC 5.6).
   3. Server lấy thông tin sản phẩm, danh sách ảnh gallery từ `product_images`, danh sách biến thể SKU từ `product_variants`, thông tin người bán từ `vendor_profiles`, và 5 đánh giá mới nhất từ `product_reviews`.
   4. Giao diện hiển thị:
      - Slider ảnh chất lượng cao.
@@ -661,7 +661,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Mỗi lần mở trang tăng bộ đếm Redis lượt xem theo nguồn (`src`) → job 5 phút ghi `ProductViewStat` và `Product.viewCount`.
 - **Quan hệ Use Case:** `<<include>>` Xem gợi ý sản phẩm tương tự (`UC-CAT-07`); được mở rộng bởi `UC-CAT-16` (điểm «Bấm vào tên shop»), `UC-CAT-18` (điểm «Chia sẻ»).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [ProductImage](../ClassDiagram/ENTITY.md#24-productimage--ảnh-sản-phẩm), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 
@@ -675,7 +675,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Sản phẩm đang xem ở trạng thái `PUBLISHED`.
 - **Hậu điều kiện:** Hiển thị tối đa 9 sản phẩm tương tự (trang chi tiết) hoặc lưới gợi ý có phân trang (trang chủ).
 - **Luồng sự kiện chính:**
-  1. Trang chi tiết gọi `GET /api/v1/products/{id}/similar?limit=9`.
+  1. Trang chi tiết gọi `GET /api/v1/public/products/{id}/similar?limit=6` (API_SPEC 5.9; `limit` 1–12).
   2. Backend chọn ứng viên: cùng danh mục lá, khoảng giá ±50%, đang bán, còn hàng; loại trừ chính sản phẩm và sản phẩm của shop đang tạm nghỉ.
   3. Xếp hạng theo điểm: độ giống tên (`similarity()` của `pg_trgm`) + số lượng bán + điểm đánh giá; cache Redis 30 phút theo sản phẩm.
   4. Trả danh sách dạng thẻ (ảnh, tên, giá, đã bán) hiển thị carousel.
@@ -686,7 +686,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Bản TLCN không dùng vector / AI (Qdrant, LLM) — chuyển sang DATN khi có dữ liệu hành vi đủ lớn.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -921,7 +921,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Hiển thị trang shop với danh sách sản phẩm `PUBLISHED` phân trang.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm vào tên shop ở trang chi tiết sản phẩm (`UC-CAT-06`), trong giỏ hàng hoặc trong kết quả tìm kiếm.
-  2. Client gọi `GET /api/v1/shops/{vendorId}` và `GET /api/v1/shops/{vendorId}/products?sort=newest&page=0`.
+  2. Client gọi `GET /api/v1/public/shops/{id}` và `GET /api/v1/public/products?shop_id={id}&sort=NEWEST&page=1` (API_SPEC 5.11, 5.3; `id` = `vendor_profiles.id`).
   3. Backend trả thông tin shop từ `vendor_profiles` (`shopName`, `logoUrl`, `coverUrl`, `shopDescription`, `createdAt`) cùng số liệu tổng hợp: tổng sản phẩm đang bán, điểm đánh giá trung bình của shop (trung bình `product_reviews.rating` đang hiển thị), số đơn đã hoàn tất.
   4. Hệ thống hiển thị lưới sản phẩm của shop, cho phép sắp xếp (mới nhất, bán chạy, giá tăng / giảm) và lọc theo danh mục sàn.
   5. Người dùng có thể bấm "Chat với shop" (`UC-SOC-01`) hoặc chọn sản phẩm để xem chi tiết (`UC-CAT-06`).
@@ -936,7 +936,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Số liệu tổng hợp của shop cache Redis `shop:stats:{vendorId}` TTL 10 phút; truy vấn danh sách dùng index `(vendor_id, status)`.
   - Chỉ số shop được cập nhật bởi job hằng ngày (tỉ lệ phản hồi) và sự kiện (đánh giá mới / bị ẩn, theo dõi, đăng / ẩn sản phẩm) — không tính trực tiếp mỗi lần mở trang.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductReview](../ClassDiagram/ENTITY.md#91-productreview--đánh-giá-sản-phẩm), [ShopFollow](../ClassDiagram/ENTITY.md#92-shopfollow--theo-dõi-shop), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -988,7 +988,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Không gắn mã giới thiệu / theo dõi cá nhân vào liên kết ở TLCN (chương trình giới thiệu bạn bè, affiliate thuộc DATN).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 

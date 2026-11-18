@@ -28,10 +28,10 @@ chưa khớp `API_SPEC.md`** (mục 2).
 |---|---|---|
 | `GET /me/wishlist/ids` | `GET /me/wishlist/product-ids` | Sửa mã |
 | `GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}` | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | Sửa mã (đổi cả phương thức theo dõi sang `PUT`) |
-| `GET /public/search/suggest` | `GET /public/search/suggestions` | Sửa mã |
-| `GET /public/feed` | `GET /public/recommendations?page&size` | Sửa mã |
-| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | Sửa mã |
-| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | Sửa mã — gộp vào `listProducts` |
+| `GET /public/search/suggest` | `GET /public/search/suggestions` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/feed` | `GET /public/recommendations?page&size` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
 | `POST /public/banners/{id}/events` | `POST /public/banner-events` (id trong body) | Sửa mã |
