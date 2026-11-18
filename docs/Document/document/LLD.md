@@ -817,7 +817,7 @@ Structured output `{decision, riskScore, violations[], reasoning}`. `REJECT` và
 Tiền xử lý: NFC → viết thường → chuẩn hóa teencode → bỏ URL → tách từ (RDRSegmenter) → ≤ 256 token. Suy luận ONNX → softmax 3 nhãn → `{overall, score, model, analyzedAt}`. Thống kê chỉ tính `score ≥ 0,6`; ưu tiên kiểm duyệt khi `NEGATIVE` và `score ≥ 0,85`; không tự ẩn đánh giá.
 
 ### 9.9 Điểm danh & Điểm (UC-PRO-08, UC-PRO-09)
-Ngày 1–6 liên tiếp: 100 Điểm; ngày 7 liên tiếp: 1.000 Điểm; đứt 1 ngày → chuỗi về 1; `UNIQUE(user_id, checkin_date)`. Mỗi lần cộng tạo một lô `coin_transactions` có hạn 12 tháng; tiêu / hết hạn trừ lô sắp hết hạn trước; `user_coins.balance_hash` kiểm mỗi lần ghi.
+Ngày 1–6 liên tiếp: 100 Điểm; ngày 7 liên tiếp: 1.000 Điểm; đứt 1 ngày → chuỗi về 1; "ngày" theo giờ Việt Nam; `daily_checkins` **mỗi khách một dòng** (`UNIQUE customer_id`, `lastCheckinAt` + `streakCount` — ENTITY 4.9), chống điểm danh 2 lần bằng khóa ngắn Redis `lock:checkin:{userId}` + khóa dòng + `DailyCheckin.checkIn()`. Mỗi lần cộng tạo một lô `coin_transactions` có hạn 12 tháng; tiêu / hết hạn trừ lô sắp hết hạn trước; `user_coins.balance_hash` kiểm mỗi lần ghi.
 
 ### 9.10 Rút tiền (UC-ADM-04, UC-ADM-05)
 Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài khoản nhận tiền đã xác minh chính chủ (`GNE-WAL-4032`); OTP email. Finance Officer duyệt → chuyển khoản tay nội dung `TRWD{id}` → webhook SePay (tiền ra) tự hoàn tất; từ chối → hoàn ví.
@@ -838,6 +838,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 | Phát thông báo hẹn giờ | 1 phút | Thông báo toàn sàn tới giờ phát | NOT-05 |
 | Thử gửi lại email | 5 phút **(đề xuất)** | Email lỗi, tối đa 3 lần | NOT-03 |
 | Hết hạn yêu cầu bổ sung KYC | Hằng ngày | Quá 7 ngày → `REJECTED` | VND-04 |
+| Điểm hết hạn | Hằng ngày 00:15 (giờ VN) | Lô Điểm quá 12 tháng còn dư → một dòng `EXPIRED` âm / lô (`FOR UPDATE SKIP LOCKED`, chạy lại không trừ thêm) | PRO-09 |
 | Hết hạn Điểm | Hằng ngày | Trừ lô quá 12 tháng | PRO-09 |
 | Kết thúc chế độ nghỉ | Hằng giờ | Tới `vacationEndsAt` → mở bán | VND-19 |
 | Ẩn danh hóa tài khoản (`AnonymizeAccountsJob`, **đã hiện thực**) | 02:30 hằng ngày (giờ VN) | Yêu cầu xóa quá 30 ngày → ẩn danh user + hồ sơ, xóa mềm địa chỉ, thu hồi phiên, `PII_ANONYMIZED`; tối đa 1.000 tài khoản / lượt, mỗi tài khoản 1 transaction; xóa ảnh đại diện Silo sau commit | AUTH-10 |

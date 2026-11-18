@@ -766,7 +766,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
   }
 }
 ```
-`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày.
+`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày. `streak_days` = `((chuỗi liên tiếp − 1) mod 7) + 1` khi hôm nay hoặc hôm qua có điểm danh, ngược lại `0` (sau ngày thứ 7 quay về ô 1). "Ngày" theo giờ Việt Nam; `next_check_in_at` = 00:00 hôm sau. `expiring_soon` = phần còn lại (FEFO) của các lô hết hạn trong 30 ngày tới, `null` khi không có.
 
 #### `POST /me/coins/check-ins` — Điểm danh
 `201` `{ "reward": 100, "balance": 1350, "streak_days": 4 }`. `409 GNE-PRO-4091` đã điểm danh hôm nay.
@@ -783,7 +783,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```
 
 #### `POST /me/coins/redemptions` — Đổi Điểm lấy voucher
-`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm.
+`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm (`details: {balance, required, missing}`); `409 GNE-PRO-4092` voucher đang có trong Kho (hoặc đã dùng hết lượt / người — `details.reason = "USAGE_LIMIT_REACHED"`); `404` quà không tồn tại. Danh mục quà là cấu hình `genie.coin.rewards` (`{id, coin-cost, voucher-code}`) trỏ tới voucher sàn — quà có voucher đã tắt / hết hạn tự ẩn.
 
 ### 3.14 Kho voucher
 UC-PRO-03 · **Màn hình:** Tài khoản › Kho Voucher (tab Tất cả / Voucher Sàn / Voucher Shop / Freeship; "Xem lịch sử voucher" với tab Hết hiệu lực / Đã sử dụng; nhập mã để lưu; xóa; modal chi tiết)

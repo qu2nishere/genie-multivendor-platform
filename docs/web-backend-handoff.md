@@ -303,9 +303,11 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getCoins` | coins.api.ts | `GET /me/coins` |
-| `listCoinTxns` | coins.api.ts | `GET /me/coins/transactions` |
-| `listCoinRewards` | coins.api.ts | `GET /public/coin-rewards` |
+| `getCoins` | coins.api.ts | `GET /me/coins` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `listCoinTxns` | coins.api.ts | `GET /me/coins/transactions` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `listCoinRewards` | coins.api.ts | `GET /public/coin-rewards` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `checkIn` | coins.api.ts | `POST /me/coins/check-ins` — **đã nối** |
+| `redeemReward` | coins.api.ts | `POST /me/coins/redemptions` — **đã nối** |
 
 ### `notifications`
 

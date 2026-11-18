@@ -2061,7 +2061,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Đã điểm danh hôm nay:* nút chuyển "Đã điểm danh", đếm ngược tới 00:00.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`promotion/coin`: điểm danh, số dư / sắp hết hạn / lịch sử, đổi quà, cron hết hạn lô V16) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_diem_danh_diem_genie.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [DailyCheckin](../ClassDiagram/ENTITY.md#49-dailycheckin--điểm-danh-hằng-ngày), [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [CoinTransaction](../ClassDiagram/ENTITY.md#48-cointransaction--lịch-sử-biến-động-điểm).
 
@@ -2075,7 +2075,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Khách đã đăng nhập.
 - **Hậu điều kiện:** Hiển thị số dư và lịch sử; khi đổi quà: trừ Điểm và thêm voucher vào Kho voucher.
 - **Luồng sự kiện chính:**
-  1. Khách mở Tài khoản → Điểm Genie; client gọi `GET /api/v1/customer/coins` và `/coins/history`.
+  1. Khách mở Tài khoản → Điểm Genie; client gọi `GET /api/v1/me/coins` và `GET /api/v1/me/coins/transactions` (API_SPEC 3.13); điểm danh `POST /api/v1/me/coins/check-ins`, đổi quà `POST /api/v1/me/coins/redemptions`, danh mục quà `GET /api/v1/public/coin-rewards`.
   2. Hiển thị: số dư (1 Điểm = 1₫ khi thanh toán), số Điểm hết hạn trong 30 ngày tới, lịch sử: điểm danh (+100), hoàn Điểm đơn (+250), đánh giá có ảnh (+50), dùng giảm giá đơn (−500), hoàn Điểm khi hủy đơn.
   3. Kiểm tra toàn vẹn số dư (`UserCoin.verifyHash()`); lệch → khóa tiêu Điểm và cảnh báo Admin.
   4. **Đổi quà:** khách chọn voucher sàn có giá đổi bằng Điểm (danh sách do sàn cấu hình) → trừ Điểm theo lô sắp hết hạn trước (FEFO), ghi `VOUCHER_REDEEM`, thêm `user_vouchers`.
@@ -2085,7 +2085,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Điểm không quy đổi thành tiền mặt / rút về ngân hàng. Lô Điểm hết hạn được Cron ghi dòng âm để `Σ amount = balance`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`promotion/coin`: điểm danh, số dư / sắp hết hạn / lịch sử, đổi quà, cron hết hạn lô V16) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_diem_danh_diem_genie.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [CoinTransaction](../ClassDiagram/ENTITY.md#48-cointransaction--lịch-sử-biến-động-điểm), [UserVoucher](../ClassDiagram/ENTITY.md#43-uservoucher--ví-voucher-của-người-dùng).
 
