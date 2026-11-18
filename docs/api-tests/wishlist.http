@@ -1,0 +1,39 @@
+### UC-CAT-08 — Sản phẩm yêu thích (API_SPEC 3.10; plan 2026-11-16 wishlist W05.01)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (sản phẩm seed). Mật khẩu Genie@123.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập — chép access_token vào @tok
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+@tok = <access_token bước 1>
+@pid = <id một sản phẩm PUBLISHED, vd. SELECT id FROM products WHERE status = 'PUBLISHED' LIMIT 1>
+
+### 2. ĐÚNG — thích (idempotent: gọi 2 lần vẫn 204, chỉ 1 dòng)
+PUT {{base}}/me/wishlist/{{pid}}
+Authorization: Bearer {{tok}}
+
+### 3. ĐÚNG — tập ID để tô tim (tối đa 1.000 ID mới nhất)
+GET {{base}}/me/wishlist/product-ids
+Authorization: Bearer {{tok}}
+
+### 4. ĐÚNG — danh sách (mới thích trước; summary.total; price, default_variant_id, is_purchasable, product_slug)
+GET {{base}}/me/wishlist?limit=20
+Authorization: Bearer {{tok}}
+
+### 5. ĐÚNG — bỏ thích (idempotent: gọi lại vẫn 204)
+DELETE {{base}}/me/wishlist/{{pid}}
+Authorization: Bearer {{tok}}
+
+### 6. LỖI — sản phẩm không tồn tại / không còn bán → 404 GNE-CAT-4042
+PUT {{base}}/me/wishlist/999999
+Authorization: Bearer {{tok}}
+
+### 7. LỖI — product_id không hợp lệ → 422 GNE-VAL-4220
+PUT {{base}}/me/wishlist/0
+Authorization: Bearer {{tok}}
+
+### 8. LỖI — không token → 401 GNE-SEC-4010
+GET {{base}}/me/wishlist

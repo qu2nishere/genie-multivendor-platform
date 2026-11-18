@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-wishlist` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-17 — đang làm (31 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (38 / 38) |
 
 **Cách dùng**
 
@@ -38,9 +38,9 @@
 | W01 | Miền & truy vấn | 4 | 1 | 5 / 5 | — | `feature/catalog-wishlist` |
 | W02 | Thích / bỏ thích & tập ID | 6 | 1 | 7 / 7 | — | `feature/catalog-wishlist` |
 | W03 | Danh sách yêu thích | 6 | 1 | 7 / 7 | — | `feature/catalog-wishlist` |
-| W04 | Nối giao diện `web/` | 6 | 2 | 7 / 8 | — | `feature/catalog-wishlist` |
-| W05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/catalog-wishlist` |
-| **Tổng** | | **32** | **6** | **31 / 38** | | |
+| W04 | Nối giao diện `web/` | 6 | 2 | 8 / 8 | — | `feature/catalog-wishlist` |
+| W05 | Hoàn thiện use case | 5 | 1 | 6 / 6 | — | `feature/catalog-wishlist` |
+| **Tổng** | | **32** | **6** | **38 / 38** | | |
 
 ## W00 — Chuẩn bị
 
@@ -87,16 +87,16 @@
 - [-] **W04.05** Chạy thật hai phía
 - [x] **W04.06** `cd web && npm run verify`.
 - [x] **W04.C1** 🔖 COMMIT `fix(web): call wishlist endpoints defined in the api spec` · hash: `a23347a`
-- [ ] **W04.C2** 🔖 COMMIT `feat(web): load wishlist page from the real api` · hash: `…`
+- [x] **W04.C2** 🔖 COMMIT `feat(web): load wishlist page from the real api` · hash: `350d923`
 
 ## W05 — Hoàn thiện use case
 
-- [ ] **W05.01** `docs/api-tests/wishlist.http`
-- [ ] **W05.02** OpenAPI
-- [ ] **W05.03** Tài liệu nguồn
-- [ ] **W05.04** Tiến độ
-- [ ] **W05.C1** 🔖 COMMIT `docs(catalog): record wishlist use case as implemented` · hash: `…`
-- [ ] **W05.05** Mở PR vào `develop`
+- [x] **W05.01** `docs/api-tests/wishlist.http`
+- [x] **W05.02** OpenAPI
+- [x] **W05.03** Tài liệu nguồn
+- [x] **W05.04** Tiến độ
+- [x] **W05.C1** 🔖 COMMIT `docs(catalog): record wishlist use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **W05.05** Mở PR vào `develop`
 
 ---
 
@@ -104,11 +104,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-CAT-08` Quản lý danh sách sản phẩm yêu thích — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-CAT-08` Quản lý danh sách sản phẩm yêu thích — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-CAT-08 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -130,7 +130,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | W04.03 | Cập nhật lạc quan + hoàn tác khi lỗi đã có sẵn ở `toggleWishlist`; `404 GNE-CAT-4042` → tim tự trả về trạng thái chưa thích + toast `errors.GNE-CAT-4042`; chưa đăng nhập → `requireLogin()` (có sẵn ở `WishHeart`). Màn danh sách: lọc theo store tim để bỏ thích biến mất ngay; nút "Thêm vào giỏ" khóa theo `is_purchasable` |
 | W04.04 | `wishlist.mapper.test.ts` (DTO → `WishlistEntry`). Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 319/319, build OK, i18n OK; E2E `guest` + `orders` 10/10 |
 | W04.05 | `[-]` Phần trình duyệt chờ người dùng (CLAUDE.md). Đã chạy thật phía API trên CSDL mới `genie_wish` với `mai.tran`: `PUT` 2 lần → 204 (1 dòng), `PUT` sản phẩm nháp → `404 GNE-CAT-4042`, `product-ids` = `[2, 1]`, danh sách đúng giá thấp nhất / SKU còn hàng / `is_purchasable`, `product_slug`, ảnh URL Silo, `summary.total = 2`; `DELETE` 2 lần → 204; không token → 401. Cách chạy giao diện: `PUBLIC_REAL_API=auth,wishlist`, dữ liệu mẫu nhánh seed |
+| W05.02 | `/v3/api-docs` có đủ 4 endpoint, summary `UC-CAT-08 — …` (kiểm khi chạy API thật ở W04.05) |
+| W05.04 | Checklist UC-CAT-08: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng) → 🟡; Excel "Đang triển khai"; handoff bỏ dòng lệch spec + đánh dấu đã nối; CLAUDE.md mục 2 + mục 9 (cổng `WishlistShopAvailability`, cảnh báo quan hệ EAGER). Cổng: `./mvnw verify` BUILD SUCCESS (108 unit + 138 IT) |
+| W05.05 | `[-]` Chưa push / mở PR — chờ người dùng; PR mở sau PR Điểm Genie (nhánh tách từ `feature/promotion-coin-checkin`) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (32 task, 6 commit, 6 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | W00–W05: truy vấn + `TestDataBuilder`, thích / bỏ thích idempotent, danh sách nạp theo lô (projection) + `product_slug`, sửa 2 endpoint web lệch spec + nối trang yêu thích, tài liệu; còn chạy thật trên giao diện (W04.05) và mở PR | `d74ed73` `1a102b5` `c302513` `0a8cbb9` `a23347a` `350d923` |

@@ -1800,6 +1800,8 @@ public class UserWishlist {
 }
 ```
 
+
+- **Phương thức `of(userId, productId, now)`** (plan 2026-11-16 wishlist W01.02) — factory tạo một lượt thích. Ghi thật dùng `INSERT … ON CONFLICT (user_id, product_id) DO NOTHING` để `PUT /me/wishlist/{id}` idempotent dưới tải đồng thời; chỉ thích được sản phẩm `PUBLISHED`.
 ---
 
 ## 2.6. `CategoryAttribute` — Bộ thuộc tính chuẩn theo ngành hàng
@@ -6983,7 +6985,7 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
   8. `Cart` («PK» id, «UQ» userId)
   9. `CartItem` («PK» id, «FK» cartId, «FK» productVariantId)
 * **Các Enum liên kết (4 enum):** `AttributeDataType`, `ProductCondition`, `ProductStatus`, `ShippingPayer`.
-* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Category`: isRoot(), changeCommissionRate() · `CategoryAttribute`: accepts(), deactivate() · `Brand`: proposedBy(), verify() · `Product`: submitForReview(), approve(), reject(), hide(), markPreOrder(), flag() · `ProductVariant`: availableStock(), reserve(), releaseReservation(), commitSale(), softDelete() · `ProductImage`: markPrimary() · `Cart`: addItem(), removeItem(), subtotal(), mergeGuestItems() · `CartItem`: increase(), lineTotal()
+* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Category`: isRoot(), changeCommissionRate() · `CategoryAttribute`: accepts(), deactivate() · `Brand`: proposedBy(), verify() · `Product`: submitForReview(), approve(), reject(), hide(), markPreOrder(), flag() · `ProductVariant`: availableStock(), reserve(), releaseReservation(), commitSale(), softDelete() · `ProductImage`: markPrimary() · `Cart`: addItem(), removeItem(), subtotal(), mergeGuestItems() · `CartItem`: increase(), lineTotal() · `UserWishlist`: of()
 * **Ma trận quan hệ:**
   - `Category` ◇ 0..1 — 0..* `Category`
   - `Category` ◇ 0..1 — 0..* `Product`
