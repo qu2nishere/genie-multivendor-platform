@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (27 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (34 / 77) |
 
 **Cách dùng**
 
@@ -39,14 +39,14 @@
 | Y00 | Chuẩn bị & chốt hợp đồng | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
 | Y01 | Khung: cấu hình, lược đồ, nạp mô hình | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
 | Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 6 / 6 | — | `feature/ai-worker-kyc` |
-| Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 7 / 8 | — | `feature/ai-worker-kyc` |
-| Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 0 / 12 | — | `feature/ai-worker-kyc` |
+| Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 8 / 8 | — | `feature/ai-worker-kyc` |
+| Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 6 / 12 | — | `feature/ai-worker-kyc` |
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 0 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 0 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **27 / 77** | | |
+| **Tổng** | | **65** | **12** | **34 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -86,16 +86,16 @@
 - [x] **Y03.05** `test_qr.py`
 - [x] **Y03.06** Chuẩn hóa họ tên
 - [x] **Y03.07** Đo tỷ lệ đọc QR
-- [ ] **Y03.C1** 🔖 COMMIT `feat(ai-worker): decode and parse the citizen id qr code` · hash: `…`
+- [x] **Y03.C1** 🔖 COMMIT `feat(ai-worker): decode and parse the citizen id qr code` · hash: `f554ea4`
 
 ## Y04 — Tầng 1: MRZ mặt sau & các luật đối chiếu
 
-- [ ] **Y04.01** Phụ thuộc OCR (Y-D2)
-- [ ] **Y04.02** `mrz.locate(image)`
-- [ ] **Y04.03** `mrz.read(region)`
-- [ ] **Y04.04** `mrz.parse(lines)`
-- [ ] **Y04.05** `test_mrz.py`
-- [ ] **Y04.06** Đo tỷ lệ đọc MRZ trên bộ ảnh biến thể; ghi vào Ghi chú; quyết định giữ Tesseract hay đổi (Y-D2).
+- [x] **Y04.01** Phụ thuộc OCR (Y-D2)
+- [x] **Y04.02** `mrz.locate(image)`
+- [x] **Y04.03** `mrz.read(region)`
+- [x] **Y04.04** `mrz.parse(lines)`
+- [x] **Y04.05** `test_mrz.py`
+- [x] **Y04.06** Đo tỷ lệ đọc MRZ trên bộ ảnh biến thể; ghi vào Ghi chú; quyết định giữ Tesseract hay đổi (Y-D2).
 - [ ] **Y04.07** `rules.check_id_structure(identity_number, date_of_birth, gender)`
 - [ ] **Y04.08** `rules.check_expiry(date_of_birth, issue_date, expiry_date)`
 - [ ] **Y04.09** `rules.match_qr_mrz(qr, mrz)`
@@ -181,6 +181,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y01.05 | Mô hình nạp ở `app/kyc/models.py` vào `app.state.face_models`; `/health` giờ trả `UP` sau lifespan kèm `models_loaded` (thiếu mô hình vẫn UP — tầng 1 chạy được), `LOADING` 503 trước khi khởi động xong. |
 | Y02.01 | Host so khớp kiểu glob (`*.s3.ap-southeast-1.amazonaws.com`), cả dạng `host:port`; giải mã bằng Pillow (sửa hướng EXIF) rồi chuyển OpenCV BGR, cạnh dài ≤ 2000 px — tất cả trong bộ nhớ. |
 | Y03.07 | Tỷ lệ đọc QR trên 32 biến thể thẻ mẫu (xoay 0/90/180/270, thu 75%, tối 70%, mờ nhẹ): **32/32 = 100%** → giữ `cv2.QRCodeDetector`, chưa cần `zxing-cpp`. Lưu ý: thẻ mẫu tự dựng sạch hơn ảnh chụp điện thoại thật — đo lại khi có ảnh thật được phép dùng. |
+| Y04.02 | Định vị dải MRZ (blackhat + gradient) dễ cắt thiếu dòng → `read_image` thử: vùng định vị → nửa dưới ảnh, ở 4 hướng; chọn 3 dòng bắt đầu từ dòng `ID`. OCR trên ảnh **xám** (nhị phân Otsu làm mất ký tự `<`). |
+| Y04.06 | Tỷ lệ đọc MRZ hợp lệ (đúng mọi số kiểm tra) trên 36 biến thể (lật 180°, thu 80/60%, tối 70%, mờ 3/5): **36/36 = 100%** với Tesseract 5.5 dữ liệu `eng` + whitelist → giữ Tesseract. Thẻ mẫu vẽ bằng DejaVu Sans Mono (không có phông OCR-B); ảnh thật cần đo lại. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
