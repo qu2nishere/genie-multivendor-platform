@@ -29,12 +29,16 @@ public class TestDataBuilder {
         this.jdbc = jdbc;
     }
 
-    /** Từ 10 chữ cái thường ngẫu nhiên — dùng trong tên sản phẩm để tìm kiếm chỉ ra dữ liệu của test này. */
+    /**
+     * Từ 12 chữ cái thường ngẫu nhiên (đủ 26 chữ) — dùng trong tên sản phẩm để tìm kiếm chỉ ra dữ liệu của test này.
+     * Lưu ý: tầng trigram (bù gõ sai) vẫn có thể bắt nhầm từ lạ của test khác — test chạy chéo shop chỉ nên khẳng định
+     * "có / không có", không khẳng định đúng toàn bộ danh sách.
+     */
     public static String uniqueWord() {
-        String hex = UUID.randomUUID().toString().replace("-", "");
-        StringBuilder sb = new StringBuilder("zq");
-        for (int i = 0; i < 8; i++) {
-            sb.append((char) ('a' + Character.digit(hex.charAt(i), 16) % 26));
+        java.util.concurrent.ThreadLocalRandom r = java.util.concurrent.ThreadLocalRandom.current();
+        StringBuilder sb = new StringBuilder(12);
+        for (int i = 0; i < 12; i++) {
+            sb.append((char) ('a' + r.nextInt(26)));
         }
         return sb.toString();
     }
