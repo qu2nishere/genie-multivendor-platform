@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C04 (40 / 66), nhánh `feature/catalog-product-detail` (tách từ `feature/catalog-search`) |
+| **Cập nhật gần nhất** | 2026-11-18 — xong C00–C05 (45 / 66), nhánh `feature/catalog-product-detail` |
 
 **Cách dùng**
 
@@ -63,11 +63,11 @@
 | C02 | Tìm kiếm & lọc | CAT-02, CAT-05 | 10 | 2 | 12 / 12 | — | `feature/catalog-search` |
 | C03 | Gợi ý & xu hướng | CAT-04 | 6 | 1 | 7 / 7 | — | `feature/catalog-search` |
 | C04 | Chi tiết sản phẩm & lượt xem | CAT-06 | 6 | 2 | 8 / 8 | — | `feature/catalog-product-detail` |
-| C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 0 / 5 | — | `feature/catalog-product-detail` |
+| C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 5 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 0 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 0 / 11 | — | `feature/web-catalog-real-api` |
 | C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 0 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **40 / 66** | | |
+| **Tổng** | | | **54** | **12** | **45 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -126,11 +126,11 @@
 
 ## C05 — Tương tự & gợi ý hôm nay (UC-CAT-07)
 
-- [ ] **C05.01** `SimilarProductService` (candidate + scoring + bù danh mục cha)
-- [ ] **C05.02** `RecommendationService` (seeded random + interleave)
-- [ ] **C05.03** Endpoint `/products/{id}/similar`, `/recommendations`
-- [ ] **C05.04** `SimilarProductIT` + `RecommendationIT`
-- [ ] **C05.C1** 🔖 COMMIT `feat(catalog): recommend similar products and daily picks` · hash: `…`
+- [x] **C05.01** `SimilarProductService` (candidate + scoring + bù danh mục cha)
+- [x] **C05.02** `RecommendationService` (seeded random + interleave)
+- [x] **C05.03** Endpoint `/products/{id}/similar`, `/recommendations`
+- [x] **C05.04** `SimilarProductIT` + `RecommendationIT`
+- [x] **C05.C1** 🔖 COMMIT `feat(catalog): recommend similar products and daily picks` · hash: `f0c594a`
 
 ## C06 — Trang shop (UC-CAT-16)
 
@@ -200,6 +200,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C04.02 | Đọc bằng `JdbcTemplate` (không JPA) cho đồng bộ với tìm kiếm và tránh N+1. Shop tạm nghỉ tính lúc trả (không theo cache). `description_html` trả nguyên văn — **phải lọc HTML khi lưu** ở UC-CAT-09 (XSS), web hiển thị cũng cần lọc. `evict(id)` sẵn cho plan sản phẩm người bán gọi khi sửa / ẩn |
 | C04.03 | HTTP `Cache-Control: no-cache` + ETag thay vì `max-age=300` (API 0.12) — trình duyệt / CDN luôn hỏi lại để tồn không cũ (D11); cache 5 phút nằm phía máy chủ |
 | C04.05 | `source` sai → 422; sản phẩm không còn bán → 404. Web gửi bằng `fetch(..., {keepalive: true})` (JSON) thay `sendBeacon` vì `sendBeacon` kiểu `application/json` bị chặn CORS preflight khi khác origin |
+| C05.01 | Bước bù lấy danh mục cha + anh em **trừ danh mục lá** (nếu gồm cả lá thì sản phẩm cùng lá ngoài ±50% giá lọt vào — test bắt được). `/similar` chạy cả khi sản phẩm gốc đã ẩn (trang "không còn bán" cần — UC-CAT-18); sản phẩm không tồn tại → `[]`. Trọng số qua `genie.catalog.similar.weight-*` (mặc định 0,5 / 0,3 / 0,2) |
+| C05.02 | Tập nguồn dòng chung tối đa 240 (= 8 trang × 30, khớp giao diện "Trang 2/8"), cache 30 phút theo ngày. Có token → `Cache-Control: private, no-cache` |
 
 ## Nhật ký
 
@@ -212,3 +214,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C02 tìm kiếm & lọc: `GET /public/products` (FTS + trigram, lọc đa tiêu chí, facet, rate limit 60/phút); 7 unit + 16 IT xanh; đo hiệu năng p95 50 ms | `a45aedb` `fa33542` |
 | 2026-11-18 | C03 gợi ý & xu hướng: `/public/search/suggestions`, `/public/search/trending`, bộ đếm Redis ZSET + job ghi gộp 5 phút; 9 IT xanh | `ac22d10` |
 | 2026-11-18 | C04 chi tiết & lượt xem: `/public/products/{id}`, `/{id}/variants`, `POST /{id}/views` + job ghi gộp; 5 unit + 8 IT xanh | `71e8533` `56d938e` |
+| 2026-11-18 | C05 tương tự & gợi ý hôm nay: `/{id}/similar` (ứng viên + chấm điểm + bù anh em), `/recommendations` (seed theo ngày, xen kẽ 3 : 2); 3 unit + 6 IT xanh | `f0c594a` |
