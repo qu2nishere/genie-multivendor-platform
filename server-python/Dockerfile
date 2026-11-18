@@ -2,8 +2,10 @@
 FROM python:3.12-slim
 
 # JRE cho VnCoreNLP — bỏ dòng này nếu dùng bản tách từ Python thuần (phải GIỐNG lúc huấn luyện)
+# tesseract-ocr + dữ liệu eng: đọc MRZ của KYC (plan AI Worker Y-D2, Y04.01)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends default-jre-headless libgl1 libglib2.0-0 \
+       tesseract-ocr tesseract-ocr-eng \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
