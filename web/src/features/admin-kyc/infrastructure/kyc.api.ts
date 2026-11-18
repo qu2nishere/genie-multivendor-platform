@@ -1,7 +1,8 @@
-// Duyệt KYC (API_SPEC 11.3). Mock: trạng thái ở kho dùng chung adminKycStore (huy hiệu nav + Tổng quan
+// Duyệt KYC (API_SPEC 11.3). API thật khi PUBLIC_REAL_API có `vendor` (K11.05). Mock: trạng thái ở kho dùng chung adminKycStore (huy hiệu nav + Tổng quan
 // đổi theo), chi tiết ở kycDetailStore.
 import { api, getPage } from '@/shared/api/http';
-import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginatePage } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { adminKycStore, type MockAdminKycStatus } from '@/shared/api/mock/admin';
 import type { Page } from '@/shared/api/types';
 import { inTab, isWaiting, KYC_TABS, SUPPLEMENT_DAYS } from '../domain/kyc.rules';
@@ -15,6 +16,7 @@ export interface KycPage extends Page<KycSubmission> {
   counts: KycCounts;
 }
 
+const USE_MOCK = isMocked('vendor');
 const PAGE_SIZE = 20;
 
 export async function listKycSubmissions(tab: KycTab, page = 1): Promise<KycPage> {
@@ -84,6 +86,8 @@ function mockDecide(
 export async function approveKyc(
   id: number,
   shopCommissionRate: number | null,
+  /** Gắn nhãn "Chính hãng" (D10) — bỏ trống = giữ nguyên. */
+  isMall?: boolean,
 ): Promise<KycDetail> {
   if (USE_MOCK) {
     await mockDelay(250);
@@ -97,6 +101,7 @@ export async function approveKyc(
   return toKycDetail(
     await api.post<KycDetailDto>(`/admin/kyc-submissions/${id}/approve`, {
       shop_commission_rate: shopCommissionRate,
+      is_mall: isMall,
     }),
   );
 }

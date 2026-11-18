@@ -3209,7 +3209,8 @@
       "tax": "Tax code",
       "rate": "Shop-specific commission",
       "rate_placeholder": "By category",
-      "rate_err": "Enter 0 to 50%, or leave empty to use the category rate."
+      "rate_err": "Enter 0 to 50%, or leave empty to use the category rate.",
+      "mall": "Mark as an official (Mall) shop on approval"
     },
     "rejected_reason": "Rejection reason:",
     "supplement_req": "Documents requested:",

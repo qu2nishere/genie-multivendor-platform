@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (113 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (125 / 137) |
 
 **Cách dùng**
 
@@ -53,10 +53,10 @@
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
-| K10 | Cổng cho module khác & API phụ | 5 | 1 | 5 / 6 | — | `feature/vendor-shop-kyc` |
-| K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
+| K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
+| K11 | Nối giao diện `web/` | 10 | 3 | 11 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **113 / 137** | | |
+| **Tổng** | | **112** | **25** | **125 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -204,22 +204,22 @@
 - [x] **K10.03** Sự kiện công khai
 - [x] **K10.04** `ShopFacade` bổ sung `searchVerified(q, limit)` cho ô chọn shop.
 - [x] **K10.05** `GET /admin/shops?q&limit=20` (API 11.16
-- [ ] **K10.C1** 🔖 COMMIT `feat(vendor): provide shop lookups for other modules and admin pickers` · hash: `…`
+- [x] **K10.C1** 🔖 COMMIT `feat(vendor): provide shop lookups for other modules and admin pickers` · hash: `b9cde08`
 
 ## K11 — Nối giao diện `web/`
 
-- [ ] **K11.01** `seller-onboarding/infrastructure/registration.api.ts`
-- [ ] **K11.02** `seller-onboarding/infrastructure/kyc.api.ts`
-- [ ] **K11.03** `seller-settings/infrastructure/shop.api.ts`
-- [ ] **K11.04** `seller-settings/infrastructure/settings.api.ts`
-- [ ] **K11.05** `admin-kyc/infrastructure/kyc.api.ts`
-- [ ] **K11.06** Kiểm DTO
-- [ ] **K11.07** i18n
+- [x] **K11.01** `seller-onboarding/infrastructure/registration.api.ts`
+- [x] **K11.02** `seller-onboarding/infrastructure/kyc.api.ts`
+- [x] **K11.03** `seller-settings/infrastructure/shop.api.ts`
+- [x] **K11.04** `seller-settings/infrastructure/settings.api.ts`
+- [x] **K11.05** `admin-kyc/infrastructure/kyc.api.ts`
+- [x] **K11.06** Kiểm DTO
+- [x] **K11.07** i18n
 - [ ] **K11.08** Chạy thật hai phía
-- [ ] **K11.09** E2E
-- [ ] **K11.10** `cd web && npm run verify`.
-- [ ] **K11.C1** 🔖 COMMIT `feat(seller-ui): connect shop registration and kyc screens to the real api` · hash: `…`
-- [ ] **K11.C2** 🔖 COMMIT `feat(seller-ui): connect shop settings, pickup address and payout account` · hash: `…`
+- [x] **K11.09** E2E
+- [x] **K11.10** `cd web && npm run verify`.
+- [x] **K11.C1** 🔖 COMMIT `feat(seller-ui): connect shop registration and kyc screens to the real api` · hash: `6e4cafc`
+- [x] **K11.C2** 🔖 COMMIT `feat(seller-ui): connect shop settings, pickup address and payout account` · hash: `5fb33e5`
 - [ ] **K11.C3** 🔖 COMMIT `feat(admin-ui): connect kyc review screens to the real api` · hash: `…`
 
 ## K12 — Hoàn thiện cụm
@@ -301,6 +301,14 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K09.08 | Chưa mở PR — chờ người dùng. |
 | K10.01 | `VendorShopPorts` cài `WishlistShopAvailability` (shop đang nghỉ) + `AccountShopProvider` (`GET /me → shop`); `ShopFollowDirectoryImpl` dùng `ShopFacade.mediaUrl`. Bean giả trong `WishlistQueryIT` vẫn `@Primary` nên test cũ không đổi. |
 | K10.02 | `GET /me` (A11.02) đã có → cài luôn `AccountShopProvider` (không cần ghi CLAUDE.md mục 9). |
+| K11.01 | Cờ `PUBLIC_REAL_API=vendor` (cả 3 feature). Sửa lệch: 9.1 trả `$OtpChallenge` → đọc `email_masked` (web cũ đọc `masked_target`). Làm mới token sau confirm đã có sẵn ở `useConfirmShop`. |
+| K11.02 | Gửi thêm `document_file_names`; DTO chấp nhận `business_type` / `identity_number` / `representative` = null (shop mới chưa kê khai). |
+| K11.03 | `GET /seller/search` thuộc cụm đơn hàng — giữ mock bằng cờ riêng `seller-search`. Thêm backend `GET /seller/payout-account` (web `getPayoutAccount` đang gọi). Xử lý chung 403 GNE-VND-4031: Seller Center đã khóa nav theo `kyc_status` từ `/seller/me` nên không thêm lớp bọc. |
+| K11.04 | Kho lấy hàng (`PUT /seller/pickup-address`) giữ mock bằng cờ `pickup` (K07 chờ A12); chế độ nghỉ giữ mock bằng cờ `vacation` (D14). Mapper chịu `pickup_address = null`, `description` / `auto_reply.*` = null. Xóa logo (gửi null) chưa hỗ trợ ở server — null = giữ nguyên. |
+| K11.05 | `approveKyc(id, rate, isMall)` + ô "Gắn nhãn Shop Chính hãng" trong khối hoa hồng; mapper đọc `supplement.deadline_at` (fallback `due_at` của mock); `risk_level` / `risk_score` / `checks.*` null-safe. |
+| K11.09 | Đã viết `web/tests/e2e/kyc-onboarding-real.spec.ts` (đăng ký qua API + OTP Mailpit → mở shop → nộp KYC CCCD đuôi 10 → chờ giả lập AI duyệt) — **chưa chạy** (cần backend + Mailpit + web cờ thật; chạy cùng K11.08). |
+| K11.10 | eslint 0 lỗi, prettier, `astro check` 0 lỗi, vitest 320/320, `astro build` OK, i18n OK (3272 khóa); `npm run verify` gọi trực tiếp lỗi 127 trên máy này nên chạy từng bước. |
+| K11.08 | Chờ người dùng chạy thật hai phía trên giao diện (không tick thay). |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
