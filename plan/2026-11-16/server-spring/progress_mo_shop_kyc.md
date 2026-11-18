@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (55 / 137) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (67 / 137) |
 
 **Cách dùng**
 
@@ -48,7 +48,7 @@
 | K02 | Nền module `vendor` | 9 | 3 | 12 / 12 | — | `feature/vendor-k02-foundation` |
 | K03 | Đăng ký mở gian hàng (UC-VND-01) | 9 | 2 | 11 / 11 | — | `feature/vendor-k03-shop-registration` |
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
-| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 3 / 17 | — | `feature/vendor-k05-kyc-ai` |
+| K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 15 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 0 / 15 | — | `feature/vendor-k06-kyc-review` |
 | K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 0 / 6 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 0 / 9 | — | `feature/vendor-k08-payout-account` |
@@ -56,7 +56,7 @@
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 0 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 0 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 0 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **55 / 137** | | |
+| **Tổng** | | **112** | **25** | **67 / 137** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -130,19 +130,19 @@
 - [x] **K05.01** `KycProperties` (`genie.kyc`)
 - [x] **K05.02** `KycRiskPolicy`
 - [x] **K05.03** `KycRiskPolicyTest`
-- [ ] **K05.04** `KycVerificationClient` (cổng) + `HttpKycVerificationClient`
-- [ ] **K05.05** `StubKycVerificationClient` (D7)
-- [ ] **K05.06** Listener gửi thẩm định
-- [ ] **K05.07** `KycDecisionService.apply(vendorProfileId, result)`
-- [ ] **K05.08** Chuyển trạng thái theo kết luận
-- [ ] **K05.09** `InternalKycController`
-- [ ] **K05.10** `KycAiTimeoutJob`
-- [ ] **K05.11** `KycNotifier`
-- [ ] **K05.12** `KycDecisionIT`
-- [ ] **K05.13** `KycCallbackIT`
+- [x] **K05.04** `KycVerificationClient` (cổng) + `HttpKycVerificationClient`
+- [x] **K05.05** `StubKycVerificationClient` (D7)
+- [x] **K05.06** Listener gửi thẩm định
+- [x] **K05.07** `KycDecisionService.apply(vendorProfileId, result)`
+- [x] **K05.08** Chuyển trạng thái theo kết luận
+- [x] **K05.09** `InternalKycController`
+- [x] **K05.10** `KycAiTimeoutJob`
+- [x] **K05.11** `KycNotifier`
+- [x] **K05.12** `KycDecisionIT`
+- [x] **K05.13** `KycCallbackIT`
 - [ ] **K05.14** Chạy thử chế độ giả lập
-- [ ] **K05.C1** 🔖 COMMIT `feat(vendor): score kyc risk signals with configurable points and thresholds` · hash: `…`
-- [ ] **K05.C2** 🔖 COMMIT `feat(vendor): send kyc dossiers to the ai worker and apply its result` · hash: `…`
+- [x] **K05.C1** 🔖 COMMIT `feat(vendor): score kyc risk signals with configurable points and thresholds` · hash: `6e69ddc`
+- [x] **K05.C2** 🔖 COMMIT `feat(vendor): send kyc dossiers to the ai worker and apply its result` · hash: `4f3019f`
 - [ ] **K05.C3** 🔖 COMMIT `feat(vendor): route stuck or failed ai checks to manual review` · hash: `…`
 
 ## K06 — Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04)
@@ -283,6 +283,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K04.04 | Bản xem tạm ghi vào Redis ZSET `kyc:views` (điểm = thời điểm tạo); `KycViewCleanupJob` mỗi phút xóa bản quá 10 phút. |
 | K04.09 | Cổng `KycAdminNotifier` + listener AFTER_COMMIT; chưa có cài đặt (module notification) → ghi log. |
 | K05.02 | Lấy mẫu qua bean `KycSampler` (test IT thay bằng bản cố định); mỗi mã tín hiệu tính 1 lần; chỉ hồ sơ dưới ngưỡng tự duyệt mới có thể bị lấy mẫu. |
+| K05.05 | `StubKycVerificationClient` dùng executor riêng (không phụ thuộc TaskScheduler — test tắt scheduling) áp kết quả sau 2 giây. Thêm `BACKEND_INTERNAL_URL` (`genie.ai-worker.callback-base-url`) để dựng `callback_url`. Test dùng `FakeKycVerificationClient` + `FakeKycSampler` (@Primary trong `IntegrationTestBase`). |
+| K05.07 | `kyc_results` không có cột `national_emblem` / `fingerprint` → hai cờ này không lưu (màn duyệt trả `null`); thêm cột để đợt sau (ENTITY trước). Không đồng ý sinh trắc: không lưu điểm khuôn mặt, bỏ tín hiệu FACE_* / LIVENESS_SUSPECT. |
+| K05.10 | Mốc tính quá hạn = `kyc_submitted_at` (listener gửi AI ngay sau commit nộp hồ sơ) — không thêm cột. |
+| K05.12 | Trùng CCCD (+50) rơi vùng 30–69 → `MANUAL_REVIEW` (không phải REJECTED) đúng bảng điểm ENTITY 1.6. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
