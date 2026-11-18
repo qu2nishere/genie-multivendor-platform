@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (40 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (49 / 77) |
 
 **Cách dùng**
 
@@ -41,12 +41,12 @@
 | Y02 | Tải ảnh an toàn & gọi lại backend | 5 | 1 | 6 / 6 | — | `feature/ai-worker-kyc` |
 | Y03 | Tầng 1: mã QR mặt trước | 7 | 1 | 8 / 8 | — | `feature/ai-worker-kyc` |
 | Y04 | Tầng 1: MRZ mặt sau & các luật đối chiếu | 10 | 2 | 12 / 12 | — | `feature/ai-worker-kyc` |
-| Y05 | Tầng 2: khuôn mặt | 9 | 1 | 0 / 10 | — | `feature/ai-worker-kyc` |
+| Y05 | Tầng 2: khuôn mặt | 9 | 1 | 9 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 0 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 0 / 7 | — | `feature/ai-worker-kyc` |
 | Y08 | Đóng gói & triển khai | 4 | 2 | 0 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **40 / 77** | | |
+| **Tổng** | | **65** | **12** | **49 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -105,15 +105,15 @@
 
 ## Y05 — Tầng 2: khuôn mặt
 
-- [ ] **Y05.01** `face.detect(image)`
-- [ ] **Y05.02** `face.embed(image, face)`
-- [ ] **Y05.03** `face.compare(card_face, selfie_face)`
-- [ ] **Y05.04** `face.selfie_quality(image, face)`
-- [ ] **Y05.05** Tôn trọng đồng ý sinh trắc (N5)
-- [ ] **Y05.06** Thiếu mô hình / lỗi suy luận
-- [ ] **Y05.07** `test_face.py` (`@pytest.mark.models`)
-- [ ] **Y05.08** Hiệu chỉnh ngưỡng
-- [ ] **Y05.09** (Y-D5) Quốc huy / vân tay
+- [x] **Y05.01** `face.detect(image)`
+- [x] **Y05.02** `face.embed(image, face)`
+- [x] **Y05.03** `face.compare(card_face, selfie_face)`
+- [x] **Y05.04** `face.selfie_quality(image, face)`
+- [x] **Y05.05** Tôn trọng đồng ý sinh trắc (N5)
+- [x] **Y05.06** Thiếu mô hình / lỗi suy luận
+- [x] **Y05.07** `test_face.py` (`@pytest.mark.models`)
+- [-] **Y05.08** Hiệu chỉnh ngưỡng
+- [-] **Y05.09** (Y-D5) Quốc huy / vân tay
 - [ ] **Y05.C1** 🔖 COMMIT `feat(ai-worker): match the id card face against the selfie with yunet and sface` · hash: `…`
 
 ## Y06 — Gom kết quả & điều phối pipeline
@@ -185,6 +185,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | Y04.06 | Tỷ lệ đọc MRZ hợp lệ (đúng mọi số kiểm tra) trên 36 biến thể (lật 180°, thu 80/60%, tối 70%, mờ 3/5): **36/36 = 100%** với Tesseract 5.5 dữ liệu `eng` + whitelist → giữ Tesseract. Thẻ mẫu vẽ bằng DejaVu Sans Mono (không có phông OCR-B); ảnh thật cần đo lại. |
 | Y04.08 | Mốc hạn thẻ: sinh nhật 25 / 40 / 60 kế tiếp; cấp từ (mốc − 2 năm) thì sang mốc sau; cấp từ 58 tuổi → không thời hạn (MRZ `<<<<<<` hoặc ngày ≥ 2090 coi là đúng). |
 | Y04.01 | Dockerfile cài `tesseract-ocr tesseract-ocr-eng` ở commit bổ sung (lệnh sửa trong commit Y04.C1 bị lỗi cú pháp, không áp dụng). Cài trên máy dev: Windows — bộ cài UB Mannheim + thêm vào PATH; macOS — `brew install tesseract` (ghi trong README worker ở Y09). |
+| Y05.04 | Liveness thụ động = 0.45 × độ nét vùng mặt + 0.3 × tỷ lệ diện tích mặt + 0.25 × (1 − moiré); khác đúng 1 mặt → 0. Moiré = đỉnh phổ tần cao / trung bình (ảnh tự nhiên ≈ 0, vân lưới → 1). |
+| Y05.07 | Repo **không có ảnh khuôn mặt người thật được phép dùng** (N10) → ca cùng người / khác người kiểm bằng mô hình giả lập vector (cosine 1.0 / 0.0); test `@pytest.mark.models` dùng YuNet + SFace thật chỉ kiểm nạp mô hình và selfie không có mặt. Cần bổ sung khi nhóm có ảnh đồng ý sử dụng. |
+| Y05.08 | Bỏ qua: chưa có bộ ảnh mặt được phép dùng để đo phân bố điểm — giữ ngưỡng công bố của SFace 0.363 / 0.25 (cấu hình được qua `KYC_FACE_*`). |
+| Y05.09 | Bỏ qua (Y-D5): `national_emblem` / `fingerprint` trả `null`; backend cũng chưa có cột lưu. |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
