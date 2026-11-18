@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/ai-worker-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (70 / 77) |
+| **Cập nhật gần nhất** | 2026-11-18 — đang làm (71 / 77) |
 
 **Cách dùng**
 
@@ -44,9 +44,9 @@
 | Y05 | Tầng 2: khuôn mặt | 9 | 1 | 10 / 10 | — | `feature/ai-worker-kyc` |
 | Y06 | Gom kết quả & điều phối pipeline | 8 | 1 | 9 / 9 | — | `feature/ai-worker-kyc` |
 | Y07 | Ghép với backend | 6 | 1 | 7 / 7 | — | `feature/ai-worker-kyc` |
-| Y08 | Đóng gói & triển khai | 4 | 2 | 4 / 6 | — | `feature/ai-worker-kyc` |
+| Y08 | Đóng gói & triển khai | 4 | 2 | 5 / 6 | — | `feature/ai-worker-kyc` |
 | Y09 | Tài liệu & kết thúc | 4 | 1 | 0 / 5 | — | `feature/ai-worker-kyc` |
-| **Tổng** | | **65** | **12** | **70 / 77** | | |
+| **Tổng** | | **65** | **12** | **71 / 77** | | |
 
 ## Y00 — Chuẩn bị & chốt hợp đồng
 
@@ -144,7 +144,7 @@
 - [x] **Y08.02** Dockerfile
 - [x] **Y08.03** `deploy/`
 - [x] **Y08.04** CI
-- [ ] **Y08.C1** 🔖 COMMIT `build(ai-worker): package ocr dependencies and verify model checksums` · hash: `…`
+- [x] **Y08.C1** 🔖 COMMIT `build(ai-worker): package ocr dependencies and verify model checksums` · hash: `10b29b9`
 - [ ] **Y08.C2** 🔖 COMMIT `ci(ai-worker): lint and test the ai worker on pull requests` · hash: `…`
 
 ## Y09 — Tài liệu & kết thúc
