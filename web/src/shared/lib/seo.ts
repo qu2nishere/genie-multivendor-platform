@@ -20,6 +20,8 @@ export interface MetaInput {
   type?: 'website' | 'product' | 'article';
   locale?: 'vi' | 'en';
   jsonLd?: JsonLd[];
+  /** Trang sản phẩm: giá (VND) cho ảnh xem trước khi dán link lên Facebook / Zalo (UC-CAT-18 bước 4). */
+  price?: number;
 }
 
 export interface Meta {
@@ -76,6 +78,12 @@ export function buildMeta(input: MetaInput, site: string): Meta {
   if (description) og['og:description'] = description;
   if (canonical) og['og:url'] = canonical;
   if (input.imageAlt) og['og:image:alt'] = input.imageAlt;
+  if (input.type === 'product' && input.price != null) {
+    og['product:price:amount'] = String(input.price);
+    og['product:price:currency'] = 'VND';
+    og['og:price:amount'] = String(input.price);
+    og['og:price:currency'] = 'VND';
+  }
 
   const twitter: Record<string, string> = {
     'twitter:card': 'summary_large_image',

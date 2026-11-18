@@ -23,6 +23,8 @@ interface Props {
   follow?: boolean;
   type?: 'website' | 'product' | 'article';
   jsonLd?: JsonLd[];
+  /** Giá sản phẩm cho thẻ Open Graph (UC-CAT-18). */
+  price?: number;
   /**
    * Biến thể lớp gốc (prototype index.html): bar = có thanh mua dính đáy (sản phẩm, checkout);
    * cart = thanh tổng giỏ; task = trang tác vụ (ẩn hàng danh mục ở màn hẹp).
