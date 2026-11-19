@@ -6,8 +6,31 @@ export const PHONE_RE = /^0\d{9,10}$/;
 export const normalizePhone = (s: string): string => s.replace(/[\s.-]/g, '');
 
 /** Địa chỉ đầy đủ một dòng ($AddressSnapshot.full_address). */
-export const fullAddress = (a: Pick<Address, 'line' | 'ward' | 'district' | 'province'>): string =>
-  [a.line, a.ward.name, a.district.name, a.province.name].filter(Boolean).join(', ');
+export const fullAddress = (a: Pick<Address, 'line' | 'ward' | 'province'>): string =>
+  [a.line, a.ward.name, a.province.name].filter(Boolean).join(', ');
+
+/**
+ * Chuẩn hóa địa chỉ cụ thể để so trùng — giống `AddressLines.normalize` ở server (plan AUTH A12.07, D26):
+ * chữ thường, bỏ dấu ("đ" → "d"), dấu câu thành khoảng trắng, gộp khoảng trắng.
+ */
+export const normalizeLine = (s: string): string =>
+  s
+    .toLowerCase()
+    .replace(/đ/g, 'd')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+/** Hai địa chỉ trùng: cùng tỉnh + phường + SĐT + địa chỉ cụ thể (không so tên người nhận, loại địa chỉ). */
+export const isSameAddress = (
+  a: { provinceId: number; wardCode: string; phone: string; line: string },
+  b: { provinceId: number; wardCode: string; phone: string; line: string },
+): boolean =>
+  a.provinceId === b.provinceId &&
+  a.wardCode === b.wardCode &&
+  normalizePhone(a.phone) === normalizePhone(b.phone) &&
+  normalizeLine(a.line) === normalizeLine(b.line);
 
 /** Mặc định đứng đầu, còn lại giữ thứ tự. */
 export const sortAddresses = (list: Address[]): Address[] =>

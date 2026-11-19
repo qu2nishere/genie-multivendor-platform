@@ -16,17 +16,14 @@ export const addressSchema = z.object({
     .number({ invalid_type_error: 'account.address.err.region' })
     .int()
     .positive('account.address.err.region'),
-  districtId: z
-    .number({ invalid_type_error: 'account.address.err.region' })
-    .int()
-    .positive('account.address.err.region'),
   wardCode: z.string().min(1, 'account.address.err.region'),
   line: z
     .string()
     .trim()
     .min(1, 'account.address.err.line')
     .max(255, 'account.address.err.line_long'),
-  label: z.enum(['HOME', 'OFFICE']),
+  note: z.string().trim().max(200, 'account.address.err.note_long'),
+  label: z.enum(['HOME', 'OFFICE', 'SCHOOL', 'APARTMENT', 'OTHER']),
   isDefault: z.boolean(),
 });
 

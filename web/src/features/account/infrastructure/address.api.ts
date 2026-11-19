@@ -1,23 +1,42 @@
 // Sổ địa chỉ + đơn vị hành chính (API_SPEC 3.8–3.9). Mock giữ trong phiên tab (mockState).
+// Nối API thật khi `PUBLIC_REAL_API` có `address` (plan AUTH A12), gồm cả "Dùng vị trí hiện tại" (A12.06 —
+// backend đổi tọa độ thành địa chỉ qua OpenStreetMap rồi khớp danh mục). Địa giới 2 cấp: Tỉnh → Phường (D25).
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
-import { sortAddresses } from '../domain/address.rules';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
+import { isSameAddress, sortAddresses } from '../domain/address.rules';
 import type { Address, AddressInput, GeoAddress, Region, Ward } from '../domain/address.types';
 import type { AddressDto, GeocodeDto, RegionDto, WardDto } from './address.dto';
 import { toAddress, toAddressInputDto, toGeoAddress } from './address.mapper';
-import { DISTRICTS, PROVINCES, regionOf, seedAddresses, WARDS } from './address.mock';
+import { PROVINCES, regionOf, seedAddresses, WARDS } from './address.mock';
+
+const USE_MOCK = isMocked('address');
 
 const db = mockState<AddressDto[]>('addresses', seedAddresses);
 
 /** Mock thêm (id null) / sửa; đặt mặc định thì bỏ cờ ở địa chỉ khác; địa chỉ đầu tiên tự mặc định. */
 function mockSave(input: AddressInput, id: number | null): AddressDto {
   const p = PROVINCES.find((x) => x.id === input.provinceId);
-  const d = DISTRICTS.find((x) => x.id === input.districtId);
-  const w = WARDS.find((x) => x.code === input.wardCode);
-  if (!p || !d || !w) mockFail('GNE-VAL-4220');
+  const w = WARDS.find((x) => x.code === input.wardCode && x.province_id === input.provinceId);
+  if (!p || !w) mockFail('GNE-VAL-4220');
   const list = db.get();
   const old = id != null ? list.find((a) => a.id === id) : undefined;
   if (id != null && !old) mockFail('GNE-VAL-4220');
+  // chặn trùng như server (A12.07): cùng tỉnh + phường + SĐT + địa chỉ cụ thể, trừ chính địa chỉ đang sửa
+  const dup = list.find(
+    (a) =>
+      a.id !== id &&
+      isSameAddress(
+        {
+          provinceId: a.province.id,
+          wardCode: a.ward.code,
+          phone: a.phone_number,
+          line: a.address_line,
+        },
+        input,
+      ),
+  );
+  if (dup) mockFail('GNE-USR-4093', { details: { existing_address_id: dup.id } });
   const isDefault = input.isDefault || list.length === 0 || !!old?.is_default;
   const body = toAddressInputDto(input);
   const dto: AddressDto = {
@@ -25,9 +44,9 @@ function mockSave(input: AddressInput, id: number | null): AddressDto {
     recipient_name: body.recipient_name,
     phone_number: body.phone_number,
     province: p,
-    district: { id: d.id, name: d.name },
     ward: { code: w.code, name: w.name },
     address_line: body.address_line,
+    delivery_note: body.delivery_note,
     label: body.label,
     is_default: isDefault,
   };
@@ -87,37 +106,40 @@ export async function deleteAddress(id: number): Promise<void> {
   await api.delete(`/me/addresses/${id}`);
 }
 
+/**
+ * Phiên bản danh mục hành chính. Backend cho trình duyệt giữ danh mục 24 giờ (`Cache-Control: max-age=86400`),
+ * nên khi danh mục đổi (vd. địa giới 2 cấp — plan AUTH D25) phải đổi giá trị này để URL mới, trình duyệt không
+ * dùng lại bản cũ trong cache. Backend bỏ qua tham số `v`.
+ */
+const REGIONS_VERSION = '2025-07-2cap';
+
 export async function listProvinces(): Promise<Region[]> {
   if (USE_MOCK) return PROVINCES;
-  return api.get<RegionDto[]>('/public/regions/provinces', { auth: false });
-}
-
-export async function listDistricts(provinceId: number): Promise<Region[]> {
-  if (USE_MOCK)
-    return DISTRICTS.filter((d) => d.province_id === provinceId).map(({ id, name }) => ({
-      id,
-      name,
-    }));
-  return api.get<RegionDto[]>(`/public/regions/provinces/${provinceId}/districts`, {
+  return api.get<RegionDto[]>('/public/regions/provinces', {
     auth: false,
+    query: { v: REGIONS_VERSION },
   });
 }
 
-export async function listWards(districtId: number): Promise<Ward[]> {
+/** Phường / xã / đặc khu của tỉnh. */
+export async function listWards(provinceId: number): Promise<Ward[]> {
   if (USE_MOCK)
-    return WARDS.filter((w) => w.district_id === districtId).map(({ code, name }) => ({
+    return WARDS.filter((w) => w.province_id === provinceId).map(({ code, name }) => ({
       code,
       name,
     }));
-  return api.get<WardDto[]>(`/public/regions/districts/${districtId}/wards`, { auth: false });
+  return api.get<WardDto[]>(`/public/regions/provinces/${provinceId}/wards`, {
+    auth: false,
+    query: { v: REGIONS_VERSION },
+  });
 }
 
-/** "Dùng vị trí hiện tại": tọa độ → Tỉnh / Quận / Phường + số nhà. */
+/** "Dùng vị trí hiện tại": tọa độ → Tỉnh / Phường + số nhà. */
 export async function reverseGeocode(lat: number, lng: number): Promise<GeoAddress> {
   if (USE_MOCK) {
     await mockDelay(600);
     return toGeoAddress({
-      ...regionOf('TP. Hồ Chí Minh', 'Quận 1', 'P. Bến Nghé'),
+      ...regionOf('Thành phố Hồ Chí Minh', 'Phường Sài Gòn'),
       address_line: '72 Lê Thánh Tôn',
     });
   }
