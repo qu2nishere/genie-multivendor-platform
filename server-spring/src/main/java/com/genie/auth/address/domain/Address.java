@@ -37,26 +37,28 @@ public class Address {
     private String ward;                      // TÊN phường/xã — dùng để HIỂN THỊ cho người đọc
 
     @Column(nullable = false, length = 50)
-    private String wardCode;                  // MÃ phường/xã theo chuẩn GHN — dùng để GỌI API tính phí ship
+    private String wardCode;                  // MÃ phường/xã/đặc khu (địa giới 2 cấp từ 01/07/2025) — dùng để GỌI API vận chuyển
+
+    @Column(length = 100)
+    private String district;                  // NULLABLE — TÊN quận/huyện, chỉ còn ở địa chỉ cũ trước sáp nhập (V16; plan AUTH D25)
+
+    private Integer districtId;               // NULLABLE — MÃ quận/huyện, chỉ còn ở địa chỉ cũ trước sáp nhập (V16; plan AUTH D25)
 
     @Column(nullable = false, length = 100)
-    private String district;                  // TÊN quận/huyện — để hiển thị
+    private String province;                  // TÊN tỉnh/thành phố (34 đơn vị sau sáp nhập) — để hiển thị
 
     @Column(nullable = false)
-    private Integer districtId;               // MÃ quận/huyện theo GHN — để gọi API
+    private Integer provinceId;               // MÃ tỉnh/thành — để gọi API
 
-    @Column(nullable = false, length = 100)
-    private String province;                  // TÊN tỉnh/thành phố — để hiển thị
-
-    @Column(nullable = false)
-    private Integer provinceId;               // MÃ tỉnh/thành theo GHN — để gọi API
+    @Column(length = 200)
+    private String deliveryNote;              // NULLABLE — ghi chú cho người giao hàng ("Gần cổng ĐH NEU, gửi phòng bảo vệ") — UC-AUTH-09, plan AUTH D27 (V17)
 
     private Boolean isDefault;                // NULLABLE — true = địa chỉ mặc định khi thanh toán
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AddressLabel label = AddressLabel.HOME; // Loại địa chỉ: HOME (Nhà riêng) / OFFICE (Văn phòng) — UC-AUTH-09 (TLCN v1.3)
+    private AddressLabel label = AddressLabel.HOME; // Loại địa chỉ: HOME (Nhà riêng) / OFFICE (Văn phòng) / SCHOOL (Trường học) / APARTMENT (Chung cư) / OTHER (Khác) — UC-AUTH-09 (TLCN v1.3; plan AUTH D24, V15)
 
     @Builder.Default
     @Column(nullable = false)
@@ -90,21 +92,22 @@ public class Address {
         this.isDefault = false;
     }
 
-    /** Sửa toàn bộ nội dung địa chỉ (tên hành chính do server tra từ mã GHN) — UC-AUTH-09 */
+    /** Sửa toàn bộ nội dung địa chỉ theo địa giới 2 cấp (tên hành chính do server tra từ mã) — UC-AUTH-09, plan AUTH D25 */
     public void update(String recipientName, String phoneNumber, String addressLine,
-                       Integer provinceId, String province, Integer districtId, String district,
-                       String wardCode, String ward, AddressLabel label) {
+                       Integer provinceId, String province, String wardCode, String ward, AddressLabel label,
+                       String deliveryNote) {
         if (Boolean.TRUE.equals(this.isDeleted)) throw new IllegalStateException("Địa chỉ đã xóa");
         this.recipientName = recipientName;
         this.phoneNumber = phoneNumber;
         this.addressLine = addressLine;
         this.provinceId = provinceId;
         this.province = province;
-        this.districtId = districtId;
-        this.district = district;
+        this.districtId = null;               // địa giới mới không còn cấp huyện
+        this.district = null;
         this.wardCode = wardCode;
         this.ward = ward;
         this.label = label == null ? AddressLabel.HOME : label;
+        this.deliveryNote = deliveryNote;
     }
 
     public boolean isDefaultAddress() {
