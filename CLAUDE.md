@@ -62,6 +62,10 @@ node ../scripts/i18n-lookup.mjs   # tra bản dịch
 ./mvnw spring-boot:run   # JDK 21 (JDK 24+ làm Lombok lỗi); profile local lấy từ .env
 ./mvnw verify        # unit + Testcontainers + ArchUnit
 
+# dữ liệu mẫu (máy dev — scripts/seed/README.md): backend profile local tự nạp khi GENIE_SEED_DEMO=true
+scripts/seed/seed.sh --docker      # nạp lại R__seed_demo + db/seed vào Postgres Docker (Windows: seed.ps1 -Docker)
+scripts/seed/upload-assets.sh      # ảnh mẫu sản phẩm / banner lên Silo
+
 # server-python/ (Python 3.12)
 ./scripts/fetch-models.sh && cd server-python && python -m venv .venv && .venv/bin/pip install -e ".[dev]"
 .venv/bin/uvicorn app.main:app --port 8000
@@ -209,4 +213,5 @@ Trong repo: `README.md` (chạy local), `docs/adr/0001…0006` (quyết định 
 - Dependabot mở PR nâng Astro / Tailwind 4 — không gộp lẫn với việc tính năng.
 - Cấu hình: mọi giá trị theo môi trường đọc từ `.env` (gốc repo, backend tự nạp — `DotEnvEnvironmentPostProcessor`); không ghi mật khẩu vào `application*.yml`. Đổi CSDL máy dev (Docker / cài máy) = đổi khối trong `.env`; production RDS + S3 chỉ khai ở `deploy/.env` — `docs/cau-hinh-moi-truong.md`.
 - Kho tệp: một cài đặt `S3ObjectStorage` cho cả Silo (dev) và AWS S3 (prod); mã nghiệp vụ dùng tên bucket **logic** (`UploadPurpose.bucket()`), tiền tố `STORAGE_BUCKET_PREFIX` chỉ ghép trong `S3ObjectStorage` — không tự ghép ở nơi khác. Không seed / không trỏ máy dev vào RDS production.
+- Seed: thư mục `db/seed` (Flyway location thứ hai, `SeedDataFlywayCustomizer`) — SQL thuần, không placeholder, chạy lại được, tra quan hệ bằng khóa tự nhiên; đổi schema làm seed hỏng thì `SeedDataIT` đỏ → sửa seed cùng PR. `balance_hash` của seed dùng khóa máy dev `local-wallet-secret`. Bản cũ `scripts/seed-local.sh` đổ thẳng vào `psql` không thay placeholder nên không chèn được gì — đã sửa (gọi `scripts/seed/seed.sh`).
 - Hook husky chạy `lint-staged` qua binary trong `web/node_modules` (cần `npm ci` trong `web/` trước khi commit).

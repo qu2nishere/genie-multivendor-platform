@@ -30,7 +30,7 @@ spring:
     placeholders:
       bootstrap_admin_email: ${BOOTSTRAP_ADMIN_EMAIL:admin@genie.local}
       bootstrap_admin_password_hash: ${BOOTSTRAP_ADMIN_PASSWORD_HASH:}
-      seed_demo: ${GENIE_SEED_DEMO:false}      # R__seed_demo.sql chỉ chạy khi true (mặc định true ở profile local)
+      seed_demo: ${genie.seed.demo-data}       # R__seed_demo.sql chỉ chạy khi true — cùng công tắc với db/seed
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -84,6 +84,9 @@ genie:
   mail-from: ${MAIL_FROM:no-reply@genie.local}   # gửi qua Gmail: MAIL_FROM phải trùng SMTP_USER
   scheduling:
     enabled: ${GENIE_SCHEDULING_ENABLED:true}    # false = tắt mọi cron
+  seed:
+    # Dữ liệu mẫu: R__seed_demo.sql + thư mục db/seed (SeedDataFlywayCustomizer). Production luôn false (ADR 0010)
+    demo-data: ${GENIE_SEED_DEMO:false}
   security:
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
