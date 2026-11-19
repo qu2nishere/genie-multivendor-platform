@@ -1,10 +1,14 @@
-// Mở shop (API_SPEC 9.1–9.2). Mock: mã 123456, tên "TechZone Official" đã dùng (GNE-VND-4094).
+// Mở shop (API_SPEC 9.1–9.2). API thật khi PUBLIC_REAL_API có `vendor` (plan Mở shop & KYC K11.01).
+// Mock: mã 123456, tên "TechZone Official" đã dùng (GNE-VND-4094).
 // Tài khoản mẫu vốn là chủ shop — mock bỏ kiểm GNE-VND-4093 để trình diễn được luồng người mua mở shop.
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { sellerStore } from '@/shared/api/mock/seller';
 import { maskEmail } from '@/shared/lib/mask';
 import type { RegistrationChallenge, ShopRegistration } from '../domain/registration.types';
+
+const USE_MOCK = isMocked('vendor');
 
 /** Mock: tên shop chờ xác nhận OTP. */
 let pendingShopName = '';
@@ -16,7 +20,8 @@ export async function registerShop(r: ShopRegistration): Promise<RegistrationCha
     pendingShopName = r.shopName.trim();
     return { id: `reg_${Date.now()}`, maskedTarget: maskEmail(r.email) };
   }
-  const d = await api.post<{ challenge_id: string; masked_target: string }>(
+  // 202 $OtpChallenge (API_SPEC 1): { challenge_id, purpose, email_masked, expires_in, resend_after }
+  const d = await api.post<{ challenge_id: string; email_masked: string }>(
     '/me/shop-registrations',
     {
       shop_name: r.shopName,
@@ -28,7 +33,7 @@ export async function registerShop(r: ShopRegistration): Promise<RegistrationCha
       accept_terms: r.acceptTerms,
     },
   );
-  return { id: d.challenge_id, maskedTarget: d.masked_target };
+  return { id: d.challenge_id, maskedTarget: d.email_masked };
 }
 
 /** 9.2 — xác nhận OTP → tài khoản lên VENDOR, KYC chưa nộp. */

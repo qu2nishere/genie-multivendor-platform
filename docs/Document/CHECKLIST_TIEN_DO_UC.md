@@ -10,8 +10,8 @@
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
-| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — 3 đã xong, 5 đang làm, 1 chưa bắt đầu (UC-AUTH-09); plan `plan/2026-11-14/auth.md` |
-| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang lập plan — `plan/2026-11-16/` (8 plan + seed dữ liệu mẫu), chưa bắt đầu code |
+| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — 4 đã xong, 5 đang làm (UC-AUTH-09 xong 2026-11-18); plan `plan/2026-11-14/auth.md` |
+| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); UC-VND-01, 02, 03 (backend), 04, 07, 21 chờ chạy thật (nhánh `feature/vendor-shop-kyc`), UC-VND-05 chờ danh mục hành chính GHN (A12) |
 | **Nghiêm Phú Đăng Quân** | 7 use case cụm khám phá sản phẩm: Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | Đang triển khai — 7 UC xong backend + test + nối web (UC-CAT-05 còn `◐`), chờ chạy thật; plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (59 / 66) |
 
 ## 1. Tổng quan
@@ -19,12 +19,12 @@
 | Chỉ số | Số lượng |
 |---|---:|
 | Tổng use case | **87** |
-| Đã triển khai (backend + test + web nối API thật) | **3** |
-| Đang triển khai | **12** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **60** |
-| Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **12** |
+| Đã triển khai (backend + test + web nối API thật) | **4** |
+| Đang triển khai | **24** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **48** |
+| Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **11** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
-| Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (71 test xanh); 10 module còn lại chưa có service |
+| Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (83 test xanh — 2026-11-17); 10 module còn lại chưa có service |
 | AI Worker `server-python` | Khung (`kyc`, `sentiment` còn TODO) |
 
 **Chú thích ngắn:** **GD** = giao diện · **BE** = backend · **Test** = kiểm thử · **Nối** = nối API thật · **Chạy** = chạy thật. `☑` xong · `◐` một phần · `☐` chưa · `—` không áp dụng. Giải thích đầy đủ ở [mục 0](#0-chu-thich).
@@ -77,17 +77,17 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Phân hệ | Số UC | Đã triển khai | Đang triển khai | Chưa |
 |---|---:|---:|---:|---:|
-| 01. Xác thực & Tài khoản | 9 | 3 | 5 | 1 |
-| 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 0 | 7 | 10 |
+| 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
+| 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 0 | 8 | 9 |
 | 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 0 | 9 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
-| 05. Gian hàng & KYC người bán | 11 | 0 | 0 | 11 |
+| 05. Gian hàng & KYC người bán | 11 | 0 | 6 | 5 |
 | 06. Vận chuyển 3PL | 5 | 0 | 0 | 5 |
-| 07. Khuyến mãi, Voucher, Flash Sale & Điểm | 9 | 0 | 0 | 9 |
-| 08. Chat, Đánh giá & Theo dõi shop | 7 | 0 | 0 | 7 |
+| 07. Khuyến mãi, Voucher, Flash Sale & Điểm | 9 | 0 | 2 | 7 |
+| 08. Chat, Đánh giá & Theo dõi shop | 7 | 0 | 1 | 6 |
 | 09. Trả hàng, Hoàn tiền & Khiếu nại | 4 | 0 | 0 | 4 |
 | 10. Thông báo | 3 | 0 | 0 | 3 |
-| 11. Quản trị sàn, Nhân viên & Rút tiền | 8 | 0 | 0 | 8 |
+| 11. Quản trị sàn, Nhân viên & Rút tiền | 8 | 0 | 2 | 6 |
 
 ## 2. Checklist từng use case
 
@@ -101,7 +101,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-AUTH-04` | Khôi phục mật khẩu qua Email OTP (Forgot Password) | S1 | `/auth/forgot` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-06` | Đổi / Thiết lập mật khẩu | S1 | `/account/password`, Seller › Cài đặt › Bảo mật, Admin › Tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-08` | Quản lý thông tin hồ sơ cá nhân (Customer Profile) | S2 | `/account/profile`, Admin › Tài khoản | ☑ | ◐ | ◐ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>hồ sơ + ảnh đại diện (Silo) xong; GET /me xong; còn đổi email</sub> | Nguyễn Quốc Khoa |
-| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>sổ địa chỉ địa giới 2 cấp (34 tỉnh / 3.321 xã), 5 loại địa chỉ, chặn trùng, ghi chú giao hàng, định vị GPS thật; build xanh + đã chạy thật 2026-11-18. Danh mục mã GHN cần `GHN_TOKEN` + `GHN_SHOP_ID`</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-10` | Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân (Xóa tài khoản) | S7 | `/account/profile` › Xóa tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật; cổng chặn của order / payment chưa cài</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-11` | Đăng xuất & Quản lý thiết bị đăng nhập | S1 | Menu Đăng xuất, `/account/devices` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
 
@@ -115,7 +115,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-CAT-05` | Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí | S2 | `/c/{slug}`, `/search` (bộ lọc, sắp xếp) | ☑ | ◐ | ☑ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>thiếu: lọc "Shop có voucher" chờ module promotion (cổng `ShopVoucherAvailability`); lọc danh mục trên web chờ UC-CAT-01 nối thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
 | `UC-CAT-06` | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho | S2 | `/p/{slug}-{id}` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (SKU, tồn, lượt xem), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
 | `UC-CAT-07` | Xem gợi ý sản phẩm tương tự | S7 | `/p/{slug}-{id}` (tương tự), `/discover` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (tương tự + gợi ý hôm nay), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
-| `UC-CAT-08` | Quản lý danh sách sản phẩm yêu thích (Wishlist) | S6 | `/account/wishlist`, tim ở thẻ sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-CAT-08` | Quản lý danh sách sản phẩm yêu thích (Wishlist) | S6 | `/account/wishlist`, tim ở thẻ sản phẩm | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=wishlist`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-CAT-09` | Thêm mới sản phẩm & Biến thể SKU (Người bán) | S2 | `/seller/products/new` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-CAT-10` | Cập nhật thông tin sản phẩm, giá bán & hình ảnh | S2 | `/seller/products/:id/edit` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-CAT-11` | Ẩn / Khóa / Xóa mềm sản phẩm | S2 | `/seller/products`, Admin › Danh mục › sản phẩm | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
@@ -155,17 +155,17 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
-| `UC-VND-01` | Đăng ký mở gian hàng (Become a Seller) | S2 | `/become-seller` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
-| `UC-VND-02` | Tải hồ sơ pháp lý & Giấy tờ định danh KYC | S2 | `/seller/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
-| `UC-VND-03` | Thẩm định KYC tự động qua AI (QR, MRZ & Face Match) | S2 | (nền) kết quả ở `/seller/kyc`, `/admin/kyc` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
-| `UC-VND-04` | Kiểm duyệt thủ công hồ sơ KYC (Staff / Admin) | S2 | `/admin/kyc` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-01` | Đăng ký mở gian hàng (Become a Seller) | S2 | `/become-seller` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-02` | Tải hồ sơ pháp lý & Giấy tờ định danh KYC | S2 | `/seller/kyc` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-03` | Thẩm định KYC tự động qua AI (QR, MRZ & Face Match) | S2 | (nền) kết quả ở `/seller/kyc`, `/admin/kyc` | — | ☑ | ☑ | — | ☐ | 🟡 Đang triển khai<br><sub>backend + AI Worker (QR, MRZ, luật, YuNet + SFace) + test, đã chạy hai phía bằng thẻ mẫu; còn ảnh mặt thật + chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-04` | Kiểm duyệt thủ công hồ sơ KYC (Staff / Admin) | S2 | `/admin/kyc` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-VND-05` | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID | S2 | `/seller/settings` (kho lấy hàng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
 | `UC-VND-06` | Cấu hình tin nhắn trả lời tự động (Auto-reply) | S7 | `/seller/settings` (tự trả lời) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-VND-07` | Đăng ký tài khoản nhận giải ngân (Payout Bank Account) | S4 | `/seller/settings` (tài khoản nhận tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-07` | Đăng ký tài khoản nhận giải ngân (Payout Bank Account) | S4 | `/seller/settings` (tài khoản nhận tiền) | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-VND-08` | Xem báo cáo doanh thu & Phân tích bán hàng (Vendor Analytics) | S6 | `/seller/analytics`, `/seller/` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-VND-19` | Bật chế độ tạm nghỉ bán hàng của shop (Vacation Mode) | S7 | `/seller/settings` (tạm nghỉ) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-VND-20` | Xem ví & sổ giao dịch người bán (Seller Wallet & Escrow Ledger) | S7 | `/seller/wallet` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-VND-21` | Cập nhật thông tin gian hàng & cài đặt vận hành | S7 | `/seller/settings` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-VND-21` | Cập nhật thông tin gian hàng & cài đặt vận hành | S7 | `/seller/settings` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 
 ### Phân hệ 06 — VẬN CHUYỂN QUA ĐỐI TÁC 3PL (SHIPPING VIA 3PL)
 
@@ -187,8 +187,8 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-PRO-04` | Thuật toán Stacking Voucher 3 Tầng & Điểm tự động khi Checkout | S8 | `/checkout` (Voucher Picker, Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-PRO-05` | Tạo chiến dịch Flash Sale & Cấu hình khung giờ vàng | S8 | `/admin/flash-sales`, `/seller/flash-sales` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-PRO-06` | Mua hàng Flash Sale chống bán vượt suất | S8 | `/flash-sale`, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-PRO-08` | Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (Streak) | S8 | `/account/points` (điểm danh) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
-| `UC-PRO-09` | Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm | S8 | `/account/points` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-PRO-08` | Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (Streak) | S8 | `/account/points` (điểm danh) | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
+| `UC-PRO-09` | Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm | S8 | `/account/points` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-PRO-10` | Sử dụng Điểm Genie để giảm trừ thanh toán đơn hàng | S8 | `/checkout` (dùng Điểm) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 
 ### Phân hệ 08 — CHAT, ĐÁNH GIÁ & THEO DÕI SHOP (CHAT, REVIEWS & SHOP FOLLOW)
@@ -200,7 +200,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-SOC-03` | Đánh giá sản phẩm đã mua & Tải ảnh thực tế (Verified Buyer Review) | S5 | `/orders/{id}` › Đánh giá, `/p/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-SOC-04` | Người bán phản hồi đánh giá của khách hàng (Vendor Review Reply) | S5 | `/seller/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-SOC-05` | Báo cáo đánh giá vi phạm / spam & Kiểm duyệt đánh giá (Review Moderation & Report) | S8 | `/p/…` (báo cáo), `/admin/reviews` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-SOC-06` | Khách hàng theo dõi gian hàng (Shop Follow) | S8 | `/shop/{id}`, `/account/following` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-SOC-06` | Khách hàng theo dõi gian hàng (Shop Follow) | S8 | `/shop/{id}`, `/account/following` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=follow`; trang shop công khai còn mock); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-AI-07` | Phân tích cảm xúc đánh giá bằng PhoBERT (Sentiment Analysis) | S6 | (nền) chỉ số cảm xúc ở `/seller/analytics`, `/seller/reviews` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
 
 ### Phân hệ 09 — TRẢ HÀNG, HOÀN TIỀN & KHIẾU NẠI (RETURNS, REFUNDS & DISPUTES)
@@ -230,14 +230,16 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-ADM-04` | Người bán gửi yêu cầu rút tiền từ Ví về Ngân hàng | S4 | `/seller/wallet` (rút tiền) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ADM-05` | Nhân viên sàn phê duyệt & Thực hiện lệnh chuyển khoản (Payout) | S4 | `/admin/withdrawals`, `/admin/cod-reconciliation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ADM-06` | Dashboard doanh thu & ký quỹ toàn sàn | S6 | `/admin/` (Tổng quan) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-ADM-07` | Tra cứu nhật ký kiểm toán hệ thống bất biến (System Audit Logs) | S7 | `/admin/audit-logs` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
-| `UC-ADM-12` | Quản lý banner trang chủ & chiến dịch tĩnh (CMS Banner) | S8 | `/admin/banners`, trang chủ, `/campaign/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock · đã lập plan `plan/2026-11-16`</sub> | Nguyễn Ngọc Thiện |
+| `UC-ADM-07` | Tra cứu nhật ký kiểm toán hệ thống bất biến (System Audit Logs) | S7 | `/admin/audit-logs` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=audit`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
+| `UC-ADM-12` | Quản lý banner trang chủ & chiến dịch tĩnh (CMS Banner) | S8 | `/admin/banners`, trang chủ, `/campaign/{slug}` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=banner`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 
 ## 3. Việc còn lại của phân hệ đang làm (AUTH — phụ trách: Nguyễn Quốc Khoa)
 
 - [x] `GET /me` — ngữ cảnh tài khoản (vai trò, shop, bộ đếm) để web dựng `SessionUser` đầy đủ (A11.02, A15.01) — xong 2026-11-17, BUILD SUCCESS
 - [ ] Đổi email đăng nhập `POST /me/email-change-requests` (+ `/confirm`) (A11.04)
-- [ ] Sổ địa chỉ + danh mục hành chính GHN + định vị GPS (A12 — UC-AUTH-09)
+- [x] Sổ địa chỉ + danh mục hành chính 2 cấp + định vị GPS (A12 — UC-AUTH-09) — xong 2026-11-18, build xanh, đã chạy thật; danh mục mã GHN cần `GHN_TOKEN` + `GHN_SHOP_ID` (chạy `scripts/fetch-ghn-regions.py`)
+  - [x] Chặn địa chỉ trùng (A12.07, plan AUTH D26) — trùng tỉnh + phường + SĐT + địa chỉ cụ thể → `409 GNE-USR-4093`
+  - [x] Ghi chú cho người giao hàng (A12.08, plan AUTH D27, migration `V17`)
 - [ ] ~~Apple Sign In~~ → Đăng nhập Zalo (A14.10, D23 — UC-AUTH-03): build `./mvnw verify` + `npm run verify`; app Zalo đã tạo, `ZALO_APP_ID` / `ZALO_APP_SECRET` đã có trong `.env`; **chờ tên miền thật** để xác thực domain trên Zalo rồi chạy thật
 - [ ] Chạy thật: đăng xuất / thiết bị, đổi mật khẩu, xóa tài khoản (A10.03)
 - [ ] E2E với API thật `tests/e2e/auth-real.spec.ts`, bộ kiểm thử Apidog / Postman, k6 đăng nhập (A15.06, A16)
@@ -274,8 +276,25 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-16 | (tài liệu) | Đồng bộ bộ tài liệu TLCN v1.4 với mã nguồn; tạo checklist này | — |
 | 2026-11-17 | AUTH-03 | Zalo thay Apple: đăng nhập / đăng ký (nhập email + OTP) / liên kết Zalo — code + test viết xong, chưa build; không đổi database | (chưa commit) |
 | 2026-11-17 | AUTH-03 | Tạo app Zalo; Zalo bắt Home URL `https` + xác thực domain (`localhost` bị từ chối) → tạm dừng chạy thật, chờ tên miền thật (bỏ phương án domain tạm ngrok) | — |
+| 2026-11-17 | (nền) | Bộ dữ liệu mẫu `db/seed` (23 danh mục, 6 shop KYC, 200 sản phẩm, voucher, banner, Điểm / yêu thích / theo dõi của `mai.tran`, hàng chờ KYC) + `scripts/seed/seed.{sh,ps1}`, `upload-assets` — plan `2026-11-16/db` | nhánh `feature/db-seed-demo` |
+| 2026-11-17 | ADM-07 | Nhật ký hệ thống: `GET /admin/audit-logs` (lọc thời gian / nhóm / từ khóa, cursor, `denied_count`) + `…/export` CSV, quyền `VIEW_AUDIT_LOG`, 13 test tích hợp; web nối API thật — còn chạy thật trên giao diện | nhánh `feature/admin-audit-log` |
+| 2026-11-18 | ADM-12 | Banner trang chủ: `/admin/banners` (tạo / sửa / tắt / bật / xóa, tối đa 8 banner / vị trí, liên kết trong sàn, ảnh `BANNER_IMAGE`), `/public/banners` (cache Redis 60 giây), `/public/banner-events` + job 5 phút, migration `V18` (`BANNER_CHANGED`); web nối API thật — còn chạy thật trên giao diện | nhánh `feature/admin-home-banner` |
+| 2026-11-18 | PRO-08, PRO-09 | Điểm Genie: điểm danh 7 ngày (khóa Redis + khóa dòng, ngày theo giờ VN), số dư + Điểm sắp hết hạn (FEFO) + lịch sử cursor, đổi Điểm lấy voucher sàn, cron hết hạn lô (`V19`, `EXPIRED`), băm số dư `coin:` HMAC; web nối API thật — còn chạy thật trên giao diện | nhánh `feature/promotion-coin-checkin` |
+| 2026-11-18 | CAT-08 | Sản phẩm yêu thích: `PUT` / `DELETE /me/wishlist/{id}` idempotent (`ON CONFLICT`), `/me/wishlist/product-ids`, `/me/wishlist` (giá thấp nhất, SKU mặc định, `is_purchasable`, `product_slug`, nạp theo lô chống N+1), cổng `WishlistShopAvailability`; web sửa 2 endpoint lệch spec + nối API thật — còn chạy thật trên giao diện | nhánh `feature/catalog-wishlist` |
+| 2026-11-18 | SOC-06 | Theo dõi gian hàng: `PUT` / `DELETE /me/following/{shop_id}` idempotent, `follower_count` chỉ đổi khi dòng thật sự chèn / xóa (không đếm sai dưới tải đồng thời), `/me/following/shop-ids`, `/me/following` (`$ShopMini`, `summary.total`), cổng `ShopFollowDirectory` (module vendor cài), `GNE-SOC-4095`; web sửa endpoint lệch spec + nối API thật — còn chạy thật trên giao diện | nhánh `feature/social-shop-follow` |
+| 2026-11-18 | VND-01…07, 21 | Mở shop & KYC: mở shop OTP email (giữ phiên, nâng VENDOR), cổng KYC `/seller/**`, hồ sơ KYC mã hóa AES-256-GCM (không trả URL ảnh), gửi AI Worker sau commit + callback nội bộ + chấm điểm tín hiệu cấu hình được + giả lập `AI_WORKER_MODE=stub`, duyệt tay 6 endpoint (REVIEW_KYC / UPDATE_COMMISSION), job hết hạn bổ sung, tài khoản nhận tiền OTP bước 2, cài đặt shop; migration `V20`; web nối API thật — còn chạy thật; UC-VND-05 chờ A12 | nhánh `feature/vendor-shop-kyc` |
+| 2026-11-18 | VND-03 (AI) | AI Worker KYC: `POST /kyc/verify` 202 + xử lý nền, tải ảnh có danh sách host, QR / MRZ TD1 / luật số CCCD, hạn thẻ, QR↔MRZ, YuNet + SFace, liveness thụ động, callback thử lại; không ghi ảnh xuống đĩa, không log dữ liệu cá nhân; chạy hai phía với backend `AI_WORKER_MODE=http` | nhánh `feature/ai-worker-kyc` |
 | 2026-11-17 | AUTH-02, 08 | `GET /me` (ngữ cảnh phiên) + web dựng `SessionUser` từ `/me` sau đăng nhập / làm mới — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-17 | AUTH-02, 03, 08 | `./mvnw verify` 83 test BUILD SUCCESS — `GET /me` (MeQueryIT 4/4), Zalo (ZaloLoginIT 5/5) | (chưa commit) |
 | 2026-11-17 | (phân công) | Thêm cột **Phụ trách** + bảng *Thành viên & phân công*: Nguyễn Quốc Khoa — phân hệ AUTH (9 UC); Nguyễn Ngọc Thiện — 13 UC (ADM-07, ADM-12, PRO-08, PRO-09, CAT-08, SOC-06, VND-01/02/03/04/05/07/21), đang lập plan `plan/2026-11-16`; Nghiêm Phú Đăng Quân — chưa phân công. Đồng bộ cột *Người phụ trách* trong Excel | `feature/env-config-cleanup` |
+| 2026-11-18 | AUTH-09 | Sổ địa chỉ + danh mục hành chính GHN (backend, test `AddressIT`, web nối qua cờ `address`) — viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Build xanh (`AddressIT` 8 ca) — BE, Test ☑; Nối ◐ (GPS còn mô phỏng) | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Định vị GPS thật (Nominatim → khớp mã GHN) — viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Thêm loại địa chỉ Trường học / Chung cư / Khác (migration `V15`) | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Chuyển sổ địa chỉ sang **địa giới 2 cấp** Tỉnh → Phường (plan AUTH D25, migration `V19`, danh mục 34 tỉnh / 3.321 xã; GHN v3); trạng thái giữ nguyên, chờ verify + kiểm thử giao diện | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Thêm việc **chặn địa chỉ trùng** (A12.07, D26) vào kế hoạch — chưa làm | — |
+| 2026-11-18 | AUTH-09 | Chặn địa chỉ trùng (A12.07) — code + test viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Ghi chú cho người giao hàng (A12.08, migration `V20`) — code + test viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Build xanh + chạy thật trên giao diện (địa giới 2 cấp, loại địa chỉ, chặn trùng, ghi chú, GPS) → **✅ Đã triển khai**; giao diện: tìm nhanh không phân biệt dấu, thẻ địa chỉ cân lại, placeholder nhạt hơn; trang chủ: bảng đường tiền chồng 1/3 ảnh | (chưa commit) |
 | 2026-11-18 | CAT-02, 04, 05, 06, 07, 16, 18 | Phân công Nghiêm Phú Đăng Quân; lập plan + progress `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (54 task, 12 commit, giai đoạn C00–C08; stack + thuật toán tìm kiếm A1–A13). Chưa đổi ô nào (vẫn ⬜ Chưa triển khai). Đồng bộ cột *Người phụ trách* trong Excel | — |
 | 2026-11-18 | CAT-02, 04, 05, 06, 07, 16, 18 | Backend (`/public/products`, `/search/suggestions`, `/search/trending`, `/products/{id}`, `/variants`, `/views`, `/similar`, `/recommendations`, `/public/shops`) + 74 test mới xanh (24 unit + 50 IT; toàn backend 212) + web nối API sau cờ `PUBLIC_REAL_API=product,search,shop`, Playwright 22/22; 7 UC → 🟡 Đang triển khai (CAT-05 BE / Nối `◐`), chưa chạy thật | `feature/web-catalog-real-api` (`a45aedb`…`cafbf78`) |

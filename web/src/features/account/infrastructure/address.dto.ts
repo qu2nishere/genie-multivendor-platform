@@ -1,4 +1,5 @@
-// $Address, $AddressInput, $Region (API_SPEC 3.8, 3.9) — snake_case.
+// $Address, $AddressInput, $Region (API_SPEC 3.8, 3.9) — snake_case; địa giới 2 cấp (plan AUTH D25).
+import type { AddressLabel } from '../domain/address.types';
 export interface RegionDto {
   id: number;
   name: string;
@@ -14,10 +15,10 @@ export interface AddressDto {
   recipient_name: string;
   phone_number: string;
   province: RegionDto;
-  district: RegionDto;
   ward: WardDto;
   address_line: string;
-  label: 'HOME' | 'OFFICE';
+  delivery_note?: string | null;
+  label: AddressLabel;
   is_default: boolean;
 }
 
@@ -25,16 +26,15 @@ export interface AddressInputDto {
   recipient_name: string;
   phone_number: string;
   province_id: number;
-  district_id: number;
   ward_code: string;
   address_line: string;
-  label: 'HOME' | 'OFFICE';
+  delivery_note: string | null;
+  label: AddressLabel;
   is_default: boolean;
 }
 
 export interface GeocodeDto {
-  province: RegionDto;
-  district: RegionDto;
-  ward: WardDto;
-  address_line: string;
+  province?: RegionDto | null;
+  ward?: WardDto | null;
+  address_line?: string | null;
 }

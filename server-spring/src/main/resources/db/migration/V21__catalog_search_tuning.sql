@@ -1,4 +1,4 @@
--- V18 — Tinh chỉnh tìm kiếm sản phẩm (plan 2026-11-17 C01.01, quyết định D3, D4; ENTITY 13.1; UC-CAT-02, 04, 05, 07)
+-- V21 — Tinh chỉnh tìm kiếm sản phẩm (plan 2026-11-17 C01.01, quyết định D3, D4; ENTITY 13.1; UC-CAT-02, 04, 05, 07)
 --
 -- 1) search_vector có TRỌNG SỐ: tên (A) > thương hiệu (B) > mô tả (D) → ts_rank_cd xếp sản phẩm khớp tên lên trước.
 --    PostgreSQL 16 (RDS) chưa có ALTER COLUMN … SET EXPRESSION cho cột sinh → xóa cột rồi tạo lại (index đi theo cột).

@@ -1,6 +1,6 @@
 import { slugify } from '@/shared/lib/slug';
 import type { Shop } from '../domain/shop.types';
-import type { FeaturedShopDto, ShopDto, ShopPageDto } from './shop.dto';
+import type { FeaturedShopDto, FollowedShopDto, ShopDto, ShopPageDto } from './shop.dto';
 
 export const toShop = (d: ShopDto): Shop => ({
   id: d.id,
@@ -23,7 +23,32 @@ export const toShop = (d: ShopDto): Shop => ({
   followed: d.followed,
 });
 
-// ===== API thật (plan 2026-11-17 C07.06) =====
+/**
+ * Dòng "Shop đang theo dõi" của API thật → `Shop` (màn chỉ dùng id, tên, Chính hãng, điểm, số người theo dõi); các trường
+ * trang shop khác để mặc định trung tính cho tới khi có `GET /public/shops/{id}`.
+ */
+export const fromFollowedShop = (d: FollowedShopDto): Shop => ({
+  id: d.shop.id,
+  slug: '',
+  name: d.shop.name,
+  authentic: d.shop.is_mall,
+  favorite: false,
+  rating: d.rating_avg,
+  followerCount: d.follower_count,
+  location: '',
+  shipFee: 0,
+  freeShipFrom: null,
+  logoBg: '',
+  coverImage: '',
+  joinedYear: 0,
+  responseRate: 0,
+  responseTime: '',
+  description: '',
+  vacation: null,
+  followed: true,
+});
+
+// ===== API thật trang shop (plan 2026-11-17 C07.06) =====
 
 /** "2026-07-15" → "15/07/2026" (định dạng hiển thị của miền ShopVacation). */
 const isoToVn = (iso: string | null): string => {

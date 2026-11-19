@@ -70,3 +70,31 @@ test('Admin duyệt chi lệnh rút tiền → chuyển khoản → hoàn tất'
   await transfer.getByRole('button', { name: 'Đã chuyển khoản' }).click();
   await expect(page.getByText(/^Đã hoàn tất chi lệnh /).first()).toBeVisible();
 });
+
+test('Chuyên viên tài chính tắt / bật lại / xóa banner trang chủ (UC-ADM-12)', async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  await asStaff(context, baseURL!, 'FINANCE_OFFICER');
+  await page.goto('/admin/banners', { waitUntil: 'networkidle' });
+  const row = page
+    .getByRole('row')
+    .filter({ has: page.getByRole('button', { name: 'Tắt ngay' }) })
+    .first();
+  const title = (await row.locator('td').first().locator('.font-semibold').innerText()).trim();
+  const target = page.getByRole('row').filter({ hasText: title }).first();
+
+  await target.getByRole('button', { name: 'Tắt ngay' }).click();
+  await expect(page.getByText('Đã tắt banner.')).toBeVisible();
+  await expect(target.getByText('Đã tắt', { exact: true })).toBeVisible();
+
+  await target.getByRole('button', { name: 'Bật lại' }).click();
+  await expect(page.getByText('Đã bật lại banner.')).toBeVisible();
+
+  await target.getByRole('button', { name: 'Tắt ngay' }).click();
+  await target.getByRole('button', { name: 'Xóa', exact: true }).click();
+  await page.getByRole('button', { name: 'Xóa banner' }).click();
+  await expect(page.getByText('Đã xóa banner.')).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: title })).toHaveCount(0);
+});

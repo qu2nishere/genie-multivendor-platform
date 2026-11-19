@@ -557,7 +557,6 @@ function Form({ s }: { s: ShopSettings }) {
                 <RegionPicker
                   value={{
                     province: pickup.province,
-                    district: pickup.district,
                     ward: pickup.ward,
                   }}
                   onChange={(r) => setPickup({ ...pickup, ...r })}

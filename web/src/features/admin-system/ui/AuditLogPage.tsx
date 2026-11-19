@@ -3,13 +3,13 @@
 // chối; bảng Thời gian / User – Vai trò / Hành động / Chi tiết / IP / Kết quả, "Tải thêm" theo con trỏ;
 // Xuất nhật ký CSV (mọi dòng khớp bộ lọc). Mock tính khoảng thời gian từ ngày chốt dữ liệu mẫu 22/06/2026.
 import { useEffect, useMemo, useState } from 'react';
-import { errorMessage } from '@/shared/api/errors';
+import { ApiError, errorMessage } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
-import { downloadCsv } from '@/shared/lib/csv';
+import { downloadBlob, downloadCsv } from '@/shared/lib/csv';
 import { formatDateTime } from '@/shared/lib/format';
 import { Badge, Button, Icon, Input, Select, Skeleton, toast, type IconName } from '@/shared/ui';
-import { auditNow, listAllAuditLogs, useAuditLogs } from '../application/useSystem';
+import { auditNow, exportAuditLogs, useAuditLogs } from '../application/useSystem';
 import { actionTone, AUDIT_CATEGORIES, rangeOf } from '../domain/system.rules';
 import type { AuditCategory, AuditRange } from '../domain/system.types';
 
@@ -49,11 +49,25 @@ export default function AuditLogPage() {
   const logs = useAuditLogs(filter);
   const rows = logs.data?.pages.flatMap((p) => p.items) ?? [];
   const denied = logs.data?.pages[0]?.deniedCount ?? 0;
+  // 422 từ API thật: khoảng thời gian > 90 ngày → báo ngay tại bộ lọc; lỗi khác → thông điệp chung
+  const listError = logs.error
+    ? logs.error instanceof ApiError &&
+      logs.error.fieldErrors.some((e) => e.code === 'RANGE_TOO_LONG')
+      ? t('admin-system.audit.range_too_long')
+      : errorMessage(logs.error, t)
+    : null;
 
   const exportCsv = async () => {
     setExporting(true);
     try {
-      const all = await listAllAuditLogs(filter);
+      const out = await exportAuditLogs(filter);
+      if (out.kind === 'file') {
+        // API thật: CSV do server sinh (BOM, chống chèn công thức, giờ Việt Nam)
+        downloadBlob(out.fileName, out.blob);
+        if (out.truncated) toast.info(t('admin-system.audit.export_truncated'));
+        return;
+      }
+      const all = out.rows;
       downloadCsv('nhat-ky-he-thong.csv', [
         [
           t('admin-system.audit.col.time'),
@@ -165,6 +179,11 @@ export default function AuditLogPage() {
           {t('admin-system.audit.denied', { count: denied })}
         </div>
       </div>
+      {listError && (
+        <p role="alert" className="text-sm text-flash-600 mb-3">
+          {listError}
+        </p>
+      )}
       <div className="bg-surface-card rounded-lg shadow-sm overflow-x-auto">
         {logs.isPending ? (
           <Skeleton lines={6} className="m-5" />

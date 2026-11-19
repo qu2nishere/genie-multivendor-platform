@@ -11,12 +11,12 @@ import { Providers } from '@/shared/providers/Providers';
 import { Button, EmptyState, Icon, PanelHead, Skeleton, toast } from '@/shared/ui';
 import { $wishlist, loadWishlist, toggleWishlist } from '../application/wishlist.store';
 import { priceOf, productHref, stockOf, variantLabel } from '../domain/product.rules';
-import type { ProductSummary } from '../domain/product.types';
-import { loadProductDetail, useWishlistProducts } from '../application/useWishlistItems';
+import type { WishlistEntry } from '../domain/product.types';
+import { loadProductDetail, useWishlistEntries } from '../application/useWishlistItems';
 
 /** Thêm vào giỏ với tổ hợp phân loại đầu tiên còn hàng (prototype: phân loại đầu tiên). */
-async function addDefault(p: ProductSummary) {
-  const d = await loadProductDetail(p.id);
+async function addDefault(p: WishlistEntry) {
+  const d = await loadProductDetail(p.productId);
   if (!d) throw new Error('not_found');
   const sku = d.skus.find((s) => {
     const sel = Object.fromEntries(d.variantGroups.map((g, i) => [g.name, s.options[i]]));
@@ -47,8 +47,11 @@ function Panel() {
   const ids = useStore($wishlist);
   const [busy, setBusy] = useState<number | null>(null);
   useEffect(() => void loadWishlist(), []);
-  const q = useWishlistProducts([...ids]);
-  const items = (q.data ?? []).filter((p) => ids.has(p.id));
+  const q = useWishlistEntries(ids);
+  // lọc theo tập id hiện tại: bỏ thích thì dòng biến mất ngay (cập nhật lạc quan), không chờ tải lại
+  const items = (q.data?.items ?? []).filter((p) => ids.has(p.productId));
+  // số trên tiêu đề theo store tim (cùng nguồn với nút tim); store chưa nạp thì dùng summary.total của API
+  const total = ids.size || (q.data?.total ?? 0);
 
   return (
     <section
@@ -58,7 +61,7 @@ function Panel() {
       <PanelHead
         id="wish-title"
         icon="heart"
-        title={t('product.wishlist.title', { count: ids.size })}
+        title={t('product.wishlist.title', { count: total })}
         sub={t('product.wishlist.sub')}
       />
       {q.isPending && ids.size > 0 && <Skeleton lines={3} className="mt-4" />}
@@ -66,10 +69,10 @@ function Panel() {
       <ul className="list-none m-0 p-0 mt-3">
         {items.map((p) => (
           <li
-            key={p.id}
+            key={p.productId}
             className="flex items-center gap-3 py-3 border-0 border-t border-solid border-line-subtle flex-wrap"
           >
-            <a href={productHref(p)} className="flex-none">
+            <a href={productHref({ slug: p.slug, id: p.productId })} className="flex-none">
               {p.image ? (
                 <img
                   src={p.image}
@@ -90,7 +93,7 @@ function Panel() {
             </a>
             <div className="flex-1 min-w-[160px]">
               <a
-                href={productHref(p)}
+                href={productHref({ slug: p.slug, id: p.productId })}
                 className="block text-sm text-body truncate no-underline hover:underline"
               >
                 {p.title}
@@ -104,7 +107,7 @@ function Panel() {
               variant="ghost"
               iconLeft="heart"
               onClick={() =>
-                void toggleWishlist(p.id).catch((e) => toast.error(errorMessage(e, t)))
+                void toggleWishlist(p.productId).catch((e) => toast.error(errorMessage(e, t)))
               }
             >
               {t('product.wishlist.remove')}
@@ -112,10 +115,11 @@ function Panel() {
             <Button
               size="sm"
               iconLeft="shopping-cart"
-              disabled={p.shopOnVacation}
-              loading={busy === p.id}
+              disabled={!p.purchasable}
+              title={p.purchasable ? undefined : t('product.wishlist.unavailable')}
+              loading={busy === p.productId}
               onClick={() => {
-                setBusy(p.id);
+                setBusy(p.productId);
                 void addDefault(p)
                   .then((r) => {
                     if (r.ok) toast.success(t('cart.add.added'));

@@ -30,7 +30,7 @@ class ProductDetailIT extends CatalogITSupport {
                 INSERT INTO category_attributes (category_id, code, name, data_type, is_filterable, display_order, created_at, updated_at)
                 VALUES (?, 'warranty', 'Bảo hành', 'ENUM', TRUE, 0, now(), now())""", leaf);
         long sony = data.brand("Sony", true);
-        var shop = data.shop().name("TechZone Official").mall().province(202, "TP. Hồ Chí Minh").rating(4.9).followers(128000).create();
+        var shop = data.shop().name("TechZone Official " + com.genie.support.TestDataBuilder.uniqueWord()).mall().province(202, "TP. Hồ Chí Minh").rating(4.9).followers(128000).create();
         long id = data.product(shop).name("Tai nghe Bluetooth ANC Pro 5").category(leaf).brand(sony, "Sony")
                 .basePrice(799000).sold(2100).rating(4.8)
                 .specs("{\"warranty\":\"12 tháng chính hãng\",\"ket_noi\":\"Bluetooth 5.3\"}")
@@ -58,7 +58,7 @@ class ProductDetailIT extends CatalogITSupport {
         assertThat((List<String>) read(r, "$.data.specs[*].name")).containsExactly("Bảo hành", "ket_noi");
         assertThat((String) read(r, "$.data.ships_from")).isEqualTo("TP. Hồ Chí Minh");
         assertThat((String) read(r, "$.data.condition")).isEqualTo("NEW");
-        assertThat((String) read(r, "$.data.shop.name")).isEqualTo("TechZone Official");
+        assertThat((String) read(r, "$.data.shop.name")).isEqualTo(shop.name());
         assertThat((Boolean) read(r, "$.data.shop.is_mall")).isTrue();
         assertThat((Integer) read(r, "$.data.shop.follower_count")).isEqualTo(128000);
         assertThat((Integer) read(r, "$.data.shop.joined_year")).isEqualTo(2021);

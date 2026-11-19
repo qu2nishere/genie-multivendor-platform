@@ -52,7 +52,9 @@ public enum AuditAction {                                                       
     PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, PII_ANONYMIZED,
     ACCESS_DENIED, PRODUCT_MODERATED,                 // lần truy cập bị chặn quyền (màn Nhật ký), kết quả duyệt sản phẩm
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
-    ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED   // +8 giá trị AUTH (V14 — plan AUTH D20)
+    ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị AUTH (V14 — plan AUTH D20)
+    BANNER_CHANGED,                                          // V15 — plan 2026-11-16 banner D1
+    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED // V20 — plan 2026-11-16 Mở shop & KYC D3
 }
 
 // ============================== ENTITIES (6) ==============================
@@ -302,6 +304,70 @@ public class HomeBanner {
     /** Tỷ lệ nhấp CTR — UC-ADM-12 */
     public double ctr() {
         return this.impressionCount == 0 ? 0.0 : (double) this.clickCount / this.impressionCount;
+    }
+
+    // ===== Bổ sung plan 2026-11-16 banner (B02.02; ENTITY 10.4, Phụ lục E) =====
+
+    /** Tạo banner mới — UC-ADM-12. {@code imageKey} / {@code mobileImageKey} là khóa đối tượng trong {@code content-assets}. */
+    public static HomeBanner create(String title, String imageKey, String mobileImageKey, String targetUrl,
+                                    BannerPosition position, Long categoryId, int sortOrder, OffsetDateTime startsAt,
+                                    OffsetDateTime endsAt, boolean active, long adminId) {
+        HomeBanner b = new HomeBanner();
+        b.impressionCount = 0L;
+        b.clickCount = 0L;
+        b.createdByAdminId = adminId;
+        b.isActive = active;
+        b.changeContent(title, targetUrl, position, categoryId, sortOrder);
+        b.changeSchedule(startsAt, endsAt);
+        b.changeImages(imageKey, mobileImageKey);
+        return b;
+    }
+
+    /** Trạng thái hiển thị (D3): tắt → OFF; chưa tới giờ → SCHEDULED; hết giờ → ENDED; còn lại → LIVE — UC-ADM-12 */
+    public BannerState state(OffsetDateTime now) {
+        if (!Boolean.TRUE.equals(this.isActive)) return BannerState.OFF;
+        if (now.isBefore(this.startsAt)) return BannerState.SCHEDULED;
+        if (!now.isBefore(this.endsAt)) return BannerState.ENDED;
+        return BannerState.LIVE;
+    }
+
+    /** Bật lại sau khi tắt khẩn cấp (service kiểm giới hạn 8 banner / vị trí trước) — UC-ADM-12 */
+    public void activate() {
+        this.isActive = true;
+    }
+
+    /** Đổi khung giờ hiển thị; {@code endsAt} phải sau {@code startsAt} — UC-ADM-12 */
+    public void changeSchedule(OffsetDateTime startsAt, OffsetDateTime endsAt) {
+        if (startsAt == null || endsAt == null || !endsAt.isAfter(startsAt))
+            throw new IllegalArgumentException("Thời điểm kết thúc phải sau thời điểm bắt đầu");
+        this.startsAt = startsAt;
+        this.endsAt = endsAt;
+    }
+
+    /** Đổi nội dung / vị trí; CATEGORY_TOP bắt buộc {@code categoryId}, vị trí khác bỏ {@code categoryId} — UC-ADM-12 */
+    public void changeContent(String title, String targetUrl, BannerPosition position, Long categoryId, int sortOrder) {
+        if (position == null) throw new IllegalArgumentException("Thiếu vị trí hiển thị");
+        if (position == BannerPosition.CATEGORY_TOP && categoryId == null)
+            throw new IllegalArgumentException("Banner đầu trang ngành hàng phải chọn danh mục");
+        if (sortOrder < 0) throw new IllegalArgumentException("Thứ tự không được âm");
+        this.title = title;
+        this.targetUrl = targetUrl;
+        this.position = position;
+        this.categoryId = position == BannerPosition.CATEGORY_TOP ? categoryId : null;
+        this.sortOrder = sortOrder;
+    }
+
+    /** Đổi ảnh (khóa đối tượng); ảnh desktop bắt buộc, mobile {@code null} = dùng ảnh desktop — UC-ADM-12 */
+    public void changeImages(String imageKey, String mobileImageKey) {
+        if (imageKey == null || imageKey.isBlank()) throw new IllegalArgumentException("Thiếu ảnh banner");
+        this.imageUrl = imageKey;
+        this.mobileImageUrl = mobileImageKey == null || mobileImageKey.isBlank() ? null : mobileImageKey;
+    }
+
+    /** Chỉ xóa được banner đã tắt hoặc đã hết giờ — UC-ADM-12 */
+    public boolean isDeletable(OffsetDateTime now) {
+        BannerState s = state(now);
+        return s == BannerState.OFF || s == BannerState.ENDED;
     }
 }
 

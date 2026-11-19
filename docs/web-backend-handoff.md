@@ -26,15 +26,15 @@ chưa khớp `API_SPEC.md`** (mục 2).
 
 | Mã đang gọi | Theo API_SPEC | Việc cần làm |
 |---|---|---|
-| `GET /me/wishlist/ids` | `GET /me/wishlist/product-ids` | Sửa mã |
-| `GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}` | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | Sửa mã (đổi cả phương thức theo dõi sang `PUT`) |
+| ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` | **Đã sửa** (plan 2026-11-16 wishlist W04.01) |
+| ~~`GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}`~~ | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | **Đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/feed` | `GET /public/recommendations?page&size` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
-| `POST /public/banners/{id}/events` | `POST /public/banner-events` (id trong body) | Sửa mã |
+| ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
 | `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
 | `POST` / `DELETE /me/identities/GOOGLE` | `POST /me/identities/{provider}` (`google` chữ thường) | Sửa mã |
 | `GET /public/campaigns/{slug}` · `GET /public/campaigns/slugs` | Chưa có — spec dựng trang chiến dịch bằng `GET /public/products?discount_min=` + `GET /public/vouchers?code=` | **Bổ sung spec** (trang `/campaign/[slug]` cần tiêu đề, banner, mốc thời gian, mã voucher; sitemap cần danh sách slug) |
@@ -59,7 +59,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 | Chức năng | Hiện tại (mock) | Khi có backend |
 |---|---|---|
 | Chat thời gian thực (8.x) | Hỏi lại 2 giây khi đang mở hội thoại, 15 giây hộp thư | WebSocket theo API_SPEC; giữ `client_message_id` làm Idempotency-Key |
-| Xuất CSV (sổ cái 11.9, nhật ký 11.13, báo cáo Tổng quan Admin / Seller) | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
+| Xuất CSV (sổ cái 11.9, báo cáo Tổng quan Admin / Seller) — nhật ký 11.10 đã gọi `…/export` thật | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
 | Phiếu gửi hàng | `window.print()` trang HTML | PDF A6 của hãng vận chuyển |
 | Chọn shop đích cho banner (Admin) | `shop.listShops` công khai | `GET /admin/shops` |
 | Đề xuất danh mục Seller ↔ Admin | Hai kho mock riêng | Cùng bảng `category_proposals` |
@@ -176,12 +176,12 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listKycSubmissions` | kyc.api.ts | `GET /admin/kyc-submissions` |
-| `getKycSubmission` | kyc.api.ts | `GET /admin/kyc-submissions/{id}` |
-| `approveKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/approve` |
-| `rejectKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/reject` |
-| `requestKycSupplement` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/request-supplement` |
-| `requeueKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/requeue` |
+| `listKycSubmissions` | kyc.api.ts | `GET /admin/kyc-submissions`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `getKycSubmission` | kyc.api.ts | `GET /admin/kyc-submissions/{id}`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `approveKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/approve`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `rejectKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/reject`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requestKycSupplement` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/request-supplement`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requeueKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/requeue`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `admin-marketing`
 
@@ -198,10 +198,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `scheduleCampaign` | marketing.api.ts | `POST /admin/flash-sales/{id}/schedule` |
 | `endCampaign` | marketing.api.ts | `POST /admin/flash-sales/{id}/end` |
 | `reviewFlashItem` | marketing.api.ts | `PATCH /admin/flash-sales/{campaignId}/items/{itemId}` |
-| `listBanners` | marketing.api.ts | `GET /admin/banners` |
-| `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` |
-| `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` |
-| `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` |
+| `listBanners` | marketing.api.ts | `GET /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` |
 | `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` |
 | `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` |
@@ -238,8 +238,8 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `listUsers` | system.api.ts | `GET /admin/users` |
 | `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` |
 | `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` |
-| `auditNow` | system.api.ts | `GET /admin/audit-logs` |
-| `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` |
+| `auditNow` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`) |
+| `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`); xuất: `exportAuditLogs` → `GET /admin/audit-logs/export` |
 | `updateAdminMe` | system.api.ts | `PATCH /admin/me` |
 
 ### `auth`
@@ -303,9 +303,11 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getCoins` | coins.api.ts | `GET /me/coins` |
-| `listCoinTxns` | coins.api.ts | `GET /me/coins/transactions` |
-| `listCoinRewards` | coins.api.ts | `GET /public/coin-rewards` |
+| `getCoins` | coins.api.ts | `GET /me/coins` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `listCoinTxns` | coins.api.ts | `GET /me/coins/transactions` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `listCoinRewards` | coins.api.ts | `GET /public/coin-rewards` — **đã nối** (`PUBLIC_REAL_API=coins`) |
+| `checkIn` | coins.api.ts | `POST /me/coins/check-ins` — **đã nối** |
+| `redeemReward` | coins.api.ts | `POST /me/coins/redemptions` — **đã nối** |
 
 ### `notifications`
 
@@ -332,15 +334,16 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `listRelated` | product.api.ts | `GET /public/products/{id}/related` |
 | `listProductsByIds` | product.api.ts | `GET /public/products` |
 | `listFeed` | product.api.ts | `GET /public/feed` |
-| `fetchWishlistIds` | wishlist.api.ts | `GET /me/wishlist/ids` |
-| `setWishlisted` | wishlist.api.ts | `POST /me/wishlist`<br>`DELETE /me/wishlist/{productId}` |
+| `fetchWishlistIds` | wishlist.api.ts | `GET /me/wishlist/product-ids` — **đã nối** (`PUBLIC_REAL_API=wishlist`) |
+| `setWishlisted` | wishlist.api.ts | `PUT /me/wishlist/{productId}`<br>`DELETE /me/wishlist/{productId}` — **đã nối** |
+| `listWishlist` | wishlist.api.ts | `GET /me/wishlist` (+ `summary.total`, `product_slug`) — **đã nối** |
 
 ### `promotions`
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listLiveBanners` | banner.api.ts | `GET /public/banners` |
-| `trackBanner` | banner.api.ts | `POST /public/banners/{id}/events` |
+| `listLiveBanners` | banner.api.ts | `GET /public/banners?positions=&category_id=` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `trackBanner` | banner.api.ts | `POST /public/banner-events` (gom lô 5 giây + `sendBeacon`) — **đã nối** |
 | `getCampaign` | campaign.api.ts | `GET /public/campaigns/{slug}` |
 | `listCampaignSlugs` | campaign.api.ts | `GET /public/campaigns/slugs` |
 | `listMyVouchers` | voucher.api.ts | `GET /me/vouchers` |
@@ -354,7 +357,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listBanks` | refund.api.ts | `GET /public/banks` |
+| `listBanks` | refund.api.ts | `GET /public/banks`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 | `createRefund` | refund.api.ts | `POST /me/refund-requests` |
 | `addEvidence` | refund.api.ts | `POST /me/refund-requests/{id}/evidence` |
 | `escalateRefund` | refund.api.ts | `POST /me/refund-requests/{id}/escalate` |
@@ -394,11 +397,11 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getKyc` | kyc.api.ts | `GET /seller/kyc` |
-| `saveKycDraft` | kyc.api.ts | `PUT /seller/kyc/draft` |
-| `submitKyc` | kyc.api.ts | `POST /seller/kyc/submissions` |
-| `requestManualReview` | kyc.api.ts | `POST /seller/kyc/manual-review-requests` |
-| `registerShop` | registration.api.ts | `POST /me/shop-registrations` |
+| `getKyc` | kyc.api.ts | `GET /seller/kyc`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `saveKycDraft` | kyc.api.ts | `PUT /seller/kyc/draft`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `submitKyc` | kyc.api.ts | `POST /seller/kyc/submissions`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requestManualReview` | kyc.api.ts | `POST /seller/kyc/manual-review-requests`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `registerShop` | registration.api.ts | `POST /me/shop-registrations`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `seller-orders`
 
@@ -454,17 +457,17 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getSettings` | settings.api.ts | `GET /seller/settings` |
-| `patchSettings` | settings.api.ts | `PATCH /seller/settings` |
-| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` |
+| `getSettings` | settings.api.ts | `GET /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `patchSettings` | settings.api.ts | `PATCH /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` — giữ mock (cờ `pickup`, chờ A12) |
 | `listBanks` | settings.api.ts | `GET /public/banks` |
-| `savePayoutAccount` | settings.api.ts | `PUT /seller/payout-account` |
-| `deletePayoutAccount` | settings.api.ts | `DELETE /seller/payout-account` |
-| `startVacation` | settings.api.ts | `PUT /seller/vacation` |
-| `endVacation` | settings.api.ts | `DELETE /seller/vacation` |
-| `getSellerMe` | shop.api.ts | `GET /seller/me` |
-| `searchSeller` | shop.api.ts | `GET /seller/search` |
-| `getPayoutAccount` | shop.api.ts | `GET /seller/payout-account` |
+| `savePayoutAccount` | settings.api.ts | `PUT /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `deletePayoutAccount` | settings.api.ts | `DELETE /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `startVacation` | settings.api.ts | `PUT /seller/vacation` — giữ mock (cờ `vacation`) |
+| `endVacation` | settings.api.ts | `DELETE /seller/vacation` — giữ mock (cờ `vacation`) |
+| `getSellerMe` | shop.api.ts | `GET /seller/me`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `searchSeller` | shop.api.ts | `GET /seller/search` — giữ mock (cờ `seller-search`, cụm đơn hàng) |
+| `getPayoutAccount` | shop.api.ts | `GET /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `seller-wallet`
 
@@ -479,6 +482,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 |---|---|---|
 | `getShop` | shop.api.ts | `GET /public/shops/{id}` |
 | `listShops` | shop.api.ts | `GET /public/shops` |
-| `listFollowedShops` | shop.api.ts | `GET /me/shop-follows` |
-| `setFollow` | shop.api.ts | `POST /me/shop-follows`<br>`DELETE /me/shop-follows/{id}` |
+| `listFollowedShops` | shop.api.ts | `GET /me/following` (+ `summary.total`) — **đã nối** (`PUBLIC_REAL_API=follow`) |
+| `fetchFollowedShopIds` | shop.api.ts | `GET /me/following/shop-ids` — **đã nối** |
+| `setFollow` | shop.api.ts | `PUT /me/following/{shop_id}`<br>`DELETE /me/following/{shop_id}` — **đã nối** |
 

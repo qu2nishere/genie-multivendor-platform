@@ -3,11 +3,11 @@
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { requireLogin } from '@/features/auth';
-import { errorMessage } from '@/shared/api/errors';
+import { errorMessage, isApiError } from '@/shared/api/errors';
 import { $session } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { Button, ConfirmDialog, toast, type ButtonVariant } from '@/shared/ui';
-import { useFollowedShops, useSetFollow } from '../application/useFollow';
+import { useFollowedShopIds, useSetFollow } from '../application/useFollow';
 
 export interface FollowButtonProps {
   shopId: number;
@@ -20,10 +20,10 @@ export function FollowButton({ shopId, shopName, followingVariant = 'subtle' }: 
   const { t } = useT();
   const session = useStore($session);
   const authed = session.status === 'authenticated';
-  const followed = useFollowedShops(authed);
+  const followed = useFollowedShopIds(authed);
   const mutate = useSetFollow();
   const [confirm, setConfirm] = useState(false);
-  const following = authed && !!followed.data?.some((s) => s.id === shopId);
+  const following = authed && !!followed.data?.includes(shopId);
 
   const set = (on: boolean) =>
     mutate.mutate(
@@ -37,7 +37,11 @@ export function FollowButton({ shopId, shopName, followingVariant = 'subtle' }: 
               : t('shop.follow.undone', { shop: shopName }),
           );
         },
-        onError: (e) => toast.error(errorMessage(e, t)),
+        onError: (e) =>
+          toast.error(
+            // 404: shop vừa bị khóa / ngừng hoạt động
+            isApiError(e) && e.status === 404 ? t('shop.follow.gone') : errorMessage(e, t),
+          ),
       },
     );
 

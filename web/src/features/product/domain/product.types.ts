@@ -132,3 +132,16 @@ export interface ProductFacets {
   locations: string[];
   total: number;
 }
+
+/** Một dòng Tài khoản › Sản phẩm yêu thích (API_SPEC 3.10 — GET /me/wishlist). */
+export interface WishlistEntry {
+  productId: number;
+  slug: string;
+  title: string;
+  image: string | null;
+  price: number;
+  /** SKU mặc định cho "Thêm vào giỏ" — null khi chưa biết (mock) / không có SKU. */
+  defaultVariantId: number | null;
+  /** false khi sản phẩm không còn bán / hết hàng / shop đang nghỉ → khóa nút "Thêm vào giỏ". */
+  purchasable: boolean;
+}

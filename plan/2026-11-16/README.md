@@ -55,13 +55,16 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 
 | Số | File | Plan | Nội dung |
 |---|---|---|---|
-| `V15` | `V15__vendor_kyc_additions.sql` | [7] Mở shop & KYC (K01) | 9 cột mới + 3 index của `vendor_profiles`, 4 giá trị `AuditAction` của vendor |
-| `V16` | `V16__banner_audit_action.sql` | [3] Banner trang chủ (B01) | Giá trị `AuditAction.BANNER_CHANGED` |
-| `V17` | `V17__coin_expired_type.sql` | [4] Điểm danh & Điểm Genie (P06 — chỉ khi làm phần Điểm hết hạn) | Giá trị `CoinTransactionType.EXPIRED` |
-| `V18` | `V18__catalog_search_tuning.sql` | [2026-11-17] Tìm kiếm & trang sản phẩm (C01.01) | Trọng số `search_vector`, index trigram tên bỏ dấu, index giá SKU |
+| `V15`–`V17` | `V15__address_labels.sql`, `V16__addresses_two_level_regions.sql`, `V17__address_delivery_note.sql` | AUTH — sổ địa chỉ (đã merge vào `develop`, PR #76) | Bảng `addresses` |
+| `V18` | `V18__banner_audit_action.sql` | [3] Banner trang chủ (B01) | Giá trị `AuditAction.BANNER_CHANGED` |
+| `V19` | `V19__coin_expired_type.sql` | [4] Điểm danh & Điểm Genie (P06) | Giá trị `CoinTransactionType.EXPIRED` |
+| `V20` | `V20__vendor_kyc_additions.sql` | [7] Mở shop & KYC (K01) | 9 cột mới + 3 index của `vendor_profiles`, 4 giá trị `AuditAction` của vendor — `CHECK` chép cả `BANNER_CHANGED` |
+| `V21` | `V21__catalog_search_tuning.sql` | [2026-11-17] Tìm kiếm & trang sản phẩm (C01.01 — đổi từ V18 khi merge `develop`) | Trọng số `search_vector`, index trigram tên bỏ dấu, index giá SKU |
 | — | `db/seed/R__seed_demo_*.sql` | [1] Seed | Migration lặp lại (repeatable), không chiếm số `V` |
 
-> Nếu plan [3] merge trước plan [7] thì đổi thành `V15__banner_audit_action.sql` / `V16__vendor_kyc_additions.sql` — sửa bảng này trong cùng PR.
+> **Đổi số 2026-11-19:** `develop` đã dùng `V15`–`V20` cho sổ địa chỉ (PR #76) nên migration của các plan này dời thành
+> `V18` (banner), `V19` (Điểm Genie), `V20` (KYC). Nội dung không đổi; ghi chú "V15 / V16 / V17" trong progress các plan
+> là số cũ trước khi đổi.
 
 ## 5. Quy ước chung của mọi plan (trích TS mục 13, 14 — không lặp lại ở từng plan)
 
@@ -79,7 +82,7 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 
 | Thứ tự gợi ý | Plan | Use case phải tick ở checklist khi xong | Xong plan |
 |:---:|---|---|:---:|
-| 1 | [1] Seed dữ liệu mẫu | — (không gắn use case; chỉ ghi Nhật ký) | ☐ |
+| 1 | [1] Seed dữ liệu mẫu | — (không gắn use case; chỉ ghi Nhật ký) | ☑ |
 | 1 (song song) | [2] Nhật ký kiểm toán | `UC-ADM-07` | ☐ |
 | 1 (song song) | [3] Banner trang chủ | `UC-ADM-12` | ☐ |
 | 1 (song song) | [4] Điểm danh & Điểm Genie | `UC-PRO-08`, `UC-PRO-09` | ☐ |

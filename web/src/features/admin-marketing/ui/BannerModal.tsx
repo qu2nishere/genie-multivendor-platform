@@ -30,6 +30,18 @@ import {
 import { bannerSchema, type BannerValues } from '../domain/marketing.schema';
 import type { AdminBanner, BannerPosition } from '../domain/marketing.types';
 
+/** Tên trường trong `errors[]` của 422 (API thật, snake_case) → ô của form banner. */
+const SERVER_FIELD: Record<string, keyof BannerValues> = {
+  title: 'title',
+  image_object_key: 'hasImage',
+  target_url: 'targetUrl',
+  position: 'position',
+  category_id: 'categoryId',
+  sort_order: 'sortOrder',
+  starts_at: 'startsAt',
+  ends_at: 'endsAt',
+};
+
 const lab = 'block text-sm font-semibold text-strong';
 const box =
   'flex-1 min-w-0 h-[42px] border-[1.5px] border-solid rounded-md px-2.5 text-sm bg-surface-card text-body outline-none focus:border-primary';
@@ -459,7 +471,18 @@ export function BannerModal({
             form.setError('position', { message: 'errors.GNE-BNR-4221' });
           else if (isApiError(err) && err.code === 'GNE-BNR-4222')
             form.setError('targetUrl', { message: 'errors.GNE-BNR-4222' });
-          else toast.error(errorMessage(err, t));
+          else if (isApiError(err) && err.code === 'GNE-VAL-4220' && err.fieldErrors.length > 0) {
+            // 422 của API thật: errors[].field (snake_case) → đúng ô trong modal
+            let shown = false;
+            for (const fe of err.fieldErrors) {
+              const name = SERVER_FIELD[fe.field ?? ''];
+              if (name) {
+                form.setError(name, { message: 'errors.GNE-VAL-4220' });
+                shown = true;
+              }
+            }
+            if (!shown) toast.error(errorMessage(err, t));
+          } else toast.error(errorMessage(err, t));
         },
       },
     );

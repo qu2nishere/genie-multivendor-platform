@@ -1,0 +1,41 @@
+### UC-SOC-06 — Theo dõi gian hàng (API_SPEC 3.11; plan 2026-11-16 theo dõi gian hàng F05.01)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (6 shop VERIFIED). Mật khẩu Genie@123.
+# shop_id = vendor_profiles.id (KHÔNG phải users.id của chủ shop).
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập — chép access_token vào @tok (mai.tran là chủ TechZone Official trong dữ liệu mẫu)
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+@tok = <access_token bước 1>
+@shop = <shop_id của một shop khác, vd. SELECT id FROM vendor_profiles WHERE shop_name = 'Beauty Box'>
+@own = <shop_id của TechZone Official>
+
+### 2. ĐÚNG — theo dõi (idempotent: gọi lại vẫn 204, follower_count chỉ +1)
+PUT {{base}}/me/following/{{shop}}
+Authorization: Bearer {{tok}}
+
+### 3. ĐÚNG — tập shop_id đang theo dõi
+GET {{base}}/me/following/shop-ids
+Authorization: Bearer {{tok}}
+
+### 4. ĐÚNG — danh sách (mới theo dõi trước; $ShopMini, rating_avg, follower_count; summary.total)
+GET {{base}}/me/following?limit=20
+Authorization: Bearer {{tok}}
+
+### 5. ĐÚNG — hủy theo dõi (idempotent: gọi lại vẫn 204, không trừ thêm)
+DELETE {{base}}/me/following/{{shop}}
+Authorization: Bearer {{tok}}
+
+### 6. LỖI — theo dõi shop của chính mình → 409 GNE-SOC-4095
+PUT {{base}}/me/following/{{own}}
+Authorization: Bearer {{tok}}
+
+### 7. LỖI — shop không tồn tại / chưa xác minh / chủ shop bị khóa → 404 GNE-SYS-4040
+PUT {{base}}/me/following/999999
+Authorization: Bearer {{tok}}
+
+### 8. LỖI — không token → 401 GNE-SEC-4010
+GET {{base}}/me/following

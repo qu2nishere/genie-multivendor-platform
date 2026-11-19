@@ -44,7 +44,7 @@
 | Đếm thời gian thực | **Redis**: `ZINCRBY` (Sorted Set) đếm từ khóa, `HINCRBY` (Hash) đếm lượt xem, **HyperLogLog** `PFADD/PFCOUNT` đếm khách duy nhất, `SET NX EX` chống đếm trùng | UC-CAT-04, UC-CAT-06 bước 9, UC-CAT-18 |
 | Ghi gộp định kỳ | **`@Scheduled` (5 phút)** + khóa Redis `SET NX` (một instance chạy) + `UPSERT … ON CONFLICT DO UPDATE` | `search_keyword_stats`, `product_view_stats`, `products.view_count` |
 | Giới hạn tần suất | **`RateLimiter` có sẵn** (Redis fixed window `INCR`+`EXPIRE`) | 60 / phút / IP cho `GET /public/products`, `/public/search/suggestions` |
-| Migration | **Flyway** `V18__catalog_search_tuning.sql` (D3, D4) | trọng số FTS, index trigram bỏ dấu, index giá |
+| Migration | **Flyway** `V21__catalog_search_tuning.sql` (D3, D4) | trọng số FTS, index trigram bỏ dấu, index giá |
 | Tài liệu API | **springdoc-openapi** `@Operation(summary = "UC-CAT-0x …")` | |
 | Test | **JUnit 5 + Testcontainers** (`postgres:16` — có sẵn `unaccent`, `pg_trgm`; Redis qua `GenericContainer("redis:7-alpine")`), **ArchUnit** | `*IT`, đo số truy vấn (chống N+1) |
 
@@ -266,9 +266,9 @@ ProductViewFlushJob (5 phút, khóa SET NX "job:pv-flush"):
 | # | Vấn đề | Nguồn lệch | Đề xuất | Chốt |
 |---|---|---|---|---|
 | D1 | Đường dẫn: UC ghi `GET /api/v1/products/{id}`, `/search/suggest`, `/shops/{vendorId}`; API ghi `/public/products/{id}`, `/public/search/suggestions`, `/public/shops/{id}` | UC vs API | Theo **API** (README mục "đường dẫn lấy theo API"); sửa câu trong Usecase.md ở C09 | ☐ |
-| D2 | `products` không có cột `slug` nhưng URL `/p/{slug}-{id}` | ENTITY vs API | **Sinh slug từ `name` khi đọc** (A11), không thêm cột; 301 khi slug đổi. Phương án khác: thêm cột `slug` (V18) — chỉ khi cần slug cố định | ☐ |
-| D3 | `search_vector` hiện không có trọng số; trigram chỉ trên `name` có dấu | V2 | `V18`: thay cột sinh bằng `setweight(…name,'A') ‖ setweight(…brand,'B') ‖ setweight(…description,'D')`; thêm `CREATE INDEX idx_products_name_unaccent_trgm ON products USING GIN (immutable_unaccent(lower(name)) gin_trgm_ops)` | ☐ |
-| D4 | Lọc / sắp theo giá cần giá thấp nhất SKU | V2 | `V18`: index `product_variants (product_id, price) WHERE deleted_at IS NULL`. Nếu đo > 300 ms trên 10.000 sản phẩm → thêm cột chuẩn hóa `products.min_price` cập nhật khi lưu SKU (để sau, ghi vào Ghi chú) | ☐ |
+| D2 | `products` không có cột `slug` nhưng URL `/p/{slug}-{id}` | ENTITY vs API | **Sinh slug từ `name` khi đọc** (A11), không thêm cột; 301 khi slug đổi. Phương án khác: thêm cột `slug` (V21) — chỉ khi cần slug cố định | ☐ |
+| D3 | `search_vector` hiện không có trọng số; trigram chỉ trên `name` có dấu | V2 | `V21`: thay cột sinh bằng `setweight(…name,'A') ‖ setweight(…brand,'B') ‖ setweight(…description,'D')`; thêm `CREATE INDEX idx_products_name_unaccent_trgm ON products USING GIN (immutable_unaccent(lower(name)) gin_trgm_ops)` | ☐ |
+| D4 | Lọc / sắp theo giá cần giá thấp nhất SKU | V2 | `V21`: index `product_variants (product_id, price) WHERE deleted_at IS NULL`. Nếu đo > 300 ms trên 10.000 sản phẩm → thêm cột chuẩn hóa `products.min_price` cập nhật khi lưu SKU (để sau, ghi vào Ghi chú) | ☐ |
 | D5 | Trending: UC ghi "7 ngày gần nhất, cache 1 giờ"; API ghi "24 giờ qua, cache 10 phút" | UC vs API | Theo **API** (24 giờ = `N = 1` ngày hôm nay + hôm qua có trọng số 0.5); cache 10 phút. Ghi lại Usecase.md | ☐ |
 | D6 | Tìm kiếm cần `is_mall`, tỉnh kho, freeship, shop nghỉ (module `vendor`, `shipping`) | TS 4.4 | Câu SQL đọc `JOIN` thẳng bảng (read-model, không import class Java của module khác → ArchUnit vẫn xanh). Đổi `shop_id ↔ vendor_id` + thông tin shop ở chi tiết sản phẩm qua cổng `CatalogShopDirectory` (khai trong `catalog`, mặc định đọc bằng SQL; module `vendor` cài lại khi có `ShopFacade`) | ☐ |
 | D7 | Đặt `GET /public/shops/{id}` ở đâu; mã lỗi shop không tồn tại | API 5.11, 15 | Ở `vendor/shop/api/PublicShopController` (phối hợp chủ plan Mở shop & KYC); mã lỗi tra API 15 (`GNE-VND-404x`) — chưa có thì thêm; `is_online = false` tới khi có presence của Chat | ☐ |
@@ -284,7 +284,7 @@ ProductViewFlushJob (5 phút, khóa SET NX "job:pv-flush"):
 
 ```
 server-spring/src/main/resources/db/migration/
-    V18__catalog_search_tuning.sql             (D3, D4 — đăng ký số ở README 2026-11-16 mục 4)
+    V21__catalog_search_tuning.sql             (D3, D4 — đăng ký số ở README 2026-11-16 mục 4)
 server-spring/src/main/java/com/genie/
 ├── common/config/CacheConfig.java             RedisCacheManager + TTL theo tên cache
 ├── common/web/EtagConfig.java                 ShallowEtagHeaderFilter cho /api/v1/public/**
@@ -334,7 +334,7 @@ docs/web-backend-handoff.md · docs/api-tests/catalog-search.http
 | CAT-18 | (không API riêng) SSR `/p/{slug}-{id}?v&src=share` + `POST /views {EXTERNAL_LINK}` | `products`, `product_view_stats` | A11 (slug 301, OG, Web Share API) |
 
 **Mã lỗi dùng:** `GNE-CAT-4041` (danh mục), `GNE-CAT-4042` (sản phẩm không còn bán), `GNE-VND-404x` (shop — D7), `GNE-VAL-4220`, `GNE-RAT-4290`.
-**Migration:** `V18__catalog_search_tuning.sql`. **Không** thêm `UploadPurpose` / `AuditAction`.
+**Migration:** `V21__catalog_search_tuning.sql`. **Không** thêm `UploadPurpose` / `AuditAction`.
 
 ---
 
@@ -362,13 +362,13 @@ Ký hiệu: `Cxx.yy` = task; `Cxx.Cn` = task commit.
 ### C00 — Chuẩn bị
 - **[C00.01]** Kiểm danh tính git — `git config user.name` / `user.email`.
 - **[C00.02]** Chốt quyết định D1–D12 — ghi vào đầu file progress.
-- **[C00.03]** Đăng ký `V18` ở README 2026-11-16 mục 4 (kiểm số chưa bị chiếm).
+- **[C00.03]** Đăng ký `V21` ở README 2026-11-16 mục 4 (kiểm số chưa bị chiếm).
 - **[C00.04]** Tạo nhánh `feature/catalog-search` từ `develop`.
 - **[C00.05]** Kiểm dữ liệu thử: seed ≥ 50 sản phẩm nhiều danh mục / thương hiệu / tỉnh; viết script sinh **10.000 sản phẩm** giả cho `SearchPerformanceIT`.
 - **[C00.06]** Đọc màn mock `/search`, `/c/…`, `/p/…`, `/shop/…`, dropdown header — ghi trường giao diện cần.
 
 ### C01 — Nền: migration, cache, chuẩn hóa
-- **[C01.01]** `V18__catalog_search_tuning.sql` — `search_vector` có trọng số (D3), index trigram bỏ dấu (D3), index giá SKU (D4); cập nhật ENTITY 13.1 trước.
+- **[C01.01]** `V21__catalog_search_tuning.sql` — `search_vector` có trọng số (D3), index trigram bỏ dấu (D3), index giá SKU (D4); cập nhật ENTITY 13.1 trước.
 - **[C01.02]** `CacheConfig` — `RedisCacheManager`, cache `catalog.product-detail` 5′, `catalog.similar` 30′, `catalog.trending` 10′, `catalog.category-tree` 1h, `vendor.shop-stats` 10′; serializer JSON.
 - **[C01.03]** `EtagConfig` — `ShallowEtagHeaderFilter` cho `/api/v1/public/**` + `Cache-Control` theo API 0.12.
 - **[C01.04]** `KeywordNormalizer` + `SlugUtil` + test (A1, A11) — bộ mẫu 30 chuỗi khớp `unaccent()` của PG (test IT so sánh).
@@ -441,7 +441,7 @@ Ký hiệu: `Cxx.yy` = task; `Cxx.Cn` = task commit.
 - **[C08.03]** Tài liệu nguồn — Usecase.md (D1, D5, D9, D12 + dòng *Hiện trạng* 7 UC), API 5.x (D8, D10, D11) và 17 (đánh dấu 5 endpoint đã sửa), ENTITY 13.1 (D3, D4), LLD 9 thêm mục "Tìm kiếm & gợi ý" tóm tắt A2, A6, A8; LLD 10 thêm 2 job.
 - **[C08.04]** Tiến độ — `CHECKLIST_TIEN_DO_UC.md`, `Quản Lý UseCase.xlsx`, `docs/web-backend-handoff.md`, `CLAUDE.md` mục 2 + mục 9 (cổng `CatalogShopDirectory`, `ShopVoucherAvailability` chờ module khác cài).
 - **[C08.C1]** COMMIT — `docs(catalog): record search and product page use cases as implemented`
-- **[C08.05]** Mở PR vào `develop` (Ảnh hưởng CSDL: `V18`).
+- **[C08.05]** Mở PR vào `develop` (Ảnh hưởng CSDL: `V21`).
 
 ---
 
@@ -458,8 +458,8 @@ Ký hiệu: `Cxx.yy` = task; `Cxx.Cn` = task commit.
 | Rủi ro | Xử lý |
 |---|---|
 | `unaccent` Java ≠ PostgreSQL → thống kê / slug lệch | Bộ mẫu chung + IT so sánh (C01.04) |
-| Truy vấn tìm kiếm chậm khi nhiều bộ lọc + facet | Index V18, chặn trang sâu, `statement_timeout`, `SearchPerformanceIT`; còn chậm → cột `min_price` chuẩn hóa (D4) |
-| Đổi cột sinh `search_vector` khóa bảng `products` | Chạy ở `V18` khi bảng còn nhỏ (dev / seed); production chưa có dữ liệu thật |
+| Truy vấn tìm kiếm chậm khi nhiều bộ lọc + facet | Index V21, chặn trang sâu, `statement_timeout`, `SearchPerformanceIT`; còn chậm → cột `min_price` chuẩn hóa (D4) |
+| Đổi cột sinh `search_vector` khóa bảng `products` | Chạy ở `V21` khi bảng còn nhỏ (dev / seed); production chưa có dữ liệu thật |
 | Đếm từ khóa / lượt xem bị spam | Dedupe `SET NX` theo IP / visitor + rate limit |
 | Mất số đếm khi Redis khởi động lại giữa 2 lần flush | Chấp nhận mất ≤ 5 phút số liệu thống kê (không phải dữ liệu tiền) — ghi vào tài liệu |
 | Cache chi tiết sản phẩm hiển thị giá cũ | `@CacheEvict` khi sản phẩm / SKU đổi; giỏ & đặt hàng luôn đọc DB |

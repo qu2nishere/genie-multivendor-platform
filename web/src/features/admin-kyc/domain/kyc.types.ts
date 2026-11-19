@@ -43,6 +43,8 @@ export interface KycDetail extends KycSubmission {
   ai: AiResult | null;
   declared: { identityNumberMasked: string; representative: string; taxCode: string | null };
   shopCommissionRate: number | null;
+  /** Huy hiệu "Chính hãng" (UC-VND-04 bước 8). */
+  isMall: boolean;
   rejectionReason: string | null;
   supplement: { documents: KycDocType[]; note: string; dueAt: string } | null;
 }

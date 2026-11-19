@@ -17,7 +17,15 @@ public enum MailTemplate {
     /** Biến: {@code newEmail}. */
     EMAIL_CHANGED("email-changed", "Email đăng nhập Genie đã thay đổi", "Your Genie sign-in email was changed"),
     /** Biến: {@code anonymizeAt}. */
-    DELETION_SCHEDULED("deletion-scheduled", "Genie Shop đã nhận yêu cầu xóa tài khoản của bạn", "We received your Genie Shop account deletion request");
+    DELETION_SCHEDULED("deletion-scheduled", "Genie Shop đã nhận yêu cầu xóa tài khoản của bạn", "We received your Genie Shop account deletion request"),
+    /** KYC đã duyệt (UC-VND-03/04). Biến: {@code name}, {@code storeName}. */
+    KYC_APPROVED("kyc-approved", "Hồ sơ KYC của shop đã được duyệt", "Your shop KYC has been approved"),
+    /** KYC bị từ chối. Biến: {@code name}, {@code storeName}, {@code reason}, {@code canRequestReview}. */
+    KYC_REJECTED("kyc-rejected", "Hồ sơ KYC của shop chưa được duyệt", "Your shop KYC was not approved"),
+    /** Yêu cầu bổ sung KYC. Biến: {@code name}, {@code storeName}, {@code documents}, {@code note}, {@code deadline}. */
+    KYC_SUPPLEMENT("kyc-supplement", "Hồ sơ KYC cần bổ sung giấy tờ", "Your shop KYC needs more documents"),
+    /** Đổi / xóa tài khoản nhận tiền (UC-VND-07). Biến: {@code name}, {@code storeName}, {@code action}, {@code bankName}, {@code accountMasked}, {@code changedAt}. */
+    PAYOUT_ACCOUNT_CHANGED("payout-account-changed", "Tài khoản nhận tiền của shop vừa thay đổi", "Your shop payout account was changed");
 
     private final String file;
     private final String subjectVi;

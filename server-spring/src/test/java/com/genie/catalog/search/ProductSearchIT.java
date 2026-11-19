@@ -144,7 +144,7 @@ class ProductSearchIT extends CatalogITSupport {
 
     @Test
     void productCardFollowsApiSpec() throws Exception {
-        var shop = data.shop().name("TechZone Official").freeship(199000).create();
+        var shop = data.shop().name("TechZone Official " + com.genie.support.TestDataBuilder.uniqueWord()).freeship(199000).create();
         long id = data.product(shop).name("Tai nghe ANC Pro 5").basePrice(799000).sold(2100).rating(4.8)
                 .sku(389000, 10).sku(539000, 3).deletedSku(1000, 9).image("product/1/main.webp").create();
 
@@ -157,7 +157,7 @@ class ProductSearchIT extends CatalogITSupport {
         assertThat((Integer) read(r, "$.data[0].discount_percent")).isEqualTo(51);
         assertThat((Double) read(r, "$.data[0].rating_avg")).isEqualTo(4.8);
         assertThat((Integer) read(r, "$.data[0].sold_count")).isEqualTo(2100);
-        assertThat((String) read(r, "$.data[0].shop.name")).isEqualTo("TechZone Official");
+        assertThat((String) read(r, "$.data[0].shop.name")).isEqualTo(shop.name());
         assertThat((Boolean) read(r, "$.data[0].shop.is_mall")).isFalse();
         assertThat((Boolean) read(r, "$.data[0].is_free_shipping")).isTrue();
         assertThat((Boolean) read(r, "$.data[0].is_shop_on_vacation")).isFalse();

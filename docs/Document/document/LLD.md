@@ -817,13 +817,13 @@ Structured output `{decision, riskScore, violations[], reasoning}`. `REJECT` và
 Tiền xử lý: NFC → viết thường → chuẩn hóa teencode → bỏ URL → tách từ (RDRSegmenter) → ≤ 256 token. Suy luận ONNX → softmax 3 nhãn → `{overall, score, model, analyzedAt}`. Thống kê chỉ tính `score ≥ 0,6`; ưu tiên kiểm duyệt khi `NEGATIVE` và `score ≥ 0,85`; không tự ẩn đánh giá.
 
 ### 9.9 Điểm danh & Điểm (UC-PRO-08, UC-PRO-09)
-Ngày 1–6 liên tiếp: 100 Điểm; ngày 7 liên tiếp: 1.000 Điểm; đứt 1 ngày → chuỗi về 1; `UNIQUE(user_id, checkin_date)`. Mỗi lần cộng tạo một lô `coin_transactions` có hạn 12 tháng; tiêu / hết hạn trừ lô sắp hết hạn trước; `user_coins.balance_hash` kiểm mỗi lần ghi.
+Ngày 1–6 liên tiếp: 100 Điểm; ngày 7 liên tiếp: 1.000 Điểm; đứt 1 ngày → chuỗi về 1; "ngày" theo giờ Việt Nam; `daily_checkins` **mỗi khách một dòng** (`UNIQUE customer_id`, `lastCheckinAt` + `streakCount` — ENTITY 4.9), chống điểm danh 2 lần bằng khóa ngắn Redis `lock:checkin:{userId}` + khóa dòng + `DailyCheckin.checkIn()`. Mỗi lần cộng tạo một lô `coin_transactions` có hạn 12 tháng; tiêu / hết hạn trừ lô sắp hết hạn trước; `user_coins.balance_hash` kiểm mỗi lần ghi.
 
 ### 9.10 Rút tiền (UC-ADM-04, UC-ADM-05)
 Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài khoản nhận tiền đã xác minh chính chủ (`GNE-WAL-4032`); OTP email. Finance Officer duyệt → chuyển khoản tay nội dung `TRWD{id}` → webhook SePay (tiền ra) tự hoàn tất; từ chối → hoàn ví.
 
 ### 9.11 Tìm kiếm, gợi ý & sản phẩm tương tự (UC-CAT-02, 04, 05, 07 — đã hiện thực, plan 2026-11-17)
-- **Tìm theo từ khóa:** chuẩn hóa (NFC, chữ thường, bỏ ký tự đặc biệt, bỏ dấu khớp `unaccent()`) → `search_vector @@ to_tsquery('simple', 'tai & nghe:*')` (từ cuối khớp tiền tố) xếp `ts_rank_cd` trên vector có trọng số tên A / thương hiệu B / mô tả D (`V18`); dưới 5 kết quả thì bù trigram `:q <% immutable_unaccent(lower(name))` (`word_similarity ≥ 0,4` — ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"; index GIN `V18`). Xu hướng gộp biến thể chỉ khác dấu ("áo thun" + "ao thun").
+- **Tìm theo từ khóa:** chuẩn hóa (NFC, chữ thường, bỏ ký tự đặc biệt, bỏ dấu khớp `unaccent()`) → `search_vector @@ to_tsquery('simple', 'tai & nghe:*')` (từ cuối khớp tiền tố) xếp `ts_rank_cd` trên vector có trọng số tên A / thương hiệu B / mô tả D (`V21`); dưới 5 kết quả thì bù trigram `:q <% immutable_unaccent(lower(name))` (`word_similarity ≥ 0,4` — ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"; index GIN `V21`). Xu hướng gộp biến thể chỉ khác dấu ("áo thun" + "ao thun").
 - **Lọc & facet:** SQL động chỉ tham số đặt tên; danh mục gồm danh mục con bằng CTE đệ quy; facet *disjunctive* (mỗi facet bỏ bộ lọc của chính nó). Đo p95 = 50 ms trên 10.000 sản phẩm (`SearchPerformanceIT`).
 - **Xu hướng:** Redis Sorted Set `search:kw:{ngày}` (`ZINCRBY`, một IP / từ / 10 phút), top-K bằng `ZUNION` hôm nay ×1 + hôm qua ×0,5, bỏ từ bị chặn; cache 10 phút.
 - **Lượt xem:** `HINCRBY pv:pending`, HyperLogLog `pv:uv:*` đếm khách duy nhất, chống lặp 30 phút / người xem.
@@ -846,6 +846,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 | Phát thông báo hẹn giờ | 1 phút | Thông báo toàn sàn tới giờ phát | NOT-05 |
 | Thử gửi lại email | 5 phút **(đề xuất)** | Email lỗi, tối đa 3 lần | NOT-03 |
 | Hết hạn yêu cầu bổ sung KYC | Hằng ngày | Quá 7 ngày → `REJECTED` | VND-04 |
+| Điểm hết hạn | Hằng ngày 00:15 (giờ VN) | Lô Điểm quá 12 tháng còn dư → một dòng `EXPIRED` âm / lô (`FOR UPDATE SKIP LOCKED`, chạy lại không trừ thêm) | PRO-09 |
 | Hết hạn Điểm | Hằng ngày | Trừ lô quá 12 tháng | PRO-09 |
 | Kết thúc chế độ nghỉ | Hằng giờ | Tới `vacationEndsAt` → mở bán | VND-19 |
 | Ẩn danh hóa tài khoản (`AnonymizeAccountsJob`, **đã hiện thực**) | 02:30 hằng ngày (giờ VN) | Yêu cầu xóa quá 30 ngày → ẩn danh user + hồ sơ, xóa mềm địa chỉ, thu hồi phiên, `PII_ANONYMIZED`; tối đa 1.000 tài khoản / lượt, mỗi tài khoản 1 transaction; xóa ảnh đại diện Silo sau commit | AUTH-10 |

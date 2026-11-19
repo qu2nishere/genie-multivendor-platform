@@ -451,6 +451,8 @@ kyc-dossiers     vendor/{vendorId}/{front|back|selfie|license}-{uuid}.enc
 
 ### 5.7 Riêng ảnh KYC
 
+> **Đã hiện thực (2026-11-18, plan Mở shop & KYC D4–D5, ADR 0011):** dùng **một** purpose `KYC_DOCUMENT` (theo API 4.1) thay cho 4 purpose riêng; loại giấy tờ nằm ở khóa của `document_object_keys`. Khi nộp, backend đọc tệp `tmp/`, mã hóa AES-256-GCM (IV 12 byte đầu tệp, AAD = `vendorProfileId:docType`, khóa `KYC_AES_KEY`), ghi `kyc-dossiers/vendor/{id}/{front|back|selfie|license}-{uuid}.enc`, xóa bản tạm. Xem: giải mã ra `kyc-dossiers/tmp/view/{uuid}.{ext}` + Presigned GET 5 phút, job xóa sau 10 phút; người bán không bao giờ nhận lại URL ảnh.
+
 Người bán tải ảnh lên `tmp/` → khi nộp hồ sơ, backend đọc ảnh, **mã hóa AES-256-GCM** bằng `KYC_AES_KEY` (biến môi trường, không lưu trong DB), ghi vào `kyc-dossiers` đuôi `.enc`, xóa bản `tmp/` → AI Worker nhận ảnh đã giải mã qua kênh nội bộ để chấm → AI Worker **không** lưu ảnh, chỉ lưu embedding khuôn mặt khi có đồng ý.
 
 ### 5.8 Vòng đời tệp

@@ -25,7 +25,7 @@ function Panel() {
   const q = useFollowedShops(true);
   const set = useSetFollow();
   const [unfollow, setUnfollow] = useState<Shop | null>(null);
-  const list = q.data ?? [];
+  const list = q.data?.items ?? [];
   return (
     <section
       className="bg-surface-card rounded-lg shadow-sm px-[22px] py-5 max-sm:px-4"
@@ -34,7 +34,7 @@ function Panel() {
       <PanelHead
         id="follow-title"
         icon="store"
-        title={t('shop.follows.title', { count: list.length })}
+        title={t('shop.follows.title', { count: q.data?.total ?? list.length })}
         sub={t('shop.follows.sub')}
       />
       {q.isPending && <Skeleton lines={3} className="mt-4" />}

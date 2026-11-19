@@ -33,7 +33,7 @@
 | Gợi ý hôm nay | Random có seed theo ngày `md5(id ‖ ngày)` + trộn 60/40 theo danh mục xem gần đây (Redis LIST) |
 | Trang shop | Cột tổng hợp `vendor_profiles` + cache Redis 10 phút, lưới dùng lại tìm kiếm với `shop_id` |
 | Deeplink | Slug sinh từ tên (Java + TS cùng thuật toán), 301 khi slug lệch, Open Graph + JSON-LD (Astro SSR), Web Share API → Clipboard API |
-| Hạ tầng chung | Spring Cache + Redis, ETag `304`, `RateLimiter` 60/phút/IP, Flyway `V18`, Testcontainers PG + Redis |
+| Hạ tầng chung | Spring Cache + Redis, ETag `304`, `RateLimiter` 60/phút/IP, Flyway `V21`, Testcontainers PG + Redis |
 
 ---
 
@@ -43,8 +43,8 @@
 |---|---|:---:|---|
 | D1 | Đường dẫn theo UC hay API | ☑ | Theo API (`/public/...`); sửa Usecase.md ở C08.03 — chốt theo đề xuất plan, 2026-11-18 |
 | D2 | `products` không có cột `slug` | ☑ | Sinh slug từ `name` khi đọc, không thêm cột; 301 khi slug lệch — chốt theo đề xuất plan, 2026-11-18 |
-| D3 | Trọng số `search_vector` + index trigram bỏ dấu (`V18`) | ☑ | `V18`: `search_vector` có trọng số A/B/D + index GIN trigram trên `immutable_unaccent(lower(name))` — chốt theo đề xuất plan, 2026-11-18 |
-| D4 | Index / cột giá thấp nhất cho lọc & sắp theo giá | ☑ | `V18`: index `product_variants (product_id, price) WHERE deleted_at IS NULL`; cột `min_price` để sau nếu đo chậm — chốt theo đề xuất plan, 2026-11-18 |
+| D3 | Trọng số `search_vector` + index trigram bỏ dấu (`V21`) | ☑ | `V21`: `search_vector` có trọng số A/B/D + index GIN trigram trên `immutable_unaccent(lower(name))` — chốt theo đề xuất plan, 2026-11-18 |
+| D4 | Index / cột giá thấp nhất cho lọc & sắp theo giá | ☑ | `V21`: index `product_variants (product_id, price) WHERE deleted_at IS NULL`; cột `min_price` để sau nếu đo chậm — chốt theo đề xuất plan, 2026-11-18 |
 | D5 | Trending 24 giờ (API) hay 7 ngày (UC); thời gian cache | ☑ | Theo API: 24 giờ (hôm nay trọng số 1 + hôm qua 0,5), cache 10 phút — chốt theo đề xuất plan, 2026-11-18 |
 | D6 | Đọc bảng module `vendor` / `shipping` trong SQL tìm kiếm; cổng `CatalogShopDirectory` | ☑ | SQL đọc JOIN thẳng bảng `vendor_profiles`, `vendor_shipping_config`, `users` (read-model); không import class module khác — chốt theo đề xuất plan, 2026-11-18 |
 | D7 | Vị trí `GET /public/shops/{id}`, mã lỗi shop, `is_online` | ☑ | `vendor/shop/api/PublicShopController`; thêm `GNE-VND-4041`; `is_online = false` tới khi có presence — chốt theo đề xuất plan, 2026-11-18 |
@@ -73,14 +73,14 @@
 
 - [x] **C00.01** Kiểm danh tính git
 - [x] **C00.02** Chốt quyết định D1–D12
-- [x] **C00.03** Đăng ký `V18` ở README 2026-11-16 mục 4
+- [x] **C00.03** Đăng ký `V21` ở README 2026-11-16 mục 4
 - [x] **C00.04** Tạo nhánh `feature/catalog-search`
 - [x] **C00.05** Dữ liệu thử (≥ 50 sản phẩm seed + script 10.000 sản phẩm giả)
 - [x] **C00.06** Đọc màn mock `/search`, `/c/…`, `/p/…`, `/shop/…`, dropdown header
 
 ## C01 — Nền: migration, cache, chuẩn hóa
 
-- [x] **C01.01** `V18__catalog_search_tuning.sql` (trọng số FTS, trigram bỏ dấu, index giá SKU) + ENTITY 13.1
+- [x] **C01.01** `V21__catalog_search_tuning.sql` (trọng số FTS, trigram bỏ dấu, index giá SKU) + ENTITY 13.1
 - [x] **C01.02** `CacheConfig` — `RedisCacheManager` + TTL theo tên cache
 - [x] **C01.03** `EtagConfig` — ETag + `Cache-Control` cho `/api/v1/public/**`
 - [x] **C01.04** `KeywordNormalizer` + `SlugUtil` + test khớp `unaccent()`
@@ -224,8 +224,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 |---|---|---|
 | 2026-11-17 | Lập plan + progress (54 task, 12 commit, 9 giai đoạn; stack + thuật toán A1–A13) — chưa bắt đầu làm | — |
 | 2026-11-18 | Phân công Nghiêm Phú Đăng Quân; ghi "đã lập plan `plan/2026-11-17`" + cột Phụ trách cho 7 UC trong `CHECKLIST_TIEN_DO_UC.md` (bảng Thành viên, mục 5 Nhật ký) và cột *Người phụ trách* / sheet *Thành viên* trong `Quản Lý UseCase.xlsx` — trạng thái vẫn ⬜ Chưa triển khai | — |
-| 2026-11-18 | C00 chuẩn bị: nhánh `feature/catalog-search`, chốt D1–D12 theo đề xuất, đăng ký `V18`; commit plan + checklist | `04b866d` |
-| 2026-11-18 | C01 nền: `V18` (trọng số FTS, trigram bỏ dấu, index giá), `JsonCache`, ETag `/public`, `PageResponse`, normalizer + slug + `TestDataBuilder` | `4f808a9` `86e5ddc` `08c76cd` |
+| 2026-11-18 | C00 chuẩn bị: nhánh `feature/catalog-search`, chốt D1–D12 theo đề xuất, đăng ký `V21`; commit plan + checklist | `04b866d` |
+| 2026-11-18 | C01 nền: `V21` (trọng số FTS, trigram bỏ dấu, index giá), `JsonCache`, ETag `/public`, `PageResponse`, normalizer + slug + `TestDataBuilder` | `4f808a9` `86e5ddc` `08c76cd` |
 | 2026-11-18 | C02 tìm kiếm & lọc: `GET /public/products` (FTS + trigram, lọc đa tiêu chí, facet, rate limit 60/phút); 7 unit + 16 IT xanh; đo hiệu năng p95 50 ms | `a45aedb` `fa33542` |
 | 2026-11-18 | C03 gợi ý & xu hướng: `/public/search/suggestions`, `/public/search/trending`, bộ đếm Redis ZSET + job ghi gộp 5 phút; 9 IT xanh | `ac22d10` |
 | 2026-11-18 | C04 chi tiết & lượt xem: `/public/products/{id}`, `/{id}/variants`, `POST /{id}/views` + job ghi gộp; 5 unit + 8 IT xanh | `71e8533` `56d938e` |

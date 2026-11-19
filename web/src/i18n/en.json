@@ -121,6 +121,7 @@
     "GNE-VCH-4221": "This voucher can't be applied to this order.",
     "GNE-USR-4091": "You have orders in progress, so the account can't be deleted yet.",
     "GNE-USR-4092": "The default address can't be deleted.",
+    "GNE-USR-4093": "This address is already in your address book.",
     "GNE-CAT-4041": "This category doesn't exist or is hidden.",
     "GNE-CAT-4042": "This product is no longer available.",
     "GNE-CAT-4091": "A category with this name or slug already exists.",
@@ -132,6 +133,7 @@
     "GNE-CAT-4222": "This category requires proof documents.",
     "GNE-CAT-4223": "Required category specifications are missing.",
     "GNE-PRO-4091": "You've already checked in today.",
+    "GNE-PRO-4092": "This voucher is already in your voucher wallet (or you have used up its uses).",
     "GNE-PRO-4221": "Flash Sale price must be at least 15% lower with a valid number of slots.",
     "GNE-PRO-4222": "You don't have enough Points.",
     "GNE-PRO-4223": "Too many products or the Flash Sale registration has closed.",
@@ -144,6 +146,7 @@
     "GNE-SOC-4092": "The order isn't complete yet, so it can't be reviewed.",
     "GNE-SOC-4093": "You've already reported this review.",
     "GNE-SOC-4094": "The shop has already replied to this review.",
+    "GNE-SOC-4095": "You cannot follow your own shop.",
     "GNE-SOC-4221": "Replies can't contain phone numbers.",
     "GNE-VND-4031": "The shop isn't verified (KYC) yet.",
     "GNE-VND-4041": "This shop doesn't exist or is no longer active.",
@@ -160,6 +163,7 @@
     "GNE-LOG-4221": "The COD statement doesn't balance.",
     "GNE-LOG-5021": "The carrier failed to create the waybill. Please try again.",
     "GNE-LOG-5022": "GHN failed to sync the pickup address. Please try again.",
+    "GNE-BNR-4091": "Banners that are live or scheduled cannot be deleted — turn the banner off first.",
     "GNE-BNR-4221": "This position already has 8 active banners.",
     "GNE-BNR-4222": "Banner links must point to the platform's domain.",
     "GNE-NOT-4091": "This notification has been sent and can't be edited.",
@@ -1120,6 +1124,7 @@
       "view": "View shop"
     },
     "follow": {
+      "gone": "This shop is no longer active.",
       "done": "Following {shop}",
       "undone": "Unfollowed {shop}",
       "confirm_title": "Unfollow this shop?",
@@ -1272,10 +1277,16 @@
       "recipient": "Full name",
       "phone": "Phone number",
       "line": "Street address",
+      "note": "Note for the courier (optional)",
+      "note_placeholder": "E.g. Near the university gate, leave at the security desk",
+      "note_hint": "The courier will see this note. Don't include door codes or passwords.",
       "label_type": "Address type",
       "label": {
         "HOME": "Home",
-        "OFFICE": "Office"
+        "OFFICE": "Office",
+        "SCHOOL": "School",
+        "APARTMENT": "Apartment",
+        "OTHER": "Other"
       },
       "save": "Save address",
       "saved": "Address saved",
@@ -1284,13 +1295,15 @@
         "locating": "Locating…",
         "done": "Current location found",
         "hint": "Fill in the address from your device location.",
-        "done_hint": "Province/District/Ward filled in — you can adjust below."
+        "done_hint": "Province/Ward filled in — you can adjust below.",
+        "partial_hint": "Province filled from your location — please pick the ward.",
+        "not_found": "Couldn't find an address at this location, please choose it manually.",
+        "denied": "Couldn't get your location — allow location access in the browser or choose manually."
       },
       "region": {
-        "label": "Province / City, District, Ward",
-        "placeholder": "Choose Province / District / Ward",
+        "label": "Province / City, Ward",
+        "placeholder": "Choose Province / Ward",
         "province": "Province",
-        "district": "District",
         "ward": "Ward",
         "search": "Quick search…",
         "none": "No results"
@@ -1299,9 +1312,10 @@
         "recipient": "Enter the recipient's name",
         "recipient_long": "Name can be at most 100 characters",
         "phone": "Invalid phone number",
-        "region": "Choose Province, District and Ward",
+        "region": "Choose Province and Ward",
         "line": "Enter the street address",
-        "line_long": "Address can be at most 255 characters"
+        "line_long": "Address can be at most 255 characters",
+        "note_long": "Note can be at most 200 characters"
       },
       "book": "Address book",
       "book_sub": "Manage your delivery addresses",
@@ -1703,6 +1717,7 @@
     "cost": "{points} Points · Orders from {min}",
     "swap": "Redeem",
     "not_enough": "Not enough Points",
+    "missing": "You need {points} more points for this reward.",
     "redeemed": "Redeemed voucher {code} — see it in your Voucher wallet",
     "history": "Points history",
     "checkin": {
@@ -2892,7 +2907,7 @@
     "pickup": {
       "title": "Pickup address (GHN)",
       "phone": "Warehouse phone",
-      "region": "Province / District / Ward",
+      "region": "Province / Ward",
       "line": "Street address",
       "save": "Save and sync with GHN",
       "saved": "Pickup address saved and synced with GHN",
@@ -3207,7 +3222,8 @@
       "tax": "Tax code",
       "rate": "Shop-specific commission",
       "rate_placeholder": "By category",
-      "rate_err": "Enter 0 to 50%, or leave empty to use the category rate."
+      "rate_err": "Enter 0 to 50%, or leave empty to use the category rate.",
+      "mall": "Mark as an official (Mall) shop on approval"
     },
     "rejected_reason": "Rejection reason:",
     "supplement_req": "Documents requested:",
@@ -4274,6 +4290,8 @@
       "reactivated": "{name} has been unlocked."
     },
     "audit": {
+      "range_too_long": "You can search at most 90 days at a time — narrow the date range.",
+      "export_truncated": "Only the latest 50,000 rows were exported — narrow the filters to export everything.",
       "append_only": "Append-only · immutable",
       "desc": "The log records every sensitive action. Entries can't be edited or deleted — for investigations & compliance.",
       "export": "Export log",

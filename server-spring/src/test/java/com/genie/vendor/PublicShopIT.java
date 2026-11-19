@@ -22,7 +22,7 @@ class PublicShopIT extends CatalogITSupport {
         long audio = data.category("Âm thanh", electronics);
         long fashion = data.category("Thời trang", null);
         data.category("Không có hàng", null);
-        var shop = data.shop().name("TechZone Official").mall().rating(4.9).followers(128000)
+        var shop = data.shop().name("TechZone Official " + com.genie.support.TestDataBuilder.uniqueWord()).mall().rating(4.9).followers(128000)
                 .province(202, "TP. Hồ Chí Minh").create();
         data.product(shop).category(audio).sku(1000, 1).create();
         data.product(shop).category(fashion).sku(1000, 1).create();
@@ -30,7 +30,7 @@ class PublicShopIT extends CatalogITSupport {
 
         MvcResult r = call(url(shop.shopId()));
         assertThat(status(r)).isEqualTo(200);
-        assertThat((String) read(r, "$.data.name")).isEqualTo("TechZone Official");
+        assertThat((String) read(r, "$.data.name")).isEqualTo(shop.name());
         assertThat((Boolean) read(r, "$.data.is_mall")).isTrue();
         assertThat((Double) read(r, "$.data.rating_avg")).isEqualTo(4.9);
         assertThat((Integer) read(r, "$.data.follower_count")).isEqualTo(128000);

@@ -1,8 +1,9 @@
 // Hồ sơ KYC (API_SPEC 10.12): GET /seller/kyc, PUT /seller/kyc/draft, POST /seller/kyc/submissions,
-// POST /seller/kyc/manual-review-requests. Mock: hồ sơ giữ trong phiên tab; nộp → kho shop dùng chung
+// POST /seller/kyc/manual-review-requests. API thật khi PUBLIC_REAL_API có `vendor` (K11.02). Mock: hồ sơ giữ trong phiên tab; nộp → kho shop dùng chung
 // chuyển PENDING (khung Seller Center hiện "KYC đang chờ", các mục khác khóa).
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { sellerStore } from '@/shared/api/mock/seller';
 import { missingDocs } from '../domain/kyc.rules';
 import type { KycDocInfo, KycDocKey, KycDossier, KycForm, KycStatus } from '../domain/kyc.types';
@@ -15,10 +16,10 @@ interface DocDto {
 interface KycDto {
   status: KycStatus;
   shop_name: string;
-  business_type: BusinessType;
-  identity_number: string;
+  business_type: BusinessType | null;
+  identity_number: string | null;
   tax_code: string | null;
-  representative: string;
+  representative: string | null;
   documents: Record<KycDocKey, DocDto | null>;
   biometric_consent: boolean;
   rejection_reason: string | null;
@@ -27,15 +28,17 @@ interface KycDto {
   submitted_at: string | null;
 }
 
+const USE_MOCK = isMocked('vendor');
+
 const KEYS: KycDocKey[] = ['ID_FRONT', 'ID_BACK', 'BUSINESS_LICENSE', 'SELFIE'];
 
 const toDossier = (d: KycDto): KycDossier => ({
   status: d.status,
   shopName: d.shop_name,
-  businessType: d.business_type,
-  identityNumber: d.identity_number,
+  businessType: d.business_type ?? 'INDIVIDUAL',
+  identityNumber: d.identity_number ?? '',
   taxCode: d.tax_code ?? '',
-  representative: d.representative,
+  representative: d.representative ?? '',
   documents: Object.fromEntries(
     KEYS.filter((k) => d.documents[k]).map((k) => [
       k,
@@ -66,6 +69,10 @@ const toBody = (f: KycForm) => ({
   // Chỉ gửi giấy tờ vừa tải; giấy tờ đã có từ lần trước giữ bản cũ (bỏ khóa)
   document_object_keys: Object.fromEntries(
     KEYS.flatMap((k) => (f.documents[k]?.objectKey ? [[k, f.documents[k]?.objectKey]] : [])),
+  ),
+  // Tên tệp gốc để màn hình hiện lại (server không trả URL ảnh — API 10.12)
+  document_file_names: Object.fromEntries(
+    KEYS.flatMap((k) => (f.documents[k]?.objectKey ? [[k, f.documents[k]?.fileName]] : [])),
   ),
   biometric_consent: f.biometricConsent,
 });
