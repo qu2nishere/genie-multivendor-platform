@@ -14,6 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /** {@code email} phải đã chuẩn hóa bằng {@link User#normalizeEmail(String)}. */
     Optional<User> findByEmail(String email);
 
+    /** Trong số các id đưa vào, id nào đang ACTIVE — một truy vấn (module khác lọc danh sách — plan theo dõi gian hàng). */
+    @Query("select u.id from User u where u.id in :ids and u.status = com.genie.auth.profile.domain.AccountStatus.ACTIVE")
+    List<Long> findActiveIds(@Param("ids") java.util.Collection<Long> ids);
+
     boolean existsByEmail(String email);
 
     Optional<User> findByOauthProviderAndOauthProviderId(String oauthProvider, String oauthProviderId);

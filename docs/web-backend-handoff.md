@@ -27,7 +27,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | Mã đang gọi | Theo API_SPEC | Việc cần làm |
 |---|---|---|
 | ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` | **Đã sửa** (plan 2026-11-16 wishlist W04.01) |
-| `GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}` | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | Sửa mã (đổi cả phương thức theo dõi sang `PUT`) |
+| ~~`GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}`~~ | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | **Đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` | Sửa mã |
 | `GET /public/feed` | `GET /public/recommendations?page&size` | Sửa mã |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | Sửa mã |
@@ -482,6 +482,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 |---|---|---|
 | `getShop` | shop.api.ts | `GET /public/shops/{id}` |
 | `listShops` | shop.api.ts | `GET /public/shops` |
-| `listFollowedShops` | shop.api.ts | `GET /me/shop-follows` |
-| `setFollow` | shop.api.ts | `POST /me/shop-follows`<br>`DELETE /me/shop-follows/{id}` |
+| `listFollowedShops` | shop.api.ts | `GET /me/following` (+ `summary.total`) — **đã nối** (`PUBLIC_REAL_API=follow`) |
+| `fetchFollowedShopIds` | shop.api.ts | `GET /me/following/shop-ids` — **đã nối** |
+| `setFollow` | shop.api.ts | `PUT /me/following/{shop_id}`<br>`DELETE /me/following/{shop_id}` — **đã nối** |
 

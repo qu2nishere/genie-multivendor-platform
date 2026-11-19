@@ -68,6 +68,7 @@ export const ERROR_CODES = [
   'GNE-SOC-4092',
   'GNE-SOC-4093',
   'GNE-SOC-4094',
+  'GNE-SOC-4095',
   'GNE-SOC-4221',
   'GNE-SUP-4091',
   'GNE-SUP-4092',
