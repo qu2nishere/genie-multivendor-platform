@@ -7,9 +7,6 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/genie}
     username: ${DB_USER:genie}
     password: ${DB_PASSWORD:changeme}
-  flyway:
-    placeholders:
-      seed_demo: ${GENIE_SEED_DEMO:true}       # không muốn nạp dữ liệu mẫu → GENIE_SEED_DEMO=false trong .env
   data:
     redis:
       password: ${REDIS_PASSWORD:changeme}
@@ -26,6 +23,8 @@ logging:
     com.genie: ${LOG_LEVEL_GENIE:DEBUG}
 
 genie:
+  seed:
+    demo-data: ${GENIE_SEED_DEMO:true}           # nạp dữ liệu mẫu (R__seed_demo + db/seed); không muốn → GENIE_SEED_DEMO=false trong .env
   security:
     jwt-secret: ${JWT_SECRET:local-dev-secret-change-me-local-dev-secret-change-me}
     internal-token: ${INTERNAL_TOKEN:local-internal-token}
