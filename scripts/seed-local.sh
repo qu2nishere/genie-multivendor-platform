@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-# Nạp dữ liệu demo vào PostgreSQL local (R__seed_demo.sql: 1 Admin, 2 Staff, 5 shop đã KYC, ~200 sản phẩm, voucher mẫu)
-# Flyway đã tự chạy R__seed_demo.sql khi backend khởi động; script này dùng để nạp lại nhanh.
+# Nạp dữ liệu mẫu vào PostgreSQL Docker local (deploy/docker-compose.local.yml): tài khoản (R__seed_demo.sql) +
+# db/seed (danh mục, 6 shop đã KYC, 20 sản phẩm, voucher, banner, hoạt động khách mẫu, hàng chờ KYC).
+# Backend profile local đã tự nạp khi khởi động (GENIE_SEED_DEMO=true); script này để nạp lại nhanh.
+# Giữ tên cũ cho tài liệu cũ — mọi việc do scripts/seed/seed.sh làm (xem scripts/seed/README.md).
 set -euo pipefail
-
-ROOT=$(cd "$(dirname "$0")/.." && pwd)
-COMPOSE="docker compose -f $ROOT/deploy/docker-compose.local.yml"
-SEED="$ROOT/server-spring/src/main/resources/db/migration/R__seed_demo.sql"
-
-$COMPOSE exec -T postgres psql -U "${DB_USER:-genie}" -d genie -v ON_ERROR_STOP=1 < "$SEED"
-echo "Đã nạp dữ liệu demo."
+exec "$(dirname "$0")/seed/seed.sh" --docker "$@"

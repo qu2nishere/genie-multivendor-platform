@@ -7,9 +7,6 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/genie}
     username: ${DB_USER:genie}
     password: ${DB_PASSWORD:changeme}
-  flyway:
-    placeholders:
-      seed_demo: ${GENIE_SEED_DEMO:true}       # không muốn nạp dữ liệu mẫu → GENIE_SEED_DEMO=false trong .env
   data:
     redis:
       password: ${REDIS_PASSWORD:changeme}
@@ -28,6 +25,8 @@ logging:
 genie:
   ai-worker:
     mode: ${AI_WORKER_MODE:stub}                  # máy dev: giả lập AI Worker (ADR 0011 mục 6); chạy cùng AI Worker thật → AI_WORKER_MODE=http
+  seed:
+    demo-data: ${GENIE_SEED_DEMO:true}           # nạp dữ liệu mẫu (R__seed_demo + db/seed); không muốn → GENIE_SEED_DEMO=false trong .env
   security:
     jwt-secret: ${JWT_SECRET:local-dev-secret-change-me-local-dev-secret-change-me}
     internal-token: ${INTERNAL_TOKEN:local-internal-token}
