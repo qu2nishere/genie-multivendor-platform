@@ -11,7 +11,11 @@ import java.util.Set;
 public enum UploadPurpose {
 
     /** Ảnh đại diện người dùng — bucket công khai {@code avatar-assets}, JPEG / PNG ≤ 1 MB. */
-    AVATAR("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, true, false);
+    AVATAR("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, true, false, null),
+
+    /** Ảnh banner trang chủ (UC-ADM-12) — {@code content-assets} công khai, JPEG / PNG / WebP ≤ 5 MB, quyền {@code MANAGE_VOUCHER}. */
+    BANNER_IMAGE("content-assets", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, true, false,
+            "MANAGE_VOUCHER");
 
     private static final Map<String, String> EXTENSIONS = Map.of(
             "image/jpeg", "jpg",
@@ -26,13 +30,21 @@ public enum UploadPurpose {
     private final long maxBytes;
     private final boolean publicRead;
     private final boolean sensitive;
+    private final String requiredAuthority;
 
-    UploadPurpose(String bucket, Set<String> contentTypes, long maxBytes, boolean publicRead, boolean sensitive) {
+    UploadPurpose(String bucket, Set<String> contentTypes, long maxBytes, boolean publicRead, boolean sensitive,
+                  String requiredAuthority) {
         this.bucket = bucket;
         this.contentTypes = contentTypes;
         this.maxBytes = maxBytes;
         this.publicRead = publicRead;
         this.sensitive = sensitive;
+        this.requiredAuthority = requiredAuthority;
+    }
+
+    /** Mã quyền bắt buộc để xin link tải lên ({@code null} = mọi người đã đăng nhập). */
+    public String requiredAuthority() {
+        return requiredAuthority;
     }
 
     public String bucket() {

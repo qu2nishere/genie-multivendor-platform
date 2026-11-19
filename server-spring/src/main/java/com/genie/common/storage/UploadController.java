@@ -11,6 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +46,24 @@ public class UploadController {
     @PostMapping("/presigned-urls")
     public ResponseEntity<ApiResponse<UploadService.IssuedUpload>> presign(@CurrentUser AuthUser me,
                                                                           @Valid @RequestBody PresignRequest body) {
+        requireAuthority(body.purpose());
         return responses.ok(uploads.issue(me.id(), body.purpose(), body.contentType(), body.contentLength()));
+    }
+
+    /**
+     * Purpose có quyền riêng (vd. ảnh banner cần {@code MANAGE_VOUCHER}) → thiếu quyền thì 403 {@code GNE-SEC-4030}
+     * (GlobalExceptionHandler ghi {@code ACCESS_DENIED} như lỗi {@code @PreAuthorize}).
+     */
+    private static void requireAuthority(UploadPurpose purpose) {
+        String needed = purpose.requiredAuthority();
+        if (needed == null) {
+            return;
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean granted = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> needed.equals(a.getAuthority()));
+        if (!granted) {
+            throw new AccessDeniedException("Thiếu quyền " + needed + " cho purpose " + purpose);
+        }
     }
 }

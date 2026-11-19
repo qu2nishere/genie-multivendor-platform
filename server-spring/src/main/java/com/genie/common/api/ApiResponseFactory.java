@@ -47,6 +47,13 @@ public class ApiResponseFactory {
                 summary, meta()));
     }
 
+    /** Danh sách phân trang số (API_SPEC 0.4) — {@code page} của Spring Data đã ánh xạ sang DTO. */
+    public <T> ResponseEntity<ApiListResponse<T>> page(org.springframework.data.domain.Page<T> page,
+                                                       Map<String, Object> summary) {
+        return ResponseEntity.ok(new ApiListResponse<>("SUCCESS", 200, "OK", page.getContent(), PagePagination.of(page),
+                summary, meta()));
+    }
+
     public <T> ResponseEntity<ApiResponse<T>> of(HttpStatus status, T data) {
         return ResponseEntity.status(status).body(ApiResponse.of(status.value(), data, meta()));
     }

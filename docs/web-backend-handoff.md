@@ -34,7 +34,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | Sửa mã — gộp vào `listProducts` |
 | `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
-| `POST /public/banners/{id}/events` | `POST /public/banner-events` (id trong body) | Sửa mã |
+| ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
 | `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
 | `POST` / `DELETE /me/identities/GOOGLE` | `POST /me/identities/{provider}` (`google` chữ thường) | Sửa mã |
 | `GET /public/campaigns/{slug}` · `GET /public/campaigns/slugs` | Chưa có — spec dựng trang chiến dịch bằng `GET /public/products?discount_min=` + `GET /public/vouchers?code=` | **Bổ sung spec** (trang `/campaign/[slug]` cần tiêu đề, banner, mốc thời gian, mã voucher; sitemap cần danh sách slug) |
@@ -198,10 +198,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `scheduleCampaign` | marketing.api.ts | `POST /admin/flash-sales/{id}/schedule` |
 | `endCampaign` | marketing.api.ts | `POST /admin/flash-sales/{id}/end` |
 | `reviewFlashItem` | marketing.api.ts | `PATCH /admin/flash-sales/{campaignId}/items/{itemId}` |
-| `listBanners` | marketing.api.ts | `GET /admin/banners` |
-| `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` |
-| `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` |
-| `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` |
+| `listBanners` | marketing.api.ts | `GET /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` |
 | `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` |
 | `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` |
@@ -339,8 +339,8 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listLiveBanners` | banner.api.ts | `GET /public/banners` |
-| `trackBanner` | banner.api.ts | `POST /public/banners/{id}/events` |
+| `listLiveBanners` | banner.api.ts | `GET /public/banners?positions=&category_id=` — **đã nối** (`PUBLIC_REAL_API=banner`) |
+| `trackBanner` | banner.api.ts | `POST /public/banner-events` (gom lô 5 giây + `sendBeacon`) — **đã nối** |
 | `getCampaign` | campaign.api.ts | `GET /public/campaigns/{slug}` |
 | `listCampaignSlugs` | campaign.api.ts | `GET /public/campaigns/slugs` |
 | `listMyVouchers` | voucher.api.ts | `GET /me/vouchers` |

@@ -160,6 +160,7 @@
     "GNE-LOG-4221": "Bảng kê COD không cân.",
     "GNE-LOG-5021": "Hãng vận chuyển đang lỗi khi tạo vận đơn. Vui lòng thử lại.",
     "GNE-LOG-5022": "GHN đang lỗi khi đồng bộ kho lấy hàng. Vui lòng thử lại.",
+    "GNE-BNR-4091": "Không thể xóa banner đang hiển thị hoặc đã lên lịch — hãy tắt banner trước.",
     "GNE-BNR-4221": "Vị trí này đã đủ 8 banner đang hiển thị.",
     "GNE-BNR-4222": "Liên kết banner phải thuộc miền của sàn.",
     "GNE-NOT-4091": "Thông báo đã phát, không thể sửa.",

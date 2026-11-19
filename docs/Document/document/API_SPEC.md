@@ -1082,7 +1082,7 @@ Chỉ banner đang `LIVE` (bật, trong khung giờ), sắp theo `sort_order`. C
 ```json
 { "events": [ { "banner_id": 101, "type": "IMPRESSION" }, { "banner_id": 108, "type": "CLICK" } ] }
 ```
-`type` ∈ `IMPRESSION, CLICK`. `204`. Client gom 5 giây / khi rời trang (`navigator.sendBeacon`).
+`type` ∈ `IMPRESSION, CLICK`. `204`. Client gom 5 giây / khi rời trang (`navigator.sendBeacon` — server nhận cả `text/plain`). Tối đa **50 sự kiện / request** (vượt → `422 GNE-VAL-4220`), **60 request / phút / IP** (`429 GNE-RAT-4290`); sự kiện của banner không còn hiển thị bị bỏ qua (vẫn `204`). Số liệu cộng vào `impressions` / `clicks` sau tối đa 5 phút.
 
 ### 5.16 `GET /public/flash-sales/current?limit=6` — Flash Sale đang chạy
 UC-PRO-06 · **Màn hình:** khối Flash Sale trang chủ (đồng hồ "Kết thúc sau", lưới sản phẩm có thanh suất)
@@ -2588,11 +2588,11 @@ UC-ADM-12 · `MANAGE_VOUCHER` · **Màn hình:** lọc vị trí, tìm; bảng B
 ```json
 { "title": "Siêu sale 12.12", "image_object_key": "tmp/content-assets/...jpg", "mobile_image_object_key": null, "target_url": "/sieu-sale-12-12", "position": "CATEGORY_TOP", "category_id": 1, "sort_order": 1, "starts_at": "...", "ends_at": "...", "is_active": true }
 ```
-Sửa mà không đổi ảnh → bỏ `image_object_key`.
+Sửa mà không đổi ảnh → bỏ `image_object_key`; `mobile_image_object_key`: bỏ / `null` = giữ, `""` = bỏ ảnh mobile. `image_object_key` là khóa `tmp/…` do `POST /uploads/presigned-urls` (`purpose = BANNER_IMAGE`, quyền `MANAGE_VOUCHER`) cấp; server chuyển ảnh sang `content-assets/banner/{id}/…`, phản hồi trả URL. Lỗi thiếu trường: `422 GNE-VAL-4220` với `errors[].field` (`title`, `image_object_key`, `target_url`, `position`, `category_id`, `sort_order`, `starts_at`, `ends_at`). Danh sách phân trang số (`page` từ 1, `size` ≤ 60); `category` = `{id, name}`. Mọi thay đổi ghi `system_logs` `BANNER_CHANGED`.
 
 | Lỗi | Khi nào |
 |---|---|
-| `422 GNE-BNR-4221` | Vị trí đã đủ 8 banner đang hiển thị |
+| `422 GNE-BNR-4221` | Vị trí đã đủ 8 banner đang hiển thị — đếm banner **bật** khác cùng vị trí (cùng `category_id` với `CATEGORY_TOP`) có khung giờ **giao** với banner đang lưu và chưa kết thúc; bật lại (`PATCH`) cũng kiểm |
 | `422 GNE-BNR-4222` | `target_url` ngoài miền sàn |
 | `422 GNE-VAL-4220` | Thiếu ảnh / thời gian / `category_id` khi `CATEGORY_TOP` |
 
@@ -2988,7 +2988,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `KycDocumentType` | `ID_FRONT, ID_BACK, BUSINESS_LICENSE, BUSINESS_REGISTRATION, SELFIE, TAX_NOTICE` | 10.12, 11.3 |
 | `RiskLevel` | `LOW, MEDIUM, HIGH` | 11.3 |
 | `NotificationCategory` | `ORDER, PROMOTION, SYSTEM, CHAT` | 3.12 |
-| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED` | 11.10 |
+| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, BANNER_CHANGED` | 11.10 |
 
 ### 16.3 Ánh xạ trạng thái đơn → tab
 

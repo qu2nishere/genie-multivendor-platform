@@ -18,3 +18,12 @@ export interface BannerDto {
   ends_at: string;
   is_active: boolean;
 }
+
+/** Một banner đang hiển thị — `GET /public/banners?positions=…&category_id=…` trả map vị trí → mảng (API_SPEC 5.14). */
+export interface LiveBannerDto {
+  id: number;
+  title: string;
+  image_url: string;
+  mobile_image_url: string | null;
+  target_url: string;
+}

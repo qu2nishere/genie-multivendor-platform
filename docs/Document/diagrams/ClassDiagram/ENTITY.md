@@ -6042,13 +6042,77 @@ public class HomeBanner {
     public double ctr() {
         return this.impressionCount == 0 ? 0.0 : (double) this.clickCount / this.impressionCount;
     }
+
+    // ===== Bổ sung plan 2026-11-16 banner (B02.02; ENTITY 10.4, Phụ lục E) =====
+
+    /** Tạo banner mới — UC-ADM-12. {@code imageKey} / {@code mobileImageKey} là khóa đối tượng trong {@code content-assets}. */
+    public static HomeBanner create(String title, String imageKey, String mobileImageKey, String targetUrl,
+                                    BannerPosition position, Long categoryId, int sortOrder, OffsetDateTime startsAt,
+                                    OffsetDateTime endsAt, boolean active, long adminId) {
+        HomeBanner b = new HomeBanner();
+        b.impressionCount = 0L;
+        b.clickCount = 0L;
+        b.createdByAdminId = adminId;
+        b.isActive = active;
+        b.changeContent(title, targetUrl, position, categoryId, sortOrder);
+        b.changeSchedule(startsAt, endsAt);
+        b.changeImages(imageKey, mobileImageKey);
+        return b;
+    }
+
+    /** Trạng thái hiển thị (D3): tắt → OFF; chưa tới giờ → SCHEDULED; hết giờ → ENDED; còn lại → LIVE — UC-ADM-12 */
+    public BannerState state(OffsetDateTime now) {
+        if (!Boolean.TRUE.equals(this.isActive)) return BannerState.OFF;
+        if (now.isBefore(this.startsAt)) return BannerState.SCHEDULED;
+        if (!now.isBefore(this.endsAt)) return BannerState.ENDED;
+        return BannerState.LIVE;
+    }
+
+    /** Bật lại sau khi tắt khẩn cấp (service kiểm giới hạn 8 banner / vị trí trước) — UC-ADM-12 */
+    public void activate() {
+        this.isActive = true;
+    }
+
+    /** Đổi khung giờ hiển thị; {@code endsAt} phải sau {@code startsAt} — UC-ADM-12 */
+    public void changeSchedule(OffsetDateTime startsAt, OffsetDateTime endsAt) {
+        if (startsAt == null || endsAt == null || !endsAt.isAfter(startsAt))
+            throw new IllegalArgumentException("Thời điểm kết thúc phải sau thời điểm bắt đầu");
+        this.startsAt = startsAt;
+        this.endsAt = endsAt;
+    }
+
+    /** Đổi nội dung / vị trí; CATEGORY_TOP bắt buộc {@code categoryId}, vị trí khác bỏ {@code categoryId} — UC-ADM-12 */
+    public void changeContent(String title, String targetUrl, BannerPosition position, Long categoryId, int sortOrder) {
+        if (position == null) throw new IllegalArgumentException("Thiếu vị trí hiển thị");
+        if (position == BannerPosition.CATEGORY_TOP && categoryId == null)
+            throw new IllegalArgumentException("Banner đầu trang ngành hàng phải chọn danh mục");
+        if (sortOrder < 0) throw new IllegalArgumentException("Thứ tự không được âm");
+        this.title = title;
+        this.targetUrl = targetUrl;
+        this.position = position;
+        this.categoryId = position == BannerPosition.CATEGORY_TOP ? categoryId : null;
+        this.sortOrder = sortOrder;
+    }
+
+    /** Đổi ảnh (khóa đối tượng); ảnh desktop bắt buộc, mobile {@code null} = dùng ảnh desktop — UC-ADM-12 */
+    public void changeImages(String imageKey, String mobileImageKey) {
+        if (imageKey == null || imageKey.isBlank()) throw new IllegalArgumentException("Thiếu ảnh banner");
+        this.imageUrl = imageKey;
+        this.mobileImageUrl = mobileImageKey == null || mobileImageKey.isBlank() ? null : mobileImageKey;
+    }
+
+    /** Chỉ xóa được banner đã tắt hoặc đã hết giờ — UC-ADM-12 */
+    public boolean isDeletable(OffsetDateTime now) {
+        BannerState s = state(now);
+        return s == BannerState.OFF || s == BannerState.ENDED;
+    }
 }
 ```
 
 ### 💡 Kiến thức chuyên sâu
 - **Đọc nhanh:** trang chủ chịu tải lớn nhất, nên danh sách banner đang hiển thị theo `position` được cache Redis `banner:live:{position}` (TTL 60 giây, xóa khi Admin sửa). Truy vấn gốc dùng index `(position, is_active, starts_at, ends_at)`.
 - **Bộ đếm không ghi thẳng DB:** mỗi lượt xem trang chủ là một impression — ghi trực tiếp sẽ tạo hàng chục nghìn UPDATE/giây. `INCR` trên Redis rồi flush định kỳ qua `recordStats()`.
-- **Kiểm tra cấu hình ở service:** `endsAt > startsAt`; `position = CATEGORY_TOP` thì phải có `categoryId`; ảnh qua kiểm duyệt nội dung trước khi `isActive = true`.
+- **Kiểm tra cấu hình:** `endsAt > startsAt`, `position = CATEGORY_TOP` thì phải có `categoryId` — nằm trong entity (`changeSchedule`, `changeContent`); `imageUrl` / `mobileImageUrl` lưu **khóa đối tượng** (`banner/{id}/desktop-{uuid}.jpg`), API ghép URL. Service kiểm thêm: tối đa 8 banner bật có lịch giao nhau mỗi vị trí (`GNE-BNR-4221`), `targetUrl` chỉ đường dẫn trong sàn (`GNE-BNR-4222`), chỉ xóa banner `OFF` / `ENDED` (`isDeletable`, `GNE-BNR-4091`). Mọi thay đổi ghi `system_logs` `BANNER_CHANGED`.
 
 ---
 
@@ -6557,6 +6621,7 @@ enum NotificationDeliveryStatus { PENDING, SENT, DELIVERED, FAILED }            
 enum ReviewReportReason { SPAM, OFFENSIVE, FAKE_PURCHASE }                              // ← ReviewReport.reason
 enum PlatformNotificationTarget { ALL, CUSTOMER, VENDOR, SPECIFIC_USERS }               // ← PlatformNotification.target (mở rộng: SHIPPER)
 enum BannerPosition { HOME_TOP_CAROUSEL, HOME_TOP_SIDE, HOME_MIDDLE, CATEGORY_TOP, FLASH_SALE_TOP, POPUP } // ← HomeBanner.position
+// BannerState { LIVE, SCHEDULED, ENDED, OFF } — KHÔNG lưu CSDL, do HomeBanner.state(now) tính (API 11.16 — plan banner D3)
 enum AdminNotificationType { SYSTEM_ALERT, NEW_ORDER, USER_APPROVAL, WITHDRAW_REQUEST, ESCROW_DISCREPANCY } // ← AdminNotification.type (mở rộng: FRAUD_ALERT, KYC_BACKLOG, SLA_OVERDUE, COD_OVERDUE)
 
 // ==========================================
@@ -6570,11 +6635,12 @@ enum AuditAction {                                                              
     PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, PII_ANONYMIZED,
     ACCESS_DENIED, PRODUCT_MODERATED,                 // lần truy cập bị chặn quyền (màn Nhật ký), kết quả duyệt sản phẩm
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
-    ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED   // +8 giá trị của AUTH (V14 thay ck_system_logs_action_type — plan AUTH D20)
+    ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị của AUTH (V14 thay ck_system_logs_action_type — plan AUTH D20)
+    BANNER_CHANGED                                           // tạo / sửa / bật / tắt / xóa banner — details.op (V18, plan 2026-11-16 banner D1)
 }
 ```
 
-> **Nhóm hiển thị của `AuditAction`** (`AuditAction.category()` → enum chỉ có ở API `AuditCategory`, màn Nhật ký hệ thống UC-ADM-07 — API_SPEC 16.2): **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED`. Thêm giá trị `AuditAction` mới phải gán nhóm (switch không `default` — thiếu là lỗi biên dịch).
+> **Nhóm hiển thị của `AuditAction`** (`AuditAction.category()` → enum chỉ có ở API `AuditCategory`, màn Nhật ký hệ thống UC-ADM-07 — API_SPEC 16.2): **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, BANNER_CHANGED`. Thêm giá trị `AuditAction` mới phải gán nhóm (switch không `default` — thiếu là lỗi biên dịch).
 
 ---
 
@@ -7142,7 +7208,7 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
   5. `AdminNotification` («PK» id)
   6. `SystemLog` («PK» id, «FK» userId, «FK» referenceId)
 * **Các Enum liên kết (7 enum):** `AdminNotificationType`, `AuditAction`, `BannerPosition`, `NotificationChannel`, `NotificationDeliveryStatus`, `NotificationType`, `PlatformNotificationTarget`.
-* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Notification`: markSent(), markFailed(), markRead() · `PlatformNotification`: incrementRead() · `UserPlatformNotificationRead`: of() · `HomeBanner`: isLive(), deactivate(), recordStats(), ctr() · `AdminNotification`: markRead() · `SystemLog`: prePersist(), of()
+* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Notification`: markSent(), markFailed(), markRead() · `PlatformNotification`: incrementRead() · `UserPlatformNotificationRead`: of() · `HomeBanner`: isLive(), deactivate(), recordStats(), ctr(), create(), state(), activate(), changeSchedule(), changeContent(), changeImages(), isDeletable() · `AdminNotification`: markRead() · `SystemLog`: prePersist(), of()
 * **Ma trận quan hệ:**
   - `User` ◆ 1 — 0..* `Notification`
   - `PlatformNotification` ◆ 1 — 0..* `UserPlatformNotificationRead`

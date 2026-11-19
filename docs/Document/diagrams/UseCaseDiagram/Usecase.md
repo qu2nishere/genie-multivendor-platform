@@ -2746,7 +2746,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Liên kết đích chỉ trong miền của sàn (chống chuyển hướng mở); mọi thay đổi ghi `system_logs`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`admin/banner`: quản trị `/admin/banners`, công khai `/public/banners` cache 60 giây, bộ đếm `/public/banner-events` + job 5 phút, nhật ký `BANNER_CHANGED`) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=banner`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_banner_trang_chu.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [HomeBanner](../ClassDiagram/ENTITY.md#104-homebanner--banner-trang-chủ--chiến-dịch-tĩnh-cms), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 

@@ -21,6 +21,7 @@ export const ERROR_CODES = [
   'GNE-AUTH-4222',
   'GNE-AUTH-4223',
   'GNE-AUTH-4230',
+  'GNE-BNR-4091',
   'GNE-BNR-4221',
   'GNE-BNR-4222',
   'GNE-CAT-4041',
