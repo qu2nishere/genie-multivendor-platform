@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-19 — xong 64 / 66 (đã kiểm chạy thật tự động, sửa 3 lỗi); còn **C07.08** (chạy thật — người phụ trách tự làm) và **C08.05** (mở PR — chờ người phụ trách đồng ý) |
+| **Cập nhật gần nhất** | 2026-11-19 — xong 65 / 66; PR #86 vào `develop` (CI xanh); còn **C07.08** (người phụ trách tự chạy trên giao diện) |
 
 **Cách dùng**
 
@@ -66,8 +66,8 @@
 | C05 | Tương tự & gợi ý hôm nay | CAT-07 | 4 | 1 | 5 / 5 | — | `feature/catalog-product-detail` |
 | C06 | Trang shop | CAT-16 | 3 | 1 | 4 / 4 | — | `feature/catalog-shop-page` |
 | C07 | Nối giao diện `web/` + Deeplink | cả 7 UC, CAT-18 | 9 | 2 | 10 / 11 | — | `feature/web-catalog-real-api` |
-| C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 5 / 6 | — | PR cuối |
-| **Tổng** | | | **54** | **12** | **64 / 66** | | |
+| C08 | Hoàn thiện use case | cả 7 UC | 5 | 1 | 6 / 6 | — | PR cuối |
+| **Tổng** | | | **54** | **12** | **65 / 66** | | |
 
 ## C00 — Chuẩn bị
 
@@ -160,7 +160,7 @@
 - [x] **C08.03** Tài liệu nguồn (Usecase, API 5.x / 17, ENTITY 13.1, LLD 9 + 10)
 - [x] **C08.04** Tiến độ (checklist, xlsx, handoff, CLAUDE.md)
 - [x] **C08.C1** 🔖 COMMIT `docs(catalog): record search and product page use cases as implemented` · hash: `a8f1c15`
-- [ ] **C08.05** Mở PR vào `develop`
+- [x] **C08.05** Mở PR vào `develop` — PR #86
 
 ---
 
@@ -234,3 +234,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C07 nối web: sản phẩm / gợi ý / shop gọi API thật sau cờ `PUBLIC_REAL_API`, BuyBox theo SKU, deeplink `?v={variant_id}&src=share`, OG giá, ghi lượt xem; verify + Playwright 22/22 xanh. C07.08 chạy thật để người phụ trách làm | `ff452e1` `d8e824d` `cafbf78` |
 | 2026-11-18 | C08 hoàn thiện: `catalog-search.http`, `CatalogOpenApiIT`, Usecase / API_SPEC / LLD / handoff, checklist + Excel + CLAUDE.md. Còn C07.08 (chạy thật) và C08.05 (PR) | `a545337` `a8f1c15` |
 | 2026-11-19 | Kiểm lại 7 UC: chạy thật tự động hai phía (API 37/37, trang SSR 13/13), toàn bộ test backend 218 + web 328 xanh; sửa 3 lỗi phát hiện khi chạy thật (ngưỡng trigram + sort khi ít kết quả, gộp xu hướng có / không dấu, ảnh rỗng) | `c1fc0dd` `0e6277e` `cfe2b87` |
+| 2026-11-19 | Gộp `develop` mới nhất (migration tìm kiếm `V18` → `V21`, bỏ mã lỗi trùng, gộp `TestDataBuilder` / `shop.*`, tính lại checklist), một quy tắc slug sản phẩm cho tìm kiếm + wishlist; backend 417 test + web 333 test + Playwright 22/22 xanh; mở **PR #86** vào `develop` — CI backend / web / commitlint xanh | `e8ad436` `477dccf` · PR #86 |
