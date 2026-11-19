@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * <p><b>Thuật toán:</b> ba nguồn — danh mục (tối đa 2), shop (2), sản phẩm (5) — mỗi nguồn khớp trên tên đã bỏ dấu:
  * <ol>
  *   <li>khớp <i>tiền tố</i> ({@code LIKE 'tai%'}) xếp trước;</li>
- *   <li>sau đó khớp <i>trigram</i> {@code word_similarity ≥ 0,3} (chịu gõ sai, dùng index GIN trên tên bỏ dấu của sản phẩm);</li>
+ *   <li>sau đó khớp <i>trigram</i> {@code word_similarity ≥ 0,4} (chịu gõ sai, dùng index GIN trên tên bỏ dấu của sản phẩm);</li>
  *   <li>cùng nhóm thì độ giống cao hơn trước, sản phẩm bán chạy hơn trước.</li>
  * </ol>
  * Dưới {@value #MIN_LENGTH} ký tự → rỗng (client cũng chặn + debounce 250 ms).
@@ -54,7 +54,7 @@ public class SuggestionService {
             return Suggestions.empty();
         }
         jdbc.getJdbcTemplate().queryForList(
-                "SELECT set_config('pg_trgm.word_similarity_threshold', '0.3', true), set_config('statement_timeout', '1000', true)");
+                "SELECT set_config('pg_trgm.word_similarity_threshold', '0.4', true), set_config('statement_timeout', '1000', true)");
         MapSqlParameterSource p = new MapSqlParameterSource().addValue("q", q).addValue("prefix", q + "%");
 
         List<CategorySuggestion> categories = jdbc.query("""

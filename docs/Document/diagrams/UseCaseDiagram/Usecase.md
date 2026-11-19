@@ -569,7 +569,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Người dùng gõ từ khóa vào thanh tìm kiếm (ví dụ: "ao thun nam") và nhấn Enter.
   2. Backend chuẩn hóa từ khóa (`unaccent`, chữ thường) và truy vấn PostgreSQL: `WHERE search_vector @@ plainto_tsquery('simple', unaccent(:q))`, sắp xếp theo `ts_rank`.
-  3. Nếu kết quả ít hơn 5 sản phẩm: chạy thêm truy vấn gần đúng bằng `pg_trgm` (`similarity(name, :q) > 0.3`) để bù lỗi gõ sai.
+  3. Nếu kết quả ít hơn 5 sản phẩm: chạy thêm truy vấn gần đúng bằng `pg_trgm` (`word_similarity ≥ 0,4` trên tên bỏ dấu; tài liệu cũ ghi 0,3 — đo trên dữ liệu thật 0,3 khớp nhầm) để bù lỗi gõ sai.
   4. Backend lấy kèm giá thấp nhất giữa các SKU, ảnh chính, `sold`, `rating` (cột tổng hợp) và trả về client.
   5. Client hiển thị lưới sản phẩm; người dùng có thể tiếp tục lọc / sắp xếp (`UC-CAT-05`).
 - **Luồng thay thế / Ngoại lệ:**

@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
  *   <li>Tầng 1 — full-text: {@code search_vector @@ to_tsquery('simple', 'tai & nghe:*')} (từ cuối khớp tiền tố),
  *       xếp hạng {@code ts_rank_cd} trên vector có trọng số (tên A, thương hiệu B, mô tả D);</li>
  *   <li>Tầng 2 — chỉ khi tầng 1 có ít hơn {@value #FALLBACK_THRESHOLD} kết quả: bù gõ sai bằng trigram
- *       {@code word_similarity ≥ 0,3} trên tên bỏ dấu; kết quả tầng 2 nối sau tầng 1.</li>
+ *       {@code word_similarity ≥ 0,4} trên tên bỏ dấu; kết quả tầng 2 nối sau tầng 1. Ngưỡng 0,4 (UC ghi 0,3) đo trên dữ liệu
+ *       thật 2026-11-19: lỗi gõ thật đạt ≥ 0,42 ("tai nge bluetoth" ↔ "Tai nghe Bluetooth…" 0,64), còn 0,30 là khớp nhầm
+ *       ("ao thun" ↔ "…thể thao…").</li>
  * </ol>
  * Ở chế độ bù gõ sai, facet đếm trên chính tập kết quả (không còn "disjunctive") — đánh đổi để giữ p95 &lt; 300 ms.
  * Mỗi request chạy trong transaction chỉ-đọc có {@code statement_timeout = 2s} (truy vấn chậm → lỗi thay vì treo pool).
@@ -32,7 +34,7 @@ public class ProductSearchService {
 
     static final int FALLBACK_THRESHOLD = 5;
     static final int FUZZY_LIMIT = 100;
-    static final String SIMILARITY_THRESHOLD = "0.3";
+    static final String SIMILARITY_THRESHOLD = "0.4";
 
     private final NamedParameterJdbcTemplate jdbc;
     private final ProductCardAssembler cards;
@@ -81,7 +83,14 @@ public class ProductSearchService {
         Where fuzzy = ProductSearchSqlBuilder.where(c, TextMode.FUZZY_ONLY, Exclude.NONE, now, voucherVendorIds);
         MapSqlParameterSource p = fuzzy.params().addValue("limit", FUZZY_LIMIT);
         all.addAll(jdbc.queryForList(ProductSearchSqlBuilder.selectFuzzyIds(fuzzy), p, Long.class));
-        List<Long> page = offset >= all.size() ? List.of() : all.subList(offset, Math.min(all.size(), offset + c.size()));
+        List<Long> page;
+        if (c.effectiveSort() == ProductSort.RELEVANCE || all.isEmpty()) {
+            page = offset >= all.size() ? List.of() : all.subList(offset, Math.min(all.size(), offset + c.size()));
+        } else {
+            // Người dùng chọn Giá / Mới nhất / Bán chạy → sắp lại đúng tập kết quả theo tiêu chí đó (không giữ thứ tự độ liên quan)
+            Where inResult = ProductSearchSqlBuilder.where(c, TextMode.RESULT_IDS, Exclude.NONE, now, voucherVendorIds, all);
+            page = ids(inResult, c.effectiveSort(), c.size(), offset);
+        }
         boolean usedFuzzy = all.size() > fulltextTotal;
         // Facet ở chế độ bù gõ sai đếm trên đúng tập kết quả (≤ 105 ID) — không quét trigram lại cho từng facet
         SearchFacets f = !c.includeFacets() ? null : usedFuzzy

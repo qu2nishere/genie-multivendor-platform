@@ -908,7 +908,7 @@ UC-CAT-02, UC-CAT-05, UC-CAT-16 · **Màn hình:** Kết quả tìm kiếm (toà
 - `facets.attribute` = thuộc tính `is_filterable` đầu tiên (theo `display_order`) của danh mục đang chọn; `facets.has_shop_voucher_supported = false` khi chưa có voucher shop (bộ lọc `has_shop_voucher` bị bỏ qua).
 - Facet đếm theo kiểu *disjunctive* (facet thương hiệu không áp chính bộ lọc thương hiệu); khi từ khóa phải bù gõ sai (tầng trigram) thì facet đếm trên đúng tập kết quả.
 - `original_price` = `base_price` khi lớn hơn giá thấp nhất của SKU, ngược lại `null`; `discount_min` lọc theo công thức này.
-- Tìm theo chữ: full-text tiền tố (`tsvector` có trọng số + `unaccent`), dưới 5 kết quả thì bù bằng trigram `word_similarity ≥ 0,3`. Trang tối đa 100, `size` tối đa 60.
+- Tìm theo chữ: full-text tiền tố (`tsvector` có trọng số + `unaccent`), dưới 5 kết quả thì bù bằng trigram `word_similarity ≥ 0,4` (ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"); `sort` khác `RELEVANCE` vẫn áp lên tập kết quả này. "Xu hướng" (5.4b) gộp biến thể chỉ khác dấu, hiển thị bản có dấu. Trang tối đa 100, `size` tối đa 60.
 
 ### 5.4 `GET /public/search/suggestions?q=tai` — Gợi ý khi gõ
 UC-CAT-04 · **Màn hình:** dropdown ô tìm kiếm header (từ 2 ký tự, debounce 250 ms)

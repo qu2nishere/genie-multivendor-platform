@@ -46,6 +46,35 @@ class ProductSearchIT extends CatalogITSupport {
         assertThat((Integer) read(r, "$.pagination.total_items")).isEqualTo(1);
     }
 
+    /** Hồi quy 2026-11-19 (chạy thật): ngưỡng trigram 0,3 làm "áo thun" khớp nhầm "…thể thao…" (độ giống 0,30). */
+    @Test
+    void typoFallbackDoesNotPullUnrelatedNames() throws Exception {
+        var shop = data.shop().create();
+        long nam = data.product(shop).name("Áo thun nam cotton 100% basic").sku(149000, 5).create();
+        long nu = data.product(shop).name("Áo thun nữ form rộng in hình").sku(179000, 5).create();
+        long sport = data.product(shop).name("Tai nghe Bluetooth thể thao chống nước").sku(299000, 5).create();
+
+        assertThat(ids(call(URL, "q", "áo thun", "shop_id", String.valueOf(shop.shopId()))))
+                .containsExactlyInAnyOrder(nam, nu).doesNotContain(sport);
+    }
+
+    /** Hồi quy 2026-11-19 (chạy thật): dưới 5 kết quả (nhánh bù gõ sai) thì sort=PRICE_* bị bỏ qua. */
+    @Test
+    void sortIsHonouredWhenFewFullTextMatches() throws Exception {
+        var shop = data.shop().create();
+        String shopId = String.valueOf(shop.shopId());
+        long pricey = data.product(shop).name("Tai nghe chống ồn cao cấp").sold(9000).sku(389000, 5).create();
+        long cheap = data.product(shop).name("Tai nghe thể thao").sold(10).sku(299000, 5).create();
+        long mid = data.product(shop).name("Tai nghe có mic").sold(500).sku(350000, 5).create();
+
+        assertThat(ids(call(URL, "q", "tai nghe", "shop_id", shopId, "sort", "PRICE_ASC"))).containsExactly(cheap, mid, pricey);
+        assertThat(ids(call(URL, "q", "tai nghe", "shop_id", shopId, "sort", "PRICE_DESC"))).containsExactly(pricey, mid, cheap);
+        assertThat(ids(call(URL, "q", "tai nghe", "shop_id", shopId, "sort", "BEST_SELLING"))).containsExactly(pricey, mid, cheap);
+        MvcResult page2 = call(URL, "q", "tai nghe", "shop_id", shopId, "sort", "PRICE_ASC", "size", "2", "page", "2");
+        assertThat(ids(page2)).containsExactly(pricey);
+        assertThat((Integer) read(page2, "$.pagination.total_items")).isEqualTo(3);
+    }
+
     @Test
     void nameMatchRanksAboveDescriptionMatch() throws Exception {
         var shop = data.shop().create();
