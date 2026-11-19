@@ -701,14 +701,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Thêm/Xóa sản phẩm trong bảng `user_wishlists`.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm biểu tượng Trái tim trên thẻ sản phẩm hoặc trang PDP.
-  2. Client gửi request `POST /api/v1/customer/wishlist` kèm `product_id`.
-  3. Hệ thống kiểm tra: nếu chưa có thì thêm bản ghi vào `user_wishlists`; nếu đã có thì xóa khỏi wishlist (Toggle pattern).
+  2. Client gửi `PUT /api/v1/me/wishlist/{product_id}` để thích, `DELETE /api/v1/me/wishlist/{product_id}` để bỏ thích (API_SPEC 3.10 — cả hai **idempotent**, không dùng kiểu bật / tắt để bấm đúp không làm lệch trạng thái); tô tim theo `GET /api/v1/me/wishlist/product-ids`.
+  3. Hệ thống chỉ cho thích sản phẩm đang bán (`PUBLISHED`, ngược lại `404 GNE-CAT-4042`); thích lại không tạo dòng thứ hai (`INSERT … ON CONFLICT DO NOTHING`), bỏ thứ không có vẫn thành công.
   5. Người dùng có thể vào mục "Danh sách yêu thích" để xem toàn bộ và thêm nhanh vào giỏ hàng.
   6. Nút tim trên trang sản phẩm / thẻ sản phẩm hiển thị trạng thái đầy (đã thích) / rỗng; bấm lần 2 để bỏ thích.
   7. Mục Tài khoản → "Sản phẩm yêu thích": danh sách có ảnh, giá hiện tại, nhãn hết hàng; thao tác bỏ thích, thêm vào giỏ.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`catalog/wishlist`: thích / bỏ thích idempotent, tập ID, danh sách có giá / SKU mặc định / còn mua được) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=wishlist`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_san_pham_yeu_thich.md`).
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [UserWishlist](../ClassDiagram/ENTITY.md#25-userwishlist--danh-sách-sản-phẩm-yêu-thích), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu).
 
@@ -1444,7 +1444,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
      - Tạo bản ghi mới trong bảng `vendor_profiles`: Gán `userId = currentUserId`, `shopName`, `businessType`, `categoryId`, `kycStatus = 'NOT_SUBMITTED'`, `commissionRate = NULL` (chưa có thỏa thuận riêng → áp tỷ lệ ngành hàng, không có thì 5% mặc định). Các trường kho lấy hàng `pickup*` và `ghnShopId` để **NULL** — chỉ có sau khi đăng ký GHN ở `UC-VND-05` (shop chưa được đăng bán khi `isPickupConfigured() = false`).
      - Cập nhật vai trò người dùng: `users.role = 'VENDOR'`.
   5. Commit transaction. Hệ thống cấp lại JWT Access Token mang `ROLE_VENDOR` (kế thừa `ROLE_CUSTOMER`) và chuyển hướng người dùng vào giao diện Cài đặt hồ sơ định danh KYC (`UC-VND-02`).
-  6. Form mở shop: tên shop, họ tên chủ shop, SĐT, email, **ngành hàng**, **loại hình** (Cá nhân / Hộ kinh doanh / Doanh nghiệp), đồng ý **Điều khoản Người bán** và **Chính sách hoa hồng**; xác thực **OTP email** (`/vendor/send-otp`) trước khi tạo hồ sơ.
+  6. Form mở shop: tên shop, họ tên chủ shop, SĐT, email, **ngành hàng**, **loại hình** (Cá nhân / Hộ kinh doanh / Doanh nghiệp), đồng ý **Điều khoản Người bán** và **Chính sách hoa hồng**; xác thực **OTP email** (`POST /me/shop-registrations` → `…/{challenge_id}/confirm` — API_SPEC 9) trước khi tạo hồ sơ.
 - **Luồng thay thế / Ngoại lệ:**
   - *2a. Tên shop đã tồn tại hoặc vi phạm thuần phong mỹ tục:* Hệ thống báo lỗi và gợi ý đổi tên gian hàng khác.
 - **Luồng thay thế — Chuyển chế độ Mua / Bán:**
@@ -1455,7 +1455,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** `<<include>>` Gửi mã OTP xác thực — tác nhân phụ: `ACT-EML` Email Service.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** 1 tài khoản `users` chỉ được phép sở hữu tối đa 1 gian hàng (`userId` có ràng buộc UNIQUE trên bảng `vendor_profiles`). Chủ shop không được mua sản phẩm của chính shop mình: giỏ hàng và checkout từ chối với `GNE-ORD-4094` (UC-ORD-01, UC-ORD-07).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`vendor/shop`: `POST /me/shop-registrations` + OTP email của shop, `…/confirm` tạo `vendor_profiles` NOT_SUBMITTED + nâng VENDOR giữ phiên, `GET /seller/me`, cổng KYC `/seller/**`) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=vendor`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md`).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập).
 
@@ -1491,7 +1491,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - **Cổng KYC:** khi chưa `VERIFIED`, Seller Center khóa mọi mục trừ Hồ sơ KYC và Cài đặt (thông báo "Hoàn tất xác minh KYC để sử dụng tính năng này").
   - Ảnh chân dung chụp trực tiếp từ camera hoặc tải lên; tệp được mã hóa trước khi lưu ("Đã tải lên (mã hóa)").
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`/seller/kyc`, lưu nháp, nộp hồ sơ; giấy tờ mã hóa AES-256-GCM trong `kyc-dossiers`, không trả URL ảnh cho người bán; `KYC_SUBMITTED` ghi thời điểm đồng ý sinh trắc) + test xanh; web nối API thật; còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md`).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop) (`idFrontUrl`, `idBackUrl`, `selfieUrl`, `licenseUrl`, `kycStatus`), [AdminNotification](../ClassDiagram/ENTITY.md#105-adminnotification--thông-báo-nội-bộ-cho-quản-trị-viên).
 
@@ -1527,7 +1527,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - **Giới hạn:** thẻ giả in QR/MRZ nhất quán với chính khuôn mặt kẻ gian vẫn có thể qua Tầng 0–1; chỉ đọc chữ ký số chip NFC hoặc xác thực C06 / VNeID chặn được triệt để (ngoài phạm vi đồ án). Rủi ro còn lại được khống chế bằng Tầng 2.
   - Embedding khuôn mặt là dữ liệu sinh trắc học: chỉ lưu vector (không lưu ảnh), xóa cùng hồ sơ KYC theo thời hạn lưu trữ, chỉ chạy khi người bán đã tích đồng ý ở `UC-VND-02`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai — xử lý phía máy chủ (cron / webhook / AI), chưa có backend; giao diện chỉ hiển thị kết quả trên lớp mock.
+  - *Hiện trạng:* Đang triển khai — backend (gửi hồ sơ, chấm điểm tín hiệu, duyệt tay khi AI lỗi / quá 30 giây) và **AI Worker** (`server-python/app/kyc`: QR, MRZ + số kiểm tra, luật số CCCD / hạn thẻ / QR↔MRZ, YuNet + SFace, liveness thụ động; chỉ trả tín hiệu, không kết luận) + test xanh; đã chạy hai phía với thẻ mẫu (lệch QR/MRZ → REJECTED, selfie không mặt → MANUAL_REVIEW, worker tắt → MANUAL_REVIEW). Chưa có: ca VERIFIED qua mặt thật (chưa có ảnh mặt được phép dùng), trùng khuôn mặt (Y-D4), chạy thật trên giao diện.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [KycResult](../ClassDiagram/ENTITY.md#16-kycresult--kết-quả-ocrai-thẩm-định-giấy-tờ), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop).
 
@@ -1555,7 +1555,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Cam kết xử lý trong **24 giờ làm việc** kể từ khi nộp (thống nhất với thông báo ở màn KYC của người bán).
 - **Quan hệ Use Case:** `<<extend>>` Thẩm định KYC tự động qua AI (QR, MRZ & Face Match) (`UC-VND-03`) tại điểm mở rộng «Kết luận thẩm định» khi {30 ≤ riskScore < 70 hoặc hồ sơ bị lấy mẫu 5%}.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`/admin/kyc-submissions…` 6 endpoint, quyền REVIEW_KYC, hoa hồng riêng cần thêm UPDATE_COMMISSION, nhãn Chính hãng, ảnh xem tạm 5 phút + `KYC_DOCUMENT_VIEWED`, job hết hạn bổ sung 7 ngày) + test xanh; web nối API thật; còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md`).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [KycResult](../ClassDiagram/ENTITY.md#16-kycresult--kết-quả-ocrai-thẩm-định-giấy-tờ).
 
@@ -1581,7 +1581,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Địa chỉ kho lưu trực tiếp ở `vendor_profiles.pickup*` (bản đầy đủ tách bảng `vendor_warehouses` cho đa kho); đổi kho phải gọi lại API GHN cập nhật cửa hàng.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Chưa triển khai backend — chờ danh mục hành chính GHN (plan AUTH A12); cột `pickup_phone` + `VendorProfile.updatePickup` đã có (V20). Giao diện chạy mock (cờ `pickup`).
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop) (`pickupDistrictId`, `pickupWardCode`, tên tỉnh/huyện/xã, `ghnShopId` — NULLABLE tới bước này).
 
@@ -1630,7 +1630,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Xóa / đổi tài khoản nhận tiền:* chỉ khi không có lệnh rút `PENDING`; xác thực OTP email; tài khoản mới phải xác minh lại chính chủ (tên chủ tài khoản trùng họ tên trên CCCD).
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`/public/banks`, `/seller/payout-account/verification`, `PUT` / `DELETE` OTP bước 2, so tên chủ tài khoản với họ tên KYC, tra tên ngân hàng giả lập) + test xanh; web nối API thật; còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md`).
   - *Kế hoạch:* Sprint 4 (tuần 7–8) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop) (`payoutBankName`, `payoutBankAccountNumber`, `payoutBankAccountName`, `payoutAccountVerifiedAt`).
 
@@ -1732,7 +1732,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Ngưỡng freeship của shop khác mã Freeship của sàn: shop chịu (ghi `EscrowLedger.shopShippingSubsidy`), không trừ vào voucher sàn.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`GET` / `PATCH /seller/settings`: đổi tên 1 lần / 30 ngày, logo / bìa, hãng vận chuyển qua module shipping, tự trả lời, Pre-order) + test xanh; web nối API thật; còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md`).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -2061,7 +2061,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Đã điểm danh hôm nay:* nút chuyển "Đã điểm danh", đếm ngược tới 00:00.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`promotion/coin`: điểm danh, số dư / sắp hết hạn / lịch sử, đổi quà, cron hết hạn lô V16) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_diem_danh_diem_genie.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [DailyCheckin](../ClassDiagram/ENTITY.md#49-dailycheckin--điểm-danh-hằng-ngày), [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [CoinTransaction](../ClassDiagram/ENTITY.md#48-cointransaction--lịch-sử-biến-động-điểm).
 
@@ -2075,7 +2075,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Khách đã đăng nhập.
 - **Hậu điều kiện:** Hiển thị số dư và lịch sử; khi đổi quà: trừ Điểm và thêm voucher vào Kho voucher.
 - **Luồng sự kiện chính:**
-  1. Khách mở Tài khoản → Điểm Genie; client gọi `GET /api/v1/customer/coins` và `/coins/history`.
+  1. Khách mở Tài khoản → Điểm Genie; client gọi `GET /api/v1/me/coins` và `GET /api/v1/me/coins/transactions` (API_SPEC 3.13); điểm danh `POST /api/v1/me/coins/check-ins`, đổi quà `POST /api/v1/me/coins/redemptions`, danh mục quà `GET /api/v1/public/coin-rewards`.
   2. Hiển thị: số dư (1 Điểm = 1₫ khi thanh toán), số Điểm hết hạn trong 30 ngày tới, lịch sử: điểm danh (+100), hoàn Điểm đơn (+250), đánh giá có ảnh (+50), dùng giảm giá đơn (−500), hoàn Điểm khi hủy đơn.
   3. Kiểm tra toàn vẹn số dư (`UserCoin.verifyHash()`); lệch → khóa tiêu Điểm và cảnh báo Admin.
   4. **Đổi quà:** khách chọn voucher sàn có giá đổi bằng Điểm (danh sách do sàn cấu hình) → trừ Điểm theo lô sắp hết hạn trước (FEFO), ghi `VOUCHER_REDEEM`, thêm `user_vouchers`.
@@ -2085,7 +2085,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Điểm không quy đổi thành tiền mặt / rút về ngân hàng. Lô Điểm hết hạn được Cron ghi dòng âm để `Σ amount = balance`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`promotion/coin`: điểm danh, số dư / sắp hết hạn / lịch sử, đổi quà, cron hết hạn lô V16) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=coins`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_diem_danh_diem_genie.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [CoinTransaction](../ClassDiagram/ENTITY.md#48-cointransaction--lịch-sử-biến-động-điểm), [UserVoucher](../ClassDiagram/ENTITY.md#43-uservoucher--ví-voucher-của-người-dùng).
 
@@ -2268,7 +2268,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Khách đã đăng nhập; không theo dõi chính shop của mình.
 - **Hậu điều kiện:** Tạo / xóa `shop_follows`; cập nhật `VendorProfile.followerCount`.
 - **Luồng sự kiện chính:**
-  1. Khách bấm "Theo dõi" → `POST /api/v1/shops/{vendorId}/follow`.
+  1. Khách bấm "Theo dõi" → `PUT /api/v1/me/following/{shop_id}` (bỏ theo dõi: `DELETE`; cả hai idempotent — API_SPEC 3.11; `shop_id` = `vendor_profiles.id`); tô nút theo `GET /api/v1/me/following/shop-ids`, danh sách `GET /api/v1/me/following`.
   2. Chưa theo dõi: tạo `ShopFollow.of()` (UNIQUE khách + shop), tăng `followerCount`; nút chuyển "Đang theo dõi".
   3. Đã theo dõi: hỏi "Hủy theo dõi Shop?" → xóa dòng, giảm `followerCount`.
   4. Mục Tài khoản → Shop đang theo dõi: danh sách shop (ảnh, nhãn Chính hãng, số người theo dõi), nút "Vào shop".
@@ -2278,7 +2278,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Bấm liên tục:* chống trùng nhờ UNIQUE (không đếm sai `followerCount`).
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`social/follow` + cổng `ShopFollowDirectory` do `vendor` cài: theo dõi / hủy idempotent, `follower_count` chỉ đổi khi dòng thật sự chèn / xóa, danh sách) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=follow`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_theo_doi_gian_hang.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [ShopFollow](../ClassDiagram/ENTITY.md#92-shopfollow--theo-dõi-shop), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân).
 
@@ -2706,17 +2706,17 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Admin, hoặc nhân viên được cấp `VIEW_AUDIT_LOG`.
 - **Hậu điều kiện:** Hiển thị nhật ký có phân trang; xuất tệp khi được yêu cầu.
 - **Luồng sự kiện chính:**
-  1. Mở Nhật ký hệ thống → `GET /api/v1/admin/system-logs?from=&to=&type=&q=`.
+  1. Mở Nhật ký hệ thống → `GET /api/v1/admin/audit-logs?from=&to=&category=&q=&cursor=&limit=` (API_SPEC 11.10; mặc định 7 ngày, tối đa 90 ngày / lần).
   2. Lọc theo khoảng thời gian (Hôm nay / 7 ngày / 30 ngày / tùy chọn), loại hành động (Đăng nhập, KYC, Tài chính, Kiểm duyệt, Bảo mật, Cấu hình), từ khóa (user, IP, mã tham chiếu).
   3. Hiển thị: thời gian, user / vai trò, hành động, chi tiết, kết quả (`SUCCESS` / `FAILED` / `DENIED`); dòng tóm tắt "N lần truy cập bị từ chối".
-  4. Phân trang keyset theo (`createdAt`, `id`); "Xuất nhật ký" tạo CSV của bộ lọc hiện tại.
+  4. Phân trang keyset theo (`createdAt`, `id`); "Xuất nhật ký" → `GET /api/v1/admin/audit-logs/export` tạo CSV của bộ lọc hiện tại (UTF-8 có BOM, tối đa 50.000 dòng).
 - **Luồng thay thế / Ngoại lệ:**
   - *Không có bản ghi khớp:* "Không có bản ghi nào khớp bộ lọc".
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - `system_logs` chỉ ghi thêm — cấm `UPDATE` / `DELETE`; lưu tối thiểu 12 tháng.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`admin/audit`: tra cứu + xuất CSV, quyền `VIEW_AUDIT_LOG`) + test xanh, web nối API thật (cờ `PUBLIC_REAL_API=audit`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_nhat_ky_kiem_toan.md`).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
@@ -2746,7 +2746,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Liên kết đích chỉ trong miền của sàn (chống chuyển hướng mở); mọi thay đổi ghi `system_logs`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`admin/banner`: quản trị `/admin/banners`, công khai `/public/banners` cache 60 giây, bộ đếm `/public/banner-events` + job 5 phút, nhật ký `BANNER_CHANGED`) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=banner`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_banner_trang_chu.md`).
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [HomeBanner](../ClassDiagram/ENTITY.md#104-homebanner--banner-trang-chủ--chiến-dịch-tĩnh-cms), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 

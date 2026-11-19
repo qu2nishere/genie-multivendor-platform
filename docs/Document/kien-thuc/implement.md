@@ -158,7 +158,8 @@ class NotifyVendorOnOrderPaid {
 | `V14__auth_additions.sql` | Bổ sung của AUTH (2026-11-14, ADR 0007): `refresh_tokens.family_id` (+ sequence) + `last_used_at`, `users.deletion_requested_at`, `uk_users_email_lower`, 5 index, `CHECK` `system_logs.action_type` +8 giá trị |
 
 > Các cột / bảng của TLCN v1.3 (`cod_remittances`, `addresses.label`, `vendor_profiles.is_favorite`, `categories.description`, `flash_sale_items.status`, `product_reviews.is_anonymous`, `platform_notifications.send_at` + `recipient_user_ids_json`, `messages.order_id`) **đã nằm sẵn trong `V1…V12`** vì migration được viết tay 1-1 từ ENTITY.md v1.3 — kế hoạch `V14__api_sync_v13.sql` cũ không còn. Thay đổi schema từ nay chỉ bằng `V15+` (ENTITY.md sửa trước).
-| `R__seed_demo.sql` | *(chỉ chạy khi placeholder `seed_demo = true` — profile `local` / `test`; hiện có: `mai.tran@gmail.com` / `Genie@123` + 2 địa chỉ, Admin, 3 nhân viên — phần còn lại bổ sung theo từng phân hệ)* 1 Admin, 3 nhân viên (MODERATOR, CS_SPECIALIST, FINANCE_OFFICER kèm `staff_permissions` mặc định), 5 shop VERIFIED (có `vendor_shipping_config`), 30 danh mục + thuộc tính, 20 thương hiệu, ~200 sản phẩm, 6 voucher (shop / sàn / freeship), 1 Flash Sale, 3 banner, 20 khách có Điểm |
+| `R__seed_demo.sql` | *(chỉ chạy khi `GENIE_SEED_DEMO=true` — profile `local`)* `mai.tran@gmail.com` / `Genie@123` + địa chỉ, 1 Admin, 3 nhân viên (MODERATOR, CS_SPECIALIST, FINANCE_OFFICER kèm `staff_permissions` mặc định) |
+| `db/seed/R__seed_demo_10…90_*.sql` | *(cùng công tắc, Flyway location `db/seed` — plan `2026-11-16/db`)* 23 danh mục + thuộc tính, 10 thương hiệu, 6 shop VERIFIED (ví, `vendor_shipping_config`, kho GHN; TechZone thuộc `mai.tran`), 20 sản phẩm mock + ~180 sản phẩm sinh tự động, 8 voucher (sàn / shop / freeship + 3 quà đổi Điểm), 19 banner đủ vị trí / trạng thái, Điểm + điểm danh + yêu thích + theo dõi của `mai.tran`, 5 hồ sơ hàng chờ KYC. Chưa có: Flash Sale, đơn hàng, đánh giá (seed cùng plan của phân hệ đó) |
 
 ### 3.2 Tìm kiếm full-text (trong `V2__catalog.sql`)
 
@@ -555,6 +556,8 @@ Không UPDATE / DELETE bảng `financial_ledger` (thu hồi quyền ở cấp CS
 ## 🪪 PHẦN 8: GIAN HÀNG & KYC THEO TẦNG (AI WORKER)
 
 ### 8.1 Hợp đồng Backend ↔ AI Worker
+
+> **Đã thay (2026-11-18, ADR 0011 mục 5):** hợp đồng **snake_case**, AI Worker **không** tính `riskScore` / kết luận — chỉ trả `checks{…}`, `signals[{code}]`, `extracted{…}`, `face_match_score`, `liveness_score`, `errors`, `model`; backend quy đổi điểm theo `genie.kyc.risk.points`, kiểm trùng CCCD, lấy mẫu 5% và chốt. Phần mô tả camelCase bên dưới chỉ còn giá trị lịch sử.
 
 ```http
 POST http://ai-worker:8000/kyc/verify          X-Internal-Token: …

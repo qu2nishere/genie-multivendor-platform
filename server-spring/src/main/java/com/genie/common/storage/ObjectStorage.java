@@ -21,6 +21,12 @@ public interface ObjectStorage {
     /** Thông tin tệp đã tải lên; rỗng nếu chưa có / đã bị dọn. */
     Optional<StoredObject> stat(String bucket, String objectKey);
 
+    /**
+     * Đọc toàn bộ nội dung tệp vào bộ nhớ (chỉ dùng cho tệp nhỏ có giới hạn dung lượng — vd. giấy tờ KYC ≤ 10 MB cần mã hóa);
+     * rỗng nếu không có tệp.
+     */
+    Optional<byte[]> get(String bucket, String objectKey);
+
     /** Ghi tệp do chính backend tạo / tải về (vd. ảnh đại diện Google). */
     void put(String bucket, String objectKey, byte[] data, String contentType);
 

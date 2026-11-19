@@ -87,6 +87,8 @@ function Detail({
   const decide = useKycDecision();
   const [rate, setRate] = useState(d.shopCommissionRate?.toString() ?? '');
   useEffect(() => setRate(d.shopCommissionRate?.toString() ?? ''), [d.id, d.shopCommissionRate]);
+  const [mall, setMall] = useState(d.isMall);
+  useEffect(() => setMall(d.isMall), [d.id, d.isMall]);
   const parsed = parseShopRate(rate);
   const actions = kycActions(d.status);
   const docLabel = (doc: KycDocument) => t(`admin-kyc.docs.${doc.type}`);
@@ -96,7 +98,7 @@ function Detail({
     if (kind === 'approve' && !parsed.ok) return;
     decide.mutate(
       kind === 'approve'
-        ? { kind, id: d.id, shopCommissionRate: parsed.ok ? parsed.value : null }
+        ? { kind, id: d.id, shopCommissionRate: parsed.ok ? parsed.value : null, isMall: mall }
         : { kind, id: d.id },
       {
         onSuccess: () => toast.success(t(`admin-kyc.${kind}.done`, { shop: d.shop.name })),
@@ -289,6 +291,15 @@ function Detail({
                 />
                 %
               </span>
+            </label>
+            <label className="flex items-center justify-end gap-2 mt-2 text-sm text-body cursor-pointer">
+              <input
+                type="checkbox"
+                checked={mall}
+                onChange={(e) => setMall(e.target.checked)}
+                disabled={!actions.includes('approve')}
+              />
+              {t('admin-kyc.declared.mall')}
             </label>
             {!parsed.ok && (
               <p role="alert" className="m-0 mt-1 text-xs text-red-600 text-right">

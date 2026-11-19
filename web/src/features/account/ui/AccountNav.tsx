@@ -39,7 +39,7 @@ function Nav({ active }: AccountNavProps) {
   const [logout, setLogout] = useState(false);
   const badge = (id: AccountSection): number => {
     if (id === 'notifications') return notifs.unread;
-    if (id === 'following') return follows.data?.length ?? 0;
+    if (id === 'following') return follows.data?.total ?? 0;
     if (id === 'vouchers')
       return (vouchers.data ?? []).filter((v) => v.saved && v.status === 'active').length;
     return 0;

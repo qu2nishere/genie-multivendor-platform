@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/admin-home-banner` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 57) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (57 / 57) |
 
 **Cách dùng**
 
@@ -23,110 +23,110 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | Hành động kiểm toán cho banner chưa có trong `AuditAction` | ☐ | |
-| D2 | "Tối đa 8 banner đang hiển thị mỗi vị trí" đếm thế nào với banner hẹn giờ | ☐ | |
-| D3 | `state` (API: `LIVE, SCHEDULED, ENDED, OFF`) | ☐ | |
-| D4 | Khóa đối tượng ảnh | ☐ | |
-| D5 | Khóa Redis | ☐ | |
-| D6 | `POST /public/banner-events` công khai dễ bị thổi số | ☐ | |
-| D7 | Ô chọn đích "Cửa hàng" cần `GET /admin/shops?q&limit=20` (API 11.16) — thuộc module `vendor` chưa có | ☐ | |
-| D8 | `target_audience_json` | ☐ | |
-| D9 | Trang chiến dịch `/campaign/{slug}`: UC bước 8 ghi cấu hình tĩnh ở frontend; API 5.18 đã thêm `GET /public/campaigns/{slug}` | ☐ | |
+| D1 | Hành động kiểm toán cho banner chưa có trong `AuditAction` | ☑ | Như đề xuất — `BANNER_CHANGED` (nhóm `CONFIG`), `details.op`; migration **`V15__banner_audit_action.sql`** (B00.04) · 2026-11-17 |
+| D2 | "Tối đa 8 banner đang hiển thị mỗi vị trí" đếm thế nào với banner hẹn giờ | ☑ | Như đề xuất — đếm banner bật khác cùng vị trí (+ danh mục với `CATEGORY_TOP`) có lịch giao nhau và chưa kết thúc; ≥ 8 → `4221`; bật lại cũng kiểm · 2026-11-17 |
+| D3 | `state` (API: `LIVE, SCHEDULED, ENDED, OFF`) | ☑ | Như đề xuất — `HomeBanner.state(now)` + enum `BannerState` · 2026-11-17 |
+| D4 | Khóa đối tượng ảnh | ☑ | Như đề xuất — `banner/{id}/{desktop|mobile}-{uuid}.{ext}` qua `UploadService.promoteTo`; không xóa khóa `seed/` · 2026-11-17 |
+| D5 | Khóa Redis | ☑ | Như đề xuất — `banner:live:{position}[:{categoryId}]` TTL 60 s; `banner:{id}:imp|clk`, job 5 phút `GETDEL` · 2026-11-17 |
+| D6 | `POST /public/banner-events` công khai dễ bị thổi số | ☑ | Như đề xuất — ≤ 50 sự kiện, 60 request / phút / IP, bỏ qua id không `LIVE`, luôn `204` · 2026-11-17 |
+| D7 | Ô chọn đích "Cửa hàng" cần `GET /admin/shops?q&limit=20` (API 11.16) — thuộc module `vendor` chưa có | ☑ | Như đề xuất — ngoài phạm vi, web giữ `shop.listShops` · 2026-11-17 |
+| D8 | `target_audience_json` | ☑ | Như đề xuất — luôn `NULL` · 2026-11-17 |
+| D9 | Trang chiến dịch `/campaign/{slug}`: UC bước 8 ghi cấu hình tĩnh ở frontend; API 5.18 đã thêm `GET /public/campaigns/{slug}` | ☑ | Như đề xuất — trang chiến dịch tĩnh ở frontend · 2026-11-17 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| B00 | Chuẩn bị | 5 | 0 | 0 / 5 | — | `feature/admin-home-banner` |
-| B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
-| B02 | Miền & truy vấn | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| B03 | API quản trị banner | 9 | 1 | 0 / 10 | — | `feature/admin-home-banner` |
-| B04 | API công khai & cache | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
-| B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 0 / 6 | — | `feature/admin-home-banner` |
-| B06 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/admin-home-banner` |
-| B07 | Hoàn thiện use case | 6 | 1 | 0 / 7 | — | `feature/admin-home-banner` |
-| **Tổng** | | **48** | **9** | **0 / 57** | | |
+| B00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/admin-home-banner` |
+| B01 | Tài liệu, migration, hằng số dùng chung | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
+| B02 | Miền & truy vấn | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
+| B03 | API quản trị banner | 9 | 1 | 10 / 10 | — | `feature/admin-home-banner` |
+| B04 | API công khai & cache | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
+| B05 | Bộ đếm hiển thị / bấm | 5 | 1 | 6 / 6 | — | `feature/admin-home-banner` |
+| B06 | Nối giao diện `web/` | 6 | 2 | 8 / 8 | — | `feature/admin-home-banner` |
+| B07 | Hoàn thiện use case | 6 | 1 | 7 / 7 | — | `feature/admin-home-banner` |
+| **Tổng** | | **48** | **9** | **57 / 57** | | |
 
 ## B00 — Chuẩn bị
 
-- [ ] **B00.01** Kiểm danh tính git
-- [ ] **B00.02** Chốt quyết định D1–D9
-- [ ] **B00.03** Tạo nhánh
-- [ ] **B00.04** Kiểm số migration
-- [ ] **B00.05** Đọc màn mock
+- [x] **B00.01** Kiểm danh tính git
+- [x] **B00.02** Chốt quyết định D1–D9
+- [x] **B00.03** Tạo nhánh
+- [x] **B00.04** Kiểm số migration
+- [x] **B00.05** Đọc màn mock
 
 ## B01 — Tài liệu, migration, hằng số dùng chung
 
-- [ ] **B01.01** ENTITY trước (TS 7.3)
-- [ ] **B01.02** `V16__banner_audit_action.sql`
-- [ ] **B01.03** `AuditAction` thêm `BANNER_CHANGED`; nếu plan Nhật ký kiểm toán đã merge thì thêm nhánh `category()` → `CONFIG`.
-- [ ] **B01.04** `ErrorCode` thêm 3 mã `GNE-BNR-*` (thông điệp tiếng Việt theo API 15); `ErrorCodeTest` (nếu có khẳng định số lượng) cập nhật.
-- [ ] **B01.05** `UploadPurpose.BANNER_IMAGE`
-- [ ] **B01.06** Test
-- [ ] **B01.C1** 🔖 COMMIT `feat(db): allow banner change action in system logs` · hash: `…`
-- [ ] **B01.C2** 🔖 COMMIT `feat(common): add banner error codes and banner image upload purpose` · hash: `…`
+- [x] **B01.01** ENTITY trước (TS 7.3)
+- [x] **B01.02** `V16__banner_audit_action.sql`
+- [x] **B01.03** `AuditAction` thêm `BANNER_CHANGED`; nếu plan Nhật ký kiểm toán đã merge thì thêm nhánh `category()` → `CONFIG`.
+- [x] **B01.04** `ErrorCode` thêm 3 mã `GNE-BNR-*` (thông điệp tiếng Việt theo API 15); `ErrorCodeTest` (nếu có khẳng định số lượng) cập nhật.
+- [x] **B01.05** `UploadPurpose.BANNER_IMAGE`
+- [x] **B01.06** Test
+- [x] **B01.C1** 🔖 COMMIT `feat(db): allow banner change action in system logs` · hash: `4336bc8`
+- [x] **B01.C2** 🔖 COMMIT `feat(common): add banner error codes and banner image upload purpose` · hash: `3831bcb`
 
 ## B02 — Miền & truy vấn
 
-- [ ] **B02.01** `BannerState`
-- [ ] **B02.02** `HomeBanner`
-- [ ] **B02.03** `HomeBannerTest`
-- [ ] **B02.04** `HomeBannerRepository`
-- [ ] **B02.05** `BannerTargetValidator` (N4)
-- [ ] **B02.06** `BannerTargetValidatorTest`
-- [ ] **B02.C1** 🔖 COMMIT `feat(admin): add banner state rules and target url validation` · hash: `…`
+- [x] **B02.01** `BannerState`
+- [x] **B02.02** `HomeBanner`
+- [x] **B02.03** `HomeBannerTest`
+- [x] **B02.04** `HomeBannerRepository`
+- [x] **B02.05** `BannerTargetValidator` (N4)
+- [x] **B02.06** `BannerTargetValidatorTest`
+- [x] **B02.C1** 🔖 COMMIT `feat(admin): add banner state rules and target url validation` · hash: `b674bb6`
 
 ## B03 — API quản trị banner
 
-- [ ] **B03.01** `BannerRequest` (record + Bean Validation)
-- [ ] **B03.02** `BannerAdminService.create`
-- [ ] **B03.03** `update`
-- [ ] **B03.04** `setActive(id, active)`
-- [ ] **B03.05** `delete(id)`
-- [ ] **B03.06** `BannerQueryService.search`
-- [ ] **B03.07** `AdminBannerController`
-- [ ] **B03.08** `BannerAdminIT` (PG + Redis + Silo)
-- [ ] **B03.09** `BannerAdminIT` phân quyền
-- [ ] **B03.C1** 🔖 COMMIT `feat(admin): manage home banners with schedule, slot limit and audit log` · hash: `…`
+- [x] **B03.01** `BannerRequest` (record + Bean Validation)
+- [x] **B03.02** `BannerAdminService.create`
+- [x] **B03.03** `update`
+- [x] **B03.04** `setActive(id, active)`
+- [x] **B03.05** `delete(id)`
+- [x] **B03.06** `BannerQueryService.search`
+- [x] **B03.07** `AdminBannerController`
+- [x] **B03.08** `BannerAdminIT` (PG + Redis + Silo)
+- [x] **B03.09** `BannerAdminIT` phân quyền
+- [x] **B03.C1** 🔖 COMMIT `feat(admin): manage home banners with schedule, slot limit and audit log` · hash: `a9a4ce5`
 
 ## B04 — API công khai & cache
 
-- [ ] **B04.01** `BannerCache`
-- [ ] **B04.02** `BannerQueryService.live(positions, categoryId, now)`
-- [ ] **B04.03** `PublicBannerController`
-- [ ] **B04.04** Listener xóa cache
-- [ ] **B04.05** `PublicBannerIT`
-- [ ] **B04.C1** 🔖 COMMIT `feat(admin): serve live banners by position with redis cache` · hash: `…`
+- [x] **B04.01** `BannerCache`
+- [x] **B04.02** `BannerQueryService.live(positions, categoryId, now)`
+- [x] **B04.03** `PublicBannerController`
+- [x] **B04.04** Listener xóa cache
+- [x] **B04.05** `PublicBannerIT`
+- [x] **B04.C1** 🔖 COMMIT `feat(admin): serve live banners by position with redis cache` · hash: `e17c094`
 
 ## B05 — Bộ đếm hiển thị / bấm
 
-- [ ] **B05.01** `BannerEventsRequest`
-- [ ] **B05.02** `BannerEventService.record(events, clientIp)`
-- [ ] **B05.03** `POST /api/v1/public/banner-events` → `204`; không yêu cầu CSRF / đăng nhập; chấp nhận `Content-Type: text/plain` của `navigator.sendBeacon` (đọc thân như JSON).
-- [ ] **B05.04** `BannerStatsFlushJob`
-- [ ] **B05.05** `BannerEventIT` + `BannerStatsFlushJobIT`
-- [ ] **B05.C1** 🔖 COMMIT `feat(admin): count banner impressions and clicks through redis` · hash: `…`
+- [x] **B05.01** `BannerEventsRequest`
+- [x] **B05.02** `BannerEventService.record(events, clientIp)`
+- [x] **B05.03** `POST /api/v1/public/banner-events` → `204`; không yêu cầu CSRF / đăng nhập; chấp nhận `Content-Type: text/plain` của `navigator.sendBeacon` (đọc thân như JSON).
+- [x] **B05.04** `BannerStatsFlushJob`
+- [x] **B05.05** `BannerEventIT` + `BannerStatsFlushJobIT`
+- [x] **B05.C1** 🔖 COMMIT `feat(admin): count banner impressions and clicks through redis` · hash: `031d634`
 
 ## B06 — Nối giao diện `web/`
 
-- [ ] **B06.01** `web/src/shared/api/error-codes.ts` + `vi.json` / `en.json`
-- [ ] **B06.02** `promotions/infrastructure/banner.api.ts`
-- [ ] **B06.03** `trackBanner`
-- [ ] **B06.04** `admin-marketing/infrastructure/marketing.api.ts` (nhóm banner)
-- [ ] **B06.05** Chạy thật hai phía
-- [ ] **B06.06** E2E
-- [ ] **B06.C1** 🔖 COMMIT `fix(web): send banner events in batches to the spec endpoint` · hash: `…`
-- [ ] **B06.C2** 🔖 COMMIT `feat(admin-ui): connect banner management to the real api` · hash: `…`
+- [x] **B06.01** `web/src/shared/api/error-codes.ts` + `vi.json` / `en.json`
+- [x] **B06.02** `promotions/infrastructure/banner.api.ts`
+- [x] **B06.03** `trackBanner`
+- [x] **B06.04** `admin-marketing/infrastructure/marketing.api.ts` (nhóm banner)
+- [-] **B06.05** Chạy thật hai phía
+- [x] **B06.06** E2E
+- [x] **B06.C1** 🔖 COMMIT `fix(web): send banner events in batches to the spec endpoint` · hash: `9519e9e`
+- [x] **B06.C2** 🔖 COMMIT `feat(admin-ui): connect banner management to the real api` · hash: `6869cb0`
 
 ## B07 — Hoàn thiện use case
 
-- [ ] **B07.01** `docs/api-tests/admin-banner.http`
-- [ ] **B07.02** OpenAPI
-- [ ] **B07.03** Tài liệu nguồn
-- [ ] **B07.04** Tiến độ
-- [ ] **B07.05** `docs/web-backend-handoff.md`
-- [ ] **B07.C1** 🔖 COMMIT `docs(admin): record home banner use case as implemented` · hash: `…`
-- [ ] **B07.06** Mở PR vào `develop`
+- [x] **B07.01** `docs/api-tests/admin-banner.http`
+- [x] **B07.02** OpenAPI
+- [x] **B07.03** Tài liệu nguồn
+- [x] **B07.04** Tiến độ
+- [x] **B07.05** `docs/web-backend-handoff.md`
+- [x] **B07.C1** 🔖 COMMIT `docs(admin): record home banner use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **B07.06** Mở PR vào `develop`
 
 ---
 
@@ -134,11 +134,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-ADM-12` Quản lý banner trang chủ & chiến dịch tĩnh — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-ADM-12` Quản lý banner trang chủ & chiến dịch tĩnh — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-ADM-12 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -146,10 +146,30 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| B00.03 | Nhánh tách từ `feature/admin-audit-log` (không phải `develop`) để dùng lại `ApiListResponse`, `InvalidRequestException`, `requestBlob` và `AuditAction.category()` của plan [2] — tránh viết trùng gây conflict. PR banner mở sau khi PR nhật ký kiểm toán đã merge (rebase lên `develop` khi đó) |
+| B00.04 | `develop` tới `V14`; plan [3] merge trước plan [7] → dùng **`V15__banner_audit_action.sql`**, KYC dời sang `V16` (đúng ghi chú README mục 4 — sửa bảng sổ đăng ký trong cùng PR) |
+| B01.01 | ENTITY 10.4 (phương thức `create / state / activate / changeSchedule / changeContent / changeImages / isDeletable`, ảnh lưu khóa đối tượng), Phụ lục A (`BANNER_CHANGED`, `BannerState` không lưu), Phụ lục E; `java-code/Diagram10_*.java`, `GIAI_NGHIA_ENTITY.md`; API 16.2 thêm `BANNER_CHANGED` vào nhóm `CONFIG` |
+| B01.05 | `UploadPurpose.requiredAuthority()` (null = ai đăng nhập cũng được); `UploadController` thiếu quyền ném `AccessDeniedException` → 403 + ghi `ACCESS_DENIED`. Thêm `UploadService.promoteTo(userId, purpose, tmpKey, targetPrefix)` (đặt ảnh ở `banner/{id}/…` — D4) và `publicUrl(purpose, key)`. Test: `BannerUploadIT` (thay cho ca trong `PresignedUploadIT` — repo chưa có lớp này; test tải ảnh đại diện nằm ở `ProfileAvatarIT`) |
+| B02.04 | `findLive` / `findLiveInCategory` (JPQL), `countOverlapping` (D2), `addStats` (`@Modifying`); tìm kiếm Admin dùng `JpaSpecificationExecutor` (ở service — B03.06). Truy vấn được kiểm trong `BannerAdminIT` / `PublicBannerIT` |
+| B02.05 | Kiểm cả chuỗi gốc và chuỗi đã giải mã `%xx`: chuỗi gốc cấm khoảng trắng / ký tự điều khiển, chuỗi giải mã chỉ cấm ký tự điều khiển (cho phép `?q=tai%20nghe`); `%` hỏng → từ chối |
+| B03.01 | Kiểm trường ở service (không dùng Bean Validation trên record) để gom đủ `errors[]` một lần: `title`, `image_object_key` (khi tạo), `target_url`, `position`, `category_id` (CATEGORY_TOP), `sort_order`, `starts_at`, `ends_at` (phải sau `starts_at`). Cổng `BannerCategoryLookup` (module catalog cài sau) — chưa có bean thì chỉ kiểm khác null, `category.name = null`. Thêm `common/api/PagePagination` + `ApiResponseFactory.page()` (phân trang số — API 0.4) |
+| B03.03 | Ảnh mới chuyển sang `banner/{id}/{desktop|mobile}-<uuid>.<ext>` bằng `promoteTo`; ảnh cũ xóa sau commit (bỏ qua khóa `seed/`); rollback thì xóa ảnh vừa chuyển. `details.changes` ghi từng trường đổi (`from` / `to`). Gửi lại đúng khóa hiện tại = giữ ảnh |
+| B04.05 | Ca "Redis tắt" kiểm bằng unit test `BannerCacheTest` (mock Redis ném lỗi → `get` rỗng, `put` / `evictAll` không ném) thay vì dừng container Redis dùng chung của mọi IT. Listener xóa cache chạy đồng bộ `AFTER_COMMIT` (lệnh Redis nhỏ) để lần đọc kế tiếp chắc chắn thấy dữ liệu mới |
+| B05.02 | Id banner LIVE lấy từ tập Redis `banner:live:ids` (TTL 60 s, xóa cùng `evictAll`) — trượt cache thì `findLiveIds`. Bộ đếm `INCRBY` gộp theo lô bằng pipeline + đánh dấu `banner:stats:dirty` để job biết banner nào cần ghi (không phải quét khóa). Phần tử sự kiện sai (`type` lạ, id lạ / không LIVE) bị bỏ qua, chỉ thân hỏng hoặc > 50 phần tử mới `422` |
+| B05.04 | `@Scheduled(fixedDelay 5 phút, initialDelay 1 phút)`, chạy khi `genie.scheduling.enabled`; `GETDEL` (`getAndDelete`) từng bộ đếm, `addStats` trong `TransactionTemplate`, lỗi DB thì `INCRBY` trả lại + đánh dấu lại |
+| B06.02 | `listLiveBanners(position, categorySlug, categoryId)`: API thật trả map vị trí → mảng `{id, title, image_url, mobile_image_url, target_url}` (mapper `toLiveBanner`); `CATEGORY_TOP` cần `category_id` (trang `/c/[slug]` truyền `category.id`). Cờ `isMocked('banner')` |
+| B06.03 | Hàng đợi trong `banner.api.ts`: gửi mỗi 5 giây hoặc khi đủ 50 sự kiện; `pagehide` / tab ẩn → `navigator.sendBeacon` (`text/plain`). Test `banner.api.test.ts` (giả lập `window` / `document` vì vitest chạy môi trường node, repo không có jsdom) |
+| B06.04 | Màn quản trị: cờ `isMocked('banner')`; mapper nhận `id` số, ngày ISO → `YYYY-MM-DD`, `category` không có `slug`; modal ánh xạ `errors[].field` của 422 về ô (`image_object_key` → ô ảnh…); thêm `GNE-BNR-4091` vào `error-codes.ts` + vi / en. Ảnh tải bằng `uploadFile(f, 'BANNER_IMAGE')` (đã có sẵn) |
+| B06.05 | `[-]` Phần chạy trên trình duyệt chờ người dùng tự thao tác (CLAUDE.md). Cách chạy: web `PUBLIC_USE_MOCK=true`, `PUBLIC_REAL_API=auth,upload,banner`; backend local; đăng nhập `linh.tm@genie.example` (Finance Officer) → `/admin/banners`; ảnh seed cần `scripts/seed/upload-assets.sh` |
+| B06.06 | Thêm kịch bản "tắt / bật lại / xóa banner" vào `tests/e2e/admin.spec.ts` (mock) — 2/2 khổ xanh. Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 318/318, build OK, i18n OK |
+| B00.05 | Đọc màn mock khi nối web (B06.04): bảng 7 cột, 4 trạng thái, modal kiểm lỗi tại ô (`hasImage`, `targetUrl`, `categoryId`, `startsAt` / `endsAt`), CTR client tự chia |
+| B07.02 | `/v3/api-docs` có đủ 7 endpoint banner, summary `UC-ADM-12 — …`. Chạy thật API trên CSDL mới `genie_banner` (V15): tải ảnh thật lên Silo → tạo banner 201 (ảnh ở `banner/1/desktop-…`) → `/public/banners` thấy banner → sự kiện `text/plain` 204, Redis `banner:1:imp|clk` = 1 → xóa khi LIVE 409 → tắt → storefront hết hiện ngay → xóa 204, ảnh Silo bị xóa → 3 dòng `BANNER_CHANGED`. `docs/openapi` trống nên không cập nhật |
+| B07.04 | Checklist: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng) → 🟡; Excel "Đang triển khai". Cổng: `./mvnw verify` BUILD SUCCESS (93 unit + 111 IT) — lần chạy đầu 108 IT lỗi vì Docker Desktop đã tắt sau khi qua ngày, bật lại thì xanh |
+| B07.06 | `[-]` Chưa push / mở PR — chờ người dùng; PR mở sau PR nhật ký kiểm toán (nhánh tách từ `feature/admin-audit-log`) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (48 task, 9 commit, 8 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | B00–B07: V15 `BANNER_CHANGED`, mã lỗi + `BANNER_IMAGE`, luật entity + kiểm liên kết, API quản trị, API công khai + cache Redis, bộ đếm + job, nối web (storefront + quản trị) + E2E, tài liệu; còn chạy thật trên giao diện (B06.05) và mở PR | `4336bc8` `3831bcb` `b674bb6` `a9a4ce5` `e17c094` `031d634` `9519e9e` `6869cb0` |

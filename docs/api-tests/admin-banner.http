@@ -1,0 +1,88 @@
+### UC-ADM-12 — Banner trang chủ (API_SPEC 11.16, 5.14, 5.15, 4.1; plan 2026-11-16 banner B07.01)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập Finance Officer (có MANAGE_VOUCHER) — chép access_token vào @fo
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "linh.tm@genie.example", "password": "Genie@123" }
+
+### 2. Đăng nhập Moderator (KHÔNG có MANAGE_VOUCHER) — chép vào @mod
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+@fo = <access_token bước 1>
+@mod = <access_token bước 2>
+
+### 3. ĐÚNG — xin link tải ảnh (PUT tệp lên upload_url với Content-Type trả về, chép object_key vào @img)
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "purpose": "BANNER_IMAGE", "file_name": "sale.jpg", "content_type": "image/jpeg", "content_length": 180000 }
+
+@img = <object_key bước 3 — dạng tmp/user/{id}/{uuid}.jpg>
+
+### 4. ĐÚNG — tạo banner → 201, state LIVE, image_url = …/content-assets/banner/{id}/desktop-…
+POST {{base}}/admin/banners
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "Siêu sale cuối tuần", "image_object_key": "{{img}}", "mobile_image_object_key": null,
+  "target_url": "/flash-sale", "position": "HOME_MIDDLE", "category_id": null, "sort_order": 3,
+  "starts_at": "2026-11-18T00:00:00+07:00", "ends_at": "2026-12-31T23:59:59+07:00", "is_active": true }
+
+@id = <id bước 4>
+
+### 5. ĐÚNG — storefront đọc banner đang hiển thị (cache 60 giây)
+GET {{base}}/public/banners?positions=HOME_TOP_CAROUSEL,HOME_MIDDLE,POPUP
+
+### 6. ĐÚNG — ghi lượt hiển thị / bấm (204; job 5 phút cộng vào impressions / clicks)
+POST {{base}}/public/banner-events
+Content-Type: application/json
+
+{ "events": [ { "banner_id": {{id}}, "type": "IMPRESSION" }, { "banner_id": {{id}}, "type": "CLICK" } ] }
+
+### 7. ĐÚNG — danh sách quản trị lọc vị trí, tìm tiêu đề
+GET {{base}}/admin/banners?position=HOME_MIDDLE&q=sale&page=1&size=20
+Authorization: Bearer {{fo}}
+
+### 8. ĐÚNG — Tắt ngay (state OFF; storefront hết hiện ngay)
+PATCH {{base}}/admin/banners/{{id}}
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "is_active": false }
+
+### 9. ĐÚNG — xóa banner đã tắt → 204
+DELETE {{base}}/admin/banners/{{id}}
+Authorization: Bearer {{fo}}
+
+### 10. LỖI — liên kết ngoài sàn → 422 GNE-BNR-4222
+POST {{base}}/admin/banners
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "X", "image_object_key": "{{img}}", "target_url": "//evil.com", "position": "POPUP",
+  "starts_at": "2026-11-18T00:00:00+07:00", "ends_at": "2026-11-30T00:00:00+07:00", "is_active": true }
+
+### 11. LỖI — thiếu ảnh / CATEGORY_TOP thiếu danh mục / lịch ngược → 422 GNE-VAL-4220, errors[] theo trường
+POST {{base}}/admin/banners
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "Y", "target_url": "/c/dien-tu", "position": "CATEGORY_TOP",
+  "starts_at": "2026-11-30T00:00:00+07:00", "ends_at": "2026-11-18T00:00:00+07:00", "is_active": true }
+
+### 12. LỖI — xóa banner đang hiển thị (vd. banner seed) → 409 GNE-BNR-4091
+DELETE {{base}}/admin/banners/1
+Authorization: Bearer {{fo}}
+
+### 13. LỖI — Moderator không có MANAGE_VOUCHER → 403 GNE-SEC-4030
+GET {{base}}/admin/banners
+Authorization: Bearer {{mod}}
+
+### 14. (Ghi chú) GNE-BNR-4221 — tạo banner thứ 9 bật, cùng vị trí, lịch chồng lên 8 banner đang bật → 422

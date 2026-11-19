@@ -1,9 +1,12 @@
 // Cài đặt Shop (API_SPEC 10.11): GET / PATCH /seller/settings, PUT /seller/pickup-address, tài khoản nhận tiền
 // (xác minh chính chủ → PUT 🔐 / DELETE 🔐), chế độ nghỉ (PUT / DELETE /seller/vacation), GET /public/banks.
+// API thật khi PUBLIC_REAL_API có `vendor` (K11.04). Kho lấy hàng GHN (cờ `pickup` — chờ danh mục hành chính A12) và
+// chế độ nghỉ (cờ `vacation` — cụm khác, D14) vẫn mock.
 // Mock: dữ liệu prototype Settings; tên trên CCCD "Đặng Quốc Huy"; OTP 123456; còn đơn chưa bàn giao →
 // không bật được chế độ nghỉ (lấy từ kho đơn dùng chung).
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { sellerMoneyStore, sellerOrdersStore, sellerStore } from '@/shared/api/mock/seller';
 import { canRename, holderMatches, normalizeHolder } from '../domain/settings.rules';
 import type {
@@ -15,10 +18,14 @@ import type {
 } from '../domain/settings.types';
 import { KYC_NAME } from './shop.mock';
 
+const USE_MOCK = isMocked('vendor');
+const PICKUP_MOCK = isMocked('pickup');
+const VACATION_MOCK = isMocked('vacation');
+
 interface SettingsDto {
   profile: {
     shop_name: string;
-    description: string;
+    description: string | null;
     logo_url: string | null;
     cover_url: string | null;
     next_rename_allowed_at: string | null;
@@ -29,35 +36,46 @@ interface SettingsDto {
     free_shipping_threshold: number | null;
   };
   pickup_address: {
-    phone_number: string;
+    phone_number: string | null;
     province: { id: number; name: string } | null;
     ward: { code: string; name: string } | null;
     address_line: string;
     ghn_shop_id: number | null;
-  };
+  } | null;
   payout_account: {
     bank_name: string;
     account_holder: string;
     account_number_masked: string;
     is_verified: boolean;
   } | null;
-  auto_reply: { enabled: boolean; greeting: string; away_message: string };
+  auto_reply: { enabled: boolean; greeting: string | null; away_message: string | null };
   pre_order_enabled: boolean;
   vacation: { ends_at: string; message: string } | null;
 }
 
-const toPickup = (d: SettingsDto['pickup_address']): PickupAddress => ({
-  phone: d.phone_number,
-  province: d.province,
-  ward: d.ward,
-  line: d.address_line,
-  ghnShopId: d.ghn_shop_id,
-});
+const NO_PICKUP = {
+  phone_number: '',
+  province: null,
+  ward: null,
+  address_line: '',
+  ghn_shop_id: null,
+};
+
+const toPickup = (raw: SettingsDto['pickup_address']): PickupAddress => {
+  const d = raw ?? NO_PICKUP;
+  return {
+    phone: d.phone_number ?? '',
+    province: d.province,
+    ward: d.ward,
+    line: d.address_line,
+    ghnShopId: d.ghn_shop_id,
+  };
+};
 
 const toSettings = (d: SettingsDto): ShopSettings => ({
   profile: {
     shopName: d.profile.shop_name,
-    description: d.profile.description,
+    description: d.profile.description ?? '',
     logoUrl: d.profile.logo_url,
     coverUrl: d.profile.cover_url,
     nextRenameAllowedAt: d.profile.next_rename_allowed_at,
@@ -76,8 +94,8 @@ const toSettings = (d: SettingsDto): ShopSettings => ({
   },
   autoReply: {
     enabled: d.auto_reply.enabled,
-    greeting: d.auto_reply.greeting,
-    away: d.auto_reply.away_message,
+    greeting: d.auto_reply.greeting ?? '',
+    away: d.auto_reply.away_message ?? '',
   },
   preOrderEnabled: d.pre_order_enabled,
   vacation: d.vacation && { endsAt: d.vacation.ends_at, message: d.vacation.message },
@@ -224,7 +242,7 @@ export async function patchSettings(p: SettingsPatch): Promise<ShopSettings> {
 }
 
 export async function savePickupAddress(a: PickupAddress): Promise<PickupAddress> {
-  if (USE_MOCK) {
+  if (PICKUP_MOCK) {
     await mockDelay(500);
     const s = db.get();
     const next = {
@@ -237,7 +255,7 @@ export async function savePickupAddress(a: PickupAddress): Promise<PickupAddress
     db.set({ ...s, pickup_address: next });
     return toPickup(next);
   }
-  const d = await api.put<SettingsDto['pickup_address']>('/seller/pickup-address', {
+  const d = await api.put<NonNullable<SettingsDto['pickup_address']>>('/seller/pickup-address', {
     phone_number: a.phone.replace(/\s/g, ''),
     province_id: a.province?.id,
     ward_code: a.ward?.code,
@@ -326,7 +344,7 @@ export function mockPendingOrders(): string[] {
 }
 
 export async function startVacation(endsAt: string, message: string): Promise<void> {
-  if (USE_MOCK) {
+  if (VACATION_MOCK) {
     await mockDelay(300);
     const pending = mockPendingOrders();
     if (pending.length)
@@ -338,7 +356,7 @@ export async function startVacation(endsAt: string, message: string): Promise<vo
 }
 
 export async function endVacation(): Promise<void> {
-  if (USE_MOCK) {
+  if (VACATION_MOCK) {
     await mockDelay(200);
     db.set({ ...db.get(), vacation: null });
     return;

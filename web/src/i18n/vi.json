@@ -133,6 +133,7 @@
     "GNE-CAT-4222": "Ngành hàng này bắt buộc giấy tờ chứng thực.",
     "GNE-CAT-4223": "Còn thiếu thông số bắt buộc của ngành hàng.",
     "GNE-PRO-4091": "Hôm nay bạn đã điểm danh rồi.",
+    "GNE-PRO-4092": "Voucher này đang có trong Kho Voucher của bạn (hoặc bạn đã dùng hết lượt).",
     "GNE-PRO-4221": "Giá Flash Sale phải thấp hơn ít nhất 15% và số suất phải hợp lệ.",
     "GNE-PRO-4222": "Bạn không đủ Điểm.",
     "GNE-PRO-4223": "Vượt số sản phẩm tối đa hoặc đã quá hạn đăng ký Flash Sale.",
@@ -145,6 +146,7 @@
     "GNE-SOC-4092": "Đơn chưa hoàn thành, chưa thể đánh giá.",
     "GNE-SOC-4093": "Bạn đã báo cáo đánh giá này.",
     "GNE-SOC-4094": "Shop đã phản hồi đánh giá này.",
+    "GNE-SOC-4095": "Không thể theo dõi shop của chính mình.",
     "GNE-SOC-4221": "Phản hồi không được chứa số điện thoại.",
     "GNE-VND-4031": "Shop chưa được xác minh (KYC).",
     "GNE-VND-4091": "Chỉ được đổi tên shop 1 lần trong 30 ngày.",
@@ -160,6 +162,7 @@
     "GNE-LOG-4221": "Bảng kê COD không cân.",
     "GNE-LOG-5021": "Hãng vận chuyển đang lỗi khi tạo vận đơn. Vui lòng thử lại.",
     "GNE-LOG-5022": "GHN đang lỗi khi đồng bộ kho lấy hàng. Vui lòng thử lại.",
+    "GNE-BNR-4091": "Không thể xóa banner đang hiển thị hoặc đã lên lịch — hãy tắt banner trước.",
     "GNE-BNR-4221": "Vị trí này đã đủ 8 banner đang hiển thị.",
     "GNE-BNR-4222": "Liên kết banner phải thuộc miền của sàn.",
     "GNE-NOT-4091": "Thông báo đã phát, không thể sửa.",
@@ -1120,6 +1123,7 @@
       "view": "Xem shop"
     },
     "follow": {
+      "gone": "Shop này hiện không còn hoạt động.",
       "done": "Đã theo dõi {shop}",
       "undone": "Đã hủy theo dõi {shop}",
       "confirm_title": "Hủy theo dõi Shop?",
@@ -1710,6 +1714,7 @@
     "cost": "{points} Điểm · Đơn từ {min}",
     "swap": "Đổi",
     "not_enough": "Chưa đủ Điểm",
+    "missing": "Bạn còn thiếu {points} Điểm để đổi quà này.",
     "redeemed": "Đã đổi voucher {code}, xem trong Kho Voucher",
     "history": "Lịch sử Điểm",
     "checkin": {
@@ -3214,7 +3219,8 @@
       "tax": "Mã số thuế",
       "rate": "Hoa hồng riêng của shop",
       "rate_placeholder": "Theo ngành",
-      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành."
+      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành.",
+      "mall": "Gắn nhãn Shop Chính hãng khi duyệt"
     },
     "rejected_reason": "Lý do từ chối:",
     "supplement_req": "Đã yêu cầu bổ sung:",
@@ -4281,6 +4287,8 @@
       "reactivated": "Đã mở khóa tài khoản {name}."
     },
     "audit": {
+      "range_too_long": "Mỗi lần chỉ tra cứu tối đa 90 ngày — hãy thu hẹp khoảng thời gian.",
+      "export_truncated": "Chỉ xuất 50.000 dòng mới nhất — hãy thu hẹp bộ lọc để xuất đủ.",
       "append_only": "Append-only · bất biến",
       "desc": "Nhật ký ghi nhận mọi hành động nhạy cảm. Bản ghi không thể sửa hoặc xoá — phục vụ điều tra & tuân thủ.",
       "export": "Xuất nhật ký",

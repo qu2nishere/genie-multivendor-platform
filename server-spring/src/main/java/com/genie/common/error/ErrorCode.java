@@ -54,6 +54,36 @@ public enum ErrorCode {
     DEFAULT_ADDRESS_NOT_DELETABLE("GNE-USR-4092", HttpStatus.CONFLICT, "Không thể xóa địa chỉ mặc định."),
     DUPLICATE_ADDRESS("GNE-USR-4093", HttpStatus.CONFLICT, "Địa chỉ này đã có trong sổ địa chỉ."),
 
+    // ===== Danh mục & sản phẩm (API_SPEC 15) =====
+    PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn bán."),
+
+    // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
+    CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),
+
+    // ===== Mở shop & KYC người bán (API_SPEC 0.9, 9, 10.11, 10.12, 15 — UC-VND-01/02/05/07/21) =====
+    SHOP_NOT_VERIFIED("GNE-VND-4031", HttpStatus.FORBIDDEN, "Shop chưa được xác minh (KYC)."),
+    SHOP_RENAME_TOO_SOON("GNE-VND-4091", HttpStatus.CONFLICT, "Chỉ được đổi tên shop 1 lần trong 30 ngày."),
+    SHOP_ALREADY_EXISTS("GNE-VND-4093", HttpStatus.CONFLICT, "Tài khoản đã có shop."),
+    SHOP_NAME_TAKEN("GNE-VND-4094", HttpStatus.CONFLICT, "Tên shop đã được dùng."),
+    KYC_NOT_EDITABLE("GNE-VND-4095", HttpStatus.CONFLICT, "Hồ sơ KYC đang được xử lý hoặc đã được duyệt."),
+    KYC_REVIEW_ALREADY_REQUESTED("GNE-VND-4096", HttpStatus.CONFLICT, "Bạn đã gửi yêu cầu xem xét hồ sơ KYC."),
+    CARRIER_REQUIRED("GNE-VND-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Phải bật ít nhất 1 hãng vận chuyển."),
+    AUTO_REPLY_EMPTY("GNE-VND-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Bật tự trả lời thì cần có nội dung."),
+    KYC_DOCUMENTS_MISSING("GNE-VND-4223", HttpStatus.UNPROCESSABLE_ENTITY, "Hồ sơ KYC còn thiếu giấy tờ."),
+    PAYOUT_PENDING_WITHDRAWAL("GNE-WAL-4091", HttpStatus.CONFLICT, "Còn lệnh rút đang chờ, chưa thể xóa tài khoản nhận tiền."),
+    PAYOUT_HOLDER_MISMATCH("GNE-WAL-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Tên chủ tài khoản không khớp với CCCD."),
+    GHN_SYNC_FAILED("GNE-LOG-5022", HttpStatus.BAD_GATEWAY, "GHN đang lỗi khi đồng bộ kho lấy hàng. Vui lòng thử lại."),
+
+    // ===== Banner trang chủ (API_SPEC 11.16, 15 — UC-ADM-12) =====
+    BANNER_NOT_DELETABLE("GNE-BNR-4091", HttpStatus.CONFLICT, "Không thể xóa banner đang hiển thị hoặc đã lên lịch — hãy tắt trước."),
+    BANNER_SLOT_FULL("GNE-BNR-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Vị trí này đã đủ 8 banner đang hiển thị."),
+    BANNER_TARGET_FORBIDDEN("GNE-BNR-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Liên kết banner phải là đường dẫn trong sàn."),
+
+    // ===== Điểm Genie (API_SPEC 3.13, 15 — UC-PRO-08, UC-PRO-09) =====
+    ALREADY_CHECKED_IN("GNE-PRO-4091", HttpStatus.CONFLICT, "Hôm nay bạn đã điểm danh rồi."),
+    REWARD_ALREADY_HELD("GNE-PRO-4092", HttpStatus.CONFLICT, "Bạn đang có voucher này trong Kho Voucher."),
+    INSUFFICIENT_COINS("GNE-PRO-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Bạn không đủ Điểm để thực hiện."),
+
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
     FLASH_SALE_SOLD_OUT("GNE-INV-4091", HttpStatus.CONFLICT, "Suất Flash Sale đã hết."),

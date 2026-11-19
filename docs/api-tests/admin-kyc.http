@@ -1,0 +1,60 @@
+### UC-VND-04 — Nhân viên duyệt KYC (API_SPEC 11.3; plan Mở shop & KYC K12.01)
+# Ma trận quyền REVIEW_KYC: Admin yen.dh, Moderator phat.nt → 200; Finance Officer linh.tm, CS truc.ht → 403.
+# Đặt hoa hồng riêng (shop_commission_rate, %) cần thêm UPDATE_COMMISSION — Moderator → 403, Admin → 200.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập Moderator (mật khẩu dữ liệu mẫu Genie@123)
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+@tok = <access_token>
+
+### 2. ĐÚNG — hàng chờ (rủi ro cao trước) + summary.counts
+GET {{base}}/admin/kyc-submissions?status=PENDING&page=1&size=20
+Authorization: Bearer {{tok}}
+
+### 3. ĐÚNG — chi tiết: URL ảnh 5 phút, CCCD che; mỗi lần mở ghi KYC_DOCUMENT_VIEWED
+GET {{base}}/admin/kyc-submissions/<id>
+Authorization: Bearer {{tok}}
+
+### 4. ĐÚNG — phê duyệt (tùy chọn nhãn Chính hãng)
+POST {{base}}/admin/kyc-submissions/<id>/approve
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "is_mall": false }
+
+### 5. LỖI — Moderator đặt hoa hồng riêng → 403 GNE-SEC-4030
+POST {{base}}/admin/kyc-submissions/<id>/approve
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "shop_commission_rate": 3.0 }
+
+### 6. LỖI — từ chối OTHER thiếu ghi chú → 422
+POST {{base}}/admin/kyc-submissions/<id>/reject
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "reason_code": "OTHER" }
+
+### 7. ĐÚNG — yêu cầu bổ sung (≥ 1 giấy tờ, hạn 7 ngày)
+POST {{base}}/admin/kyc-submissions/<id>/request-supplement
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "documents": ["ID_FRONT"], "note": "Ảnh mặt trước bị lóa" }
+
+### 8. ĐÚNG — đưa lại hàng chờ (hồ sơ đã quyết định); hồ sơ đang chờ → 409 GNE-VND-4095
+POST {{base}}/admin/kyc-submissions/<id>/requeue
+Authorization: Bearer {{tok}}
+
+### 9. LỖI — Finance Officer không có REVIEW_KYC → 403
+GET {{base}}/admin/kyc-submissions
+Authorization: Bearer <token linh.tm@genie.example>
+
+### 10. Ô chọn shop đích banner (MANAGE_VOUCHER — Finance Officer / Admin)
+GET {{base}}/admin/shops?q=tech&limit=20
+Authorization: Bearer <token linh.tm@genie.example>

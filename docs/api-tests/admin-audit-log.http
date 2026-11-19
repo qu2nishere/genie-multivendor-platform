@@ -1,0 +1,49 @@
+### UC-ADM-07 — Tra cứu / xuất nhật ký kiểm toán (API_SPEC 11.10; plan 2026-11-16 nhật ký kiểm toán L06.01)
+# Chạy bằng REST Client (VS Code) hoặc IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập Admin seed (đủ 13 quyền) — chép access_token vào @admin
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "yen.dh@genie.example", "password": "Genie@123" }
+
+### 2. Đăng nhập nhân viên CS (không có VIEW_AUDIT_LOG) — chép access_token vào @cs
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "truc.ht@genie.example", "password": "Genie@123" }
+
+@admin = <access_token của bước 1>
+@cs = <access_token của bước 2>
+
+### 3. ĐÚNG — 7 ngày gần nhất, nhóm AUTH, 20 dòng / trang → 200, pagination.next_cursor, summary.denied_count
+GET {{base}}/admin/audit-logs?category=AUTH&limit=20
+Authorization: Bearer {{admin}}
+
+### 4. ĐÚNG — trang sau (dán pagination.next_cursor của bước 3)
+GET {{base}}/admin/audit-logs?category=AUTH&limit=20&cursor=<next_cursor>
+Authorization: Bearer {{admin}}
+
+### 5. ĐÚNG — tìm theo email / IP / mã tham chiếu, khoảng theo ngày (giờ Việt Nam, "to" tính hết ngày)
+GET {{base}}/admin/audit-logs?from=2026-11-10&to=2026-11-17&q=mai.tran
+Authorization: Bearer {{admin}}
+
+### 6. ĐÚNG — xuất CSV (UTF-8 có BOM, tối đa 50.000 dòng; X-Truncated: true khi bị cắt)
+GET {{base}}/admin/audit-logs/export?category=SECURITY
+Authorization: Bearer {{admin}}
+
+### 7. LỖI — nhân viên thiếu quyền → 403 GNE-SEC-4030 (sinh thêm 1 dòng ACCESS_DENIED)
+GET {{base}}/admin/audit-logs
+Authorization: Bearer {{cs}}
+
+### 8. LỖI — khoảng > 90 ngày → 422 GNE-VAL-4220, errors[0].field = from, code = RANGE_TOO_LONG
+GET {{base}}/admin/audit-logs?from=2026-01-01&to=2026-11-17
+Authorization: Bearer {{admin}}
+
+### 9. LỖI — nhóm sai + limit vượt + con trỏ hỏng → 422 với 3 lỗi trường
+GET {{base}}/admin/audit-logs?category=BOGUS&limit=500&cursor=abc
+Authorization: Bearer {{admin}}
+
+### 10. LỖI — không token → 401 GNE-SEC-4010
+GET {{base}}/admin/audit-logs

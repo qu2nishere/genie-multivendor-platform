@@ -1,0 +1,23 @@
+# Từ / cụm từ cấm trong tên shop (UC-VND-01, UC-VND-21; plan Mở shop & KYC K03.01).
+# So khớp theo NGUYÊN TỪ sau khi chuẩn hóa (bỏ dấu, viết hoa, gộp khoảng trắng — NameNormalizer), nên ghi không dấu.
+# Chỉ đưa cụm có nghĩa rõ ràng: từ ngắn dễ trùng chữ thường sau khi bỏ dấu (vd "lon" ↔ "lớn") KHÔNG đưa vào.
+# Mạo danh sàn / cơ quan nhà nước
+genie official
+genie mall
+quan tri vien
+admin genie
+bo cong an
+cong an
+chinh phu
+# Lừa đảo / hàng cấm
+lua dao
+scam
+hang gia
+hang nhai
+ma tuy
+vu khi
+# Thô tục
+dit me
+du ma
+dcm
+dmm

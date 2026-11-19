@@ -68,6 +68,12 @@ services:
       MINIO_SECRET_KEY: ${MINIO_APP_SECRET_KEY}
       STORAGE_BUCKET_PREFIX: ${STORAGE_BUCKET_PREFIX}
       STORAGE_REGION: ${STORAGE_REGION:-ap-southeast-1}
+      # KYC (plan AI Worker Y08.03): chỉ tải ảnh từ bucket S3 của sàn; ngưỡng mặc định trong app/core/config.py
+      STORAGE_ALLOWED_HOSTS: ${STORAGE_ALLOWED_HOSTS:-*.s3.ap-southeast-1.amazonaws.com}
+      KYC_FACE_MATCH_THRESHOLD: ${KYC_FACE_MATCH_THRESHOLD:-0.363}
+      KYC_FACE_LOW_THRESHOLD: ${KYC_FACE_LOW_THRESHOLD:-0.25}
+      KYC_LIVENESS_THRESHOLD: ${KYC_LIVENESS_THRESHOLD:-0.5}
+      KYC_MAX_CONCURRENCY: ${KYC_MAX_CONCURRENCY:-1}
     volumes: [models:/app/models]
     deploy: { resources: { limits: { memory: 2g } } }
     healthcheck:

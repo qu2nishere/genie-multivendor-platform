@@ -29,6 +29,8 @@ public class VendorProfile {
     @Column(nullable = false, length = 255)
     private String shopName;                  // Tên cửa hàng hiển thị cho khách
 
+    private OffsetDateTime shopNameChangedAt;  // NULLABLE — Lần đổi tên shop gần nhất; đổi tối đa 1 lần / 30 ngày (UC-VND-21, V20)
+
     private Long categoryId;                  // NULLABLE — FK → categories.id, ngành hàng chính của shop
 
     @Enumerated(EnumType.STRING)
@@ -42,6 +44,12 @@ public class VendorProfile {
 
     @Column(length = 255)
     private String representative;            // NULLABLE — Họ tên người đại diện pháp luật
+
+    @Column(length = 20)
+    private String contactPhone;              // NULLABLE — SĐT liên hệ của shop (form Mở shop — API 9.1, V20)
+
+    @Column(length = 255)
+    private String contactEmail;              // NULLABLE — Email liên hệ của shop; OTP mở shop gửi tới email này (V20)
 
     @Column(length = 255)
     private String coverUrl;                  // NULLABLE — Ảnh bìa trang shop
@@ -65,6 +73,14 @@ public class VendorProfile {
     @Column(length = 500)
     private String selfieUrl;                 // NULLABLE — Ảnh chân dung tự chụp, dùng so khớp khuôn mặt với CCCD
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private String kycDocumentsMetaJson;      // NULLABLE — Tên tệp + dung lượng gốc từng giấy tờ, vd {"ID_FRONT":{"file_name":"cccd.jpg","size_bytes":2202009}}; màn KYC chỉ hiện thông tin này, không trả URL ảnh (V20)
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean kycBiometricConsent = false; // Đồng ý xử lý dữ liệu sinh trắc (so khớp khuôn mặt); false → luôn chuyển nhân viên đối chiếu (UC-VND-02, V20)
+
     // ---- Kết quả thẩm định KYC ----
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -72,6 +88,14 @@ public class VendorProfile {
 
     @Column(columnDefinition = "TEXT")
     private String kycRejectionReason;        // NULLABLE — Lý do bị từ chối, để vendor biết đường sửa
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private String kycSupplementDocumentsJson; // NULLABLE — Giấy tờ nhân viên yêu cầu bổ sung, vd ["ID_FRONT","BUSINESS_LICENSE"] (UC-VND-04, V20)
+
+    private OffsetDateTime kycSupplementDeadlineAt; // NULLABLE — Hạn bổ sung (yêu cầu + 7 ngày); quá hạn → job chuyển REJECTED (V20)
+
+    private OffsetDateTime kycManualReviewRequestedAt; // NULLABLE — Lúc người bán bấm "Yêu cầu nhân viên xem xét" (1 lần / hồ sơ; hồ sơ nộp lại mà AI kết luận FAIL thì vào MANUAL_REVIEW) (V20)
 
     @Enumerated(EnumType.STRING)
     private KycVerificationMethod kycVerificationMethod; // NULLABLE — OCR_AUTO (AI duyệt) / MANUAL_STAFF (người duyệt) / BIOMETRIC_FACIAL (sinh trắc khuôn mặt)
@@ -104,6 +128,9 @@ public class VendorProfile {
 
     @Column(length = 500)
     private String pickupAddressLine;         // NULLABLE — Địa chỉ chi tiết kho hàng để shipper tới lấy
+
+    @Column(length = 20)
+    private String pickupPhone;               // NULLABLE — SĐT người liên hệ tại kho lấy hàng (gửi GHN — UC-VND-05, V20)
 
     private Integer ghnShopId;                // NULLABLE — ID shop do GHN cấp sau khi gọi API đăng ký (UC-VND-05); NULL khi mới mở shop (UC-VND-01)
 
@@ -180,11 +207,53 @@ public class VendorProfile {
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
-    /** Nộp hồ sơ KYC — UC-VND-02 */
+    /** Factory mở shop: KYC chưa nộp, chưa có hoa hồng riêng / kho / GHN — UC-VND-01 bước 4 */
+    public static VendorProfile register(Long userId, String shopName, Long categoryId, BusinessType businessType,
+                                         String representative, String contactPhone, String contactEmail) {
+        return VendorProfile.builder()
+                .userId(userId).shopName(shopName).categoryId(categoryId).businessType(businessType)
+                .representative(representative).contactPhone(contactPhone).contactEmail(contactEmail)
+                .kycStatus(KycStatus.NOT_SUBMITTED)
+                .build();
+    }
+
+    /** Hồ sơ còn sửa / nộp được: chưa nộp, bị từ chối hoặc được yêu cầu bổ sung — UC-VND-02 */
+    public boolean isKycEditable() {
+        return this.kycStatus == KycStatus.NOT_SUBMITTED || this.kycStatus == KycStatus.REJECTED
+                || this.kycStatus == KycStatus.SUPPLEMENT_REQUESTED;
+    }
+
+    /** Lưu nháp dữ liệu kê khai KYC (trường null = giữ nguyên), không đổi trạng thái — UC-VND-02 */
+    public void saveKycDraft(String identityCode, String taxCode, String representative, String shopName,
+                             BusinessType businessType, Boolean biometricConsent) {
+        if (!isKycEditable()) throw new IllegalStateException("Hồ sơ KYC đang được xử lý hoặc đã duyệt");
+        if (identityCode != null) this.identityCode = identityCode;
+        if (taxCode != null) this.taxCode = taxCode.isBlank() ? null : taxCode;
+        if (representative != null) this.representative = representative;
+        if (shopName != null) this.shopName = shopName;
+        if (businessType != null) this.businessType = businessType;
+        if (biometricConsent != null) this.kycBiometricConsent = biometricConsent;
+    }
+
+    /** Gắn giấy tờ đã mã hóa (khóa đối tượng .enc; null = giữ bản cũ) + metadata hiển thị — UC-VND-02 */
+    public void attachKycDocuments(String idFrontKey, String idBackKey, String licenseKey, String selfieKey,
+                                   String documentsMetaJson) {
+        if (!isKycEditable()) throw new IllegalStateException("Hồ sơ KYC đang được xử lý hoặc đã duyệt");
+        if (idFrontKey != null) this.idFrontUrl = idFrontKey;
+        if (idBackKey != null) this.idBackUrl = idBackKey;
+        if (licenseKey != null) this.licenseUrl = licenseKey;
+        if (selfieKey != null) this.selfieUrl = selfieKey;
+        this.kycDocumentsMetaJson = documentsMetaJson;
+    }
+
+    /** Nộp / nộp lại hồ sơ KYC (chỉ khi chưa nộp, bị từ chối, cần bổ sung) — UC-VND-02 */
     public void submitKyc(OffsetDateTime now) {
-        if (this.kycStatus == KycStatus.VERIFIED) throw new IllegalStateException("Đã xác minh");
+        if (!isKycEditable()) throw new IllegalStateException("Hồ sơ KYC đang được xử lý hoặc đã duyệt");
         this.kycStatus = KycStatus.PENDING;
         this.kycSubmittedAt = now;
+        this.kycRejectionReason = null;
+        this.kycSupplementDocumentsJson = null;
+        this.kycSupplementDeadlineAt = null;
     }
 
     /** Đẩy hồ sơ vào hàng đợi AI Worker OCR/FaceMatch — UC-VND-03 */
@@ -193,32 +262,136 @@ public class VendorProfile {
         this.kycStatus = KycStatus.AI_PROCESSING;
     }
 
-    /** AI nghi ngờ / điểm tin cậy thấp → chuyển nhân viên duyệt tay — UC-VND-03 */
+    /** AI nghi ngờ / điểm tin cậy thấp / AI lỗi hoặc quá hạn → chuyển nhân viên duyệt tay — UC-VND-03 */
     public void routeToManualReview() {
         if (this.kycStatus != KycStatus.AI_PROCESSING) throw new IllegalStateException("Chỉ chuyển duyệt tay từ AI_PROCESSING");
         this.kycStatus = KycStatus.MANUAL_REVIEW;
     }
 
-    /** Nhân viên yêu cầu bổ sung giấy tờ (không từ chối thẳng) — UC-VND-04 */
-    public void requestSupplement(String note) {
+    /** Hồ sơ bị từ chối → người bán yêu cầu nhân viên xem xét lại (1 lần / hồ sơ) — UC-VND-03 ràng buộc */
+    public void requestManualReview(OffsetDateTime now) {
+        if (this.kycStatus != KycStatus.REJECTED) throw new IllegalStateException("Chỉ yêu cầu xem xét khi hồ sơ bị từ chối");
+        if (isManualReviewRequested()) throw new IllegalStateException("Đã yêu cầu nhân viên xem xét");
+        this.kycManualReviewRequestedAt = now;
+        this.kycStatus = KycStatus.MANUAL_REVIEW;
+    }
+
+    /** Đã từng yêu cầu nhân viên xem xét — UC-VND-03 */
+    public boolean isManualReviewRequested() {
+        return this.kycManualReviewRequestedAt != null;
+    }
+
+    /** Nhân viên yêu cầu bổ sung giấy tờ (không từ chối thẳng), hạn 7 ngày — UC-VND-04 */
+    public void requestSupplement(String documentsJson, String note, OffsetDateTime deadline) {
         if (this.kycStatus != KycStatus.MANUAL_REVIEW) throw new IllegalStateException("Chỉ yêu cầu bổ sung khi đang duyệt tay");
         this.kycStatus = KycStatus.SUPPLEMENT_REQUESTED;
         this.kycRejectionReason = note;
+        this.kycSupplementDocumentsJson = documentsJson;
+        this.kycSupplementDeadlineAt = deadline;
     }
 
-    /** Duyệt KYC — UC-VND-04 */
+    /** Quá hạn bổ sung hồ sơ → từ chối (job hằng ngày) — UC-VND-04 */
+    public void expireSupplement(String reason) {
+        if (this.kycStatus != KycStatus.SUPPLEMENT_REQUESTED) throw new IllegalStateException("Hồ sơ không ở trạng thái chờ bổ sung");
+        this.kycStatus = KycStatus.REJECTED;
+        this.kycRejectionReason = reason;
+        this.kycSupplementDeadlineAt = null;
+    }
+
+    /** Đưa hồ sơ đã quyết định trở lại hàng chờ duyệt tay (không chạy lại AI) — UC-VND-04 */
+    public void requeueForReview() {
+        if (this.kycStatus != KycStatus.VERIFIED && this.kycStatus != KycStatus.REJECTED
+                && this.kycStatus != KycStatus.SUPPLEMENT_REQUESTED) {
+            throw new IllegalStateException("Hồ sơ đang ở hàng chờ hoặc chưa nộp");
+        }
+        this.kycStatus = KycStatus.MANUAL_REVIEW;
+        this.kycRejectionReason = null;
+        this.kycSupplementDocumentsJson = null;
+        this.kycSupplementDeadlineAt = null;
+        this.kycVerificationMethod = null;
+        this.kycVerifiedBy = null;
+        this.kycVerifiedAt = null;
+    }
+
+    /** Duyệt KYC: AI tự duyệt (từ AI_PROCESSING) hoặc nhân viên duyệt (từ MANUAL_REVIEW) — UC-VND-03, UC-VND-04 */
     public void approveKyc(Long staffId, KycVerificationMethod method, OffsetDateTime now) {
+        if (this.kycStatus != KycStatus.AI_PROCESSING && this.kycStatus != KycStatus.MANUAL_REVIEW) {
+            throw new IllegalStateException("Hồ sơ không ở trạng thái chờ duyệt");
+        }
         this.kycStatus = KycStatus.VERIFIED;
         this.kycVerificationMethod = method;
         this.kycVerifiedBy = staffId;
         this.kycVerifiedAt = now;
         this.kycRejectionReason = null;
+        this.kycSupplementDocumentsJson = null;
+        this.kycSupplementDeadlineAt = null;
     }
 
-    /** Từ chối KYC kèm lý do — UC-VND-04 */
+    /** Từ chối KYC kèm lý do (AI kết luận FAIL hoặc nhân viên từ chối) — UC-VND-03, UC-VND-04 */
     public void rejectKyc(String reason) {
+        if (this.kycStatus != KycStatus.AI_PROCESSING && this.kycStatus != KycStatus.MANUAL_REVIEW) {
+            throw new IllegalStateException("Hồ sơ không ở trạng thái chờ duyệt");
+        }
         this.kycStatus = KycStatus.REJECTED;
         this.kycRejectionReason = reason;
+    }
+
+    /** Gắn / gỡ huy hiệu "Chính hãng" khi duyệt KYC doanh nghiệp — UC-VND-04 bước 8 */
+    public void markAsMall(boolean mall) {
+        this.isMall = mall;
+    }
+
+    /** Hoa hồng thương lượng riêng (tỷ lệ 0..1, vd 0.0300 = 3%); null = theo ngành hàng — UC-VND-04 */
+    public void setNegotiatedCommission(BigDecimal rate) {
+        if (rate != null && (rate.signum() < 0 || rate.compareTo(BigDecimal.ONE) > 0)) {
+            throw new IllegalArgumentException("Tỷ lệ hoa hồng phải trong khoảng 0–100%");
+        }
+        this.commissionRate = rate;
+    }
+
+    /** Thời điểm được đổi tên lần tiếp theo; null = đổi được ngay — UC-VND-21 */
+    public OffsetDateTime nextRenameAllowedAt(OffsetDateTime now) {
+        if (this.shopNameChangedAt == null) return null;
+        OffsetDateTime next = this.shopNameChangedAt.plusDays(30);
+        return next.isAfter(now) ? next : null;
+    }
+
+    /** Đổi tên shop, tối đa 1 lần / 30 ngày (Service kiểm trùng tên / từ cấm trước) — UC-VND-21 */
+    public void renameShop(String newName, OffsetDateTime now) {
+        if (newName.equals(this.shopName)) return;
+        if (nextRenameAllowedAt(now) != null) throw new IllegalStateException("Chỉ đổi tên shop 1 lần mỗi 30 ngày");
+        this.shopName = newName;
+        this.shopNameChangedAt = now;
+    }
+
+    /** Cập nhật mô tả, logo, ảnh bìa (khóa đối tượng trong avatar-assets) — UC-VND-21 */
+    public void updateBranding(String description, String logoKey, String coverKey) {
+        this.shopDescription = description;
+        this.logoUrl = logoKey;
+        this.coverUrl = coverKey;
+    }
+
+    /** Cấu hình tin nhắn trả lời tự động: bật mà cả hai nội dung đều rỗng → lỗi (GNE-VND-4222) — UC-VND-06 */
+    public void configureAutoReply(boolean enabled, String greeting, String awayMessage) {
+        boolean empty = (greeting == null || greeting.isBlank()) && (awayMessage == null || awayMessage.isBlank());
+        if (enabled && empty) throw new IllegalArgumentException("Bật tự trả lời cần ít nhất một nội dung");
+        this.autoReplyEnabled = enabled;
+        this.autoReplyGreeting = greeting;
+        this.autoReplyOffline = awayMessage;
+    }
+
+    /** Lưu kho lấy hàng sau khi GHN đã cấp / cập nhật Shop ID — UC-VND-05 */
+    public void updatePickup(String phone, Integer provinceId, String provinceName, Integer districtId, String districtName,
+                             String wardCode, String wardName, String addressLine, Integer ghnShopId) {
+        this.pickupPhone = phone;
+        this.pickupProvinceId = provinceId;
+        this.pickupProvince = provinceName;
+        this.pickupDistrictId = districtId;
+        this.pickupDistrict = districtName;
+        this.pickupWardCode = wardCode;
+        this.pickupWard = wardName;
+        this.pickupAddressLine = addressLine;
+        this.ghnShopId = ghnShopId;
     }
 
     /** Đã cấu hình kho lấy hàng & đăng ký GHN (điều kiện đăng bán / nhận đơn) — UC-VND-05 */
@@ -243,6 +416,25 @@ public class VendorProfile {
     /** Đã có tài khoản nhận tiền chính chủ — điều kiện tạo lệnh rút (GNE-WAL-4032) — UC-ADM-04 */
     public boolean isPayoutAccountVerified() {
         return this.kycStatus == KycStatus.VERIFIED && this.payoutAccountVerifiedAt != null;
+    }
+
+    /** Lưu tài khoản nhận tiền chỉ khi tên ngân hàng trả về khớp họ tên KYC; không khớp → giữ nguyên tài khoản cũ, trả false — UC-VND-07 */
+    public boolean setPayoutAccount(String bankName, String accountNumber, String holderName, String bankReturnedHolderName,
+                                    String kycFullName, OffsetDateTime now) {
+        if (!NameNormalizer.normalize(bankReturnedHolderName).equals(NameNormalizer.normalize(kycFullName))) return false;
+        this.payoutBankName = bankName;
+        this.payoutBankAccountNumber = accountNumber;
+        this.payoutBankAccountName = holderName;
+        this.payoutAccountVerifiedAt = now;
+        return true;
+    }
+
+    /** Xóa tài khoản nhận tiền (Service kiểm không còn lệnh rút đang chờ) — UC-VND-07 */
+    public void clearPayoutAccount() {
+        this.payoutBankName = null;
+        this.payoutBankAccountNumber = null;
+        this.payoutBankAccountName = null;
+        this.payoutAccountVerifiedAt = null;
     }
 
     /** Cập nhật điểm đánh giá shop khi có đánh giá mới / bị ẩn — UC-CAT-16 */

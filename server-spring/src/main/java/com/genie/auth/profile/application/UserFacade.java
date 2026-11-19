@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Cửa công khai của module {@code auth} cho module khác (TS 4.4, LLD 3; plan AUTH A10.01). Chỉ trả DTO, không trả entity.
  * <ul>
  *   <li>{@link #findSummary} — tên / ảnh / vai trò (chat, đánh giá, đơn hàng…);</li>
- *   <li>{@link #promoteToVendor} — UC-VND-01 mở shop: CUSTOMER → VENDOR, thu hồi phiên để token mới mang vai trò mới;</li>
+ *   <li>{@link #promoteToVendor} — UC-VND-01 mở shop: CUSTOMER → VENDOR, GIỮ phiên; token làm mới mang vai trò mới;</li>
  *   <li>{@link #suspend} / {@link #reactivate} — UC-ADM-03: đình chỉ thì thu hồi mọi phiên và chặn ngay access token.</li>
  * </ul>
  */
@@ -51,12 +51,22 @@ public class UserFacade {
         return users.findById(userId).map(User::isActive).orElse(false);
     }
 
+    /** Các id đang ACTIVE trong tập đưa vào — một truy vấn cho cả trang (vd. lọc shop có chủ còn hoạt động). */
+    @Transactional(readOnly = true)
+    public java.util.Set<Long> activeAmong(java.util.Collection<Long> userIds) {
+        return userIds.isEmpty() ? java.util.Set.of() : new java.util.HashSet<>(users.findActiveIds(userIds));
+    }
+
     @Transactional(readOnly = true)
     public Optional<String> emailOf(long userId) {
         return users.findById(userId).map(User::getEmail);
     }
 
-    /** Mở shop thành công (UC-VND-01) — vai trò mới có hiệu lực từ lần đăng nhập / làm mới tiếp theo. */
+    /**
+     * Mở shop thành công (UC-VND-01) — chỉ đổi vai trò, KHÔNG thu hồi phiên (plan Mở shop & KYC D11): người dùng vẫn đang
+     * ở giữa luồng mở shop; {@code POST /auth/sessions/refresh} cấp access token mới đọc vai trò từ CSDL → có quyền
+     * {@code /seller} ngay (API_SPEC 9.2). Access token cũ (vai trò CUSTOMER) vẫn mua hàng bình thường tới khi hết hạn.
+     */
     @Transactional
     public void promoteToVendor(long userId) {
         User user = users.findByIdForUpdate(userId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
@@ -67,7 +77,6 @@ public class UserFacade {
             throw new IllegalStateException("Chỉ tài khoản người mua mới mở shop được");
         }
         user.setRole(UserRole.VENDOR);
-        sessions.revokeAllSessions(userId, RevokeReason.ROLE_CHANGED);
     }
 
     /** Đình chỉ tài khoản (UC-ADM-03). {@code until} null = vô thời hạn. */

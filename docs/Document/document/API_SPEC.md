@@ -9,7 +9,7 @@
 | Base URL | `https://api.genie.vn/api/v1` (staging: `https://api.staging.genie.vn/api/v1`) |
 | Định dạng | JSON `snake_case`, UTF-8 |
 | Tài liệu gốc | LLD.md mục 8 & 12, TECH_STACK_VA_QUY_UOC.md mục 8–9, ENTITY.md, Usecase.md, BAO_CAO_DOI_CHIEU_GIAO_DIEN.md |
-| Lịch sử | 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
+| Lịch sử | 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
 
 > **Cách đọc:** mỗi endpoint ghi *màn hình dùng nó*, *quyền*, *mã UC*, rồi tới request/response mẫu. Đối tượng dùng lại nhiều lần được định nghĩa một lần ở **mục 1 (Schema dùng chung)** và gọi bằng tên `$TênSchema` — khi chuyển sang OpenAPI, mỗi `$TênSchema` là một `components/schemas`.
 >
@@ -693,6 +693,10 @@ UC-CAT-08 · **Màn hình:** nút tim trên `$ProductCard` và trang chi tiết;
 ]
 ```
 `summary.total` cho tiêu đề "Sản phẩm yêu thích (2)". `is_purchasable = false` khi shop đang nghỉ / sản phẩm hết bán → khóa nút "Thêm vào giỏ" (nút gọi `POST /me/cart/items` với `default_variant_id`).
+- `price` = giá thấp nhất trong các SKU chưa xóa (không có SKU → `base_price`); `default_variant_id` = SKU **còn tồn** rẻ nhất (hết hàng → SKU đầu tiên; không có SKU → `null`); `image_url` = ảnh chính của gallery chung.
+- `is_purchasable` = sản phẩm `PUBLISHED` **và** còn ít nhất một SKU có tồn **và** shop không nghỉ. Sản phẩm đã thích rồi mới bị ẩn / khóa vẫn hiện trong danh sách (để bỏ thích).
+- `product_slug` (bổ sung): slug sinh từ tên — web dựng link `/p/{slug}-{id}` (cùng quy tắc `slugify` của web).
+- `PUT` sản phẩm không tồn tại / không `PUBLISHED` → `404 GNE-CAT-4042`. `product-ids` trả tối đa 1.000 ID mới nhất; `limit` của danh sách 1–50.
 
 #### `PUT /me/wishlist/{product_id}` — Thích (idempotent) · `204`
 #### `DELETE /me/wishlist/{product_id}` — Bỏ thích · `204`
@@ -706,6 +710,9 @@ UC-SOC-06 · **Màn hình:** nút Theo dõi ở trang Shop & trang chi tiết; T
 [ { "shop": { "id": 15, "name": "TechZone Official", "logo_url": null, "is_mall": true }, "rating_avg": 4.9, "follower_count": 128000 } ]
 ```
 `summary.total` cho "Shop đang theo dõi (3)".
+- `shop_id` = `vendor_profiles.id` (cùng id trả ở 9.2 sau khi mở shop) — không phải `users.id` của chủ shop.
+- Theo dõi được khi shop `kyc_status = VERIFIED` **và** tài khoản chủ shop `ACTIVE`, ngược lại `404 GNE-SYS-4040`; theo dõi shop của chính mình → `409 GNE-SOC-4095`. Shop đã theo dõi rồi mới bị khóa vẫn hủy được và **không** hiện trong danh sách / `shop-ids` / `summary.total`.
+- `PUT` / `DELETE` idempotent; `follower_count` chỉ cộng / trừ khi dòng theo dõi thật sự được thêm / xóa (cùng transaction, không âm). `limit` 1–50; `shop-ids` tối đa 1.000.
 
 #### `PUT /me/following/{shop_id}` · `204` — cộng `follower_count`
 #### `DELETE /me/following/{shop_id}` · `204`
@@ -768,7 +775,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
   }
 }
 ```
-`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày.
+`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày. `streak_days` = `((chuỗi liên tiếp − 1) mod 7) + 1` khi hôm nay hoặc hôm qua có điểm danh, ngược lại `0` (sau ngày thứ 7 quay về ô 1). "Ngày" theo giờ Việt Nam; `next_check_in_at` = 00:00 hôm sau. `expiring_soon` = phần còn lại (FEFO) của các lô hết hạn trong 30 ngày tới, `null` khi không có.
 
 #### `POST /me/coins/check-ins` — Điểm danh
 `201` `{ "reward": 100, "balance": 1350, "streak_days": 4 }`. `409 GNE-PRO-4091` đã điểm danh hôm nay.
@@ -777,7 +784,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```json
 [ { "id": 7781, "type": "ORDER_CASHBACK", "description": "Hoàn điểm đơn TR-20260608-000041", "amount": 120, "created_at": "2026-06-08T10:00:00+07:00" } ]
 ```
-`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM`; `amount` âm khi tiêu.
+`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` (`EXPIRED` = Điểm của lô quá 12 tháng bị trừ — cron 00:15 hằng ngày); `amount` âm khi tiêu.
 
 #### `GET /public/coin-rewards` — Danh mục quà đổi Điểm
 ```json
@@ -785,7 +792,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```
 
 #### `POST /me/coins/redemptions` — Đổi Điểm lấy voucher
-`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm.
+`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm (`details: {balance, required, missing}`); `409 GNE-PRO-4092` voucher đang có trong Kho (hoặc đã dùng hết lượt / người — `details.reason = "USAGE_LIMIT_REACHED"`); `404` quà không tồn tại. Danh mục quà là cấu hình `genie.coin.rewards` (`{id, coin-cost, voucher-code}`) trỏ tới voucher sàn — quà có voucher đã tắt / hết hạn tự ẩn.
 
 ### 3.14 Kho voucher
 UC-PRO-03 · **Màn hình:** Tài khoản › Kho Voucher (tab Tất cả / Voucher Sàn / Voucher Shop / Freeship; "Xem lịch sử voucher" với tab Hết hiệu lực / Đã sử dụng; nhập mã để lưu; xóa; modal chi tiết)
@@ -839,7 +846,7 @@ hoặc `{ "voucher_id": 1 }`. `201` `$Voucher`.
 
 Sai MIME/kích thước → `422 GNE-VAL-4220` ngay khi xin URL; server kiểm tra lại khi nhận `object_key` (`statObject`). URL hết hạn sau 15 phút (KYC 10 phút) → `GNE-MINIO-5003` khi PUT, xin URL mới. URL được ký theo tên miền công khai `PUBLIC_S3_URL` (`https://s3.genie.vn`, Nginx → Silo).
 
-**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
+**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. **2026-11-18 (Mở shop & KYC):** `KYC_DOCUMENT` (`kyc-dossiers` riêng tư, ảnh ≥ 20 KB — nhỏ hơn → `422 {min_bytes}`, link 10 phút, chỉ VENDOR; backend mã hóa AES-256-GCM khi nộp hồ sơ, bản rõ không ở khóa chính thức — ADR 0011), `SHOP_LOGO` / `SHOP_COVER` (`avatar-assets`, chỉ VENDOR, lưu vào `vendor/{shop_id}/{logo|cover}/…`). Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
 
 ---
 
@@ -1082,7 +1089,7 @@ Chỉ banner đang `LIVE` (bật, trong khung giờ), sắp theo `sort_order`. C
 ```json
 { "events": [ { "banner_id": 101, "type": "IMPRESSION" }, { "banner_id": 108, "type": "CLICK" } ] }
 ```
-`type` ∈ `IMPRESSION, CLICK`. `204`. Client gom 5 giây / khi rời trang (`navigator.sendBeacon`).
+`type` ∈ `IMPRESSION, CLICK`. `204`. Client gom 5 giây / khi rời trang (`navigator.sendBeacon` — server nhận cả `text/plain`). Tối đa **50 sự kiện / request** (vượt → `422 GNE-VAL-4220`), **60 request / phút / IP** (`429 GNE-RAT-4290`); sự kiện của banner không còn hiển thị bị bỏ qua (vẫn `204`). Số liệu cộng vào `impressions` / `clicks` sau tối đa 5 phút.
 
 ### 5.16 `GET /public/flash-sales/current?limit=6` — Flash Sale đang chạy
 UC-PRO-06 · **Màn hình:** khối Flash Sale trang chủ (đồng hồ "Kết thúc sau", lưới sản phẩm có thanh suất)
@@ -1542,7 +1549,7 @@ UC-VND-01 · **Màn hình:** Trở thành Người bán (form Tên Shop, Họ t�
 | `409 GNE-VND-4094` | Tên shop đã được dùng |
 
 ### 9.2 `POST /me/shop-registrations/{challenge_id}/confirm`
-`{ "otp": "123456" }` → `201` `{ "shop_id": 15, "kyc_status": "NOT_SUBMITTED" }`. Tài khoản được nâng lên `role = VENDOR` (vẫn mua hàng bình thường — `CUSTOMER < VENDOR`); client làm mới token (`POST /auth/sessions/refresh`) để có quyền `/seller`.
+`{ "otp": "123456" }` → `201` `{ "shop_id": 15, "kyc_status": "NOT_SUBMITTED" }` (`shop_id` = `vendor_profiles.id`). Phiên hiện tại **không** bị thu hồi. Tài khoản được nâng lên `role = VENDOR` (vẫn mua hàng bình thường — `CUSTOMER < VENDOR`); client làm mới token (`POST /auth/sessions/refresh`) để có quyền `/seller`.
 
 ---
 
@@ -2069,7 +2076,7 @@ UC-VND-07 · **Màn hình:** modal "Cập nhật tài khoản nhận tiền" (Ng
 | `PUT /seller/payout-account` 🔐 `PAYOUT_ACCOUNT_UPDATE` | như trên | `200` `payout_account` |
 | `DELETE /seller/payout-account` 🔐 `PAYOUT_ACCOUNT_DELETE` | — | `204`; `409 GNE-WAL-4091` còn lệnh rút đang chờ |
 
-Danh sách ngân hàng: `GET /public/banks` → `[{ "code": "VCB", "name": "Vietcombank" }]` (dùng chung cho modal trả hàng của khách).
+`GET /seller/payout-account` → `payout_account` hoặc `null` (số tài khoản che — thêm 2026-11-18). Danh sách ngân hàng: `GET /public/banks` → `[{ "code": "VCB", "name": "Vietcombank" }]` (dùng chung cho modal trả hàng của khách).
 
 #### Chế độ nghỉ
 UC-VND-19 · **Màn hình:** công tắc "Chế độ nghỉ (Vacation)" → modal "Bật chế độ nghỉ" (mở lại ngày ≤ 30 ngày, tin nhắn tự động; nếu còn đơn chưa bàn giao thì liệt kê)
@@ -2108,6 +2115,8 @@ UC-VND-02, UC-VND-03, UC-VND-04 · **Màn hình:** Hồ sơ KYC (băng trạng t
 }
 ```
 Giấy tờ chưa tải = `null`. Không trả URL ảnh CCCD về lại cho shop (giảm rò rỉ — màn hình chỉ hiện tên tệp và dung lượng).
+
+**Hiện thực (2026-11-18):** thân lưu nháp / gửi duyệt nhận thêm `document_file_names` (tùy chọn, `{ID_FRONT: "cccd.jpg"}`) để màn hình hiện lại tên tệp; tên tệp + dung lượng lưu ở `kyc_documents_meta_json`.
 
 #### `PUT /seller/kyc/draft` — Lưu nháp
 Body như 10.12 submit nhưng mọi trường tùy chọn. `200`.
@@ -2238,7 +2247,7 @@ UC-VND-04 · `REVIEW_KYC` · **Màn hình:** hàng chờ (tab Chờ duyệt / Ch
 
 | Method & Path | Body | Kết quả |
 |---|---|---|
-| `POST /admin/kyc-submissions/{id}/approve` | `{ "shop_commission_rate": 3.0 }` (bỏ trống = theo ngành) | `VERIFIED`, `kyc_verification_method = MANUAL_STAFF` |
+| `POST /admin/kyc-submissions/{id}/approve` | `{ "shop_commission_rate": 3.0, "is_mall": true }` (bỏ trống = theo ngành; hoa hồng cần thêm `UPDATE_COMMISSION`, thiếu → `403`; 0–50%) | `VERIFIED`, `kyc_verification_method = MANUAL_STAFF` |
 | `POST /admin/kyc-submissions/{id}/reject` | `{ "reason_code": "BLURRY_DOCUMENT", "note": "…" }` (`note` bắt buộc khi `OTHER`) | `REJECTED`, thông báo + email shop |
 | `POST /admin/kyc-submissions/{id}/request-supplement` | `{ "documents": ["ID_FRONT", "BUSINESS_LICENSE"], "note": "Ảnh CCCD mặt trước bị mờ…" }` (≥ 1 giấy tờ) | `SUPPLEMENT_REQUESTED`, hạn 7 ngày |
 | `POST /admin/kyc-submissions/{id}/requeue` | — | Về `PENDING` |
@@ -2396,9 +2405,12 @@ UC-ADM-07 · `VIEW_AUDIT_LOG` · **Màn hình:** lọc thời gian (Hôm nay / 7
 ```json
 [ { "id": 55120, "created_at": "2026-06-22T09:42:11+07:00", "actor_email": "phat.nt@genie.example", "actor_role": "MODERATOR", "action": "KYC_APPROVED", "category": "KYC", "target": "KYC-1037 · TravelGear", "ip_address": "113.161.40.12", "result": "SUCCESS" } ]
 ```
-`result` ∈ `SUCCESS, FAILED, DENIED`; `actor_email = "system"` cho tác vụ định kỳ. `summary.denied_count`.
+`result` ∈ `SUCCESS, FAILED, DENIED` (`DENIED` = dòng `ACCESS_DENIED`); `actor_email = "system"` cho tác vụ định kỳ. `summary.denied_count` = số dòng `ACCESS_DENIED` trong bộ lọc. `id` là UUID (chuỗi).
+- `from` / `to`: ISO-8601 hoặc ngày `YYYY-MM-DD` (giờ Việt Nam; `to` dạng ngày tính hết ngày đó, dạng thời điểm thì loại trừ). Mặc định 7 ngày gần nhất; **tối đa 90 ngày / lần** → vượt `422 GNE-VAL-4220` (`errors[].code = RANGE_TOO_LONG`). `q` ≤ 100 ký tự, tìm không phân biệt hoa thường trong email / IP / mã tham chiếu. `limit` 1–100 (mặc định 50).
+- `actor_role`: vai trò chụp lúc ghi; riêng `STAFF` hiển thị **chức danh hiện tại** (`MODERATOR`…). `target` = `details.target_label` nếu có, không thì `reference_id`.
 
 #### `GET /admin/audit-logs/export?…` → `text/csv` (`nhat-ky-he-thong.csv`)
+Cùng bộ lọc (không `cursor` / `limit`). UTF-8 có BOM, ô bắt đầu bằng `= + - @` được thêm `'` (chống chèn công thức), giờ Việt Nam. **Tối đa 50.000 dòng** mới nhất — bị cắt thì có header `X-Truncated: true`. Giới hạn 5 lần / phút / người (`429 GNE-RAT-4290`).
 
 ### 11.11 Danh mục toàn sàn & bộ thuộc tính
 UC-CAT-14, UC-CAT-15, UC-CAT-17 · `MANAGE_CATALOG` · **Màn hình:** 4 chỉ số (Danh mục gốc, Danh mục con, Tổng sản phẩm, Chờ duyệt), cây danh mục gốc, chi tiết (hiển thị, Bộ thuộc tính, Sửa; bảng danh mục con Sản phẩm / Hoa hồng / Xem SP), "Đề xuất danh mục từ người bán" (Duyệt / Từ chối có lý do), modal Thêm/Sửa danh mục (tên, slug + Auto, danh mục cha 3 cấp, icon, hoa hồng mặc định, Xóa khi rỗng), Bộ thuộc tính (Mã, Tên, Kiểu, Giá trị/Đơn vị, Bắt buộc, Lọc được, Trục biến thể, Ngừng dùng)
@@ -2585,11 +2597,11 @@ UC-ADM-12 · `MANAGE_VOUCHER` · **Màn hình:** lọc vị trí, tìm; bảng B
 ```json
 { "title": "Siêu sale 12.12", "image_object_key": "tmp/content-assets/...jpg", "mobile_image_object_key": null, "target_url": "/sieu-sale-12-12", "position": "CATEGORY_TOP", "category_id": 1, "sort_order": 1, "starts_at": "...", "ends_at": "...", "is_active": true }
 ```
-Sửa mà không đổi ảnh → bỏ `image_object_key`.
+Sửa mà không đổi ảnh → bỏ `image_object_key`; `mobile_image_object_key`: bỏ / `null` = giữ, `""` = bỏ ảnh mobile. `image_object_key` là khóa `tmp/…` do `POST /uploads/presigned-urls` (`purpose = BANNER_IMAGE`, quyền `MANAGE_VOUCHER`) cấp; server chuyển ảnh sang `content-assets/banner/{id}/…`, phản hồi trả URL. Lỗi thiếu trường: `422 GNE-VAL-4220` với `errors[].field` (`title`, `image_object_key`, `target_url`, `position`, `category_id`, `sort_order`, `starts_at`, `ends_at`). Danh sách phân trang số (`page` từ 1, `size` ≤ 60); `category` = `{id, name}`. Mọi thay đổi ghi `system_logs` `BANNER_CHANGED`.
 
 | Lỗi | Khi nào |
 |---|---|
-| `422 GNE-BNR-4221` | Vị trí đã đủ 8 banner đang hiển thị |
+| `422 GNE-BNR-4221` | Vị trí đã đủ 8 banner đang hiển thị — đếm banner **bật** khác cùng vị trí (cùng `category_id` với `CATEGORY_TOP`) có khung giờ **giao** với banner đang lưu và chưa kết thúc; bật lại (`PATCH`) cũng kiểm |
 | `422 GNE-BNR-4222` | `target_url` ngoài miền sàn |
 | `422 GNE-VAL-4220` | Thiếu ảnh / thời gian / `category_id` khi `CATEGORY_TOP` |
 
@@ -2660,7 +2672,7 @@ Không có màn hình nhưng bắt buộc để các màn hình thanh toán, gia
 | `GET /payments/vnpay/ipn` | VNPay | HMAC-SHA512 | Xác nhận thanh toán → đơn `PAID`, ký quỹ `HELD`. Trả `{"RspCode":"00"}`; sai chữ ký `97`; đã xử lý `02`; lệch tiền `04` (LLD SD-03) |
 | `POST /payments/sepay/webhook` | SePay | Header `Authorization: Apikey …` | Tiền vào nội dung `TR…` → thanh toán VietQR; tiền vào từ hãng vận chuyển → tạo phiên `cod-remittances`; tiền ra `TRWD…` → lệnh rút `COMPLETED`; tiền ra `TRRF…` → hoàn tiền `SUCCESS`. Body theo định dạng SePay (camelCase: `id`, `gateway`, `transactionDate`, `accountNumber`, `code`, `content`, `transferType` `in/out`, `transferAmount`, `accumulated`, `subAccount`, `referenceCode`, `description`), idempotent theo `id`; trả `200 { "success": true }` |
 | `POST /shipping/{carrier}/webhook/{secret}` | GHN, GHTK, ViettelPost, J&T | `secret` trên URL + IP allowlist | `carrier` ∈ `ghn, ghtk, viettel_post, jnt_express`; body là payload gốc của hãng (adapter chuẩn hóa). Ghi `shipment_events`, cập nhật đơn (`DELIVERING`, `DELIVERED`, `DELIVERY_FAILED`, `RETURNING`…); trả `200` `{ "received": true }` |
-| `PATCH /internal/kyc/{id}/result` | AI Worker | `X-Internal-Token` | Body `{ overall: PASS\|PARTIAL\|FAIL, checks: {qr_code, national_emblem, mrz, fingerprint, face_match}, face_match_score, liveness_passed, risk_score, errors[], model }` (cùng cấu trúc `ai_result` ở 11.3) → tự duyệt, chuyển duyệt tay hoặc từ chối; trả `200 { "kyc_status" }` |
+| `PATCH /internal/kyc/{id}/result` | AI Worker | `X-Internal-Token` | **Đã sửa 2026-11-18 (ADR 0011 mục 5):** worker không kết luận. Body `{ checks: {qr_code, mrz, mrz_qr_match, cccd_number_valid, expiry_rule_valid, face_match, face_duplicate, national_emblem, fingerprint} (true/false/null), face_match_score, liveness_score, signals[{code}], extracted{identity_number, full_name, date_of_birth, gender, address, issue_date, expiry_date, legacy_identity_number}, errors[], model{} }` → backend tính điểm theo bảng `genie.kyc.risk.points` và tự duyệt / chuyển duyệt tay / từ chối; idempotent; trả `200 { "kyc_status" }`. Yêu cầu gửi đi: `POST {AI_WORKER_URL}/kyc/verify {kyc_id, documents{id_front, id_back, selfie} (URL 5 phút), declared{identity_number, full_name}, biometric_consent, callback_url}` → `202` |
 | `PATCH /internal/reviews/{id}/sentiment` | AI Worker | `X-Internal-Token` | `{ "label": "NEGATIVE", "score": 0.91, "model": "phobert-genie-v1" }` → `aspect_sentiment_json.overall` |
 | `GET /public/health` | Uptime Kuma | — | `{ "status": "UP" }` — trả nguyên văn, **không** bọc phong bì §0.3 |
 
@@ -2877,6 +2889,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-VCH-4093` | 409 | Voucher đã có lượt dùng, không xóa được | mới |
 | `GNE-VCH-4221` | 422 | Voucher không áp dụng được (hết hạn, chưa đạt tối thiểu, vượt 85%…) | LLD |
 | `GNE-PRO-4091` | 409 | Đã điểm danh hôm nay | mới |
+| `GNE-PRO-4092` | 409 | Đổi Điểm lấy voucher đang có trong Kho Voucher (còn lượt dùng) hoặc đã dùng hết lượt / người (`details.reason = "USAGE_LIMIT_REACHED"`) | mới |
 | `GNE-PRO-4221` | 422 | Giá Flash không thấp hơn ≥ 15% / số suất không hợp lệ | mới |
 | `GNE-PRO-4222` | 422 | Không đủ Điểm | mới |
 | `GNE-PRO-4223` | 422 | Quá số sản phẩm tối đa / quá hạn đăng ký Flash Sale | mới |
@@ -2889,6 +2902,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-SOC-4092` | 409 | Đơn chưa hoàn thành, chưa đánh giá được | mới |
 | `GNE-SOC-4093` | 409 | Đã báo cáo đánh giá này | mới |
 | `GNE-SOC-4094` | 409 | Shop đã phản hồi đánh giá | mới |
+| `GNE-SOC-4095` | 409 | Theo dõi shop của chính mình | mới |
 | `GNE-SOC-4221` | 422 | Phản hồi chứa số điện thoại | mới |
 | `GNE-VND-4031` | 403 | Shop chưa `VERIFIED` (cổng KYC) | mới |
 | `GNE-VND-4091` | 409 | Đổi tên shop quá 1 lần / 30 ngày | mới |
@@ -2957,7 +2971,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `VoucherScope` | `ALL, CATEGORY, PRODUCT` |
 | `FundingParty` | `PLATFORM, VENDOR, CO_SPONSOR` |
 | `FlashSaleStatus` | `DRAFT, SCHEDULED, ACTIVE, ENDED` |
-| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM` |
+| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` |
 | `MessageType` | `TEXT, IMAGE, PRODUCT_CARD, ORDER_CARD` |
 | `ReviewReportReason` | `SPAM, OFFENSIVE, FAKE_PURCHASE` |
 | `TrafficSource` | `SEARCH, HOME_FEED, PROMOTION, SHOP_PAGE, EXTERNAL_LINK` |
@@ -2985,7 +2999,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `KycDocumentType` | `ID_FRONT, ID_BACK, BUSINESS_LICENSE, BUSINESS_REGISTRATION, SELFIE, TAX_NOTICE` | 10.12, 11.3 |
 | `RiskLevel` | `LOW, MEDIUM, HIGH` | 11.3 |
 | `NotificationCategory` | `ORDER, PROMOTION, SYSTEM, CHAT` | 3.12 |
-| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` | 11.10 |
+| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, BANNER_CHANGED` | 11.10 |
 
 ### 16.3 Ánh xạ trạng thái đơn → tab
 
@@ -3100,8 +3114,8 @@ Khi sinh OpenAPI (`genie-api-spec`) từ tài liệu này, các chỗ còn hở 
 
 | Mã web đang gọi | Theo spec |
 |---|---|
-| `GET /me/wishlist/ids` | `GET /me/wishlist/product-ids` |
-| `GET/POST/DELETE /me/shop-follows…` | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` |
+| ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` — **đã sửa** (cùng `POST /me/wishlist` → `PUT`; plan 2026-11-16 wishlist W04.01) |
+| ~~`GET/POST/DELETE /me/shop-follows…`~~ | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` — **đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` |
 | `GET /public/feed` | `GET /public/recommendations` |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar` |

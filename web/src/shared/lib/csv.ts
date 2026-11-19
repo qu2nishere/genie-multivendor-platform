@@ -12,10 +12,13 @@ export function toCsv(rows: CsvCell[][]): string {
 }
 
 export function downloadCsv(filename: string, rows: CsvCell[][]): void {
+  downloadBlob(filename, new Blob([BOM + toCsv(rows)], { type: 'text/csv;charset=utf-8' }));
+}
+
+/** Lưu một Blob (vd. CSV do server sinh — đã có BOM) thành tệp tải về. */
+export function downloadBlob(filename: string, blob: Blob): void {
   if (typeof document === 'undefined') return;
-  const url = URL.createObjectURL(
-    new Blob([BOM + toCsv(rows)], { type: 'text/csv;charset=utf-8' }),
-  );
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;

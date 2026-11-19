@@ -21,3 +21,5 @@ genie:
     bucket-prefix: ${STORAGE_BUCKET_PREFIX}        # bắt buộc, vd. genie-prod- (khớp deploy/aws/s3-init.sh)
   ai-worker:
     url: ${AI_WORKER_URL:http://ai-worker:8000}
+    mode: ${AI_WORKER_MODE:http}
+    callback-base-url: ${BACKEND_INTERNAL_URL:http://backend:8080}

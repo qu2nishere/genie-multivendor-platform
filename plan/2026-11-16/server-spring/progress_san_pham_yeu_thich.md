@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-wishlist` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-16 — mới lập plan, chưa bắt đầu (0 / 38) |
+| **Cập nhật gần nhất** | 2026-11-17 — đang làm (38 / 38) |
 
 **Cách dùng**
 
@@ -23,80 +23,80 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | UC-CAT-08 bước 2–3: `POST /api/v1/customer/wishlist` kiểu bật / tắt (toggle); API 3.10: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids` | ☐ | |
-| D2 | Thích sản phẩm không còn bán / không tồn tại | ☐ | |
-| D3 | `is_purchasable = false` "khi shop đang nghỉ / sản phẩm hết bán" — trạng thái nghỉ của shop ở module `vendor` | ☐ | |
-| D4 | `price`, `default_variant_id`, `image_url` lấy thế nào | ☐ | |
-| D5 | Giới hạn số sản phẩm yêu thích | ☐ | |
-| D6 | UC mục đích có "nhận thông báo khi sản phẩm giảm giá" | ☐ | |
+| D1 | UC-CAT-08 bước 2–3: `POST /api/v1/customer/wishlist` kiểu bật / tắt (toggle); API 3.10: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids` | ☑ | Theo API: `PUT` / `DELETE /me/wishlist/{product_id}` idempotent + `GET /me/wishlist/product-ids`; sửa Usecase.md ở W05.03 · 2026-11-17 |
+| D2 | Thích sản phẩm không còn bán / không tồn tại | ☑ | Như đề xuất — thích sản phẩm không tồn tại / không `PUBLISHED` → `404 GNE-CAT-4042`; đã thích rồi mới bị ẩn → vẫn hiện, `is_purchasable = false`, bỏ thích bình thường · 2026-11-17 |
+| D3 | `is_purchasable = false` "khi shop đang nghỉ / sản phẩm hết bán" — trạng thái nghỉ của shop ở module `vendor` | ☑ | Như đề xuất — cổng `WishlistShopAvailability` (mặc định không shop nào nghỉ); `is_purchasable` = `PUBLISHED` + còn SKU có tồn + shop không nghỉ · 2026-11-17 |
+| D4 | `price`, `default_variant_id`, `image_url` lấy thế nào | ☑ | Như đề xuất — `price` = giá thấp nhất của SKU chưa xóa (không có SKU → `base_price`); `default_variant_id` = SKU còn tồn rẻ nhất (hết hàng → SKU đầu tiên); `image_url` = ảnh chính (không có cờ chính → ảnh `display_order` nhỏ nhất) · 2026-11-17 |
+| D5 | Giới hạn số sản phẩm yêu thích | ☑ | Như đề xuất — không giới hạn; `product-ids` trả tối đa 1.000 ID mới nhất · 2026-11-17 |
+| D6 | UC mục đích có "nhận thông báo khi sản phẩm giảm giá" | ☑ | Như đề xuất — ngoài phạm vi; có sẵn `WishlistFacade.userIdsWishing(productId)` · 2026-11-17 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong | Mã Jira | Nhánh |
 |---|---|---:|---:|---:|---|---|
-| W00 | Chuẩn bị | 5 | 0 | 0 / 5 | — | `feature/catalog-wishlist` |
-| W01 | Miền & truy vấn | 4 | 1 | 0 / 5 | — | `feature/catalog-wishlist` |
-| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
-| W03 | Danh sách yêu thích | 6 | 1 | 0 / 7 | — | `feature/catalog-wishlist` |
-| W04 | Nối giao diện `web/` | 6 | 2 | 0 / 8 | — | `feature/catalog-wishlist` |
-| W05 | Hoàn thiện use case | 5 | 1 | 0 / 6 | — | `feature/catalog-wishlist` |
-| **Tổng** | | **32** | **6** | **0 / 38** | | |
+| W00 | Chuẩn bị | 5 | 0 | 5 / 5 | — | `feature/catalog-wishlist` |
+| W01 | Miền & truy vấn | 4 | 1 | 5 / 5 | — | `feature/catalog-wishlist` |
+| W02 | Thích / bỏ thích & tập ID | 6 | 1 | 7 / 7 | — | `feature/catalog-wishlist` |
+| W03 | Danh sách yêu thích | 6 | 1 | 7 / 7 | — | `feature/catalog-wishlist` |
+| W04 | Nối giao diện `web/` | 6 | 2 | 8 / 8 | — | `feature/catalog-wishlist` |
+| W05 | Hoàn thiện use case | 5 | 1 | 6 / 6 | — | `feature/catalog-wishlist` |
+| **Tổng** | | **32** | **6** | **38 / 38** | | |
 
 ## W00 — Chuẩn bị
 
-- [ ] **W00.01** Kiểm danh tính git
-- [ ] **W00.02** Chốt quyết định D1–D6
-- [ ] **W00.03** Tạo nhánh
-- [ ] **W00.04** Kiểm dữ liệu thử
-- [ ] **W00.05** Đọc màn mock
+- [x] **W00.01** Kiểm danh tính git
+- [x] **W00.02** Chốt quyết định D1–D6
+- [x] **W00.03** Tạo nhánh
+- [-] **W00.04** Kiểm dữ liệu thử
+- [x] **W00.05** Đọc màn mock
 
 ## W01 — Miền & truy vấn
 
-- [ ] **W01.01** `ErrorCode`
-- [ ] **W01.02** `UserWishlist.of(userId, productId, now)`
-- [ ] **W01.03** `UserWishlistRepository`
-- [ ] **W01.04** `TestDataBuilder`
-- [ ] **W01.C1** 🔖 COMMIT `feat(catalog): add wishlist queries and product test fixtures` · hash: `…`
+- [x] **W01.01** `ErrorCode`
+- [x] **W01.02** `UserWishlist.of(userId, productId, now)`
+- [x] **W01.03** `UserWishlistRepository`
+- [x] **W01.04** `TestDataBuilder`
+- [x] **W01.C1** 🔖 COMMIT `feat(catalog): add wishlist queries and product test fixtures` · hash: `d74ed73`
 
 ## W02 — Thích / bỏ thích & tập ID
 
-- [ ] **W02.01** `WishlistService.add(userId, productId)`
-- [ ] **W02.02** `WishlistService.remove(userId, productId)`
-- [ ] **W02.03** `WishlistQueryService.productIds(userId)`
-- [ ] **W02.04** `MeWishlistController`
-- [ ] **W02.05** `WishlistIT`
-- [ ] **W02.06** `WishlistConcurrencyIT`
-- [ ] **W02.C1** 🔖 COMMIT `feat(catalog): add and remove wishlist products idempotently` · hash: `…`
+- [x] **W02.01** `WishlistService.add(userId, productId)`
+- [x] **W02.02** `WishlistService.remove(userId, productId)`
+- [x] **W02.03** `WishlistQueryService.productIds(userId)`
+- [x] **W02.04** `MeWishlistController`
+- [x] **W02.05** `WishlistIT`
+- [x] **W02.06** `WishlistConcurrencyIT`
+- [x] **W02.C1** 🔖 COMMIT `feat(catalog): add and remove wishlist products idempotently` · hash: `1a102b5`
 
 ## W03 — Danh sách yêu thích
 
-- [ ] **W03.01** `WishlistShopAvailability`
-- [ ] **W03.02** `WishlistQueryService.list(userId, cursor, limit)`
-- [ ] **W03.03** `summary.total` = `countByUserId` (API 3.10); phân trang cursor theo API 0.4.
-- [ ] **W03.04** `MeWishlistController`
-- [ ] **W03.05** `WishlistQueryIT`
-- [ ] **W03.06** `WishlistFacade.userIdsWishing(productId)` (D6)
-- [ ] **W03.C1** 🔖 COMMIT `feat(catalog): list wishlist products with price and purchasable flag` · hash: `…`
+- [x] **W03.01** `WishlistShopAvailability`
+- [x] **W03.02** `WishlistQueryService.list(userId, cursor, limit)`
+- [x] **W03.03** `summary.total` = `countByUserId` (API 3.10); phân trang cursor theo API 0.4.
+- [x] **W03.04** `MeWishlistController`
+- [x] **W03.05** `WishlistQueryIT`
+- [x] **W03.06** `WishlistFacade.userIdsWishing(productId)` (D6)
+- [x] **W03.C1** 🔖 COMMIT `feat(catalog): list wishlist products with price and purchasable flag` · hash: `c302513`
 
 ## W04 — Nối giao diện `web/`
 
-- [ ] **W04.01** `product/infrastructure/wishlist.api.ts`
-- [ ] **W04.02** Thêm `listWishlist(cursor)` (DTO snake_case + mapper + nhánh mock dùng dữ liệu hiện có) gọi `GET /me/wishlist`; trang `/account/wishlist` dùng hàm này thay cho ghép ID + `listProductsByIds`; tiêu đề lấy `summary.total`.
-- [ ] **W04.03** Trạng thái & lỗi
-- [ ] **W04.04** Test Vitest cho mapper + quy tắc cập nhật lạc quan (nếu đặt ở `domain` / `application`).
-- [ ] **W04.05** Chạy thật hai phía
-- [ ] **W04.06** `cd web && npm run verify`.
-- [ ] **W04.C1** 🔖 COMMIT `fix(web): call wishlist endpoints defined in the api spec` · hash: `…`
-- [ ] **W04.C2** 🔖 COMMIT `feat(web): load wishlist page from the real api` · hash: `…`
+- [x] **W04.01** `product/infrastructure/wishlist.api.ts`
+- [x] **W04.02** Thêm `listWishlist(cursor)` (DTO snake_case + mapper + nhánh mock dùng dữ liệu hiện có) gọi `GET /me/wishlist`; trang `/account/wishlist` dùng hàm này thay cho ghép ID + `listProductsByIds`; tiêu đề lấy `summary.total`.
+- [x] **W04.03** Trạng thái & lỗi
+- [x] **W04.04** Test Vitest cho mapper + quy tắc cập nhật lạc quan (nếu đặt ở `domain` / `application`).
+- [-] **W04.05** Chạy thật hai phía
+- [x] **W04.06** `cd web && npm run verify`.
+- [x] **W04.C1** 🔖 COMMIT `fix(web): call wishlist endpoints defined in the api spec` · hash: `a23347a`
+- [x] **W04.C2** 🔖 COMMIT `feat(web): load wishlist page from the real api` · hash: `350d923`
 
 ## W05 — Hoàn thiện use case
 
-- [ ] **W05.01** `docs/api-tests/wishlist.http`
-- [ ] **W05.02** OpenAPI
-- [ ] **W05.03** Tài liệu nguồn
-- [ ] **W05.04** Tiến độ
-- [ ] **W05.C1** 🔖 COMMIT `docs(catalog): record wishlist use case as implemented` · hash: `…`
-- [ ] **W05.05** Mở PR vào `develop`
+- [x] **W05.01** `docs/api-tests/wishlist.http`
+- [x] **W05.02** OpenAPI
+- [x] **W05.03** Tài liệu nguồn
+- [x] **W05.04** Tiến độ
+- [x] **W05.C1** 🔖 COMMIT `docs(catalog): record wishlist use case as implemented` · hash: `(commit tài liệu cuối nhánh)`
+- [-] **W05.05** Mở PR vào `develop`
 
 ---
 
@@ -104,11 +104,11 @@
 
 Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-CAT-08` Quản lý danh sách sản phẩm yêu thích — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
-- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
+- [x] `UC-CAT-08` Quản lý danh sách sản phẩm yêu thích — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6 — **chờ**: UC-CAT-08 còn ô **Chạy** (người dùng chạy thật trên giao diện)
 
 ## Ghi chú
 
@@ -116,10 +116,25 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 
 | Task | Ghi chú |
 |---|---|
-| | |
 
 ## Nhật ký
+| W00.03 | Nhánh tách từ `feature/promotion-coin-checkin` (xếp nối tiếp seed → audit → banner → coin → wishlist) |
+| W00.04 | `[-]` Không phụ thuộc: test tự dựng dữ liệu bằng `TestDataBuilder` (W01.04); lần chạy API thật (W04.05) tự chèn sản phẩm vào CSDL mới (dữ liệu mẫu nằm ở nhánh seed) |
+| W00.05 | Web: `wishlist.api.ts` gọi `GET /me/wishlist/ids` + `POST /me/wishlist` / `DELETE` (lệch spec); trang `/account/wishlist` ghép ID + `listProductsByIds` — sẽ đổi sang `GET /me/wishlist` |
+| W01.04 | `TestDataBuilder` (trước là khung rỗng) dựng bằng `JdbcTemplate`: `category`, `vendor` (users VENDOR + vendor_profiles VERIFIED), `shopIdOf`, `product`, `variant`, `primaryImage`, `setStatus` — khóa tự nhiên ngẫu nhiên, test không đụng nhau. `ProductVariant` không có `@SQLRestriction` thật → truy vấn tự lọc `deleted_at IS NULL` |
+| W02.04 | `product_id` kiểm bằng `@Positive` trên `@PathVariable` (Spring 6.1 tự kiểm tham số) — `0` hoặc chữ → `422 GNE-VAL-4220` |
+| W02.06 | Ca đồng thời đặt luôn trong `WishlistIT` (`twentyConcurrentLikesKeepOneRowAndMixedTogglesNeverFail`) thay vì lớp `WishlistConcurrencyIT` riêng — dùng chung dữ liệu dựng sẵn; 20 `PUT` song song → 20 lần `204`, 1 dòng; 20 `PUT` / `DELETE` xen kẽ → toàn `204` |
+| W03.02 | Nạp theo lô bằng **projection** (`ProductSummaryRows`: `ProductRow`, `VariantRow`, `ImageRow`) chứ không nạp entity — `Product.category` và `ProductVariant.product` là `@ManyToOne` EAGER sẽ sinh truy vấn phụ. Ảnh: `ImageRow` của gallery chung (ảnh chính trước, rồi `display_order`); URL ghép bằng `ObjectStorage.publicUrl("product-media", key)`, khóa đã là URL `http(s)` thì giữ nguyên. `WishlistService.add` cũng đổi sang `findStatus` (không nạp entity) |
+| W03.05 | Bật `hibernate.generate_statistics` riêng cho `WishlistQueryIT`: một trang 20 dòng (25 sản phẩm × 2 SKU) ≤ 6 câu SQL. Shop nghỉ kiểm bằng cài đặt giả `WishlistShopAvailability` (`@Primary` trong test). Lần chạy đầu sập vì máy hết RAM (ứng dụng khác đang chạy) — chạy lại sau khi giải phóng thì xanh |
+| W04.02 | Thêm trường `product_slug` vào `GET /me/wishlist` (commit `0a8cbb9`, ngoài plan): bảng `products` chưa có cột slug, web cần `/p/{slug}-{id}` (handoff mục 3) → backend sinh từ tên bằng `common/domain/Slugs.slugify` (cùng quy tắc `web/src/shared/lib/slug.ts`, có `SlugsTest`) |
+| W04.03 | Cập nhật lạc quan + hoàn tác khi lỗi đã có sẵn ở `toggleWishlist`; `404 GNE-CAT-4042` → tim tự trả về trạng thái chưa thích + toast `errors.GNE-CAT-4042`; chưa đăng nhập → `requireLogin()` (có sẵn ở `WishHeart`). Màn danh sách: lọc theo store tim để bỏ thích biến mất ngay; nút "Thêm vào giỏ" khóa theo `is_purchasable` |
+| W04.04 | `wishlist.mapper.test.ts` (DTO → `WishlistEntry`). Cổng web: lint 0, astro check 0 lỗi, tsc 0, vitest 319/319, build OK, i18n OK; E2E `guest` + `orders` 10/10 |
+| W04.05 | `[-]` Phần trình duyệt chờ người dùng (CLAUDE.md). Đã chạy thật phía API trên CSDL mới `genie_wish` với `mai.tran`: `PUT` 2 lần → 204 (1 dòng), `PUT` sản phẩm nháp → `404 GNE-CAT-4042`, `product-ids` = `[2, 1]`, danh sách đúng giá thấp nhất / SKU còn hàng / `is_purchasable`, `product_slug`, ảnh URL Silo, `summary.total = 2`; `DELETE` 2 lần → 204; không token → 401. Cách chạy giao diện: `PUBLIC_REAL_API=auth,wishlist`, dữ liệu mẫu nhánh seed |
+| W05.02 | `/v3/api-docs` có đủ 4 endpoint, summary `UC-CAT-08 — …` (kiểm khi chạy API thật ở W04.05) |
+| W05.04 | Checklist UC-CAT-08: GD / BE / Test / Nối `☑`, **Chạy `☐`** (chờ người dùng) → 🟡; Excel "Đang triển khai"; handoff bỏ dòng lệch spec + đánh dấu đã nối; CLAUDE.md mục 2 + mục 9 (cổng `WishlistShopAvailability`, cảnh báo quan hệ EAGER). Cổng: `./mvnw verify` BUILD SUCCESS (108 unit + 138 IT) |
+| W05.05 | `[-]` Chưa push / mở PR — chờ người dùng; PR mở sau PR Điểm Genie (nhánh tách từ `feature/promotion-coin-checkin`) |
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (32 task, 6 commit, 6 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-17 | W00–W05: truy vấn + `TestDataBuilder`, thích / bỏ thích idempotent, danh sách nạp theo lô (projection) + `product_slug`, sửa 2 endpoint web lệch spec + nối trang yêu thích, tài liệu; còn chạy thật trên giao diện (W04.05) và mở PR | `d74ed73` `1a102b5` `c302513` `0a8cbb9` `a23347a` `350d923` |

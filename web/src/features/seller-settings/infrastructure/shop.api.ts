@@ -1,6 +1,8 @@
 // Khung Seller Center: GET /seller/me (10.1), GET /seller/search (10.1b), tài khoản nhận tiền (10.11).
+// API thật khi PUBLIC_REAL_API có `vendor` (K11.03); tìm nhanh /seller/search thuộc cụm đơn hàng — cờ `seller-search`.
 import { api } from '@/shared/api/http';
-import { mockDelay, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import {
   sellerChatUnreadStore,
   sellerOrdersStore,
@@ -12,6 +14,9 @@ import type { PayoutAccount, SearchHit, SellerContext } from '../domain/shop.typ
 import type { PayoutAccountDto, SellerMeDto, SellerSearchDto } from './shop.dto';
 import { toPayoutAccount, toSearchHit, toSellerContext } from './shop.mapper';
 import { BADGES, PAYOUT_ACCOUNT } from './shop.mock';
+
+const USE_MOCK = isMocked('vendor');
+const SEARCH_MOCK = isMocked('seller-search');
 
 export async function getSellerMe(): Promise<SellerContext> {
   if (USE_MOCK) {
@@ -33,7 +38,7 @@ export async function getSellerMe(): Promise<SellerContext> {
 export async function searchSeller(q: string, limit = 5): Promise<SearchHit> {
   const empty: SearchHit = { orders: [], products: [] };
   if (!searchable(q)) return empty;
-  if (USE_MOCK) {
+  if (SEARCH_MOCK) {
     await mockDelay(120);
     if (sellerStore.get().kyc_status !== 'VERIFIED') return empty;
     const n = q.trim().toLowerCase();

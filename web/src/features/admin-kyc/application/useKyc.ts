@@ -29,7 +29,7 @@ export const useKycDetail = (id: number | null) =>
   });
 
 export type KycDecision =
-  | { kind: 'approve'; id: number; shopCommissionRate: number | null }
+  | { kind: 'approve'; id: number; shopCommissionRate: number | null; isMall?: boolean }
   | { kind: 'reject'; id: number; reason: KycRejectReason; note: string | null; label: string }
   | { kind: 'supplement'; id: number; documents: KycDocType[]; note: string }
   | { kind: 'requeue'; id: number };
@@ -37,7 +37,7 @@ export type KycDecision =
 function decide(d: KycDecision): Promise<KycDetail> {
   switch (d.kind) {
     case 'approve':
-      return approveKyc(d.id, d.shopCommissionRate);
+      return approveKyc(d.id, d.shopCommissionRate, d.isMall);
     case 'reject':
       return rejectKyc(d.id, d.reason, d.note, d.label);
     case 'supplement':
