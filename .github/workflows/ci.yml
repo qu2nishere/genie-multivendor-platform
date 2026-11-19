@@ -85,6 +85,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
+      # Tesseract đọc MRZ (KYC) + phông đơn cách dựng thẻ mẫu trong test (plan AI Worker Y08.04)
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng fonts-dejavu-core
       - run: pip install -e ".[dev]"
       - run: ruff check .
-      - run: pytest
+      - run: ruff format --check .
+      # Test cần models/*.onnx tự bỏ qua (CI không tải mô hình)
+      - run: pytest -m "not models"

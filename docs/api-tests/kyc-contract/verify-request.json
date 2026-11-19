@@ -1,0 +1,14 @@
+{
+  "kyc_id": 1042,
+  "documents": {
+    "id_front": "http://localhost:9000/kyc-dossiers/tmp/view/0b6c1f2e.jpg?X-Amz-Expires=300",
+    "id_back": "http://localhost:9000/kyc-dossiers/tmp/view/5d9a77c3.jpg?X-Amz-Expires=300",
+    "selfie": "http://localhost:9000/kyc-dossiers/tmp/view/e1f4a2b8.jpg?X-Amz-Expires=300"
+  },
+  "declared": {
+    "identity_number": "079190000012",
+    "full_name": "Phạm Thị Lan"
+  },
+  "biometric_consent": true,
+  "callback_url": "http://localhost:8080/api/v1/internal/kyc/1042/result"
+}

@@ -251,6 +251,8 @@ web/
 
 ### 2.5 Cây AI Worker — `server-python`
 
+> **KYC đã hiện thực (2026-11-18, plan AI Worker):** đọc MRZ bằng **Tesseract 5** (`tesseract-ocr` + dữ liệu `eng`, whitelist `A–Z0–9<`) gọi qua `stdin` — không dùng `pytesseract` (thư viện ghi ảnh ra tệp tạm); QR bằng `cv2.QRCodeDetector`; mặt bằng YuNet + SFace (opencv_zoo, SHA-256 ở `scripts/models.sha256`). Tệp mới: `core/images.py` (tải ảnh an toàn), `kyc/{models,signals,text,rules}.py`; chi tiết ở `server-python/README.md`.
+
 ```
 server-python/
 ├── pyproject.toml · Dockerfile           # Python 3.12 slim + JRE (nếu tách từ bằng VnCoreNLP)
