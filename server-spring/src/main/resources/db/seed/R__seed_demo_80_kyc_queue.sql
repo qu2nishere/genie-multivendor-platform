@@ -1,7 +1,7 @@
 -- Dữ liệu mẫu 80 — hồ sơ KYC cho hàng chờ Admin (plan seed 2026-11-16 S06.05–S06.07; mock web adminKycStore; ENTITY 1.6).
 -- SQL thuần, chạy lại được, không ghi cứng id. Mật khẩu chủ shop: Genie@123.
 --   3 MANUAL_REVIEW (rủi ro 12 — bị lấy mẫu hậu kiểm, 42, 65) · 1 SUPPLEMENT_REQUESTED · 1 REJECTED; kyc_submitted_at lệch nhau.
--- "TravelGear" của mock trùng tên shop đã KYC ở file 30 (V15 thêm UNIQUE lower(shop_name)) → đặt "TravelGear Outdoor".
+-- "TravelGear" của mock trùng tên shop đã KYC ở file 30 (V20 thêm UNIQUE lower(shop_name)) → đặt "TravelGear Outdoor".
 -- Cột ảnh giấy tờ (id_front_url…) để NULL: ảnh thật được mã hóa bởi luồng nộp hồ sơ (UC-VND-02) — muốn xem ảnh thì tự nộp một hồ sơ.
 
 DROP TABLE IF EXISTS seed_kyc;
@@ -66,7 +66,7 @@ JOIN users u ON u.email = r.email
 JOIN vendor_profiles vp ON vp.user_id = u.id
 ON CONFLICT (vendor_profile_id) DO NOTHING;
 
--- ===== S06.07 cột của V15 (plan Mở shop & KYC) — chỉ điền khi cột đã có, để file chạy được cả trước và sau V15 =====
+-- ===== S06.07 cột của V20 (plan Mở shop & KYC) — chỉ điền khi cột đã có, để file chạy được cả trước và sau V20 =====
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.columns
