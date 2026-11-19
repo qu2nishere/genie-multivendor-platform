@@ -1,6 +1,7 @@
 // Nút "Yêu thích" + "Chia sẻ" dưới thư viện ảnh (prototype ProductDetail.jsx toggleLike, share) —
-// plan G08.27, island client:idle. Chia sẻ: liên kết chuẩn kèm phân loại đang chọn (?v=0-1),
-// dùng Web Share khi có, không thì chép vào bộ nhớ tạm.
+// plan G08.27, island client:idle. Chia sẻ (UC-CAT-18; plan 2026-11-17 C07.05): liên kết chuẩn
+// /p/{slug}-{id}?v={variant_id}&src=share (v chỉ có khi đã chọn đủ phân loại), dùng Web Share API khi có,
+// không thì Clipboard API.
 import { useStore } from '@nanostores/react';
 import { useEffect } from 'react';
 import { requireLogin } from '@/features/auth';
@@ -11,8 +12,8 @@ import { cn } from '@/shared/lib/cn';
 import { Icon, toast } from '@/shared/ui';
 import { $selection } from '../application/selection.store';
 import { $wishlist, loadWishlist, toggleWishlist } from '../application/wishlist.store';
-import { encodeSelection } from '../domain/product.rules';
-import type { VariantGroup } from '../domain/product.types';
+import { shareVariantParam } from '../domain/product.rules';
+import type { ProductSku, VariantGroup } from '../domain/product.types';
 
 export interface WishShareProps {
   productId: number;
@@ -20,12 +21,14 @@ export interface WishShareProps {
   /** Đường dẫn chuẩn /p/{slug}-{id}. */
   href: string;
   variantGroups: VariantGroup[];
+  /** SKU để đổi lựa chọn thành `variant_id` trong liên kết. */
+  skus: ProductSku[];
 }
 
 const BTN =
   'inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 border-0 bg-transparent px-0 text-sm hover:text-primary';
 
-export default function WishShare({ productId, title, href, variantGroups }: WishShareProps) {
+export default function WishShare({ productId, title, href, variantGroups, skus }: WishShareProps) {
   const { t } = useT();
   const session = useStore($session);
   const list = useStore($wishlist);
@@ -52,8 +55,8 @@ export default function WishShare({ productId, title, href, variantGroups }: Wis
 
   const share = async () => {
     const u = new URL(href, window.location.origin);
-    const code = encodeSelection(variantGroups, sel);
-    if (code.replace(/-/g, '')) u.searchParams.set('v', code);
+    const variantId = shareVariantParam({ variantGroups, skus }, sel);
+    if (variantId) u.searchParams.set('v', variantId);
     u.searchParams.set('src', 'share');
     if (navigator.share) {
       try {

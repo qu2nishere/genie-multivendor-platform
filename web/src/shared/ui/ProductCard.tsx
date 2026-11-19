@@ -59,19 +59,30 @@ export function ProductCard({
         className="tr-card__main group flex-1 flex flex-col w-full p-0 border-0 rounded-xl bg-surface-card text-left text-[inherit] no-underline hover:no-underline overflow-hidden focus-visible:outline-none focus-visible:shadow-focus"
       >
         <span className="tr-card__media relative block aspect-square overflow-hidden bg-gray-100">
-          <img
-            src={p.image}
-            alt={p.title}
-            width={400}
-            height={400}
-            loading={priority ? 'eager' : 'lazy'}
-            fetchPriority={priority ? 'high' : undefined}
-            decoding="async"
-            className={cn(
-              'w-full h-full object-cover transition-transform duration-slow ease-out group-hover:scale-[1.04]',
-              p.soldOut && 'opacity-60',
-            )}
-          />
+          {p.image ? (
+            <img
+              src={p.image}
+              alt={p.title}
+              width={400}
+              height={400}
+              loading={priority ? 'eager' : 'lazy'}
+              fetchPriority={priority ? 'high' : undefined}
+              decoding="async"
+              className={cn(
+                'w-full h-full object-cover transition-transform duration-slow ease-out group-hover:scale-[1.04]',
+                p.soldOut && 'opacity-60',
+              )}
+            />
+          ) : (
+            // Sản phẩm chưa có ảnh (API trả image_url = null) — không render <img src=""> (trình duyệt tải lại trang)
+            <span
+              role="img"
+              aria-label={p.title}
+              className="flex h-full w-full items-center justify-center text-subtle"
+            >
+              <Icon name="image" size={40} />
+            </span>
+          )}
           {flag && (
             <span className="tr-card__flag absolute left-2 bottom-2 px-[9px] py-[3px] rounded-pill text-white bg-[rgba(11,31,75,.82)] font-semibold text-[11px] leading-4">
               {flag}

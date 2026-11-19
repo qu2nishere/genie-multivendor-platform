@@ -84,6 +84,7 @@ export const ERROR_CODES = [
   'GNE-VCH-4093',
   'GNE-VCH-4221',
   'GNE-VND-4031',
+  'GNE-VND-4041',
   'GNE-VND-4091',
   'GNE-VND-4092',
   'GNE-VND-4093',

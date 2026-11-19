@@ -2,6 +2,8 @@
 // Trang chi tiết sản phẩm (prototype ProductDetail.jsx) — plan G08.35. SSR đầy đủ: tên, giá, ảnh,
 // thông số, mô tả, đánh giá trang đầu, sản phẩm tương tự; title / description / OG ảnh sản phẩm;
 // JSON-LD Product + BreadcrumbList. Slug sai → 301 về URL chuẩn; không có / đã gỡ → 404 + ProductGone.
+// Plan 2026-11-17 C07.04: breadcrumb theo category_path (API thật), OG giá (UC-CAT-18), ghi lượt xem theo nguồn,
+// trang "không còn bán" gợi ý sản phẩm tương tự của chính sản phẩm đó (UC-CAT-07).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
 import { categoryHref, listCategories, mockProductIdsOfSubcategory } from '@/features/catalog';
 import {
@@ -13,7 +15,7 @@ import {
   ProductGallery,
   ProductGrid,
   productHref,
-  stockOf,
+  stockFor,
   WishShare,
   type Product,
 } from '@/features/product';
@@ -55,10 +57,13 @@ if (product && parsed && needsCanonicalRedirect(parsed.slug, product)) {
 let gonePicks: Awaited<ReturnType<typeof listProducts>>['items'] = [];
 if (!product) {
   Astro.response.status = 404;
-  // prototype: 6 sản phẩm đánh giá cao nhất
-  gonePicks = (await listProducts({ size: 60 })).items
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 6);
+  // Sản phẩm tương tự của chính sản phẩm đã ẩn (API chạy được cả khi đã ẩn); không có → 6 sản phẩm đánh giá cao nhất
+  gonePicks = parsed ? await listRelated(parsed.id).catch(() => []) : [];
+  if (gonePicks.length === 0) {
+    gonePicks = (await listProducts({ size: 60 })).items
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 6);
+  }
 }
 
 const p = product;
@@ -85,12 +90,20 @@ const sub = root
       (c) => c.parentId === root.id && mockProductIdsOfSubcategory(c.id)?.includes(p?.id ?? -1),
     )
   : undefined;
-const cats = [root, sub]
+const mockCats = [root, sub]
   .filter((c): c is NonNullable<typeof c> => !!c)
   .map((c) => ({
     name: c.name,
     href: c.parentId ? `${categoryHref(root?.slug ?? '')}?sub=${c.slug}` : categoryHref(c.slug),
   }));
+// API thật trả thẳng đường dẫn gốc → lá: cấp gốc mở trang danh mục, cấp dưới mở ?sub= của danh mục gốc
+const path = p?.categoryPath ?? [];
+const cats = path.length
+  ? path.map((c, i) => ({
+      name: c.name,
+      href: i === 0 ? categoryHref(c.slug) : `${categoryHref(path[0].slug)}?sub=${c.slug}`,
+    }))
+  : mockCats;
 
 const href = p ? productHref(p) : '/';
 const crumbs = p
@@ -102,7 +115,9 @@ const plain = p
       .replace(/\s+/g, ' ')
       .trim()
   : '';
-const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
+const totalStock = p ? stockFor(p, {}) : 0;
+// Nguồn chia sẻ đọc lúc SSR — BuyBox xóa ?src khỏi thanh địa chỉ khi hydrate
+const viewSrc = Astro.url.searchParams.get('src') ?? '';
 ---
 
 {
@@ -114,6 +129,7 @@ const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
       canonical={href}
       image={p.images[0]}
       imageAlt={p.title}
+      price={p.price}
       type="product"
       jsonLd={[
         productLd(
@@ -159,6 +175,7 @@ const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
               title={p.title}
               href={href}
               variantGroups={p.variantGroups}
+              skus={p.skus}
             />
           </div>
           <BuyBox
@@ -213,6 +230,7 @@ const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
           )}
         </section>
       </div>
+      <div hidden data-product-view={p.id} data-src={viewSrc} />
     </StorefrontLayout>
   ) : (
     <StorefrontLayout title={t('product.gone.title')} noindex>
@@ -220,3 +238,11 @@ const totalStock = p ? stockOf(p.variantGroups, {}) : 0;
     </StorefrontLayout>
   )
 }
+
+<script>
+  // Ghi lượt xem theo nguồn (UC-CAT-06 bước 9, UC-CAT-18 bước 5) — chỉ trang có sản phẩm
+  import { trackProductView } from '@/features/product';
+
+  const el = document.querySelector<HTMLElement>('[data-product-view]');
+  if (el) trackProductView(Number(el.dataset.productView), el.dataset.src || null);
+</script>

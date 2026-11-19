@@ -1,37 +1,43 @@
-// Shop công khai + theo dõi shop. Shop công khai: mock khi USE_MOCK (chờ /api/v1/public/shops). Theo dõi shop
-// (API_SPEC 3.11 — UC-SOC-06): nối API thật khi PUBLIC_REAL_API có `follow`.
+// Shop công khai + theo dõi shop. Trang shop: nối API thật khi PUBLIC_REAL_API có `shop` (/api/v1/public/shops — API_SPEC
+// 5.11, 5.12; plan 2026-11-17 C07.06). Theo dõi shop (API_SPEC 3.11 — UC-SOC-06): nối API thật khi có `follow`.
 import { api, request } from '@/shared/api/http';
-import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail } from '@/shared/api/mock';
 import { env, isMocked } from '@/shared/config/env';
 import type { Shop } from '../domain/shop.types';
-import type { FollowedShopDto, ShopDto } from './shop.dto';
-import { fromFollowedShop, toShop } from './shop.mapper';
+import type { FeaturedShopDto, FollowedShopDto, ShopPageDto } from './shop.dto';
+import { fromFeaturedShopDto, fromFollowedShop, fromShopPageDto, toShop } from './shop.mapper';
 import { setMockFollow, shopDtos } from './shop.mock';
 
 const baseUrl = () =>
   typeof window === 'undefined' ? (env.INTERNAL_API_URL ?? env.PUBLIC_API_URL) : env.PUBLIC_API_URL;
 
+const SHOP_MOCK = isMocked('shop');
+
 export async function getShop(id: number): Promise<Shop> {
-  if (USE_MOCK) {
+  if (SHOP_MOCK) {
     await mockDelay();
     const s = shopDtos().find((x) => x.id === id);
-    if (!s) mockFail('GNE-CAT-4041', { status: 404, message: 'Shop not found' });
+    if (!s) mockFail('GNE-VND-4041', { status: 404, message: 'Shop not found' });
     return toShop(s);
   }
-  return toShop(
-    (await request<ShopDto>(`/public/shops/${id}`, { auth: false, baseUrl: baseUrl() })).data,
+  return fromShopPageDto(
+    (await request<ShopPageDto>(`/public/shops/${id}`, { auth: false, baseUrl: baseUrl() })).data,
   );
 }
 
 /** Shop đã xác minh nổi bật (trang chủ "Shop đã xác minh"). */
 export async function listShops(): Promise<Shop[]> {
-  if (USE_MOCK) {
+  if (SHOP_MOCK) {
     await mockDelay();
     return shopDtos().map(toShop);
   }
-  return (await request<ShopDto[]>('/public/shops', { auth: false, baseUrl: baseUrl() })).data.map(
-    toShop,
-  );
+  return (
+    await request<FeaturedShopDto[]>('/public/shops', {
+      auth: false,
+      baseUrl: baseUrl(),
+      query: { featured: true, limit: 24 },
+    })
+  ).data.map(fromFeaturedShopDto);
 }
 
 const FOLLOW_MOCK = isMocked('follow');

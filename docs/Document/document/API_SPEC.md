@@ -184,7 +184,7 @@ Vượt → `429 GNE-RAT-4290`, header `Retry-After`.
 | `GET /public/categories` | 1 giờ |
 | `GET /public/banners` | 60 giây |
 | `GET /public/flash-sales/current` | 30 giây |
-| `GET /public/products/{id}` | 5 phút (giá, tồn kho đọc thẳng DB khi thêm giỏ / đặt hàng) |
+| `GET /public/products/{id}` | 5 phút phía máy chủ cho phần tĩnh; `stock` đọc DB mỗi request; HTTP `no-cache` + ETag (giá, tồn kho đọc thẳng DB khi thêm giỏ / đặt hàng) |
 | `GET /public/regions/**` | 24 giờ |
 
 `ETag` + `If-None-Match` → `304` cho mọi `GET /public/**`.
@@ -227,7 +227,7 @@ Vượt → `429 GNE-RAT-4290`, header `Retry-After`.
   "discount_percent": 51,
   "rating_avg": 4.8,
   "sold_count": 2100,
-  "shop": { "id": 15, "name": "TechZone Official" },
+  "shop": { "id": 15, "name": "TechZone Official", "is_mall": true },
   "is_free_shipping": true,
   "is_pre_order": false,
   "is_shop_on_vacation": false,
@@ -914,6 +914,10 @@ UC-CAT-02, UC-CAT-05, UC-CAT-16 · **Màn hình:** Kết quả tìm kiếm (toà
 }
 ```
 `facets.attribute` = `null` khi chưa chọn đúng một danh mục.
+- `facets.attribute` = thuộc tính `is_filterable` đầu tiên (theo `display_order`) của danh mục đang chọn; `facets.has_shop_voucher_supported = false` khi chưa có voucher shop (bộ lọc `has_shop_voucher` bị bỏ qua).
+- Facet đếm theo kiểu *disjunctive* (facet thương hiệu không áp chính bộ lọc thương hiệu); khi từ khóa phải bù gõ sai (tầng trigram) thì facet đếm trên đúng tập kết quả.
+- `original_price` = `base_price` khi lớn hơn giá thấp nhất của SKU, ngược lại `null`; `discount_min` lọc theo công thức này.
+- Tìm theo chữ: full-text tiền tố (`tsvector` có trọng số + `unaccent`), dưới 5 kết quả thì bù bằng trigram `word_similarity ≥ 0,4` (ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"); `sort` khác `RELEVANCE` vẫn áp lên tập kết quả này. "Xu hướng" (5.4b) gộp biến thể chỉ khác dấu, hiển thị bản có dấu. Trang tối đa 100, `size` tối đa 60.
 
 ### 5.4 `GET /public/search/suggestions?q=tai` — Gợi ý khi gõ
 UC-CAT-04 · **Màn hình:** dropdown ô tìm kiếm header (từ 2 ký tự, debounce 250 ms)
@@ -1020,7 +1024,7 @@ Query: `rating` (1–5), `has_media` (bool), `cursor`, `limit=10`.
 `summary`: `{ "rating_avg": 4.8, "rating_count": 2100, "counts": { "ALL": 2100, "5": 1600, "4": 300, "3": 120, "2": 50, "1": 30, "WITH_MEDIA": 640 } }` — chip "Đã mua hàng" dùng `ALL` (mọi đánh giá đều từ đơn đã mua). `is_helpful_by_me` chỉ có khi gửi token. Đánh giá bị ẩn không trả.
 
 ### 5.9 `GET /public/products/{id}/similar?limit=6` — Sản phẩm tương tự
-UC-CAT-07 · `$ProductCard[]` (cùng danh mục lá, loại sản phẩm hiện tại).
+UC-CAT-07 · `$ProductCard[]` (cùng danh mục lá, loại sản phẩm hiện tại). `limit` 1–12, mặc định 6. Ứng viên: đang bán, còn hàng, shop không nghỉ, giá ±50%; điểm = 0,5·độ giống tên (trigram) + 0,3·log(đã bán) chuẩn hóa + 0,2·đánh giá/5; thiếu thì bổ sung từ danh mục cha + anh em. Chạy cả khi sản phẩm gốc đã ẩn (màn "Sản phẩm không còn bán"). Cache 30 phút.
 
 ### 5.10 `GET /public/products/{id}/variants` — Phân loại để đổi trong giỏ
 **Màn hình:** modal "Chọn phân loại" ở Giỏ hàng
@@ -1045,6 +1049,7 @@ UC-CAT-16 · **Màn hình:** ảnh bìa + 4 chỉ số (Đánh giá, Người th
   "rating_avg": 4.9,
   "follower_count": 128000,
   "product_count": 9,
+  "province_name": "TP. Hồ Chí Minh",
   "chat_response_rate": 98.0,
   "avg_response_minutes": 4,
   "joined_at": "2021-03-02",
@@ -2905,6 +2910,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-SOC-4095` | 409 | Theo dõi shop của chính mình | mới |
 | `GNE-SOC-4221` | 422 | Phản hồi chứa số điện thoại | mới |
 | `GNE-VND-4031` | 403 | Shop chưa `VERIFIED` (cổng KYC) | mới |
+| `GNE-VND-4041` | 404 | Gian hàng không tồn tại, chưa duyệt KYC hoặc đã ngừng hoạt động (trang shop công khai 5.11) | mới (v1.5) |
 | `GNE-VND-4091` | 409 | Đổi tên shop quá 1 lần / 30 ngày | mới |
 | `GNE-VND-4092` | 409 | Còn đơn chưa bàn giao, chưa bật chế độ nghỉ được | mới |
 | `GNE-VND-4093` | 409 | Tài khoản đã có shop | mới |
@@ -3116,10 +3122,10 @@ Khi sinh OpenAPI (`genie-api-spec`) từ tài liệu này, các chỗ còn hở 
 |---|---|
 | ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` — **đã sửa** (cùng `POST /me/wishlist` → `PUT`; plan 2026-11-16 wishlist W04.01) |
 | ~~`GET/POST/DELETE /me/shop-follows…`~~ | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` — **đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
-| `GET /public/search/suggest` | `GET /public/search/suggestions` |
-| `GET /public/feed` | `GET /public/recommendations` |
-| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar` |
-| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` |
+| `GET /public/search/suggest` | `GET /public/search/suggestions` — ✅ web đã sửa (plan 2026-11-17) |
+| `GET /public/feed` | `GET /public/recommendations` — ✅ web đã sửa (plan 2026-11-17) |
+| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar` — ✅ web đã sửa (plan 2026-11-17) |
+| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` — ✅ web đã sửa (plan 2026-11-17) |
 | `POST /me/notifications/{id}/read`, `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}`, `POST /me/notifications/mark-all-read` |
 | `POST /reviews/{id}/helpful` | `PUT / DELETE /reviews/{id}/helpful-vote` |
 | `POST /public/banners/{id}/events` | `POST /public/banner-events` |
