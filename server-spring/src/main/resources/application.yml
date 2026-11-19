@@ -119,6 +119,28 @@ genie:
     bucket-prefix: ${STORAGE_BUCKET_PREFIX:}       # tên bucket thật = tiền tố + tên logic (AWS: tên bucket duy nhất toàn cầu)
   ai-worker:
     url: ${AI_WORKER_URL:http://localhost:8000}
+    mode: ${AI_WORKER_MODE:http}                  # http = gọi AI Worker thật; stub = giả lập theo 2 số cuối CCCD (ADR 0011 mục 6)
+    callback-base-url: ${BACKEND_INTERNAL_URL:http://localhost:8080}   # AI Worker gọi lại PATCH /api/v1/internal/kyc/{id}/result
+  kyc:
+    # Thẩm định KYC theo tầng, cộng điểm rủi ro (UC-VND-03; ENTITY 1.6 c–d; plan Mở shop & KYC N5, K05.01) — hằng số nghiệp vụ
+    risk:
+      auto-approve-below: 30       # < 30 → tự duyệt (PASS)
+      reject-from: 70              # ≥ 70 → từ chối (FAIL); 30–69 → nhân viên duyệt (PARTIAL)
+      sample-rate: 0.05            # 5% hồ sơ điểm thấp vẫn chuyển hậu kiểm ngẫu nhiên
+      points:                      # bảng điểm tín hiệu — ENTITY 1.6
+        QR_MRZ_MISMATCH: 60
+        ID_STRUCTURE_MISMATCH: 40
+        EXPIRY_RULE_MISMATCH: 30
+        DUPLICATE_ID: 50
+        FACE_DUPLICATE: 70
+        FACE_SCORE_BORDERLINE: 25
+        FACE_SCORE_LOW: 60
+        LIVENESS_SUSPECT: 40
+        LEGACY_CARD: 30
+        DECLARED_DATA_MISMATCH: 20
+        UNREADABLE_IMAGE: 30
+    ai-timeout: 30s                # AI Worker không gọi lại sau 30 giây → chuyển duyệt tay (LLD 9.6)
+    supplement-days: 7             # hạn bổ sung hồ sơ (UC-VND-04)
   payment:
     vnpay:
       tmn-code: ${VNPAY_TMN_CODE:}

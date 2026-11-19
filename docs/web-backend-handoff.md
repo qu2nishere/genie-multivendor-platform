@@ -176,12 +176,12 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listKycSubmissions` | kyc.api.ts | `GET /admin/kyc-submissions` |
-| `getKycSubmission` | kyc.api.ts | `GET /admin/kyc-submissions/{id}` |
-| `approveKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/approve` |
-| `rejectKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/reject` |
-| `requestKycSupplement` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/request-supplement` |
-| `requeueKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/requeue` |
+| `listKycSubmissions` | kyc.api.ts | `GET /admin/kyc-submissions`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `getKycSubmission` | kyc.api.ts | `GET /admin/kyc-submissions/{id}`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `approveKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/approve`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `rejectKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/reject`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requestKycSupplement` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/request-supplement`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requeueKyc` | kyc.api.ts | `POST /admin/kyc-submissions/{id}/requeue`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `admin-marketing`
 
@@ -357,7 +357,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listBanks` | refund.api.ts | `GET /public/banks` |
+| `listBanks` | refund.api.ts | `GET /public/banks`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 | `createRefund` | refund.api.ts | `POST /me/refund-requests` |
 | `addEvidence` | refund.api.ts | `POST /me/refund-requests/{id}/evidence` |
 | `escalateRefund` | refund.api.ts | `POST /me/refund-requests/{id}/escalate` |
@@ -397,11 +397,11 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getKyc` | kyc.api.ts | `GET /seller/kyc` |
-| `saveKycDraft` | kyc.api.ts | `PUT /seller/kyc/draft` |
-| `submitKyc` | kyc.api.ts | `POST /seller/kyc/submissions` |
-| `requestManualReview` | kyc.api.ts | `POST /seller/kyc/manual-review-requests` |
-| `registerShop` | registration.api.ts | `POST /me/shop-registrations` |
+| `getKyc` | kyc.api.ts | `GET /seller/kyc`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `saveKycDraft` | kyc.api.ts | `PUT /seller/kyc/draft`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `submitKyc` | kyc.api.ts | `POST /seller/kyc/submissions`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `requestManualReview` | kyc.api.ts | `POST /seller/kyc/manual-review-requests`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `registerShop` | registration.api.ts | `POST /me/shop-registrations`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `seller-orders`
 
@@ -457,17 +457,17 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getSettings` | settings.api.ts | `GET /seller/settings` |
-| `patchSettings` | settings.api.ts | `PATCH /seller/settings` |
-| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` |
+| `getSettings` | settings.api.ts | `GET /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `patchSettings` | settings.api.ts | `PATCH /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` — giữ mock (cờ `pickup`, chờ A12) |
 | `listBanks` | settings.api.ts | `GET /public/banks` |
-| `savePayoutAccount` | settings.api.ts | `PUT /seller/payout-account` |
-| `deletePayoutAccount` | settings.api.ts | `DELETE /seller/payout-account` |
-| `startVacation` | settings.api.ts | `PUT /seller/vacation` |
-| `endVacation` | settings.api.ts | `DELETE /seller/vacation` |
-| `getSellerMe` | shop.api.ts | `GET /seller/me` |
-| `searchSeller` | shop.api.ts | `GET /seller/search` |
-| `getPayoutAccount` | shop.api.ts | `GET /seller/payout-account` |
+| `savePayoutAccount` | settings.api.ts | `PUT /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `deletePayoutAccount` | settings.api.ts | `DELETE /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `startVacation` | settings.api.ts | `PUT /seller/vacation` — giữ mock (cờ `vacation`) |
+| `endVacation` | settings.api.ts | `DELETE /seller/vacation` — giữ mock (cờ `vacation`) |
+| `getSellerMe` | shop.api.ts | `GET /seller/me`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
+| `searchSeller` | shop.api.ts | `GET /seller/search` — giữ mock (cờ `seller-search`, cụm đơn hàng) |
+| `getPayoutAccount` | shop.api.ts | `GET /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 
 ### `seller-wallet`
 

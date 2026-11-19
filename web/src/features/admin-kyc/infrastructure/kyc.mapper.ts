@@ -16,8 +16,8 @@ export const toKycSubmission = (d: KycSubmissionDto): KycSubmission => ({
 
 export const toKycDetail = (d: KycDetailDto): KycDetail => ({
   ...toKycSubmission(d),
-  riskLevel: d.risk_level,
-  riskScore: d.risk_score,
+  riskLevel: d.risk_level ?? 'LOW',
+  riskScore: d.risk_score ?? 0,
   randomAudit: d.is_random_audit,
   documents: d.documents.flatMap((x) =>
     isDocType(x.type) ? [{ type: x.type, url: x.url, contentType: x.content_type }] : [],
@@ -25,8 +25,14 @@ export const toKycDetail = (d: KycDetailDto): KycDetail => ({
   ai: d.ai_result
     ? {
         overall: d.ai_result.overall,
-        checks: d.ai_result.checks,
-        faceMatchScore: d.ai_result.face_match_score,
+        checks: {
+          qr_code: d.ai_result.checks.qr_code === true,
+          national_emblem: d.ai_result.checks.national_emblem === true,
+          mrz: d.ai_result.checks.mrz === true,
+          fingerprint: d.ai_result.checks.fingerprint === true,
+          face_match: d.ai_result.checks.face_match === true,
+        },
+        faceMatchScore: d.ai_result.face_match_score ?? 0,
         errors: d.ai_result.errors,
       }
     : null,
@@ -36,12 +42,13 @@ export const toKycDetail = (d: KycDetailDto): KycDetail => ({
     taxCode: d.declared.tax_code,
   },
   shopCommissionRate: d.shop_commission_rate,
+  isMall: d.is_mall ?? false,
   rejectionReason: d.rejection_reason,
   supplement: d.supplement
     ? {
         documents: d.supplement.documents.filter(isDocType),
         note: d.supplement.note,
-        dueAt: d.supplement.due_at,
+        dueAt: d.supplement.deadline_at ?? d.supplement.due_at ?? '',
       }
     : null,
 });

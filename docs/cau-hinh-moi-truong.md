@@ -164,6 +164,8 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | `PUBLIC_WEB_URL` | `http://localhost:4321` | Địa chỉ web (link trong email, redirect OAuth) |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:4321` | Origin được gọi API kèm cookie, nhiều origin cách dấu phẩy |
 | `AI_WORKER_URL` | `http://localhost:8000` (prod `http://ai-worker:8000`) | AI Worker |
+| `AI_WORKER_MODE` | `stub` (profile local) / `http` (prod, mặc định `application.yml`) | `stub` = giả lập kết quả KYC theo 2 số cuối CCCD (`00–29` tự duyệt, `30–69` nhân viên duyệt, `70–99` từ chối), không cần AI Worker; `http` = gọi AI Worker thật (ADR 0011) |
+| `BACKEND_INTERNAL_URL` | `http://localhost:8080` (prod `http://backend:8080`) | Địa chỉ backend AI Worker gọi lại `PATCH /api/v1/internal/kyc/{id}/result` |
 
 ### 6.3 Bảo mật
 
@@ -216,7 +218,7 @@ Ghi trước để không ai đặt tên khác. Khi làm task tương ứng ph�
 
 | Biến | Plan / task | Mặc định | Ý nghĩa |
 |---|---|---|---|
-| `AI_WORKER_MODE` | Mở shop & KYC — D7, K05.05 | `stub` (local) / `http` (prod) | `stub` = giả lập kết quả KYC theo 2 số cuối CCCD, không cần AI Worker; `http` = gọi AI Worker thật |
+| ~~`AI_WORKER_MODE`~~ | Mở shop & KYC — D7, K05.05 | — | **Đã có** — xem mục 6.2 |
 | `server-python/.env`: `INTERNAL_TOKEN`, `BACKEND_URL`, `STORAGE_ALLOWED_HOSTS`, `KYC_FACE_MATCH_THRESHOLD`, `KYC_FACE_LOW_THRESHOLD`, `KYC_*`… | AI Worker KYC — Y01.01, Y07.01 | `INTERNAL_TOKEN` trùng backend (`local-internal-token`), `BACKEND_URL=http://localhost:8080` | Cấu hình AI Worker; mẫu ở `server-python/.env.example` (sẽ tạo) |
 | `E2E_REAL_API` (web, Playwright) | Mở shop & KYC — K11.09 | không đặt | `1` = chạy E2E với backend thật |
 

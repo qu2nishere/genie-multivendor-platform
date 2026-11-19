@@ -30,5 +30,9 @@ class AuditActionCategoryTest {
         assertThat(AuditAction.PRODUCT_MODERATED.category()).isEqualTo(AuditCategory.MODERATION);
         assertThat(AuditAction.ACCESS_DENIED.category()).isEqualTo(AuditCategory.SECURITY);
         assertThat(AuditAction.PERMISSION_GRANTED.category()).isEqualTo(AuditCategory.CONFIG);
+        assertThat(AuditAction.KYC_DOCUMENT_VIEWED.category()).isEqualTo(AuditCategory.KYC);
+        assertThat(AuditAction.KYC_SUPPLEMENT_REQUESTED.category()).isEqualTo(AuditCategory.KYC);
+        assertThat(AuditAction.KYC_REQUEUED.category()).isEqualTo(AuditCategory.KYC);
+        assertThat(AuditAction.PAYOUT_ACCOUNT_CHANGED.category()).isEqualTo(AuditCategory.FINANCE);
     }
 }

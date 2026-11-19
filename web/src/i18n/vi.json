@@ -3219,7 +3219,8 @@
       "tax": "Mã số thuế",
       "rate": "Hoa hồng riêng của shop",
       "rate_placeholder": "Theo ngành",
-      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành."
+      "rate_err": "Nhập từ 0 đến 50%, bỏ trống để theo ngành.",
+      "mall": "Gắn nhãn Shop Chính hãng khi duyệt"
     },
     "rejected_reason": "Lý do từ chối:",
     "supplement_req": "Đã yêu cầu bổ sung:",

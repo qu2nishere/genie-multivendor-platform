@@ -80,7 +80,7 @@ public abstract class IntegrationTestBase {
     private static void createBuckets() {
         try {
             MinioClient client = siloClient();
-            for (String bucket : new String[] {"avatar-assets", "content-assets"}) {
+            for (String bucket : new String[] {"avatar-assets", "content-assets", "kyc-dossiers"}) {
                 if (!client.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())) {
                     client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
                 }
@@ -137,6 +137,12 @@ public abstract class IntegrationTestBase {
 
     @Autowired
     protected FakeAccountContext accountContext;
+
+    @Autowired
+    protected FakeKycVerificationClient aiWorker;
+
+    @Autowired
+    protected FakeKycSampler kycSampler;
 
     @Autowired
     protected FakeReverseGeocoder geocoder;
@@ -205,6 +211,8 @@ public abstract class IntegrationTestBase {
         zalo.clear();
         deletionBlocker.clear();
         accountContext.clear();
+        aiWorker.clear();
+        kycSampler.set(false);
         geocoder.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
@@ -254,6 +262,20 @@ public abstract class IntegrationTestBase {
         @Bean
         FakeAccountDeletionBlocker fakeAccountDeletionBlocker() {
             return new FakeAccountDeletionBlocker();
+        }
+
+        /** AI Worker giả (plan Mở shop & KYC K05.12) — thay HttpKycVerificationClient / StubKycVerificationClient. */
+        @Bean
+        @Primary
+        FakeKycVerificationClient fakeKycVerificationClient() {
+            return new FakeKycVerificationClient();
+        }
+
+        /** Lấy mẫu hậu kiểm KYC cố định (mặc định không lấy mẫu). */
+        @Bean
+        @Primary
+        FakeKycSampler fakeKycSampler() {
+            return new FakeKycSampler();
         }
 
         /** Giả lập shop + bộ đếm của các module chưa làm cho {@code GET /me} — mặc định trống. */

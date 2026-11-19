@@ -57,6 +57,10 @@ public class UploadService {
             throw invalid("content_length", "Tệp vượt quá dung lượng cho phép.",
                     Map.of("max_bytes", purpose.maxBytes()));
         }
+        if (!purpose.acceptsSize(type, contentLength)) {
+            throw invalid("content_length", "Ảnh quá nhỏ, vui lòng chụp lại rõ nét hơn.",
+                    Map.of("min_bytes", purpose.minImageBytes()));
+        }
         String key = TMP_PREFIX + "user/" + userId + "/" + UUID.randomUUID() + "." + UploadPurpose.extensionOf(type);
         Duration ttl = purpose.sensitive() ? properties.presignedPutKycTtl() : properties.presignedPutTtl();
         ObjectStorage.PresignedUpload signed = storage.presignPut(purpose.bucket(), key, type, ttl);
@@ -75,7 +79,8 @@ public class UploadService {
         ObjectStorage.StoredObject stored = storage.stat(purpose.bucket(), tmpKey)
                 .orElseThrow(() -> invalid("object_key", "Tệp chưa được tải lên hoặc đã hết hạn, vui lòng tải lại.",
                         Map.of()));
-        if (!purpose.accepts(normalize(stored.contentType())) || stored.size() > purpose.maxBytes()) {
+        if (!purpose.accepts(normalize(stored.contentType()))
+                || !purpose.acceptsSize(normalize(stored.contentType()), stored.size())) {
             deleteQuietly(purpose, tmpKey);
             throw invalid("object_key", "Tệp không đúng định dạng hoặc vượt quá dung lượng cho phép.",
                     Map.of("allowed_types", purpose.contentTypes(), "max_bytes", purpose.maxBytes()));
@@ -83,6 +88,36 @@ public class UploadService {
         String finalKey = tmpKey.substring(TMP_PREFIX.length());
         storage.move(purpose.bucket(), tmpKey, finalKey);
         return new StoredFile(finalKey, purpose.publicRead() ? storage.publicUrl(purpose.bucket(), finalKey) : null);
+    }
+
+    /** Nội dung một tệp tạm đã tải lên, đã kiểm chủ sở hữu / loại / dung lượng. */
+    public record TmpFile(String objectKey, String contentType, byte[] data) {
+    }
+
+    /**
+     * Đọc tệp {@code tmp/user/{userId}/…} của CHÍNH người gọi để nghiệp vụ tự xử lý rồi ghi ở nơi khác (vd. mã hóa giấy tờ
+     * KYC — plan Mở shop & KYC K04.03). Kiểm như {@link #promote}; sai loại / dung lượng thì xóa tệp tạm. Không xóa tệp khi
+     * thành công — nghiệp vụ gọi {@link #deleteQuietly} sau khi đã ghi xong bản chính thức.
+     */
+    public TmpFile readOwnTmp(long userId, UploadPurpose purpose, String tmpKey) {
+        var m = tmpKey == null ? null : TMP_KEY.matcher(tmpKey);
+        if (m == null || !m.matches() || Long.parseLong(m.group(1)) != userId) {
+            throw invalid("object_key", "Tệp không hợp lệ.", Map.of());
+        }
+        ObjectStorage.StoredObject stored = storage.stat(purpose.bucket(), tmpKey)
+                .orElseThrow(() -> invalid("object_key", "Tệp chưa được tải lên hoặc đã hết hạn, vui lòng tải lại.",
+                        Map.of()));
+        String type = normalize(stored.contentType());
+        if (!purpose.accepts(type) || !purpose.acceptsSize(type, stored.size())) {
+            deleteQuietly(purpose, tmpKey);
+            throw invalid("object_key", "Tệp không đúng định dạng hoặc dung lượng cho phép.",
+                    Map.of("allowed_types", purpose.contentTypes(), "max_bytes", purpose.maxBytes(),
+                            "min_bytes", purpose.minImageBytes()));
+        }
+        byte[] data = storage.get(purpose.bucket(), tmpKey)
+                .orElseThrow(() -> invalid("object_key", "Tệp chưa được tải lên hoặc đã hết hạn, vui lòng tải lại.",
+                        Map.of()));
+        return new TmpFile(tmpKey, type, data);
     }
 
     /**

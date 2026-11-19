@@ -61,7 +61,7 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 | `V20` | `V20__vendor_kyc_additions.sql` | [7] Mở shop & KYC (K01) | 9 cột mới + 3 index của `vendor_profiles`, 4 giá trị `AuditAction` của vendor — `CHECK` chép cả `BANNER_CHANGED` |
 | — | `db/seed/R__seed_demo_*.sql` | [1] Seed | Migration lặp lại (repeatable), không chiếm số `V` |
 
-> **Đổi số 2026-11-19:** `develop` đã dùng `V15`–`V17` cho sổ địa chỉ (PR #76) nên migration của các plan này dời thành
+> **Đổi số 2026-11-19:** `develop` đã dùng `V15`–`V20` cho sổ địa chỉ (PR #76) nên migration của các plan này dời thành
 > `V18` (banner), `V19` (Điểm Genie), `V20` (KYC). Nội dung không đổi; ghi chú "V15 / V16 / V17" trong progress các plan
 > là số cũ trước khi đổi.
 

@@ -23,6 +23,8 @@ logging:
     com.genie: ${LOG_LEVEL_GENIE:DEBUG}
 
 genie:
+  ai-worker:
+    mode: ${AI_WORKER_MODE:stub}                  # máy dev: giả lập AI Worker (ADR 0011 mục 6); chạy cùng AI Worker thật → AI_WORKER_MODE=http
   seed:
     demo-data: ${GENIE_SEED_DEMO:true}           # nạp dữ liệu mẫu (R__seed_demo + db/seed); không muốn → GENIE_SEED_DEMO=false trong .env
   security:
