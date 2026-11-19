@@ -6636,7 +6636,7 @@ enum AuditAction {                                                              
     ACCESS_DENIED, PRODUCT_MODERATED,                 // lần truy cập bị chặn quyền (màn Nhật ký), kết quả duyệt sản phẩm
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị của AUTH (V14 thay ck_system_logs_action_type — plan AUTH D20)
-    BANNER_CHANGED                                           // tạo / sửa / bật / tắt / xóa banner — details.op (V15, plan 2026-11-16 banner D1)
+    BANNER_CHANGED                                           // tạo / sửa / bật / tắt / xóa banner — details.op (V18, plan 2026-11-16 banner D1)
 }
 ```
 
