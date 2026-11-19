@@ -35,4 +35,13 @@ public class UserWishlist {
     private OffsetDateTime createdAt;          // Thời điểm thêm vào danh sách yêu thích
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
+
+    /** Thả tim một sản phẩm — UC-CAT-08 (ghi thật dùng {@code insertIfAbsent} để idempotent; factory cho test / mã khác) */
+    public static UserWishlist of(Long userId, Long productId, OffsetDateTime now) {
+        UserWishlist w = new UserWishlist();
+        w.userId = userId;
+        w.productId = productId;
+        w.createdAt = now;
+        return w;
+    }
 }

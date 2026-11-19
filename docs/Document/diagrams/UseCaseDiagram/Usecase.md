@@ -701,14 +701,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Thêm/Xóa sản phẩm trong bảng `user_wishlists`.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm biểu tượng Trái tim trên thẻ sản phẩm hoặc trang PDP.
-  2. Client gửi request `POST /api/v1/customer/wishlist` kèm `product_id`.
-  3. Hệ thống kiểm tra: nếu chưa có thì thêm bản ghi vào `user_wishlists`; nếu đã có thì xóa khỏi wishlist (Toggle pattern).
+  2. Client gửi `PUT /api/v1/me/wishlist/{product_id}` để thích, `DELETE /api/v1/me/wishlist/{product_id}` để bỏ thích (API_SPEC 3.10 — cả hai **idempotent**, không dùng kiểu bật / tắt để bấm đúp không làm lệch trạng thái); tô tim theo `GET /api/v1/me/wishlist/product-ids`.
+  3. Hệ thống chỉ cho thích sản phẩm đang bán (`PUBLISHED`, ngược lại `404 GNE-CAT-4042`); thích lại không tạo dòng thứ hai (`INSERT … ON CONFLICT DO NOTHING`), bỏ thứ không có vẫn thành công.
   5. Người dùng có thể vào mục "Danh sách yêu thích" để xem toàn bộ và thêm nhanh vào giỏ hàng.
   6. Nút tim trên trang sản phẩm / thẻ sản phẩm hiển thị trạng thái đầy (đã thích) / rỗng; bấm lần 2 để bỏ thích.
   7. Mục Tài khoản → "Sản phẩm yêu thích": danh sách có ảnh, giá hiện tại, nhãn hết hàng; thao tác bỏ thích, thêm vào giỏ.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — backend (`catalog/wishlist`: thích / bỏ thích idempotent, tập ID, danh sách có giá / SKU mặc định / còn mua được) + test xanh; web nối API thật (cờ `PUBLIC_REAL_API=wishlist`); còn chạy thật trên giao diện (plan `2026-11-16/server-spring/plan_san_pham_yeu_thich.md`).
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [UserWishlist](../ClassDiagram/ENTITY.md#25-userwishlist--danh-sách-sản-phẩm-yêu-thích), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu).
 

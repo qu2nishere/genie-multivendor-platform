@@ -54,6 +54,9 @@ public enum ErrorCode {
     DEFAULT_ADDRESS_NOT_DELETABLE("GNE-USR-4092", HttpStatus.CONFLICT, "Không thể xóa địa chỉ mặc định."),
     DUPLICATE_ADDRESS("GNE-USR-4093", HttpStatus.CONFLICT, "Địa chỉ này đã có trong sổ địa chỉ."),
 
+    // ===== Danh mục & sản phẩm (API_SPEC 15) =====
+    PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn bán."),
+
     // ===== Banner trang chủ (API_SPEC 11.16, 15 — UC-ADM-12) =====
     BANNER_NOT_DELETABLE("GNE-BNR-4091", HttpStatus.CONFLICT, "Không thể xóa banner đang hiển thị hoặc đã lên lịch — hãy tắt trước."),
     BANNER_SLOT_FULL("GNE-BNR-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Vị trí này đã đủ 8 banner đang hiển thị."),

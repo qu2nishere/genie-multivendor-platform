@@ -26,7 +26,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 
 | Mã đang gọi | Theo API_SPEC | Việc cần làm |
 |---|---|---|
-| `GET /me/wishlist/ids` | `GET /me/wishlist/product-ids` | Sửa mã |
+| ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` | **Đã sửa** (plan 2026-11-16 wishlist W04.01) |
 | `GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}` | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | Sửa mã (đổi cả phương thức theo dõi sang `PUT`) |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` | Sửa mã |
 | `GET /public/feed` | `GET /public/recommendations?page&size` | Sửa mã |
@@ -334,8 +334,9 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `listRelated` | product.api.ts | `GET /public/products/{id}/related` |
 | `listProductsByIds` | product.api.ts | `GET /public/products` |
 | `listFeed` | product.api.ts | `GET /public/feed` |
-| `fetchWishlistIds` | wishlist.api.ts | `GET /me/wishlist/ids` |
-| `setWishlisted` | wishlist.api.ts | `POST /me/wishlist`<br>`DELETE /me/wishlist/{productId}` |
+| `fetchWishlistIds` | wishlist.api.ts | `GET /me/wishlist/product-ids` — **đã nối** (`PUBLIC_REAL_API=wishlist`) |
+| `setWishlisted` | wishlist.api.ts | `PUT /me/wishlist/{productId}`<br>`DELETE /me/wishlist/{productId}` — **đã nối** |
+| `listWishlist` | wishlist.api.ts | `GET /me/wishlist` (+ `summary.total`, `product_slug`) — **đã nối** |
 
 ### `promotions`
 

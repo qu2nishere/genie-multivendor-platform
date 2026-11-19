@@ -693,6 +693,10 @@ UC-CAT-08 · **Màn hình:** nút tim trên `$ProductCard` và trang chi tiết;
 ]
 ```
 `summary.total` cho tiêu đề "Sản phẩm yêu thích (2)". `is_purchasable = false` khi shop đang nghỉ / sản phẩm hết bán → khóa nút "Thêm vào giỏ" (nút gọi `POST /me/cart/items` với `default_variant_id`).
+- `price` = giá thấp nhất trong các SKU chưa xóa (không có SKU → `base_price`); `default_variant_id` = SKU **còn tồn** rẻ nhất (hết hàng → SKU đầu tiên; không có SKU → `null`); `image_url` = ảnh chính của gallery chung.
+- `is_purchasable` = sản phẩm `PUBLISHED` **và** còn ít nhất một SKU có tồn **và** shop không nghỉ. Sản phẩm đã thích rồi mới bị ẩn / khóa vẫn hiện trong danh sách (để bỏ thích).
+- `product_slug` (bổ sung): slug sinh từ tên — web dựng link `/p/{slug}-{id}` (cùng quy tắc `slugify` của web).
+- `PUT` sản phẩm không tồn tại / không `PUBLISHED` → `404 GNE-CAT-4042`. `product-ids` trả tối đa 1.000 ID mới nhất; `limit` của danh sách 1–50.
 
 #### `PUT /me/wishlist/{product_id}` — Thích (idempotent) · `204`
 #### `DELETE /me/wishlist/{product_id}` — Bỏ thích · `204`
@@ -3104,7 +3108,7 @@ Khi sinh OpenAPI (`genie-api-spec`) từ tài liệu này, các chỗ còn hở 
 
 | Mã web đang gọi | Theo spec |
 |---|---|
-| `GET /me/wishlist/ids` | `GET /me/wishlist/product-ids` |
+| ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` — **đã sửa** (cùng `POST /me/wishlist` → `PUT`; plan 2026-11-16 wishlist W04.01) |
 | `GET/POST/DELETE /me/shop-follows…` | `GET /me/following`, `PUT/DELETE /me/following/{shop_id}`, `GET /me/following/shop-ids` |
 | `GET /public/search/suggest` | `GET /public/search/suggestions` |
 | `GET /public/feed` | `GET /public/recommendations` |
