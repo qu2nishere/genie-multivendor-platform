@@ -1,32 +1,35 @@
 // Form thêm / sửa địa chỉ (prototype AddressModal.jsx AddressForm) — plan G10.48: react-hook-form + zod
-// (R8), nút "Dùng vị trí hiện tại (GPS)" tự điền Tỉnh / Quận / Phường, bộ chọn hành chính 3 cấp,
+// (R8), nút "Dùng vị trí hiện tại (GPS)" tự điền Tỉnh / Phường, bộ chọn hành chính 2 cấp (plan AUTH D25),
 // loại địa chỉ, đặt mặc định.
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { errorMessage } from '@/shared/api/errors';
+import { errorMessage, isApiError } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { zodResolver } from '@/shared/lib/zodResolver';
-import { Button, Checkbox, Field, Icon, Input, toast } from '@/shared/ui';
+import { Button, Checkbox, Field, Icon, Input, Textarea, toast } from '@/shared/ui';
 import { useReverseGeocode, useSaveAddress } from '../../application/useAddresses';
 import { addressSchema, type AddressFormValues } from '../../domain/address.schema';
-import type { Address, Region, Ward } from '../../domain/address.types';
+import { ADDRESS_LABELS, type Address, type Region, type Ward } from '../../domain/address.types';
 import { RegionPicker, type RegionValue } from './RegionPicker';
 
 export interface AddressFormProps {
   initial: Address | null;
   onCancel: () => void;
   onSaved: (a: Address) => void;
+  /** Địa chỉ đã có trong sổ (409 GNE-USR-4093) — nơi gọi đóng form và làm nổi địa chỉ cũ. */
+  onDuplicate?: (existingId: number) => void;
 }
 
-export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
+export function AddressForm({ initial, onCancel, onSaved, onDuplicate }: AddressFormProps) {
   const { t } = useT();
   const save = useSaveAddress();
   const geo = useReverseGeocode();
   const [gps, setGps] = useState<'idle' | 'locating' | 'done'>('idle');
+  /** Định vị chỉ khớp được tỉnh, chưa khớp phường → nhắc chọn tiếp. */
+  const [partial, setPartial] = useState(false);
   const [names, setNames] = useState<RegionValue>({
     province: initial?.province ?? null,
-    district: initial?.district ?? null,
     ward: initial?.ward ?? null,
   });
   const {
@@ -41,9 +44,9 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
       recipient: initial?.recipient ?? '',
       phone: initial?.phone ?? '',
       provinceId: initial?.province.id ?? 0,
-      districtId: initial?.district.id ?? 0,
       wardCode: initial?.ward.code ?? '',
       line: initial?.line ?? '',
+      note: initial?.note ?? '',
       label: initial?.label ?? 'HOME',
       isDefault: initial?.isDefault ?? false,
     },
@@ -52,14 +55,9 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
   const isDefault = watch('isDefault');
   const err = (m?: string) => (m ? t(m) : undefined);
 
-  const setRegion = (v: {
-    province: Region | null;
-    district: Region | null;
-    ward: Ward | null;
-  }) => {
+  const setRegion = (v: { province: Region | null; ward: Ward | null }) => {
     setNames(v);
     setValue('provinceId', v.province?.id ?? 0, { shouldValidate: !!errors.provinceId });
-    setValue('districtId', v.district?.id ?? 0, { shouldValidate: !!errors.districtId });
     setValue('wardCode', v.ward?.code ?? '', { shouldValidate: !!errors.wardCode });
   };
 
@@ -70,8 +68,16 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
         { lat, lng },
         {
           onSuccess: (g) => {
-            setRegion({ province: g.province, district: g.district, ward: g.ward });
-            if (!watch('line')) setValue('line', g.line);
+            if (!g.province) {
+              // không khớp được tỉnh nào (ngoài danh mục, giữa biển…) → giữ nguyên, để chọn thủ công
+              if (g.line && !watch('line')) setValue('line', g.line);
+              setGps('idle');
+              toast.error(t('account.address.gps.not_found'));
+              return;
+            }
+            setRegion({ province: g.province, ward: g.ward });
+            if (g.line && !watch('line')) setValue('line', g.line);
+            setPartial(!g.ward);
             setGps('done');
           },
           onError: (e) => {
@@ -80,12 +86,16 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
           },
         },
       );
-    // Trình duyệt từ chối / không có định vị → dùng tọa độ trung tâm TP. HCM để vẫn điền được
-    if (!navigator.geolocation) return fill(10.7769, 106.7009);
+    const denied = () => {
+      setGps('idle');
+      toast.error(t('account.address.gps.denied'));
+    };
+    // Không đoán vị trí khi trình duyệt từ chối / không hỗ trợ — báo để người dùng chọn thủ công
+    if (!navigator.geolocation) return denied();
     navigator.geolocation.getCurrentPosition(
       (p) => fill(p.coords.latitude, p.coords.longitude),
-      () => fill(10.7769, 106.7009),
-      { timeout: 4000 },
+      denied,
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     );
   };
 
@@ -97,13 +107,16 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
           toast.success(t('account.address.saved'));
           onSaved(a);
         },
-        onError: (e) => toast.error(errorMessage(e, t)),
+        onError: (e) => {
+          toast.error(errorMessage(e, t));
+          const existing =
+            isApiError(e) && e.code === 'GNE-USR-4093' ? e.details.existing_address_id : null;
+          if (typeof existing === 'number') onDuplicate?.(existing);
+        },
       },
     ),
   );
-  const regionError = err(
-    errors.provinceId?.message ?? errors.districtId?.message ?? errors.wardCode?.message,
-  );
+  const regionError = err(errors.provinceId?.message ?? errors.wardCode?.message);
 
   return (
     <form className="flex flex-col gap-3.5" onSubmit={(e) => void submit(e)} noValidate>
@@ -152,7 +165,13 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
             {t(`account.address.gps.${gps}`)}
           </span>
           <span className="block text-xs text-muted">
-            {t(gps === 'done' ? 'account.address.gps.done_hint' : 'account.address.gps.hint')}
+            {t(
+              gps === 'done'
+                ? partial
+                  ? 'account.address.gps.partial_hint'
+                  : 'account.address.gps.done_hint'
+                : 'account.address.gps.hint',
+            )}
           </span>
         </span>
         {gps !== 'done' && <Icon name="chevron-right" size={18} className="text-subtle" />}
@@ -178,12 +197,22 @@ export function AddressForm({ initial, onCancel, onSaved }: AddressFormProps) {
         {...register('line')}
       />
 
+      <Textarea
+        label={t('account.address.note')}
+        placeholder={t('account.address.note_placeholder')}
+        hint={t('account.address.note_hint')}
+        rows={2}
+        maxLength={200}
+        error={err(errors.note?.message)}
+        {...register('note')}
+      />
+
       <fieldset className="border-0 p-0 m-0">
         <legend className="p-0 font-semibold text-sm text-strong">
           {t('account.address.label_type')}
         </legend>
-        <div className="flex gap-2 mt-2">
-          {(['HOME', 'OFFICE'] as const).map((l) => (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {ADDRESS_LABELS.map((l) => (
             <button
               key={l}
               type="button"

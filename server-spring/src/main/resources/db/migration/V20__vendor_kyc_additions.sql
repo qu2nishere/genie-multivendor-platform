@@ -1,4 +1,4 @@
--- V17 — Mở shop & KYC người bán (UC-VND-01/02/03/04/05/07/21; plan 2026-11-16 Mở shop & KYC D2, D3, K01.03;
+-- V20 — Mở shop & KYC người bán (UC-VND-01/02/03/04/05/07/21; plan 2026-11-16 Mở shop & KYC D2, D3, K01.03;
 -- ENTITY 1.4, 13.1, Phụ lục A; ADR 0011). Chỉ THÊM (tương thích ngược): cột cho phép NULL / có mặc định, index, giá trị CHECK.
 
 -- ===== 1. Cột mới của vendor_profiles (D2, D15) =====
@@ -23,7 +23,7 @@ CREATE INDEX idx_vendor_profiles_kyc_status ON vendor_profiles (kyc_status, kyc_
 CREATE INDEX idx_vendor_profiles_supplement_deadline ON vendor_profiles (kyc_supplement_deadline_at)
     WHERE kyc_status = 'SUPPLEMENT_REQUESTED';
 
--- ===== 3. Hành động kiểm toán (D3) — giữ NGUYÊN mọi giá trị của V14 + V15, thêm 4 giá trị =====
+-- ===== 3. Hành động kiểm toán (D3) — giữ NGUYÊN mọi giá trị của V14 + V18, thêm 4 giá trị =====
 ALTER TABLE system_logs DROP CONSTRAINT ck_system_logs_action_type;
 ALTER TABLE system_logs ADD CONSTRAINT ck_system_logs_action_type CHECK (action_type IN (
     'LOGIN_SUCCESS', 'LOGIN_FAILED', 'ACCOUNT_LOCKED', 'ACCOUNT_SUSPENDED', 'ACCOUNT_REACTIVATED',

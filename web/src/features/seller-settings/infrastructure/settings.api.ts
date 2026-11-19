@@ -38,7 +38,6 @@ interface SettingsDto {
   pickup_address: {
     phone_number: string | null;
     province: { id: number; name: string } | null;
-    district: { id: number; name: string } | null;
     ward: { code: string; name: string } | null;
     address_line: string;
     ghn_shop_id: number | null;
@@ -57,7 +56,6 @@ interface SettingsDto {
 const NO_PICKUP = {
   phone_number: '',
   province: null,
-  district: null,
   ward: null,
   address_line: '',
   ghn_shop_id: null,
@@ -68,7 +66,6 @@ const toPickup = (raw: SettingsDto['pickup_address']): PickupAddress => {
   return {
     phone: d.phone_number ?? '',
     province: d.province,
-    district: d.district,
     ward: d.ward,
     line: d.address_line,
     ghnShopId: d.ghn_shop_id,
@@ -128,9 +125,8 @@ const db = mockState<SettingsDto>('seller.settings', () => ({
   },
   pickup_address: {
     phone_number: '0912345678',
-    province: { id: 201, name: 'TP. Hồ Chí Minh' },
-    district: { id: 1443, name: 'Quận 7' },
-    ward: { code: '144302', name: 'P. Tân Phong' },
+    province: { id: 79, name: 'Thành phố Hồ Chí Minh' },
+    ward: { code: '27478', name: 'Phường Tân Thuận' },
     address_line: 'Kho TechZone, 88 Nguyễn Văn Linh',
     ghn_shop_id: 884120,
   },
@@ -252,7 +248,6 @@ export async function savePickupAddress(a: PickupAddress): Promise<PickupAddress
     const next = {
       phone_number: a.phone.replace(/\s/g, ''),
       province: a.province,
-      district: a.district,
       ward: a.ward,
       address_line: a.line.trim(),
       ghn_shop_id: 884000 + a.line.trim().length,
@@ -263,7 +258,6 @@ export async function savePickupAddress(a: PickupAddress): Promise<PickupAddress
   const d = await api.put<NonNullable<SettingsDto['pickup_address']>>('/seller/pickup-address', {
     phone_number: a.phone.replace(/\s/g, ''),
     province_id: a.province?.id,
-    district_id: a.district?.id,
     ward_code: a.ward?.code,
     address_line: a.line.trim(),
   });

@@ -26,14 +26,23 @@ FROM users u
 WHERE '${seed_demo}' = 'true' AND u.email = 'mai.tran@gmail.com'
 ON CONFLICT (user_id) DO NOTHING;
 
--- ===== addresses (mã GHN theo ví dụ API_SPEC 3.8 / 3.9: TP.HCM 202 · Quận 1 1442 · P. Bến Nghé 20308) =====
+-- ===== addresses — địa giới 2 cấp (V16; plan AUTH D25), mã theo regions.json / API_SPEC 3.8–3.9:
+--       Thành phố Hồ Chí Minh 79 · Phường Sài Gòn 26740 (trước sáp nhập: P. Bến Nghé, Quận 1) =====
 INSERT INTO addresses (user_id, recipient_name, phone_number, address_line, ward, ward_code, district, district_id,
                        province, province_id, is_default, label, is_deleted, created_at, updated_at)
-SELECT u.id, 'Trần Thị Mai', '0901234567', '25 Nguyễn Huệ', 'P. Bến Nghé', '20308', 'Quận 1', 1442,
-       'TP. Hồ Chí Minh', 202, TRUE, 'HOME', FALSE, now(), now()
+SELECT u.id, 'Trần Thị Mai', '0901234567', '25 Nguyễn Huệ', 'Phường Sài Gòn', '26740', NULL, NULL,
+       'Thành phố Hồ Chí Minh', 79, TRUE, 'HOME', FALSE, now(), now()
 FROM users u
 WHERE '${seed_demo}' = 'true' AND u.email = 'mai.tran@gmail.com'
   AND NOT EXISTS (SELECT 1 FROM addresses a WHERE a.user_id = u.id AND a.is_deleted = FALSE);
+
+-- địa chỉ mẫu đã seed theo địa giới cũ (máy dev chạy seed trước V16) → đổi sang địa giới mới
+UPDATE addresses a
+SET ward = 'Phường Sài Gòn', ward_code = '26740', district = NULL, district_id = NULL,
+    province = 'Thành phố Hồ Chí Minh', province_id = 79, updated_at = now()
+FROM users u
+WHERE '${seed_demo}' = 'true' AND u.email = 'mai.tran@gmail.com' AND a.user_id = u.id
+  AND a.ward_code = '20308' AND a.province_id = 202;
 
 UPDATE customer_profiles p
 SET default_address_id = a.id

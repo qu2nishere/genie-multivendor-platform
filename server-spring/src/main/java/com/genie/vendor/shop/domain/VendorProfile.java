@@ -29,7 +29,7 @@ public class VendorProfile {
     @Column(nullable = false, length = 255)
     private String shopName;                  // Tên cửa hàng hiển thị cho khách
 
-    private OffsetDateTime shopNameChangedAt;  // NULLABLE — Lần đổi tên shop gần nhất; đổi tối đa 1 lần / 30 ngày (UC-VND-21, V17)
+    private OffsetDateTime shopNameChangedAt;  // NULLABLE — Lần đổi tên shop gần nhất; đổi tối đa 1 lần / 30 ngày (UC-VND-21, V20)
 
     private Long categoryId;                  // NULLABLE — FK → categories.id, ngành hàng chính của shop
 
@@ -46,10 +46,10 @@ public class VendorProfile {
     private String representative;            // NULLABLE — Họ tên người đại diện pháp luật
 
     @Column(length = 20)
-    private String contactPhone;              // NULLABLE — SĐT liên hệ của shop (form Mở shop — API 9.1, V17)
+    private String contactPhone;              // NULLABLE — SĐT liên hệ của shop (form Mở shop — API 9.1, V20)
 
     @Column(length = 255)
-    private String contactEmail;              // NULLABLE — Email liên hệ của shop; OTP mở shop gửi tới email này (V17)
+    private String contactEmail;              // NULLABLE — Email liên hệ của shop; OTP mở shop gửi tới email này (V20)
 
     @Column(length = 255)
     private String coverUrl;                  // NULLABLE — Ảnh bìa trang shop
@@ -75,11 +75,11 @@ public class VendorProfile {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String kycDocumentsMetaJson;      // NULLABLE — Tên tệp + dung lượng gốc từng giấy tờ, vd {"ID_FRONT":{"file_name":"cccd.jpg","size_bytes":2202009}}; màn KYC chỉ hiện thông tin này, không trả URL ảnh (V17)
+    private String kycDocumentsMetaJson;      // NULLABLE — Tên tệp + dung lượng gốc từng giấy tờ, vd {"ID_FRONT":{"file_name":"cccd.jpg","size_bytes":2202009}}; màn KYC chỉ hiện thông tin này, không trả URL ảnh (V20)
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean kycBiometricConsent = false; // Đồng ý xử lý dữ liệu sinh trắc (so khớp khuôn mặt); false → luôn chuyển nhân viên đối chiếu (UC-VND-02, V17)
+    private Boolean kycBiometricConsent = false; // Đồng ý xử lý dữ liệu sinh trắc (so khớp khuôn mặt); false → luôn chuyển nhân viên đối chiếu (UC-VND-02, V20)
 
     // ---- Kết quả thẩm định KYC ----
     @Enumerated(EnumType.STRING)
@@ -91,11 +91,11 @@ public class VendorProfile {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String kycSupplementDocumentsJson; // NULLABLE — Giấy tờ nhân viên yêu cầu bổ sung, vd ["ID_FRONT","BUSINESS_LICENSE"] (UC-VND-04, V17)
+    private String kycSupplementDocumentsJson; // NULLABLE — Giấy tờ nhân viên yêu cầu bổ sung, vd ["ID_FRONT","BUSINESS_LICENSE"] (UC-VND-04, V20)
 
-    private OffsetDateTime kycSupplementDeadlineAt; // NULLABLE — Hạn bổ sung (yêu cầu + 7 ngày); quá hạn → job chuyển REJECTED (V17)
+    private OffsetDateTime kycSupplementDeadlineAt; // NULLABLE — Hạn bổ sung (yêu cầu + 7 ngày); quá hạn → job chuyển REJECTED (V20)
 
-    private OffsetDateTime kycManualReviewRequestedAt; // NULLABLE — Lúc người bán bấm "Yêu cầu nhân viên xem xét" (1 lần / hồ sơ; hồ sơ nộp lại mà AI kết luận FAIL thì vào MANUAL_REVIEW) (V17)
+    private OffsetDateTime kycManualReviewRequestedAt; // NULLABLE — Lúc người bán bấm "Yêu cầu nhân viên xem xét" (1 lần / hồ sơ; hồ sơ nộp lại mà AI kết luận FAIL thì vào MANUAL_REVIEW) (V20)
 
     @Enumerated(EnumType.STRING)
     private KycVerificationMethod kycVerificationMethod; // NULLABLE — OCR_AUTO (AI duyệt) / MANUAL_STAFF (người duyệt) / BIOMETRIC_FACIAL (sinh trắc khuôn mặt)
@@ -130,7 +130,7 @@ public class VendorProfile {
     private String pickupAddressLine;         // NULLABLE — Địa chỉ chi tiết kho hàng để shipper tới lấy
 
     @Column(length = 20)
-    private String pickupPhone;               // NULLABLE — SĐT người liên hệ tại kho lấy hàng (gửi GHN — UC-VND-05, V17)
+    private String pickupPhone;               // NULLABLE — SĐT người liên hệ tại kho lấy hàng (gửi GHN — UC-VND-05, V20)
 
     private Integer ghnShopId;                // NULLABLE — ID shop do GHN cấp sau khi gọi API đăng ký (UC-VND-05); NULL khi mới mở shop (UC-VND-01)
 

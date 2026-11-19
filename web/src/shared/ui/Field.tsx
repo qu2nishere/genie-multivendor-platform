@@ -57,7 +57,8 @@ export function Field({ label, hint, error, required, id, className, children }:
 export const inputClass = (invalid?: boolean, extra?: string) =>
   cn(
     'w-full min-h-[44px] px-[14px] rounded-md border-[1.5px] border-solid bg-surface-card text-strong font-sans text-base',
-    'transition-[border-color,box-shadow] duration-fast ease-out placeholder:text-subtle',
+    // placeholder nhạt + nhỏ hơn chữ đã nhập để không bị nhầm là giá trị thật
+    'transition-[border-color,box-shadow] duration-fast ease-out placeholder:text-disabled placeholder:text-sm',
     'hover:border-line-strong focus:outline-none focus:border-line-focus focus:shadow-focus',
     'disabled:bg-gray-50 disabled:text-disabled disabled:cursor-not-allowed',
     invalid
