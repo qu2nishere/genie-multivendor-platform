@@ -11,6 +11,8 @@ spring:
 
 genie:
   version: test
+  seed:
+    demo-data: false                             # test tự dựng dữ liệu (TestDataBuilder); SeedDataIT tự nạp db/seed
   security:
     jwt-secret: test-secret-0123456789-test-secret-0123456789
     internal-token: test-internal-token
