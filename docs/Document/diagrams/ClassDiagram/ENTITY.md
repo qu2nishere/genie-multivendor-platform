@@ -501,7 +501,7 @@ public class Address {
 - **Mã (`districtId`, `wardCode`)** là thứ API của Giao Hàng Nhanh (GHN) hiểu. Không có mã thì không tính được phí ship, không tạo được vận đơn.
 - **Tên (`district`, `ward`)** là thứ con người đọc. Nếu chỉ lưu mã, mỗi lần hiển thị địa chỉ lại phải gọi API GHN để tra tên → chậm và phụ thuộc mạng.
 - Quan trọng hơn: khi **địa giới hành chính Việt Nam thay đổi** (sáp nhập phường/xã), tên cũ trong đơn hàng cũ vẫn phải giữ nguyên để đối chiếu.
-- **Địa giới 2 cấp từ 01/07/2025** (Nghị quyết 202/2025/QH15 — 34 tỉnh, 3.321 xã, bỏ cấp huyện): địa chỉ mới chỉ lưu tỉnh + phường; `district` / `districtId` cho phép `NULL` (migration `V16`), không xóa cột để địa chỉ cũ vẫn đọc được (plan AUTH D25).
+- **Địa giới 2 cấp từ 01/07/2025** (Nghị quyết 202/2025/QH15 — 34 tỉnh, 3.321 xã, bỏ cấp huyện): địa chỉ mới chỉ lưu tỉnh + phường; `district` / `districtId` cho phép `NULL` (migration `V19`), không xóa cột để địa chỉ cũ vẫn đọc được (plan AUTH D25).
 
 **b) Xoá mềm (Soft Delete) qua `isDeleted`**
 Không dùng `DELETE FROM addresses`. Lý do: các đơn hàng cũ có thể vẫn tham chiếu tới địa chỉ này. Xoá cứng sẽ làm gãy dữ liệu lịch sử. Xoá mềm chỉ ẩn khỏi danh sách hiển thị.
@@ -3073,7 +3073,7 @@ public class UserCoin {
     private Long version;                     // Optimistic Lock — chống race condition khi trừ Điểm đồng thời
 
     @Column(name = "balance_hash", nullable = false, length = 255)
-    private String balanceHash;               // HMAC-SHA256(userId + balance + secret) — chống can thiệp trực tiếp CSDL
+    private String balanceHash;               // HMAC-SHA256(WALLET_HMAC_SECRET, "coin:" + userId + ":" + balance), hex chữ thường — chống can thiệp trực tiếp CSDL (tiền tố "coin:" để không trùng băm ví shop)
 
     @Column(nullable = false)
     private OffsetDateTime lastUpdated;        // Lần biến động gần nhất
@@ -3150,6 +3150,7 @@ public class CoinTransaction {
 
 ### 💡 Kiến thức chuyên sâu
 - **Nguồn Điểm của TLCN** (khớp giao diện "Lịch sử Điểm"): điểm danh hằng ngày (`CHECK_IN`, UC-PRO-08), hoàn Điểm theo đơn / voucher hoàn Điểm (`ORDER_CASHBACK`), đánh giá có ảnh (`REVIEW_BONUS`, UC-SOC-03), hoàn lại Điểm khi đơn bị hủy / hoàn tiền (`ORDER_REFUND`). Tiêu Điểm: thanh toán (`USED_AT_CHECKOUT`, tối đa 50% tiền hàng — UC-PRO-10) và đổi Điểm lấy voucher (`VOUCHER_REDEEM`, UC-PRO-09).
+- **Lô hết hạn (`EXPIRED`, V19):** cron 00:15 giờ Việt Nam tính phần còn lại của từng lô cộng đã quá `expiresAt` theo FEFO (lô sắp hết hạn bị tiêu trước) và ghi **một dòng âm** `type = EXPIRED`, `referenceId` = id lô gốc — sổ vẫn chỉ ghi thêm, `Σ amount = UserCoin.balance` luôn đúng; chạy lại không trừ thêm (lô đã có dòng `EXPIRED` tham chiếu thì bỏ qua).
 - **Sổ lô + hết hạn:** mỗi dòng cộng Điểm là một "lô" có `expiresAt`; tiêu Điểm trừ lô sắp hết hạn trước (FEFO). Job hằng ngày ghi dòng âm cho lô hết hạn để `Σ amount = UserCoin.balance` luôn đúng.
 
 ---
@@ -3179,10 +3180,20 @@ public class DailyCheckin {
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
+    /** Bản ghi của khách chưa từng điểm danh (chưa lưu — gọi checkIn rồi mới lưu) — UC-PRO-08 */
+    public static DailyCheckin firstFor(Long customerId) {
+        DailyCheckin d = new DailyCheckin();
+        d.customerId = customerId;
+        d.streakCount = 0;
+        return d;
+    }
+
     /** Điểm danh, tính chuỗi & số Điểm thưởng — UC-PRO-08 */
     public int checkIn(OffsetDateTime now) {
         LocalDate today = now.toLocalDate();
-        LocalDate last = this.lastCheckinAt == null ? null : this.lastCheckinAt.toLocalDate();
+        // quy mốc cũ về cùng offset với now (CSDL trả TIMESTAMPTZ theo UTC) — "ngày" là ngày Việt Nam (now đã ở +07:00)
+        LocalDate last = this.lastCheckinAt == null ? null
+                : this.lastCheckinAt.withOffsetSameInstant(now.getOffset()).toLocalDate();
         if (today.equals(last)) throw new IllegalStateException("Hôm nay đã điểm danh");
         this.streakCount = (last != null && last.plusDays(1).equals(today)) ? this.streakCount + 1 : 1;
         this.lastCheckinAt = now;
@@ -6547,7 +6558,7 @@ enum DiscountType { PERCENTAGE, FIXED_AMOUNT, FREESHIP }                        
 enum FundingParty { PLATFORM, VENDOR, CO_SPONSOR }                                      // ← Voucher.sponsorType, OrderDiscount.fundedBy (CO_SPONSOR: sàn + shop cùng chịu theo Voucher.platformSharePercent)
 enum FlashSaleStatus { DRAFT, SCHEDULED, ACTIVE, ENDED }                                // ← FlashSaleCampaign.status
 enum FlashSaleItemStatus { PENDING, APPROVED, REJECTED }                                 // ← FlashSaleItem.status (TLCN v1.3)
-enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM } // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
+enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED } // ← CoinTransaction.type (EXPIRED: dòng âm trừ phần còn lại của lô hết hạn sau 12 tháng, reference_id = id lô — V19, plan 2026-11-16 Điểm Genie D5; mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
 
 // ==========================================
 // NHÓM 05. ĐƠN HÀNG, PHIÊN & GIỮ CHỖ KHO (4 enum)
@@ -7184,7 +7195,7 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
   4. `CoinTransaction` («PK» id, «FK» userId, «FK» referenceId)
   5. `DailyCheckin` («PK» id, «UQ» customerId)
 * **Các Enum liên kết (3 enum):** `CoinTransactionType`, `FlashSaleItemStatus`, `FlashSaleStatus`.
-* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `FlashSaleCampaign`: schedule(), activate(), isRunning(), end() · `FlashSaleItem`: validateAgainst(), remaining(), reserve(), releaseReservation(), recordSale() · `UserCoin`: earn(), spend(), verifyHash() · `CoinTransaction`: isExpired(), isCredit() · `DailyCheckin`: checkIn()
+* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `FlashSaleCampaign`: schedule(), activate(), isRunning(), end() · `FlashSaleItem`: validateAgainst(), remaining(), reserve(), releaseReservation(), recordSale() · `UserCoin`: earn(), spend(), verifyHash() · `CoinTransaction`: isExpired(), isCredit() · `DailyCheckin`: checkIn(), firstFor()
 * **Ma trận quan hệ:**
   - `FlashSaleCampaign` 0..* → 0..1 `User` (vendor)
   - `FlashSaleCampaign` ◆ 1 — 0..* `FlashSaleItem`

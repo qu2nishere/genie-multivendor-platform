@@ -1,7 +1,11 @@
 // Điểm Genie (API_SPEC 3.13). Mock: số dư = mẫu − Điểm dùng khi đặt hàng + Điểm đánh giá có ảnh + giao
 // dịch trong phiên (điểm danh, đổi quà) — các kho mock dùng chung giữ trong phiên tab.
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
+
+/** Điểm Genie nối API thật khi `PUBLIC_REAL_API` có `coins` (backend UC-PRO-08, UC-PRO-09 — plan 2026-11-16 Điểm Genie P07). */
+const COINS_MOCK = isMocked('coins');
 import { activityStore } from '@/shared/api/mock/activity';
 import { placedStore } from '@/shared/api/mock/placed';
 import { rewardOf } from '../domain/coins.rules';
@@ -107,7 +111,7 @@ function mockSummary(): CoinSummaryDto {
 }
 
 export async function getCoins(): Promise<CoinSummary> {
-  if (USE_MOCK) {
+  if (COINS_MOCK) {
     await mockDelay(120);
     return toCoinSummary(mockSummary());
   }
@@ -115,7 +119,7 @@ export async function getCoins(): Promise<CoinSummary> {
 }
 
 export async function listCoinTxns(): Promise<CoinTxn[]> {
-  if (USE_MOCK) {
+  if (COINS_MOCK) {
     await mockDelay(150);
     return [...sessionTxns(), ...SEED_TXNS];
   }
@@ -126,7 +130,7 @@ export async function listCoinTxns(): Promise<CoinTxn[]> {
 }
 
 export async function listCoinRewards(): Promise<CoinReward[]> {
-  if (USE_MOCK) return REWARDS;
+  if (COINS_MOCK) return REWARDS;
   const r = await api.get<
     { id: number; coin_cost: number; voucher_value: number; min_order_value: number }[]
   >('/public/coin-rewards', { auth: false });
@@ -140,7 +144,7 @@ export async function listCoinRewards(): Promise<CoinReward[]> {
 
 /** POST /me/coins/check-ins — đã điểm danh hôm nay → 409 GNE-PRO-4091. */
 export async function checkIn(): Promise<{ reward: number }> {
-  if (USE_MOCK) {
+  if (COINS_MOCK) {
     await mockDelay(300);
     const a = act();
     if (isToday(a.checkedInAt)) mockFail('GNE-PRO-4091');
@@ -179,7 +183,7 @@ export async function checkIn(): Promise<{ reward: number }> {
 
 /** POST /me/coins/redemptions — không đủ Điểm → 422 GNE-PRO-4222. Voucher vào Kho Voucher. */
 export async function redeemReward(r: CoinReward): Promise<{ code: string }> {
-  if (USE_MOCK) {
+  if (COINS_MOCK) {
     await mockDelay(300);
     if (mockSummary().balance < r.cost) mockFail('GNE-PRO-4222');
     const a = act();

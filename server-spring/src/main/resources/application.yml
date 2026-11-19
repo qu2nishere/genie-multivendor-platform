@@ -84,6 +84,16 @@ genie:
   mail-from: ${MAIL_FROM:no-reply@genie.local}   # gửi qua Gmail: MAIL_FROM phải trùng SMTP_USER
   scheduling:
     enabled: ${GENIE_SCHEDULING_ENABLED:true}    # false = tắt mọi cron
+  coin:
+    # Điểm Genie (UC-PRO-08, UC-PRO-09; plan 2026-11-16 Điểm Genie D3, P01.02) — hằng số nghiệp vụ theo tài liệu
+    expiry-months: 12              # mỗi lô Điểm hết hạn sau 12 tháng (LLD 9.9)
+    expiring-soon-days: 30         # "N Điểm sắp hết hạn trong 30 ngày"
+    check-in:
+      rewards: [100, 100, 100, 100, 100, 100, 1000]   # chỉ để hiển thị 7 ô — số thưởng thật do DailyCheckin.checkIn quyết định
+    rewards:                       # quà đổi Điểm → voucher sàn (dữ liệu mẫu COIN500 / COIN1000 / COIN2000)
+      - { id: 1, coin-cost: 500, voucher-code: COIN500 }
+      - { id: 2, coin-cost: 1000, voucher-code: COIN1000 }
+      - { id: 3, coin-cost: 2000, voucher-code: COIN2000 }
   seed:
     # Dữ liệu mẫu: R__seed_demo.sql + thư mục db/seed (SeedDataFlywayCustomizer). Production luôn false (ADR 0010)
     demo-data: ${GENIE_SEED_DEMO:false}

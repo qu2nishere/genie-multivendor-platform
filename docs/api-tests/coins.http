@@ -1,0 +1,61 @@
+### UC-PRO-08, UC-PRO-09 — Điểm Genie (API_SPEC 3.13; plan 2026-11-16 Điểm Genie P07.04)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mai.tran có 1.250 Điểm, voucher COIN*).
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập — chép access_token vào @tok
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+@tok = <access_token bước 1>
+
+### 2. ĐÚNG — số dư, Điểm sắp hết hạn (30 ngày), trạng thái điểm danh 7 ô
+GET {{base}}/me/coins
+Authorization: Bearer {{tok}}
+
+### 3. ĐÚNG — điểm danh → 201 {reward, balance, streak_days}
+POST {{base}}/me/coins/check-ins
+Authorization: Bearer {{tok}}
+
+### 4. LỖI — điểm danh lần 2 cùng ngày (giờ Việt Nam) → 409 GNE-PRO-4091
+POST {{base}}/me/coins/check-ins
+Authorization: Bearer {{tok}}
+
+### 5. ĐÚNG — lịch sử (mới nhất trước; dán pagination.next_cursor để xem trang sau)
+GET {{base}}/me/coins/transactions?limit=20
+Authorization: Bearer {{tok}}
+
+### 6. ĐÚNG — danh mục quà đổi Điểm (công khai, cache 5 phút)
+GET {{base}}/public/coin-rewards
+
+### 7. ĐÚNG — đổi 500 Điểm lấy voucher COIN500 → 201 {voucher: $Voucher, balance}
+POST {{base}}/me/coins/redemptions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "reward_id": 1 }
+
+### 8. LỖI — đổi lại khi voucher còn trong Kho → 409 GNE-PRO-4092
+POST {{base}}/me/coins/redemptions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "reward_id": 1 }
+
+### 9. LỖI — quà cần nhiều Điểm hơn số dư → 422 GNE-PRO-4222, details.missing = số Điểm còn thiếu
+POST {{base}}/me/coins/redemptions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "reward_id": 3 }
+
+### 10. LỖI — quà không tồn tại → 404 GNE-SYS-4040
+POST {{base}}/me/coins/redemptions
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "reward_id": 99 }
+
+### 11. LỖI — không token → 401 GNE-SEC-4010
+GET {{base}}/me/coins

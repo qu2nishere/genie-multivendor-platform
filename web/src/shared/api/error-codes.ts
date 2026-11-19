@@ -54,6 +54,7 @@ export const ERROR_CODES = [
   'GNE-PAY-4021',
   'GNE-PAY-4092',
   'GNE-PRO-4091',
+  'GNE-PRO-4092',
   'GNE-PRO-4221',
   'GNE-PRO-4222',
   'GNE-PRO-4223',

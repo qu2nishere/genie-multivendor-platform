@@ -133,6 +133,7 @@
     "GNE-CAT-4222": "Ngành hàng này bắt buộc giấy tờ chứng thực.",
     "GNE-CAT-4223": "Còn thiếu thông số bắt buộc của ngành hàng.",
     "GNE-PRO-4091": "Hôm nay bạn đã điểm danh rồi.",
+    "GNE-PRO-4092": "Voucher này đang có trong Kho Voucher của bạn (hoặc bạn đã dùng hết lượt).",
     "GNE-PRO-4221": "Giá Flash Sale phải thấp hơn ít nhất 15% và số suất phải hợp lệ.",
     "GNE-PRO-4222": "Bạn không đủ Điểm.",
     "GNE-PRO-4223": "Vượt số sản phẩm tối đa hoặc đã quá hạn đăng ký Flash Sale.",
@@ -1711,6 +1712,7 @@
     "cost": "{points} Điểm · Đơn từ {min}",
     "swap": "Đổi",
     "not_enough": "Chưa đủ Điểm",
+    "missing": "Bạn còn thiếu {points} Điểm để đổi quà này.",
     "redeemed": "Đã đổi voucher {code}, xem trong Kho Voucher",
     "history": "Lịch sử Điểm",
     "checkin": {

@@ -2,7 +2,7 @@
 // đổi quà (Điểm → voucher vào Kho Voucher), điểm danh 7 ngày (đếm ngược tới nửa đêm sau khi điểm danh),
 // lịch sử Điểm. Từ ngữ "Điểm" thay "Xu" (R11).
 import { useEffect, useState } from 'react';
-import { errorMessage } from '@/shared/api/errors';
+import { errorMessage, isApiError } from '@/shared/api/errors';
 import { secondsUntilMidnightVN } from '@/shared/hooks/useCountdown';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
@@ -223,7 +223,18 @@ function Panel() {
                         setOpen(false);
                         toast.success(t('coins.redeemed', { code: res.code }));
                       },
-                      onError: (e) => toast.error(errorMessage(e, t)),
+                      onError: (e) => {
+                        // 422 GNE-PRO-4222 có details.missing → báo đúng số Điểm còn thiếu
+                        const missing =
+                          isApiError(e) && e.code === 'GNE-PRO-4222'
+                            ? Number(e.details.missing)
+                            : NaN;
+                        toast.error(
+                          Number.isFinite(missing) && missing > 0
+                            ? t('coins.missing', { points: n(missing) })
+                            : errorMessage(e, t),
+                        );
+                      },
                     })
                   }
                 >

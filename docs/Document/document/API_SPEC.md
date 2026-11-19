@@ -768,7 +768,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
   }
 }
 ```
-`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày.
+`rewards[i]` = số Điểm của ngày thứ `i+1` trong chuỗi 7 ngày. `streak_days` = `((chuỗi liên tiếp − 1) mod 7) + 1` khi hôm nay hoặc hôm qua có điểm danh, ngược lại `0` (sau ngày thứ 7 quay về ô 1). "Ngày" theo giờ Việt Nam; `next_check_in_at` = 00:00 hôm sau. `expiring_soon` = phần còn lại (FEFO) của các lô hết hạn trong 30 ngày tới, `null` khi không có.
 
 #### `POST /me/coins/check-ins` — Điểm danh
 `201` `{ "reward": 100, "balance": 1350, "streak_days": 4 }`. `409 GNE-PRO-4091` đã điểm danh hôm nay.
@@ -777,7 +777,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```json
 [ { "id": 7781, "type": "ORDER_CASHBACK", "description": "Hoàn điểm đơn TR-20260608-000041", "amount": 120, "created_at": "2026-06-08T10:00:00+07:00" } ]
 ```
-`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM`; `amount` âm khi tiêu.
+`type` ∈ `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` (`EXPIRED` = Điểm của lô quá 12 tháng bị trừ — cron 00:15 hằng ngày); `amount` âm khi tiêu.
 
 #### `GET /public/coin-rewards` — Danh mục quà đổi Điểm
 ```json
@@ -785,7 +785,7 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 ```
 
 #### `POST /me/coins/redemptions` — Đổi Điểm lấy voucher
-`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm.
+`{ "reward_id": 1 }` → `201` `{ "voucher": $Voucher, "balance": 750 }`. `422 GNE-PRO-4222` không đủ Điểm (`details: {balance, required, missing}`); `409 GNE-PRO-4092` voucher đang có trong Kho (hoặc đã dùng hết lượt / người — `details.reason = "USAGE_LIMIT_REACHED"`); `404` quà không tồn tại. Danh mục quà là cấu hình `genie.coin.rewards` (`{id, coin-cost, voucher-code}`) trỏ tới voucher sàn — quà có voucher đã tắt / hết hạn tự ẩn.
 
 ### 3.14 Kho voucher
 UC-PRO-03 · **Màn hình:** Tài khoản › Kho Voucher (tab Tất cả / Voucher Sàn / Voucher Shop / Freeship; "Xem lịch sử voucher" với tab Hết hiệu lực / Đã sử dụng; nhập mã để lưu; xóa; modal chi tiết)
@@ -2880,6 +2880,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-VCH-4093` | 409 | Voucher đã có lượt dùng, không xóa được | mới |
 | `GNE-VCH-4221` | 422 | Voucher không áp dụng được (hết hạn, chưa đạt tối thiểu, vượt 85%…) | LLD |
 | `GNE-PRO-4091` | 409 | Đã điểm danh hôm nay | mới |
+| `GNE-PRO-4092` | 409 | Đổi Điểm lấy voucher đang có trong Kho Voucher (còn lượt dùng) hoặc đã dùng hết lượt / người (`details.reason = "USAGE_LIMIT_REACHED"`) | mới |
 | `GNE-PRO-4221` | 422 | Giá Flash không thấp hơn ≥ 15% / số suất không hợp lệ | mới |
 | `GNE-PRO-4222` | 422 | Không đủ Điểm | mới |
 | `GNE-PRO-4223` | 422 | Quá số sản phẩm tối đa / quá hạn đăng ký Flash Sale | mới |
@@ -2960,7 +2961,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `VoucherScope` | `ALL, CATEGORY, PRODUCT` |
 | `FundingParty` | `PLATFORM, VENDOR, CO_SPONSOR` |
 | `FlashSaleStatus` | `DRAFT, SCHEDULED, ACTIVE, ENDED` |
-| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM` |
+| `CoinTransactionType` | `CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED` |
 | `MessageType` | `TEXT, IMAGE, PRODUCT_CARD, ORDER_CARD` |
 | `ReviewReportReason` | `SPAM, OFFENSIVE, FAKE_PURCHASE` |
 | `TrafficSource` | `SEARCH, HOME_FEED, PROMOTION, SHOP_PAGE, EXTERNAL_LINK` |

@@ -30,7 +30,7 @@ public enum FlashSaleStatus { DRAFT, SCHEDULED, ACTIVE, ENDED }   // ← FlashSa
 
 public enum FlashSaleItemStatus { PENDING, APPROVED, REJECTED }   // ← FlashSaleItem.status (sàn duyệt từng sản phẩm đăng ký — TLCN v1.3)
 
-public enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM }   // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
+public enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED }   // ← CoinTransaction.type (mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
 
 // ============================== ENTITIES (5) ==============================
 
@@ -278,10 +278,20 @@ public class DailyCheckin {
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
+    /** Bản ghi của khách chưa từng điểm danh (chưa lưu — gọi checkIn rồi mới lưu) — UC-PRO-08 */
+    public static DailyCheckin firstFor(Long customerId) {
+        DailyCheckin d = new DailyCheckin();
+        d.customerId = customerId;
+        d.streakCount = 0;
+        return d;
+    }
+
     /** Điểm danh, tính chuỗi & số Điểm thưởng — UC-PRO-08 */
     public int checkIn(OffsetDateTime now) {
         LocalDate today = now.toLocalDate();
-        LocalDate last = this.lastCheckinAt == null ? null : this.lastCheckinAt.toLocalDate();
+        // quy mốc cũ về cùng offset với now (CSDL trả TIMESTAMPTZ theo UTC) — "ngày" là ngày Việt Nam (now đã ở +07:00)
+        LocalDate last = this.lastCheckinAt == null ? null
+                : this.lastCheckinAt.withOffsetSameInstant(now.getOffset()).toLocalDate();
         if (today.equals(last)) throw new IllegalStateException("Hôm nay đã điểm danh");
         this.streakCount = (last != null && last.plusDays(1).equals(today)) ? this.streakCount + 1 : 1;
         this.lastCheckinAt = now;
