@@ -54,7 +54,7 @@ public enum AuditAction {                                                       
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị AUTH (V14 — plan AUTH D20)
     BANNER_CHANGED,                                          // V15 — plan 2026-11-16 banner D1
-    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED // V17 — plan 2026-11-16 Mở shop & KYC D3
+    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED // V20 — plan 2026-11-16 Mở shop & KYC D3
 }
 
 // ============================== ENTITIES (6) ==============================

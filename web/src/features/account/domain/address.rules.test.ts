@@ -3,6 +3,8 @@ import {
   defaultAddress,
   formatPhone,
   fullAddress,
+  isSameAddress,
+  normalizeLine,
   normalizePhone,
   PHONE_RE,
   sortAddresses,
@@ -15,21 +17,29 @@ const a = (id: number, isDefault = false): Address => ({
   id,
   recipient: 'Mai',
   phone: '0901234567',
-  province: { id: 1, name: 'TP. Hồ Chí Minh' },
-  district: { id: 2, name: 'Quận 1' },
-  ward: { code: '20308', name: 'P. Bến Nghé' },
+  province: { id: 79, name: 'Thành phố Hồ Chí Minh' },
+  ward: { code: '26740', name: 'Phường Sài Gòn' },
   line: '25 Nguyễn Huệ',
+  note: null,
   label: 'HOME',
   isDefault,
 });
 
 describe('address.rules', () => {
   it('địa chỉ đầy đủ, mặc định đứng đầu', () => {
-    expect(fullAddress(a(1))).toBe('25 Nguyễn Huệ, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh');
+    expect(fullAddress(a(1))).toBe('25 Nguyễn Huệ, Phường Sài Gòn, Thành phố Hồ Chí Minh');
     expect(sortAddresses([a(1), a(2, true)]).map((x) => x.id)).toEqual([2, 1]);
     expect(defaultAddress([a(1), a(2, true)])?.id).toBe(2);
     expect(defaultAddress([])).toBeNull();
     expect(withDefault([a(1, true), a(2)], 2).map((x) => x.isDefault)).toEqual([false, true]);
+  });
+
+  it('so trùng địa chỉ: bỏ dấu, hoa thường, dấu câu, khoảng trắng; khác SĐT / phường thì không trùng', () => {
+    expect(normalizeLine('25 Nguyễn Huệ, Căn hộ 12A')).toBe('25 nguyen hue can ho 12a');
+    const x = { provinceId: 79, wardCode: '26740', phone: '0901234567', line: '25 Nguyễn Huệ' };
+    expect(isSameAddress(x, { ...x, line: '25  nguyen hue,', phone: '0901 234 567' })).toBe(true);
+    expect(isSameAddress(x, { ...x, phone: '0911111111' })).toBe(false);
+    expect(isSameAddress(x, { ...x, wardCode: '26743' })).toBe(false);
   });
 
   it('SĐT', () => {
@@ -43,9 +53,9 @@ describe('address.rules', () => {
       recipient: ' ',
       phone: '123',
       provinceId: 0,
-      districtId: 0,
       wardCode: '',
       line: '',
+      note: 'x'.repeat(201),
       label: 'HOME',
       isDefault: false,
     });
@@ -55,5 +65,6 @@ describe('address.rules', () => {
     expect(msgs).toContain('account.address.err.phone');
     expect(msgs).toContain('account.address.err.region');
     expect(msgs).toContain('account.address.err.line');
+    expect(msgs).toContain('account.address.err.note_long');
   });
 });

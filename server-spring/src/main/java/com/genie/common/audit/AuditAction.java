@@ -14,9 +14,9 @@ public enum AuditAction {                                                       
     // ===== AUTH (plan AUTH D20) =====
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,
-    // ===== Banner trang chủ (plan 2026-11-16 banner D1, V15) — details.op = CREATE / UPDATE / ACTIVATE / DEACTIVATE / DELETE =====
+    // ===== Banner trang chủ (plan 2026-11-16 banner D1, V18) — details.op = CREATE / UPDATE / ACTIVATE / DEACTIVATE / DELETE =====
     BANNER_CHANGED,
-    // ===== Mở shop & KYC (plan 2026-11-16 Mở shop & KYC D3, V17) =====
+    // ===== Mở shop & KYC (plan 2026-11-16 Mở shop & KYC D3, V20) =====
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED;
 
     /**

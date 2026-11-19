@@ -16,7 +16,7 @@ cho các màn hình Mở shop / KYC / Cài đặt.
 
 1. **`shop_id` trên API = `vendor_profiles.id`.** Bảng nghiệp vụ khác vẫn lưu `vendor_id = users.id`; đổi qua
    `ShopFacade` (module `vendor`).
-2. **Schema:** `V17__vendor_kyc_additions.sql` (số theo sổ đăng ký README plan 2026-11-16) chỉ **thêm** 9 cột
+2. **Schema:** `V20__vendor_kyc_additions.sql` (số theo sổ đăng ký README plan 2026-11-16) chỉ **thêm** 9 cột
    (`contact_phone`, `contact_email`, `pickup_phone`, `kyc_biometric_consent`, `kyc_documents_meta_json`,
    `kyc_supplement_documents_json`, `kyc_supplement_deadline_at`, `kyc_manual_review_requested_at`,
    `shop_name_changed_at`), 3 index và 4 `AuditAction` (`KYC_SUPPLEMENT_REQUESTED`, `KYC_REQUEUED`,
