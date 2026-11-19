@@ -142,8 +142,10 @@ out/
 nbproject/private/
 nbbuild/
 nbdist/
-# Claude Code — cấu hình cá nhân
+# Claude Code — cấu hình cá nhân + file ngữ cảnh làm việc với Claude (giữ ở máy, không đẩy lên git)
 .claude/settings.local.json
+CLAUDE.md
+CLAUDE.local.md
 # Vim / Emacs
 *.swp
 *.swo
