@@ -30,7 +30,7 @@ spring:
     placeholders:
       bootstrap_admin_email: ${BOOTSTRAP_ADMIN_EMAIL:admin@genie.local}
       bootstrap_admin_password_hash: ${BOOTSTRAP_ADMIN_PASSWORD_HASH:}
-      seed_demo: ${GENIE_SEED_DEMO:false}      # R__seed_demo.sql chỉ chạy khi true (mặc định true ở profile local)
+      seed_demo: ${genie.seed.demo-data}       # R__seed_demo.sql chỉ chạy khi true — cùng công tắc với db/seed
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -94,6 +94,9 @@ genie:
       - { id: 1, coin-cost: 500, voucher-code: COIN500 }
       - { id: 2, coin-cost: 1000, voucher-code: COIN1000 }
       - { id: 3, coin-cost: 2000, voucher-code: COIN2000 }
+  seed:
+    # Dữ liệu mẫu: R__seed_demo.sql + thư mục db/seed (SeedDataFlywayCustomizer). Production luôn false (ADR 0010)
+    demo-data: ${GENIE_SEED_DEMO:false}
   security:
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
