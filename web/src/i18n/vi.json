@@ -121,6 +121,7 @@
     "GNE-VCH-4221": "Voucher không áp dụng được cho đơn này.",
     "GNE-USR-4091": "Còn đơn đang xử lý, chưa thể xóa tài khoản.",
     "GNE-USR-4092": "Không thể xóa địa chỉ mặc định.",
+    "GNE-USR-4093": "Địa chỉ này đã có trong sổ địa chỉ của bạn.",
     "GNE-CAT-4041": "Danh mục không tồn tại hoặc đã ẩn.",
     "GNE-CAT-4042": "Sản phẩm không còn được bán.",
     "GNE-CAT-4091": "Tên hoặc đường dẫn danh mục đã tồn tại.",
@@ -1270,10 +1271,16 @@
       "recipient": "Họ và tên",
       "phone": "Số điện thoại",
       "line": "Địa chỉ cụ thể (số nhà, tên đường)",
+      "note": "Ghi chú cho người giao hàng (không bắt buộc)",
+      "note_placeholder": "VD: Gần cổng ĐH NEU, gửi phòng bảo vệ tòa B",
+      "note_hint": "Người giao hàng sẽ thấy ghi chú này. Đừng ghi mã cửa hay mật khẩu.",
       "label_type": "Loại địa chỉ",
       "label": {
         "HOME": "Nhà riêng",
-        "OFFICE": "Văn phòng"
+        "OFFICE": "Văn phòng",
+        "SCHOOL": "Trường học",
+        "APARTMENT": "Chung cư",
+        "OTHER": "Khác"
       },
       "save": "Lưu địa chỉ",
       "saved": "Đã lưu địa chỉ",
@@ -1282,13 +1289,15 @@
         "locating": "Đang định vị…",
         "done": "Đã lấy vị trí hiện tại",
         "hint": "Tự động điền địa chỉ từ định vị thiết bị.",
-        "done_hint": "Đã điền Tỉnh/Quận/Phường — bạn có thể chỉnh lại bên dưới."
+        "done_hint": "Đã điền Tỉnh/Phường — bạn có thể chỉnh lại bên dưới.",
+        "partial_hint": "Đã điền tỉnh theo vị trí — vui lòng chọn tiếp Phường / Xã.",
+        "not_found": "Không xác định được địa chỉ ở vị trí này, vui lòng chọn thủ công.",
+        "denied": "Không lấy được vị trí — hãy cho phép trình duyệt truy cập vị trí hoặc chọn thủ công."
       },
       "region": {
-        "label": "Tỉnh / Thành phố, Quận / Huyện, Phường / Xã",
-        "placeholder": "Chọn Tỉnh / Quận / Phường",
+        "label": "Tỉnh / Thành phố, Phường / Xã",
+        "placeholder": "Chọn Tỉnh / Phường",
         "province": "Tỉnh/Thành",
-        "district": "Quận/Huyện",
         "ward": "Phường/Xã",
         "search": "Tìm nhanh…",
         "none": "Không tìm thấy"
@@ -1297,9 +1306,10 @@
         "recipient": "Nhập họ tên người nhận",
         "recipient_long": "Họ tên tối đa 100 ký tự",
         "phone": "Số điện thoại không hợp lệ",
-        "region": "Chọn đầy đủ Tỉnh / Quận / Phường",
+        "region": "Chọn đầy đủ Tỉnh / Phường",
         "line": "Nhập địa chỉ cụ thể",
-        "line_long": "Địa chỉ tối đa 255 ký tự"
+        "line_long": "Địa chỉ tối đa 255 ký tự",
+        "note_long": "Ghi chú tối đa 200 ký tự"
       },
       "book": "Sổ địa chỉ",
       "book_sub": "Quản lý địa chỉ nhận hàng của bạn",
@@ -2890,7 +2900,7 @@
     "pickup": {
       "title": "Địa chỉ lấy hàng (GHN)",
       "phone": "Số điện thoại kho",
-      "region": "Tỉnh / Quận / Phường",
+      "region": "Tỉnh / Phường",
       "line": "Địa chỉ chi tiết",
       "save": "Lưu và Đồng bộ với GHN",
       "saved": "Đã lưu địa chỉ lấy hàng và đồng bộ với GHN",

@@ -447,25 +447,25 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Mã Use Case:** `UC-AUTH-09`
 - **Tác nhân chính:** `ACT-CUS` Customer (khách hàng)
 - **Tác nhân phụ:** `ACT-3PL` Đối tác vận chuyển (GHN)
-- **Mục đích nghiệp vụ:** Cho phép khách hàng thêm, sửa, xóa và thiết lập địa chỉ giao hàng mặc định; chuẩn hóa mã tỉnh/quận/phường theo đơn vị vận chuyển GHN để phục vụ tính phí ship chính xác.
+- **Mục đích nghiệp vụ:** Cho phép khách hàng thêm, sửa, xóa và thiết lập địa chỉ giao hàng mặc định; chuẩn hóa mã tỉnh/phường theo địa giới 2 cấp từ 01/07/2025 (không còn cấp quận/huyện) để đơn vị vận chuyển GHN tính phí ship chính xác.
 - **Tiền điều kiện:** Khách hàng đã đăng nhập tài khoản.
 - **Hậu điều kiện:** Bản ghi trong bảng `addresses` được tạo/sửa; cập nhật `defaultAddressId` trong `customer_profiles`.
 - **Luồng sự kiện chính:**
   1. Khách hàng vào mục "Địa chỉ" (`/account/address`), bấm "Thêm địa chỉ mới".
-  2. Khách hàng nhập Tên người nhận, Số điện thoại nhận hàng, Địa chỉ chi tiết (Số nhà, tên đường) và nhãn (Nhà riêng / Văn phòng).
-  3. Khách hàng chọn Tỉnh/Thành phố (`GET /public/regions/provinces` — backend lấy danh mục hành chính GHN, cache Redis 24 giờ; thiếu `GHN_TOKEN` ở máy dev thì đọc ảnh chụp JSON).
-  4. Hệ thống nạp danh sách Quận/Huyện theo Tỉnh (`GET /public/regions/provinces/{id}/districts`, GHN District ID). Khách hàng chọn Quận/Huyện.
-  5. Hệ thống nạp danh sách Phường/Xã theo Quận (`GET /public/regions/districts/{id}/wards`, GHN Ward Code). Khách hàng chọn Phường/Xã.
-  6. Khách hàng tích chọn "Đặt làm địa chỉ mặc định" (nếu muốn).
-  7. Khách hàng bấm "Hoàn thành" → `POST /me/addresses`.
-  8. Hệ thống kiểm tra đủ 3 cấp hợp lệ và **tự điền tên** tỉnh / quận / phường từ mã (không tin tên client gửi), lưu `addresses` theo mô hình chuẩn hóa kép:
-     - Lưu mã GHN: `provinceId`, `districtId`, `wardCode` (dùng để gọi API tính phí ship và tạo vận đơn).
-     - Lưu tên hiển thị: `province`, `district`, `ward` (dùng hiển thị giao diện và bảo toàn lịch sử khi địa giới thay đổi).
-  9. Nếu chọn mặc định (hoặc là địa chỉ đầu tiên): hệ thống mở transaction, khóa dòng `customer_profiles` (`FOR UPDATE`), đặt `is_default = false` cho các địa chỉ khác, đặt địa chỉ này `is_default = true` và cập nhật `customer_profiles.default_address_id`.
+  2. Khách hàng nhập Tên người nhận, Số điện thoại nhận hàng, Địa chỉ chi tiết (Số nhà, tên đường), Ghi chú cho người giao hàng (không bắt buộc, ≤ 200 ký tự — VD "Gần cổng ĐH NEU, gửi phòng bảo vệ"; thêm 2026-11-18) và nhãn (Nhà riêng / Văn phòng / Trường học / Chung cư / Khác — 3 nhãn sau thêm 2026-11-18).
+  3. Khách hàng chọn Tỉnh/Thành phố trong 34 đơn vị (`GET /public/regions/provinces` — backend lấy danh mục GHN v3, cache Redis 24 giờ; thiếu `GHN_TOKEN`/`GHN_SHOP_ID` ở máy dev thì đọc danh mục chính thức `regions.json`).
+  4. Hệ thống nạp danh sách Phường/Xã/Đặc khu theo Tỉnh (`GET /public/regions/provinces/{id}/wards`). Khách hàng chọn Phường/Xã (ô tìm nhanh không phân biệt dấu).
+  5. Khách hàng tích chọn "Đặt làm địa chỉ mặc định" (nếu muốn).
+  6. Khách hàng bấm "Hoàn thành" → `POST /me/addresses`.
+  7. Hệ thống kiểm tra phường thuộc tỉnh và **tự điền tên** tỉnh / phường từ mã (không tin tên client gửi), lưu `addresses` theo mô hình chuẩn hóa kép:
+     - Lưu mã: `provinceId`, `wardCode` (dùng để gọi API tính phí ship và tạo vận đơn GHN với `is_new_to_address`).
+     - Lưu tên hiển thị: `province`, `ward` (dùng hiển thị giao diện và bảo toàn lịch sử khi địa giới thay đổi). Cột `district`/`districtId` để trống (chỉ còn ở địa chỉ cũ trước sáp nhập).
+  8. Nếu chọn mặc định (hoặc là địa chỉ đầu tiên): hệ thống mở transaction, khóa dòng `customer_profiles` (`FOR UPDATE`), đặt `is_default = false` cho các địa chỉ khác, đặt địa chỉ này `is_default = true` và cập nhật `customer_profiles.default_address_id`.
 - **Luồng thay thế / Ngoại lệ:**
   - *Sửa địa chỉ:* `PUT /me/addresses/{id}`; đặt mặc định nhanh: `PATCH /me/addresses/{id}` (`is_default = true`). Địa chỉ của người khác → `404`.
+  - *Địa chỉ trùng:* khi thêm / sửa, nếu đã có địa chỉ khác cùng tỉnh, phường, số điện thoại và địa chỉ cụ thể (không phân biệt dấu, hoa thường, dấu câu) → `409 GNE-USR-4093`; giao diện báo "Địa chỉ này đã có trong sổ địa chỉ" và làm nổi địa chỉ cũ (ở Thanh toán: chọn sẵn địa chỉ cũ).
   - *Xóa địa chỉ:* `DELETE /me/addresses/{id}` → `is_deleted = true` (xóa mềm) để bảo vệ toàn vẹn lịch sử đơn hàng cũ; địa chỉ mặc định không xóa được (`409 GNE-USR-4092`) — đặt địa chỉ khác làm mặc định trước.
-  - *Dùng vị trí hiện tại (GPS):* trình duyệt cấp tọa độ → `GET /public/regions/reverse-geocode?lat&lng` (Nominatim / OpenStreetMap, ≤ 1 yêu cầu / giây, khớp tên sang mã GHN) → gợi ý Tỉnh / Quận / Phường; người dùng chỉnh lại trước khi lưu. Không khớp được phường → chỉ gợi ý tỉnh / quận. (Có thể cắt nếu thiếu thời gian.)
+  - *Dùng vị trí hiện tại (GPS):* trình duyệt cấp tọa độ → `GET /public/regions/reverse-geocode?lat&lng` (Nominatim / OpenStreetMap, ≤ 1 yêu cầu / giây, khớp tên sang danh mục 2 cấp) → gợi ý Tỉnh / Phường; người dùng chỉnh lại trước khi lưu. Không khớp được phường → chỉ gợi ý tỉnh. (Có thể cắt nếu thiếu thời gian.)
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
   - *Hiện trạng:* **Chưa triển khai backend** — giao diện (sổ địa chỉ + `RegionPicker`) đã xong trên lớp mock, chờ API.

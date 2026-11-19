@@ -11,7 +11,7 @@ export const CARRIERS: CarrierCode[] = [
 export interface PickupAddress {
   phone: string;
   province: { id: number; name: string } | null;
-  district: { id: number; name: string } | null;
+  /** Địa giới 2 cấp từ 01/07/2025 — không còn quận / huyện (plan AUTH D25). */
   ward: { code: string; name: string } | null;
   line: string;
   ghnShopId: number | null;
