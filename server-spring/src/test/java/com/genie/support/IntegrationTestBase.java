@@ -108,6 +108,9 @@ public abstract class IntegrationTestBase {
         registry.add("genie.storage.public-url", SILO::getS3URL);
         registry.add("genie.storage.access-key", SILO::getUserName);
         registry.add("genie.storage.secret-key", SILO::getPassword);
+        // Danh mục hành chính luôn đọc ảnh chụp JSON trong test (kể cả khi .env của máy dev có GHN_TOKEN)
+        registry.add("genie.shipping.ghn.token", () -> "");
+        registry.add("genie.shipping.ghn.shop-id", () -> "");
     }
 
     public static final String START = "2026-06-08T07:00:00Z";
@@ -134,6 +137,9 @@ public abstract class IntegrationTestBase {
 
     @Autowired
     protected FakeAccountContext accountContext;
+
+    @Autowired
+    protected FakeReverseGeocoder geocoder;
 
     @Autowired
     protected JdbcTemplate jdbc;
@@ -199,6 +205,7 @@ public abstract class IntegrationTestBase {
         zalo.clear();
         deletionBlocker.clear();
         accountContext.clear();
+        geocoder.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -253,6 +260,13 @@ public abstract class IntegrationTestBase {
         @Bean
         FakeAccountContext fakeAccountContext() {
             return new FakeAccountContext();
+        }
+
+        /** {@code @Primary} → thay {@code NominatimGeocoder} (không gọi OpenStreetMap trong test). */
+        @Bean
+        @Primary
+        FakeReverseGeocoder fakeReverseGeocoder() {
+            return new FakeReverseGeocoder();
         }
     }
 }

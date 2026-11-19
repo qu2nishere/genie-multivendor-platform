@@ -121,6 +121,7 @@
     "GNE-VCH-4221": "This voucher can't be applied to this order.",
     "GNE-USR-4091": "You have orders in progress, so the account can't be deleted yet.",
     "GNE-USR-4092": "The default address can't be deleted.",
+    "GNE-USR-4093": "This address is already in your address book.",
     "GNE-CAT-4041": "This category doesn't exist or is hidden.",
     "GNE-CAT-4042": "This product is no longer available.",
     "GNE-CAT-4091": "A category with this name or slug already exists.",
@@ -1269,10 +1270,16 @@
       "recipient": "Full name",
       "phone": "Phone number",
       "line": "Street address",
+      "note": "Note for the courier (optional)",
+      "note_placeholder": "E.g. Near the university gate, leave at the security desk",
+      "note_hint": "The courier will see this note. Don't include door codes or passwords.",
       "label_type": "Address type",
       "label": {
         "HOME": "Home",
-        "OFFICE": "Office"
+        "OFFICE": "Office",
+        "SCHOOL": "School",
+        "APARTMENT": "Apartment",
+        "OTHER": "Other"
       },
       "save": "Save address",
       "saved": "Address saved",
@@ -1281,13 +1288,15 @@
         "locating": "Locating…",
         "done": "Current location found",
         "hint": "Fill in the address from your device location.",
-        "done_hint": "Province/District/Ward filled in — you can adjust below."
+        "done_hint": "Province/Ward filled in — you can adjust below.",
+        "partial_hint": "Province filled from your location — please pick the ward.",
+        "not_found": "Couldn't find an address at this location, please choose it manually.",
+        "denied": "Couldn't get your location — allow location access in the browser or choose manually."
       },
       "region": {
-        "label": "Province / City, District, Ward",
-        "placeholder": "Choose Province / District / Ward",
+        "label": "Province / City, Ward",
+        "placeholder": "Choose Province / Ward",
         "province": "Province",
-        "district": "District",
         "ward": "Ward",
         "search": "Quick search…",
         "none": "No results"
@@ -1296,9 +1305,10 @@
         "recipient": "Enter the recipient's name",
         "recipient_long": "Name can be at most 100 characters",
         "phone": "Invalid phone number",
-        "region": "Choose Province, District and Ward",
+        "region": "Choose Province and Ward",
         "line": "Enter the street address",
-        "line_long": "Address can be at most 255 characters"
+        "line_long": "Address can be at most 255 characters",
+        "note_long": "Note can be at most 200 characters"
       },
       "book": "Address book",
       "book_sub": "Manage your delivery addresses",
@@ -2889,7 +2899,7 @@
     "pickup": {
       "title": "Pickup address (GHN)",
       "phone": "Warehouse phone",
-      "region": "Province / District / Ward",
+      "region": "Province / Ward",
       "line": "Street address",
       "save": "Save and sync with GHN",
       "saved": "Pickup address saved and synced with GHN",

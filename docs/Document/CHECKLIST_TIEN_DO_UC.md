@@ -10,7 +10,7 @@
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
-| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — 3 đã xong, 5 đang làm, 1 chưa bắt đầu (UC-AUTH-09); plan `plan/2026-11-14/auth.md` |
+| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — 4 đã xong, 5 đang làm (UC-AUTH-09 xong 2026-11-18); plan `plan/2026-11-14/auth.md` |
 | **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`) |
 | **Nghiêm Phú Đăng Quân** | Chưa phân công | — |
 
@@ -19,12 +19,12 @@
 | Chỉ số | Số lượng |
 |---|---:|
 | Tổng use case | **87** |
-| Đã triển khai (backend + test + web nối API thật) | **3** |
+| Đã triển khai (backend + test + web nối API thật) | **4** |
 | Đang triển khai | **6** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **66** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **65** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **12** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
-| Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (71 test xanh); 10 module còn lại chưa có service |
+| Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (83 test xanh — 2026-11-17); 10 module còn lại chưa có service |
 | AI Worker `server-python` | Khung (`kyc`, `sentiment` còn TODO) |
 
 **Chú thích ngắn:** **GD** = giao diện · **BE** = backend · **Test** = kiểm thử · **Nối** = nối API thật · **Chạy** = chạy thật. `☑` xong · `◐` một phần · `☐` chưa · `—` không áp dụng. Giải thích đầy đủ ở [mục 0](#0-chu-thich).
@@ -77,7 +77,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Phân hệ | Số UC | Đã triển khai | Đang triển khai | Chưa |
 |---|---:|---:|---:|---:|
-| 01. Xác thực & Tài khoản | 9 | 3 | 5 | 1 |
+| 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
 | 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 0 | 0 | 17 |
 | 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 0 | 9 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
@@ -101,7 +101,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-AUTH-04` | Khôi phục mật khẩu qua Email OTP (Forgot Password) | S1 | `/auth/forgot` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>backend + test, web nối API thật, đã chạy thật</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-06` | Đổi / Thiết lập mật khẩu | S1 | `/account/password`, Seller › Cài đặt › Bảo mật, Admin › Tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-08` | Quản lý thông tin hồ sơ cá nhân (Customer Profile) | S2 | `/account/profile`, Admin › Tài khoản | ☑ | ◐ | ◐ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>hồ sơ + ảnh đại diện (Silo) xong; GET /me xong; còn đổi email</sub> | Nguyễn Quốc Khoa |
-| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | Nguyễn Quốc Khoa |
+| `UC-AUTH-09` | Quản lý sổ địa chỉ giao hàng chuẩn GHN | S2 | `/account/address`, modal địa chỉ ở `/checkout` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>sổ địa chỉ địa giới 2 cấp (34 tỉnh / 3.321 xã), 5 loại địa chỉ, chặn trùng, ghi chú giao hàng, định vị GPS thật; build xanh + đã chạy thật 2026-11-18. Danh mục mã GHN cần `GHN_TOKEN` + `GHN_SHOP_ID`</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-10` | Yêu cầu ẩn danh hóa & Xóa dữ liệu cá nhân (Xóa tài khoản) | S7 | `/account/profile` › Xóa tài khoản | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật; cổng chặn của order / payment chưa cài</sub> | Nguyễn Quốc Khoa |
 | `UC-AUTH-11` | Đăng xuất & Quản lý thiết bị đăng nhập | S1 | Menu Đăng xuất, `/account/devices` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong, chưa chạy thật</sub> | Nguyễn Quốc Khoa |
 
@@ -237,7 +237,9 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 - [x] `GET /me` — ngữ cảnh tài khoản (vai trò, shop, bộ đếm) để web dựng `SessionUser` đầy đủ (A11.02, A15.01) — xong 2026-11-17, BUILD SUCCESS
 - [ ] Đổi email đăng nhập `POST /me/email-change-requests` (+ `/confirm`) (A11.04)
-- [ ] Sổ địa chỉ + danh mục hành chính GHN + định vị GPS (A12 — UC-AUTH-09)
+- [x] Sổ địa chỉ + danh mục hành chính 2 cấp + định vị GPS (A12 — UC-AUTH-09) — xong 2026-11-18, build xanh, đã chạy thật; danh mục mã GHN cần `GHN_TOKEN` + `GHN_SHOP_ID` (chạy `scripts/fetch-ghn-regions.py`)
+  - [x] Chặn địa chỉ trùng (A12.07, plan AUTH D26) — trùng tỉnh + phường + SĐT + địa chỉ cụ thể → `409 GNE-USR-4093`
+  - [x] Ghi chú cho người giao hàng (A12.08, plan AUTH D27, migration `V17`)
 - [ ] ~~Apple Sign In~~ → Đăng nhập Zalo (A14.10, D23 — UC-AUTH-03): build `./mvnw verify` + `npm run verify`; app Zalo đã tạo, `ZALO_APP_ID` / `ZALO_APP_SECRET` đã có trong `.env`; **chờ tên miền thật** để xác thực domain trên Zalo rồi chạy thật
 - [ ] Chạy thật: đăng xuất / thiết bị, đổi mật khẩu, xóa tài khoản (A10.03)
 - [ ] E2E với API thật `tests/e2e/auth-real.spec.ts`, bộ kiểm thử Apidog / Postman, k6 đăng nhập (A15.06, A16)
@@ -270,3 +272,12 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-17 | AUTH-02, 08 | `GET /me` (ngữ cảnh phiên) + web dựng `SessionUser` từ `/me` sau đăng nhập / làm mới — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-17 | AUTH-02, 03, 08 | `./mvnw verify` 83 test BUILD SUCCESS — `GET /me` (MeQueryIT 4/4), Zalo (ZaloLoginIT 5/5) | (chưa commit) |
 | 2026-11-17 | (phân công) | Thêm cột **Phụ trách** + bảng *Thành viên & phân công*: Nguyễn Quốc Khoa — phân hệ AUTH (9 UC); Nguyễn Ngọc Thiện — 13 UC (ADM-07, ADM-12, PRO-08, PRO-09, CAT-08, SOC-06, VND-01/02/03/04/05/07/21), đang lập plan `plan/2026-11-16`; Nghiêm Phú Đăng Quân — chưa phân công. Đồng bộ cột *Người phụ trách* trong Excel | `feature/env-config-cleanup` |
+| 2026-11-18 | AUTH-09 | Sổ địa chỉ + danh mục hành chính GHN (backend, test `AddressIT`, web nối qua cờ `address`) — viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Build xanh (`AddressIT` 8 ca) — BE, Test ☑; Nối ◐ (GPS còn mô phỏng) | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Định vị GPS thật (Nominatim → khớp mã GHN) — viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Thêm loại địa chỉ Trường học / Chung cư / Khác (migration `V15`) | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Chuyển sổ địa chỉ sang **địa giới 2 cấp** Tỉnh → Phường (plan AUTH D25, migration `V16`, danh mục 34 tỉnh / 3.321 xã; GHN v3); trạng thái giữ nguyên, chờ verify + kiểm thử giao diện | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Thêm việc **chặn địa chỉ trùng** (A12.07, D26) vào kế hoạch — chưa làm | — |
+| 2026-11-18 | AUTH-09 | Chặn địa chỉ trùng (A12.07) — code + test viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Ghi chú cho người giao hàng (A12.08, migration `V17`) — code + test viết xong, chờ build | (chưa commit) |
+| 2026-11-18 | AUTH-09 | Build xanh + chạy thật trên giao diện (địa giới 2 cấp, loại địa chỉ, chặn trùng, ghi chú, GPS) → **✅ Đã triển khai**; giao diện: tìm nhanh không phân biệt dấu, thẻ địa chỉ cân lại, placeholder nhạt hơn; trang chủ: bảng đường tiền chồng 1/3 ảnh | (chưa commit) |
