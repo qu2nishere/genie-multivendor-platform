@@ -296,7 +296,9 @@ deploy/
 └── scripts/deploy.sh                 # pull image theo TAG, up -d, kiểm health, rollback
 scripts/
 ├── fetch-models.sh                   # tải ONNX KYC + PhoBERT
-├── seed-local.sh                     # nạp dữ liệu demo
+├── seed-local.sh                     # nạp dữ liệu demo vào Postgres Docker (gọi seed/seed.sh --docker)
+├── seed/{seed.sh, seed.ps1}          # nạp R__seed_demo + db/seed vào CSDL local bất kỳ (từ chối host không phải local)
+├── seed/{upload-assets.sh, .ps1}     # đẩy ảnh mẫu web/public/img lên Silo (seed/product, seed/banner)
 ├── check-i18n.mjs                    # so khóa vi.json / en.json
 └── webhooks/{ghn-webhook.http, sepay-webhook.http, vnpay-ipn.http}   # giả lập webhook khi dev
 ```
@@ -989,7 +991,7 @@ Certbot (container hoặc cài trên VPS) cấp chứng chỉ Let's Encrypt cho 
 
 ### 16.5 Khởi tạo dữ liệu & dịch vụ
 
-- **PostgreSQL (dev: Docker / cài máy; prod: AWS RDS):** Flyway tạo 65 bảng khi backend khởi động; `V13__bootstrap_admin.sql` tạo Admin đầu tiên từ biến môi trường; `R__seed_demo.sql` chỉ chạy ở profile `local` / `demo`.
+- **PostgreSQL (dev: Docker / cài máy; prod: AWS RDS):** Flyway tạo 65 bảng khi backend khởi động; `V13__bootstrap_admin.sql` tạo Admin đầu tiên từ biến môi trường; dữ liệu mẫu (`R__seed_demo.sql` + thư mục `db/seed/`) chỉ nạp khi `GENIE_SEED_DEMO=true` (mặc định ở profile `local`, luôn `false` ở `prod`); nạp tay vào CSDL local bằng `scripts/seed/seed.sh` / `seed.ps1`, ảnh mẫu bằng `scripts/seed/upload-assets.*` (hướng dẫn: `scripts/seed/README.md`).
 - **Kho tệp:** production dùng **`deploy/aws/s3-init.sh`** (9 bucket có tiền tố, bucket policy đọc công khai trừ `tmp/`, chặn công khai bucket riêng tư, lifecycle `tmp/` 1 ngày, CORS, SSE-S3, versioning `kyc-dossiers`) + IAM user theo `deploy/aws/iam-policy.json`. Máy dev: **Silo (`deploy/silo/init.sh`, container chạy một lần):** tạo 9 bucket; `anonymous download` cho `product-media`, `avatar-assets`, `review-media`, `content-assets`; lifecycle xóa `tmp/` sau 1 ngày; tài khoản ứng dụng riêng (không dùng root). Ảnh KYC do backend mã hóa AES-256-GCM khi chuyển từ `tmp/` sang `kyc-dossiers`.
 - **Redis:** `deploy/redis/redis.conf` — AOF `everysec`, `requirepass`, `maxmemory 256mb`, `volatile-lru`.
 - **AI Worker:** `scripts/fetch-models.sh` tải mô hình đúng phiên bản trước khi khởi động; `/health` chỉ báo sẵn sàng khi đã nạp xong.

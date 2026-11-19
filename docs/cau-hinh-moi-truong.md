@@ -145,7 +145,7 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | `DB_URL` | `jdbc:postgresql://localhost:5432/genie` | Chuỗi kết nối JDBC — prod: endpoint **RDS** + `?sslmode=require` |
 | `DB_USER` / `DB_PASSWORD` | `genie` / `changeme` | Tài khoản CSDL |
 | `DB_POOL_SIZE` | `20` (prod `30`) | Số kết nối tối đa HikariCP |
-| `GENIE_SEED_DEMO` | `true` (prod `false`) | Nạp `R__seed_demo.sql` |
+| `GENIE_SEED_DEMO` | `true` (prod `false`) | Nạp dữ liệu mẫu: `R__seed_demo.sql` (tài khoản) **và** thư mục `db/seed` (danh mục, shop, sản phẩm, voucher, banner… — `SeedDataFlywayCustomizer`). Nạp tay vào CSDL local: `scripts/seed/seed.sh` / `seed.ps1` ([scripts/seed/README.md](../scripts/seed/README.md)) |
 | `FLYWAY_ENABLED` | `true` | `false` = không chạy migration |
 | `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD_HASH` | `admin@genie.local` / rỗng | Admin đầu tiên (`V13__bootstrap_admin.sql`); băm bằng `python3 scripts/hash-password.py '<mật khẩu>'` |
 
@@ -219,7 +219,6 @@ Ghi trước để không ai đặt tên khác. Khi làm task tương ứng ph�
 | Biến | Plan / task | Mặc định | Ý nghĩa |
 |---|---|---|---|
 | ~~`AI_WORKER_MODE`~~ | Mở shop & KYC — D7, K05.05 | — | **Đã có** — xem mục 6.2 |
-| `GENIE_SEED_DEMO` (mở rộng) | Seed dữ liệu mẫu — D1, S01.02 | như hiện tại | Điều khiển thêm thư mục `db/seed` (shop, sản phẩm, voucher, banner…) qua `SeedDataFlywayCustomizer` |
 | ~~`server-python/.env`~~ | AI Worker KYC — Y01.01 | — | **Đã có** — xem mục 6.8 |
 | `E2E_REAL_API` (web, Playwright) | Mở shop & KYC — K11.09 | không đặt | `1` = chạy E2E với backend thật |
 
