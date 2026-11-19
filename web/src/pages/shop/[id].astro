@@ -107,14 +107,18 @@ const canonical = canonicalUrl(path, Astro.url.searchParams);
       class="relative h-[220px] overflow-hidden max-md:h-[160px]"
       style={`background:${shop.logoBg}`}
     >
-      <img
-        src={shop.coverImage}
-        width="1440"
-        height="220"
-        alt=""
-        class="absolute inset-0 h-full w-full object-cover"
-        fetchpriority="high"
-      />
+      {
+        shop.coverImage && (
+          <img
+            src={shop.coverImage}
+            width="1440"
+            height="220"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover"
+            fetchpriority="high"
+          />
+        )
+      }
       <div
         class="absolute inset-0"
         style="background:linear-gradient(180deg, rgba(11,31,75,.58) 0%, rgba(11,31,75,.14) 48%, rgba(11,31,75,.62) 100%)"
