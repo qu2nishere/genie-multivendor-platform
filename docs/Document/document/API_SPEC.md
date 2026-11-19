@@ -2396,9 +2396,12 @@ UC-ADM-07 · `VIEW_AUDIT_LOG` · **Màn hình:** lọc thời gian (Hôm nay / 7
 ```json
 [ { "id": 55120, "created_at": "2026-06-22T09:42:11+07:00", "actor_email": "phat.nt@genie.example", "actor_role": "MODERATOR", "action": "KYC_APPROVED", "category": "KYC", "target": "KYC-1037 · TravelGear", "ip_address": "113.161.40.12", "result": "SUCCESS" } ]
 ```
-`result` ∈ `SUCCESS, FAILED, DENIED`; `actor_email = "system"` cho tác vụ định kỳ. `summary.denied_count`.
+`result` ∈ `SUCCESS, FAILED, DENIED` (`DENIED` = dòng `ACCESS_DENIED`); `actor_email = "system"` cho tác vụ định kỳ. `summary.denied_count` = số dòng `ACCESS_DENIED` trong bộ lọc. `id` là UUID (chuỗi).
+- `from` / `to`: ISO-8601 hoặc ngày `YYYY-MM-DD` (giờ Việt Nam; `to` dạng ngày tính hết ngày đó, dạng thời điểm thì loại trừ). Mặc định 7 ngày gần nhất; **tối đa 90 ngày / lần** → vượt `422 GNE-VAL-4220` (`errors[].code = RANGE_TOO_LONG`). `q` ≤ 100 ký tự, tìm không phân biệt hoa thường trong email / IP / mã tham chiếu. `limit` 1–100 (mặc định 50).
+- `actor_role`: vai trò chụp lúc ghi; riêng `STAFF` hiển thị **chức danh hiện tại** (`MODERATOR`…). `target` = `details.target_label` nếu có, không thì `reference_id`.
 
 #### `GET /admin/audit-logs/export?…` → `text/csv` (`nhat-ky-he-thong.csv`)
+Cùng bộ lọc (không `cursor` / `limit`). UTF-8 có BOM, ô bắt đầu bằng `= + - @` được thêm `'` (chống chèn công thức), giờ Việt Nam. **Tối đa 50.000 dòng** mới nhất — bị cắt thì có header `X-Truncated: true`. Giới hạn 5 lần / phút / người (`429 GNE-RAT-4290`).
 
 ### 11.11 Danh mục toàn sàn & bộ thuộc tính
 UC-CAT-14, UC-CAT-15, UC-CAT-17 · `MANAGE_CATALOG` · **Màn hình:** 4 chỉ số (Danh mục gốc, Danh mục con, Tổng sản phẩm, Chờ duyệt), cây danh mục gốc, chi tiết (hiển thị, Bộ thuộc tính, Sửa; bảng danh mục con Sản phẩm / Hoa hồng / Xem SP), "Đề xuất danh mục từ người bán" (Duyệt / Từ chối có lý do), modal Thêm/Sửa danh mục (tên, slug + Auto, danh mục cha 3 cấp, icon, hoa hồng mặc định, Xóa khi rỗng), Bộ thuộc tính (Mã, Tên, Kiểu, Giá trị/Đơn vị, Bắt buộc, Lọc được, Trục biến thể, Ngừng dùng)
@@ -2985,7 +2988,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `KycDocumentType` | `ID_FRONT, ID_BACK, BUSINESS_LICENSE, BUSINESS_REGISTRATION, SELFIE, TAX_NOTICE` | 10.12, 11.3 |
 | `RiskLevel` | `LOW, MEDIUM, HIGH` | 11.3 |
 | `NotificationCategory` | `ORDER, PROMOTION, SYSTEM, CHAT` | 3.12 |
-| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` | 11.10 |
+| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED` | 11.10 |
 
 ### 16.3 Ánh xạ trạng thái đơn → tab
 

@@ -4281,6 +4281,8 @@
       "reactivated": "{name} has been unlocked."
     },
     "audit": {
+      "range_too_long": "You can search at most 90 days at a time — narrow the date range.",
+      "export_truncated": "Only the latest 50,000 rows were exported — narrow the filters to export everything.",
       "append_only": "Append-only · immutable",
       "desc": "The log records every sensitive action. Entries can't be edited or deleted — for investigations & compliance.",
       "export": "Export log",

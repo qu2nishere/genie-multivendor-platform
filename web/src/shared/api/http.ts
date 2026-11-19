@@ -128,6 +128,54 @@ export async function request<T>(
   }
 }
 
+/** Tệp tải về từ API (CSV…): nội dung + tên tệp lấy từ `Content-Disposition` + header phản hồi. */
+export interface DownloadedFile {
+  blob: Blob;
+  fileName: string | null;
+  headers: Headers;
+}
+
+/** Tên tệp trong `Content-Disposition` (`filename*=UTF-8''…` ưu tiên, rồi `filename="…"`). */
+export function fileNameOf(disposition: string | null): string | null {
+  if (!disposition) return null;
+  const star = /filename\*=UTF-8''([^;]+)/i.exec(disposition);
+  if (star?.[1]) return decodeURIComponent(star[1]);
+  const plain = /filename="?([^";]+)"?/i.exec(disposition);
+  return plain?.[1] ?? null;
+}
+
+/** Tải tệp có Bearer (xuất CSV…): 401 → làm mới token MỘT lần; lỗi → ApiError như {@link request}. */
+export async function requestBlob(
+  path: string,
+  options: RequestOptions = {},
+): Promise<DownloadedFile> {
+  const o: RequestOptions = { ...options, headers: { Accept: '*/*', ...options.headers } };
+  try {
+    let res = await send(path, o, getAccessToken());
+    if (res.status === 401) {
+      const ok = await refreshAccessToken();
+      if (!ok) {
+        clearSession();
+        throw new ApiError({ code: 'GNE-SEC-4010', status: 401, message: 'Unauthorized' });
+      }
+      res = await send(path, o, getAccessToken());
+    }
+    if (!res.ok) {
+      const body = (await parseBody(res)) as ApiErrorBody | null;
+      throw new ApiError(
+        body ?? { code: 'CLIENT-UNKNOWN', status: res.status, message: res.statusText },
+      );
+    }
+    return {
+      blob: await res.blob(),
+      fileName: fileNameOf(res.headers.get('Content-Disposition')),
+      headers: res.headers,
+    };
+  } catch (e) {
+    throw toApiError(e);
+  }
+}
+
 /** Gọi API và chỉ lấy `data`. */
 export async function http<T>(path: string, options: RequestOptions = {}): Promise<T> {
   return (await request<T>(path, options)).data;

@@ -4281,6 +4281,8 @@
       "reactivated": "Đã mở khóa tài khoản {name}."
     },
     "audit": {
+      "range_too_long": "Mỗi lần chỉ tra cứu tối đa 90 ngày — hãy thu hẹp khoảng thời gian.",
+      "export_truncated": "Chỉ xuất 50.000 dòng mới nhất — hãy thu hẹp bộ lọc để xuất đủ.",
       "append_only": "Append-only · bất biến",
       "desc": "Nhật ký ghi nhận mọi hành động nhạy cảm. Bản ghi không thể sửa hoặc xoá — phục vụ điều tra & tuân thủ.",
       "export": "Xuất nhật ký",

@@ -59,7 +59,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 | Chức năng | Hiện tại (mock) | Khi có backend |
 |---|---|---|
 | Chat thời gian thực (8.x) | Hỏi lại 2 giây khi đang mở hội thoại, 15 giây hộp thư | WebSocket theo API_SPEC; giữ `client_message_id` làm Idempotency-Key |
-| Xuất CSV (sổ cái 11.9, nhật ký 11.13, báo cáo Tổng quan Admin / Seller) | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
+| Xuất CSV (sổ cái 11.9, báo cáo Tổng quan Admin / Seller) — nhật ký 11.10 đã gọi `…/export` thật | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
 | Phiếu gửi hàng | `window.print()` trang HTML | PDF A6 của hãng vận chuyển |
 | Chọn shop đích cho banner (Admin) | `shop.listShops` công khai | `GET /admin/shops` |
 | Đề xuất danh mục Seller ↔ Admin | Hai kho mock riêng | Cùng bảng `category_proposals` |
@@ -238,8 +238,8 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `listUsers` | system.api.ts | `GET /admin/users` |
 | `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` |
 | `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` |
-| `auditNow` | system.api.ts | `GET /admin/audit-logs` |
-| `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` |
+| `auditNow` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`) |
+| `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`); xuất: `exportAuditLogs` → `GET /admin/audit-logs/export` |
 | `updateAdminMe` | system.api.ts | `PATCH /admin/me` |
 
 ### `auth`

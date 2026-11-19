@@ -2,6 +2,7 @@ package com.genie.common.api;
 
 import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
+import com.genie.common.error.InvalidRequestException;
 import com.genie.common.error.NotFoundException;
 import com.genie.common.error.TooManyRequestsException;
 import com.genie.common.security.RestAccessDeniedHandler;
@@ -70,6 +71,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     ResponseEntity<ErrorResponse> handleMethod(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
         return of(ErrorCode.METHOD_NOT_ALLOWED, null, req);
+    }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    ResponseEntity<ErrorResponse> handleInvalidRequest(InvalidRequestException ex, HttpServletRequest req) {
+        List<ErrorResponse.FieldError> all = ex.getViolations().stream()
+                .map(v -> new ErrorResponse.FieldError(v.field(), v.code(), v.rejectedValue(), v.message()))
+                .toList();
+        ErrorCode ec = ErrorCode.VALIDATION_FAILED;
+        return ResponseEntity.status(ec.status()).body(
+                errors.build(ec.code(), ec.status().value(), ec.defaultMessage(), all, null, req.getRequestURI()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
