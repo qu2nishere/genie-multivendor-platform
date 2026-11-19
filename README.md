@@ -27,8 +27,10 @@ cp .env.example .env
 # 2. Hạ tầng: postgres, redis, silo (+ silo-init), mailpit — mật khẩu mặc định genie / changeme
 docker compose --env-file .env -f deploy/docker-compose.local.yml up -d
 
-# 3. Backend — JDK 21 (Flyway tự tạo bảng, R__seed_demo.sql nạp dữ liệu demo; profile lấy từ .env)
+# 3. Backend — JDK 21 (Flyway tự tạo bảng + nạp dữ liệu mẫu R__seed_demo.sql và db/seed khi GENIE_SEED_DEMO=true; profile lấy từ .env)
 cd server-spring && ./mvnw spring-boot:run
+# Ảnh mẫu sản phẩm / banner lên Silo (một lần); nạp lại dữ liệu mẫu: scripts/seed/seed.sh --docker — xem scripts/seed/README.md
+./scripts/seed/upload-assets.sh
 
 # 4. AI Worker
 ./scripts/fetch-models.sh
