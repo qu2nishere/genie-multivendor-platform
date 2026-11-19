@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — xong 64 / 66; còn **C07.08** (chạy thật — người phụ trách tự làm) và **C08.05** (mở PR — chờ người phụ trách đồng ý) |
+| **Cập nhật gần nhất** | 2026-11-19 — xong 64 / 66 (đã kiểm chạy thật tự động, sửa 3 lỗi); còn **C07.08** (chạy thật — người phụ trách tự làm) và **C08.05** (mở PR — chờ người phụ trách đồng ý) |
 
 **Cách dùng**
 
@@ -216,6 +216,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | C08.02 | Thêm `CatalogOpenApiIT` (commit `a545337`): `/v3/api-docs` có đủ 10 endpoint, summary chứa đủ 7 mã UC |
 | C08.04 | Checklist: 7 UC → 🟡 Đang triển khai (BE / Test / Nối ☑, Chạy ☐; UC-CAT-05 BE / Nối `◐` — chờ voucher shop + UC-CAT-01), Tổng quan 5 → 12 đang triển khai, 67 → 60 chưa có backend, phân hệ 02 = 0 / 7 / 10, mục 3 thêm việc còn lại của cụm. Excel: cột S = "Đang triển khai" + ghi chú U, sheet Thành viên. CLAUDE.md mục 2 + 9 |
 | C08.05 | **Chưa làm** — theo quy trình repo chỉ push / viết nội dung PR khi người phụ trách yêu cầu. 4 nhánh xếp chồng: `feature/catalog-search` → `feature/catalog-product-detail` → `feature/catalog-shop-page` → `feature/web-catalog-real-api` (mỗi nhánh tách từ nhánh trước) — mở PR vào `develop` theo đúng thứ tự, hoặc gộp một PR từ nhánh cuối |
+| C07.08 (kiểm 2026-11-19) | Đã chạy **tự động** hai phía trên máy dev (docker local + backend `local` + web `PUBLIC_REAL_API=auth,profile,security,upload,product,search,shop`, dữ liệu mẫu 2 shop / 7 sản phẩm): API 37/37 và trang SSR 13/13 đạt cho đủ 7 UC; job ghi gộp lượt xem / từ khóa ghi đúng xuống CSDL. Tìm ra và sửa 3 lỗi: ngưỡng trigram 0,3 khớp nhầm "ao thun" ↔ "…thể thao…" → 0,4; `sort` bị bỏ qua khi < 5 kết quả (`c1fc0dd`); xu hướng hiện 2 dòng "áo thun" / "ao thun" → gộp (`0e6277e`); `<img src="">` khi sản phẩm chưa có ảnh (`cfe2b87`). Backend 218 test xanh, web 328 test + build xanh. **Ô Chạy vẫn chờ người phụ trách tự thao tác trên giao diện** |
 
 ## Nhật ký
 
@@ -232,3 +233,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C06 trang shop: `/public/shops/{id}`, `/public/shops?featured=true`, mã `GNE-VND-4041`; 6 IT xanh; `./mvnw verify` toàn bộ 211 test xanh (1 bỏ qua = test hiệu năng) | `a2c33db` `4fc1468` |
 | 2026-11-18 | C07 nối web: sản phẩm / gợi ý / shop gọi API thật sau cờ `PUBLIC_REAL_API`, BuyBox theo SKU, deeplink `?v={variant_id}&src=share`, OG giá, ghi lượt xem; verify + Playwright 22/22 xanh. C07.08 chạy thật để người phụ trách làm | `ff452e1` `d8e824d` `cafbf78` |
 | 2026-11-18 | C08 hoàn thiện: `catalog-search.http`, `CatalogOpenApiIT`, Usecase / API_SPEC / LLD / handoff, checklist + Excel + CLAUDE.md. Còn C07.08 (chạy thật) và C08.05 (PR) | `a545337` `a8f1c15` |
+| 2026-11-19 | Kiểm lại 7 UC: chạy thật tự động hai phía (API 37/37, trang SSR 13/13), toàn bộ test backend 218 + web 328 xanh; sửa 3 lỗi phát hiện khi chạy thật (ngưỡng trigram + sort khi ít kết quả, gộp xu hướng có / không dấu, ảnh rỗng) | `c1fc0dd` `0e6277e` `cfe2b87` |
