@@ -444,26 +444,28 @@ public class Address {
     private String ward;                      // TÊN phường/xã — dùng để HIỂN THỊ cho người đọc
 
     @Column(nullable = false, length = 50)
-    private String wardCode;                  // MÃ phường/xã theo chuẩn GHN — dùng để GỌI API tính phí ship
+    private String wardCode;                  // MÃ phường/xã/đặc khu (địa giới 2 cấp từ 01/07/2025) — dùng để GỌI API vận chuyển
+
+    @Column(length = 100)
+    private String district;                  // NULLABLE — TÊN quận/huyện, chỉ còn ở địa chỉ cũ trước sáp nhập (V16; plan AUTH D25)
+
+    private Integer districtId;               // NULLABLE — MÃ quận/huyện, chỉ còn ở địa chỉ cũ trước sáp nhập (V16; plan AUTH D25)
 
     @Column(nullable = false, length = 100)
-    private String district;                  // TÊN quận/huyện — để hiển thị
-
-    @Column(nullable = false)
-    private Integer districtId;               // MÃ quận/huyện theo GHN — để gọi API
-
-    @Column(nullable = false, length = 100)
-    private String province;                  // TÊN tỉnh/thành phố — để hiển thị
+    private String province;                  // TÊN tỉnh/thành phố (34 đơn vị sau sáp nhập) — để hiển thị
 
     @Column(nullable = false)
     private Integer provinceId;               // MÃ tỉnh/thành theo GHN — để gọi API
+
+    @Column(length = 200)
+    private String deliveryNote;              // NULLABLE — ghi chú cho người giao hàng ("Gần cổng ĐH NEU, gửi phòng bảo vệ") — UC-AUTH-09, plan AUTH D27 (V17)
 
     private Boolean isDefault;                // NULLABLE — true = địa chỉ mặc định khi thanh toán
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AddressLabel label = AddressLabel.HOME; // Loại địa chỉ: HOME (Nhà riêng) / OFFICE (Văn phòng) — UC-AUTH-09 (TLCN v1.3)
+    private AddressLabel label = AddressLabel.HOME; // Loại địa chỉ: HOME (Nhà riêng) / OFFICE (Văn phòng) / SCHOOL (Trường học) / APARTMENT (Chung cư) / OTHER (Khác) — UC-AUTH-09 (TLCN v1.3; 2026-11-18 thêm 3 loại, migration V15)
 
     @Builder.Default
     @Column(nullable = false)
@@ -499,6 +501,7 @@ public class Address {
 - **Mã (`districtId`, `wardCode`)** là thứ API của Giao Hàng Nhanh (GHN) hiểu. Không có mã thì không tính được phí ship, không tạo được vận đơn.
 - **Tên (`district`, `ward`)** là thứ con người đọc. Nếu chỉ lưu mã, mỗi lần hiển thị địa chỉ lại phải gọi API GHN để tra tên → chậm và phụ thuộc mạng.
 - Quan trọng hơn: khi **địa giới hành chính Việt Nam thay đổi** (sáp nhập phường/xã), tên cũ trong đơn hàng cũ vẫn phải giữ nguyên để đối chiếu.
+- **Địa giới 2 cấp từ 01/07/2025** (Nghị quyết 202/2025/QH15 — 34 tỉnh, 3.321 xã, bỏ cấp huyện): địa chỉ mới chỉ lưu tỉnh + phường; `district` / `districtId` cho phép `NULL` (migration `V19`), không xóa cột để địa chỉ cũ vẫn đọc được (plan AUTH D25).
 
 **b) Xoá mềm (Soft Delete) qua `isDeleted`**
 Không dùng `DELETE FROM addresses`. Lý do: các đơn hàng cũ có thể vẫn tham chiếu tới địa chỉ này. Xoá cứng sẽ làm gãy dữ liệu lịch sử. Xoá mềm chỉ ẩn khỏi danh sách hiển thị.
@@ -3147,7 +3150,7 @@ public class CoinTransaction {
 
 ### 💡 Kiến thức chuyên sâu
 - **Nguồn Điểm của TLCN** (khớp giao diện "Lịch sử Điểm"): điểm danh hằng ngày (`CHECK_IN`, UC-PRO-08), hoàn Điểm theo đơn / voucher hoàn Điểm (`ORDER_CASHBACK`), đánh giá có ảnh (`REVIEW_BONUS`, UC-SOC-03), hoàn lại Điểm khi đơn bị hủy / hoàn tiền (`ORDER_REFUND`). Tiêu Điểm: thanh toán (`USED_AT_CHECKOUT`, tối đa 50% tiền hàng — UC-PRO-10) và đổi Điểm lấy voucher (`VOUCHER_REDEEM`, UC-PRO-09).
-- **Lô hết hạn (`EXPIRED`, V16):** cron 00:15 giờ Việt Nam tính phần còn lại của từng lô cộng đã quá `expiresAt` theo FEFO (lô sắp hết hạn bị tiêu trước) và ghi **một dòng âm** `type = EXPIRED`, `referenceId` = id lô gốc — sổ vẫn chỉ ghi thêm, `Σ amount = UserCoin.balance` luôn đúng; chạy lại không trừ thêm (lô đã có dòng `EXPIRED` tham chiếu thì bỏ qua).
+- **Lô hết hạn (`EXPIRED`, V19):** cron 00:15 giờ Việt Nam tính phần còn lại của từng lô cộng đã quá `expiresAt` theo FEFO (lô sắp hết hạn bị tiêu trước) và ghi **một dòng âm** `type = EXPIRED`, `referenceId` = id lô gốc — sổ vẫn chỉ ghi thêm, `Σ amount = UserCoin.balance` luôn đúng; chạy lại không trừ thêm (lô đã có dòng `EXPIRED` tham chiếu thì bỏ qua).
 - **Sổ lô + hết hạn:** mỗi dòng cộng Điểm là một "lô" có `expiresAt`; tiêu Điểm trừ lô sắp hết hạn trước (FEFO). Job hằng ngày ghi dòng âm cho lô hết hạn để `Σ amount = UserCoin.balance` luôn đúng.
 
 ---
@@ -6514,7 +6517,7 @@ random_page_cost = 1.1            # SSD
 enum UserRole { CUSTOMER, VENDOR, STAFF, ADMIN }                                      // ← User.role (mở rộng: VENDOR_STAFF, SHIPPER, B2B_BUYER)
 enum AccountStatus { UNVERIFIED, ACTIVE, LOCKED, SUSPENDED, ANONYMIZED, DELETED }      // ← User.status (ANONYMIZED: xóa tài khoản — UC-AUTH-10; LOCKED để dành — khóa tạm dùng lockedUntil; UNVERIFIED chỉ cho nhân viên được mời)
 enum Gender { MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY }                                  // ← CustomerProfile.gender
-enum AddressLabel { HOME, OFFICE }                                                       // ← Address.label (TLCN v1.3)
+enum AddressLabel { HOME, OFFICE, SCHOOL, APARTMENT, OTHER }                            // ← Address.label (TLCN v1.3; + SCHOOL, APARTMENT, OTHER — 2026-11-18, V15)
 enum BusinessType { INDIVIDUAL, HOUSEHOLD, BUSINESS }                                   // ← VendorProfile.businessType
 enum KycStatus { NOT_SUBMITTED, PENDING, AI_PROCESSING, MANUAL_REVIEW, VERIFIED, REJECTED, SUPPLEMENT_REQUESTED } // ← VendorProfile.kycStatus
 enum KycVerificationMethod { OCR_AUTO, MANUAL_STAFF, BIOMETRIC_FACIAL }                 // ← VendorProfile.kycVerificationMethod
@@ -6555,7 +6558,7 @@ enum DiscountType { PERCENTAGE, FIXED_AMOUNT, FREESHIP }                        
 enum FundingParty { PLATFORM, VENDOR, CO_SPONSOR }                                      // ← Voucher.sponsorType, OrderDiscount.fundedBy (CO_SPONSOR: sàn + shop cùng chịu theo Voucher.platformSharePercent)
 enum FlashSaleStatus { DRAFT, SCHEDULED, ACTIVE, ENDED }                                // ← FlashSaleCampaign.status
 enum FlashSaleItemStatus { PENDING, APPROVED, REJECTED }                                 // ← FlashSaleItem.status (TLCN v1.3)
-enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED } // ← CoinTransaction.type (EXPIRED: dòng âm trừ phần còn lại của lô hết hạn sau 12 tháng, reference_id = id lô — V16, plan 2026-11-16 Điểm Genie D5; mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
+enum CoinTransactionType { CHECK_IN, ORDER_CASHBACK, REVIEW_BONUS, USED_AT_CHECKOUT, ORDER_REFUND, VOUCHER_REDEEM, EXPIRED } // ← CoinTransaction.type (EXPIRED: dòng âm trừ phần còn lại của lô hết hạn sau 12 tháng, reference_id = id lô — V19, plan 2026-11-16 Điểm Genie D5; mở rộng: COSMETIC_REDEEM, VENDOR_REWARD)
 
 // ==========================================
 // NHÓM 05. ĐƠN HÀNG, PHIÊN & GIỮ CHỖ KHO (4 enum)
@@ -6644,7 +6647,7 @@ enum AuditAction {                                                              
     ACCESS_DENIED, PRODUCT_MODERATED,                 // lần truy cập bị chặn quyền (màn Nhật ký), kết quả duyệt sản phẩm
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị của AUTH (V14 thay ck_system_logs_action_type — plan AUTH D20)
-    BANNER_CHANGED                                           // tạo / sửa / bật / tắt / xóa banner — details.op (V15, plan 2026-11-16 banner D1)
+    BANNER_CHANGED                                           // tạo / sửa / bật / tắt / xóa banner — details.op (V18, plan 2026-11-16 banner D1)
 }
 ```
 

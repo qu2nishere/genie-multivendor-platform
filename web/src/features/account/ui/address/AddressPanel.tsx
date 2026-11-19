@@ -1,8 +1,9 @@
 // "Sổ địa chỉ" (prototype Account.jsx AddressPanel) — plan G10.48: danh sách (mặc định đứng đầu), thêm /
 // sửa (AddressForm trong hộp), xóa (không xóa được địa chỉ mặc định — GNE-USR-4092), đặt mặc định.
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { errorMessage } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
+import { cn } from '@/shared/lib/cn';
 import {
   Button,
   ConfirmDialog,
@@ -30,6 +31,16 @@ export function AddressPanel() {
   const del = useDeleteAddress();
   const [editing, setEditing] = useState<Address | 'new' | null>(null);
   const [removing, setRemoving] = useState<Address | null>(null);
+  /** Địa chỉ trùng vừa bị chặn (A12.07) — viền nổi vài giây để người dùng thấy địa chỉ đã có. */
+  const [highlight, setHighlight] = useState<number | null>(null);
+  useEffect(() => {
+    if (highlight == null) return;
+    document
+      .getElementById(`addr-${highlight}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const timer = setTimeout(() => setHighlight(null), 4000);
+    return () => clearTimeout(timer);
+  }, [highlight]);
   const fail = (e: unknown) => toast.error(errorMessage(e, t));
   const link =
     'border-0 bg-transparent p-0 text-sm font-semibold cursor-pointer hover:underline min-h-8';
@@ -39,6 +50,7 @@ export function AddressPanel() {
       <PanelHead
         id="addr-title"
         icon="map-pin"
+        iconTile
         title={t('account.address.book')}
         sub={t('account.address.book_sub')}
         action={
@@ -53,11 +65,20 @@ export function AddressPanel() {
         {q.data?.map((a) => (
           <div
             key={a.id}
-            className="flex gap-3.5 border border-solid border-line-subtle rounded-md px-4 py-3.5 flex-wrap"
+            id={`addr-${a.id}`}
+            className={cn(
+              'flex items-center gap-4 border border-solid rounded-md px-4 py-4 flex-wrap transition-shadow',
+              a.id === highlight ? 'border-primary shadow-focus' : 'border-line-subtle',
+            )}
           >
-            <Icon name="map-pin" size={18} className="text-subtle mt-0.5 flex-none" />
-            <div className="flex-1 min-w-[200px]">
-              <div className="flex items-center gap-[9px] mb-[3px] flex-wrap">
+            <span
+              className="flex-none grid place-items-center w-9 h-9 rounded-full bg-surface-sunken text-subtle"
+              aria-hidden="true"
+            >
+              <Icon name="map-pin" size={17} />
+            </span>
+            <div className="flex-1 min-w-[220px]">
+              <div className="flex items-center gap-[9px] mb-1 flex-wrap">
                 <span className="font-bold text-sm text-strong">{a.recipient}</span>
                 <span className="w-px h-3 bg-line-strong" aria-hidden="true" />
                 <span className="font-mono text-[13px] text-muted">{formatPhone(a.phone)}</span>
@@ -71,34 +92,42 @@ export function AddressPanel() {
                 )}
               </div>
               <p className="m-0 text-sm text-body leading-normal">{fullAddress(a)}</p>
+              {a.note && (
+                <p className="m-0 mt-1 flex items-start gap-1.5 text-[13px] text-muted italic">
+                  <Icon name="message-square" size={14} className="mt-[3px] flex-none" />
+                  <span className="break-words">{a.note}</span>
+                </p>
+              )}
             </div>
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex gap-3.5">
+            {/* Thao tác trên một hàng, canh giữa theo chiều dọc; địa chỉ mặc định đã có nhãn "Mặc định"
+                nên không hiện nút đặt mặc định (nút mờ trước đây làm thẻ lệch) và không xóa được. */}
+            <div className="flex items-center justify-end gap-4 flex-none max-sm:w-full">
+              {!a.isDefault && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={setDefault.isPending}
+                  onClick={() => setDefault.mutate(a.id, { onError: fail })}
+                >
+                  {t('account.address.set_default')}
+                </Button>
+              )}
+              <button
+                type="button"
+                className={`${link} text-brand-600`}
+                onClick={() => setEditing(a)}
+              >
+                {t('common.action.edit')}
+              </button>
+              {!a.isDefault && (
                 <button
                   type="button"
-                  className={`${link} text-brand-600`}
-                  onClick={() => setEditing(a)}
+                  className={`${link} text-red-600`}
+                  onClick={() => setRemoving(a)}
                 >
-                  {t('common.action.edit')}
+                  {t('common.action.delete')}
                 </button>
-                {!a.isDefault && (
-                  <button
-                    type="button"
-                    className={`${link} text-red-600`}
-                    onClick={() => setRemoving(a)}
-                  >
-                    {t('common.action.delete')}
-                  </button>
-                )}
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={a.isDefault || setDefault.isPending}
-                onClick={() => setDefault.mutate(a.id, { onError: fail })}
-              >
-                {t('account.address.set_default')}
-              </Button>
+              )}
             </div>
           </div>
         ))}
@@ -115,6 +144,10 @@ export function AddressPanel() {
             initial={editing === 'new' ? null : editing}
             onCancel={() => setEditing(null)}
             onSaved={() => setEditing(null)}
+            onDuplicate={(id) => {
+              setEditing(null);
+              setHighlight(id);
+            }}
           />
         )}
       </Modal>

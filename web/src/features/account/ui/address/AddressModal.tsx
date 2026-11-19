@@ -74,6 +74,12 @@ export function AddressModal({ open, onClose, selectedId, onSelect }: AddressMod
             setMode('list');
             setEditing(null);
           }}
+          onDuplicate={(id) => {
+            // địa chỉ đã có → quay lại danh sách và chọn sẵn địa chỉ đó
+            setPick(id);
+            setMode('list');
+            setEditing(null);
+          }}
         />
       ) : (
         <div className="flex flex-col gap-2.5" role="radiogroup" aria-label={title}>
@@ -109,6 +115,12 @@ export function AddressModal({ open, onClose, selectedId, onSelect }: AddressMod
                     )}
                   </div>
                   <p className="m-0 text-sm text-body leading-normal">{fullAddress(a)}</p>
+                  {a.note && (
+                    <p className="m-0 mt-1 flex items-start gap-1.5 text-[13px] text-muted italic">
+                      <Icon name="message-square" size={14} className="mt-[3px] flex-none" />
+                      <span className="break-words">{a.note}</span>
+                    </p>
+                  )}
                   <div className="flex gap-4 mt-[7px]">
                     <button
                       type="button"

@@ -83,8 +83,11 @@
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 12px;
-    height: clamp(200px, 19vw, 276px);
-    margin-bottom: -60px;
+    --shelf-h: clamp(200px, 19vw, 276px);
+    height: var(--shelf-h);
+    margin-top: 0;
+    /* bảng "đường tiền" (MoneyRail) đè lên 1/3 chiều cao 6 ảnh sản phẩm */
+    margin-bottom: calc(var(--shelf-h) / -3);
   }
   .tr-shelf__item {
     display: block;
