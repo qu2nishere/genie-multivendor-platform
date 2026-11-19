@@ -268,6 +268,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-16 | (tài liệu) | Đồng bộ bộ tài liệu TLCN v1.4 với mã nguồn; tạo checklist này | — |
 | 2026-11-17 | AUTH-03 | Zalo thay Apple: đăng nhập / đăng ký (nhập email + OTP) / liên kết Zalo — code + test viết xong, chưa build; không đổi database | (chưa commit) |
 | 2026-11-17 | AUTH-03 | Tạo app Zalo; Zalo bắt Home URL `https` + xác thực domain (`localhost` bị từ chối) → tạm dừng chạy thật, chờ tên miền thật (bỏ phương án domain tạm ngrok) | — |
+| 2026-11-17 | (nền) | Bộ dữ liệu mẫu `db/seed` (23 danh mục, 6 shop KYC, 200 sản phẩm, voucher, banner, Điểm / yêu thích / theo dõi của `mai.tran`, hàng chờ KYC) + `scripts/seed/seed.{sh,ps1}`, `upload-assets` — plan `2026-11-16/db` | nhánh `feature/db-seed-demo` |
 | 2026-11-17 | AUTH-02, 08 | `GET /me` (ngữ cảnh phiên) + web dựng `SessionUser` từ `/me` sau đăng nhập / làm mới — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-17 | AUTH-02, 03, 08 | `./mvnw verify` 83 test BUILD SUCCESS — `GET /me` (MeQueryIT 4/4), Zalo (ZaloLoginIT 5/5) | (chưa commit) |
 | 2026-11-17 | (phân công) | Thêm cột **Phụ trách** + bảng *Thành viên & phân công*: Nguyễn Quốc Khoa — phân hệ AUTH (9 UC); Nguyễn Ngọc Thiện — 13 UC (ADM-07, ADM-12, PRO-08, PRO-09, CAT-08, SOC-06, VND-01/02/03/04/05/07/21), đang lập plan `plan/2026-11-16`; Nghiêm Phú Đăng Quân — chưa phân công. Đồng bộ cột *Người phụ trách* trong Excel | `feature/env-config-cleanup` |

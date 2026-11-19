@@ -78,7 +78,7 @@ Mỗi plan `server-spring/` gồm cả giai đoạn cuối **nối giao diện `
 
 | Thứ tự gợi ý | Plan | Use case phải tick ở checklist khi xong | Xong plan |
 |:---:|---|---|:---:|
-| 1 | [1] Seed dữ liệu mẫu | — (không gắn use case; chỉ ghi Nhật ký) | ☐ |
+| 1 | [1] Seed dữ liệu mẫu | — (không gắn use case; chỉ ghi Nhật ký) | ☑ |
 | 1 (song song) | [2] Nhật ký kiểm toán | `UC-ADM-07` | ☐ |
 | 1 (song song) | [3] Banner trang chủ | `UC-ADM-12` | ☐ |
 | 1 (song song) | [4] Điểm danh & Điểm Genie | `UC-PRO-08`, `UC-PRO-09` | ☐ |
