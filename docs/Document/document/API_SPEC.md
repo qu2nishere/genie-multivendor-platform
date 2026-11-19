@@ -240,9 +240,10 @@ Vượt → `429 GNE-RAT-4290`, header `Retry-After`.
 
 ### `$Region`
 ```json
-{ "id": 202, "name": "TP. Hồ Chí Minh" }
+{ "id": 79, "name": "Thành phố Hồ Chí Minh" }
 ```
-Phường/xã dùng `code` (chuỗi, chuẩn GHN) thay cho `id`: `{ "code": "20308", "name": "P. Bến Nghé" }`.
+Phường/xã/đặc khu dùng `code` (chuỗi) thay cho `id`: `{ "code": "26740", "name": "Phường Sài Gòn" }`.
+**Địa giới 2 cấp** từ 01/07/2025 (Nghị quyết 202/2025/QH15): Tỉnh / thành (34) → Phường / xã / đặc khu (3.321), **không còn quận / huyện** (plan AUTH D25, migration `V16`). Mã theo danh mục GHN v3 khi cấu hình `GHN_TOKEN` + `GHN_SHOP_ID`; chưa cấu hình → mã ĐVHC theo Quyết định 19/2025/QĐ-TTg (`regions.json`).
 
 ### `$Address`
 ```json
@@ -250,19 +251,19 @@ Phường/xã dùng `code` (chuỗi, chuẩn GHN) thay cho `id`: `{ "code": "203
   "id": 1,
   "recipient_name": "Trần Thị Mai",
   "phone_number": "0901234567",
-  "province": { "id": 202, "name": "TP. Hồ Chí Minh" },
-  "district": { "id": 1442, "name": "Quận 1" },
-  "ward": { "code": "20308", "name": "P. Bến Nghé" },
+  "province": { "id": 79, "name": "Thành phố Hồ Chí Minh" },
+  "ward": { "code": "26740", "name": "Phường Sài Gòn" },
   "address_line": "25 Nguyễn Huệ, Căn hộ 12A",
+  "delivery_note": "Gửi phòng bảo vệ tòa B",
   "label": "HOME",
   "is_default": true
 }
 ```
-`label` ∈ `HOME` (Nhà riêng), `OFFICE` (Văn phòng).
+`label` ∈ `HOME` (Nhà riêng), `OFFICE` (Văn phòng), `SCHOOL` (Trường học), `APARTMENT` (Chung cư), `OTHER` (Khác) — 3 loại sau thêm 2026-11-18 (plan AUTH D24, migration `V15`).
 
 ### `$AddressSnapshot` — địa chỉ đã chụp trên đơn (chỉ hiển thị)
 ```json
-{ "recipient_name": "Trần Thị Mai", "phone_number": "0901234567", "full_address": "25 Nguyễn Huệ, Căn hộ 12A, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh" }
+{ "recipient_name": "Trần Thị Mai", "phone_number": "0901234567", "full_address": "25 Nguyễn Huệ, Căn hộ 12A, Phường Sài Gòn, Thành phố Hồ Chí Minh" }
 ```
 
 ### `$Voucher` — voucher phía khách (kho voucher, picker, vé "Lưu" ở trang chủ / shop / chiến dịch)
@@ -656,27 +657,28 @@ UC-AUTH-09 · **Màn hình:** Tài khoản › Địa chỉ; modal "Địa chỉ
 {
   "recipient_name": "Nguyễn Văn A",
   "phone_number": "0901234567",
-  "province_id": 202,
-  "district_id": 1442,
-  "ward_code": "20308",
+  "province_id": 79,
+  "ward_code": "26740",
   "address_line": "25 Nguyễn Huệ",
+  "delivery_note": "Gần cổng ĐH NEU, gửi phòng bảo vệ",
   "label": "HOME",
   "is_default": false
 }
 ```
-Luật: SĐT `^0\d{9,10}$`; đủ 3 cấp hành chính; `address_line` không rỗng. Địa chỉ đầu tiên tự thành mặc định.
+Luật: SĐT `^0\d{9,10}$`; đủ tỉnh + phường và phường phải thuộc tỉnh (sai → `422 GNE-VAL-4220`, `details.field = ward_code`); `address_line` không rỗng. Địa chỉ đầu tiên tự thành mặc định.
+`delivery_note` (không bắt buộc, ≤ 200 ký tự, plan AUTH D27): ghi chú cho người giao hàng — server cắt / gộp khoảng trắng, rỗng → `null`; chụp vào địa chỉ của đơn và gửi vào `note` khi tạo vận đơn GHN. Khác `buyer_note` (lời nhắn cho shop theo từng đơn).
+**Không lưu trùng** (plan AUTH D26): đã có địa chỉ khác (chưa xóa) cùng `province_id` + `ward_code` + `phone_number` + `address_line` (so sau khi bỏ dấu, chữ thường, bỏ dấu câu, gộp khoảng trắng) → `409 GNE-USR-4093`, `details.existing_address_id`. Tên người nhận và `label` không tính; `PUT` giữ nguyên chính nó vẫn lưu được.
 
-### 3.9 Đơn vị hành chính (GHN) & định vị
-**Màn hình:** bộ chọn Tỉnh → Quận → Phường (tab + ô tìm nhanh) ở form địa chỉ khách, địa chỉ lấy hàng của shop, nút "Dùng vị trí hiện tại (GPS)".
+### 3.9 Đơn vị hành chính (2 cấp) & định vị
+**Màn hình:** bộ chọn Tỉnh → Phường (2 tab + ô tìm nhanh) ở form địa chỉ khách, địa chỉ lấy hàng của shop, nút "Dùng vị trí hiện tại (GPS)".
 
 | Method & Path | Phản hồi |
 |---|---|
 | `GET /public/regions/provinces` | `$Region[]` |
-| `GET /public/regions/provinces/{province_id}/districts` | `$Region[]` |
-| `GET /public/regions/districts/{district_id}/wards` | `[{ "code": "20308", "name": "P. Bến Nghé" }]` |
-| `GET /public/regions/reverse-geocode?lat=10.7769&lng=106.7009` | `{ "province": $Region, "district": $Region, "ward": {code,name}, "address_line": "72 Lê Thánh Tôn" }` |
+| `GET /public/regions/provinces/{province_id}/wards` | `[{ "code": "26740", "name": "Phường Sài Gòn" }]` |
+| `GET /public/regions/reverse-geocode?lat=10.7769&lng=106.7009` | `{ "province": $Region, "ward": {code,name}, "address_line": "72 Lê Thánh Tôn" }` — cấp không khớp được thì `null` |
 
-Ô "Tìm nhanh" lọc phía client (danh sách nhỏ, cache 24 giờ).
+Ô "Tìm nhanh" lọc phía client, không phân biệt dấu (danh sách nhỏ, cache 24 giờ). Nguồn GHN: `GET /v3/master-data/province/all`, `GET /v3/master-data/ward/all-by-province-id` (header `Token` + `ShopId`).
 
 ### 3.10 Sản phẩm yêu thích
 UC-CAT-08 · **Màn hình:** nút tim trên `$ProductCard` và trang chi tiết; Tài khoản › Sản phẩm yêu thích
@@ -2028,7 +2030,7 @@ UC-VND-05, UC-VND-06, UC-VND-07, UC-VND-19, UC-VND-21 · **Màn hình:** Cài đ
 {
   "profile": { "shop_name": "TechZone Official", "description": "Thiết bị công nghệ chính hãng — bảo hành 12 tháng.", "logo_url": null, "cover_url": "...", "next_rename_allowed_at": null },
   "shipping": { "carriers": { "GHN": true, "GHTK": true, "VIETTEL_POST": false, "JNT_EXPRESS": false, "GENIE_EXPRESS": false }, "free_shipping_enabled": true, "free_shipping_threshold": 99000 },
-  "pickup_address": { "phone_number": "0912345678", "province": "$Region", "district": "$Region", "ward": { "code": "20710", "name": "P. Tân Phong" }, "address_line": "Kho TechZone, 88 Nguyễn Văn Linh", "ghn_shop_id": 884120 },
+  "pickup_address": { "phone_number": "0912345678", "province": "$Region", "ward": { "code": "27478", "name": "Phường Tân Thuận" }, "address_line": "Kho TechZone, 88 Nguyễn Văn Linh", "ghn_shop_id": 884120 },
   "payout_account": { "bank_name": "Vietcombank", "account_holder": "DANG QUOC HUY", "account_number_masked": "•••• •••• 6712", "is_verified": true },
   "auto_reply": { "enabled": true, "greeting": "Chào bạn, shop có thể giúp gì cho bạn?", "away_message": "Hiện tại shop đang bận…" },
   "pre_order_enabled": false,
@@ -2058,7 +2060,7 @@ Gửi khối nào cập nhật khối đó:
 #### `PUT /seller/pickup-address` — "Lưu và Đồng bộ với GHN"
 UC-VND-05
 ```json
-{ "phone_number": "0912345678", "province_id": 202, "district_id": 1449, "ward_code": "20710", "address_line": "Kho TechZone, 88 Nguyễn Văn Linh" }
+{ "phone_number": "0912345678", "province_id": 79, "ward_code": "27478", "address_line": "Kho TechZone, 88 Nguyễn Văn Linh" }
 ```
 `200` `{ "...pickup_address", "ghn_shop_id": 884120 }`. GHN lỗi → `502 GNE-LOG-5022`.
 
@@ -2853,6 +2855,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-AUTH-4230` | 423 | Khóa đăng nhập 15 phút (`locked_until`, `locked_by`) | LLD |
 | `GNE-USR-4091` | 409 | Còn đơn đang xử lý, chưa xóa được tài khoản (`active_order_codes`) | mới |
 | `GNE-USR-4092` | 409 | Không xóa được địa chỉ mặc định | mới |
+| `GNE-USR-4093` | 409 | Địa chỉ đã có trong sổ (`existing_address_id`) | mới |
 | `GNE-CAT-4041` | 404 | Danh mục không tồn tại / đã ẩn | mới |
 | `GNE-CAT-4042` | 404 | Sản phẩm không còn bán | mới |
 | `GNE-CAT-4091` | 409 | Trùng tên / slug danh mục (`existing_category`) | mới |

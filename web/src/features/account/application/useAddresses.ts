@@ -5,7 +5,6 @@ import {
   createAddress,
   deleteAddress,
   listAddresses,
-  listDistricts,
   listProvinces,
   listWards,
   reverseGeocode,
@@ -49,19 +48,13 @@ export function useDeleteAddress() {
 // Danh sách hành chính nhỏ, cache 24 giờ (API_SPEC 3.9)
 export const useProvinces = (enabled = true) =>
   useQuery({ queryKey: ['regions', 'p'], queryFn: listProvinces, staleTime: DAY, enabled });
-export const useDistricts = (provinceId: number | null) =>
+/** Phường / xã của tỉnh (địa giới 2 cấp — plan AUTH D25). */
+export const useWards = (provinceId: number | null) =>
   useQuery({
-    queryKey: ['regions', 'd', provinceId],
-    queryFn: () => listDistricts(provinceId ?? 0),
+    queryKey: ['regions', 'w2', provinceId],
+    queryFn: () => listWards(provinceId ?? 0),
     staleTime: DAY,
     enabled: provinceId != null,
-  });
-export const useWards = (districtId: number | null) =>
-  useQuery({
-    queryKey: ['regions', 'w', districtId],
-    queryFn: () => listWards(districtId ?? 0),
-    staleTime: DAY,
-    enabled: districtId != null,
   });
 
 export function useReverseGeocode() {
