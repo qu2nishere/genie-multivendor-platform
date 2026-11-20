@@ -1,7 +1,7 @@
 // Tầng ứng dụng xác thực (plan G09.04): gọi API, đặt $session, gộp giỏ khách, chuyển về `next`.
 import { useMutation } from '@tanstack/react-query';
 import { clearSession, loadSessionUser, setSession, type SessionUser } from '@/shared/auth/session';
-import { safeNext, type OtpPurpose } from '../domain/auth.rules';
+import { homeFor, safeNext, type OtpPurpose } from '../domain/auth.rules';
 import type { AuthSession, SocialProvider } from '../domain/auth.types';
 import {
   completeOAuth,
@@ -15,7 +15,10 @@ import {
   resendOtp,
   resetPassword,
   verifyOtp,
+  requestStaffActivationOtp,
+  activateStaff,
   type RegisterPayload,
+  type StaffActivationPayload,
 } from '../infrastructure/auth.api';
 
 /**
@@ -28,9 +31,11 @@ export async function finishLogin(
   afterLogin?: () => Promise<unknown>,
 ): Promise<void> {
   // $AuthTokens chỉ có id / vai trò / tên / ảnh → nạp đủ email, shop, có mật khẩu chưa từ GET /me (plan AUTH D18)
-  setSession(session.accessToken, await loadSessionUser(session.accessToken, session.user));
+  const user = await loadSessionUser(session.accessToken, session.user);
+  setSession(session.accessToken, user);
   if (afterLogin) await afterLogin();
-  window.location.assign(safeNext(next));
+  // Không có `next`: nhân viên / Admin vào /admin, người dùng khác về trang chủ.
+  window.location.assign(next ? safeNext(next) : homeFor(user.roles));
 }
 
 /** Địa chỉ bắt đầu đăng nhập Google / Zalo (backend 302 sang nhà cung cấp). */
@@ -52,8 +57,10 @@ export function useLogin() {
 
 export function useRequestOtp() {
   return useMutation({
-    mutationFn: (v: { email: string; purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP'> }) =>
-      requestOtp(v.email, v.purpose),
+    mutationFn: (v: {
+      email: string;
+      purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP' | 'STAFF_ACTIVATION'>;
+    }) => requestOtp(v.email, v.purpose),
   });
 }
 
@@ -89,6 +96,16 @@ export function useResetPassword() {
     mutationFn: (v: { resetToken: string; password: string }) =>
       resetPassword(v.resetToken, v.password),
   });
+}
+
+/** Nhân viên mở liên kết mời → xin OTP kích hoạt (UC-ADM-01). */
+export function useStaffActivationOtp() {
+  return useMutation({ mutationFn: (token: string) => requestStaffActivationOtp(token) });
+}
+
+/** Xác minh OTP + đặt mật khẩu → phiên nhân viên (UC-ADM-01). */
+export function useActivateStaff() {
+  return useMutation({ mutationFn: (v: StaffActivationPayload) => activateStaff(v) });
 }
 
 /** Đăng xuất: báo server (lỗi vẫn xóa phiên phía client), rồi về trang chủ. */
