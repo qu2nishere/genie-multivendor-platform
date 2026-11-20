@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  homeFor,
   isEmail,
+  isInvitationToken,
   isPhoneVN,
   LOCK_SECONDS,
   MAX_ATTEMPTS,
@@ -9,7 +11,13 @@ import {
   RESEND_AFTER,
   safeNext,
 } from './auth.rules';
-import { fieldErrors, loginSchema, registerSchema, resetSchema } from './auth.schemas';
+import {
+  fieldErrors,
+  loginSchema,
+  registerSchema,
+  resetSchema,
+  staffActivationSchema,
+} from './auth.schemas';
 
 describe('auth.rules', () => {
   it('hằng số theo UC-AUTH', () => {
@@ -69,5 +77,32 @@ describe('auth.schemas', () => {
     const r = resetSchema.safeParse({ password: 'Genie@1234', confirm: 'Genie@123' });
     expect(r.success).toBe(false);
     if (!r.success) expect(fieldErrors(r.error).confirm).toBe('ui.password.mismatch');
+  });
+
+  it('kích hoạt nhân viên: mã lời mời inv_…, OTP 6 số, mật khẩu mạnh, nhập lại khớp', () => {
+    expect(isInvitationToken('inv_abc')).toBe(true);
+    expect(isInvitationToken('rst_abc')).toBe(false);
+    expect(isInvitationToken('')).toBe(false);
+    expect(isInvitationToken(null)).toBe(false);
+    const ok = staffActivationSchema.safeParse({
+      otp: '123456',
+      password: 'Staff@2026',
+      confirm: 'Staff@2026',
+    });
+    expect(ok.success).toBe(true);
+    const bad = staffActivationSchema.safeParse({ otp: '12', password: 'abc', confirm: 'x' });
+    expect(bad.success).toBe(false);
+    if (!bad.success) {
+      const e = fieldErrors(bad.error);
+      expect(e.otp).toBe('auth.staff_activation.err_otp');
+      expect(e.password).toMatch(/^ui\.password\.issue\./);
+    }
+  });
+
+  it('trang mặc định sau đăng nhập theo vai trò', () => {
+    expect(homeFor(['ADMIN'])).toBe('/admin');
+    expect(homeFor(['STAFF'])).toBe('/admin');
+    expect(homeFor(['CUSTOMER'])).toBe('/');
+    expect(homeFor(['VENDOR', 'CUSTOMER'])).toBe('/');
   });
 });

@@ -137,6 +137,7 @@ public class OAuthLoginService {
      */
     public String startLink(OAuthProvider provider, long userId, String currentPassword, ClientInfo info) {
         IdentityProviderClient client = configuredClient(provider);
+        users.findById(userId).ifPresent(u -> rejectInternal(u, provider, AuditAction.OAUTH_LINKED, info));
         if (!provider.providesVerifiedEmail()) {
             User user = users.findById(userId).filter(User::isActive)
                     .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
@@ -193,6 +194,7 @@ public class OAuthLoginService {
         }
         User user = users.findByIdForUpdate(userId).filter(User::isActive)
                 .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED));
+        rejectInternal(user, provider, AuditAction.OAUTH_LINKED, client);
         String providerEmail = claims.email() == null ? null : User.normalizeEmail(claims.email());
         if (provider.providesVerifiedEmail() && (providerEmail == null || !providerEmail.equals(user.getEmail()))) {
             audit.recordIndependent(AuditAction.OAUTH_LINKED, user.getId(), provider.id(),
@@ -276,6 +278,7 @@ public class OAuthLoginService {
                 .flatMap(u -> users.findByIdForUpdate(u.getId()));
         if (linked.isPresent()) {
             User user = linked.get();
+            rejectInternal(user, provider, AuditAction.LOGIN_FAILED, client);   // gắn từ trước khi có luật D17
             ensureCanSignIn(user, now, client);
             fillProfileGaps(user, claims);
             return done(provider, OAuthLoginResult.Outcome.LOGGED_IN, user, client, saved.next());
@@ -301,6 +304,8 @@ public class OAuthLoginService {
                 .filter(u -> u.getStatus() != AccountStatus.ANONYMIZED && u.getStatus() != AccountStatus.DELETED);
         if (sameEmail.isPresent()) {
             User user = sameEmail.get();
+            // Tài khoản nội bộ (kể cả nhân viên đang chờ kích hoạt): không gắn Google, không mở phiên
+            rejectInternal(user, provider, AuditAction.LOGIN_FAILED, client);
             ensureCanSignIn(user, now, client);
             if (user.getOauthProvider() != null) {
                 throw new BusinessException(ErrorCode.IDENTITY_ALREADY_LINKED,
@@ -374,6 +379,26 @@ public class OAuthLoginService {
     }
 
     /** Cùng điều kiện như đăng nhập mật khẩu: khóa tạm → 423, đình chỉ → 403 (hết hạn đình chỉ thì tự mở). */
+    /**
+     * Tài khoản nội bộ STAFF / ADMIN (kể cả nhân viên đang chờ kích hoạt) không đăng nhập / liên kết bằng Google, Zalo —
+     * chỉ email + mật khẩu do Genie cấp qua luồng kích hoạt (plan B1 D17): Genie kiểm soát và thu hồi được, không phụ
+     * thuộc tài khoản mạng xã hội cá nhân. Từ chối {@code 403 GNE-AUTH-4033} bằng câu chung chung (không lộ đây là tài
+     * khoản nội bộ); nhật ký ghi rõ lý do để Admin tra cứu (ghi riêng transaction vì transaction chính sẽ rollback).
+     */
+    private void rejectInternal(User user, OAuthProvider provider, AuditAction action, ClientInfo client) {
+        if (!user.isInternal()) {
+            return;
+        }
+        Map<String, Object> details = new HashMap<>();
+        details.put("reason", user.isPendingStaffActivation() ? "PENDING_STAFF_ACTIVATION" : "INTERNAL_ACCOUNT");
+        details.put("provider", provider.id());
+        audit.recordIndependent(action, user.getId(), provider.id(), details, client, false);
+        throw new BusinessException(ErrorCode.OAUTH_ACCOUNT_UNAVAILABLE,
+                "Tài khoản này hiện không thể tiếp tục với " + provider.label()
+                        + ", vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu.",
+                Map.<String, Object>of("provider", provider.label()));
+    }
+
     private void ensureCanSignIn(User user, OffsetDateTime now, ClientInfo client) {
         if (user.isLocked(now)) {
             throw loginService.lockedError(user);

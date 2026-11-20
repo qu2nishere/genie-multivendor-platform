@@ -40,7 +40,7 @@ describe('nhân viên & phân quyền', () => {
       'delete',
     ]);
   });
-  it('lời mời: email @genie.example', () => {
+  it('lời mời: nhận mọi email hợp lệ (không còn bắt đuôi @genie.example)', () => {
     const ok = {
       fullName: 'Hồ Thanh Trúc',
       email: 'Truc.HT@genie.example',
@@ -48,7 +48,9 @@ describe('nhân viên & phân quyền', () => {
     };
     const r = inviteSchema.safeParse(ok);
     expect(r.success && r.data.email).toBe('truc.ht@genie.example');
-    expect(inviteSchema.safeParse({ ...ok, email: 'truc@gmail.com' }).success).toBe(false);
+    expect(inviteSchema.safeParse({ ...ok, email: 'Truc@Gmail.com' }).success).toBe(true);
+    expect(inviteSchema.safeParse({ ...ok, email: 'truc@gmail' }).success).toBe(false);
+    expect(inviteSchema.safeParse({ ...ok, email: 'truc gmail.com' }).success).toBe(false);
   });
 });
 

@@ -280,6 +280,21 @@ export function bootstrapSession(): Promise<boolean> {
   return refreshAccessToken();
 }
 
+/**
+ * Tài khoản nội bộ (STAFF / ADMIN) — chỉ xem storefront, không mua hàng (plan B1 D16 hướng B; server chặn giỏ hàng /
+ * đặt hàng bằng 403 GNE-ORD-4031). Mua sắm bằng tài khoản khách hàng cá nhân.
+ */
+export function isInternalUser(user: Pick<SessionUser, 'roles'> | null | undefined): boolean {
+  return !!user && (user.roles.includes('ADMIN') || user.roles.includes('STAFF'));
+}
+
+/** Trang chỉ dành cho người mua — tài khoản nội bộ mở sẽ được đưa về trang chủ. */
+export const BUYER_ONLY_PATHS = ['/cart', '/checkout', '/orders', '/account'] as const;
+
+export function isBuyerOnlyPath(path: string): boolean {
+  return BUYER_ONLY_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
 export const currentUser = (): SessionUser | null => {
   const s = $session.get();
   return s.status === 'authenticated' ? s.user : null;

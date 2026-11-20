@@ -1,5 +1,6 @@
 package com.genie.common.security;
 
+import com.genie.common.api.ErrorResponseFactory;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,8 +51,11 @@ public class SecurityConfig {
                                     List<AuthorityProvider> authorityProviders,
                                     SecurityProperties props,
                                     RestAuthEntryPoint entryPoint,
-                                    RestAccessDeniedHandler accessDeniedHandler) throws Exception {
+                                    RestAccessDeniedHandler accessDeniedHandler,
+                                    ErrorResponseFactory errorResponses) throws Exception {
         JwtAuthFilter jwtFilter = new JwtAuthFilter(jwtService, revocations, authorityProviders);
+        // Tài khoản nội bộ không mua hàng — /me/cart/**, /me/checkout/** (plan B1 D16, hướng B)
+        BuyerOnlyFilter buyerOnlyFilter = new BuyerOnlyFilter(errorResponses);
         InternalTokenFilter internalFilter = new InternalTokenFilter(props);
 
         http.csrf(AbstractHttpConfigurer::disable)
@@ -71,7 +75,8 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()          // STOMP tự kiểm token ở CONNECT (plan NOTIFICATION / SOCIAL)
                         .anyRequest().authenticated())
                 .addFilterBefore(internalFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(buyerOnlyFilter, JwtAuthFilter.class);
         return http.build();
     }
 

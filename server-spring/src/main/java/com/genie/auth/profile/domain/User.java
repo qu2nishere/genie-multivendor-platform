@@ -164,6 +164,37 @@ public class User {
                 .build();
     }
 
+    /**
+     * Tạo tài khoản nhân viên được mời: {@code STAFF}, {@code UNVERIFIED}, chưa có mật khẩu — chính là bản ghi lời mời
+     * (plan B1 D1). Đăng nhập bị chặn tới khi kích hoạt — UC-ADM-01
+     */
+    public static User newStaff(String email) {
+        return User.builder()
+                .email(normalizeEmail(email))
+                .role(UserRole.STAFF)
+                .status(AccountStatus.UNVERIFIED)
+                .failedLoginAttempts(0)
+                .build();
+    }
+
+    /** Nhân viên đang chờ kích hoạt lời mời — UC-ADM-01 */
+    public boolean isPendingStaffActivation() {
+        return this.role == UserRole.STAFF && this.status == AccountStatus.UNVERIFIED;
+    }
+
+    /** Tài khoản nội bộ (STAFF / ADMIN) — chỉ đăng nhập bằng email + mật khẩu, không dùng Google / Zalo (plan B1 D17). */
+    public boolean isInternal() {
+        return this.role == UserRole.STAFF || this.role == UserRole.ADMIN;
+    }
+
+    /** Nhân viên tự đặt mật khẩu sau khi xác minh OTP email: {@code UNVERIFIED → ACTIVE} — UC-ADM-01 bước 5 */
+    public void activateStaff(String passwordHash, OffsetDateTime now) {
+        if (!isPendingStaffActivation()) throw new IllegalStateException("Tài khoản không ở trạng thái chờ kích hoạt");
+        changePassword(passwordHash);
+        this.status = AccountStatus.ACTIVE;
+        verifyEmail(now);
+    }
+
     /** Có mật khẩu (false với tài khoản chỉ đăng nhập Google / Apple) — UC-AUTH-03, UC-AUTH-06 */
     public boolean hasPassword() {
         return this.password != null;

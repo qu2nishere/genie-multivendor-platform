@@ -30,10 +30,13 @@ export {
   useResendOtp,
   useVerifyOtp,
   useResetPassword,
+  useStaffActivationOtp,
+  useActivateStaff,
 } from './application/useAuth';
 export { default as LoginForm, type LoginFormProps } from './ui/LoginForm';
 export { default as RegisterForm } from './ui/RegisterForm';
 export { default as ForgotForm } from './ui/ForgotForm';
 export { default as OAuthCallback } from './ui/OAuthCallback';
+export { default as StaffActivationForm } from './ui/StaffActivationForm';
 export { OtpStep, type OtpStepProps } from './ui/OtpStep';
 export { LockedState } from './ui/LockedState';

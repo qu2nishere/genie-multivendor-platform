@@ -6,7 +6,9 @@ export interface StaffDto {
   role: 'STAFF' | 'ADMIN';
   staff_title: 'MODERATOR' | 'CS_SPECIALIST' | 'FINANCE_OFFICER' | 'CUSTOM' | null;
   permissions: string[];
-  status: 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION';
+  status: 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION' | 'INVITATION_EXPIRED';
+  /** Hạn lời mời (chờ kích hoạt / đã hết hạn); null với tài khoản đã kích hoạt — API_SPEC 11.18. */
+  invitation_expires_at?: string | null;
   is_self: boolean;
 }
 
@@ -35,4 +37,11 @@ export interface AuditLogDto {
   target: string | null;
   ip_address: string | null;
   result: 'SUCCESS' | 'FAILED' | 'DENIED';
+}
+
+export interface StaffEmailCheckDto {
+  email: string;
+  available: boolean;
+  reason: 'INVALID' | 'DOMAIN' | 'TAKEN' | null;
+  taken_by: 'CUSTOMER' | 'VENDOR' | 'STAFF' | 'ADMIN' | 'OTHER' | null;
 }

@@ -4,7 +4,7 @@ import { api, request } from '@/shared/api/http';
 import { mockDelay, mockFail } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import type { OtpPurpose } from '../domain/auth.rules';
-import type { SessionUser } from '@/shared/auth/session';
+import { MOCK_STAFF, type SessionUser } from '@/shared/auth/session';
 import type {
   AuthSession,
   OtpChallenge,
@@ -17,8 +17,10 @@ import { toChallenge, toSession } from './auth.mapper';
 import {
   EXISTING_EMAILS,
   mockChallenge,
+  mockActivateStaff,
   mockLogin,
   mockReset,
+  mockStaffActivationOtp,
   mockResend,
   mockTokens,
   mockVerify,
@@ -43,7 +45,7 @@ export async function login(email: string, password: string): Promise<AuthSessio
 /** POST /auth/otp-challenges — OTP đăng nhập / quên mật khẩu / mở khóa tài khoản. */
 export async function requestOtp(
   email: string,
-  purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP'>,
+  purpose: Exclude<OtpPurpose, 'REGISTER' | 'OAUTH_SIGNUP' | 'STAFF_ACTIVATION'>,
 ): Promise<OtpChallenge> {
   if (USE_MOCK) {
     await mockDelay(300);
@@ -135,6 +137,55 @@ export async function resetPassword(resetToken: string, newPassword: string): Pr
     body: { reset_token: resetToken, new_password: newPassword },
     auth: false,
   });
+}
+
+/**
+ * POST /auth/staff-activations/otp-challenges (API_SPEC 2.11 bước 1) — nhân viên mở liên kết mời → OTP
+ * `STAFF_ACTIVATION` gửi tới email được mời. 410 GNE-AUTH-4103: lời mời sai / hết hạn / đã dùng.
+ */
+export async function requestStaffActivationOtp(invitationToken: string): Promise<OtpChallenge> {
+  if (USE_MOCK) {
+    await mockDelay(400);
+    return toChallenge(mockStaffActivationOtp(invitationToken));
+  }
+  return toChallenge(
+    await api.post<OtpChallengeDto>(
+      '/auth/staff-activations/otp-challenges',
+      { invitation_token: invitationToken },
+      noAuth,
+    ),
+  );
+}
+
+export interface StaffActivationPayload {
+  invitationToken: string;
+  challengeId: string;
+  otp: string;
+  password: string;
+}
+
+/**
+ * POST /auth/staff-activations (API_SPEC 2.11 bước 2) — xác minh OTP + đặt mật khẩu → 201 $AuthTokens (đã đăng nhập).
+ * Lỗi OTP như màn OTP chung (4101 / 4221 / 4222); 410 GNE-AUTH-4103 lời mời hết hạn.
+ */
+export async function activateStaff(p: StaffActivationPayload): Promise<AuthSession<SessionUser>> {
+  if (USE_MOCK) {
+    await mockDelay(450);
+    const dto = mockActivateStaff(p.invitationToken, p.challengeId, p.otp);
+    return { accessToken: dto.access_token, user: MOCK_STAFF };
+  }
+  return toSession(
+    await api.post<AuthTokensDto>(
+      '/auth/staff-activations',
+      {
+        invitation_token: p.invitationToken,
+        challenge_id: p.challengeId,
+        otp: p.otp,
+        password: p.password,
+      },
+      noAuth,
+    ),
+  );
 }
 
 /**

@@ -148,6 +148,7 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | `GENIE_SEED_DEMO` | `true` (prod `false`) | Nạp dữ liệu mẫu: `R__seed_demo.sql` (tài khoản) **và** thư mục `db/seed` (danh mục, shop, sản phẩm, voucher, banner… — `SeedDataFlywayCustomizer`). Nạp tay vào CSDL local: `scripts/seed/seed.sh` / `seed.ps1` ([scripts/seed/README.md](../scripts/seed/README.md)) |
 | `FLYWAY_ENABLED` | `true` | `false` = không chạy migration |
 | `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD_HASH` | `admin@genie.local` / rỗng | Admin đầu tiên (`V13__bootstrap_admin.sql`); băm bằng `python3 scripts/hash-password.py '<mật khẩu>'` |
+| `STAFF_EMAIL_DOMAINS` | rỗng (prod `genie.vn`) | Tên miền email được phép khi mời nhân viên (UC-ADM-01, plan B1 D3), cách nhau dấu phẩy; rỗng = mọi email hợp lệ. Sai tên miền → `422 GNE-ADM-4221`. Đọc trực tiếp bằng `@Value` (không khai trong `application*.yml`) |
 
 ### 6.2 Redis, Silo, địa chỉ
 

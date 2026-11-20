@@ -27,6 +27,12 @@ const staff = (
   permissions:
     title === null ? [...PERMISSIONS] : title === 'CUSTOM' ? [] : [...TITLE_PRESETS[title]],
   status,
+  invitation_expires_at:
+    status === 'PENDING_ACTIVATION'
+      ? new Date(Date.now() + 30 * 3600 * 1000).toISOString()
+      : status === 'INVITATION_EXPIRED'
+        ? new Date(Date.now() - 20 * 3600 * 1000).toISOString()
+        : null,
   is_self: id === 1,
 });
 
@@ -36,6 +42,7 @@ export const staffStore = mockState<StaffDto[]>('admin.staff', () => [
   staff(8, 'Trịnh Mỹ Linh', 'linh.tm@genie.example', 'FINANCE_OFFICER', 'ACTIVE'),
   staff(9, 'Vương Đại Nghĩa', 'nghia.vd@genie.example', 'CS_SPECIALIST', 'LOCKED'),
   staff(10, 'Hồ Thanh Trúc', 'truc.ht@genie.example', 'CS_SPECIALIST', 'PENDING_ACTIVATION'),
+  staff(11, 'Lý Quốc Bảo', 'bao.lq@genie.example', 'MODERATOR', 'INVITATION_EXPIRED'),
 ]);
 
 const user = (
