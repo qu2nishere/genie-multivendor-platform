@@ -230,8 +230,10 @@ public class UserFacade {
     @Transactional
     public void deleteStaff(long userId, Long actorId, ClientInfo client) {
         User user = users.findByIdForUpdate(userId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
-        sessions.revokeAllSessions(userId, RevokeReason.ACCOUNT_DELETED);
+        // Ẩn danh hóa TRƯỚC khi thu hồi phiên: truy vấn thu hồi dùng clearAutomatically → xóa persistence context, sửa
+        // entity sau đó sẽ không được lưu (cùng thứ tự với suspend / lockStaff — flushAutomatically ghi thay đổi trước)
         user.anonymize();
+        sessions.revokeAllSessions(userId, RevokeReason.ACCOUNT_DELETED);
         invitations.cancel(userId);
         audit.record(AuditAction.PII_ANONYMIZED, actorId, String.valueOf(userId),
                 Map.of("reason", "STAFF_DELETED", "at", OffsetDateTime.now(clock)), client, true);
