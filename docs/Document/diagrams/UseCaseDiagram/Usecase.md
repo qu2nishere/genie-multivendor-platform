@@ -331,6 +331,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *4b. Apple "Ẩn email":* dùng email chuyển tiếp do Apple cấp làm email đăng nhập (khi bật Apple).
   - *5a. Tài khoản đã liên kết / cùng email đang bị khóa tạm hoặc đình chỉ:* `423 GNE-AUTH-4230` / `403 GNE-AUTH-4031` như UC-AUTH-02; không liên kết, không cấp phiên.
   - *5b. IdP trả `email_verified = false`:* `403 GNE-AUTH-4032` — không liên kết / không tạo tài khoản (tránh chiếm tài khoản).
+  - *5c. Tài khoản đã liên kết / cùng email là tài khoản nội bộ `STAFF` / `ADMIN` (kể cả nhân viên chờ kích hoạt):* `403 GNE-AUTH-4033` "Tài khoản này hiện không thể tiếp tục với Google, vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu." — không liên kết, không cấp phiên; liên kết Google / Zalo từ trang tài khoản cũng bị chặn. Câu báo không nói lý do để không lộ tài khoản nội bộ; nhật ký ghi `LOGIN_FAILED` lý do `INTERNAL_ACCOUNT` / `PENDING_STAFF_ACTIVATION` (thêm 2026-11-20, plan B1 D17).
   - *5c. Tài khoản cùng email đã gắn một nhà cung cấp khác:* `409 GNE-AUTH-4092` (mỗi tài khoản TLCN chỉ gắn một nhà cung cấp).
   - *Liên kết thủ công (đang đăng nhập):* Tài khoản › **Liên kết đăng nhập** › "Liên kết Google" → web gọi `POST /api/v1/me/identities/google/authorize` (XHR có access token, trả URL Google; `state` ghi kèm người đang đăng nhập) → Google → callback → `POST /api/v1/me/identities/google` (`code`, `state`) → `201` + danh sách cách đăng nhập, quay về `/account/logins?linked=google`. Quy tắc: **email Google phải trùng email tài khoản Genie** (khác → `409 GNE-AUTH-4098` kèm `account_email` — một người = một tài khoản = một email); Google đã gắn người khác → `409 GNE-AUTH-4092`; email Google chưa xác minh → `403 GNE-AUTH-4032`; `state` đăng nhập và `state` liên kết không dùng lẫn được (`400 GNE-AUTH-4001`); đã gắn đúng Google này → coi như thành công.
   - *Gỡ liên kết:* "Gỡ liên kết" → nhập lại **mật khẩu hiện tại** → `DELETE /api/v1/me/identities/google` (`current_password`) → `204`, ghi `OAUTH_UNLINKED`. Chưa có mật khẩu → `409 GNE-AUTH-4093` (giao diện yêu cầu "Thiết lập mật khẩu" trước); sai mật khẩu → `401 GNE-AUTH-4011`; tối đa 10 lần / phút.
@@ -1009,7 +1010,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Bảng `carts` và `cart_items` được cập nhật (hoặc giỏ tạm trên trình duyệt với Guest); số lượng hiển thị trên icon giỏ hàng header thay đổi.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm "Thêm vào giỏ" từ trang sản phẩm (đã chọn SKU và số lượng Q).
-  2. Backend kiểm tra tính hợp lệ: SKU tồn tại, sản phẩm đang `PUBLISHED`, và Người bán không phải chính tài khoản của khách hàng (Cấm tự mua hàng của shop mình — `GNE-ORD-4094`; chủ shop ở chế độ Mua hàng vẫn thêm được sản phẩm của shop khác).
+  2. Backend kiểm tra tính hợp lệ: tài khoản là người mua (khách / chủ shop) — **tài khoản nội bộ `STAFF` / `ADMIN` bị từ chối `403 GNE-ORD-4031`** (chỉ xem storefront, mua bằng tài khoản khách hàng cá nhân); SKU tồn tại, sản phẩm đang `PUBLISHED`, và Người bán không phải chính tài khoản của khách hàng (Cấm tự mua hàng của shop mình — `GNE-ORD-4094`; chủ shop ở chế độ Mua hàng vẫn thêm được sản phẩm của shop khác).
   3. Backend kiểm tra tồn kho: `stockCount >= Q`.
   4. Mở transaction:
      - Nếu SKU chưa có trong giỏ: Tạo bản ghi `cart_items` mới với số lượng Q.
@@ -1122,6 +1123,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   11. Sau khi thanh toán: trang **"Đặt hàng thành công"** (mã giao dịch, mã phiên, danh sách đơn tách theo shop "Cung cấp bởi …", tạm tính, giảm giá voucher & khuyến mãi, nút Về trang chủ / Xem đơn mua) hoặc **"Thanh toán thất bại"** (`PAYMENT_FAILED`, tồn kho vẫn được giữ, nút Thử thanh toán lại / Đổi phương thức / Về giỏ hàng).
 - **Luồng thay thế / Ngoại lệ:**
   - *Giỏ có sản phẩm của chính shop người mua:* từ chối toàn phiên với `GNE-ORD-4094` — kiểm tra lại ở bước này vì sản phẩm có thể đã vào giỏ trước khi người dùng mở shop.
+  - *Tài khoản nội bộ (`STAFF` / `ADMIN`) đặt hàng:* từ chối `403 GNE-ORD-4031` — tách tài khoản vận hành khỏi mua sắm, tránh xung đột lợi ích (tự duyệt đánh giá / hoàn tiền cho đơn của mình).
   - *Bất kỳ bước nào gặp lỗi (DB lỗi, khóa ngoại lỗi):* `tx.Rollback()`, toàn bộ dữ liệu trở về trạng thái ban đầu, giỏ hàng giữ nguyên, báo lỗi cho khách hàng.
 - **Quan hệ Use Case:** `<<include>>` Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) (`UC-ORD-04`); được mở rộng bởi `UC-PRO-06` (điểm «Giữ chỗ tồn kho»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
@@ -2537,21 +2539,23 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Admin đăng nhập (quyền `MANAGE_RBAC`). Tài khoản Admin đầu tiên được tạo bằng seed khi cài đặt.
 - **Hậu điều kiện:** `users` (`role = STAFF`, `status = UNVERIFIED`), `admin_profiles` (`staffTitle`), `staff_permissions` (bộ quyền mặc định) được tạo; email mời đã gửi.
 - **Luồng sự kiện chính:**
-  1. Admin bấm "Mời nhân viên mới", nhập họ tên, email công việc (`@genie.vn`), chọn chức danh: Nhân viên kiểm duyệt (`MODERATOR`), CSKH (`CS_SPECIALIST`), Tài chính (`FINANCE_OFFICER`) hoặc "Tùy chỉnh".
-  2. Hệ thống kiểm tra email chưa tồn tại (`/admin/staffs/check-email`); nạp sẵn bộ quyền mặc định `StaffTitle.defaultPermissions()` để Admin bỏ / thêm trước khi gửi.
+  1. Admin bấm "Mời nhân viên mới", nhập họ tên, email nhân viên (mọi email hợp lệ; production giới hạn tên miền công ty bằng cấu hình `STAFF_EMAIL_DOMAINS`, vd. `@genie.vn`), chọn chức danh: Nhân viên kiểm duyệt (`MODERATOR`), CSKH (`CS_SPECIALIST`), Tài chính (`FINANCE_OFFICER`) hoặc "Tùy chỉnh".
+  2. Hệ thống kiểm tra email chưa tồn tại (khi gửi lời mời — trùng thì `409 GNE-ADM-4091`); nạp sẵn bộ quyền mặc định `StaffTitle.defaultPermissions()` để Admin bỏ / thêm trước khi gửi.
   3. Bấm "Gửi lời mời": trong một transaction tạo `users` (`UNVERIFIED`, chưa có mật khẩu), `admin_profiles`, các dòng `staff_permissions` (`grantedByAdminId`); ghi `system_logs` `STAFF_INVITED`.
-  4. Gửi email mời chứa liên kết kích hoạt dùng một lần (hết hạn 48 giờ).
+  4. Gửi email mời chứa liên kết kích hoạt dùng một lần (hết hạn 48 giờ). Thông tin lời mời nằm ở PostgreSQL (`users` `UNVERIFIED`, `admin_profiles`, `staff_permissions`, `system_logs STAFF_INVITED`); chỉ mã trong liên kết (bản băm SHA-256) lưu ở Redis `auth:staff_invite:*`.
   5. Nhân viên mở liên kết, xác thực OTP email, tự đặt mật khẩu → `status = ACTIVE` (trạng thái "Chờ kích hoạt" → "Hoạt động").
   6. Danh sách nhân viên: tìm theo tên / email, xem vai trò, số quyền, trạng thái; thao tác "Sửa quyền" (UC-ADM-02), "Khóa / Mở khóa" (UC-ADM-03), "Xóa tài khoản nhân viên".
 - **Luồng thay thế / Ngoại lệ:**
   - *Email đã tồn tại:* báo "Email đã được sử dụng".
-  - *Liên kết hết hạn:* Admin bấm "Gửi lại lời mời".
+  - *Liên kết hết hạn:* danh sách nhân viên hiện trạng thái "Lời mời hết hạn" kèm thời điểm hết hạn (`INVITATION_EXPIRED`, `invitation_expires_at`); Admin bấm "Gửi lại lời mời" — mã cũ bị vô hiệu, hạn 48 giờ tính lại từ lần gửi này.
   - *Xóa nhân viên:* chỉ khi không phải Admin cuối cùng; thu hồi mọi quyền và phiên, giữ lịch sử trong `system_logs`.
 - **Quan hệ Use Case:** `<<include>>` Gửi mã OTP xác thực — tác nhân phụ: `ACT-EML` Email Service; `<<include>>` Ghi nhật ký kiểm toán; `<<include>>` Phân cấp vai trò & Cấp phát / Thu hồi mã quyền chi tiết (RBAC) (`UC-ADM-02`).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Không có Super Admin — vai trò cao nhất là `ADMIN`; Admin không tự khóa / tự hạ quyền mình, hệ thống luôn còn ≥ 1 Admin hoạt động.
+  - Tài khoản nhân viên / Admin **chỉ xem** storefront (nút "Kênh người mua"), không có giỏ hàng / đơn mua và không đặt hàng được (`GNE-ORD-4031`, UC-ORD-01, UC-ORD-07). Nhân viên muốn mua sắm dùng tài khoản khách hàng cá nhân với email riêng — một email chỉ gắn một tài khoản, mời bằng email đã có tài khoản → `409 GNE-ADM-4091`.
+  - Tài khoản nhân viên / Admin **chỉ đăng nhập bằng email + mật khẩu** do Genie cấp qua luồng kích hoạt — không đăng nhập / liên kết Google, Zalo (`403 GNE-AUTH-4033`, câu báo chung "Tài khoản này hiện không thể tiếp tục với Google, vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu." — không lộ đây là tài khoản nội bộ; UC-AUTH-03 5c). Trong lúc chờ kích hoạt, email được mời cũng không đăng ký khách được (email đã có tài khoản); chỉ kích hoạt qua liên kết mời + OTP.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — kích hoạt lời mời (`POST /auth/staff-activations`) build xanh; quản lý nhân viên `/admin/staff` + khung Admin `/admin/me` chạy được trên giao diện với API thật, chờ kiểm thử tự động + chạy thật (2026-11-20; plan `plan/2026-11-19/b1.md`).
   - *Kế hoạch:* Sprint 1 (tuần 1–2) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập), [AdminProfile](../ClassDiagram/ENTITY.md#15-adminprofile--hồ-sơ-quản-trị-viên--nhân-viên), [StaffPermission](../ClassDiagram/ENTITY.md#18-staffpermission--phân-quyền-chi-tiết-cho-nhân-viên), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
@@ -2577,7 +2581,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Kiểm tra quyền ở tầng API bằng `@PreAuthorize("hasAuthority('REVIEW_KYC')")`; giao diện chỉ ẩn mục, không thay thế kiểm tra phía máy chủ.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — cấp / thu hồi mã quyền (`PUT /admin/staff/{id}/permissions`, `GET /admin/permission-catalog`) chạy được trên giao diện, chờ kiểm thử tự động + chạy thật (2026-11-20; plan `plan/2026-11-19/b1.md`).
   - *Kế hoạch:* Sprint 1 (tuần 1–2) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [StaffPermission](../ClassDiagram/ENTITY.md#18-staffpermission--phân-quyền-chi-tiết-cho-nhân-viên), [AdminProfile](../ClassDiagram/ENTITY.md#15-adminprofile--hồ-sơ-quản-trị-viên--nhân-viên), [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
