@@ -26,6 +26,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.id = :id")
     Optional<User> findByIdForUpdate(@Param("id") Long id);
 
+    /** Tài khoản nội bộ (STAFF / ADMIN) chưa ẩn danh / xóa — danh sách nhân viên (UC-ADM-01, plan B1 D12). */
+    @Query("select u from User u where u.role in (com.genie.common.domain.UserRole.STAFF, com.genie.common.domain.UserRole.ADMIN) "
+            + "and u.status not in (com.genie.auth.profile.domain.AccountStatus.ANONYMIZED, com.genie.auth.profile.domain.AccountStatus.DELETED) "
+            + "order by u.id")
+    List<User> findInternalAccounts();
+
     /** Tài khoản đã yêu cầu xóa trước {@code cutoff}, chưa ẩn danh — Cron UC-AUTH-10 (an toàn khi chạy nhiều instance). */
     @Query(value = "SELECT * FROM users WHERE deletion_requested_at IS NOT NULL AND deletion_requested_at < :cutoff "
             + "AND status NOT IN ('ANONYMIZED', 'DELETED') ORDER BY id LIMIT :limit FOR UPDATE SKIP LOCKED",
