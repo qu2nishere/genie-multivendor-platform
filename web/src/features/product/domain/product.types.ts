@@ -53,6 +53,17 @@ export interface ProductSku {
   id: number;
   /** Chỉ số lựa chọn theo thứ tự nhóm phân loại. */
   options: number[];
+  /** Giá bán của SKU (API thật — API_SPEC 5.6); mock prototype không có → tính theo priceDelta. */
+  price?: number;
+  /** Tồn khả dụng của SKU (stock − reserved); mock không có → theo nhóm quyết định tồn. */
+  stock?: number;
+}
+
+/** Một cấp danh mục trên đường dẫn gốc → lá (API_SPEC 5.6 category_path). */
+export interface CategoryCrumb {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 /** Khóa thông số thương hiệu trong dữ liệu người bán — bảng thông số hiện riêng hàng này ở đầu. */
@@ -74,6 +85,8 @@ export interface Product extends ProductSummary {
   specs: ProductSpec[];
   /** Mô tả HTML do người bán soạn (đã làm sạch phía server). */
   descriptionHtml: string;
+  /** Danh mục gốc → lá (API thật); mock không có → trang tự dựng từ categoryId. */
+  categoryPath?: CategoryCrumb[];
 }
 
 export type ProductBadge = 'authentic' | 'flash' | 'preorder' | 'out_of_stock';

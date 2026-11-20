@@ -90,3 +90,14 @@ describe('canonicalUrl', () => {
     expect(canonicalUrl('/p/tai-nghe-1', 'v=0-1&src=share', [])).toBe('/p/tai-nghe-1');
   });
 });
+
+describe('buildMeta — giá sản phẩm (UC-CAT-18, plan 2026-11-17 C07.04)', () => {
+  it('adds Open Graph price tags only for product pages', async () => {
+    const { buildMeta } = await import('./seo');
+    const p = buildMeta({ title: 'Tai nghe', type: 'product', price: 389000 }, 'https://genie.vn');
+    expect(p.og['og:price:amount']).toBe('389000');
+    expect(p.og['product:price:currency']).toBe('VND');
+    const w = buildMeta({ title: 'Trang chủ', price: 1 }, 'https://genie.vn');
+    expect(w.og['og:price:amount']).toBeUndefined();
+  });
+});

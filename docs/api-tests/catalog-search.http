@@ -1,0 +1,118 @@
+### Kịch bản thử tay cụm tìm kiếm & trang sản phẩm (plan 2026-11-17 C08.01)
+### UC-CAT-02, 04, 05, 06, 07, 16, 18 — API_SPEC 5.3–5.12. Mở bằng REST Client (VS Code) / IntelliJ HTTP Client.
+### Cần: backend chạy cổng 8080, CSDL có shop VERIFIED + sản phẩm PUBLISHED (plan seed S02–S04 hoặc chèn tay).
+### Đổi @productId / @shopId / @categoryId theo dữ liệu của bạn.
+
+@base = http://localhost:8080/api/v1
+@productId = 1
+@shopId = 1
+@categoryId = 1
+
+### ===================== UC-CAT-02 Tìm kiếm theo từ khóa =====================
+
+### Có dấu
+GET {{base}}/public/products?q=tai nghe&size=20
+
+### Không dấu — cùng kết quả
+GET {{base}}/public/products?q=tai%20nghe
+
+### Tiền tố từ cuối ("tai ngh" → "tai nghe")
+GET {{base}}/public/products?q=tai%20ngh
+
+### Gõ sai → tầng trigram bù (word_similarity ≥ 0,3)
+GET {{base}}/public/products?q=tai%20nge%20bluetoth
+
+### Từ khóa rỗng / chỉ ký tự đặc biệt → sản phẩm mới nhất
+GET {{base}}/public/products?q=!!!
+
+### ===================== UC-CAT-05 Lọc nâng cao & sắp xếp =====================
+
+### Lọc đa tiêu chí + facet sidebar
+GET {{base}}/public/products?q=tai%20nghe&price_min=100000&price_max=500000&rating_min=4&is_mall=true&free_shipping=true&sort=PRICE_ASC&include_facets=true
+
+### Danh mục (gồm danh mục con) + thuộc tính (chỉ khi đúng 1 danh mục)
+GET {{base}}/public/products?category_id={{categoryId}}&attr.warranty=12%20th%C3%A1ng&include_facets=true
+
+### Nhiều thương hiệu / nơi bán (lặp tham số hoặc dấu phẩy)
+GET {{base}}/public/products?brand_ids=3,7&province_ids=202&sort=BEST_SELLING
+
+### Lỗi 422 — size > 60
+GET {{base}}/public/products?size=61
+
+### Lỗi 422 — khoảng giá ngược
+GET {{base}}/public/products?price_min=500&price_max=100
+
+### Lỗi 422 — sort sai
+GET {{base}}/public/products?sort=CHEAPEST
+
+### ===================== UC-CAT-04 Gợi ý & xu hướng =====================
+
+### Gợi ý khi gõ (≥ 2 ký tự): 2 danh mục, 2 shop, 5 sản phẩm
+GET {{base}}/public/search/suggestions?q=tai
+
+### Dưới 2 ký tự → rỗng
+GET {{base}}/public/search/suggestions?q=t
+
+### Xu hướng 24 giờ (sau vài lượt tìm có kết quả ở trên)
+GET {{base}}/public/search/trending?limit=5
+
+### Lỗi 422 — limit > 10
+GET {{base}}/public/search/trending?limit=11
+
+### ===================== UC-CAT-06 Chi tiết + SKU + tồn =====================
+
+### Chi tiết (ETag — gửi lại kèm If-None-Match → 304)
+GET {{base}}/public/products/{{productId}}
+
+### Phân loại cho modal giỏ hàng
+GET {{base}}/public/products/{{productId}}/variants
+
+### Sản phẩm không có / đã ẩn → 404 GNE-CAT-4042
+GET {{base}}/public/products/999999999
+
+### Ghi lượt xem theo nguồn → 204 (job 5 phút ghi vào product_view_stats)
+POST {{base}}/public/products/{{productId}}/views
+Content-Type: application/json
+
+{ "source": "SEARCH" }
+
+### Nguồn chia sẻ (src=share)
+POST {{base}}/public/products/{{productId}}/views
+Content-Type: application/json
+
+{ "source": "EXTERNAL_LINK" }
+
+### Lỗi 422 — nguồn sai
+POST {{base}}/public/products/{{productId}}/views
+Content-Type: application/json
+
+{ "source": "FACEBOOK" }
+
+### ===================== UC-CAT-07 Tương tự & gợi ý hôm nay =====================
+
+### Sản phẩm tương tự (chạy cả khi sản phẩm đã ẩn)
+GET {{base}}/public/products/{{productId}}/similar?limit=6
+
+### Gợi ý hôm nay (cùng ngày cùng thứ tự)
+GET {{base}}/public/recommendations?page=1&size=30
+
+### ===================== UC-CAT-16 Trang shop =====================
+
+GET {{base}}/public/shops/{{shopId}}
+
+### Lưới + "Tìm trong Shop" dùng lại 5.3
+GET {{base}}/public/products?shop_id={{shopId}}&sort=NEWEST
+
+GET {{base}}/public/products?shop_id={{shopId}}&q=ban%20phim
+
+### Shop nổi bật trang chủ
+GET {{base}}/public/shops?featured=true&limit=6
+
+### Shop chưa duyệt / bị khóa / không có → 404 GNE-VND-4041
+GET {{base}}/public/shops/999999999
+
+### ===================== UC-CAT-18 Deeplink =====================
+### Không có API riêng: mở trên trình duyệt (web chạy PUBLIC_REAL_API=product,search,shop)
+###   http://localhost:4321/p/{slug}-{{productId}}?v={variant_id}&src=share   → chọn sẵn SKU, ghi lượt xem EXTERNAL_LINK
+###   http://localhost:4321/p/slug-sai-{{productId}}                            → 301 về slug chuẩn
+### Xem trước Open Graph: view-source tìm og:title, og:image, og:price:amount

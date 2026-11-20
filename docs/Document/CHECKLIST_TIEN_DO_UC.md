@@ -1,18 +1,18 @@
 # CHECKLIST TIẾN ĐỘ USE CASE — GENIE (BẢN TLCN)
 
-> **Cập nhật:** 2026-11-20 · **Nguồn đặc tả:** [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4) · **Nguồn trạng thái:** mã nguồn `genie-multivendor-platform` (plan `plan/2026-11-11/web/` G00–G13, `plan/2026-11-14/auth.md` A00–A16, `docs/web-backend-handoff.md`).
+> **Cập nhật:** 2026-11-20 · **Nguồn đặc tả:** [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4) · **Nguồn trạng thái:** mã nguồn `genie-multivendor-platform` (plan `plan/2026-11-11/web/` G00–G13, `plan/2026-11-14/auth.md` A00–A16, `plan/2026-11-16/`, `plan/2026-11-17/` C00–C08, `plan/2026-11-19/b1.md` R00–R10, `docs/web-backend-handoff.md`).
 > **Bảng quản lý đầy đủ (tác nhân, quan hệ, lọc):** [Quản Lý UseCase.xlsx](diagrams/UseCaseDiagram/Quản%20Lý%20UseCase.xlsx) — cột *Hiện trạng mã nguồn* đã đồng bộ với file này.
 > **Cách dùng:** mỗi khi xong một lớp của UC thì đổi ô `☐` → `☑` (một phần: `◐`), cập nhật cột Trạng thái và ghi mã commit / PR vào Nhật ký cuối file. Một UC chỉ **Đã triển khai** khi đủ 5 lớp (Definition of Done — implement.md 15.3).
 
 ## Thành viên & phân công
 
-> Cập nhật 2026-11-17. Cột **Phụ trách** ở mọi bảng use case bên dưới ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
+> Cập nhật 2026-11-18. Cột **Phụ trách** ở mọi bảng use case bên dưới ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm B1 Nhân viên & phân quyền: UC-ADM-01, 02, 03 (nhận 2026-11-19) | Đang triển khai — AUTH: 4 đã xong, 5 đang làm (UC-AUTH-09 xong 2026-11-18); plan `plan/2026-11-14/auth.md`. B1: bắt đầu 2026-11-19, plan `plan/2026-11-19/b1.md`, nhánh `feature/b1` — UC-ADM-01, 02 xong (2026-11-20), UC-ADM-03 đang làm |
 | **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); UC-VND-01, 02, 03 (backend), 04, 07, 21 chờ chạy thật (nhánh `feature/vendor-shop-kyc`), UC-VND-05 chờ danh mục hành chính GHN (A12) |
-| **Nghiêm Phú Đăng Quân** | Chưa phân công | — |
+| **Nghiêm Phú Đăng Quân** | 7 use case cụm khám phá sản phẩm: Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | Đang triển khai — 7 UC xong backend + test + nối web (UC-CAT-05 còn `◐`), chờ chạy thật; plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (59 / 66) |
 
 ## 1. Tổng quan
 
@@ -20,8 +20,8 @@
 |---|---:|
 | Tổng use case | **87** |
 | Đã triển khai (backend + test + web nối API thật) | **6** |
-| Đang triển khai | **18** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **52** |
+| Đang triển khai | **25** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **45** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **11** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
 | Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (83 test xanh — 2026-11-17); 10 module còn lại chưa có service |
@@ -78,7 +78,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | Phân hệ | Số UC | Đã triển khai | Đang triển khai | Chưa |
 |---|---:|---:|---:|---:|
 | 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
-| 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 0 | 1 | 16 |
+| 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 0 | 8 | 9 |
 | 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 0 | 9 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
 | 05. Gian hàng & KYC người bán | 11 | 0 | 6 | 5 |
@@ -110,11 +110,11 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
 | `UC-CAT-01` | Duyệt cây danh mục đa cấp (Category Hierarchy) | S2 | Header danh mục, `/c/{slug}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-02` | Tìm kiếm sản phẩm theo từ khóa | S2 | `/search` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-04` | Gợi ý từ khóa tìm kiếm & Xu hướng (Autocomplete & Trending) | S7 | Ô tìm kiếm (gợi ý, xu hướng) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-05` | Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí | S2 | `/c/{slug}`, `/search` (bộ lọc, sắp xếp) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-06` | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho | S2 | `/p/{slug}-{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-07` | Xem gợi ý sản phẩm tương tự | S7 | `/p/{slug}-{id}` (tương tự), `/discover` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-02` | Tìm kiếm sản phẩm theo từ khóa | S2 | `/search` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (cờ `product`), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
+| `UC-CAT-04` | Gợi ý từ khóa tìm kiếm & Xu hướng (Autocomplete & Trending) | S7 | Ô tìm kiếm (gợi ý, xu hướng) | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (cờ `search`), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
+| `UC-CAT-05` | Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí | S2 | `/c/{slug}`, `/search` (bộ lọc, sắp xếp) | ☑ | ◐ | ☑ | ◐ | ☐ | 🟡 Đang triển khai<br><sub>thiếu: lọc "Shop có voucher" chờ module promotion (cổng `ShopVoucherAvailability`); lọc danh mục trên web chờ UC-CAT-01 nối thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
+| `UC-CAT-06` | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho | S2 | `/p/{slug}-{id}` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (SKU, tồn, lượt xem), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
+| `UC-CAT-07` | Xem gợi ý sản phẩm tương tự | S7 | `/p/{slug}-{id}` (tương tự), `/discover` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (tương tự + gợi ý hôm nay), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
 | `UC-CAT-08` | Quản lý danh sách sản phẩm yêu thích (Wishlist) | S6 | `/account/wishlist`, tim ở thẻ sản phẩm | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test, web nối API thật (`PUBLIC_REAL_API=wishlist`); còn chạy thật trên giao diện</sub> | Nguyễn Ngọc Thiện |
 | `UC-CAT-09` | Thêm mới sản phẩm & Biến thể SKU (Người bán) | S2 | `/seller/products/new` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-CAT-10` | Cập nhật thông tin sản phẩm, giá bán & hình ảnh | S2 | `/seller/products/:id/edit` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
@@ -123,9 +123,9 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | `UC-CAT-13` | Kiểm duyệt sản phẩm thủ công theo hàng đợi (Staff Moderator) | S2 | `/admin/product-moderation` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-CAT-14` | Quản lý danh mục sàn toàn cục & Cấu hình tỷ lệ hoa hồng | S2 | `/admin/catalog`, `/admin/commission` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-CAT-15` | Cấu hình bộ thuộc tính chuẩn theo ngành hàng (Category Attributes) | S7 | `/admin/catalog/:id/attributes` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-16` | Xem trang gian hàng (Shop Page) | S2 | `/shop/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-16` | Xem trang gian hàng (Shop Page) | S2 | `/shop/{id}` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>backend + test + web nối xong (cờ `shop`), chưa chạy thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
 | `UC-CAT-17` | Người bán đề xuất danh mục mới & Duyệt đề xuất | S7 | `/seller/catalog`, `/admin/catalog` (đề xuất) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-CAT-18` | Chia sẻ sản phẩm bằng liên kết (Deeplink) | S7 | Nút Chia sẻ ở `/p/…`, `/shop/…` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-CAT-18` | Chia sẻ sản phẩm bằng liên kết (Deeplink) | S7 | Nút Chia sẻ ở `/p/…`, `/shop/…` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>deeplink `?v={variant_id}&src=share` + OG giá + ghi lượt xem xong, chưa thử dán link thật · plan `plan/2026-11-17`</sub> | Nghiêm Phú Đăng Quân |
 
 ### Phân hệ 03 — GIỎ HÀNG, ĐẶT HÀNG & ĐƠN HÀNG (CART, CHECKOUT & ORDERS)
 
@@ -264,6 +264,14 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 - [x] Chạy thật (2026-11-20): Admin mời → email → kích hoạt → nhân viên thấy đúng menu → đổi quyền / khóa có hiệu lực ngay
 - [ ] Commit toàn bộ B1 lên nhánh `feature/b1` (30 commit tách nhỏ, chờ duyệt kịch bản)
 
+### Cụm tìm kiếm & trang sản phẩm (UC-CAT-02, 04, 05, 06, 07, 16, 18 — phụ trách: Nghiêm Phú Đăng Quân)
+
+- [ ] Chạy thật hai phía (`PUBLIC_REAL_API=product,search,shop`) theo progress C07.08 — xong thì tick cột **Chạy**
+- [ ] Lọc "Shop có voucher" (UC-CAT-05): module promotion cài cổng `ShopVoucherAvailability`
+- [ ] Lọc danh mục trên web khớp CSDL thật khi UC-CAT-01 (cây danh mục) nối API
+- [ ] Plan sản phẩm người bán (UC-CAT-09/10/11/13) gọi `ProductDetailService.evict(id)` khi sửa / ẩn; lọc HTML `description` khi lưu
+- [ ] Plan Mở shop & KYC (UC-VND-21) gọi `PublicShopService.evict(shopId)` khi sửa thông tin shop
+
 ## 4. Thứ tự phân hệ tiếp theo (gợi ý theo implement.md Phần 1.2)
 
 | Sprint | Phân hệ / UC | Phụ thuộc |
@@ -306,6 +314,8 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-18 | AUTH-09 | Chặn địa chỉ trùng (A12.07) — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-18 | AUTH-09 | Ghi chú cho người giao hàng (A12.08, migration `V20`) — code + test viết xong, chờ build | (chưa commit) |
 | 2026-11-18 | AUTH-09 | Build xanh + chạy thật trên giao diện (địa giới 2 cấp, loại địa chỉ, chặn trùng, ghi chú, GPS) → **✅ Đã triển khai**; giao diện: tìm nhanh không phân biệt dấu, thẻ địa chỉ cân lại, placeholder nhạt hơn; trang chủ: bảng đường tiền chồng 1/3 ảnh | (chưa commit) |
+| 2026-11-18 | CAT-02, 04, 05, 06, 07, 16, 18 | Phân công Nghiêm Phú Đăng Quân; lập plan + progress `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (54 task, 12 commit, giai đoạn C00–C08; stack + thuật toán tìm kiếm A1–A13). Chưa đổi ô nào (vẫn ⬜ Chưa triển khai). Đồng bộ cột *Người phụ trách* trong Excel | — |
+| 2026-11-18 | CAT-02, 04, 05, 06, 07, 16, 18 | Backend (`/public/products`, `/search/suggestions`, `/search/trending`, `/products/{id}`, `/variants`, `/views`, `/similar`, `/recommendations`, `/public/shops`) + 74 test mới xanh (24 unit + 50 IT; toàn backend 212) + web nối API sau cờ `PUBLIC_REAL_API=product,search,shop`, Playwright 22/22; 7 UC → 🟡 Đang triển khai (CAT-05 BE / Nối `◐`), chưa chạy thật | `feature/web-catalog-real-api` (`a45aedb`…`cafbf78`) |
 | 2026-11-19 | ADM-01, 02, 03 | Nhận cụm B1 (Nguyễn Quốc Khoa); plan `plan/2026-11-19/b1.md` chốt D1–D15. Luồng lời mời mới: thông tin ở PostgreSQL, mã link ở Redis `auth:staff_invite:*` 48 giờ; Admin xem được lời mời hết hạn (`INVITATION_EXPIRED`, `invitation_expires_at` suy từ Redis + `system_logs`) và gửi lại. Trạng thái giữ ⬜ tới khi có backend | `b8ca54a`, nhánh `feature/admin-staff-rbac` |
 | 2026-11-19 | ADM-01 | B1 R01–R02: API_SPEC 1.6 + mã lỗi `GNE-ADM-*` + mẫu email mời; `auth` tạo tài khoản nhân viên, mã lời mời Redis, `POST /auth/staff-activations` (+ `/otp-challenges`), `StaffActivationIT` — code + test viết xong, chờ build; trạng thái giữ ⬜ | (chưa commit) |
 | 2026-11-19 | ADM-01 | B1 R01–R02 build xanh (`./mvnw verify`, `StaffActivationIT` 5/5) → BE ◐, Test ◐, trạng thái 🟡; đồng bộ Excel (Hiện trạng, Người phụ trách ADM-01/02/03) | (chưa commit) |
@@ -319,4 +329,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-20 | ADM-01 | Form mời cảnh báo tức thời khi email đã thuộc khách hàng / người bán / nhân viên (`GET /admin/staff/email-check`, `GNE-ADM-4091` kèm `taken_by`) — viết xong, chờ build | (chưa commit) |
 | 2026-11-20 | ADM-01, AUTH-03 | Nhân viên chờ kích hoạt không đăng nhập Google được (`403 GNE-AUTH-4033`, câu báo chung) — vá lỗ hổng bỏ qua bước kích hoạt; chờ build | (chưa commit) |
 | 2026-11-20 | ADM-01, AUTH-03 | Chốt D17: mọi tài khoản nội bộ STAFF / ADMIN chỉ đăng nhập email + mật khẩu — chặn đăng nhập / liên kết Google, Zalo (`403 GNE-AUTH-4033`, câu báo chung); chờ build | (chưa commit) |
-| 2026-11-20 | ADM-01, 02, 03 | Chủ dự án build + verify xanh và chạy thật xong → UC-ADM-01, UC-ADM-02 ✅ Đã triển khai (đủ 5 lớp); UC-ADM-03 🟡 (khóa / mở nhân viên xong, còn `/admin/users` + cron). Tổng quan: Đã triển khai 4 → 6, Đang triển khai 19 → 18, Chưa (mock) 53 → 52; phân hệ 11: 2 / 3 / 3. Đồng bộ Excel | (chờ commit — `feature/b1`) |
+| 2026-11-20 | ADM-01, 02, 03 | Chủ dự án build + verify xanh và chạy thật xong → UC-ADM-01, UC-ADM-02 ✅ Đã triển khai (đủ 5 lớp); UC-ADM-03 🟡 (khóa / mở nhân viên xong, còn `/admin/users` + cron). Tổng quan (sau khi gộp `develop` — cụm tìm kiếm & trang sản phẩm): Đã triển khai 4 → 6, Đang triển khai **25**, Chưa (mock) **45** — đếm lại theo từng dòng UC (số ở `develop` lệch 1–2 so với bảng phân hệ); phân hệ 11: 2 / 3 / 3. Đồng bộ Excel | (chờ commit — `feature/b1`) |

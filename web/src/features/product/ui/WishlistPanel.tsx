@@ -8,7 +8,7 @@ import { errorMessage } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { formatVND } from '@/shared/lib/format';
 import { Providers } from '@/shared/providers/Providers';
-import { Button, EmptyState, PanelHead, Skeleton, toast } from '@/shared/ui';
+import { Button, EmptyState, Icon, PanelHead, Skeleton, toast } from '@/shared/ui';
 import { $wishlist, loadWishlist, toggleWishlist } from '../application/wishlist.store';
 import { priceOf, productHref, stockOf, variantLabel } from '../domain/product.rules';
 import type { WishlistEntry } from '../domain/product.types';
@@ -73,14 +73,23 @@ function Panel() {
             className="flex items-center gap-3 py-3 border-0 border-t border-solid border-line-subtle flex-wrap"
           >
             <a href={productHref({ slug: p.slug, id: p.productId })} className="flex-none">
-              <img
-                src={p.image ?? ''}
-                alt=""
-                width={64}
-                height={64}
-                loading="lazy"
-                className="w-16 h-16 rounded-sm object-cover"
-              />
+              {p.image ? (
+                <img
+                  src={p.image}
+                  alt=""
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  className="w-16 h-16 rounded-sm object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className="flex w-16 h-16 items-center justify-center rounded-sm bg-gray-100 text-subtle"
+                >
+                  <Icon name="image" size={24} />
+                </span>
+              )}
             </a>
             <div className="flex-1 min-w-[160px]">
               <a

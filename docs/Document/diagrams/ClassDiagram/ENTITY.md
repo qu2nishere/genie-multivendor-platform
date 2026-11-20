@@ -6656,8 +6656,11 @@ Nhìn vào danh sách enum có thể thấy ngay hệ thống coi cái gì là n
 
 | Bảng | Index | Phục vụ |
 |---|---|---|
-| `products` | `GIN (search_vector)` — cột `tsvector` sinh từ `name`, `brand`, `description` (qua `unaccent`) | UC-CAT-02 tìm kiếm theo từ khóa |
+| `products` | `GIN (search_vector)` — cột `tsvector` sinh từ `name` (trọng số A), `brand` (B), `description` (D) qua `immutable_unaccent(lower(…))` (`V21`) | UC-CAT-02 tìm kiếm theo từ khóa, xếp hạng `ts_rank_cd` |
 | `products` | `GIN (name gin_trgm_ops)` | Gợi ý khi gõ sai nhẹ (`similarity()`) |
+| `products` | `GIN (immutable_unaccent(lower(name)) gin_trgm_ops)` (`V21`) | Gợi ý khi gõ / bù gõ sai không dấu (`word_similarity`), độ giống tên của sản phẩm tương tự (UC-CAT-04, 07) |
+| `products` | `(status, sold DESC NULLS LAST)` (`V21`) | Lưới công khai sắp theo bán chạy (UC-CAT-05, 07) |
+| `product_variants` | `(product_id, price) WHERE deleted_at IS NULL` (`V21`) | Giá thấp nhất của sản phẩm — lọc / sắp theo giá, khoảng giá ±50% (UC-CAT-05, 07) |
 | `products` | `(category_id, status, created_at DESC)` | UC-CAT-01 / UC-CAT-05 duyệt & lọc |
 | `products` | `(vendor_id, status)` | UC-CAT-16 trang shop, kênh người bán |
 | `product_variants` | `UNIQUE (sku)` | Chống trùng SKU |

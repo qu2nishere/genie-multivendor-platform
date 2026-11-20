@@ -23,13 +23,14 @@ import {
 } from '@/shared/ui';
 import { $selection } from '../application/selection.store';
 import {
-  decodeSelection,
+  decodeShared,
   isFlashSoldOut,
+  isOptionOut,
   maxQty,
   missingGroups,
   priceOf,
   skuOf,
-  stockOf,
+  stockFor,
   variantLabel,
   LOW_STOCK,
   type Selection,
@@ -66,14 +67,14 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
   useEffect(() => {
     const u = new URL(window.location.href);
     const shared = u.searchParams.get('v');
-    $selection.set(decodeSelection(p.variantGroups, shared));
+    $selection.set(decodeShared(p, shared));
     if (shared || u.searchParams.get('src')) {
       u.searchParams.delete('v');
       u.searchParams.delete('src');
       window.history.replaceState(window.history.state, '', u);
     }
     return () => $selection.set({});
-  }, [p.id, p.variantGroups]);
+  }, [p]);
 
   const pick = (group: string, i: number) => {
     $selection.set({ ...sel, [group]: i } satisfies Selection);
@@ -81,7 +82,7 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
   };
 
   const price = priceOf(p, sel);
-  const stock = stockOf(p.variantGroups, sel);
+  const stock = stockFor(p, sel);
   const soldOut = stock === 0 && !p.preorderDays;
   const flashOut = isFlashSoldOut(p);
   const vacation = vacationUntil !== null;
@@ -196,7 +197,7 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
             </span>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby={`vg-${gi}`}>
               {g.options.map((o, i) => {
-                const out = g.controlsStock && (o.stock ?? 0) === 0;
+                const out = isOptionOut(p, sel, gi, i);
                 const on = sel[g.name] === i;
                 return (
                   <button

@@ -13,6 +13,20 @@ export function slugify(input: string): string {
     .replace(/-{2,}/g, '-');
 }
 
+/** Độ dài tối đa slug sản phẩm — khớp `SlugUtil.MAX_LENGTH` của backend. */
+export const PRODUCT_SLUG_MAX = 80;
+
+/**
+ * Slug sản phẩm sinh từ tên — CÙNG thuật toán với `SlugUtil.slugify` (backend, plan 2026-11-17 A11, D2):
+ * như {@link slugify} + cắt 80 ký tự (bỏ gạch cuối) + rỗng thì "san-pham". Hai phía test chung bộ mẫu
+ * `docs/api-tests/slug-samples.json`.
+ */
+export function productSlug(name: string | null | undefined): string {
+  let s = slugify(name ?? '');
+  if (s.length > PRODUCT_SLUG_MAX) s = s.slice(0, PRODUCT_SLUG_MAX).replace(/^-+|-+$/g, '');
+  return s || 'san-pham';
+}
+
 /** Tách "/p/tai-nghe-anc-pro-5-12" → { slug: "tai-nghe-anc-pro-5", id: 12 }. */
 export function splitSlugId(param: string): { slug: string; id: number } | null {
   const m = /^(.*)-(\d+)$/.exec(param);
