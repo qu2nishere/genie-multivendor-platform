@@ -227,20 +227,20 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getAdminMe` | me.api.ts | `GET /admin/me` |
-| `listStaff` | system.api.ts | `GET /admin/staff` |
-| `inviteStaff` | system.api.ts | `POST /admin/staff/invitations` |
-| `resendInvitation` | system.api.ts | `POST /admin/staff/{id}/invitations/resend` |
-| `updateStaffPermissions` | system.api.ts | `PUT /admin/staff/{id}/permissions` |
-| `lockStaff` | system.api.ts | `POST /admin/staff/{id}/lock` |
-| `unlockStaff` | system.api.ts | `POST /admin/staff/{id}/unlock` |
-| `deleteStaff` | system.api.ts | `DELETE /admin/staff/{id}` |
+| `getAdminMe` | me.api.ts | `GET /admin/me` — **đã nối** (theo nhóm `auth`, plan B1) |
+| `listStaff` | system.api.ts | `GET /admin/staff` — **đã nối** (`PUBLIC_REAL_API=rbac`; trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`) |
+| `inviteStaff` | system.api.ts | `POST /admin/staff/invitations` — **đã nối** (`rbac`) |
+| `resendInvitation` | system.api.ts | `POST /admin/staff/{id}/invitations/resend` — **đã nối** (`rbac`) |
+| `updateStaffPermissions` | system.api.ts | `PUT /admin/staff/{id}/permissions` — **đã nối** (`rbac`) |
+| `lockStaff` | system.api.ts | `POST /admin/staff/{id}/lock` — **đã nối** (`rbac`) |
+| `unlockStaff` | system.api.ts | `POST /admin/staff/{id}/unlock` — **đã nối** (`rbac`) |
+| `deleteStaff` | system.api.ts | `DELETE /admin/staff/{id}` — **đã nối** (`rbac`) |
 | `listUsers` | system.api.ts | `GET /admin/users` |
 | `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` |
 | `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` |
 | `auditNow` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`) |
 | `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`); xuất: `exportAuditLogs` → `GET /admin/audit-logs/export` |
-| `updateAdminMe` | system.api.ts | `PATCH /admin/me` |
+| `updateAdminMe` | system.api.ts | `PATCH /admin/me` — **đã nối** (theo nhóm `auth`, plan B1) |
 
 ### `auth`
 
