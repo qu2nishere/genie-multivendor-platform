@@ -1,5 +1,5 @@
 // Nhân viên & phân quyền (11.18), người dùng (11.13), nhật ký (11.10), sửa tài khoản (11.1 PATCH
-// /admin/me). Mock báo lỗi như server: email đã dùng (GNE-ADM-4091), sai đuôi (GNE-ADM-4221), xóa chính
+// /admin/me). Mock báo lỗi như server: email đã dùng (GNE-ADM-4091), tên miền không được phép (GNE-ADM-4221), xóa chính
 // mình (GNE-ADM-4092), cấp MANAGE_RBAC cho Staff (GNE-SEC-4031).
 import { api, getPage, request, requestBlob } from '@/shared/api/http';
 import { mockDelay, mockFail, paginateCursor, USE_MOCK } from '@/shared/api/mock';
@@ -26,11 +26,12 @@ import type {
   AuditEntry,
   InviteInput,
   PlatformUser,
+  StaffEmailCheck,
   StaffMember,
   UserCounts,
   UserTab,
 } from '../domain/system.types';
-import type { AuditLogDto, PlatformUserDto, StaffDto } from './system.dto';
+import type { AuditLogDto, PlatformUserDto, StaffDto, StaffEmailCheckDto } from './system.dto';
 import { adminMeStore, AUDIT_DTOS, AUDIT_NOW, staffStore, usersStore } from './system.mock';
 
 const toStaff = (d: StaffDto): StaffMember => ({
@@ -41,6 +42,7 @@ const toStaff = (d: StaffDto): StaffMember => ({
   staffTitle: d.staff_title,
   permissions: d.permissions.filter(isPermission),
   status: d.status,
+  invitationExpiresAt: d.invitation_expires_at ?? null,
   isSelf: d.is_self,
 });
 
@@ -71,8 +73,13 @@ const toAudit = (d: AuditLogDto): AuditEntry => ({
 });
 
 // ---------- Nhân viên ----------
+/** Nhân viên & phân quyền (11.18) nối API thật khi `PUBLIC_REAL_API` có `rbac` (plan B1 R08.01). */
+const STAFF_MOCK = isMocked('rbac');
+/** Sửa tài khoản (PATCH /admin/me) đi cùng phiên đăng nhập thật — nhóm `auth`. */
+const ME_MOCK = isMocked('auth');
+
 export async function listStaff(q: string): Promise<StaffMember[]> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(160);
     return staffStore
       .get()
@@ -92,6 +99,34 @@ function patchStaff(id: number, fn: (s: StaffDto) => StaffDto): void {
   staffStore.set(rows.map((s) => (s.id === id ? fn(s) : s)));
 }
 
+/**
+ * Kiểm tra email trước khi mời (cảnh báo tức thời): đã thuộc khách hàng / người bán / nhân viên chưa. Mock tra cả danh
+ * sách nhân viên lẫn danh sách người dùng.
+ */
+export async function checkStaffEmail(
+  email: string,
+  signal?: AbortSignal,
+): Promise<StaffEmailCheck> {
+  const normalized = email.trim().toLowerCase();
+  if (STAFF_MOCK) {
+    await mockDelay(150);
+    if (!STAFF_EMAIL.test(normalized))
+      return { email: normalized, available: false, reason: 'INVALID', takenBy: null };
+    const owner =
+      staffStore.get().find((s) => s.email.toLowerCase() === normalized)?.role ??
+      usersStore.get().find((u) => u.email.toLowerCase() === normalized)?.role ??
+      null;
+    return owner
+      ? { email: normalized, available: false, reason: 'TAKEN', takenBy: owner }
+      : { email: normalized, available: true, reason: null, takenBy: null };
+  }
+  const d = await api.get<StaffEmailCheckDto>('/admin/staff/email-check', {
+    query: { email: normalized },
+    signal,
+  });
+  return { email: d.email, available: d.available, reason: d.reason, takenBy: d.taken_by };
+}
+
 export async function inviteStaff(v: InviteInput): Promise<void> {
   const body = {
     full_name: v.fullName.trim(),
@@ -99,11 +134,13 @@ export async function inviteStaff(v: InviteInput): Promise<void> {
     staff_title: v.staffTitle,
     permissions: v.permissions,
   };
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(300);
     if (!STAFF_EMAIL.test(body.email)) mockFail('GNE-ADM-4221');
     const rows = staffStore.get();
     if (rows.some((s) => s.email === body.email)) mockFail('GNE-ADM-4091');
+    if (usersStore.get().some((u) => u.email.toLowerCase() === body.email))
+      mockFail('GNE-ADM-4091');
     if (body.permissions.includes('MANAGE_RBAC')) mockFail('GNE-SEC-4031');
     staffStore.set([
       ...rows,
@@ -112,6 +149,7 @@ export async function inviteStaff(v: InviteInput): Promise<void> {
         ...body,
         role: 'STAFF',
         status: 'PENDING_ACTIVATION',
+        invitation_expires_at: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
         is_self: false,
       },
     ]);
@@ -121,8 +159,13 @@ export async function inviteStaff(v: InviteInput): Promise<void> {
 }
 
 export async function resendInvitation(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(200);
+    patchStaff(id, (s) => ({
+      ...s,
+      status: 'PENDING_ACTIVATION',
+      invitation_expires_at: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
+    }));
     return;
   }
   await api.post(`/admin/staff/${id}/invitations/resend`);
@@ -134,7 +177,7 @@ export async function updateStaffPermissions(
   title: Exclude<StaffTitle, 'ADMIN'>,
   permissions: PermissionCode[],
 ): Promise<string[]> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(250);
     if (permissions.includes('MANAGE_RBAC')) mockFail('GNE-SEC-4031');
     patchStaff(id, (s) => ({ ...s, staff_title: title, permissions }));
@@ -148,7 +191,7 @@ export async function updateStaffPermissions(
 }
 
 export async function lockStaff(id: number, reason: string): Promise<void> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(220);
     patchStaff(id, (s) => ({ ...s, status: 'LOCKED' }));
     return;
@@ -157,7 +200,7 @@ export async function lockStaff(id: number, reason: string): Promise<void> {
 }
 
 export async function unlockStaff(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(220);
     patchStaff(id, (s) => ({ ...s, status: 'ACTIVE' }));
     return;
@@ -166,7 +209,7 @@ export async function unlockStaff(id: number): Promise<void> {
 }
 
 export async function deleteStaff(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (STAFF_MOCK) {
     await mockDelay(220);
     const s = staffStore.get().find((x) => x.id === id);
     if (s?.is_self) mockFail('GNE-ADM-4092');
@@ -356,7 +399,7 @@ export async function updateAdminMe(p: {
   avatarObjectKey?: string;
   avatarPreview?: string | null;
 }): Promise<void> {
-  if (USE_MOCK) {
+  if (ME_MOCK) {
     await mockDelay(220);
     const cur = adminMeStore.get();
     adminMeStore.set({

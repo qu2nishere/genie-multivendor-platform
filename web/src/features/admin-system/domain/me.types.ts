@@ -2,7 +2,8 @@
 import type { PermissionCode, StaffTitle } from '@/shared/auth/permissions';
 
 export type StaffRole = 'STAFF' | 'ADMIN';
-export type StaffStatus = 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION';
+/** API_SPEC 16.2 `StaffStatus` — INVITATION_EXPIRED: lời mời quá 48 giờ chưa kích hoạt (plan B1 D5). */
+export type StaffStatus = 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION' | 'INVITATION_EXPIRED';
 
 export interface AdminMe {
   id: number;

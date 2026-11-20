@@ -13,6 +13,8 @@ export interface StaffMember {
   staffTitle: Exclude<StaffTitle, 'ADMIN'> | null;
   permissions: PermissionCode[];
   status: StaffStatus;
+  /** Hạn lời mời — chỉ có khi PENDING_ACTIVATION / INVITATION_EXPIRED. */
+  invitationExpiresAt: string | null;
   isSelf: boolean;
 }
 
@@ -21,6 +23,17 @@ export interface InviteInput {
   email: string;
   staffTitle: Exclude<StaffTitle, 'ADMIN'>;
   permissions: PermissionCode[];
+}
+
+/** Vai trò tài khoản đang giữ email (OTHER: tài khoản đang chờ xóa / không rõ vai trò). */
+export type EmailOwner = 'CUSTOMER' | 'VENDOR' | 'STAFF' | 'ADMIN' | 'OTHER';
+
+/** Kết quả kiểm tra email trước khi mời — GET /admin/staff/email-check (cảnh báo tức thời ở form). */
+export interface StaffEmailCheck {
+  email: string;
+  available: boolean;
+  reason: 'INVALID' | 'DOMAIN' | 'TAKEN' | null;
+  takenBy: EmailOwner | null;
 }
 
 // ---------- 11.13 Người dùng ----------

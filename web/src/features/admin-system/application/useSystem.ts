@@ -11,6 +11,7 @@ import type { Duration, SuspendReason } from '../domain/system.rules';
 import type { InviteInput, UserTab } from '../domain/system.types';
 import {
   auditNow,
+  checkStaffEmail,
   deleteStaff,
   inviteStaff,
   listAllAuditLogs,
@@ -44,6 +45,17 @@ export const useStaff = (q: string) =>
     queryKey: [...KEY, 'staff', q],
     queryFn: () => listStaff(q),
     placeholderData: keepPreviousData,
+  });
+/**
+ * Kiểm tra email ở form mời — chỉ gọi khi email đã đúng định dạng (đã debounce ở form). Kết quả giữ 30 giây.
+ */
+export const useStaffEmailCheck = (email: string, enabled: boolean) =>
+  useQuery({
+    queryKey: [...KEY, 'staff-email-check', email],
+    queryFn: ({ signal }) => checkStaffEmail(email, signal),
+    enabled,
+    staleTime: 30_000,
+    retry: false,
   });
 export const useInviteStaff = () => useAdminMutation((v: InviteInput) => inviteStaff(v));
 export const useResendInvitation = () => useAdminMutation((id: number) => resendInvitation(id));
