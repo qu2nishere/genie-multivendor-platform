@@ -34,8 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
  *   <li>{@link #promoteToVendor} — UC-VND-01 mở shop: CUSTOMER → VENDOR, GIỮ phiên; token làm mới mang vai trò mới;</li>
  *   <li>{@link #suspend} / {@link #reactivate} — UC-ADM-03: đình chỉ thì thu hồi mọi phiên và chặn ngay access token.</li>
  *   <li>Nhân viên (UC-ADM-01/02/03, plan B1): {@link #createStaffAccount}, {@link #sendStaffInvitation},
- *       {@link #invitationsRemaining}, {@link #listStaffAccounts}, {@link #lockStaff}, {@link #deleteStaff},
- *       {@link #revokeSessions} — module {@code admin} điều phối, {@code auth} không gọi ngược {@code admin}.</li>
+ *       {@link #invitationsRemaining}, {@link #listStaffAccounts}, {@link #lockStaff}, {@link #deleteStaff} — module
+ *       {@code admin} điều phối, {@code auth} không gọi ngược {@code admin}. Đổi quyền KHÔNG thu hồi phiên (plan B1 D19).</li>
  * </ul>
  */
 @Component
@@ -197,12 +197,6 @@ public class UserFacade {
         return users.findInternalAccounts().stream()
                 .map(u -> new StaffAccountView(u.getId(), u.getEmail(), u.getRole(), u.getStatus().name()))
                 .toList();
-    }
-
-    /** Thu hồi mọi phiên để quyền / chức danh mới có hiệu lực ngay (UC-ADM-02 bước 4). */
-    @Transactional
-    public void revokeSessions(long userId) {
-        sessions.revokeAllSessions(userId, RevokeReason.ROLE_CHANGED);
     }
 
     /** Một tài khoản nội bộ STAFF / ADMIN chưa xóa; khác (khách, shop, không tồn tại) → rỗng. */
