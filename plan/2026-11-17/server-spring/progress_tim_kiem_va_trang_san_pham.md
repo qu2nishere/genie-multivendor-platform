@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/catalog-search` · `feature/catalog-product-detail` · `feature/catalog-shop-page` · `feature/web-catalog-real-api` |
 | **Phụ trách** | Nghiêm Phú Đăng Quân — lập plan và thực hiện (phân công 2026-11-18; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-19 — xong 65 / 66; PR #86 vào `develop` (CI xanh); còn **C07.08** (người phụ trách tự chạy trên giao diện) |
+| **Cập nhật gần nhất** | 2026-11-21 — xong 66 / 66 (C07.08 chạy thật xong); 6 UC ✅, UC-CAT-05 🟡 chờ module promotion + UC-CAT-01 |
 
 **Cách dùng**
 
@@ -148,7 +148,7 @@
 - [x] **C07.05** `WishShare.tsx` — Web Share API / Clipboard
 - [x] **C07.06** `shop.api.ts` + `/shop/[id]`
 - [x] **C07.07** Vitest: mapper, `slug.ts`, khóa giá trị biến thể
-- [ ] **C07.08** Chạy thật hai phía (`PUBLIC_REAL_API=catalog,search,shop`)
+- [x] **C07.08** Chạy thật hai phía (`PUBLIC_REAL_API=catalog,search,shop`)
 - [x] **C07.09** `npm run verify` + Playwright `/search`, `/p/…`
 - [x] **C07.C1** 🔖 COMMIT `fix(web): call catalog endpoints defined in the api spec` · hash: `d8e824d`
 - [x] **C07.C2** 🔖 COMMIT `feat(web): share product deeplink with open graph preview` · hash: `cafbf78`
@@ -170,13 +170,13 @@ Làm **ngay khi xong plan** (hoặc xong từng use case),
 > 2026-11-18: 7 UC đã chuyển 🟡 Đang triển khai trong checklist (BE / Test / Nối); 7 dòng UC dưới đây tick khi **Chạy** xong (C07.08) → ✅.
 > trong file [`docs/Document/CHECKLIST_TIEN_DO_UC.md`](../../../docs/Document/CHECKLIST_TIEN_DO_UC.md) — cách tick xem mục 0 của file đó.
 
-- [ ] `UC-CAT-02` Tìm kiếm sản phẩm theo từ khóa (sau C02 + C07)
-- [ ] `UC-CAT-04` Gợi ý từ khóa tìm kiếm & Xu hướng (sau C03 + C07)
-- [ ] `UC-CAT-05` Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (sau C02 + C07; `◐` nếu `has_shop_voucher` / `discount_min` còn chờ module khác — D8, D10)
-- [ ] `UC-CAT-06` Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (sau C04 + C07)
-- [ ] `UC-CAT-07` Xem gợi ý sản phẩm tương tự (sau C05 + C07)
-- [ ] `UC-CAT-16` Xem trang gian hàng (sau C06 + C07)
-- [ ] `UC-CAT-18` Chia sẻ sản phẩm bằng liên kết — Deeplink (sau C04 lượt xem + C07.04–C07.05)
+- [x] `UC-CAT-02` Tìm kiếm sản phẩm theo từ khóa (sau C02 + C07)
+- [x] `UC-CAT-04` Gợi ý từ khóa tìm kiếm & Xu hướng (sau C03 + C07)
+- [ ] `UC-CAT-05` Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí — Chạy `◐` 2026-11-21 (sau C02 + C07; `◐` nếu `has_shop_voucher` / `discount_min` còn chờ module khác — D8, D10)
+- [x] `UC-CAT-06` Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (sau C04 + C07)
+- [x] `UC-CAT-07` Xem gợi ý sản phẩm tương tự (sau C05 + C07)
+- [x] `UC-CAT-16` Xem trang gian hàng (sau C06 + C07)
+- [x] `UC-CAT-18` Chia sẻ sản phẩm bằng liên kết — Deeplink (sau C04 lượt xem + C07.04–C07.05)
 - [x] Cập nhật số ở mục 1 *Tổng quan* của checklist
 - [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
 - [x] Đổi cột *Hiện trạng mã nguồn* của 7 use case trong `Quản Lý UseCase.xlsx`
@@ -235,3 +235,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo hi�
 | 2026-11-18 | C08 hoàn thiện: `catalog-search.http`, `CatalogOpenApiIT`, Usecase / API_SPEC / LLD / handoff, checklist + Excel + CLAUDE.md. Còn C07.08 (chạy thật) và C08.05 (PR) | `a545337` `a8f1c15` |
 | 2026-11-19 | Kiểm lại 7 UC: chạy thật tự động hai phía (API 37/37, trang SSR 13/13), toàn bộ test backend 218 + web 328 xanh; sửa 3 lỗi phát hiện khi chạy thật (ngưỡng trigram + sort khi ít kết quả, gộp xu hướng có / không dấu, ảnh rỗng) | `c1fc0dd` `0e6277e` `cfe2b87` |
 | 2026-11-19 | Gộp `develop` mới nhất (migration tìm kiếm `V18` → `V21`, bỏ mã lỗi trùng, gộp `TestDataBuilder` / `shop.*`, tính lại checklist), một quy tắc slug sản phẩm cho tìm kiếm + wishlist; backend 417 test + web 333 test + Playwright 22/22 xanh; mở **PR #86** vào `develop` — CI backend / web / commitlint xanh | `e8ad436` `477dccf` · PR #86 |
+| 2026-11-21 | C07.08 chạy thật hai phía theo yêu cầu người phụ trách: API + trình duyệt Chromium (tìm có dấu / không dấu / gõ sai, xu hướng + gợi ý, sắp xếp 4 kiểu + lọc, SKU hết hàng, 301 / 404, tương tự, trang shop, deeplink `?v=&src=share` + OG, lượt xem xuống `product_view_stats`). Sửa lỗi ô giá "Từ" tự gửi form khi bấm sang ô "Đến" (`FilterPanel.tsx`). Phát hiện ETag `/public/**` đổi mỗi lần (thân có `meta.request_id`) → không bao giờ 304, chưa sửa. 6 UC ✅, UC-CAT-05 Chạy ◐ | (chưa commit) |
