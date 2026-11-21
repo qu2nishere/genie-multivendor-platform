@@ -1,6 +1,6 @@
 # BÁO CÁO PHÂN NHÓM USE CASE THEO MỨC ĐỘ ĐỘC LẬP — GENIE (BẢN TLCN)
 
-> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-17) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
+> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-21) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
 > **Mục đích:** chỉ ra use case nào làm riêng được (một plan riêng, chạy song song) mà không chờ hay làm ảnh hưởng use case khác, use case nào phải làm theo cụm hoặc theo chuỗi — làm đầu vào để lập plan trong `plan/<ngày>/<thể loại>/`.
 > **Nguồn đã quét:** quan hệ «include» / «extend», *Tiền điều kiện* và *Thực thể CSDL* của từng use case trong Usecase.md; bảng ánh xạ use case ↔ API ở [API_SPEC.md](document/API_SPEC.md); hiện trạng code `genie-multivendor-platform` (AUTH đã hiện thực; 65 bảng + `V1…V14` có sẵn; `common` đã có Silo, email, nhật ký kiểm toán, phân quyền). Tiến độ từng use case: [CHECKLIST_TIEN_DO_UC.md](CHECKLIST_TIEN_DO_UC.md).
 > **Cách ghi:** mỗi use case ghi **tên đầy đủ** theo Usecase.md, mã đặt trong ngoặc để tra cứu.
@@ -9,13 +9,13 @@
 
 ## Thành viên & phân công
 
-> Cập nhật 2026-11-17. Cột **Phụ trách** ở bảng mục 3, 4 và dòng *Phụ trách* của từng cụm / chuỗi ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
+> Cập nhật 2026-11-21. Cột **Phụ trách** ở bảng mục 3, 4 và dòng *Phụ trách* của từng cụm / chuỗi ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) | Đang triển khai — xem mục 3; còn *Quản lý sổ địa chỉ giao hàng chuẩn GHN* (UC-AUTH-09) và phần còn lại của UC-AUTH-03, 08; plan `plan/2026-11-14/auth.md` |
 | **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang lập plan — `plan/2026-11-16/` (8 plan + seed dữ liệu mẫu), chưa bắt đầu code |
-| **Nghiêm Phú Đăng Quân** | Chưa phân công | — |
+| **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | 6 / 7 ✅ Đã triển khai (chạy thật 2026-11-21); *Lọc nâng cao & Sắp xếp* (UC-CAT-05) 🟡 — chờ lọc "Shop có voucher" (cụm B5 / module promotion) và lọc danh mục (cụm B2); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
 Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
 
@@ -99,13 +99,18 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 *Ghi chú:* *Cấu hình bộ thuộc tính* cần ngành hàng tạo ở *Quản lý danh mục sàn*; *Duyệt cây danh mục* chỉ đọc. Là **gốc** của mọi cụm sản phẩm — nên làm sớm.
 
 ### B3. Storefront đọc công khai (7 use case)
-- Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02)
-- Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04)
-- Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05)
-- Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06)
-- Xem gợi ý sản phẩm tương tự (UC-CAT-07)
-- Xem trang gian hàng (UC-CAT-16)
-- Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18)
+
+*Phụ trách:* **Nghiêm Phú Đăng Quân** — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (+ progress, 66 / 66 task), nhánh `feature/web-catalog-real-api` (PR #86 vào `develop`). Chạy thật hai phía 2026-11-21 (web `PUBLIC_REAL_API=product,search,shop` + backend `local`, seed 200 sản phẩm / 11 shop).
+
+| Use case | Trạng thái | Còn lại |
+|---|---|---|
+| Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) | ✅ Đã triển khai | — |
+| Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) | ✅ Đã triển khai | — |
+| Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) | 🟡 Đang triển khai | Lọc "Shop có voucher" chờ module promotion cài cổng `ShopVoucherAvailability` (cụm B5); lọc danh mục trên web chờ *Duyệt cây danh mục đa cấp* (UC-CAT-01, cụm B2) nối API |
+| Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) | ✅ Đã triển khai | — |
+| Xem gợi ý sản phẩm tương tự (UC-CAT-07) | ✅ Đã triển khai | — |
+| Xem trang gian hàng (UC-CAT-16) | ✅ Đã triển khai | — |
+| Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | ✅ Đã triển khai | Thử dán link vào Zalo / Facebook khi có tên miền công khai (thẻ OG đã kiểm trên HTML) |
 
 *Ghi chú:* chỉ đọc `products` + ghi bộ đếm riêng (lượt xem, từ khóa). Chạy trên **seed sản phẩm**, không chờ người bán đăng bán. *Xem chi tiết sản phẩm* «include» *Xem gợi ý sản phẩm tương tự*; *Gợi ý từ khóa* «extend» *Tìm kiếm sản phẩm*; *Xem trang gian hàng* và *Chia sẻ sản phẩm* «extend» *Xem chi tiết sản phẩm*. Cần cụm B2 có cây danh mục (hoặc seed).
 
@@ -243,5 +248,5 @@ Use case độc lập về nghiệp vụ nhưng các nhánh vẫn sửa chung v�
 ## 8. Thứ tự đề xuất
 
 1. **Song song ngay:** nhóm A (bắt đầu *Quản lý sổ địa chỉ giao hàng chuẩn GHN* và *Tra cứu nhật ký kiểm toán hệ thống*) + cụm **B1 Nhân viên & phân quyền** + cụm **B2 Danh mục sàn**.
-2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed), **B4 Mở shop & KYC** (*Kiểm duyệt thủ công hồ sơ KYC* trước, thẩm định AI sau), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher**.
+2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed — 6 / 7 đã xong 2026-11-21), **B4 Mở shop & KYC** (*Kiểm duyệt thủ công hồ sơ KYC* trước, thẩm định AI sau), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher**.
 3. **Sau cùng:** nhóm C theo chuỗi C1 Đăng bán → C2 Giỏ → Checkout → C3 Thanh toán & ký quỹ → C4 Vận chuyển → C5 Sau giao hàng → C6 Khuyến mãi khi mua / C7 Đánh giá / C8 Trả hàng & hoàn tiền / C9 Ví & rút tiền → C10 Báo cáo, C11 Email giao dịch.

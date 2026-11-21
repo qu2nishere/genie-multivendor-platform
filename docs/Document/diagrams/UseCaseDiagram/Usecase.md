@@ -579,7 +579,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được mở rộng bởi `UC-CAT-04` (điểm «Nhập từ khóa»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Index `GIN (search_vector)` và `GIN (name gin_trgm_ops)` (ENTITY.md mục 13.1); giới hạn 60 request / phút / IP bằng bộ đếm Redis.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku).
 
@@ -604,7 +604,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - TLCN dùng full-text PostgreSQL (`tsvector` + `pg_trgm`), không dùng Elasticsearch / Redis Trie như bản DATN.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [SearchKeywordStat](../ClassDiagram/ENTITY.md#211-searchkeywordstat--thống-kê-từ-khóa-tìm-kiếm-theo-ngày), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -631,7 +631,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   6. Tìm **trong shop** (từ trang shop) ↔ "Mở rộng tìm toàn sàn"; sắp xếp Liên quan / Mới nhất / Bán chạy / Giá.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), phần đã có đã chạy thật 2026-11-21 (sắp xếp, khoảng giá, đánh giá, Chính hãng, Freeship, nơi bán). Còn: lọc "Shop có voucher" (module promotion), lọc danh mục khi UC-CAT-01 nối API — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -662,7 +662,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Mỗi lần mở trang tăng bộ đếm Redis lượt xem theo nguồn (`src`) → job 5 phút ghi `ProductViewStat` và `Product.viewCount`.
 - **Quan hệ Use Case:** `<<include>>` Xem gợi ý sản phẩm tương tự (`UC-CAT-07`); được mở rộng bởi `UC-CAT-16` (điểm «Bấm vào tên shop»), `UC-CAT-18` (điểm «Chia sẻ»).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [ProductImage](../ClassDiagram/ENTITY.md#24-productimage--ảnh-sản-phẩm), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 
@@ -687,7 +687,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Bản TLCN không dùng vector / AI (Qdrant, LLM) — chuyển sang DATN khi có dữ liệu hành vi đủ lớn.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -937,7 +937,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Số liệu tổng hợp của shop cache Redis `shop:stats:{vendorId}` TTL 10 phút; truy vấn danh sách dùng index `(vendor_id, status)`.
   - Chỉ số shop được cập nhật bởi job hằng ngày (tỉ lệ phản hồi) và sự kiện (đánh giá mới / bị ẩn, theo dõi, đăng / ẩn sản phẩm) — không tính trực tiếp mỗi lần mở trang.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductReview](../ClassDiagram/ENTITY.md#91-productreview--đánh-giá-sản-phẩm), [ShopFollow](../ClassDiagram/ENTITY.md#92-shopfollow--theo-dõi-shop), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -989,7 +989,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Không gắn mã giới thiệu / theo dõi cá nhân vào liên kết ở TLCN (chương trình giới thiệu bạn bè, affiliate thuộc DATN).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web đã nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), chờ chạy thật end-to-end — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (2026-11-18).
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 
