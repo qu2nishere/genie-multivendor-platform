@@ -1,0 +1,384 @@
+{
+  "version": 1,
+  "note": "Sinh tự động bởi scripts/seed/excel/excel_to_seed.py — không sửa tay",
+  "images": {
+    "anh/apple iphone 15 pro max 256gb.jpg": {
+      "source_sha256": "7ce3db0e36bd10a34533286cbb8cd15aff29057caab2c0a6ed7c0b5378118808",
+      "asset": "26b20a0b.jpg",
+      "width": 700,
+      "height": 700,
+      "bytes": 40586
+    },
+    "anh/apple macbook air 13 inch m3 8gb256gb.jpg": {
+      "source_sha256": "49d4061ce37d04a85e1cd360ec5177fe329683f2db42d90dec3f478e9c84d5c7",
+      "asset": "f9cb364d.jpg",
+      "width": 275,
+      "height": 183,
+      "bytes": 14011
+    },
+    "anh/balo du lịch osprey farpoint 40.jpg": {
+      "source_sha256": "0092e5873888cdad5ccfb9a47458e086841c4d60d1a1f8fe85545be45c8401ab",
+      "asset": "5d27e518.jpg",
+      "width": 554,
+      "height": 554,
+      "bytes": 14748
+    },
+    "anh/balo the north face borealis 28l.jpg": {
+      "source_sha256": "9e36081ceb1fe2c62934514e519617a15a794b4b06fcfe6aa51f4ddbdcbd3a10",
+      "asset": "3e7b9864.jpg",
+      "width": 494,
+      "height": 619,
+      "bytes": 21502
+    },
+    "anh/bàn làm việc ikea lagkapten adils 120x60 cm.jpg": {
+      "source_sha256": "5cbd3ee088e0d2da31d257d9d985671c65e51f422545d2a40fba372071fa9cdf",
+      "asset": "1a39b46e.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 8184
+    },
+    "anh/bàn phím cơ không dây keychron k2 pro hot-swap.jpg": {
+      "source_sha256": "1248bd3ccb2ae7c1173a28af2c7bb1a93188f15a18342d4e891bc7f38309cf52",
+      "asset": "4e169ef1.jpg",
+      "width": 225,
+      "height": 225,
+      "bytes": 6092
+    },
+    "anh/bình giữ nhiệt lock&lock energetic 500ml.webp": {
+      "source_sha256": "6983149240a31d8bfe26decc0446b538204789c777a3c7a53979d623080e9783",
+      "asset": "ef40f031.jpg",
+      "width": 800,
+      "height": 800,
+      "bytes": 12217
+    },
+    "anh/bộ nồi inox elmich tri-max 3 chiếc.jpg": {
+      "source_sha256": "5e39a95358ddac8d8ad9fabd41a24e07bd9effe2e4176aea10ec264135319b1b",
+      "asset": "10ba1639.jpg",
+      "width": 1020,
+      "height": 680,
+      "bytes": 120934
+    },
+    "anh/chuột không dây logitech mx master 3s.jpg": {
+      "source_sha256": "90e90ee6b4f0935534ad4938bb4bdfa3e46ad55dda3f4da2cba0feba603cba82",
+      "asset": "c73f1cfa.jpg",
+      "width": 547,
+      "height": 365,
+      "bytes": 9054
+    },
+    "anh/chân váy xếp ly h&m.jpg": {
+      "source_sha256": "fd7e9006b0eeef504150c44cfc372f88b3b2a09b6680e37f9a3c06658de1c187",
+      "asset": "f4ef3b6d.jpg",
+      "width": 183,
+      "height": 275,
+      "bytes": 5841
+    },
+    "anh/củ sạc anker 735 nano ii 65w gan 3 cổng.png": {
+      "source_sha256": "536a8f4610bc1fbb3095269ed50a619ddaeb12e9cb509787b5144f65b729b3cb",
+      "asset": "eea1d85b.jpg",
+      "width": 1000,
+      "height": 1000,
+      "bytes": 22378
+    },
+    "anh/dao đầu bếp zwilling four star 20cm.webp": {
+      "source_sha256": "d63738ca60d18ac49f6e0a321a7791af35b990f88ff36391fd2e26be109fa6c4",
+      "asset": "459dfdb8.jpg",
+      "width": 500,
+      "height": 500,
+      "bytes": 6033
+    },
+    "anh/dép crocs classic clog.jpg": {
+      "source_sha256": "e8e942f6370eb86e010211697d239aac94f8ffec72326c117330382b1c399c11",
+      "asset": "3821c458.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 8587
+    },
+    "anh/ghế công thái học sihoo m57.webp": {
+      "source_sha256": "fcd239e899b3d38c094b7cb8b0a996f7bb9f5bdc3fdfa02de7ea85b1c71bbc65",
+      "asset": "1e5ae77c.jpg",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 76171
+    },
+    "anh/giày boot dr. martens 1460 smooth 8 lỗ.jpg": {
+      "source_sha256": "1abbf6030735f542c90d7d0ac31cca7ca133a46063ce6514256e78ddf573b14d",
+      "asset": "1e4a552f.jpg",
+      "width": 399,
+      "height": 501,
+      "bytes": 16977
+    },
+    "anh/giày chạy bộ adidas ultraboost light.jpg": {
+      "source_sha256": "6b1e734829178f153e06a24a4750cf99dc4d42629da24747a5f0271e8695a6e7",
+      "asset": "9df08c3b.jpg",
+      "width": 840,
+      "height": 840,
+      "bytes": 42653
+    },
+    "anh/giày chạy bộ nike pegasus 41.webp": {
+      "source_sha256": "bc96e0ab767f424a56faef64dbc460cd02373b3d3de0ac637472b6dc37d8365b",
+      "asset": "c55e2556.jpg",
+      "width": 500,
+      "height": 500,
+      "bytes": 19109
+    },
+    "anh/giày converse chuck taylor all star classic cổ thấp.jpg": {
+      "source_sha256": "3c2d864893d7e98efbd1189ad55bf796b61a834c18935f62fe36a7faa63518e6",
+      "asset": "9403dd3e.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 11577
+    },
+    "anh/giày thể thao biti's hunter street.webp": {
+      "source_sha256": "5228687d8adf99804c7693bd48d231a20abdc773f3be418e54de4a1dc929e1d2",
+      "asset": "2d7f4060.jpg",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 128732
+    },
+    "anh/giày vans old skool đen trắng.webp": {
+      "source_sha256": "580ba7ac0bd138c261dd4fe4f836c523ca9b74047bb6cc6fe71cc8caa20894a8",
+      "asset": "9290be75.jpg",
+      "width": 900,
+      "height": 900,
+      "bytes": 67088
+    },
+    "anh/gối kê cổ cabeau evolution s3.jpg": {
+      "source_sha256": "201422019310fd3c64b1264f6d03de677514d649baf2f3840b6b291c951c79a5",
+      "asset": "b0dc4a23.jpg",
+      "width": 554,
+      "height": 554,
+      "bytes": 24861
+    },
+    "anh/kem chống nắng la roche-posay anthelios uvmune 400 spf50+ 50ml.jpg": {
+      "source_sha256": "e76c2b155d408ed05e07db6bea9ffa621198d8c13a10de54473822d723090e76",
+      "asset": "09a771db.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 12010
+    },
+    "anh/kính mát ray-ban aviator classic rb3025.webp": {
+      "source_sha256": "de9d2284929bcd0b4dae02506758c5bf17b6df0aeaddf938a3863f755f49d03f",
+      "asset": "7b37083a.jpg",
+      "width": 1200,
+      "height": 779,
+      "bytes": 37221
+    },
+    "anh/kệ sách ikea billy 80x28x202 cm.webp": {
+      "source_sha256": "6a3e411250a49c10e7d083eb0acbfb75784e6634f421fff4c4a4bea56573a33d",
+      "asset": "c40a8a26.jpg",
+      "width": 502,
+      "height": 493,
+      "bytes": 7136
+    },
+    "anh/laptop asus rog strix g16 i7-13650hx rtx 4060 16gb 512gb.jpg": {
+      "source_sha256": "3ca799fbc7cd3005e3646a4b451f513713c4d0c4be6e6324e48e491852cf0c42",
+      "asset": "c3d91176.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 14529
+    },
+    "anh/loa bluetooth jbl flip 6 chống nước ip67.jpg": {
+      "source_sha256": "76cd6a334b903eae2fbf7eeb3740e5cd3fbfe5df3696e315598abb9e746aa201",
+      "asset": "4dbeb8c6.jpg",
+      "width": 700,
+      "height": 700,
+      "bytes": 38438
+    },
+    "anh/mascara maybelline lash sensational sky high.jpg": {
+      "source_sha256": "265c9971b59dc314d3d88a466a7318f9681781ee62c152bc650085db0d559fa5",
+      "asset": "dd5d64ae.jpg",
+      "width": 760,
+      "height": 1130,
+      "bytes": 67104
+    },
+    "anh/máy lọc không khí xiaomi smart air purifier 4.jpg": {
+      "source_sha256": "8c982d56d519ad9e504a6b8085e087f29039f63a9b02103e1290951334deacd8",
+      "asset": "46bb8db7.jpg",
+      "width": 600,
+      "height": 600,
+      "bytes": 38921
+    },
+    "anh/máy ảnh sony zv-1 ii quay vlog.jpg": {
+      "source_sha256": "abb753ee723642169cd02ba020e258c24bd753acd437b3e18b96c7a313576746",
+      "asset": "aa52e2d2.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 16907
+    },
+    "anh/mặt nạ giấy innisfree my real squeeze hộp 10 miếng.jpg": {
+      "source_sha256": "5bb4a62b272cb7a0fd9dc7c747d55f56167035775c7d694bb2e33edd195ff703",
+      "asset": "a13a14ad.jpg",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 129694
+    },
+    "anh/nước hoa nam bleu de chanel eau de parfum 100ml.webp": {
+      "source_sha256": "101eaf83fd130e6eb04b032bb91d9b08f58deb06bd4a88b48f03167fed05fc0e",
+      "asset": "4f694e1e.jpg",
+      "width": 777,
+      "height": 799,
+      "bytes": 45799
+    },
+    "anh/nồi chiên không dầu philips hd9252-90 4.1l chính hãng philips..webp": {
+      "source_sha256": "aba157d9fbc96e33d4118e1d0849be62c16fb02a3fe11e9c50de932a1cbee8b6",
+      "asset": "4a0b11d6.jpg",
+      "width": 600,
+      "height": 600,
+      "bytes": 20376
+    },
+    "anh/phấn nước laneige neo cushion matte spf46.webp": {
+      "source_sha256": "0beef24272394c3187e822deb90cf9b9d8deef25b892490895d0c3057ce22fd5",
+      "asset": "15a2e640.jpg",
+      "width": 900,
+      "height": 900,
+      "bytes": 42479
+    },
+    "anh/quần jeans nam levi's 511 slim.webp": {
+      "source_sha256": "dc59aeebb2ef538f8660bb815857048db0223380e437f6c1520f01cabeb8ca23",
+      "asset": "54f816ab.jpg",
+      "width": 1000,
+      "height": 1000,
+      "bytes": 52066
+    },
+    "anh/robot hút bụi lau nhà roborock q7 max.jpg": {
+      "source_sha256": "96b6dbf080deb68d953d77137f9acd036057094dbc1c2445ed6ea4d1eba47c46",
+      "asset": "22653249.jpg",
+      "width": 1020,
+      "height": 680,
+      "bytes": 98896
+    },
+    "anh/samsung galaxy s24 ultra 256gb.jpg": {
+      "source_sha256": "cc5df56aa382c0de97a3d8a9ac661d93cafb2b4b9cdd719160254f5f8a1d683f",
+      "asset": "e994a744.jpg",
+      "width": 554,
+      "height": 554,
+      "bytes": 21467
+    },
+    "anh/son kem maybelline superstay matte ink.jpg": {
+      "source_sha256": "7d306e1f6c277891bdffd63cd1173bb8a7bc8d9d12b3e8ff9d3fb844df68f7c1",
+      "asset": "6865b89d.jpg",
+      "width": 554,
+      "height": 554,
+      "bytes": 13861
+    },
+    "anh/sữa rửa mặt cerave foaming cleanser 236ml.webp": {
+      "source_sha256": "a1ba900b07685cdd8255348faa6698284367070508182c8a2fffde789be2889c",
+      "asset": "dc182e5a.jpg",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 52548
+    },
+    "anh/tai nghe apple airpods pro 2 cổng usb-c.png": {
+      "source_sha256": "b928b42259c4f6f3f21e14d0b4bbe5bafffc64aa5a21f413547475fc71e4e0c0",
+      "asset": "8ca12b8c.jpg",
+      "width": 600,
+      "height": 600,
+      "bytes": 16789
+    },
+    "anh/tai nghe chống ồn bose quietcomfort ultra headphones.jpg": {
+      "source_sha256": "b8ba8f0afee4618071c19a0847c406867509349666a4f8359c883417263d6d25",
+      "asset": "002eb390.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 14654
+    },
+    "anh/tai nghe chống ồn sony wh-1000xm5.webp": {
+      "source_sha256": "e35e45e9c1b4b58ea5650e8d4958ef4c80297c61450c90a0fef807733988487c",
+      "asset": "551ee910.jpg",
+      "width": 358,
+      "height": 358,
+      "bytes": 6550
+    },
+    "anh/túi du lịch herschel novel duffle 42.5l chính hãng herschel..jpg": {
+      "source_sha256": "7720e88cbe1d7f4c6ed187ef2f96acd5718278157307c838f7e26aef827ec5d9",
+      "asset": "8153c26f.jpg",
+      "width": 461,
+      "height": 433,
+      "bytes": 21953
+    },
+    "anh/túi đeo chéo xiaomi mi city sling bag.jpg": {
+      "source_sha256": "f0de20b4b461f8b9ff35886104b4be16133a6ef6ebf70c8630641222f48176a5",
+      "asset": "afdf894a.jpg",
+      "width": 500,
+      "height": 500,
+      "bytes": 17262
+    },
+    "anh/vali american tourister curio 2 size 69cm.webp": {
+      "source_sha256": "dfa32bfa44e2959493dcb15eed94c3c5c320b315c278f233682d68fecc861c28",
+      "asset": "44ffc60c.jpg",
+      "width": 900,
+      "height": 900,
+      "bytes": 76608
+    },
+    "anh/vòng tay pandora moments mắt xích rắn bạc 925.webp": {
+      "source_sha256": "0e06cc95a1a8c1ea71e84696479259917ca710be9cfa195484a797688410faf1",
+      "asset": "af103795.jpg",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 80908
+    },
+    "anh/áo cardigan len merino nữ uniqlo.jpg": {
+      "source_sha256": "904ccaa7b13dc21443411e50406ebd054541b45725bcf68682cae4488d5d2fb8",
+      "asset": "2d881d94.jpg",
+      "width": 387,
+      "height": 516,
+      "bytes": 11955
+    },
+    "anh/áo hoodie champion reverse weave.webp": {
+      "source_sha256": "38ff234a4b7bdc52b4846d331cebdf596fb56c2e0a2838aac936c9c4778ce3a8",
+      "asset": "a085bd18.jpg",
+      "width": 337,
+      "height": 427,
+      "bytes": 18164
+    },
+    "anh/áo polo lacoste l.12.12 classic fit.webp": {
+      "source_sha256": "a85d2ba379775abb4703fb291864d87800eaccf774f55f688795da19e295f0ef",
+      "asset": "bc9280ac.jpg",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 49271
+    },
+    "anh/áo sơ mi oxford dài tay nam uniqlo.jpg": {
+      "source_sha256": "55ea53a505db395aa160e951ed39b01a1250c25a6164ce347400da2a6e1b8957",
+      "asset": "27659266.jpg",
+      "width": 720,
+      "height": 900,
+      "bytes": 36615
+    },
+    "anh/áo thun uniqlo u crew neck ngắn tay.jpg": {
+      "source_sha256": "7705befe63095e8d0cc37b2212e56094dffb8e4f41b1e0e6fc51b5a5fa30b526",
+      "asset": "65ec1ce9.jpg",
+      "width": 194,
+      "height": 259,
+      "bytes": 3939
+    },
+    "anh/đèn ngủ thông minh xiaomi mi bedside lamp 2.jpg": {
+      "source_sha256": "1956a36da10be296a9f79e4e7258fce7acddb52e7c387d192828d50ace207d34",
+      "asset": "5df1e34b.jpg",
+      "width": 1020,
+      "height": 680,
+      "bytes": 10643
+    },
+    "anh/đầm midi satin zara.jpg": {
+      "source_sha256": "5603afd829ab53265b7ed0da0f83b9df307f697a21418e818d3d2e2c94f8b0f5",
+      "asset": "f572c92c.jpg",
+      "width": 800,
+      "height": 1200,
+      "bytes": 50810
+    },
+    "anh/đồng hồ apple watch series 9 gps 41mm.jpg": {
+      "source_sha256": "c6d17400cefd80890ce2a9a3094c726fca71d4597acfa552cc02f18db9061896",
+      "asset": "c697c18c.jpg",
+      "width": 447,
+      "height": 447,
+      "bytes": 14536
+    },
+    "anh/đồng hồ casio g-shock ga-2100-1a1jpg.jpg": {
+      "source_sha256": "5d99507b5b2c13c47454e3bba1a3c41689ca285fa99ce06114fa87d210f6ab1e",
+      "asset": "aaae3109.jpg",
+      "width": 600,
+      "height": 600,
+      "bytes": 51910
+    }
+  }
+}

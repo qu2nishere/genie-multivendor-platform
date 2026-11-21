@@ -6,7 +6,18 @@
 WITH v(name, slug, is_verified) AS (VALUES
     ('Sony', 'sony', TRUE), ('Samsung', 'samsung', TRUE), ('Biti''s', 'bitis', TRUE), ('Xiaomi', 'xiaomi', TRUE),
     ('Asus', 'asus', TRUE), ('Maybelline', 'maybelline', TRUE), ('La Roche-Posay', 'la-roche-posay', TRUE),
-    ('JBL', 'jbl', TRUE), ('Logitech', 'logitech', TRUE), ('Chanel', 'chanel', TRUE)
+    ('JBL', 'jbl', TRUE), ('Logitech', 'logitech', TRUE), ('Chanel', 'chanel', TRUE),
+    -- thương hiệu của sản phẩm nhập từ Excel (file 95 — plan 2026-11-21) để bộ lọc theo thương hiệu dùng được
+    ('Apple', 'apple', TRUE), ('Anker', 'anker', TRUE), ('Keychron', 'keychron', TRUE), ('Bose', 'bose', TRUE),
+    ('Nike', 'nike', TRUE), ('Adidas', 'adidas', TRUE), ('Converse', 'converse', TRUE), ('Crocs', 'crocs', TRUE),
+    ('Vans', 'vans', TRUE), ('Dr. Martens', 'dr-martens', TRUE), ('Uniqlo', 'uniqlo', TRUE), ('Levi''s', 'levis', TRUE),
+    ('Champion', 'champion', TRUE), ('Lacoste', 'lacoste', TRUE), ('Zara', 'zara', TRUE), ('H&M', 'h-m', TRUE),
+    ('Ray-Ban', 'ray-ban', TRUE), ('Casio', 'casio', TRUE), ('Pandora', 'pandora', TRUE), ('Philips', 'philips', TRUE),
+    ('Roborock', 'roborock', TRUE), ('Elmich', 'elmich', TRUE), ('Lock&Lock', 'lock-lock', TRUE),
+    ('Zwilling', 'zwilling', TRUE), ('IKEA', 'ikea', TRUE), ('Sihoo', 'sihoo', TRUE), ('CeraVe', 'cerave', TRUE),
+    ('Laneige', 'laneige', TRUE), ('Innisfree', 'innisfree', TRUE), ('American Tourister', 'american-tourister', TRUE),
+    ('The North Face', 'the-north-face', TRUE), ('Herschel', 'herschel', TRUE), ('Cabeau', 'cabeau', TRUE),
+    ('Osprey', 'osprey', TRUE)
 ), upd AS (
     UPDATE brands b SET name = v.name, is_verified = v.is_verified FROM v WHERE b.slug = v.slug RETURNING b.slug
 )
