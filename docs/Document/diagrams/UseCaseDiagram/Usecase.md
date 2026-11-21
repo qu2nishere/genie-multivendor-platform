@@ -2572,7 +2572,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   1. Admin chọn nhân viên → "Sửa quyền"; giao diện hiển thị chức danh và 13 quyền: `VIEW_DASHBOARD` (Tổng quan), `REVIEW_KYC` (Duyệt KYC), `MANAGE_CATALOG` (Danh mục, Duyệt sản phẩm), `MODERATE_REVIEW` (Kiểm duyệt đánh giá), `HANDLE_DISPUTE` (Trả hàng & Hoàn tiền), `PROCESS_PAYOUT` (Xử lý rút tiền), `UPDATE_COMMISSION` (Cấu hình hoa hồng), `VIEW_FINANCE` (Sổ cái tài chính), `MANAGE_VOUCHER` (Voucher sàn, Flash Sale), `MANAGE_PLATFORM_NOTIFICATION` (Thông báo sàn), `VIEW_AUDIT_LOG` (Nhật ký hệ thống), `MANAGE_USER` (Khóa người dùng), `MANAGE_RBAC` (chỉ Admin).
   2. Đổi chức danh → `AdminProfile.changeTitle()` đề xuất bộ quyền mặc định; Admin xác nhận.
   3. Tích / bỏ tích quyền → thêm dòng mới hoặc `StaffPermission.revoke()`.
-  4. Lưu: phiên đăng nhập của nhân viên được làm mới quyền (thu hồi refresh token) để quyền mới có hiệu lực ngay.
+  4. Lưu: quyền mới có hiệu lực ngay ở request kế tiếp của nhân viên (server đọc mã quyền từ CSDL mỗi request) — **không** buộc đăng nhập lại; giao diện của nhân viên đang mở tự cập nhật menu qua kênh realtime, đang ở màn vừa mất quyền thì chuyển về trang chính kèm thông báo (sửa 2026-11-21, plan B1 D19).
   5. Nav Admin chỉ hiện mục nhân viên có quyền; truy cập trực tiếp mục không có quyền → màn "Bạn không có quyền truy cập… Liên hệ Admin" và ghi `system_logs` `ACCESS_DENIED`.
 - **Luồng thay thế / Ngoại lệ:**
   - *Cấp `MANAGE_RBAC` cho STAFF:* từ chối (`GNE-SEC-4031`).
