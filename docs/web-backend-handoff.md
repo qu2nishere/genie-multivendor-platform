@@ -235,9 +235,9 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `lockStaff` | system.api.ts | `POST /admin/staff/{id}/lock` — **đã nối** (`rbac`) |
 | `unlockStaff` | system.api.ts | `POST /admin/staff/{id}/unlock` — **đã nối** (`rbac`) |
 | `deleteStaff` | system.api.ts | `DELETE /admin/staff/{id}` — **đã nối** (`rbac`) |
-| `listUsers` | system.api.ts | `GET /admin/users` |
-| `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` |
-| `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` |
+| `listUsers` | system.api.ts | `GET /admin/users` — **đã nối** (`PUBLIC_REAL_API=users`, plan B1 R05; số đơn / cảnh báo tạm 0 tới khi module order / support cài cổng) |
+| `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` — **đã nối** (`users`) |
+| `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` — **đã nối** (`users`) |
 | `auditNow` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`) |
 | `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`); xuất: `exportAuditLogs` → `GET /admin/audit-logs/export` |
 | `updateAdminMe` | system.api.ts | `PATCH /admin/me` — **đã nối** (theo nhóm `auth`, plan B1) |
