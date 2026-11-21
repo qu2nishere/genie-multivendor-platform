@@ -17,15 +17,17 @@
 
 | Nhóm | Task | Xong |
 |---|---|---|
-| E00 Chốt quyết định | 1 | 0 |
-| E01 Khung công cụ | 3 | 0 |
-| E02 Đọc & kiểm tra Excel | 4 | 0 |
-| E03 Ảnh | 5 | 0 |
-| E04 Sinh SQL | 4 | 0 |
-| E05 Nạp & đẩy ảnh | 4 | 0 |
-| E06 Kiểm thử | 3 | 0 |
-| E07 Tài liệu | 3 | 0 |
-| **Tổng** | **27** | **0** |
+| E00 Chốt quyết định | 1 | 1 |
+| E01 Khung công cụ | 3 | 3 |
+| E02 Đọc & kiểm tra Excel | 4 | 4 |
+| E03 Ảnh | 5 | 5 |
+| E04 Sinh SQL | 4 | 4 |
+| E05 Nạp & đẩy ảnh | 4 | 4 |
+| E06 Kiểm thử | 3 | 2 |
+| E07 Tài liệu | 3 | 2 |
+| **Tổng** | **27** | **25** |
+
+Còn lại: **E06.03** (API đã kiểm — chờ xem trên giao diện web) · **E07.03** (cần một người chưa làm tool thử README).
 
 ---
 
@@ -52,7 +54,7 @@
 | X2 | **Kiểm hết rồi mới ghi**: đọc toàn bộ file, gom mọi lỗi kèm `Sheet!Ô` (vd `SanPham!D7: giá phải là số nguyên VND`), có lỗi → in danh sách, thoát mã 1, không ghi file nào |
 | X3 | **Đầu ra tất định**: cùng file Excel → cùng SQL, cùng tên ảnh (băm nội dung). Chạy lại không sinh diff giả trong git |
 | X4 | **SQL sinh ra tuân thủ N1–N3, N6, N7 của plan seed**: chạy lại được, không ghi cứng id, SQL thuần, ảnh lưu khóa đối tượng |
-| X5 | **Tham chiếu sai phải nổ to**: SQL kết thúc bằng khối `DO $$ … RAISE EXCEPTION` nếu có dòng không khớp chủ shop / danh mục / thương hiệu bắt buộc — không âm thầm bỏ qua như `JOIN` thường |
+| X5 | **Tham chiếu sai phải nổ to**: SQL có khối `DO $$ … RAISE EXCEPTION` chạy **trước khi ghi** nếu có dòng không khớp chủ shop (shop VERIFIED) / danh mục — không âm thầm bỏ qua như `JOIN` thường |
 | X6 | Ảnh trong repo đã **chuẩn hóa** (JPEG, cạnh dài ≤ 1200px, chất lượng 85) để repo không phình |
 | X7 | **Người dùng lại không cần Python**: chỉ `git pull` → `upload-assets` → chạy backend (hoặc `seed.sh`). Python chỉ cần cho người sửa Excel |
 
@@ -106,13 +108,13 @@ Trình duyệt mở trang sản phẩm
 | # | Vấn đề | Đề xuất | Chốt |
 |---|---|---|---|
 | D1 | Ảnh nằm ở đâu để **cả nhóm** có (Silo mỗi máy là kho riêng; ảnh chỉ trên Silo máy người tạo thì máy khác vỡ ảnh) | Công cụ ghi bản thu nhỏ vào `scripts/seed/excel/assets/<băm8>.jpg` + `assets/manifest.json` — **bắt buộc commit**; ảnh gốc `anh/` **không commit** (đưa vào `.gitignore`), người khác sinh lại SQL nhờ `manifest.json`. `upload-assets` mirror `assets/` → `product-media/seed/excel/`. Khóa đối tượng trong SQL: `seed/excel/<băm8>.jpg` (xem mục 1b) | ☑ 2026-11-21 |
-| D2 | Cách đưa ảnh vào Excel | Ô `anh` nhận 3 dạng, ưu tiên theo thứ tự: **(1) Chính — tên tệp** trong folder `anh/` cạnh file Excel, nhiều ảnh cách nhau `;` (giữ chất lượng, file Excel nhẹ). **(2) Link `https://…`** — ghi thẳng vào SQL, không tải về, không qua Silo (nhanh nhưng phụ thuộc web ngoài; cảnh báo khi dùng). **(3) Phụ — ảnh chèn thẳng vào Excel** kiểu *Insert → Pictures → Place over Cells* (`openpyxl` đọc ô neo). Ảnh kiểu *Place in Cell* (Excel 365) → **báo lỗi rõ** hướng dẫn chèn lại; hỗ trợ ở E03.05 (cắt được) | ☐ |
-| D3 | Tên file SQL / thứ tự chạy | `R__seed_demo_95_excel_products.sql` — chạy sau 40 (sản phẩm tay) và 90 (bulk), dùng `seed.sh --only 95` để nạp riêng | ☐ |
-| D4 | Sửa dòng trong Excel rồi chạy lại thì sao | Sản phẩm khớp theo `(email chủ shop, tên)`: **cập nhật** mô tả, giá, danh mục, thông số, trạng thái (`UPDATE … FROM`); biến thể `ON CONFLICT (sku) DO UPDATE` giá + tồn + tên; ảnh của sản phẩm Excel **xóa rồi chèn lại** (chỉ dòng có khóa `seed/excel/%`). Đổi **tên** sản phẩm = sản phẩm mới (ghi rõ trong README) | ☐ |
-| D5 | Một hay nhiều file Excel | Một file nguồn duy nhất `scripts/seed/excel/products.xlsx` (commit) → một file SQL. Muốn tách thì nhiều sheet `SanPham` không cần — giữ đơn giản | ☐ |
-| D6 | Mã SKU | `XL-<ma_sp>-<ma_bien_the>` (vd `XL-TN01-BLK`); sản phẩm không có biến thể → tự sinh một SKU `XL-<ma_sp>-STD` "Mặc định" với giá = `gia`, tồn = `ton_kho` | ☐ |
-| D7 | Danh sách chọn shop / danh mục trong file mẫu | Lệnh `template` đọc **file seed hiện có** (`R__seed_demo_10/30`) bằng biểu thức chính quy để lấy slug danh mục + email chủ shop → sheet ẩn `_DanhMuc`, `_Shop` + Data Validation. Không cần kết nối CSDL. Nếu regex quá mong manh → chuyển sang `--from-db` (psycopg, cùng biến `DB_*`) | ☐ |
-| D8 | Cache Redis sau khi nạp (trang sản phẩm cache 5 phút, trang shop 10 phút) | `--apply` in nhắc + tùy chọn `--flush-cache` xóa khóa catalog trong Redis Docker (`redis-cli --scan --pattern '<tiền tố catalog>*' \| xargs DEL`) — tra tiền tố trong `ProductDetailService` / `PublicShopService` khi làm E05.03 | ☐ |
+| D2 | Cách đưa ảnh vào Excel | Ô `anh` nhận 3 dạng, ưu tiên theo thứ tự: **(1) Chính — tên tệp** trong folder `anh/` cạnh file Excel, nhiều ảnh cách nhau `;` (giữ chất lượng, file Excel nhẹ). **(2) Link `https://…`** — ghi thẳng vào SQL, không tải về, không qua Silo (nhanh nhưng phụ thuộc web ngoài; cảnh báo khi dùng). **(3) Phụ — ảnh chèn thẳng vào Excel** kiểu *Insert → Pictures → Place over Cells* (`openpyxl` đọc ô neo). Ảnh kiểu *Place in Cell* (Excel 365) → **báo lỗi rõ** hướng dẫn chèn lại; hỗ trợ ở E03.05 (cắt được) | ☑ 2026-11-21 (theo đề xuất) |
+| D3 | Tên file SQL / thứ tự chạy | `R__seed_demo_95_excel_products.sql` — chạy sau 40 (sản phẩm tay) và 90 (bulk), dùng `seed.sh --only 95` để nạp riêng | ☑ 2026-11-21 (theo đề xuất) |
+| D4 | Sửa dòng trong Excel rồi chạy lại thì sao | Sản phẩm khớp theo `(email chủ shop, tên)`: **cập nhật** mô tả, giá, danh mục, thông số, trạng thái (`UPDATE … FROM`); biến thể `ON CONFLICT (sku) DO UPDATE` giá + tồn + tên; ảnh của sản phẩm Excel **xóa rồi chèn lại** (chỉ dòng có khóa `seed/excel/%`). Đổi **tên** sản phẩm = sản phẩm mới (ghi rõ trong README). *Khi làm:* sản phẩm Excel (có SKU `XL-%`) không còn trong file → `HIDDEN`; biến thể `XL-%` không còn → xóa mềm `deleted_at` | ☑ 2026-11-21 (theo đề xuất) |
+| D5 | Một hay nhiều file Excel | Một file nguồn duy nhất `scripts/seed/excel/products.xlsx` (commit) → một file SQL. Muốn tách thì nhiều sheet `SanPham` không cần — giữ đơn giản | ☑ 2026-11-21 (theo đề xuất) |
+| D6 | Mã SKU | `XL-<ma_sp>-<ma_bien_the>` (vd `XL-TN01-BLK`); sản phẩm không có biến thể → tự sinh một SKU `XL-<ma_sp>-STD` "Mặc định" với giá = `gia`, tồn = `ton_kho` | ☑ 2026-11-21 (theo đề xuất) |
+| D7 | Danh sách chọn shop / danh mục trong file mẫu | Lệnh `template` đọc **file seed hiện có** (`R__seed_demo_10/30`) bằng biểu thức chính quy để lấy slug danh mục + email chủ shop → sheet ẩn `_DanhMuc`, `_Shop` + Data Validation. Không cần kết nối CSDL. Nếu regex quá mong manh → chuyển sang `--from-db` (psycopg, cùng biến `DB_*`) | ☑ 2026-11-21 (theo đề xuất) |
+| D8 | Cache Redis sau khi nạp (trang sản phẩm cache 5 phút, trang shop 10 phút) | `--apply` in nhắc + tùy chọn `--flush-cache` xóa khóa catalog trong Redis Docker (`redis-cli --scan --pattern '<tiền tố catalog>*' \| xargs DEL`) — tra tiền tố trong `ProductDetailService` / `PublicShopService` khi làm E05.03 | ☑ 2026-11-21 (theo đề xuất) |
 
 ---
 
@@ -195,54 +197,54 @@ python scripts/seed/excel/excel_to_seed.py build ... --apply [--flush-cache]    
 ## 5. Danh sách task
 
 ### E00 — Chốt quyết định
-- [ ] **E00.01** Chốt D1–D8 và cấu trúc Excel mục 3 với nhóm; ghi kết quả vào cột *Chốt*.
+- [x] **E00.01** Chốt D1–D8 và cấu trúc Excel mục 3 với nhóm; ghi kết quả vào cột *Chốt*.
 
 ### E01 — Khung công cụ
-- [ ] **E01.01** Tạo `scripts/seed/excel/` + `requirements.txt` + CLI `argparse` 3 lệnh con; mã thoát 0 / 1 (lỗi dữ liệu) / 2 (lỗi dùng lệnh).
-- [ ] **E01.02** Dò gốc repo từ vị trí script (như `seed.sh`), đường dẫn đầu ra cố định (D1, D3); thêm `scripts/seed/excel/.gitignore` bỏ qua `anh/`; chạy được trên Windows (PowerShell, Git Bash) và Linux / macOS.
-- [ ] **E01.03** `excel_to_seed.bat`: nhận đường dẫn file kéo thả, gọi `build --apply`, `pause` cuối để đọc kết quả.
+- [x] **E01.01** Tạo `scripts/seed/excel/` + `requirements.txt` + CLI `argparse` 3 lệnh con; mã thoát 0 / 1 (lỗi dữ liệu) / 2 (lỗi dùng lệnh).
+- [x] **E01.02** Dò gốc repo từ vị trí script (như `seed.sh`), đường dẫn đầu ra cố định (D1, D3); thêm `scripts/seed/excel/.gitignore` bỏ qua `anh/`; chạy được trên Windows (PowerShell, Git Bash) và Linux / macOS.
+- [x] **E01.03** `excel_to_seed.bat`: nhận đường dẫn file kéo thả, gọi `build --apply`, `pause` cuối để đọc kết quả.
 
 ### E02 — Đọc & kiểm tra Excel (X2)
-- [ ] **E02.01** `reader.py`: đọc sheet theo **tên tiêu đề** (không theo vị trí cột), bỏ dòng trống, chuẩn hóa khoảng trắng / Unicode NFC.
-- [ ] **E02.02** Kiểm kiểu & miền giá trị: bắt buộc, số nguyên VND, enum đúng CHECK của V2, độ dài theo cột DB, `ma_sp` / `ma_bien_the` trùng, `BienThe.ma_sp` không có trong `SanPham`, `thuoc_tinh` sai cú pháp.
-- [ ] **E02.03** Kiểm tham chiếu offline: `email_chu_shop` / `slug_danh_muc` có trong danh sách lấy từ file seed (D7); cảnh báo (không chặn) khi `thuong_hieu` / khóa `ThongSo` không khớp.
-- [ ] **E02.04** Báo lỗi gom theo `Sheet!Ô`, tối đa in 50 lỗi + tổng số; lệnh `check` dừng ở đây.
+- [x] **E02.01** `reader.py`: đọc sheet theo **tên tiêu đề** (không theo vị trí cột), bỏ dòng trống, chuẩn hóa khoảng trắng / Unicode NFC.
+- [x] **E02.02** Kiểm kiểu & miền giá trị: bắt buộc, số nguyên VND, enum đúng CHECK của V2, độ dài theo cột DB, `ma_sp` / `ma_bien_the` trùng, `BienThe.ma_sp` không có trong `SanPham`, `thuoc_tinh` sai cú pháp.
+- [x] **E02.03** Kiểm tham chiếu offline: `email_chu_shop` / `slug_danh_muc` có trong danh sách lấy từ file seed (D7); cảnh báo (không chặn) khi `thuong_hieu` / khóa `ThongSo` không khớp.
+- [x] **E02.04** Báo lỗi gom theo `Sheet!Ô`, tối đa in 50 lỗi + tổng số; lệnh `check` dừng ở đây.
 
 ### E03 — Ảnh (D1, D2, X6)
-- [ ] **E03.01** *(cách chính)* Ảnh theo tên tệp: tìm trong `anh/` cạnh file Excel, không phân biệt hoa thường phần mở rộng; chỉ nhận jpg / jpeg / png / webp. Tệp gốc vắng → tra `assets/manifest.json`: có bản thu nhỏ thì dùng lại (người khác sửa Excel không cần ảnh gốc), không có → lỗi theo ô.
-- [ ] **E03.02** Ảnh là link `https://…`: không tải, không chuẩn hóa, ghi nguyên URL vào `image_url` (`MediaUrls` giữ nguyên URL tuyệt đối); in cảnh báo "ảnh phụ thuộc web ngoài"; `http://` thường → lỗi.
-- [ ] **E03.03** *(cách phụ)* Ảnh chèn nổi trong Excel: duyệt `ws._images`, ánh xạ ô neo `(hàng, cột)` → (sản phẩm / biến thể, thứ tự ảnh); nhiều ảnh neo cùng ô → xếp theo vị trí ngang; ảnh neo vào ô không thuộc cột ảnh → lỗi. Phát hiện ảnh *Place in Cell* → lỗi hướng dẫn chèn lại bằng *Place over Cells*.
-- [ ] **E03.04** Chuẩn hóa bằng Pillow (xoay theo EXIF, bỏ alpha → nền trắng, cạnh dài ≤ 1200, JPEG q85), tên `<sha256[:8]>.jpg` theo **nội dung sau chuẩn hóa**; ghi vào `assets/`, trả `width/height/file_size`; cập nhật `assets/manifest.json` (tên tệp gốc → tên băm + kích thước, sắp xếp khóa để tất định); xóa ảnh mồ côi trong `assets/` và mục manifest không còn dòng Excel nào dùng.
-- [ ] **E03.05** *(Giai đoạn 2, cắt được)* Đọc ảnh *Place in Cell*: `xl/metadata.xml` + `xl/richData/*` + thuộc tính `vm` của ô.
+- [x] **E03.01** *(cách chính)* Ảnh theo tên tệp: tìm trong `anh/` cạnh file Excel, không phân biệt hoa thường phần mở rộng; chỉ nhận jpg / jpeg / png / webp. Tệp gốc vắng → tra `assets/manifest.json`: có bản thu nhỏ thì dùng lại (người khác sửa Excel không cần ảnh gốc), không có → lỗi theo ô.
+- [x] **E03.02** Ảnh là link `https://…`: không tải, không chuẩn hóa, ghi nguyên URL vào `image_url` (`MediaUrls` giữ nguyên URL tuyệt đối); in cảnh báo "ảnh phụ thuộc web ngoài"; `http://` thường → lỗi.
+- [x] **E03.03** *(cách phụ)* Ảnh chèn nổi trong Excel: duyệt `ws._images`, ánh xạ ô neo `(hàng, cột)` → (sản phẩm / biến thể, thứ tự ảnh); nhiều ảnh neo cùng ô → xếp theo vị trí ngang; ảnh neo vào ô không thuộc cột ảnh → lỗi. Phát hiện ảnh *Place in Cell* → lỗi hướng dẫn chèn lại bằng *Place over Cells*.
+- [x] **E03.04** Chuẩn hóa bằng Pillow (xoay theo EXIF, bỏ alpha → nền trắng, cạnh dài ≤ 1200, JPEG q85), tên `<sha256[:8]>.jpg` theo **nội dung sau chuẩn hóa**; ghi vào `assets/`, trả `width/height/file_size`; cập nhật `assets/manifest.json` (tên tệp gốc → tên băm + kích thước, sắp xếp khóa để tất định); xóa ảnh mồ côi trong `assets/` và mục manifest không còn dòng Excel nào dùng.
+- [x] **E03.05** *(Giai đoạn 2, cắt được)* Đọc ảnh *Place in Cell*: `xl/metadata.xml` + `xl/richData/*` + thuộc tính `vm` của ô.
 
 ### E04 — Sinh SQL (X3, X4, X5, D4, D6)
-- [ ] **E04.01** Khuôn SQL theo seed 40: đầu file ghi chú nguồn + "FILE SINH TỰ ĐỘNG — sửa Excel rồi chạy lại công cụ"; bảng tạm `xl_product`, `xl_variant`, `xl_image`; escape chuỗi `'` → `''`, JSON qua `json.dumps(ensure_ascii=False)`; thứ tự dòng theo `ma_sp`.
-- [ ] **E04.02** Upsert: `UPDATE products … FROM xl_product` rồi `INSERT … WHERE NOT EXISTS (vendor_id, name)`; biến thể `ON CONFLICT (sku) DO UPDATE`; ảnh `DELETE … WHERE image_url LIKE 'seed/excel/%' AND product_id IN (…)` rồi `INSERT`; cập nhật `active_product_count` như seed 40.
-- [ ] **E04.03** Khối `DO $$` cuối file: đếm dòng `xl_product` không khớp chủ shop / danh mục → `RAISE EXCEPTION` liệt kê `ma_sp`.
-- [ ] **E04.04** Ghi file tất định (LF, UTF-8 không BOM); chạy `build` 2 lần trên cùng Excel → `git diff` rỗng.
+- [x] **E04.01** Khuôn SQL theo seed 40: đầu file ghi chú nguồn + "FILE SINH TỰ ĐỘNG — sửa Excel rồi chạy lại công cụ"; bảng tạm `xl_product`, `xl_variant`, `xl_image`; escape chuỗi `'` → `''`, JSON qua `json.dumps(ensure_ascii=False)`; thứ tự dòng theo `ma_sp`.
+- [x] **E04.02** Upsert: `UPDATE products … FROM xl_product` rồi `INSERT … WHERE NOT EXISTS (vendor_id, name)`; biến thể `ON CONFLICT (sku) DO UPDATE`; ảnh `DELETE … WHERE image_url LIKE 'seed/excel/%' AND product_id IN (…)` rồi `INSERT`; cập nhật `active_product_count` như seed 40.
+- [x] **E04.03** Khối `DO $$` (đặt trước các lệnh ghi): đếm dòng `xl_product` không khớp chủ shop / danh mục → `RAISE EXCEPTION` liệt kê `ma_sp`.
+- [x] **E04.04** Ghi file tất định (LF, UTF-8 không BOM); chạy `build` 2 lần trên cùng Excel → `git diff` rỗng.
 
 ### E05 — Nạp & đẩy ảnh (X1, D8)
-- [ ] **E05.01** Sửa `upload-assets.sh` + `.ps1`: thêm mirror `scripts/seed/excel/assets` → `product-media/seed/excel` (bỏ qua nếu thư mục rỗng).
-- [ ] **E05.02** Kiểm ảnh sau khi đẩy: cuối `upload-assets` đối chiếu mọi khóa `seed/excel/…` trong file SQL 95 với danh sách đối tượng trên Silo (`mcli ls`) → in ảnh thiếu + nhắc kiểm `STORAGE_BUCKET_PREFIX` / `MINIO_ENDPOINT` trong `.env` khớp backend; có ảnh thiếu thì thoát mã ≠ 0.
-- [ ] **E05.03** `--apply`: gọi `upload-assets` rồi `seed.sh --docker --only 95` (Windows: `seed.ps1 -Docker -Only 95`), in bảng số dòng script trả về.
-- [ ] **E05.04** `--flush-cache`: xóa khóa cache catalog trong Redis Docker (tra tiền tố khóa trong `ProductDetailService` / `PublicShopService`); không bật thì in nhắc "trang sản phẩm có thể còn bản cũ tới 5 phút".
+- [x] **E05.01** Sửa `upload-assets.sh` + `.ps1`: thêm mirror `scripts/seed/excel/assets` → `product-media/seed/excel` (bỏ qua nếu thư mục rỗng).
+- [x] **E05.02** Kiểm ảnh sau khi đẩy: cuối `upload-assets` đối chiếu mọi khóa `seed/excel/…` trong file SQL 95 với danh sách đối tượng trên Silo (`mcli ls`) → in ảnh thiếu + nhắc kiểm `STORAGE_BUCKET_PREFIX` / `MINIO_ENDPOINT` trong `.env` khớp backend; có ảnh thiếu thì thoát mã ≠ 0.
+- [x] **E05.03** `--apply`: gọi `upload-assets` rồi `seed.sh --docker --only 95` (Windows: `seed.ps1 -Docker -Only 95`), in bảng số dòng script trả về.
+- [x] **E05.04** `--flush-cache`: xóa khóa cache catalog trong Redis Docker (tra tiền tố khóa trong `ProductDetailService` / `PublicShopService`); không bật thì in nhắc "trang sản phẩm có thể còn bản cũ tới 5 phút".
 
 ### E06 — Kiểm thử
-- [ ] **E06.01** pytest: file Excel nhỏ dựng bằng `openpyxl` trong test (có ảnh nổi) → đúng số sản phẩm / biến thể / ảnh; từng loại lỗi E02.02 báo đúng ô; SQL tất định.
-- [ ] **E06.02** Sửa `SeedDataIT`: nếu có `R__seed_demo_95_*` thì khẳng định ≥ 1 SKU `XL-%`, mọi sản phẩm Excel có ≥ 1 ảnh chính; lần chạy thứ 2 không đổi số dòng (đã có sẵn). `./mvnw verify` xanh.
-- [ ] **E06.03** Chạy thật máy dev: `build --apply` với `products.xlsx` mẫu → sản phẩm hiện ở tìm kiếm, trang sản phẩm có đủ ảnh + biến thể (web `PUBLIC_REAL_API=product,search,shop`); sửa giá một dòng, chạy lại → giá đổi, không sinh trùng.
+- [x] **E06.01** pytest: file Excel nhỏ dựng bằng `openpyxl` trong test (có ảnh nổi) → đúng số sản phẩm / biến thể / ảnh; từng loại lỗi E02.02 báo đúng ô; SQL tất định.
+- [x] **E06.02** Sửa `SeedDataIT`: nếu có `R__seed_demo_95_*` thì khẳng định ≥ 1 SKU `XL-%`, mọi sản phẩm Excel có ≥ 1 ảnh chính; lần chạy thứ 2 không đổi số dòng (đã có sẵn). `./mvnw verify` xanh.
+- [ ] **E06.03** ◐ *API đã kiểm 2026-11-21 (tìm kiếm, chi tiết 2 ảnh Silo, biến thể có ảnh, sản phẩm HIDDEN → 404); còn xem trên giao diện web.* Chạy thật máy dev: `build --apply` với `products.xlsx` mẫu → sản phẩm hiện ở tìm kiếm, trang sản phẩm có đủ ảnh + biến thể (web `PUBLIC_REAL_API=product,search,shop`); sửa giá một dòng, chạy lại → giá đổi, không sinh trùng.
 
 ### E07 — Tài liệu
-- [ ] **E07.01** `scripts/seed/excel/README.md` — **hướng dẫn chạy seed từ đầu đến cuối**, viết cho người chưa đọc plan, đủ các mục:
+- [x] **E07.01** `scripts/seed/excel/README.md` — **hướng dẫn chạy seed từ đầu đến cuối**, viết cho người chưa đọc plan, đủ các mục:
   1. *Tool này làm gì* — 3 câu + sơ đồ mục 1b (Excel → tool → `assets/` + SQL → git → Silo + CSDL → giao diện) và bảng vai trò Tool / Git / Silo / CSDL.
   2. *Chuẩn bị máy* — Docker đang chạy `postgres`, `redis`, `silo` (`docker compose … up -d`), backend đã chạy một lần (migrate tới V21); với người tạo: Python 3.12 + `pip install -r requirements.txt`.
   3. *Luồng người dùng lại* (không cần Python) — `git pull` → `upload-assets` → chạy backend / `seed.sh --docker`; lệnh cho cả Git Bash và PowerShell.
   4. *Luồng người tạo dữ liệu* — `template` → điền Excel → bỏ ảnh vào `anh/` → `check` → `build --apply` → mở web kiểm → commit đúng các file (bảng: SQL 95 + `assets/` + `products.xlsx` bắt buộc; `anh/` không commit — tự giữ ảnh gốc nếu cần).
-  5. *Mô tả các cột* — bảng mục 3 + ví dụ; 3 cách đưa ảnh (tên tệp / link / chèn vào Excel), kèm hình chụp chỗ chọn *Place over Cells* và cách tắt *Compress Pictures*.
+  5. *Mô tả các cột* — bảng mục 3 + ví dụ; 3 cách đưa ảnh (tên tệp / link / chèn vào Excel), kèm đường dẫn menu chọn *Place over Cells* và cách tắt nén ảnh (*Do not compress images in file*).
   6. *Sửa và chạy lại* — sửa dòng thì cập nhật, **đổi tên = sản phẩm mới**, xóa dòng thì sản phẩm cũ vẫn còn trong CSDL (xóa bằng cách hạ CSDL `down -v`).
   7. *Lỗi thường gặp* — ảnh vỡ (quên `upload-assets` / lệch `STORAGE_BUCKET_PREFIX`), giá cũ vẫn hiện (cache Redis → `--flush-cache`), `RAISE EXCEPTION` không khớp shop / danh mục, `Place in Cell`, backend báo checksum Flyway.
   8. *Không bao giờ* — sửa tay file SQL 95, trỏ `.env` vào RDS / S3 production.
-- [ ] **E07.02** Thêm mục vào `scripts/seed/README.md` (bảng file 95 + link sang `excel/README.md`) và một dòng vào CLAUDE.md mục 9 (bẫy: file 95 là file sinh tự động, không sửa tay; `assets/` phải commit cùng SQL).
+- [x] **E07.02** Thêm mục vào `scripts/seed/README.md` (bảng file 95 + link sang `excel/README.md`) và một dòng vào CLAUDE.md mục 9 (bẫy: file 95 là file sinh tự động, không sửa tay; `assets/` phải commit cùng SQL).
 - [ ] **E07.03** Một người **chưa tham gia** làm tool tự đọc README và chạy luồng "người dùng lại" trên máy mình; chỗ nào phải hỏi thì bổ sung vào README.
 
 ---
@@ -279,3 +281,10 @@ python scripts/seed/excel/excel_to_seed.py build ... --apply [--flush-cache]    
 | 2026-11-21 | Lập plan | — |
 | 2026-11-21 | Sửa plan: thêm mục 1b (vai trò Tool / Git / Silo / CSDL, 2 folder ảnh, 2 luồng làm việc); D1 `assets/` bắt buộc commit, `anh/` tùy chọn; D2 tên tệp là cách chính, thêm link `https://`; E05.02 kiểm ảnh trên Silo; E07.01 README chạy seed đủ 8 mục, E07.03 người ngoài thử README | — |
 | 2026-11-21 | Chốt D1: không commit `anh/` (`.gitignore`), chỉ commit `assets/`; thêm `assets/manifest.json` để người khác sửa Excel không cần ảnh gốc (E03.01, E03.04) | — |
+| 2026-11-21 | Commit plan (nhánh `feature/excel-product-seed`) | `b916fef` |
+| 2026-11-21 | E01, E02: khung CLI `template` / `check`, đọc sheet theo tên cột, kiểm kiểu / enum / độ dài / trùng / tham chiếu (danh sách đọc từ seed 10, 20, 30), file mẫu có danh sách chọn; 7 test | `b6db664` |
+| 2026-11-21 | E03: ảnh theo tên tệp / link https / ảnh nổi / Place in Cell (đọc `xl/richData`), chuẩn hóa JPEG ≤ 1200px, `manifest.json`, dọn mồ côi; `check` kiểm cả ảnh | `4768d8f` |
+| 2026-11-21 | E04, E06.02: lệnh `build` sinh `R__seed_demo_95_excel_products.sql` (upsert, ẩn sản phẩm bỏ khỏi file, xóa mềm biến thể, khối DO kiểm tham chiếu), `products.xlsx` mẫu 4 sản phẩm + 7 ảnh; `SeedDataIT` cho phép link https + test sản phẩm Excel đủ biến thể / ảnh chính (5/5 xanh). Đã thử trên Postgres Docker: nạp 2 lần không đổi số dòng; đổi tên → HIDDEN; bỏ biến thể → xóa mềm; trả Excel về → khôi phục, SQL giống hệt | `6e5aab2` |
+| 2026-11-21 | E05: `upload-assets` (.sh / .ps1) đẩy `assets/` (trừ `manifest.json`) + kiểm đủ ảnh (thiếu → mã 4, đã thử cả hai bản); `build --apply` / `--flush-cache`; `excel_to_seed.bat` kéo thả; 16 test Python | `3d719b3` |
+| 2026-11-21 | E06.03 (phần API): backend thật trả sản phẩm Excel ở tìm kiếm + chi tiết với URL ảnh Silo; ảnh tải được (200) | — |
+| 2026-11-21 | E07.01, E07.02: `scripts/seed/excel/README.md` (8 mục), mục file 95 trong `scripts/seed/README.md`, bẫy seed Excel trong CLAUDE.md mục 9 | _(commit docs)_ |
