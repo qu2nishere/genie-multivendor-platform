@@ -12,6 +12,7 @@ import { allowed, homeOf, NAV } from './nav';
 import NotFound from './NotFound';
 import { RequirePermission } from './RequirePermission';
 import { adminRoutes } from './routes';
+import { usePermissionUpdates } from './usePermissionUpdates';
 
 function Loading() {
   return (
@@ -24,6 +25,7 @@ function Loading() {
 function Shell() {
   const { t } = useT();
   const me = useAdminMe();
+  usePermissionUpdates();
   if (me.isPending) return <Loading />;
   if (me.isError) {
     const denied = isApiError(me.error) && me.error.status === 403;

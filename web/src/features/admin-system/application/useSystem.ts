@@ -78,13 +78,8 @@ export const useUsers = (tab: UserTab, q: string) =>
   });
 export const useSuspendUser = () =>
   useAdminMutation(
-    (a: {
-      id: number;
-      reason: SuspendReason;
-      note: string | null;
-      duration: Duration;
-      label: string;
-    }) => suspendUser(a.id, a.reason, a.note, a.duration, a.label),
+    (a: { id: number; reason: SuspendReason; note: string | null; duration: Duration }) =>
+      suspendUser(a.id, a.reason, a.note, a.duration),
   );
 export const useReactivateUser = () =>
   useAdminMutation((a: { id: number; reason: string }) => reactivateUser(a.id, a.reason));

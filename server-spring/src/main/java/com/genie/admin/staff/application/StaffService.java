@@ -18,6 +18,7 @@ import com.genie.common.domain.UserRole;
 import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
 import com.genie.common.error.InvalidRequestException;
+import com.genie.common.realtime.UserChannel;
 import com.genie.common.security.ClientInfo;
 import com.genie.common.security.RateLimiter;
 import com.genie.common.storage.UploadPurpose;
@@ -72,11 +73,16 @@ public class StaffService {
     private final Clock clock;
     /** Tên miền email được phép (chữ thường, không @); rỗng = mọi email hợp lệ (plan B1 D3 — chốt 2026-11-20). */
     private final Set<String> allowedDomains;
+    private final UserChannel realtime;
+
+    /** Tin realtime khi quyền / chức danh của nhân viên đổi (API_SPEC 13 — kênh {@code /user/queue/account}). */
+    public static final String PERMISSIONS_CHANGED = "PERMISSIONS_CHANGED";
 
     public StaffService(UserFacade users, AdminProfileRepository profiles, StaffPermissionRepository permissionRows,
                         PermissionService permissions, SystemLogRepository logs, AuditLogger audit,
                         RateLimiter rateLimiter, UploadService uploads, ApplicationEventPublisher events, Clock clock,
-                        @Value("${STAFF_EMAIL_DOMAINS:}") String allowedDomains) {
+                        @Value("${STAFF_EMAIL_DOMAINS:}") String allowedDomains, UserChannel realtime) {
+        this.realtime = realtime;
         this.users = users;
         this.profiles = profiles;
         this.permissionRows = permissionRows;
@@ -302,7 +308,9 @@ public class StaffService {
         }
         PermissionService.Change change = permissions.replace(staffId, wanted, actorId, client);
         if (change.changed() || titleChanged) {
-            users.revokeSessions(staffId);   // quyền mới có hiệu lực ngay (UC-ADM-02 bước 4)
+            // D19: KHÔNG thu hồi phiên — mã quyền đọc lại từ CSDL ở mỗi request (cache xóa sau commit) nên có hiệu lực
+            // ngay ở request kế tiếp; chỉ báo client tải lại menu (/admin/me) qua kênh realtime /user/queue/account
+            realtime.sendAfterCommit(staffId, UserChannel.ACCOUNT, Map.of("type", PERMISSIONS_CHANGED));
         }
         return viewOf(staffId, actorId).withWarnings(change.warnings());
     }

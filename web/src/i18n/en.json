@@ -617,6 +617,14 @@
       "blocked_text": "This verification code has been cancelled. Tap below to get a new code by email.",
       "error_title": "Could not send the verification code",
       "new_code": "Send a new code"
+    },
+    "forced_logout": {
+      "title": "You have been signed out",
+      "SUSPENDED": "Your account has just been locked. Contact support if you need more details.",
+      "ACCOUNT_DELETED": "Your account has been deleted.",
+      "ROLE_CHANGED": "Your access has just changed. Please sign in again.",
+      "PASSWORD_CHANGED": "Your password was just reset. Please sign in with the new password.",
+      "DEFAULT": "Your session has ended. Please sign in again."
     }
   },
   "search": {
@@ -3043,7 +3051,9 @@
         "title": "This account is not platform staff",
         "desc": "The Admin Console is only for Genie staff and administrators.",
         "cta": "Back to Genie"
-      }
+      },
+      "permissions_changed": "Your access has just been updated.",
+      "permissions_lost": "You no longer have access to {screen} — moved to your home page."
     },
     "perm": {
       "VIEW_DASHBOARD": "View the Overview page",

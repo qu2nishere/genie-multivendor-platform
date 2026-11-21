@@ -18,12 +18,13 @@ export interface PlatformUserDto {
   full_name: string;
   shop_name: string | null;
   email: string;
-  phone_number: string;
+  phone_number: string | null;
   role: 'CUSTOMER' | 'VENDOR';
   order_count: number;
   warning_count: number;
   status: 'ACTIVE' | 'LOCKED' | 'SUSPENDED';
-  suspension: { reason: string; until: string | null } | null;
+  /** `reason_code` theo API 16.4 (client dịch); `until = null` = vô thời hạn. */
+  suspension: { reason_code: string; note: string | null; until: string | null } | null;
 }
 
 export interface AuditLogDto {

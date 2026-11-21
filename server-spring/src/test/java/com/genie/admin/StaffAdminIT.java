@@ -180,13 +180,15 @@ class StaffAdminIT extends AuditLogTestSupport {
                 + "AND reference_id = ?", Integer.class, String.valueOf(staffId))).isEqualTo(1);
         assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'RBAC_ROLE_CHANGED' "
                 + "AND reference_id = ?", Integer.class, String.valueOf(staffId))).isEqualTo(1);
+        // D19: KHÔNG đăng xuất — cùng access token, quyền mới có hiệu lực ngay ở request kế tiếp
+        MvcResult me = mvc.perform(get("/api/v1/admin/me").header(HttpHeaders.AUTHORIZATION, staffAccess)).andReturn();
+        assertThat(me.getResponse().getStatus()).isEqualTo(200);
+        assertThat(json(me, "$.data.permissions")).contains("VIEW_FINANCE").doesNotContain("REVIEW_KYC");
+        assertThat(mvc.perform(get("/api/v1/admin/kyc-submissions").header(HttpHeaders.AUTHORIZATION, staffAccess))
+                .andReturn().getResponse().getStatus()).isEqualTo(403);                      // quyền vừa thu hồi
         MvcResult refresh = mvc.perform(post("/api/v1/auth/sessions/refresh").cookie(refreshCookieOf(session)))
                 .andReturn();
-        assertThat(refresh.getResponse().getStatus()).isEqualTo(401);                        // phiên cũ bị thu hồi
-
-        String fresh = bearer(accessTokenOf(login(email, PASSWORD)));
-        MvcResult me = mvc.perform(get("/api/v1/admin/me").header(HttpHeaders.AUTHORIZATION, fresh)).andReturn();
-        assertThat(json(me, "$.data.permissions")).contains("VIEW_FINANCE").doesNotContain("REVIEW_KYC");
+        assertThat(refresh.getResponse().getStatus()).isEqualTo(200);                        // phiên vẫn còn
 
         MvcResult adminTarget = mvc.perform(put("/api/v1/admin/staff/" + idOf("yen.dh@genie.example") + "/permissions")
                 .header(HttpHeaders.AUTHORIZATION, adminToken()).contentType(MediaType.APPLICATION_JSON)
