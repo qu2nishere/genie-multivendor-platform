@@ -226,7 +226,8 @@ class _Entry:
 
 
 class AssetStore:
-    """assets/ + manifest.json. write=False (lệnh check): chỉ kiểm, không ghi tệp nào."""
+    """assets/ + manifest.json. Ảnh mới giữ trong bộ nhớ, chỉ ghi khi save() — có lỗi thì không gọi save (X2).
+    write=False (lệnh check): chỉ kiểm, save() không ghi gì."""
 
     def __init__(self, assets_dir: Path = paths.ASSETS_DIR, write: bool = True):
         self.dir = assets_dir
@@ -234,6 +235,7 @@ class AssetStore:
         self.write = write
         self.entries: dict[str, _Entry] = {}
         self.used: set[str] = set()
+        self.pending: dict[str, bytes] = {}
         if self.manifest_path.exists():
             data = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             for key, e in data.get("images", {}).items():
@@ -255,22 +257,25 @@ class AssetStore:
         data, width, height = normalize(raw)
         asset = hashlib.sha256(data).hexdigest()[:8] + ".jpg"
         target = self.dir / asset
-        if self.write:
-            self.dir.mkdir(parents=True, exist_ok=True)
-            if target.exists() and target.read_bytes() != data:
-                raise ValueError(f"trùng tên băm {asset} với ảnh khác — đổi nhẹ ảnh rồi chạy lại")
-            if not target.exists():
-                target.write_bytes(data)
+        existing = self.pending.get(asset) or (target.read_bytes() if target.exists() else None)
+        if existing is not None and existing != data:
+            raise ValueError(f"trùng tên băm {asset} với ảnh khác — đổi nhẹ ảnh rồi chạy lại")
+        if existing is None:
+            self.pending[asset] = data
         self.entries[key] = _Entry(sha, asset, width, height, len(data))
         self.used.add(key)
         return self.entries[key].resolved()
 
-    def save(self) -> list[str]:
-        """Ghi manifest (khóa sắp xếp — tất định), xóa mục + ảnh mồ côi. Trả danh sách ảnh đã xóa."""
+    def save(self) -> tuple[list[str], list[str]]:
+        """Ghi ảnh mới + manifest (khóa sắp xếp — tất định), xóa mục + ảnh mồ côi. Trả (ảnh thêm, ảnh xóa)."""
         if not self.write:
-            return []
+            return [], []
         kept = {k: self.entries[k] for k in sorted(self.used)}
         self.dir.mkdir(parents=True, exist_ok=True)
+        added = sorted(self.pending)
+        for asset in added:
+            (self.dir / asset).write_bytes(self.pending[asset])
+        self.pending.clear()
         body = {"version": MANIFEST_VERSION,
                 "note": "Sinh tự động bởi scripts/seed/excel/excel_to_seed.py — không sửa tay",
                 "images": {k: vars(e) for k, e in kept.items()}}
@@ -282,7 +287,7 @@ class AssetStore:
             if f.name not in live:
                 f.unlink()
                 removed.append(f.name)
-        return removed
+        return added, removed
 
 
 class _SourceIndex:

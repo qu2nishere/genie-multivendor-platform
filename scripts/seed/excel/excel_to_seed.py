@@ -2,6 +2,7 @@
 # Công cụ seed sản phẩm từ Excel — CHỈ cho máy dev (plan 2026-11-21 db/plan_seed_tu_excel.md; ADR 0010).
 #   template <file.xlsx> [--force]   tạo file Excel mẫu có danh sách chọn shop / danh mục
 #   check    <file.xlsx>             chỉ đọc + kiểm, không ghi gì
+#   build    <file.xlsx>             kiểm rồi ghi ảnh thu nhỏ vào assets/ + db/seed/R__seed_demo_95_excel_products.sql
 # Mã thoát: 0 ổn · 1 lỗi dữ liệu · 2 dùng lệnh sai. Hướng dẫn: scripts/seed/excel/README.md
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from xlseed import images, paths, refdata, reader, template  # noqa: E402
+from xlseed import images, paths, refdata, reader, sql_writer, template  # noqa: E402
 from xlseed.model import Report  # noqa: E402
 
 MAX_PRINTED = 50
@@ -71,6 +72,23 @@ def cmd_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_build(args: argparse.Namespace) -> int:
+    source = Path(args.file)
+    products, report, store = read_checked(source, write=True)
+    print_report(report)
+    if not report.ok:
+        print(f"\nCó {len(report.errors)} lỗi — chưa ghi file nào. Sửa file Excel rồi chạy lại.", file=sys.stderr)
+        return 1
+    changed = sql_writer.write(paths.SQL_FILE, sql_writer.render(products, source.name))
+    added, removed = store.save()
+    variants = sum(len(p.variants) for p in products)
+    print(f"\nĐã xử lý {len(products)} sản phẩm, {variants} biến thể.")
+    print(f"  SQL : {paths.rel(paths.SQL_FILE)} ({'đã cập nhật' if changed else 'không đổi'})")
+    print(f"  Ảnh : {paths.rel(paths.ASSETS_DIR)}/ (+{len(added)} mới, -{len(removed)} xóa)")
+    print("Commit: file SQL + folder assets/ + file Excel — KHÔNG commit folder anh/.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     _utf8_console()
     parser = argparse.ArgumentParser(prog="excel_to_seed.py", description="Seed sản phẩm từ file Excel (máy dev).")
@@ -84,6 +102,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("check", help="chỉ kiểm file Excel, không ghi gì")
     p.add_argument("file")
     p.set_defaults(func=cmd_check)
+
+    p = sub.add_parser("build", help="kiểm rồi ghi ảnh vào assets/ + file SQL seed 95")
+    p.add_argument("file")
+    p.set_defaults(func=cmd_build)
 
     args = parser.parse_args(argv)
     return args.func(args)

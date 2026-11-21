@@ -96,7 +96,7 @@ def test_orphans_are_removed_and_unchanged_source_keeps_asset(tmp_path, ref):
     [p] = _read(f, ref, report)
     store = images.AssetStore(assets)
     images.resolve([p], anh, store, report)
-    removed = store.save()
+    _, removed = store.save()
     assert len(removed) == 1 and sorted(x.name for x in assets.glob("*.jpg")) == [p.resolved_images[0].image_url[-12:]]
 
 

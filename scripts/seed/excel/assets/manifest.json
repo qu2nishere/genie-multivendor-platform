@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "note": "Sinh tự động bởi scripts/seed/excel/excel_to_seed.py — không sửa tay",
+  "images": {
+    "anh/backpack.jpg": {
+      "source_sha256": "bfe961f632857a98602a650e2175b827855a1d9d0fffc1b8f6a041e0c43af9f9",
+      "asset": "fde92203.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 19517
+    },
+    "anh/headphones.jpg": {
+      "source_sha256": "adaeb44b9e95eef6f014f06579c6563e5b485e836f3e6a4974a21a367075ec7d",
+      "asset": "56769b09.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 21105
+    },
+    "anh/jacket.jpg": {
+      "source_sha256": "1b7f322e959fb8a523559daddaf2be0599ea84ddc62451fe11e53de393839d8a",
+      "asset": "401359cc.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 42613
+    },
+    "anh/lamp.jpg": {
+      "source_sha256": "ac4b8a224897c073c5dee933965b6ed9ce4149c7bcb40c071fbe17ce96cff268",
+      "asset": "ef270230.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 10823
+    },
+    "anh/mug.jpg": {
+      "source_sha256": "b70bf9135345cd9d62bc720b12c083c820418e0dcd7fa200249c4bbe7f2beb8e",
+      "asset": "88c3a3aa.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 7081
+    },
+    "anh/speaker.jpg": {
+      "source_sha256": "efcb6369234efb5f21b13d8bf7a377f5c6db4d6fd349a22360eeb7f74468acc8",
+      "asset": "89baf85d.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 40450
+    },
+    "anh/tshirt.jpg": {
+      "source_sha256": "0f234d032300b8750538b3a3e5928f2d9c5dd8d200feab050787c18f46d87766",
+      "asset": "a9596e10.jpg",
+      "width": 480,
+      "height": 480,
+      "bytes": 22104
+    }
+  }
+}

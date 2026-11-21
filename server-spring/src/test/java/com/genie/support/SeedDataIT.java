@@ -95,7 +95,9 @@ class SeedDataIT {
         assertThat(count("""
                 SELECT count(*) FROM products p
                 WHERE NOT EXISTS (SELECT 1 FROM vendor_profiles vp WHERE vp.user_id = p.vendor_id AND vp.kyc_status = 'VERIFIED')""")).isZero();
-        assertThat(count("SELECT count(*) FROM product_images WHERE image_url NOT LIKE 'seed/%'")).isZero();
+        // ảnh là khóa đối tượng 'seed/…'; seed từ Excel (file 95) còn cho phép link https (plan 2026-11-21 D2)
+        assertThat(count("SELECT count(*) FROM product_images WHERE image_url NOT LIKE 'seed/%' AND image_url NOT LIKE 'https://%'"))
+                .isZero();
         assertThat(count("SELECT count(*) FROM vouchers WHERE code IN ('COIN500', 'COIN1000', 'COIN2000')")).isEqualTo(3);
         assertThat(count("SELECT count(*) FROM home_banners WHERE target_url NOT LIKE '/%' OR target_url LIKE '%//%'")).isZero();
         assertThat(count("""
@@ -103,6 +105,25 @@ class SeedDataIT {
                     WHERE is_active AND starts_at <= now() AND ends_at > now() GROUP BY position HAVING count(*) > 8) x""")).isZero();
         assertThat(count("SELECT count(*) FROM vendor_profiles WHERE kyc_status = 'MANUAL_REVIEW'")).isGreaterThanOrEqualTo(3);
         assertThat(queryString("SELECT role FROM users WHERE email = 'mai.tran@gmail.com'")).isEqualTo("VENDOR");
+    }
+
+    /** File 95 do công cụ Excel sinh (plan 2026-11-21 E06.02): có sản phẩm SKU 'XL-%', mỗi sản phẩm đang bán có ảnh chính. */
+    @Test
+    void excelSeedProductsAreComplete() throws SQLException, IOException {
+        boolean excel = new PathMatchingResourcePatternResolver()
+                .getResources("classpath:db/seed/R__seed_demo_95_*.sql").length > 0;
+        if (!excel) {
+            return;
+        }
+        assertThat(count("SELECT count(*) FROM product_variants WHERE sku LIKE 'XL-%' AND deleted_at IS NULL"))
+                .isGreaterThanOrEqualTo(1);
+        assertThat(count("""
+                SELECT count(*) FROM products p
+                WHERE p.status = 'PUBLISHED'
+                  AND EXISTS (SELECT 1 FROM product_variants v WHERE v.product_id = p.id AND v.sku LIKE 'XL-%')
+                  AND (NOT EXISTS (SELECT 1 FROM product_variants v WHERE v.product_id = p.id AND v.deleted_at IS NULL)
+                    OR (SELECT count(*) FROM product_images i WHERE i.product_id = p.id AND i.is_primary) <> 1)""")).isZero();
+        assertThat(count("SELECT count(*) FROM pg_tables WHERE tablename LIKE 'xl\\_%'")).isZero();
     }
 
     @Test
