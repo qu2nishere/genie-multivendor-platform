@@ -617,6 +617,14 @@
       "blocked_text": "Mã xác thực này đã bị hủy. Bấm bên dưới để nhận mã mới qua email.",
       "error_title": "Chưa gửi được mã xác thực",
       "new_code": "Gửi mã mới"
+    },
+    "forced_logout": {
+      "title": "Bạn đã bị đăng xuất",
+      "SUSPENDED": "Tài khoản của bạn vừa bị khóa. Liên hệ bộ phận hỗ trợ nếu bạn cần biết thêm.",
+      "ACCOUNT_DELETED": "Tài khoản của bạn đã bị xóa.",
+      "ROLE_CHANGED": "Quyền truy cập của bạn vừa được thay đổi. Vui lòng đăng nhập lại.",
+      "PASSWORD_CHANGED": "Mật khẩu vừa được đặt lại. Vui lòng đăng nhập bằng mật khẩu mới.",
+      "DEFAULT": "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại."
     }
   },
   "search": {
@@ -3043,7 +3051,9 @@
         "title": "Tài khoản không phải nhân viên sàn",
         "desc": "Admin Console chỉ dành cho nhân viên và quản trị viên Genie.",
         "cta": "Về trang chủ Genie"
-      }
+      },
+      "permissions_changed": "Quyền truy cập của bạn vừa được cập nhật.",
+      "permissions_lost": "Bạn không còn quyền xem mục {screen} — đã chuyển về trang chính."
     },
     "perm": {
       "VIEW_DASHBOARD": "Xem trang Tổng quan",
