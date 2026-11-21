@@ -49,6 +49,7 @@ class ImageSource:
     where: str                       # ô Excel khai ảnh
     name: str = ""                   # file: đường dẫn tương đối trong anh/; url: link
     data: Optional[bytes] = None     # embedded: nội dung ảnh
+    order: tuple = ()                # thứ tự hiển thị: (cột, 0 = chữ / 1 = ảnh chèn, vị trí trong ô)
 
 
 @dataclass

@@ -243,22 +243,29 @@ def _code(row: SheetRow, key: str, report: Report) -> Optional[str]:
     return text.upper()
 
 
+# Giá trị lỗi Excel ghi vào ô có ảnh "Place in Cell" (thường là #VALUE!) — ảnh thật đọc ở images.py
+EXCEL_ERROR_VALUES = {"#VALUE!", "#N/A", "#REF!", "#NAME?", "#NULL!", "#DIV/0!", "#NUM!", "#SPILL!", "#CALC!",
+                      "#BLOCKED!", "#UNKNOWN!", "#FIELD!", "#CONNECT!", "#BUSY!"}
+
+
 def parse_image_tokens(row: SheetRow, key: str, report: Report) -> list[ImageSource]:
     """Ô ảnh dạng chữ: tên tệp trong anh/ hoặc link https, cách nhau `;` hoặc xuống dòng (D2)."""
     text = row.text(key)
-    if text is None:
+    if text is None or text.upper() in EXCEL_ERROR_VALUES:
         return []
     where = row.where(key)
+    column = row.columns.get(key, 0)
     images: list[ImageSource] = []
     for token in (t.strip() for t in re.split(r"[;\n]", text)):
         if not token:
             continue
+        order = (column, 0, len(images))
         low = token.lower()
         if low.startswith("https://"):
             if len(token) > MAX_URL:
                 report.error(where, f"link ảnh dài quá {MAX_URL} ký tự")
                 continue
-            images.append(ImageSource("url", where, name=token))
+            images.append(ImageSource("url", where, name=token, order=order))
         elif low.startswith("http://"):
             report.error(where, f"link ảnh phải là https:// (đang là '{token}')")
         else:
@@ -266,7 +273,7 @@ def parse_image_tokens(row: SheetRow, key: str, report: Report) -> list[ImageSou
             if name.startswith("/") or re.match(r"^[A-Za-z]:", name) or ".." in name.split("/"):
                 report.error(where, f"chỉ ghi tên tệp trong folder anh/, không ghi đường dẫn tuyệt đối hay '..' ('{token}')")
                 continue
-            images.append(ImageSource("file", where, name=name))
+            images.append(ImageSource("file", where, name=name, order=order))
     return images
 
 
@@ -437,6 +444,7 @@ def read(path: Path, ref: RefData, report: Report,
 
     for product in products.values():
         where = f"{SHEET_PRODUCTS}!dòng {product.row}"
+        product.images.sort(key=lambda i: i.order)
         if not product.images:
             report.error(where, "cần ít nhất 1 ảnh ở cột 'anh'")
         if len(product.images) > MAX_IMAGES_PER_PRODUCT:

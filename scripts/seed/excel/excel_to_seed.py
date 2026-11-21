@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from xlseed import paths, refdata, reader, template  # noqa: E402
+from xlseed import images, paths, refdata, reader, template  # noqa: E402
 from xlseed.model import Report  # noqa: E402
 
 MAX_PRINTED = 50
@@ -49,20 +49,25 @@ def cmd_template(args: argparse.Namespace) -> int:
     return 0
 
 
-def read_checked(path: Path) -> tuple[list, Report]:
+def read_checked(path: Path, *, write: bool) -> tuple[list, Report, images.AssetStore]:
+    """Đọc + kiểm Excel rồi xử lý ảnh. write=False: không ghi assets/ (lệnh check)."""
     report = Report()
-    products = reader.read(path, refdata.load(), report)
-    return products, report
+    products = reader.read(path, refdata.load(), report, attach_embedded=images.collect_embedded)
+    store = images.AssetStore(write=write)
+    if report.ok:
+        images.resolve(products, paths.image_dir_for(path), store, report)
+    return products, report, store
 
 
 def cmd_check(args: argparse.Namespace) -> int:
-    products, report = read_checked(Path(args.file))
+    products, report, _ = read_checked(Path(args.file), write=False)
     print_report(report)
     if not report.ok:
         print(f"\nCó {len(report.errors)} lỗi — sửa file Excel rồi chạy lại.", file=sys.stderr)
         return 1
     variants = sum(len(p.variants) for p in products)
-    print(f"\nỔn: {len(products)} sản phẩm, {variants} biến thể.")
+    pictures = sum(len(p.resolved_images) + sum(1 for v in p.variants if v.resolved_image) for p in products)
+    print(f"\nỔn: {len(products)} sản phẩm, {variants} biến thể, {pictures} ảnh.")
     return 0
 
 
