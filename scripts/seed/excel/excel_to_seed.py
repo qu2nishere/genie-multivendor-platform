@@ -3,7 +3,9 @@
 #   template <file.xlsx> [--force]   tạo file Excel mẫu có danh sách chọn shop / danh mục
 #   check    <file.xlsx>             chỉ đọc + kiểm, không ghi gì
 #   build    <file.xlsx>             kiểm rồi ghi ảnh thu nhỏ vào assets/ + db/seed/R__seed_demo_95_excel_products.sql
-# Mã thoát: 0 ổn · 1 lỗi dữ liệu · 2 dùng lệnh sai. Hướng dẫn: scripts/seed/excel/README.md
+#            [--apply]               + upload-assets (Silo) + seed.sh --docker --only 95
+#            [--flush-cache]         + xóa cache catalog trong Redis Docker
+# Mã thoát: 0 ổn · 1 lỗi dữ liệu · 2 dùng lệnh sai · 3 lỗi khi nạp. Hướng dẫn: scripts/seed/excel/README.md
 from __future__ import annotations
 
 import argparse
@@ -12,7 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from xlseed import images, paths, refdata, reader, sql_writer, template  # noqa: E402
+from xlseed import images, paths, refdata, reader, runner, sql_writer, template  # noqa: E402
 from xlseed.model import Report  # noqa: E402
 
 MAX_PRINTED = 50
@@ -86,6 +88,15 @@ def cmd_build(args: argparse.Namespace) -> int:
     print(f"  SQL : {paths.rel(paths.SQL_FILE)} ({'đã cập nhật' if changed else 'không đổi'})")
     print(f"  Ảnh : {paths.rel(paths.ASSETS_DIR)}/ (+{len(added)} mới, -{len(removed)} xóa)")
     print("Commit: file SQL + folder assets/ + file Excel — KHÔNG commit folder anh/.")
+    if args.apply:
+        code = runner.apply()
+        if code != 0:
+            return 3
+    if args.flush_cache:
+        if runner.flush_cache() != 0:
+            return 3
+    elif args.apply:
+        runner.remind_cache()
     return 0
 
 
@@ -105,6 +116,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("build", help="kiểm rồi ghi ảnh vào assets/ + file SQL seed 95")
     p.add_argument("file")
+    p.add_argument("--apply", action="store_true",
+                   help="sau khi ghi: đẩy ảnh lên Silo (upload-assets) và nạp seed 95 vào PostgreSQL Docker")
+    p.add_argument("--flush-cache", action="store_true", help="xóa cache catalog trong Redis Docker")
     p.set_defaults(func=cmd_build)
 
     args = parser.parse_args(argv)

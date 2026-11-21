@@ -2,6 +2,8 @@
 # Đẩy ảnh mẫu lên Silo của MÁY DEV (plan seed 2026-11-16 S04.01, D6; LUU_TRU 5.5) — khớp khóa đối tượng trong db/seed:
 #   web/public/img/products/*  → <tiền tố>product-media/seed/product/
 #   web/public/img/banners/*   → <tiền tố>content-assets/seed/banner/
+#   scripts/seed/excel/assets/*.jpg → <tiền tố>product-media/seed/excel/  (ảnh seed từ Excel — plan 2026-11-21 E05.01)
+# Cuối cùng đối chiếu mọi khóa 'seed/excel/…' trong R__seed_demo_95_excel_products.sql với Silo — thiếu ảnh → thoát mã 4 (E05.02).
 # Dùng client mcli có sẵn trong image Silo (service silo-init của deploy/docker-compose.local.yml) — không cần cài gì thêm.
 # Đọc CÙNG biến với backend: MINIO_ENDPOINT, MINIO_APP_ACCESS_KEY, MINIO_APP_SECRET_KEY, STORAGE_BUCKET_PREFIX
 # (biến môi trường → .env gốc repo → mặc định Docker local). Chạy lại không tải trùng (mirror --overwrite).
@@ -34,16 +36,44 @@ esac
 echo "Silo: $TARGET (máy dev: $ENDPOINT) · bucket: ${PREFIX}product-media, ${PREFIX}content-assets"
 
 IMG_DIR="$ROOT/web/public/img"
+EXCEL_DIR="$ROOT/scripts/seed/excel/assets"
+EXCEL_SQL="$ROOT/server-spring/src/main/resources/db/seed/R__seed_demo_95_excel_products.sql"
+mkdir -p "$EXCEL_DIR"
 # Git Bash trên Windows: đổi sang đường dẫn Windows và tắt chuyển đổi đường dẫn tự động của MSYS khi gắn volume
 if command -v cygpath >/dev/null 2>&1; then
-  IMG_DIR=$(cygpath -w "$IMG_DIR"); COMPOSE_FILE=$(cygpath -w "$COMPOSE_FILE"); export MSYS_NO_PATHCONV=1
+  IMG_DIR=$(cygpath -w "$IMG_DIR"); EXCEL_MOUNT=$(cygpath -w "$EXCEL_DIR"); COMPOSE_FILE=$(cygpath -w "$COMPOSE_FILE")
+  export MSYS_NO_PATHCONV=1
+else
+  EXCEL_MOUNT="$EXCEL_DIR"
 fi
 
-docker compose -f "$COMPOSE_FILE" run --rm --no-deps -v "$IMG_DIR:/assets:ro" --entrypoint /bin/sh silo-init -c "
+docker compose -f "$COMPOSE_FILE" run --rm --no-deps -v "$IMG_DIR:/assets:ro" -v "$EXCEL_MOUNT:/excel:ro" \
+  --entrypoint /bin/sh silo-init -c "
   set -e
   MC=\$(command -v mcli || command -v mc)
   \"\$MC\" alias set seed '$TARGET' '$ACCESS_KEY' '$SECRET_KEY' >/dev/null
   \"\$MC\" mirror --overwrite /assets/products 'seed/${PREFIX}product-media/seed/product'
   \"\$MC\" mirror --overwrite /assets/banners 'seed/${PREFIX}content-assets/seed/banner'
+  \"\$MC\" mirror --overwrite --exclude 'manifest.json' /excel 'seed/${PREFIX}product-media/seed/excel'
 "
+
+# ---------- E05.02: ảnh nào file SQL 95 cần mà Silo chưa có? (image silo-init không có grep → so ở máy) ----------
+if [ -f "$EXCEL_SQL" ]; then
+  expected=$(grep -o "seed/excel/[0-9a-f]\{8\}\.jpg" "$EXCEL_SQL" | sort -u || true)
+  if [ -n "$expected" ]; then
+    present=$(docker compose -f "$COMPOSE_FILE" run --rm --no-deps --entrypoint /bin/sh silo-init -c "
+      MC=\$(command -v mcli || command -v mc)
+      \"\$MC\" alias set seed '$TARGET' '$ACCESS_KEY' '$SECRET_KEY' >/dev/null
+      \"\$MC\" ls --recursive 'seed/${PREFIX}product-media/seed/excel/'" | tr -d '\r' | awk '{print "seed/excel/" $NF}' | sort -u)
+    missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+    if [ -n "$missing" ]; then
+      echo "THIẾU ảnh trên Silo (bucket ${PREFIX}product-media) mà R__seed_demo_95 cần:" >&2
+      printf '  %s\n' $missing >&2
+      echo "→ Kiểm folder scripts/seed/excel/assets/ đã pull đủ chưa, và STORAGE_BUCKET_PREFIX / MINIO_ENDPOINT trong .env" >&2
+      echo "  phải giống cấu hình backend đang chạy." >&2
+      exit 4
+    fi
+    echo "Ảnh seed Excel: đủ $(printf '%s\n' "$expected" | wc -l | tr -d ' ') ảnh trên Silo."
+  fi
+fi
 echo "Xong. Thử: ${ENDPOINT%/}/${PREFIX}product-media/seed/product/headphones.jpg"
