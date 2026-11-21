@@ -13,6 +13,7 @@ import io
 import json
 import posixpath
 import re
+import unicodedata
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -290,8 +291,14 @@ class AssetStore:
         return added, removed
 
 
+def source_key(name: str) -> str:
+    """Khóa so tên tệp ảnh: Unicode NFC (macOS / Unikey tổ hợp lưu dạng NFD), gộp khoảng trắng, chữ thường —
+    `Áo  Thun.JPG` (NFD) và `áo thun.jpg` (NFC) là một."""
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFC", name)).strip().lower()
+
+
 class _SourceIndex:
-    """Tra tệp trong anh/ không phân biệt hoa thường (Windows / macOS / Linux như nhau)."""
+    """Tra tệp trong anh/ không phân biệt hoa thường, dạng mã hóa dấu tiếng Việt và khoảng trắng thừa."""
 
     def __init__(self, image_dir: Path):
         self.dir = image_dir
@@ -299,10 +306,10 @@ class _SourceIndex:
         if image_dir.is_dir():
             for f in image_dir.rglob("*"):
                 if f.is_file():
-                    self.files[f.relative_to(image_dir).as_posix().lower()] = f
+                    self.files[source_key(f.relative_to(image_dir).as_posix())] = f
 
     def find(self, name: str) -> Optional[Path]:
-        return self.files.get(name.lower())
+        return self.files.get(source_key(name))
 
 
 def _resolve_one(src: ImageSource, store: AssetStore, index: _SourceIndex, report: Report) -> Optional[ResolvedImage]:
@@ -317,7 +324,7 @@ def _resolve_one(src: ImageSource, store: AssetStore, index: _SourceIndex, repor
             if Path(src.name).suffix.lower() not in ALLOWED_SUFFIXES:
                 report.error(src.where, f"'{src.name}': chỉ nhận ảnh {', '.join(sorted(ALLOWED_SUFFIXES))}")
                 return None
-            key = "anh/" + src.name.lower()
+            key = "anh/" + source_key(src.name)
             path = index.find(src.name)
             if path is None:
                 reused = store.reuse(key)

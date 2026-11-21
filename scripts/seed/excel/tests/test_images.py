@@ -59,6 +59,27 @@ def test_file_images_are_normalized_and_reused_from_manifest(tmp_path, ref):
     assert [i.image_url for i in p2.resolved_images] == [i.image_url for i in p.resolved_images]
 
 
+def test_vietnamese_names_with_spaces_match_any_unicode_form(tmp_path, ref):
+    import unicodedata
+
+    anh = tmp_path / "anh"
+    (anh / "Giày dép").mkdir(parents=True)
+    # tên trên đĩa dạng tổ hợp (NFD — macOS) + 2 dấu cách; trong Excel gõ dạng dựng sẵn (NFC), 1 dấu cách, khác hoa thường
+    (anh / unicodedata.normalize("NFD", "Áo  Thun Nữ.JPG")).write_bytes(png_bytes(size=(500, 500)))
+    (anh / "Giày dép" / "dép tổ ong.png").write_bytes(png_bytes((1, 1, 1), (500, 500)))
+    f = tmp_path / "p.xlsx"
+    make_book(f, [product_row("TN01", anh="áo thun nữ.jpg; Giày dép/Dép Tổ Ong.png")])
+    report = Report()
+    [p] = _read(f, ref, report)
+    store = images.AssetStore(tmp_path / "assets")
+    images.resolve([p], anh, store, report)
+    assert report.ok, [str(e) for e in report.errors]
+    assert len(p.resolved_images) == 2 and all(i.image_url.startswith("seed/excel/") for i in p.resolved_images)
+    store.save()
+    manifest = json.loads((tmp_path / "assets" / "manifest.json").read_text(encoding="utf-8"))
+    assert sorted(manifest["images"]) == ["anh/giày dép/dép tổ ong.png", "anh/áo thun nữ.jpg"]
+
+
 def test_missing_file_and_bad_image_are_errors(tmp_path, ref):
     anh = tmp_path / "anh"
     anh.mkdir()
