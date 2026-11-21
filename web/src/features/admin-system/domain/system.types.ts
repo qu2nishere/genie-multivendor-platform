@@ -2,6 +2,7 @@
 // admin/Finance.jsx Rbac / InviteStaff / RbacEditor, Users.jsx, AuditLog.jsx).
 import type { PermissionCode, StaffTitle } from '@/shared/auth/permissions';
 import type { StaffRole, StaffStatus } from './me.types';
+import type { SuspendReason } from './system.rules';
 
 // ---------- 11.18 Nhân viên ----------
 export interface StaffMember {
@@ -51,7 +52,8 @@ export interface PlatformUser {
   orderCount: number;
   warningCount: number;
   status: AccountState;
-  suspension: { reason: string; until: string | null } | null;
+  /** `reasonCode` ngoài danh sách 16.4 được đưa về `OTHER` khi ánh xạ; `until = null` = vô thời hạn. */
+  suspension: { reasonCode: SuspendReason; note: string | null; until: string | null } | null;
 }
 
 export type UserCounts = Record<UserTab, number>;

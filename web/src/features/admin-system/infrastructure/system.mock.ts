@@ -73,7 +73,8 @@ export const usersStore = mockState<PlatformUserDto[]>('admin.users', () => [
   user(20411, 'Trần Thị Mai', null, 'mai.tran@gmail.com', '0901234567', 48, 0, 'ACTIVE'),
   user(20398, 'Nguyễn Văn An', null, 'an.nguyen@gmail.com', '0912887001', 12, 0, 'ACTIVE'),
   user(20377, 'Lê Hoàng Phúc', null, 'phuc.le@yahoo.com', '0978112340', 31, 3, 'SUSPENDED', {
-    reason: 'Hoàn hàng bất thường nhiều lần',
+    reason_code: 'ABNORMAL_RETURNS',
+    note: null,
     until: '2026-06-29T00:00:00+07:00',
   }),
   user(
@@ -106,7 +107,8 @@ export const usersStore = mockState<PlatformUserDto[]>('admin.users', () => [
     5,
     'LOCKED',
     {
-      reason: 'Người bán gian lận hàng giả',
+      reason_code: 'COUNTERFEIT_SELLER',
+      note: null,
       until: null,
     },
   ),

@@ -2,7 +2,7 @@
 // /admin/me). Mock báo lỗi như server: email đã dùng (GNE-ADM-4091), tên miền không được phép (GNE-ADM-4221), xóa chính
 // mình (GNE-ADM-4092), cấp MANAGE_RBAC cho Staff (GNE-SEC-4031).
 import { api, getPage, request, requestBlob } from '@/shared/api/http';
-import { mockDelay, mockFail, paginateCursor, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginateCursor } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import {
   isPermission,
@@ -17,6 +17,7 @@ import {
   matchesUser,
   STAFF_EMAIL,
   suspendUntil,
+  SUSPEND_REASONS,
   USER_TABS,
   type Duration,
   type SuspendReason,
@@ -52,12 +53,20 @@ const toUser = (d: PlatformUserDto): PlatformUser => ({
   fullName: d.full_name,
   shopName: d.shop_name,
   email: d.email,
-  phone: d.phone_number,
+  phone: d.phone_number ?? '',
   role: d.role,
   orderCount: d.order_count,
   warningCount: d.warning_count,
   status: d.status,
-  suspension: d.suspension,
+  suspension: d.suspension
+    ? {
+        reasonCode: (SUSPEND_REASONS as readonly string[]).includes(d.suspension.reason_code)
+          ? (d.suspension.reason_code as SuspendReason)
+          : 'OTHER',
+        note: d.suspension.note,
+        until: d.suspension.until,
+      }
+    : null,
 });
 
 const toAudit = (d: AuditLogDto): AuditEntry => ({
@@ -220,13 +229,16 @@ export async function deleteStaff(id: number): Promise<void> {
 }
 
 // ---------- Người dùng ----------
+/** Khóa / mở khóa người dùng (11.13) — nhóm `users` trong `PUBLIC_REAL_API` (plan B1 R05). */
+const USERS_MOCK = isMocked('users');
+
 export interface UserList {
   items: PlatformUser[];
   counts: UserCounts;
 }
 
 export async function listUsers(tab: UserTab, q: string): Promise<UserList> {
-  if (USE_MOCK) {
+  if (USERS_MOCK) {
     await mockDelay(180);
     const all = usersStore.get().map(toUser);
     const found = all.filter((u) => matchesUser(u, q));
@@ -255,10 +267,8 @@ export async function suspendUser(
   reason: SuspendReason,
   note: string | null,
   duration: Duration,
-  /** Nhãn lý do đã dịch — mock lưu làm lý do hiển thị. */
-  label: string,
 ): Promise<void> {
-  if (USE_MOCK) {
+  if (USERS_MOCK) {
     await mockDelay(250);
     usersStore.set(
       usersStore.get().map((u) =>
@@ -267,7 +277,8 @@ export async function suspendUser(
               ...u,
               status: duration === 'FOREVER' ? 'LOCKED' : 'SUSPENDED',
               suspension: {
-                reason: reason === 'OTHER' && note ? note : label,
+                reason_code: reason,
+                note,
                 until: suspendUntil(duration, new Date()),
               },
             }
@@ -284,7 +295,7 @@ export async function suspendUser(
 }
 
 export async function reactivateUser(id: number, reason: string): Promise<void> {
-  if (USE_MOCK) {
+  if (USERS_MOCK) {
     await mockDelay(220);
     usersStore.set(
       usersStore.get().map((u) => (u.id === id ? { ...u, status: 'ACTIVE', suspension: null } : u)),

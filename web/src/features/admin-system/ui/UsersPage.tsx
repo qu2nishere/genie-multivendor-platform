@@ -9,6 +9,7 @@ import { errorMessage } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatDate, formatNumber } from '@/shared/lib/format';
+import type { TFunction } from '@/shared/lib/i18n';
 import { zodResolver } from '@/shared/lib/zodResolver';
 import {
   Avatar,
@@ -50,6 +51,13 @@ const th = 'px-4 py-[11px] whitespace-nowrap font-semibold text-xs text-muted te
 const td = 'px-4 py-[11px] whitespace-nowrap align-middle';
 const nameOf = (u: PlatformUser) => u.shopName ?? u.fullName;
 
+/** Lý do khóa hiển thị: nhãn theo mã (API 16.4); `OTHER` có ghi chú thì hiện ghi chú, mã khác kèm ghi chú phía sau. */
+function suspensionText(s: NonNullable<PlatformUser['suspension']>, t: TFunction): string {
+  if (s.reasonCode === 'OTHER' && s.note) return s.note;
+  const label = t(`admin-system.users.reasons.${s.reasonCode}`);
+  return s.note ? `${label} — ${s.note}` : label;
+}
+
 function SuspendModal({ u, onClose }: { u: PlatformUser | null; onClose: () => void }) {
   const { t } = useT();
   const suspend = useSuspendUser();
@@ -76,7 +84,6 @@ function SuspendModal({ u, onClose }: { u: PlatformUser | null; onClose: () => v
           reason: x.reason,
           note: x.note || null,
           duration: x.duration,
-          label: t(`admin-system.users.reasons.${x.reason}`),
         },
         {
           onSuccess: () => {
@@ -320,7 +327,7 @@ export default function UsersPage() {
                       </Badge>
                       {u.suspension && (
                         <div className="text-xs text-muted mt-[3px] max-w-[220px] whitespace-normal">
-                          {u.suspension.reason} ·{' '}
+                          {suspensionText(u.suspension, t)} ·{' '}
                           {u.suspension.until
                             ? t('admin-system.users.until', {
                                 date: formatDate(u.suspension.until, { locale }),
