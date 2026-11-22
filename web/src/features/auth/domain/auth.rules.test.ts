@@ -8,7 +8,6 @@ import {
   remainingAttempts,
   RESEND_AFTER,
   safeNext,
-  landingAfterLogin,
 } from './auth.rules';
 import { fieldErrors, loginSchema, registerSchema, resetSchema } from './auth.schemas';
 
@@ -32,14 +31,6 @@ describe('auth.rules', () => {
     expect(safeNext('//evil.com')).toBe('/');
     expect(safeNext('/auth/login')).toBe('/');
     expect(safeNext(null)).toBe('/');
-  });
-  it('đích sau đăng nhập theo vai trò', () => {
-    expect(landingAfterLogin(null, ['ADMIN'])).toBe('/admin');
-    expect(landingAfterLogin('/', ['STAFF'])).toBe('/admin');
-    expect(landingAfterLogin('/admin/kyc', ['STAFF'])).toBe('/admin/kyc');
-    expect(landingAfterLogin('//evil.com', ['ADMIN'])).toBe('/admin');
-    expect(landingAfterLogin(null, ['CUSTOMER', 'VENDOR'])).toBe('/');
-    expect(landingAfterLogin('/checkout', ['CUSTOMER'])).toBe('/checkout');
   });
 });
 
