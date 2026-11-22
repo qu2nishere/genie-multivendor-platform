@@ -1793,6 +1793,7 @@
       "form_sub": "Chỉ mất 2 phút để bắt đầu.",
       "shop_name": "Tên Shop",
       "owner": "Họ tên chủ Shop",
+      "email_locked": "Dùng email tài khoản của bạn — mã OTP mở shop gửi về email này.",
       "phone": "Số điện thoại",
       "category": "Ngành hàng",
       "type": "Loại hình",
@@ -3198,6 +3199,7 @@
       "none": "Chưa có kết quả",
       "passed": "đạt",
       "failed": "không đạt",
+      "not_checked": "chưa kiểm tra",
       "errors": "Lỗi phát hiện",
       "checks": {
         "qr_code": "QR Code",

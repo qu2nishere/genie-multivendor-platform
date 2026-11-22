@@ -1793,6 +1793,7 @@
       "form_sub": "It only takes 2 minutes.",
       "shop_name": "Shop name",
       "owner": "Owner's full name",
+      "email_locked": "Uses your account email — the shop OTP is sent here.",
       "phone": "Phone number",
       "category": "Main category",
       "type": "Business type",
@@ -3198,6 +3199,7 @@
       "none": "No result yet",
       "passed": "passed",
       "failed": "failed",
+      "not_checked": "not checked",
       "errors": "Issues found",
       "checks": {
         "qr_code": "QR code",

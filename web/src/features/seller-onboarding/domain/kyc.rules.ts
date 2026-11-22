@@ -27,6 +27,12 @@ export function bannerOf(s: KycStatus): KycBanner {
 export const canEdit = (s: KycStatus): boolean =>
   s === 'NOT_SUBMITTED' || s === 'REJECTED' || s === 'SUPPLEMENT_REQUESTED';
 
+/** AI đang chấm (thường vài giây) → làm mới hồ sơ định kỳ để băng trạng thái + nút "Yêu cầu nhân viên xem xét"
+ * hiện ngay khi có kết quả, không cần F5 (plan sửa KYC ảnh thật L7). */
+export const KYC_POLL_MS = 3000;
+export const shouldPollKyc = (s: KycStatus | undefined): boolean =>
+  s === 'PENDING' || s === 'AI_PROCESSING';
+
 export const isResubmit = (s: KycStatus): boolean =>
   s === 'REJECTED' || s === 'SUPPLEMENT_REQUESTED';
 
