@@ -1,14 +1,18 @@
 // Danh mục toàn sàn (API_SPEC 11.11): cây danh mục, thêm / sửa / xóa, bộ thuộc tính, đề xuất của shop,
 // sản phẩm theo danh mục (duyệt / từ chối dùng endpoint 11.12, khóa / mở khóa). Mock ghi các kho ở
-// catalog.mock.ts và báo lỗi như server (trùng slug, còn sản phẩm, trùng mã thuộc tính).
+// catalog.mock.ts và báo lỗi như server (trùng slug, còn sản phẩm, trùng mã thuộc tính). Nhóm mock (plan B2 C08.03):
+// `admin-catalog` = cây + thuộc tính (đã có backend); `catalog-proposals` (UC-CAT-17), `catalog-products`
+// (UC-CAT-12, 13) chưa có backend nên vẫn mock.
 import { api, getPage, request } from '@/shared/api/http';
-import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginatePage } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import type { Page } from '@/shared/api/types';
 import { slugify } from '@/shared/lib/slug';
 import { inProductTab, type LockReason } from '../domain/catalog.rules';
 import type {
   CatalogProduct,
   CatalogProductTab,
+  AttributeList,
   CategoryAttribute,
   CategoryInput,
   CategoryProposal,
@@ -16,6 +20,7 @@ import type {
 } from '../domain/catalog.types';
 import type {
   AttributeDto,
+  InheritedAttributeDto,
   CatalogProductDto,
   CatalogSummaryDto,
   CategoryDto,
@@ -24,6 +29,7 @@ import type {
 import {
   toAttribute,
   toAttributeDto,
+  toInheritedAttribute,
   toCatalogProduct,
   toCategoryInputDto,
   toProposal,
@@ -37,9 +43,13 @@ import {
   proposalsStore,
 } from './catalog.mock';
 
+const CATALOG_MOCK = isMocked('admin-catalog');
+const PROPOSALS_MOCK = isMocked('catalog-proposals');
+const PRODUCTS_MOCK = isMocked('catalog-products');
+
 // ---------- Cây danh mục ----------
 export async function getCategoryTree(): Promise<CategoryTree> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(180);
     const roots = categoriesStore.get();
     return {
@@ -81,7 +91,9 @@ function mockAdd(c: CategoryInput): void {
         slug: c.slug,
         icon: c.icon,
         is_active: c.active,
+        requires_business_license: c.requiresLicense,
         commission_rate: c.commissionRate,
+        effective_commission_rate: c.commissionRate ?? 5,
         product_count: 0,
         shop_count: 0,
         children: [],
@@ -104,6 +116,7 @@ function mockAdd(c: CategoryInput): void {
                   id,
                   name: c.name,
                   commission_rate: c.commissionRate,
+                  effective_commission_rate: c.commissionRate ?? r.effective_commission_rate,
                   product_count: 0,
                   children: [],
                 },
@@ -121,7 +134,7 @@ function mockAdd(c: CategoryInput): void {
 }
 
 export async function createCategory(c: CategoryInput): Promise<void> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(250);
     mockAdd(c);
     return;
@@ -131,7 +144,7 @@ export async function createCategory(c: CategoryInput): Promise<void> {
 
 /** Sửa danh mục gốc (tên, slug, icon, hoa hồng, hiển thị) — công tắc "Hiển thị" gửi riêng is_active. */
 export async function updateCategory(id: number, patch: Partial<CategoryInput>): Promise<void> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(200);
     const roots = categoriesStore.get();
     if (patch.slug && roots.some((r) => r.id !== id && r.slug === patch.slug))
@@ -145,7 +158,10 @@ export async function updateCategory(id: number, patch: Partial<CategoryInput>):
               slug: patch.slug ?? r.slug,
               icon: patch.icon ?? r.icon,
               commission_rate: patch.commissionRate ?? r.commission_rate,
+              effective_commission_rate:
+                patch.commissionRate ?? r.commission_rate ?? r.effective_commission_rate,
               is_active: patch.active ?? r.is_active,
+              requires_business_license: patch.requiresLicense ?? r.requires_business_license,
             }
           : r,
       ),
@@ -156,13 +172,15 @@ export async function updateCategory(id: number, patch: Partial<CategoryInput>):
   if (patch.name !== undefined) body.name = patch.name;
   if (patch.slug !== undefined) body.slug = patch.slug;
   if (patch.icon !== undefined) body.icon = patch.icon;
-  if (patch.commissionRate !== undefined) body.commission_rate = patch.commissionRate;
+  if (patch.commissionRate !== undefined && patch.commissionRate !== null)
+    body.commission_rate = patch.commissionRate;
   if (patch.active !== undefined) body.is_active = patch.active;
+  if (patch.requiresLicense !== undefined) body.requires_business_license = patch.requiresLicense;
   await api.patch(`/admin/categories/${id}`, body);
 }
 
 export async function deleteCategory(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(200);
     const roots = categoriesStore.get();
     const r = roots.find((x) => x.id === id);
@@ -175,14 +193,15 @@ export async function deleteCategory(id: number): Promise<void> {
 }
 
 // ---------- Bộ thuộc tính ----------
-export async function listAttributes(categoryId: number): Promise<CategoryAttribute[]> {
-  if (USE_MOCK) {
+/** Thuộc tính riêng của ngành + `summary.inherited` (thuộc tính ngành cha — chỉ đọc, plan B2 D8). */
+export async function listAttributes(categoryId: number): Promise<AttributeList> {
+  if (CATALOG_MOCK) {
     await mockDelay(150);
-    return (attributesStore.get()[categoryId] ?? []).map(toAttribute);
+    return { own: (attributesStore.get()[categoryId] ?? []).map(toAttribute), inherited: [] };
   }
-  return (await api.get<AttributeDto[]>(`/admin/categories/${categoryId}/attributes`)).map(
-    toAttribute,
-  );
+  const res = await request<AttributeDto[]>(`/admin/categories/${categoryId}/attributes`);
+  const inherited = (res.summary?.inherited ?? []) as InheritedAttributeDto[];
+  return { own: res.data.map(toAttribute), inherited: inherited.map(toInheritedAttribute) };
 }
 
 /** Lưu (thêm hoặc sửa); trả số ngày ân hạn khi thêm thuộc tính bắt buộc (shop bổ sung cho SP cũ). */
@@ -191,7 +210,7 @@ export async function saveAttribute(
   a: CategoryAttribute,
   editing: string | null,
 ): Promise<{ gracePeriodDays: number | null }> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(220);
     const all = attributesStore.get();
     const rows = all[categoryId] ?? [];
@@ -224,7 +243,7 @@ export async function setAttributeActive(
   code: string,
   active: boolean,
 ): Promise<void> {
-  if (USE_MOCK) {
+  if (CATALOG_MOCK) {
     await mockDelay(150);
     const all = attributesStore.get();
     attributesStore.set({
@@ -242,7 +261,7 @@ export async function setAttributeActive(
 
 // ---------- Đề xuất danh mục ----------
 export async function listProposals(): Promise<CategoryProposal[]> {
-  if (USE_MOCK) {
+  if (PROPOSALS_MOCK) {
     await mockDelay(150);
     return proposalsStore.get().map(toProposal);
   }
@@ -252,7 +271,7 @@ export async function listProposals(): Promise<CategoryProposal[]> {
 }
 
 export async function approveProposal(id: number, commissionRate: number | null): Promise<void> {
-  if (USE_MOCK) {
+  if (PROPOSALS_MOCK) {
     await mockDelay(250);
     const p = proposalsStore.get().find((x) => x.id === id);
     if (!p) mockFail('GNE-SYS-4040', { status: 404 });
@@ -264,6 +283,7 @@ export async function approveProposal(id: number, commissionRate: number | null)
       icon: 'package',
       commissionRate: commissionRate ?? parent?.commission_rate ?? 5,
       active: true,
+      requiresLicense: false,
     });
     proposalsStore.set(proposalsStore.get().filter((x) => x.id !== id));
     return;
@@ -272,7 +292,7 @@ export async function approveProposal(id: number, commissionRate: number | null)
 }
 
 export async function rejectProposal(id: number, reason: string): Promise<void> {
-  if (USE_MOCK) {
+  if (PROPOSALS_MOCK) {
     await mockDelay(200);
     proposalsStore.set(proposalsStore.get().filter((x) => x.id !== id));
     return;
@@ -290,7 +310,7 @@ export async function listCatalogProducts(
   tab: CatalogProductTab,
   page = 1,
 ): Promise<CatalogProductPage> {
-  if (USE_MOCK) {
+  if (PRODUCTS_MOCK) {
     await mockDelay(180);
     const all = catalogProductsStore.get().map(toCatalogProduct);
     const p = paginatePage(
@@ -321,7 +341,7 @@ export type ProductCommand =
   | { kind: 'unlock'; id: number };
 
 export async function runProductCommand(c: ProductCommand): Promise<void> {
-  if (USE_MOCK) {
+  if (PRODUCTS_MOCK) {
     await mockDelay(220);
     patchProduct(c.id, (p) => {
       switch (c.kind) {

@@ -5,13 +5,18 @@ export interface CategoryDto {
   slug: string;
   icon: string;
   is_active: boolean;
-  commission_rate: number;
+  requires_business_license: boolean;
+  /** Tỷ lệ riêng của ngành (%); `null` = dùng ngành cha / mặc định toàn sàn. */
+  commission_rate: number | null;
+  /** Tỷ lệ đang áp dụng thực tế (%). */
+  effective_commission_rate: number;
   product_count: number;
   shop_count: number;
   children: {
     id: number;
     name: string;
-    commission_rate: number;
+    commission_rate: number | null;
+    effective_commission_rate: number;
     product_count: number;
     children: { id: number; name: string }[];
   }[];
@@ -29,8 +34,9 @@ export interface CategoryInputDto {
   slug: string;
   parent_id: number | null;
   icon: string;
-  commission_rate: number;
+  commission_rate?: number;
   is_active: boolean;
+  requires_business_license: boolean;
 }
 
 export interface AttributeDto {
@@ -43,6 +49,17 @@ export interface AttributeDto {
   is_filterable: boolean;
   is_variant_axis: boolean;
   is_active: boolean;
+}
+
+/** `summary.inherited[]` của `GET /admin/categories/{id}/attributes`. */
+export interface InheritedAttributeDto {
+  code: string;
+  name: string;
+  data_type: string;
+  is_required: boolean;
+  is_active: boolean;
+  category_id: number;
+  category_name: string;
 }
 
 export interface ProposalDto {
