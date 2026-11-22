@@ -28,7 +28,8 @@ class AuditLogCsvWriterTest {
         AuditLogCsvWriter csv = new AuditLogCsvWriter(out);
         csv.writeHeader();
         csv.writeRow(new AuditLogView("1", OffsetDateTime.parse("2026-06-08T02:42:11Z"), "phat.nt@genie.example",
-                "MODERATOR", "KYC_APPROVED", AuditCategory.KYC, "KYC-1037 · TravelGear", "113.161.40.12", "SUCCESS"));
+                "MODERATOR", "KYC_APPROVED", AuditCategory.KYC, "KYC-1037 · TravelGear", "113.161.40.12", "SUCCESS",
+                "1037", "Mozilla/5.0", null));
         assertThat(out.toString()).startsWith("﻿Thời gian,User,Vai trò,Hành động,Nhóm,Đối tượng,IP,Kết quả\r\n")
                 .endsWith("2026-06-08 09:42:11,phat.nt@genie.example,MODERATOR,KYC_APPROVED,KYC,KYC-1037 · TravelGear,"
                         + "113.161.40.12,SUCCESS\r\n");

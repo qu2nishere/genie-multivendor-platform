@@ -24,6 +24,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -224,22 +225,54 @@ public class AuditLogQueryService {
         }
         String actor = r.getUserId() == null ? SYSTEM_ACTOR : r.getUserEmail();
         String result = r.getActionType() == AuditAction.ACCESS_DENIED ? "DENIED" : r.getStatus();
+        JsonNode details = details(r);
         return new AuditLogView(r.getId(), r.getCreatedAt().atZoneSameInstant(VN).toOffsetDateTime(), actor, role,
-                r.getActionType().name(), r.getActionType().category(), target(r), r.getIpAddress(), result);
+                r.getActionType().name(), r.getActionType().category(), target(r, details), r.getIpAddress(), result,
+                r.getReferenceId(), r.getUserAgent(), changes(details));
+    }
+
+    /** {@code details} dạng JSON object; không phải JSON hợp lệ → {@code null}. */
+    JsonNode details(SystemLog r) {
+        if (r.getDetails() == null || r.getDetails().isBlank()) {
+            return null;
+        }
+        try {
+            JsonNode node = objectMapper.readTree(r.getDetails());
+            return node != null && node.isObject() ? node : null;
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     /** {@code details.target_label} → {@code reference_id} → {@code null} (D3). */
-    String target(SystemLog r) {
-        if (r.getDetails() != null) {
-            try {
-                JsonNode label = objectMapper.readTree(r.getDetails()).get("target_label");
-                if (label != null && label.isTextual() && !label.asText().isBlank()) {
-                    return label.asText();
-                }
-            } catch (Exception ignored) {
-                // details không phải JSON hợp lệ — dùng reference_id
-            }
+    String target(SystemLog r, JsonNode details) {
+        JsonNode label = details == null ? null : details.get("target_label");
+        if (label != null && label.isTextual() && !label.asText().isBlank()) {
+            return label.asText();
         }
         return r.getReferenceId();
+    }
+
+    /**
+     * {@code details.changes} → {@code {trường: {from, to}}} (plan 2026-11-22 N4). Chỉ nhận object có {@code from} /
+     * {@code to}; dạng khác (vd mảng tên trường của bản ghi cũ) bị bỏ qua. Giữ thứ tự trường như lúc ghi.
+     */
+    Map<String, AuditChange> changes(JsonNode details) {
+        JsonNode node = details == null ? null : details.get("changes");
+        if (node == null || !node.isObject() || node.isEmpty()) {
+            return null;
+        }
+        Map<String, AuditChange> out = new LinkedHashMap<>();
+        node.fields().forEachRemaining(e -> {
+            JsonNode v = e.getValue();
+            if (v.isObject() && (v.has("from") || v.has("to"))) {
+                out.put(e.getKey(), new AuditChange(text(v.get("from")), text(v.get("to"))));
+            }
+        });
+        return out.isEmpty() ? null : out;
+    }
+
+    private static String text(JsonNode n) {
+        return n == null || n.isNull() ? null : n.isTextual() ? n.asText() : n.toString();
     }
 }
