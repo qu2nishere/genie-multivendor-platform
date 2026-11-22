@@ -185,6 +185,9 @@ công tắc kịch bản mock). Không `any`. Không biến toàn cục `window.
 - Tham số nghiệp vụ: hoa hồng 3,5–8% theo ngành (mặc định 5%); voucher 3 tầng Shop → Sàn → Freeship, Shop+Sàn ≤ 85%;
   Điểm 1 = 1₫, tối đa 50% sau voucher; escrow giữ 7 ngày sau DELIVERED; giữ hàng 15 phút; KYC risk < 30 tự duyệt,
   30–69 người duyệt, ≥ 70 từ chối; rút tối thiểu 100.000đ; khiếu nại 7 ngày, shop phản hồi 48h.
+- Hoa hồng: API nhận / trả **phần trăm** (`5.5`), CSDL lưu **phân số** (`0.0550`, `CommissionRates.toPercent / toFraction`).
+  Tỷ lệ áp dụng cho một ngành luôn lấy qua `CategoryFacade.effectiveCommissionRate(categoryId)` (ngành → cha gần nhất →
+  mặc định ở bảng `platform_settings` khóa `commission.default_rate`) — module khác không tự đọc `categories.commission_rate`.
 - Comment code viết **tiếng Việt**, dòng đầu file thường ghi nguồn (vd `// … (plan G10.08; API_SPEC 6.1)`).
 
 ## 8. Tra tài liệu — `~/Documents/TLCN/HOÀN CHỈNH /` (thứ tự ưu tiên khi mâu thuẫn: TECH_STACK mục 12 → Usecase/ENTITY → Document_Vi → implement)
