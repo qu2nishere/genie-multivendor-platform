@@ -25,7 +25,9 @@ public enum MailTemplate {
     /** Yêu cầu bổ sung KYC. Biến: {@code name}, {@code storeName}, {@code documents}, {@code note}, {@code deadline}. */
     KYC_SUPPLEMENT("kyc-supplement", "Hồ sơ KYC cần bổ sung giấy tờ", "Your shop KYC needs more documents"),
     /** Đổi / xóa tài khoản nhận tiền (UC-VND-07). Biến: {@code name}, {@code storeName}, {@code action}, {@code bankName}, {@code accountMasked}, {@code changedAt}. */
-    PAYOUT_ACCOUNT_CHANGED("payout-account-changed", "Tài khoản nhận tiền của shop vừa thay đổi", "Your shop payout account was changed");
+    PAYOUT_ACCOUNT_CHANGED("payout-account-changed", "Tài khoản nhận tiền của shop vừa thay đổi", "Your shop payout account was changed"),
+    /** Mời nhân viên kích hoạt tài khoản (UC-ADM-01, plan B1 R01.03). Biến: {@code name}, {@code inviterName}, {@code staffTitle}, {@code activationUrl}, {@code expiresHours}. */
+    STAFF_INVITATION("staff-invitation", "Lời mời tham gia quản trị Genie Shop", "You are invited to Genie Shop admin");
 
     private final String file;
     private final String subjectVi;

@@ -100,6 +100,7 @@
     "GNE-AUTH-4012": "Incorrect account or password.",
     "GNE-AUTH-4031": "This account is suspended.",
     "GNE-AUTH-4032": "The Google account email isn't verified.",
+    "GNE-AUTH-4033": "This account can't continue with {provider} right now. Please choose another account or try signing in with your password.",
     "GNE-AUTH-4091": "This email is already registered. Sign in or reset your password.",
     "GNE-AUTH-4098": "The Google account you chose uses a different email from your Genie account. Please choose the Google account with the same email.",
     "GNE-AUTH-4092": "This social account is linked to another user, or your account already links another social account.",
@@ -149,6 +150,7 @@
     "GNE-SOC-4095": "You cannot follow your own shop.",
     "GNE-SOC-4221": "Replies can't contain phone numbers.",
     "GNE-VND-4031": "The shop isn't verified (KYC) yet.",
+    "GNE-VND-4041": "This shop doesn't exist or is no longer active.",
     "GNE-VND-4091": "The shop name can be changed once every 30 days.",
     "GNE-VND-4092": "Orders are still awaiting handover, so break mode can't be turned on.",
     "GNE-VND-4093": "This account already has a shop.",
@@ -168,12 +170,14 @@
     "GNE-NOT-4091": "This notification has been sent and can't be edited.",
     "GNE-NOT-4221": "The recipient list is empty or has unknown emails.",
     "GNE-ADM-4091": "This staff email is already in use.",
-    "GNE-ADM-4092": "You can't delete yourself.",
-    "GNE-ADM-4221": "Staff emails must end with @genie.example.",
+    "GNE-ADM-4092": "You cannot do this on your own account or on the last administrator.",
+    "GNE-ADM-4093": "This staff member has already activated their account; no need to resend the invitation.",
+    "GNE-ADM-4221": "This email domain is not allowed for staff accounts.",
     "GNE-SYS-5030": "The system is busy. Please try again shortly.",
     "GNE-DB-5002": "The system is busy. Please try again in a few seconds.",
     "GNE-MINIO-5003": "The upload link expired. Please upload again.",
-    "GNE-CMP-4041": "This campaign doesn't exist or has ended."
+    "GNE-CMP-4041": "This campaign doesn't exist or has ended.",
+    "GNE-ORD-4031": "Staff / admin accounts cannot place orders — please use a personal customer account."
   },
   "ui": {
     "close": "Close",
@@ -314,7 +318,8 @@
       "cart_count": "Cart, {count} items",
       "categories": "Categories",
       "all_categories": "All categories",
-      "theme": "Theme"
+      "theme": "Theme",
+      "internal_no_buy": "Staff / admin accounts can only browse the store — no cart or orders. Please shop with a personal customer account."
     },
     "notfound": {
       "title": "Page not found",
@@ -468,6 +473,8 @@
       "orders": "My orders",
       "seller": "Seller Center",
       "switch": "Switch to Seller Center",
+      "admin": "Admin portal",
+      "admin_switch": "Switch to Admin Console",
       "logout_confirm": "Are you sure you want to sign out of {name}?"
     },
     "meta": {
@@ -591,6 +598,33 @@
       "taken_text": "Sign in with this email, then link {provider} under Account › Sign-in methods.",
       "expired_title": "Sign-up session expired",
       "expired_text": "Please sign in with {provider} again."
+    },
+    "staff_activation": {
+      "title": "Activate your account",
+      "lead": "Complete 2 steps to start working at Genie",
+      "sent_to": "A 6-digit code was sent to",
+      "step_otp": "Enter the verification code",
+      "step_password": "Set your sign-in password",
+      "resend": "Resend code",
+      "resend_in": "Resend in {time}",
+      "err_otp": "Please enter all 6 digits.",
+      "submit": "Activate and sign in",
+      "sending": "Sending a verification code to the invited email…",
+      "signing_in": "Activated, taking you to the admin portal…",
+      "expired_title": "This invitation has expired",
+      "expired_text": "The activation link is no longer valid (older than 48 hours, already used or replaced by a newer invitation). Please ask an administrator to resend the invitation.",
+      "blocked_title": "Too many wrong codes",
+      "blocked_text": "This verification code has been cancelled. Tap below to get a new code by email.",
+      "error_title": "Could not send the verification code",
+      "new_code": "Send a new code"
+    },
+    "forced_logout": {
+      "title": "You have been signed out",
+      "SUSPENDED": "Your account has just been locked. Contact support if you need more details.",
+      "ACCOUNT_DELETED": "Your account has been deleted.",
+      "ROLE_CHANGED": "Your access has just changed. Please sign in again.",
+      "PASSWORD_CHANGED": "Your password was just reset. Please sign in with the new password.",
+      "DEFAULT": "Your session has ended. Please sign in again."
     }
   },
   "search": {
@@ -996,7 +1030,8 @@
       "hold_b": "15 minutes",
       "hold_c": "while you pay.",
       "hold_note_a": "When you prepay with VNPay or VietQR, Genie holds your money and only pays",
-      "hold_note_b": "after you receive your order."
+      "hold_note_b": "after you receive your order.",
+      "internal_no_buy": "You are signed in with a staff / admin account — you can view products but not buy. Please use a personal customer account to shop."
     },
     "gallery": {
       "zoom": "Enlarge image of {title}",
@@ -1134,6 +1169,8 @@
     "empty": "This shop has no products in this section yet.",
     "head": {
       "meta": "Online · Joined {year} · Replies {time}",
+      "response_minutes": "within minutes",
+      "response_hours": "within hours",
       "reopen": "Expected to reopen on {until}."
     },
     "stat": {
@@ -2972,6 +3009,10 @@
     "shell": {
       "title": "Admin Console",
       "home": "Admin Console — home",
+      "to_store": "Switch to the shopping site",
+      "account_menu": "Admin account",
+      "my_account": "My account",
+      "buyer_channel": "Buyer channel",
       "nav_label": "Admin Console navigation",
       "nav": {
         "overview": "Overview",
@@ -3010,7 +3051,9 @@
         "title": "This account is not platform staff",
         "desc": "The Admin Console is only for Genie staff and administrators.",
         "cta": "Back to Genie"
-      }
+      },
+      "permissions_changed": "Your access has just been updated.",
+      "permissions_lost": "You no longer have access to {screen} — moved to your home page."
     },
     "perm": {
       "VIEW_DASHBOARD": "View the Overview page",
@@ -3620,8 +3663,9 @@
         "name": "Enter a category name.",
         "name_long": "At most 100 characters.",
         "slug": "Slug may only contain lowercase letters, digits and hyphens.",
-        "rate": "Commission must be 0 to 50%."
-      }
+        "rate": "Commission must be between 3.5 and 8%."
+      },
+      "license": "Requires documents"
     },
     "attr": {
       "title": "Attributes — {name}",
@@ -3650,6 +3694,9 @@
       "deactivate": "Retire",
       "activate": "Use again",
       "empty": "This category has no attributes yet.",
+      "inherited_title": "Inherited from parent categories",
+      "inherited_desc": "Read-only — edit them on the parent category. Codes must be unique within the branch.",
+      "from": "Defined in",
       "save": "Save attribute",
       "saved": "Attribute saved",
       "saved_grace": "Saved. Shops have {days} days to fill this required attribute on existing products",
@@ -3774,7 +3821,7 @@
       "toggle": "Use a specific rate for {name}",
       "save": "Save settings",
       "saved": "All settings saved",
-      "err": "Rate must be between 0 and 50%."
+      "err": "Rate must be between 3.5 and 8%."
     },
     "ledger": {
       "append_only": "Append-only · immutable",
@@ -4182,7 +4229,8 @@
       "status": {
         "ACTIVE": "Active",
         "LOCKED": "Locked",
-        "PENDING_ACTIVATION": "Pending activation"
+        "PENDING_ACTIVATION": "Pending activation",
+        "INVITATION_EXPIRED": "Invitation expired"
       },
       "all_perms": "Full access",
       "all_perms_desc": "Holds every permission in the system",
@@ -4190,6 +4238,8 @@
       "empty": "No staff found.",
       "resend": "Resend invite",
       "resent": "Invitation resent to {email}",
+      "invite_expires_at": "Expires at {time}",
+      "invite_expired_at": "Expired at {time} — resend the invitation",
       "edit": "Edit permissions",
       "lock": "Lock",
       "unlock": "Unlock",
@@ -4226,7 +4276,16 @@
       "footnote": "MANAGE_RBAC is reserved for Admins and can't be granted to staff.",
       "err": {
         "name": "Enter a full name (max 100 characters)",
-        "email": "Work email must end with @genie.example"
+        "email": "Enter a valid email address"
+      },
+      "email_checking": "Checking email…",
+      "email_available": "No account uses this email yet — you can send the invitation.",
+      "email_taken": {
+        "CUSTOMER": "Email matches a customer account",
+        "VENDOR": "Email matches a seller account",
+        "STAFF": "Email matches a staff account",
+        "ADMIN": "Email matches an admin account",
+        "OTHER": "Email matches another account"
       }
     },
     "users": {

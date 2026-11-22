@@ -1,12 +1,13 @@
 // Đăng nhập (prototype auth: step "login" / "otp" / "locked") — plan G09.05, island client:load.
 // Hai chế độ Mật khẩu / Mã OTP; sai mật khẩu báo số lần còn lại; sai 5 lần → màn tạm khóa 15 phút,
 // mở khóa bằng OTP qua email. Xong → gộp giỏ khách, chuyển về `next`.
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { errorMessage, toApiError } from '@/shared/api/errors';
 import { isMocked } from '@/shared/config/env';
 import type { SessionUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
+import { takeForcedLogoutReason, type ForcedLogoutReason } from '@/shared/realtime/accountChannel';
 import { Providers } from '@/shared/providers/Providers';
 import { Button, Input, PasswordInput } from '@/shared/ui';
 import { useLogin, useRequestOtp } from '../application/useAuth';
@@ -39,6 +40,8 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [forced, setForced] = useState<ForcedLogoutReason | null>(null);
+  useEffect(() => setForced(takeForcedLogoutReason()), []);
   const [done, setDone] = useState(false);
   const login = useLogin();
   const otp = useRequestOtp();
@@ -170,6 +173,11 @@ function Form({ next, email: initialEmail = '' }: LoginFormProps) {
         lead={mode === 'otp' ? t('auth.login.lead_otp') : t('auth.login.lead_password')}
       />
       {formError && <Notice tone="error">{formError}</Notice>}
+      {!formError && forced && (
+        <Notice tone="error" title={t('auth.forced_logout.title')}>
+          {t(`auth.forced_logout.${forced}`)}
+        </Notice>
+      )}
       <div
         className="mb-[18px] flex gap-1 rounded-md bg-gray-100 p-1"
         role="group"

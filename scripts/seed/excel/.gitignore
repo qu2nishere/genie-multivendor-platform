@@ -1,0 +1,6 @@
+# Ảnh gốc người nhập bỏ vào — KHÔNG commit (plan 2026-11-21 D1). Chỉ commit assets/ (bản thu nhỏ + manifest.json).
+anh/
+__pycache__/
+.pytest_cache/
+# file tạm của Excel khi đang mở
+~$*.xlsx

@@ -27,6 +27,12 @@ const staff = (
   permissions:
     title === null ? [...PERMISSIONS] : title === 'CUSTOM' ? [] : [...TITLE_PRESETS[title]],
   status,
+  invitation_expires_at:
+    status === 'PENDING_ACTIVATION'
+      ? new Date(Date.now() + 30 * 3600 * 1000).toISOString()
+      : status === 'INVITATION_EXPIRED'
+        ? new Date(Date.now() - 20 * 3600 * 1000).toISOString()
+        : null,
   is_self: id === 1,
 });
 
@@ -36,6 +42,7 @@ export const staffStore = mockState<StaffDto[]>('admin.staff', () => [
   staff(8, 'Trịnh Mỹ Linh', 'linh.tm@genie.example', 'FINANCE_OFFICER', 'ACTIVE'),
   staff(9, 'Vương Đại Nghĩa', 'nghia.vd@genie.example', 'CS_SPECIALIST', 'LOCKED'),
   staff(10, 'Hồ Thanh Trúc', 'truc.ht@genie.example', 'CS_SPECIALIST', 'PENDING_ACTIVATION'),
+  staff(11, 'Lý Quốc Bảo', 'bao.lq@genie.example', 'MODERATOR', 'INVITATION_EXPIRED'),
 ]);
 
 const user = (
@@ -66,7 +73,8 @@ export const usersStore = mockState<PlatformUserDto[]>('admin.users', () => [
   user(20411, 'Trần Thị Mai', null, 'mai.tran@gmail.com', '0901234567', 48, 0, 'ACTIVE'),
   user(20398, 'Nguyễn Văn An', null, 'an.nguyen@gmail.com', '0912887001', 12, 0, 'ACTIVE'),
   user(20377, 'Lê Hoàng Phúc', null, 'phuc.le@yahoo.com', '0978112340', 31, 3, 'SUSPENDED', {
-    reason: 'Hoàn hàng bất thường nhiều lần',
+    reason_code: 'ABNORMAL_RETURNS',
+    note: null,
     until: '2026-06-29T00:00:00+07:00',
   }),
   user(
@@ -99,7 +107,8 @@ export const usersStore = mockState<PlatformUserDto[]>('admin.users', () => [
     5,
     'LOCKED',
     {
-      reason: 'Người bán gian lận hàng giả',
+      reason_code: 'COUNTERFEIT_SELLER',
+      note: null,
       until: null,
     },
   ),

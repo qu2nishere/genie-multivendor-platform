@@ -141,9 +141,32 @@ export function mockReset(newPassword: string): void {
   if (newPassword === MOCK_PASSWORD) mockFail('GNE-AUTH-4223', { status: 422 });
 }
 
+/** Mock lời mời nhân viên: `inv_expired` (và mọi mã không bắt đầu `inv_`) → 410; mã khác hợp lệ một lần. */
+export const MOCK_STAFF_INVITE_EMAIL = 'nhanvien.moi@genie.example';
+const usedInvitations = new Set<string>();
+
+export function mockStaffActivationOtp(token: string): OtpChallengeDto {
+  if (!token.startsWith('inv_') || token === 'inv_expired' || usedInvitations.has(token)) {
+    mockFail('GNE-AUTH-4103', { status: 410 });
+  }
+  return mockChallenge(MOCK_STAFF_INVITE_EMAIL, 'STAFF_ACTIVATION');
+}
+
+export function mockActivateStaff(token: string, challengeId: string, otp: string): AuthTokensDto {
+  if (usedInvitations.has(token)) mockFail('GNE-AUTH-4103', { status: 410 });
+  const r = mockVerify(challengeId, otp);
+  if (r.kind !== 'tokens') mockFail('GNE-AUTH-4101', { status: 410 });
+  usedInvitations.add(token);
+  return {
+    ...r.tokens,
+    user: { ...r.tokens.user, role: 'STAFF', full_name: 'Nhân viên mới' },
+  };
+}
+
 /** Chỉ dùng trong test: xoá trạng thái mock. */
 export function resetAuthMock(): void {
   challenges.clear();
   pwFails.clear();
   lockedUntil.clear();
+  usedInvitations.clear();
 }

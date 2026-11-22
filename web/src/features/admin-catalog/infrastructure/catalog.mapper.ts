@@ -4,6 +4,7 @@ import type {
   CategoryAttribute,
   CategoryInput,
   CategoryProposal,
+  InheritedAttribute,
   RootCategory,
 } from '../domain/catalog.types';
 import type {
@@ -12,6 +13,7 @@ import type {
   CatalogSummaryDto,
   CategoryDto,
   CategoryInputDto,
+  InheritedAttributeDto,
   ProposalDto,
 } from './catalog.dto';
 
@@ -21,13 +23,15 @@ export const toRoot = (d: CategoryDto): RootCategory => ({
   slug: d.slug,
   icon: d.icon,
   active: d.is_active,
-  commissionRate: d.commission_rate,
+  requiresLicense: d.requires_business_license ?? false,
+  commissionRate: d.commission_rate ?? d.effective_commission_rate,
+  ownCommission: d.commission_rate !== null && d.commission_rate !== undefined,
   productCount: d.product_count,
   shopCount: d.shop_count,
   children: d.children.map((s) => ({
     id: s.id,
     name: s.name,
-    commissionRate: s.commission_rate,
+    commissionRate: s.commission_rate ?? s.effective_commission_rate,
     productCount: s.product_count,
     children: s.children,
   })),
@@ -45,8 +49,9 @@ export const toCategoryInputDto = (c: CategoryInput): CategoryInputDto => ({
   slug: c.slug,
   parent_id: c.parentId,
   icon: c.icon,
-  commission_rate: c.commissionRate,
+  ...(c.commissionRate !== null ? { commission_rate: c.commissionRate } : {}),
   is_active: c.active,
+  requires_business_license: c.requiresLicense,
 });
 
 export const toAttribute = (d: AttributeDto): CategoryAttribute => ({
@@ -59,6 +64,16 @@ export const toAttribute = (d: AttributeDto): CategoryAttribute => ({
   filterable: d.is_filterable,
   variantAxis: d.is_variant_axis,
   active: d.is_active,
+});
+
+export const toInheritedAttribute = (d: InheritedAttributeDto): InheritedAttribute => ({
+  code: d.code,
+  name: d.name,
+  dataType: d.data_type as InheritedAttribute['dataType'],
+  required: d.is_required,
+  active: d.is_active,
+  categoryId: d.category_id,
+  categoryName: d.category_name,
 });
 
 export const toAttributeDto = (a: CategoryAttribute): AttributeDto => ({

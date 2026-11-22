@@ -2,6 +2,7 @@
 // chung `sellerProductsStore` (Tổng quan, tìm nhanh đọc) + kho chi tiết form.
 import { api, request } from '@/shared/api/http';
 import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import {
   sellerOrdersStore,
   sellerProductsStore,
@@ -272,9 +273,9 @@ const toNode = (d: {
   children: d.children?.map(toNode),
 });
 
-/** Cây 3 cấp cho ô chọn danh mục (5.1 GET /public/categories). */
+/** Cây 3 cấp cho ô chọn danh mục (5.1 GET /public/categories — nhóm `catalog`, plan B2 C08.02). */
 export async function getCategoryTree(): Promise<CategoryNode[]> {
-  if (USE_MOCK) {
+  if (isMocked('catalog')) {
     await mockDelay(120);
     return CATEGORY_TREE;
   }

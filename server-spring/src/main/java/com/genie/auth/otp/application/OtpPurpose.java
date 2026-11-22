@@ -12,7 +12,9 @@ package com.genie.auth.otp.application;
  */
 public enum OtpPurpose {
     REGISTER, LOGIN, PASSWORD_RESET, PASSWORD_CHANGE, ACCOUNT_DELETION, WITHDRAWAL,
-    PAYOUT_ACCOUNT_UPDATE, PAYOUT_ACCOUNT_DELETE, SHOP_REGISTRATION, EMAIL_CHANGE, ACCOUNT_UNLOCK, OAUTH_SIGNUP;
+    PAYOUT_ACCOUNT_UPDATE, PAYOUT_ACCOUNT_DELETE, SHOP_REGISTRATION, EMAIL_CHANGE, ACCOUNT_UNLOCK, OAUTH_SIGNUP,
+    /** Nhân viên kích hoạt lời mời (UC-ADM-01, plan B1 D2) — chỉ xin qua {@code POST /auth/staff-activations/otp-challenges}. */
+    STAFF_ACTIVATION;
 
     /** Được xin qua {@code POST /auth/otp-challenges} (không cần đăng nhập). REGISTER đi qua {@code /auth/registrations}. */
     public boolean isGuestRequestable() {
@@ -41,6 +43,8 @@ public enum OtpPurpose {
             case ACCOUNT_UNLOCK -> english ? "unlocking your account" : "mở khóa tài khoản";
             case OAUTH_SIGNUP -> english ? "creating your Genie Shop account with Zalo"
                     : "tạo tài khoản Genie Shop bằng Zalo";
+            case STAFF_ACTIVATION -> english ? "activating your Genie Shop staff account"
+                    : "kích hoạt tài khoản nhân viên Genie Shop";
         };
     }
 }

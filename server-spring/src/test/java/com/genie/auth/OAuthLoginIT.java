@@ -164,6 +164,55 @@ class OAuthLoginIT extends IntegrationTestBase {
     }
 
     @Test
+    void pendingStaffInvitationCannotSignInWithGoogle() throws Exception {
+        String email = uniqueEmail();
+        long id = userRepository.saveAndFlush(User.newStaff(email)).getId();
+
+        MvcResult r = signIn("c-pending-staff", new IdentityClaims("sub-ps-" + email, email, true, "Nhân viên", null));
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(403);
+        assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4033");
+        // Câu báo chung chung — không nhắc tới nhân viên / lời mời
+        assertThat(json(r, "$.message")).doesNotContainIgnoringCase("nhân viên").doesNotContainIgnoringCase("mời");
+        User after = userRepository.findById(id).orElseThrow();
+        assertThat(after.getOauthProvider()).isNull();
+        assertThat(after.getEmailVerifiedAt()).isNull();
+        assertThat(after.isPendingStaffActivation()).isTrue();
+    }
+
+    @Test
+    void activeStaffCannotSignInWithGoogleEvenWithSameEmail() throws Exception {
+        String email = uniqueEmail();
+        long id = createCustomer(email, PASSWORD).getId();
+        jdbc.update("UPDATE users SET role = 'STAFF' WHERE id = ?", id);
+
+        MvcResult r = signIn("c-active-staff", new IdentityClaims("sub-as-" + email, email, true, "Nhân viên", null));
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(403);
+        assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4033");
+        assertThat(json(r, "$.message")).isEqualTo(
+                "Tài khoản này hiện không thể tiếp tục với Google, "
+                        + "vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu.");
+        assertThat(userRepository.findById(id).orElseThrow().getOauthProvider()).isNull();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'LOGIN_FAILED' "
+                + "AND user_id = ? AND details LIKE '%INTERNAL_ACCOUNT%'", Integer.class, id)).isEqualTo(1);
+    }
+
+    @Test
+    void adminAlreadyLinkedToGoogleBeforeTheRuleIsRejected() throws Exception {
+        String email = uniqueEmail();
+        String sub = "sub-al-" + email;
+        long id = createCustomer(email, PASSWORD).getId();
+        jdbc.update("UPDATE users SET role = 'ADMIN', oauth_provider = 'google', oauth_provider_id = ? WHERE id = ?",
+                sub, id);
+
+        MvcResult r = signIn("c-linked-admin", new IdentityClaims(sub, email, true, "Admin", null));
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(403);
+        assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4033");
+    }
+
+    @Test
     void temporarilyLockedAccountIsNotLinked() throws Exception {
         String email = uniqueEmail();
         createCustomer(email, PASSWORD);

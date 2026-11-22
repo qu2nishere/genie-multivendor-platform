@@ -1,11 +1,15 @@
 // Khung Admin: GET /admin/me (11.1) — không cần mã quyền.
 import { api } from '@/shared/api/http';
-import { mockDelay, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { currentUser, MOCK_STAFF } from '@/shared/auth/session';
 import type { AdminMe } from '../domain/me.types';
 import type { AdminMeDto } from './me.dto';
 import { toAdminMe } from './me.mapper';
 import { adminMeStore } from './system.mock';
+
+/** Khung Admin dựa trên phiên đăng nhập — nối API thật cùng nhóm `auth` (đăng nhập thật thì GET /admin/me thật). */
+const USE_MOCK = isMocked('auth');
 
 export async function getAdminMe(): Promise<AdminMe> {
   if (USE_MOCK) {

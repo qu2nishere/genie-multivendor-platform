@@ -1,6 +1,6 @@
 // Khung Admin Portal (prototype AdminShell.jsx) — plan G12.03: thanh bên tối 18 mục lọc theo quyền,
-// huy hiệu hàng chờ (G12.05), chip quyền, thẻ tài khoản ở đáy; thanh trên (tiêu đề, "Staff RBAC",
-// ngôn ngữ, theme, chuông, Tài khoản). Màn hẹp: thanh bên thành dải trên, nav cuộn ngang (như Seller).
+// huy hiệu hàng chờ (G12.05), chip quyền; thanh trên (tiêu đề, "Staff RBAC", ngôn ngữ, theme, chuông, menu tài khoản
+// ảnh + tên — plan B1 2026-11-20, thay thẻ tài khoản ở đáy thanh bên). Màn hẹp: thanh bên thành dải trên, nav cuộn ngang.
 // Bỏ ô "Xem với vai trò" (PREVIEW_ROLES — D5).
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
@@ -9,8 +9,9 @@ import type { AdminMe } from '@/features/admin-system';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { LOCALE_LABELS, LOCALES, switchLocale, type Locale } from '@/shared/lib/locale';
-import { Avatar, Badge, Icon } from '@/shared/ui';
+import { Badge, Icon } from '@/shared/ui';
 import { GenieLogo, ThemePicker } from '@/shared/ui/brand';
+import { AdminAccountMenu } from './AdminAccountMenu';
 import { AdminBell } from './AdminBell';
 import { allowed, NAV, navOf, type AdminNavItem } from './nav';
 
@@ -88,17 +89,6 @@ function Sidebar({ me, active }: { me: AdminMe; active: AdminNavItem | null }) {
           );
         })}
       </nav>
-      <Link
-        to="/account"
-        className="p-3 border-0 border-t border-solid border-white/[.08] flex items-center gap-2.5 no-underline hover:no-underline hover:bg-white/[.05] focus-visible:outline-none focus-visible:shadow-focus"
-      >
-        <Avatar name={me.fullName} size={34} />
-        <span className="min-w-0">
-          <span className="block text-xs font-semibold text-white truncate">{me.fullName}</span>
-          <span className="block text-[11px] text-white/50">{role}</span>
-        </span>
-        <Icon name="settings" size={17} className="ml-auto text-white/50" />
-      </Link>
     </aside>
   );
 }
@@ -125,6 +115,7 @@ export function AdminLayout({ me, children }: { me: AdminMe; children: ReactNode
   const { t } = useT();
   const { pathname } = useLocation();
   const active = navOf(pathname);
+  const roleLabel = useRoleLabel(me);
   const title = active ? t(`admin.shell.nav.${active.section}`) : t('admin.shell.not_found.title');
 
   useEffect(() => {
@@ -145,9 +136,7 @@ export function AdminLayout({ me, children }: { me: AdminMe; children: ReactNode
             <LangSwitch />
             <ThemePicker className="gn-iconbtn" />
             <AdminBell />
-            <Link to="/account" className="gn-iconbtn" aria-label={t('admin.shell.nav.account')}>
-              <Icon name="settings" size={20} />
-            </Link>
+            <AdminAccountMenu me={me} roleLabel={roleLabel} />
           </div>
         </header>
         <main className="flex-1 px-7 pt-6 pb-[60px] min-w-0 max-md:px-3 max-md:pt-3.5 max-md:pb-10">

@@ -1,6 +1,7 @@
 // Trang trả về sau Google / Zalo (plan G09.12, A14.10; API_SPEC 2.10): đang xử lý → hoàn tất (gộp giỏ, chuyển về
 // `next`) hoặc lỗi. Thiếu `code` / `state`, nhà cung cấp báo lỗi, hay backend từ chối (GNE-AUTH-4001 state không hợp lệ,
-// 4032 email chưa xác minh, 4031 tài khoản bị khóa) → màn lỗi.
+// 4032 email chưa xác minh, 4031 tài khoản bị khóa, 4033 tài khoản nội bộ STAFF / ADMIN không dùng Google / Zalo — câu
+// chung, không nói lý do) → màn lỗi.
 // Callback cố định `/auth/oauth-callback` (không kèm tham số) → nhà cung cấp và ý định (đăng nhập / liên kết) đọc từ
 // sessionStorage do nút bấm ghi trước khi chuyển trang; không có → Google.
 // Zalo chưa có tài khoản (SIGNUP_REQUIRED) → hỏi email + OTP ngay tại trang này (SocialSignup).

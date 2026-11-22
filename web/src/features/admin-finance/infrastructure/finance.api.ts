@@ -2,6 +2,7 @@
 // Tổng quan đổi theo); duyệt chi xong ghi bút toán PAYOUT_SETTLE, đối soát xong ghi ESCROW_IN vào sổ cái.
 import { api, getPage, request } from '@/shared/api/http';
 import { mockDelay, mockFail, paginateCursor, USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import {
   adminCodStore,
   adminWithdrawalsStore,
@@ -167,9 +168,12 @@ export async function completeWithdrawal(id: number, bankReference: string): Pro
   await api.post(`/admin/withdrawals/${id}/complete`, { bank_reference: bankReference });
 }
 
+// Nhóm mock riêng `commission` — đã có backend (plan B2 C08.04)
+const COMMISSION_MOCK = isMocked('commission');
+
 // ---------- 11.8 Hoa hồng ----------
 export async function getCommission(): Promise<CommissionSettings> {
-  if (USE_MOCK) {
+  if (COMMISSION_MOCK) {
     await mockDelay(150);
     return toCommission(commissionStore.get());
   }
@@ -177,7 +181,7 @@ export async function getCommission(): Promise<CommissionSettings> {
 }
 
 export async function saveDefaultRate(rate: number): Promise<CommissionSettings> {
-  if (USE_MOCK) {
+  if (COMMISSION_MOCK) {
     await mockDelay(220);
     return toCommission(commissionStore.set({ ...commissionStore.get(), default_rate: rate }));
   }
@@ -194,7 +198,7 @@ export async function saveCategoryRates(
     rate: c.rate,
     is_enabled: c.enabled,
   }));
-  if (USE_MOCK) {
+  if (COMMISSION_MOCK) {
     await mockDelay(250);
     const cur = commissionStore.get();
     return toCommission(

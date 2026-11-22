@@ -45,14 +45,16 @@ export function withdrawalSummary(
 }
 
 // ---------- Hoa hồng ----------
-export const MAX_RATE = 50;
+/** Khung hoa hồng ngành 3,5–8 % (plan B2 D1 — backend `CommissionRates`). */
+export const MIN_RATE = 3.5;
+export const MAX_RATE = 8;
 
-/** Tỷ lệ 0–50, cho phép thập phân (dấu phẩy hoặc chấm); sai → null. */
+/** Tỷ lệ 3,5–8, cho phép thập phân (dấu phẩy hoặc chấm); sai → null. */
 export function parseRate(raw: string): number | null {
   const s = raw.trim().replace(',', '.');
   if (!s) return null;
   const n = Number(s);
-  return Number.isFinite(n) && n >= 0 && n <= MAX_RATE ? Math.round(n * 100) / 100 : null;
+  return Number.isFinite(n) && n >= MIN_RATE && n <= MAX_RATE ? Math.round(n * 100) / 100 : null;
 }
 
 // ---------- Sổ cái ----------

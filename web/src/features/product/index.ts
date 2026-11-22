@@ -8,6 +8,7 @@ export type {
   ProductBadge,
   ProductSpec,
   ProductSku,
+  CategoryCrumb,
   VariantGroup,
   VariantOption,
   FlashInfo,
@@ -28,8 +29,14 @@ export {
   encodeSelection,
   skuOf,
   decodeSelection,
+  stockFor,
+  isOptionOut,
+  shareVariantParam,
+  decodeShared,
+  viewSourceOf,
   LOW_STOCK,
   type Selection,
+  type ViewSource,
 } from './domain/product.rules';
 export {
   listProducts,
@@ -40,6 +47,7 @@ export {
   getFacets,
 } from './infrastructure/product.api';
 export { $wishlist, loadWishlist, toggleWishlist } from './application/wishlist.store';
+export { trackProductView } from './application/viewTracking';
 export { default as ProductGrid, ProductGridBody, type ProductGridProps } from './ui/ProductGrid';
 export { default as ProductFeed, type ProductFeedProps } from './ui/ProductFeed';
 export { WishHeart } from './ui/WishHeart';

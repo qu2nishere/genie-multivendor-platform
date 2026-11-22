@@ -9,6 +9,7 @@ import com.genie.common.audit.AuditAction;
 import com.genie.common.audit.AuditLogger;
 import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
+import com.genie.common.realtime.UserChannel;
 import com.genie.common.security.AuthUser;
 import com.genie.common.security.ClientInfo;
 import com.genie.common.security.Hashing;
@@ -45,9 +46,11 @@ public class SessionService {
     private final AuditLogger audit;
     private final Clock clock;
     private final Duration refreshTtl;
+    private final UserChannel realtime;
 
     public SessionService(RefreshTokenRepository tokens, UserRepository users, JwtService jwtService,
-                          TokenRevocationStore revocations, AuditLogger audit, Clock clock, SecurityProperties props) {
+                          TokenRevocationStore revocations, AuditLogger audit, Clock clock, SecurityProperties props,
+                          UserChannel realtime) {
         this.tokens = tokens;
         this.users = users;
         this.jwtService = jwtService;
@@ -55,6 +58,7 @@ public class SessionService {
         this.audit = audit;
         this.clock = clock;
         this.refreshTtl = props.refreshTokenTtl();
+        this.realtime = realtime;
     }
 
     /** Mở phiên mới cho user vừa xác thực (mật khẩu, OTP, Google, đăng ký, mở khóa). */
@@ -178,6 +182,8 @@ public class SessionService {
     public void revokeAllSessions(long userId, String reason) {
         tokens.revokeAllOfUser(userId, reason, now());
         revocations.revokeAllIssuedBefore(userId, clock.instant());
+        // Báo ngay cho mọi thiết bị đang mở (WebSocket /user/queue/account) — client tự đăng xuất, không phải tải lại trang
+        realtime.sendAfterCommit(userId, UserChannel.ACCOUNT, new AccountSignal(AccountSignal.SESSION_REVOKED, reason));
     }
 
     /** Lịch sử đăng nhập gần đây (kể cả đã thu hồi) — nhận diện thiết bị lạ. */

@@ -6,6 +6,7 @@ import { useStore } from '@nanostores/react';
 import { Fragment, useEffect, useState } from 'react';
 import { AddToCartButton, type CartLineInput } from '@/features/cart';
 import { HoldNote } from '@/features/payment';
+import { $session, isInternalUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatCompact, formatNumber, formatVND } from '@/shared/lib/format';
@@ -22,13 +23,14 @@ import {
 } from '@/shared/ui';
 import { $selection } from '../application/selection.store';
 import {
-  decodeSelection,
+  decodeShared,
   isFlashSoldOut,
+  isOptionOut,
   maxQty,
   missingGroups,
   priceOf,
   skuOf,
-  stockOf,
+  stockFor,
   variantLabel,
   LOW_STOCK,
   type Selection,
@@ -57,20 +59,22 @@ function chip(on: boolean, disabled: boolean) {
 function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
   const { t, locale } = useT();
   const sel = useStore($selection);
+  const session = useStore($session);
+  const internal = session.status === 'authenticated' && isInternalUser(session.user);
   const [qty, setQty] = useState(1);
 
   // Lần đầu: lựa chọn trống; liên kết chia sẻ chọn sẵn rồi bỏ tham số khỏi URL (prototype)
   useEffect(() => {
     const u = new URL(window.location.href);
     const shared = u.searchParams.get('v');
-    $selection.set(decodeSelection(p.variantGroups, shared));
+    $selection.set(decodeShared(p, shared));
     if (shared || u.searchParams.get('src')) {
       u.searchParams.delete('v');
       u.searchParams.delete('src');
       window.history.replaceState(window.history.state, '', u);
     }
     return () => $selection.set({});
-  }, [p.id, p.variantGroups]);
+  }, [p]);
 
   const pick = (group: string, i: number) => {
     $selection.set({ ...sel, [group]: i } satisfies Selection);
@@ -78,7 +82,7 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
   };
 
   const price = priceOf(p, sel);
-  const stock = stockOf(p.variantGroups, sel);
+  const stock = stockFor(p, sel);
   const soldOut = stock === 0 && !p.preorderDays;
   const flashOut = isFlashSoldOut(p);
   const vacation = vacationUntil !== null;
@@ -193,7 +197,7 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
             </span>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby={`vg-${gi}`}>
               {g.options.map((o, i) => {
-                const out = g.controlsStock && (o.stock ?? 0) === 0;
+                const out = isOptionOut(p, sel, gi, i);
                 const on = sel[g.name] === i;
                 return (
                   <button
@@ -262,22 +266,32 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
         </span>
       </div>
 
-      <div className="tr-buybar">
-        <AddToCartButton
-          mode="add"
-          variant="secondary"
-          iconLeft="shopping-cart"
-          label={t('product.buy.add')}
-          disabled={soldOut || vacation}
-          getLine={getLine}
-        />
-        <AddToCartButton
-          mode="buy"
-          label={p.preorderDays ? t('product.buy.preorder') : t('product.buy.now')}
-          disabled={soldOut || vacation}
-          getLine={getLine}
-        />
-      </div>
+      {internal ? (
+        <p
+          role="note"
+          className="m-0 mt-2 flex items-start gap-2 rounded-md bg-primary-tint px-3.5 py-3 text-sm text-body"
+        >
+          <Icon name="info" size={17} className="mt-px flex-none text-primary" />
+          {t('product.buy.internal_no_buy')}
+        </p>
+      ) : (
+        <div className="tr-buybar">
+          <AddToCartButton
+            mode="add"
+            variant="secondary"
+            iconLeft="shopping-cart"
+            label={t('product.buy.add')}
+            disabled={soldOut || vacation}
+            getLine={getLine}
+          />
+          <AddToCartButton
+            mode="buy"
+            label={p.preorderDays ? t('product.buy.preorder') : t('product.buy.now')}
+            disabled={soldOut || vacation}
+            getLine={getLine}
+          />
+        </div>
+      )}
       <HoldNote className="mt-4">
         {t('product.buy.hold_note_a')} <b>{shopName}</b> {t('product.buy.hold_note_b')}
       </HoldNote>

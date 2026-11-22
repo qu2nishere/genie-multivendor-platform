@@ -1,6 +1,7 @@
 // Mời nhân viên + Chỉnh quyền (prototype Finance.jsx InviteStaff, RbacEditor) — plan G12.41: chức danh
 // nạp bộ quyền mặc định (chỉnh tay → Tùy chỉnh), 13 mã quyền (MANAGE_RBAC không cấp cho Staff), cảnh báo
-// tách biệt nhiệm vụ PROCESS_PAYOUT + UPDATE_COMMISSION; email công việc @genie.example.
+// tách biệt nhiệm vụ PROCESS_PAYOUT + UPDATE_COMMISSION; email nhân viên (mọi email hợp lệ — plan B1 D3). Gõ email xong
+// 0,4 giây là kiểm tra ngay email đã thuộc khách hàng / người bán / nhân viên chưa (GET /admin/staff/email-check).
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { errorMessage, isApiError } from '@/shared/api/errors';
@@ -10,14 +11,15 @@ import {
   type PermissionCode,
   type StaffTitle,
 } from '@/shared/auth/permissions';
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { zodResolver } from '@/shared/lib/zodResolver';
-import { Button, Checkbox, Icon, Input, Modal, Select, toast } from '@/shared/ui';
-import { useInviteStaff, useUpdatePermissions } from '../application/useSystem';
-import { EDIT_TITLES, presetOf, titleOf, togglePerm } from '../domain/system.rules';
+import { Button, Checkbox, Icon, Input, Modal, Select, Spinner, toast } from '@/shared/ui';
+import { useInviteStaff, useStaffEmailCheck, useUpdatePermissions } from '../application/useSystem';
+import { EDIT_TITLES, presetOf, STAFF_EMAIL, titleOf, togglePerm } from '../domain/system.rules';
 import { inviteSchema, type InviteValues } from '../domain/system.schema';
-import type { StaffMember } from '../domain/system.types';
+import type { StaffEmailCheck, StaffMember } from '../domain/system.types';
 
 type EditTitle = Exclude<StaffTitle, 'ADMIN'>;
 const lab = 'block text-sm font-semibold text-strong';
@@ -36,10 +38,20 @@ function Segregation({ perms }: { perms: PermissionCode[] }) {
   );
 }
 
+/** Khóa i18n cảnh báo cho email không dùng được; `null` khi email dùng được hoặc chưa kiểm tra. */
+function emailWarningKey(c: StaffEmailCheck | undefined): string | null {
+  if (!c || c.available) return null;
+  if (c.reason === 'DOMAIN') return 'errors.GNE-ADM-4221';
+  if (c.reason === 'TAKEN') return `admin-system.staff.email_taken.${c.takenBy ?? 'OTHER'}`;
+  return null;
+}
+
 export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useT();
   const invite = useInviteStaff();
   const [perms, setPerms] = useState<PermissionCode[]>(presetOf('MODERATOR', []));
+  /** Server báo trùng email khi bấm gửi trước lúc kiểm tra xong — hiện cùng chỗ với cảnh báo tức thời. */
+  const [serverTaken, setServerTaken] = useState<StaffEmailCheck | undefined>();
   const form = useForm<InviteValues>({
     resolver: zodResolver(inviteSchema),
     defaultValues: { fullName: '', email: '', staffTitle: 'MODERATOR' },
@@ -48,8 +60,18 @@ export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: ()
     if (!open) return;
     form.reset({ fullName: '', email: '', staffTitle: 'MODERATOR' });
     setPerms(presetOf('MODERATOR', []));
+    setServerTaken(undefined);
   }, [open, form]);
   const title = form.watch('staffTitle');
+  const typed = form.watch('email').trim().toLowerCase();
+  const settled = useDebouncedValue(typed, 400);
+  const canCheck = open && settled === typed && STAFF_EMAIL.test(settled);
+  const check = useStaffEmailCheck(settled, canCheck);
+  const checked = canCheck && check.data?.email === settled ? check.data : undefined;
+  const emailWarning = emailWarningKey(
+    checked ?? (serverTaken?.email === typed ? serverTaken : undefined),
+  );
+  const checking = STAFF_EMAIL.test(typed) && (settled !== typed || check.isFetching);
   const e = form.formState.errors;
   const m = (x?: string) => (x ? t(x) : undefined);
   const pickTitle = (x: EditTitle) => {
@@ -70,7 +92,18 @@ export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: ()
           onClose();
         },
         onError: (err) => {
-          if (isApiError(err) && (err.code === 'GNE-ADM-4091' || err.code === 'GNE-ADM-4221'))
+          if (
+            isApiError(err) &&
+            err.code === 'GNE-ADM-4091' &&
+            typeof err.details.taken_by === 'string'
+          )
+            setServerTaken({
+              email: v.email.trim().toLowerCase(),
+              available: false,
+              reason: 'TAKEN',
+              takenBy: err.details.taken_by as StaffEmailCheck['takenBy'],
+            });
+          else if (isApiError(err) && (err.code === 'GNE-ADM-4091' || err.code === 'GNE-ADM-4221'))
             form.setError('email', { message: `errors.${err.code}` });
           else toast.error(errorMessage(err, t));
         },
@@ -89,7 +122,12 @@ export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: ()
           <Button variant="ghost" onClick={onClose}>
             {t('common.action.cancel')}
           </Button>
-          <Button iconLeft="send" loading={invite.isPending} onClick={() => void submit()}>
+          <Button
+            iconLeft="send"
+            loading={invite.isPending}
+            disabled={!!emailWarning}
+            onClick={() => void submit()}
+          >
             {t('admin-system.staff.invite_send')}
           </Button>
         </>
@@ -115,10 +153,30 @@ export function InviteStaffModal({ open, onClose }: { open: boolean; onClose: ()
           />
         </div>
         <Input
-          label={t('admin-system.staff.email')}
+          label={
+            <span className="flex items-center gap-2 w-full">
+              {t('admin-system.staff.email')}
+              {emailWarning && !e.email && (
+                <span
+                  role="alert"
+                  className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-red-600"
+                >
+                  <Icon name="circle-alert" size={13} />
+                  {t(emailWarning)}
+                </span>
+              )}
+            </span>
+          }
           iconLeft="mail"
-          placeholder="ten@genie.example"
+          placeholder="ten@congty.com"
+          invalid={!!emailWarning}
           error={m(e.email?.message)}
+          hint={checked?.available ? t('admin-system.staff.email_available') : undefined}
+          suffix={
+            checking ? (
+              <Spinner size={16} label={t('admin-system.staff.email_checking')} />
+            ) : undefined
+          }
           {...form.register('email')}
         />
         <div>

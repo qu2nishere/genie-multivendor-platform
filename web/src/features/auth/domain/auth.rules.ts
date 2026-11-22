@@ -12,7 +12,11 @@ export const LOCK_SECONDS = 900;
 
 /** Mục đích của một lần gửi OTP (POST /auth/otp-challenges). */
 export type OtpPurpose =
-  'LOGIN' | 'REGISTER' | 'ACCOUNT_UNLOCK' | 'PASSWORD_RESET' | 'OAUTH_SIGNUP';
+  'LOGIN' | 'REGISTER' | 'ACCOUNT_UNLOCK' | 'PASSWORD_RESET' | 'OAUTH_SIGNUP' | 'STAFF_ACTIVATION';
+
+/** Mã lời mời nhân viên trong liên kết email (API_SPEC 2.11): `inv_…`. */
+export const isInvitationToken = (v: string | null | undefined): v is string =>
+  !!v && v.startsWith('inv_') && v.length <= 200;
 
 export const isEmail = (v: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
@@ -21,6 +25,13 @@ export const isEmail = (v: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test
 export const isPhoneVN = (v: string): boolean => /^0\d{9,10}$/.test(v.replace(/\s/g, ''));
 
 export const remainingAttempts = (fails: number): number => Math.max(0, MAX_ATTEMPTS - fails);
+
+/**
+ * Trang mặc định sau đăng nhập khi không có `next`: nhân viên / Admin vào Admin Portal, người dùng khác về trang chủ.
+ */
+export function homeFor(roles: readonly string[]): string {
+  return roles.includes('ADMIN') || roles.includes('STAFF') ? '/admin' : '/';
+}
 
 /** Đích sau đăng nhập: chỉ nhận đường dẫn nội bộ (chặn open redirect), mặc định trang chủ. */
 export function safeNext(next: string | null | undefined): string {

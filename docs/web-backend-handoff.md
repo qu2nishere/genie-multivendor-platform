@@ -28,10 +28,10 @@ chưa khớp `API_SPEC.md`** (mục 2).
 |---|---|---|
 | ~~`GET /me/wishlist/ids`~~ | `GET /me/wishlist/product-ids` | **Đã sửa** (plan 2026-11-16 wishlist W04.01) |
 | ~~`GET /me/shop-follows` · `POST /me/shop-follows` · `DELETE /me/shop-follows/{id}`~~ | `GET /me/following` · `PUT/DELETE /me/following/{shop_id}` · `GET /me/following/shop-ids` | **Đã sửa** (plan 2026-11-16 theo dõi gian hàng F04.01) |
-| `GET /public/search/suggest` | `GET /public/search/suggestions` | Sửa mã |
-| `GET /public/feed` | `GET /public/recommendations?page&size` | Sửa mã |
-| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | Sửa mã |
-| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | Sửa mã — gộp vào `listProducts` |
+| `GET /public/search/suggest` | `GET /public/search/suggestions` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/feed` | `GET /public/recommendations?page&size` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
+| `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
 | ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
@@ -118,12 +118,12 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getCategoryTree` | catalog.api.ts | `GET /admin/categories` |
-| `createCategory` | catalog.api.ts | `POST /admin/categories` |
-| `updateCategory` | catalog.api.ts | `PATCH /admin/categories/{id}` |
-| `deleteCategory` | catalog.api.ts | `DELETE /admin/categories/{id}` |
-| `listAttributes` | catalog.api.ts | `GET /admin/categories/{categoryId}/attributes` |
-| `setAttributeActive` | catalog.api.ts | `PATCH /admin/categories/{categoryId}/attributes/{code}` |
+| `getCategoryTree` | catalog.api.ts | `GET /admin/categories`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `createCategory` | catalog.api.ts | `POST /admin/categories`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `updateCategory` | catalog.api.ts | `PATCH /admin/categories/{id}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `deleteCategory` | catalog.api.ts | `DELETE /admin/categories/{id}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `listAttributes` | catalog.api.ts | `GET /admin/categories/{categoryId}/attributes`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `setAttributeActive` | catalog.api.ts | `PATCH /admin/categories/{categoryId}/attributes/{code}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
 | `listProposals` | catalog.api.ts | `GET /admin/category-proposals` |
 | `approveProposal` | catalog.api.ts | `POST /admin/category-proposals/{id}/approve` |
 | `rejectProposal` | catalog.api.ts | `POST /admin/category-proposals/{id}/reject` |
@@ -163,9 +163,9 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `getWithdrawalTransfer` | finance.api.ts | `GET /admin/withdrawals/{id}/transfer` |
 | `rejectWithdrawal` | finance.api.ts | `POST /admin/withdrawals/{id}/reject` |
 | `completeWithdrawal` | finance.api.ts | `POST /admin/withdrawals/{id}/complete` |
-| `getCommission` | finance.api.ts | `GET /admin/commission-settings` |
-| `saveDefaultRate` | finance.api.ts | `PATCH /admin/commission-settings` |
-| `saveCategoryRates` | finance.api.ts | `PATCH /admin/commission-settings` |
+| `getCommission` | finance.api.ts | `GET /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
+| `saveDefaultRate` | finance.api.ts | `PATCH /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
+| `saveCategoryRates` | finance.api.ts | `PATCH /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
 | `listLedger` | finance.api.ts | `GET /admin/ledger-entries` |
 | `listCodRemittances` | finance.api.ts | `GET /admin/cod-remittances` |
 | `getCodRemittance` | finance.api.ts | `GET /admin/cod-remittances/{id}` |
@@ -227,20 +227,20 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getAdminMe` | me.api.ts | `GET /admin/me` |
-| `listStaff` | system.api.ts | `GET /admin/staff` |
-| `inviteStaff` | system.api.ts | `POST /admin/staff/invitations` |
-| `resendInvitation` | system.api.ts | `POST /admin/staff/{id}/invitations/resend` |
-| `updateStaffPermissions` | system.api.ts | `PUT /admin/staff/{id}/permissions` |
-| `lockStaff` | system.api.ts | `POST /admin/staff/{id}/lock` |
-| `unlockStaff` | system.api.ts | `POST /admin/staff/{id}/unlock` |
-| `deleteStaff` | system.api.ts | `DELETE /admin/staff/{id}` |
-| `listUsers` | system.api.ts | `GET /admin/users` |
-| `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` |
-| `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` |
+| `getAdminMe` | me.api.ts | `GET /admin/me` — **đã nối** (theo nhóm `auth`, plan B1) |
+| `listStaff` | system.api.ts | `GET /admin/staff` — **đã nối** (`PUBLIC_REAL_API=rbac`; trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`) |
+| `inviteStaff` | system.api.ts | `POST /admin/staff/invitations` — **đã nối** (`rbac`) |
+| `resendInvitation` | system.api.ts | `POST /admin/staff/{id}/invitations/resend` — **đã nối** (`rbac`) |
+| `updateStaffPermissions` | system.api.ts | `PUT /admin/staff/{id}/permissions` — **đã nối** (`rbac`) |
+| `lockStaff` | system.api.ts | `POST /admin/staff/{id}/lock` — **đã nối** (`rbac`) |
+| `unlockStaff` | system.api.ts | `POST /admin/staff/{id}/unlock` — **đã nối** (`rbac`) |
+| `deleteStaff` | system.api.ts | `DELETE /admin/staff/{id}` — **đã nối** (`rbac`) |
+| `listUsers` | system.api.ts | `GET /admin/users` — **đã nối** (`PUBLIC_REAL_API=users`, plan B1 R05; số đơn / cảnh báo tạm 0 tới khi module order / support cài cổng) |
+| `suspendUser` | system.api.ts | `POST /admin/users/{id}/suspend` — **đã nối** (`users`) |
+| `reactivateUser` | system.api.ts | `POST /admin/users/{id}/reactivate` — **đã nối** (`users`) |
 | `auditNow` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`) |
 | `listAuditLogs` | system.api.ts | `GET /admin/audit-logs` — **đã nối** (`PUBLIC_REAL_API=audit`); xuất: `exportAuditLogs` → `GET /admin/audit-logs/export` |
-| `updateAdminMe` | system.api.ts | `PATCH /admin/me` |
+| `updateAdminMe` | system.api.ts | `PATCH /admin/me` — **đã nối** (theo nhóm `auth`, plan B1) |
 
 ### `auth`
 
@@ -269,8 +269,8 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listCategories` | catalog.api.ts | `GET /public/categories` |
-| `getCategoryBySlug` | catalog.api.ts | `GET /public/categories/{slug}` |
+| `listCategories` | catalog.api.ts | `GET /public/categories`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
+| `getCategoryBySlug` | catalog.api.ts | `GET /public/categories/{slug}`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
 | `listAttributeFilters` | catalog.api.ts | `GET /public/categories/{categoryId}/attribute-filters` |
 | `listVerifiedBrands` | catalog.api.ts | `GET /public/brands/verified` |
 
@@ -426,7 +426,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `saveProduct` | product.api.ts | `PUT /seller/products/{id}`<br>`POST /seller/products` |
 | `setProductHidden` | product.api.ts | `PATCH /seller/products/{id}` |
 | `deleteProduct` | product.api.ts | `DELETE /seller/products/{id}` |
-| `getCategoryTree` | product.api.ts | `GET /public/categories` |
+| `getCategoryTree` | product.api.ts | `GET /public/categories`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
 | `getListingRules` | product.api.ts | `GET /seller/categories/{categoryId}/listing-rules` |
 | `searchBrands` | product.api.ts | `GET /seller/brands` |
 | `createBrand` | product.api.ts | `POST /seller/brands` |

@@ -2,6 +2,7 @@
 // admin/Finance.jsx Rbac / InviteStaff / RbacEditor, Users.jsx, AuditLog.jsx).
 import type { PermissionCode, StaffTitle } from '@/shared/auth/permissions';
 import type { StaffRole, StaffStatus } from './me.types';
+import type { SuspendReason } from './system.rules';
 
 // ---------- 11.18 Nhân viên ----------
 export interface StaffMember {
@@ -13,6 +14,8 @@ export interface StaffMember {
   staffTitle: Exclude<StaffTitle, 'ADMIN'> | null;
   permissions: PermissionCode[];
   status: StaffStatus;
+  /** Hạn lời mời — chỉ có khi PENDING_ACTIVATION / INVITATION_EXPIRED. */
+  invitationExpiresAt: string | null;
   isSelf: boolean;
 }
 
@@ -21,6 +24,17 @@ export interface InviteInput {
   email: string;
   staffTitle: Exclude<StaffTitle, 'ADMIN'>;
   permissions: PermissionCode[];
+}
+
+/** Vai trò tài khoản đang giữ email (OTHER: tài khoản đang chờ xóa / không rõ vai trò). */
+export type EmailOwner = 'CUSTOMER' | 'VENDOR' | 'STAFF' | 'ADMIN' | 'OTHER';
+
+/** Kết quả kiểm tra email trước khi mời — GET /admin/staff/email-check (cảnh báo tức thời ở form). */
+export interface StaffEmailCheck {
+  email: string;
+  available: boolean;
+  reason: 'INVALID' | 'DOMAIN' | 'TAKEN' | null;
+  takenBy: EmailOwner | null;
 }
 
 // ---------- 11.13 Người dùng ----------
@@ -38,7 +52,8 @@ export interface PlatformUser {
   orderCount: number;
   warningCount: number;
   status: AccountState;
-  suspension: { reason: string; until: string | null } | null;
+  /** `reasonCode` ngoài danh sách 16.4 được đưa về `OTHER` khi ánh xạ; `until = null` = vô thời hạn. */
+  suspension: { reasonCode: SuspendReason; note: string | null; until: string | null } | null;
 }
 
 export type UserCounts = Record<UserTab, number>;

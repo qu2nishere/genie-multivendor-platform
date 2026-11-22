@@ -17,6 +17,7 @@
 | `db/seed/R__seed_demo_70_customer_activity.sql` | Điểm Genie, điểm danh, yêu thích, theo dõi shop của `mai.tran` |
 | `db/seed/R__seed_demo_80_kyc_queue.sql` | 5 hồ sơ KYC cho hàng chờ Admin (chờ duyệt / bổ sung / từ chối) |
 | `db/seed/R__seed_demo_90_bulk_products.sql` | ~180 sản phẩm sinh tự động (tìm kiếm, phân trang) |
+| `db/seed/R__seed_demo_95_excel_products.sql` | Sản phẩm nhập từ file Excel. **File sinh tự động, không sửa tay.** Xem [excel/README.md](excel/README.md) |
 
 Thư mục `db/seed` là migration lặp lại của Flyway (`R__…`), SQL thuần (không placeholder, không lệnh meta `psql`),
 chạy lại bao nhiêu lần cũng không trùng dòng; khóa chính không ghi cứng, quan hệ tra bằng khóa tự nhiên (email, slug, SKU, mã voucher).
@@ -43,7 +44,8 @@ Script đọc **cùng biến với backend**: `DATABASE_URL` (`postgresql://user
 Docker local (`genie` / `changeme`). CSDL phải đã migrate tới `V14` (chạy backend một lần). Tùy chọn: `--only <NN>` (`00` = tài khoản),
 `--dry-run`. Mỗi file chạy trong một transaction với `ON_ERROR_STOP`; script in bảng đếm số dòng trước / sau.
 
-**Ảnh mẫu** (sản phẩm, banner) lên Silo — chạy sau khi Silo đã bật:
+**Ảnh mẫu** (sản phẩm, banner, ảnh seed Excel ở `scripts/seed/excel/assets/`) lên Silo — chạy sau khi Silo đã bật.
+Script tự kiểm đủ ảnh mà file 95 cần; thiếu ảnh thì thoát mã 4:
 
 ```bash
 scripts/seed/upload-assets.sh            # hoặc: powershell -ExecutionPolicy Bypass -File scripts\seed\upload-assets.ps1

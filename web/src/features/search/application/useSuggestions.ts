@@ -18,7 +18,7 @@ export function useSuggestions(q: string): Suggestion[] {
   });
   const suggest = useQuery({
     queryKey: ['search', 'suggest', term.toLowerCase()],
-    queryFn: () => fetchSuggestions(term),
+    queryFn: ({ signal }) => fetchSuggestions(term, signal),
     enabled: term.length >= SUGGEST_MIN_CHARS,
     staleTime: 60_000,
   });

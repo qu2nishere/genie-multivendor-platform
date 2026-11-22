@@ -331,6 +331,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *4b. Apple "Ẩn email":* dùng email chuyển tiếp do Apple cấp làm email đăng nhập (khi bật Apple).
   - *5a. Tài khoản đã liên kết / cùng email đang bị khóa tạm hoặc đình chỉ:* `423 GNE-AUTH-4230` / `403 GNE-AUTH-4031` như UC-AUTH-02; không liên kết, không cấp phiên.
   - *5b. IdP trả `email_verified = false`:* `403 GNE-AUTH-4032` — không liên kết / không tạo tài khoản (tránh chiếm tài khoản).
+  - *5c. Tài khoản đã liên kết / cùng email là tài khoản nội bộ `STAFF` / `ADMIN` (kể cả nhân viên chờ kích hoạt):* `403 GNE-AUTH-4033` "Tài khoản này hiện không thể tiếp tục với Google, vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu." — không liên kết, không cấp phiên; liên kết Google / Zalo từ trang tài khoản cũng bị chặn. Câu báo không nói lý do để không lộ tài khoản nội bộ; nhật ký ghi `LOGIN_FAILED` lý do `INTERNAL_ACCOUNT` / `PENDING_STAFF_ACTIVATION` (thêm 2026-11-20, plan B1 D17).
   - *5c. Tài khoản cùng email đã gắn một nhà cung cấp khác:* `409 GNE-AUTH-4092` (mỗi tài khoản TLCN chỉ gắn một nhà cung cấp).
   - *Liên kết thủ công (đang đăng nhập):* Tài khoản › **Liên kết đăng nhập** › "Liên kết Google" → web gọi `POST /api/v1/me/identities/google/authorize` (XHR có access token, trả URL Google; `state` ghi kèm người đang đăng nhập) → Google → callback → `POST /api/v1/me/identities/google` (`code`, `state`) → `201` + danh sách cách đăng nhập, quay về `/account/logins?linked=google`. Quy tắc: **email Google phải trùng email tài khoản Genie** (khác → `409 GNE-AUTH-4098` kèm `account_email` — một người = một tài khoản = một email); Google đã gắn người khác → `409 GNE-AUTH-4092`; email Google chưa xác minh → `403 GNE-AUTH-4032`; `state` đăng nhập và `state` liên kết không dùng lẫn được (`400 GNE-AUTH-4001`); đã gắn đúng Google này → coi như thành công.
   - *Gỡ liên kết:* "Gỡ liên kết" → nhập lại **mật khẩu hiện tại** → `DELETE /api/v1/me/identities/google` (`current_password`) → `204`, ghi `OAUTH_UNLINKED`. Chưa có mật khẩu → `409 GNE-AUTH-4093` (giao diện yêu cầu "Thiết lập mật khẩu" trước); sai mật khẩu → `401 GNE-AUTH-4011`; tối đa 10 lần / phút.
@@ -546,14 +547,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Trả về danh sách danh mục phân cấp có icon và số lượng sản phẩm.
 - **Luồng sự kiện chính:**
   1. Người dùng mở trang chủ hoặc bấm "Danh mục sản phẩm" trên header.
-  2. Client gửi request `GET /api/v1/categories`.
-  3. Server kiểm tra Redis Cache `categories:tree:all`:
-     - Nếu Cache Hit: Trả về dữ liệu cây danh mục ngay lập tức (phản hồi < 5ms).
-     - Nếu Cache Miss: Server truy vấn bảng `categories` (lọc `isActive = true`), dựng cây phân cấp (Parent - Child thông qua `parentId`), lưu vào Redis với TTL 24 giờ.
+  2. Client gửi request `GET /api/v1/public/categories` (trang một danh mục: `GET /api/v1/public/categories/{slug}` — tiêu đề, mô tả, breadcrumb, danh mục con, số sản phẩm).
+  3. Server kiểm tra Redis Cache `catalog:categories:all`:
+     - Nếu Cache Hit: Trả về dữ liệu cây danh mục ngay lập tức.
+     - Nếu Cache Miss: Server truy vấn bảng `categories`, dựng cây phân cấp (Parent - Child thông qua `parentId`), lưu vào Redis với TTL 1 giờ; chỉ trả danh mục đang hiển thị — ẩn danh mục cha thì ẩn cả nhánh. Redis lỗi → đọc thẳng CSDL.
   4. Giao diện hiển thị Menu đa cấp với Icon, Tên ngành hàng, và các danh mục con trực thuộc.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`catalog/category`: cây công khai có cache, xóa cache sau commit khi Admin đổi cây) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=catalog`); **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -569,7 +570,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Người dùng gõ từ khóa vào thanh tìm kiếm (ví dụ: "ao thun nam") và nhấn Enter.
   2. Backend chuẩn hóa từ khóa (`unaccent`, chữ thường) và truy vấn PostgreSQL: `WHERE search_vector @@ plainto_tsquery('simple', unaccent(:q))`, sắp xếp theo `ts_rank`.
-  3. Nếu kết quả ít hơn 5 sản phẩm: chạy thêm truy vấn gần đúng bằng `pg_trgm` (`similarity(name, :q) > 0.3`) để bù lỗi gõ sai.
+  3. Nếu kết quả ít hơn 5 sản phẩm: chạy thêm truy vấn gần đúng bằng `pg_trgm` (`word_similarity ≥ 0,4` trên tên bỏ dấu; tài liệu cũ ghi 0,3 — đo trên dữ liệu thật 0,3 khớp nhầm) để bù lỗi gõ sai.
   4. Backend lấy kèm giá thấp nhất giữa các SKU, ảnh chính, `sold`, `rating` (cột tổng hợp) và trả về client.
   5. Client hiển thị lưới sản phẩm; người dùng có thể tiếp tục lọc / sắp xếp (`UC-CAT-05`).
 - **Luồng thay thế / Ngoại lệ:**
@@ -578,7 +579,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được mở rộng bởi `UC-CAT-04` (điểm «Nhập từ khóa»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Index `GIN (search_vector)` và `GIN (name gin_trgm_ops)` (ENTITY.md mục 13.1); giới hạn 60 request / phút / IP bằng bộ đếm Redis.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku).
 
@@ -592,8 +593,8 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Người dùng ở trang có ô tìm kiếm (header storefront).
 - **Hậu điều kiện:** Hiển thị tối đa 10 từ khóa phổ biến / gợi ý; lượt tìm được đếm cho thống kê.
 - **Luồng sự kiện chính:**
-  1. Khi trang tải, ô tìm kiếm hiển thị dãy **từ khóa phổ biến**: top 5–10 `search_keyword_stats` có `searchCount` cao nhất 7 ngày gần nhất (bỏ từ `isBlocked`), cache Redis 1 giờ.
-  2. Khi người dùng gõ từ 2 ký tự, client chờ 250 ms rồi gọi `GET /api/v1/search/suggest?q=…`.
+  1. Khi trang tải, ô tìm kiếm hiển thị dãy **từ khóa phổ biến** (`GET /api/v1/public/search/trending`): top 5–10 từ khóa 24 giờ qua — Redis Sorted Set hôm nay (trọng số 1) + hôm qua (trọng số 0,5), bỏ từ `isBlocked`, cache 10 phút; Redis trống thì cộng `search_keyword_stats` (API_SPEC 5.4b).
+  2. Khi người dùng gõ từ 2 ký tự, client chờ 250 ms rồi gọi `GET /api/v1/public/search/suggestions?q=…` (API_SPEC 5.4).
   3. Backend trả gợi ý theo tiền tố: từ khóa phổ biến khớp tiền tố + tên sản phẩm / danh mục khớp (`pg_trgm` + `unaccent`, giới hạn 10).
   4. Người dùng bấm một từ khóa → thực hiện tìm kiếm (UC-CAT-02).
   5. Mỗi lượt tìm hợp lệ tăng bộ đếm Redis `search:kw:{ngày}`; job 5 phút cộng dồn vào `search_keyword_stats` (`SearchKeywordStat.accumulate()`).
@@ -603,7 +604,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - TLCN dùng full-text PostgreSQL (`tsvector` + `pg_trgm`), không dùng Elasticsearch / Redis Trie như bản DATN.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [SearchKeywordStat](../ClassDiagram/ENTITY.md#211-searchkeywordstat--thống-kê-từ-khóa-tìm-kiếm-theo-ngày), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -623,14 +624,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
      - Địa điểm gian hàng (theo Tỉnh/Thành phố của kho người bán).
      - Thương hiệu / Danh mục con.
      - Tình trạng khuyến mãi (shop đang có voucher).
-  2. Người dùng chọn tiêu chí sắp xếp: Phổ biến nhất, Bán chạy nhất, Giá tăng dần, Giá giảm dần, Hàng mới về.
+  2. Người dùng chọn tiêu chí sắp xếp: Phổ biến nhất, Bán chạy nhất, Giá tăng dần, Giá giảm dần, Hàng mới về (`sort` = `RELEVANCE` / `BEST_SELLING` / `PRICE_ASC` / `PRICE_DESC` / `NEWEST`; "Phổ biến nhất" = `RELEVANCE` khi có từ khóa, `BEST_SELLING` khi không — API_SPEC 5.3).
   3. Client cập nhật URL params và gửi request đến Backend.
   4. Backend dựng câu truy vấn kết hợp các facet filters và order clauses, trả về danh sách phân trang.
   5. Bộ lọc bổ sung theo giao diện: **Shop Chính Hãng** (`VendorProfile.isMall`), **Chính hãng** (shop `isMall` hoặc thương hiệu đã xác minh `Brand.isVerified`), **Thương hiệu** (`brandId`), **Miễn phí vận chuyển** (shop có `freeshipThreshold`), số sao (≥ N★), khoảng giá, thuộc tính `isFilterable` của ngành (UC-CAT-15).
   6. Tìm **trong shop** (từ trang shop) ↔ "Mở rộng tìm toàn sàn"; sắp xếp Liên quan / Mới nhất / Bán chạy / Giá.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), phần đã có đã chạy thật 2026-11-21 (sắp xếp, khoảng giá, đánh giá, Chính hãng, Freeship, nơi bán). Còn: lọc "Shop có voucher" (module promotion), lọc danh mục khi UC-CAT-01 nối API — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -645,7 +646,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Hiển thị trang Product Detail Page (PDP); tăng biến đếm lượt xem trong Redis.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm vào thẻ sản phẩm từ trang chủ hoặc danh mục.
-  2. Client gọi `GET /api/v1/products/{id}`.
+  2. Client gọi `GET /api/v1/public/products/{id}` (API_SPEC 5.6).
   3. Server lấy thông tin sản phẩm, danh sách ảnh gallery từ `product_images`, danh sách biến thể SKU từ `product_variants`, thông tin người bán từ `vendor_profiles`, và 5 đánh giá mới nhất từ `product_reviews`.
   4. Giao diện hiển thị:
      - Slider ảnh chất lượng cao.
@@ -661,7 +662,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Mỗi lần mở trang tăng bộ đếm Redis lượt xem theo nguồn (`src`) → job 5 phút ghi `ProductViewStat` và `Product.viewCount`.
 - **Quan hệ Use Case:** `<<include>>` Xem gợi ý sản phẩm tương tự (`UC-CAT-07`); được mở rộng bởi `UC-CAT-16` (điểm «Bấm vào tên shop»), `UC-CAT-18` (điểm «Chia sẻ»).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [ProductImage](../ClassDiagram/ENTITY.md#24-productimage--ảnh-sản-phẩm), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 
@@ -675,7 +676,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Sản phẩm đang xem ở trạng thái `PUBLISHED`.
 - **Hậu điều kiện:** Hiển thị tối đa 9 sản phẩm tương tự (trang chi tiết) hoặc lưới gợi ý có phân trang (trang chủ).
 - **Luồng sự kiện chính:**
-  1. Trang chi tiết gọi `GET /api/v1/products/{id}/similar?limit=9`.
+  1. Trang chi tiết gọi `GET /api/v1/public/products/{id}/similar?limit=6` (API_SPEC 5.9; `limit` 1–12).
   2. Backend chọn ứng viên: cùng danh mục lá, khoảng giá ±50%, đang bán, còn hàng; loại trừ chính sản phẩm và sản phẩm của shop đang tạm nghỉ.
   3. Xếp hạng theo điểm: độ giống tên (`similarity()` của `pg_trgm`) + số lượng bán + điểm đánh giá; cache Redis 30 phút theo sản phẩm.
   4. Trả danh sách dạng thẻ (ảnh, tên, giá, đã bán) hiển thị carousel.
@@ -686,7 +687,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Bản TLCN không dùng vector / AI (Qdrant, LLM) — chuyển sang DATN khi có dữ liệu hành vi đủ lớn.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -874,18 +875,18 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   1. Admin truy cập Quản trị > Danh mục ngành hàng.
   2. Xem cây danh mục, bấm "Thêm danh mục mới" hoặc bấm sửa danh mục hiện có.
   3. Nhập Tên danh mục, Slug URL, Icon SVG, chọn Danh mục cha (nếu là cấp con).
-  4. Cấu hình Tỷ lệ hoa hồng sàn (`commissionRate`, định dạng thập phân `DECIMAL(5,4)`, ví dụ: `0.0500` = 5.0%, `0.0800` = 8.0%).
+  4. Cấu hình Tỷ lệ hoa hồng sàn (`commissionRate`, định dạng thập phân `DECIMAL(5,4)`, ví dụ: `0.0500` = 5.0%, `0.0800` = 8.0%; khung cho phép 3,5 % – 8 %). Bỏ trống = kế thừa ngành cha gần nhất, rồi mặc định toàn sàn. Đặt / đổi hoa hồng ở form này cần thêm quyền `UPDATE_COMMISSION`. Cây tối đa 3 cấp; slug duy nhất toàn sàn, tên không trùng trong cùng ngành cha (`GNE-CAT-4091`).
   5. Bấm "Lưu danh mục".
-  6. Hệ thống cập nhật bảng `categories`, đồng thời thực hiện xóa khóa Redis `categories:tree:all` để buộc các request sau nạp lại dữ liệu mới nhất.
-  7. Ẩn / hiện danh mục; xóa danh mục chỉ khi không còn sản phẩm và danh mục con (hộp xác nhận "Hành động này không thể hoàn tác").
-  8. Màn **Cấu hình hoa hồng**: phí hoa hồng **mặc định toàn sàn** (5%) áp cho mọi ngành chưa cấu hình riêng, và bảng hoa hồng theo ngành **lưu hàng loạt** (`/admin/commissions/bulk`); ghi `system_logs` `COMMISSION_UPDATED`.
+  6. Hệ thống cập nhật bảng `categories`, rồi **sau khi commit** xóa khóa Redis `catalog:categories:*` để buộc các request sau nạp lại dữ liệu mới nhất.
+  7. Ẩn / hiện danh mục; xóa danh mục chỉ khi không còn danh mục con, sản phẩm (chưa xóa) và không bị voucher tham chiếu — `GNE-CAT-4092` kèm lý do (hộp xác nhận "Hành động này không thể hoàn tác").
+  8. Màn **Cấu hình hoa hồng**: phí hoa hồng **mặc định toàn sàn** (5%, lưu ở `PlatformSetting` khóa `commission.default_rate`) áp cho mọi ngành chưa cấu hình riêng, và bảng hoa hồng theo ngành gốc **lưu hàng loạt** trong một lần (`PATCH /admin/commission-settings`); mỗi thay đổi ghi một dòng `system_logs` `COMMISSION_UPDATED` (từ → đến).
   9. Hoa hồng riêng từng shop (`VendorProfile.commissionRate`) đặt ở hồ sơ shop trong màn Duyệt KYC (UC-VND-04); thứ tự áp dụng shop → ngành → mặc định.
   10. Duyệt đề xuất danh mục của người bán ở cùng màn (UC-CAT-17); xem danh sách sản phẩm trong từng danh mục và từ chối sản phẩm vi phạm.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories`, `/admin/commission-settings`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog,commission`); duyệt đề xuất (UC-CAT-17) và sản phẩm theo danh mục còn mock; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
-  - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng) (`commissionRate`), [CategoryProposal](../ClassDiagram/ENTITY.md#29-categoryproposal--đề-xuất-danh-mục-mới-của-người-bán), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
+  - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng) (`commissionRate`), `PlatformSetting` (mục 12.2), [CategoryProposal](../ClassDiagram/ENTITY.md#29-categoryproposal--đề-xuất-danh-mục-mới-của-người-bán), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
 ---
 
@@ -895,18 +896,18 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tác nhân phụ:** —
 - **Mục đích nghiệp vụ:** Chuẩn hóa thông số sản phẩm theo ngành: thông tin bắt buộc (xuất xứ, bảo hành, chất liệu, hạn sử dụng…), bộ lọc tìm kiếm thống nhất và trục biến thể (Màu, Size) — form đăng bán gợi ý "Gợi ý: Bảo hành, Kết nối, Pin…" theo ngành.
 - **Tiền điều kiện:** Ngành hàng đã tồn tại (UC-CAT-14); người thao tác có quyền `MANAGE_CATALOG`.
-- **Hậu điều kiện:** Bản ghi `category_attributes` được tạo / cập nhật; cache `cat:attrs:{categoryId}` được làm mới.
+- **Hậu điều kiện:** Bản ghi `category_attributes` được tạo / cập nhật; cache `catalog:attrs:*` được xóa sau commit.
 - **Luồng sự kiện chính:**
   1. Người thao tác chọn ngành hàng, thêm thuộc tính: `code`, tên hiển thị, `dataType` (TEXT / NUMBER / BOOLEAN / ENUM / MULTI_ENUM / DATE), danh sách giá trị (ENUM), đơn vị (NUMBER), cờ `isRequired`, `isFilterable`, `isVariantAxis`, thứ tự hiển thị.
-  2. Hệ thống kiểm tra `code` không trùng trong ngành và các ngành cha (thuộc tính được ngành con kế thừa).
+  2. Hệ thống kiểm tra `code` không trùng trong ngành, các ngành cha và các ngành con (thuộc tính được ngành con kế thừa) — trùng → `GNE-CAT-4095`; màn hình hiện thêm bảng thuộc tính kế thừa (chỉ đọc). Kiểu dữ liệu không đổi được sau khi tạo.
   3. Form đăng bán (UC-CAT-09) tự sinh ô nhập và gợi ý theo bộ thuộc tính; khi gửi duyệt, Service gọi `CategoryAttribute.accepts()` cho từng thuộc tính — thiếu thuộc tính bắt buộc / sai kiểu thì báo lỗi theo từng ô.
   4. Thuộc tính `isFilterable` xuất hiện làm bộ lọc ở trang tìm kiếm (UC-CAT-05).
 - **Luồng thay thế / Ngoại lệ:**
-  - *Thêm thuộc tính bắt buộc cho ngành đã có sản phẩm:* sản phẩm cũ không bị gỡ ngay — thông báo shop bổ sung trong 14 ngày.
+  - *Thêm thuộc tính bắt buộc cho ngành đã có sản phẩm:* sản phẩm cũ không bị gỡ ngay — phản hồi có `grace_period_days = 14`, shop bổ sung trong 14 ngày (gửi thông báo cho shop làm cùng module Notification).
   - *Ngừng dùng thuộc tính:* `deactivate()` — dữ liệu cũ trong `specsJson` giữ nguyên.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories/{id}/attributes`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog`); kiểm thuộc tính bắt buộc khi gửi duyệt sản phẩm làm ở UC-CAT-09; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CategoryAttribute](../ClassDiagram/ENTITY.md#26-categoryattribute--bộ-thuộc-tính-chuẩn-theo-ngành-hàng), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu).
 
@@ -921,7 +922,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Hiển thị trang shop với danh sách sản phẩm `PUBLISHED` phân trang.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm vào tên shop ở trang chi tiết sản phẩm (`UC-CAT-06`), trong giỏ hàng hoặc trong kết quả tìm kiếm.
-  2. Client gọi `GET /api/v1/shops/{vendorId}` và `GET /api/v1/shops/{vendorId}/products?sort=newest&page=0`.
+  2. Client gọi `GET /api/v1/public/shops/{id}` và `GET /api/v1/public/products?shop_id={id}&sort=NEWEST&page=1` (API_SPEC 5.11, 5.3; `id` = `vendor_profiles.id`).
   3. Backend trả thông tin shop từ `vendor_profiles` (`shopName`, `logoUrl`, `coverUrl`, `shopDescription`, `createdAt`) cùng số liệu tổng hợp: tổng sản phẩm đang bán, điểm đánh giá trung bình của shop (trung bình `product_reviews.rating` đang hiển thị), số đơn đã hoàn tất.
   4. Hệ thống hiển thị lưới sản phẩm của shop, cho phép sắp xếp (mới nhất, bán chạy, giá tăng / giảm) và lọc theo danh mục sàn.
   5. Người dùng có thể bấm "Chat với shop" (`UC-SOC-01`) hoặc chọn sản phẩm để xem chi tiết (`UC-CAT-06`).
@@ -936,7 +937,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Số liệu tổng hợp của shop cache Redis `shop:stats:{vendorId}` TTL 10 phút; truy vấn danh sách dùng index `(vendor_id, status)`.
   - Chỉ số shop được cập nhật bởi job hằng ngày (tỉ lệ phản hồi) và sự kiện (đánh giá mới / bị ẩn, theo dõi, đăng / ẩn sản phẩm) — không tính trực tiếp mỗi lần mở trang.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductReview](../ClassDiagram/ENTITY.md#91-productreview--đánh-giá-sản-phẩm), [ShopFollow](../ClassDiagram/ENTITY.md#92-shopfollow--theo-dõi-shop), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -988,7 +989,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Không gắn mã giới thiệu / theo dõi cá nhân vào liên kết ở TLCN (chương trình giới thiệu bạn bè, affiliate thuộc DATN).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* ✅ Đã triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), đã chạy thật end-to-end 2026-11-21 — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductViewStat](../ClassDiagram/ENTITY.md#212-productviewstat--lượt-xem-sản-phẩm-theo-ngày--nguồn-truy-cập).
 
@@ -1009,7 +1010,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Bảng `carts` và `cart_items` được cập nhật (hoặc giỏ tạm trên trình duyệt với Guest); số lượng hiển thị trên icon giỏ hàng header thay đổi.
 - **Luồng sự kiện chính:**
   1. Người dùng bấm "Thêm vào giỏ" từ trang sản phẩm (đã chọn SKU và số lượng Q).
-  2. Backend kiểm tra tính hợp lệ: SKU tồn tại, sản phẩm đang `PUBLISHED`, và Người bán không phải chính tài khoản của khách hàng (Cấm tự mua hàng của shop mình — `GNE-ORD-4094`; chủ shop ở chế độ Mua hàng vẫn thêm được sản phẩm của shop khác).
+  2. Backend kiểm tra tính hợp lệ: tài khoản là người mua (khách / chủ shop) — **tài khoản nội bộ `STAFF` / `ADMIN` bị từ chối `403 GNE-ORD-4031`** (chỉ xem storefront, mua bằng tài khoản khách hàng cá nhân); SKU tồn tại, sản phẩm đang `PUBLISHED`, và Người bán không phải chính tài khoản của khách hàng (Cấm tự mua hàng của shop mình — `GNE-ORD-4094`; chủ shop ở chế độ Mua hàng vẫn thêm được sản phẩm của shop khác).
   3. Backend kiểm tra tồn kho: `stockCount >= Q`.
   4. Mở transaction:
      - Nếu SKU chưa có trong giỏ: Tạo bản ghi `cart_items` mới với số lượng Q.
@@ -1122,6 +1123,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   11. Sau khi thanh toán: trang **"Đặt hàng thành công"** (mã giao dịch, mã phiên, danh sách đơn tách theo shop "Cung cấp bởi …", tạm tính, giảm giá voucher & khuyến mãi, nút Về trang chủ / Xem đơn mua) hoặc **"Thanh toán thất bại"** (`PAYMENT_FAILED`, tồn kho vẫn được giữ, nút Thử thanh toán lại / Đổi phương thức / Về giỏ hàng).
 - **Luồng thay thế / Ngoại lệ:**
   - *Giỏ có sản phẩm của chính shop người mua:* từ chối toàn phiên với `GNE-ORD-4094` — kiểm tra lại ở bước này vì sản phẩm có thể đã vào giỏ trước khi người dùng mở shop.
+  - *Tài khoản nội bộ (`STAFF` / `ADMIN`) đặt hàng:* từ chối `403 GNE-ORD-4031` — tách tài khoản vận hành khỏi mua sắm, tránh xung đột lợi ích (tự duyệt đánh giá / hoàn tiền cho đơn của mình).
   - *Bất kỳ bước nào gặp lỗi (DB lỗi, khóa ngoại lỗi):* `tx.Rollback()`, toàn bộ dữ liệu trở về trạng thái ban đầu, giỏ hàng giữ nguyên, báo lỗi cho khách hàng.
 - **Quan hệ Use Case:** `<<include>>` Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) (`UC-ORD-04`); được mở rộng bởi `UC-PRO-06` (điểm «Giữ chỗ tồn kho»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
@@ -2537,21 +2539,23 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tiền điều kiện:** Admin đăng nhập (quyền `MANAGE_RBAC`). Tài khoản Admin đầu tiên được tạo bằng seed khi cài đặt.
 - **Hậu điều kiện:** `users` (`role = STAFF`, `status = UNVERIFIED`), `admin_profiles` (`staffTitle`), `staff_permissions` (bộ quyền mặc định) được tạo; email mời đã gửi.
 - **Luồng sự kiện chính:**
-  1. Admin bấm "Mời nhân viên mới", nhập họ tên, email công việc (`@genie.vn`), chọn chức danh: Nhân viên kiểm duyệt (`MODERATOR`), CSKH (`CS_SPECIALIST`), Tài chính (`FINANCE_OFFICER`) hoặc "Tùy chỉnh".
-  2. Hệ thống kiểm tra email chưa tồn tại (`/admin/staffs/check-email`); nạp sẵn bộ quyền mặc định `StaffTitle.defaultPermissions()` để Admin bỏ / thêm trước khi gửi.
+  1. Admin bấm "Mời nhân viên mới", nhập họ tên, email nhân viên (mọi email hợp lệ; production giới hạn tên miền công ty bằng cấu hình `STAFF_EMAIL_DOMAINS`, vd. `@genie.vn`), chọn chức danh: Nhân viên kiểm duyệt (`MODERATOR`), CSKH (`CS_SPECIALIST`), Tài chính (`FINANCE_OFFICER`) hoặc "Tùy chỉnh".
+  2. Hệ thống kiểm tra email chưa tồn tại (khi gửi lời mời — trùng thì `409 GNE-ADM-4091`); nạp sẵn bộ quyền mặc định `StaffTitle.defaultPermissions()` để Admin bỏ / thêm trước khi gửi.
   3. Bấm "Gửi lời mời": trong một transaction tạo `users` (`UNVERIFIED`, chưa có mật khẩu), `admin_profiles`, các dòng `staff_permissions` (`grantedByAdminId`); ghi `system_logs` `STAFF_INVITED`.
-  4. Gửi email mời chứa liên kết kích hoạt dùng một lần (hết hạn 48 giờ).
+  4. Gửi email mời chứa liên kết kích hoạt dùng một lần (hết hạn 48 giờ). Thông tin lời mời nằm ở PostgreSQL (`users` `UNVERIFIED`, `admin_profiles`, `staff_permissions`, `system_logs STAFF_INVITED`); chỉ mã trong liên kết (bản băm SHA-256) lưu ở Redis `auth:staff_invite:*`.
   5. Nhân viên mở liên kết, xác thực OTP email, tự đặt mật khẩu → `status = ACTIVE` (trạng thái "Chờ kích hoạt" → "Hoạt động").
   6. Danh sách nhân viên: tìm theo tên / email, xem vai trò, số quyền, trạng thái; thao tác "Sửa quyền" (UC-ADM-02), "Khóa / Mở khóa" (UC-ADM-03), "Xóa tài khoản nhân viên".
 - **Luồng thay thế / Ngoại lệ:**
   - *Email đã tồn tại:* báo "Email đã được sử dụng".
-  - *Liên kết hết hạn:* Admin bấm "Gửi lại lời mời".
+  - *Liên kết hết hạn:* danh sách nhân viên hiện trạng thái "Lời mời hết hạn" kèm thời điểm hết hạn (`INVITATION_EXPIRED`, `invitation_expires_at`); Admin bấm "Gửi lại lời mời" — mã cũ bị vô hiệu, hạn 48 giờ tính lại từ lần gửi này.
   - *Xóa nhân viên:* chỉ khi không phải Admin cuối cùng; thu hồi mọi quyền và phiên, giữ lịch sử trong `system_logs`.
 - **Quan hệ Use Case:** `<<include>>` Gửi mã OTP xác thực — tác nhân phụ: `ACT-EML` Email Service; `<<include>>` Ghi nhật ký kiểm toán; `<<include>>` Phân cấp vai trò & Cấp phát / Thu hồi mã quyền chi tiết (RBAC) (`UC-ADM-02`).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Không có Super Admin — vai trò cao nhất là `ADMIN`; Admin không tự khóa / tự hạ quyền mình, hệ thống luôn còn ≥ 1 Admin hoạt động.
+  - Tài khoản nhân viên / Admin **chỉ xem** storefront (nút "Kênh người mua"), không có giỏ hàng / đơn mua và không đặt hàng được (`GNE-ORD-4031`, UC-ORD-01, UC-ORD-07). Nhân viên muốn mua sắm dùng tài khoản khách hàng cá nhân với email riêng — một email chỉ gắn một tài khoản, mời bằng email đã có tài khoản → `409 GNE-ADM-4091`.
+  - Tài khoản nhân viên / Admin **chỉ đăng nhập bằng email + mật khẩu** do Genie cấp qua luồng kích hoạt — không đăng nhập / liên kết Google, Zalo (`403 GNE-AUTH-4033`, câu báo chung "Tài khoản này hiện không thể tiếp tục với Google, vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu." — không lộ đây là tài khoản nội bộ; UC-AUTH-03 5c). Trong lúc chờ kích hoạt, email được mời cũng không đăng ký khách được (email đã có tài khoản); chỉ kích hoạt qua liên kết mời + OTP.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — kích hoạt lời mời (`POST /auth/staff-activations`) build xanh; quản lý nhân viên `/admin/staff` + khung Admin `/admin/me` chạy được trên giao diện với API thật, chờ kiểm thử tự động + chạy thật (2026-11-20; plan `plan/2026-11-19/b1.md`).
   - *Kế hoạch:* Sprint 1 (tuần 1–2) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập), [AdminProfile](../ClassDiagram/ENTITY.md#15-adminprofile--hồ-sơ-quản-trị-viên--nhân-viên), [StaffPermission](../ClassDiagram/ENTITY.md#18-staffpermission--phân-quyền-chi-tiết-cho-nhân-viên), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
@@ -2568,7 +2572,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   1. Admin chọn nhân viên → "Sửa quyền"; giao diện hiển thị chức danh và 13 quyền: `VIEW_DASHBOARD` (Tổng quan), `REVIEW_KYC` (Duyệt KYC), `MANAGE_CATALOG` (Danh mục, Duyệt sản phẩm), `MODERATE_REVIEW` (Kiểm duyệt đánh giá), `HANDLE_DISPUTE` (Trả hàng & Hoàn tiền), `PROCESS_PAYOUT` (Xử lý rút tiền), `UPDATE_COMMISSION` (Cấu hình hoa hồng), `VIEW_FINANCE` (Sổ cái tài chính), `MANAGE_VOUCHER` (Voucher sàn, Flash Sale), `MANAGE_PLATFORM_NOTIFICATION` (Thông báo sàn), `VIEW_AUDIT_LOG` (Nhật ký hệ thống), `MANAGE_USER` (Khóa người dùng), `MANAGE_RBAC` (chỉ Admin).
   2. Đổi chức danh → `AdminProfile.changeTitle()` đề xuất bộ quyền mặc định; Admin xác nhận.
   3. Tích / bỏ tích quyền → thêm dòng mới hoặc `StaffPermission.revoke()`.
-  4. Lưu: phiên đăng nhập của nhân viên được làm mới quyền (thu hồi refresh token) để quyền mới có hiệu lực ngay.
+  4. Lưu: quyền mới có hiệu lực ngay ở request kế tiếp của nhân viên (server đọc mã quyền từ CSDL mỗi request) — **không** buộc đăng nhập lại; giao diện của nhân viên đang mở tự cập nhật menu qua kênh realtime, đang ở màn vừa mất quyền thì chuyển về trang chính kèm thông báo (sửa 2026-11-21, plan B1 D19).
   5. Nav Admin chỉ hiện mục nhân viên có quyền; truy cập trực tiếp mục không có quyền → màn "Bạn không có quyền truy cập… Liên hệ Admin" và ghi `system_logs` `ACCESS_DENIED`.
 - **Luồng thay thế / Ngoại lệ:**
   - *Cấp `MANAGE_RBAC` cho STAFF:* từ chối (`GNE-SEC-4031`).
@@ -2577,7 +2581,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Kiểm tra quyền ở tầng API bằng `@PreAuthorize("hasAuthority('REVIEW_KYC')")`; giao diện chỉ ẩn mục, không thay thế kiểm tra phía máy chủ.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Đang triển khai — cấp / thu hồi mã quyền (`PUT /admin/staff/{id}/permissions`, `GET /admin/permission-catalog`) chạy được trên giao diện, chờ kiểm thử tự động + chạy thật (2026-11-20; plan `plan/2026-11-19/b1.md`).
   - *Kế hoạch:* Sprint 1 (tuần 1–2) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [StaffPermission](../ClassDiagram/ENTITY.md#18-staffpermission--phân-quyền-chi-tiết-cho-nhân-viên), [AdminProfile](../ClassDiagram/ENTITY.md#15-adminprofile--hồ-sơ-quản-trị-viên--nhân-viên), [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
