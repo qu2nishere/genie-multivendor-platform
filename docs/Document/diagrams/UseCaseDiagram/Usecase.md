@@ -547,14 +547,14 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Trả về danh sách danh mục phân cấp có icon và số lượng sản phẩm.
 - **Luồng sự kiện chính:**
   1. Người dùng mở trang chủ hoặc bấm "Danh mục sản phẩm" trên header.
-  2. Client gửi request `GET /api/v1/categories`.
-  3. Server kiểm tra Redis Cache `categories:tree:all`:
-     - Nếu Cache Hit: Trả về dữ liệu cây danh mục ngay lập tức (phản hồi < 5ms).
-     - Nếu Cache Miss: Server truy vấn bảng `categories` (lọc `isActive = true`), dựng cây phân cấp (Parent - Child thông qua `parentId`), lưu vào Redis với TTL 24 giờ.
+  2. Client gửi request `GET /api/v1/public/categories` (trang một danh mục: `GET /api/v1/public/categories/{slug}` — tiêu đề, mô tả, breadcrumb, danh mục con, số sản phẩm).
+  3. Server kiểm tra Redis Cache `catalog:categories:all`:
+     - Nếu Cache Hit: Trả về dữ liệu cây danh mục ngay lập tức.
+     - Nếu Cache Miss: Server truy vấn bảng `categories`, dựng cây phân cấp (Parent - Child thông qua `parentId`), lưu vào Redis với TTL 1 giờ; chỉ trả danh mục đang hiển thị — ẩn danh mục cha thì ẩn cả nhánh. Redis lỗi → đọc thẳng CSDL.
   4. Giao diện hiển thị Menu đa cấp với Icon, Tên ngành hàng, và các danh mục con trực thuộc.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`catalog/category`: cây công khai có cache, xóa cache sau commit khi Admin đổi cây) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=catalog`); **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -875,18 +875,18 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   1. Admin truy cập Quản trị > Danh mục ngành hàng.
   2. Xem cây danh mục, bấm "Thêm danh mục mới" hoặc bấm sửa danh mục hiện có.
   3. Nhập Tên danh mục, Slug URL, Icon SVG, chọn Danh mục cha (nếu là cấp con).
-  4. Cấu hình Tỷ lệ hoa hồng sàn (`commissionRate`, định dạng thập phân `DECIMAL(5,4)`, ví dụ: `0.0500` = 5.0%, `0.0800` = 8.0%).
+  4. Cấu hình Tỷ lệ hoa hồng sàn (`commissionRate`, định dạng thập phân `DECIMAL(5,4)`, ví dụ: `0.0500` = 5.0%, `0.0800` = 8.0%; khung cho phép 3,5 % – 8 %). Bỏ trống = kế thừa ngành cha gần nhất, rồi mặc định toàn sàn. Đặt / đổi hoa hồng ở form này cần thêm quyền `UPDATE_COMMISSION`. Cây tối đa 3 cấp; slug duy nhất toàn sàn, tên không trùng trong cùng ngành cha (`GNE-CAT-4091`).
   5. Bấm "Lưu danh mục".
-  6. Hệ thống cập nhật bảng `categories`, đồng thời thực hiện xóa khóa Redis `categories:tree:all` để buộc các request sau nạp lại dữ liệu mới nhất.
-  7. Ẩn / hiện danh mục; xóa danh mục chỉ khi không còn sản phẩm và danh mục con (hộp xác nhận "Hành động này không thể hoàn tác").
-  8. Màn **Cấu hình hoa hồng**: phí hoa hồng **mặc định toàn sàn** (5%) áp cho mọi ngành chưa cấu hình riêng, và bảng hoa hồng theo ngành **lưu hàng loạt** (`/admin/commissions/bulk`); ghi `system_logs` `COMMISSION_UPDATED`.
+  6. Hệ thống cập nhật bảng `categories`, rồi **sau khi commit** xóa khóa Redis `catalog:categories:*` để buộc các request sau nạp lại dữ liệu mới nhất.
+  7. Ẩn / hiện danh mục; xóa danh mục chỉ khi không còn danh mục con, sản phẩm (chưa xóa) và không bị voucher tham chiếu — `GNE-CAT-4092` kèm lý do (hộp xác nhận "Hành động này không thể hoàn tác").
+  8. Màn **Cấu hình hoa hồng**: phí hoa hồng **mặc định toàn sàn** (5%, lưu ở `PlatformSetting` khóa `commission.default_rate`) áp cho mọi ngành chưa cấu hình riêng, và bảng hoa hồng theo ngành gốc **lưu hàng loạt** trong một lần (`PATCH /admin/commission-settings`); mỗi thay đổi ghi một dòng `system_logs` `COMMISSION_UPDATED` (từ → đến).
   9. Hoa hồng riêng từng shop (`VendorProfile.commissionRate`) đặt ở hồ sơ shop trong màn Duyệt KYC (UC-VND-04); thứ tự áp dụng shop → ngành → mặc định.
   10. Duyệt đề xuất danh mục của người bán ở cùng màn (UC-CAT-17); xem danh sách sản phẩm trong từng danh mục và từ chối sản phẩm vi phạm.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories`, `/admin/commission-settings`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog,commission`); duyệt đề xuất (UC-CAT-17) và sản phẩm theo danh mục còn mock; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
-  - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng) (`commissionRate`), [CategoryProposal](../ClassDiagram/ENTITY.md#29-categoryproposal--đề-xuất-danh-mục-mới-của-người-bán), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
+  - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng) (`commissionRate`), `PlatformSetting` (mục 12.2), [CategoryProposal](../ClassDiagram/ENTITY.md#29-categoryproposal--đề-xuất-danh-mục-mới-của-người-bán), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
 ---
 
@@ -896,18 +896,18 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Tác nhân phụ:** —
 - **Mục đích nghiệp vụ:** Chuẩn hóa thông số sản phẩm theo ngành: thông tin bắt buộc (xuất xứ, bảo hành, chất liệu, hạn sử dụng…), bộ lọc tìm kiếm thống nhất và trục biến thể (Màu, Size) — form đăng bán gợi ý "Gợi ý: Bảo hành, Kết nối, Pin…" theo ngành.
 - **Tiền điều kiện:** Ngành hàng đã tồn tại (UC-CAT-14); người thao tác có quyền `MANAGE_CATALOG`.
-- **Hậu điều kiện:** Bản ghi `category_attributes` được tạo / cập nhật; cache `cat:attrs:{categoryId}` được làm mới.
+- **Hậu điều kiện:** Bản ghi `category_attributes` được tạo / cập nhật; cache `catalog:attrs:*` được xóa sau commit.
 - **Luồng sự kiện chính:**
   1. Người thao tác chọn ngành hàng, thêm thuộc tính: `code`, tên hiển thị, `dataType` (TEXT / NUMBER / BOOLEAN / ENUM / MULTI_ENUM / DATE), danh sách giá trị (ENUM), đơn vị (NUMBER), cờ `isRequired`, `isFilterable`, `isVariantAxis`, thứ tự hiển thị.
-  2. Hệ thống kiểm tra `code` không trùng trong ngành và các ngành cha (thuộc tính được ngành con kế thừa).
+  2. Hệ thống kiểm tra `code` không trùng trong ngành, các ngành cha và các ngành con (thuộc tính được ngành con kế thừa) — trùng → `GNE-CAT-4095`; màn hình hiện thêm bảng thuộc tính kế thừa (chỉ đọc). Kiểu dữ liệu không đổi được sau khi tạo.
   3. Form đăng bán (UC-CAT-09) tự sinh ô nhập và gợi ý theo bộ thuộc tính; khi gửi duyệt, Service gọi `CategoryAttribute.accepts()` cho từng thuộc tính — thiếu thuộc tính bắt buộc / sai kiểu thì báo lỗi theo từng ô.
   4. Thuộc tính `isFilterable` xuất hiện làm bộ lọc ở trang tìm kiếm (UC-CAT-05).
 - **Luồng thay thế / Ngoại lệ:**
-  - *Thêm thuộc tính bắt buộc cho ngành đã có sản phẩm:* sản phẩm cũ không bị gỡ ngay — thông báo shop bổ sung trong 14 ngày.
+  - *Thêm thuộc tính bắt buộc cho ngành đã có sản phẩm:* sản phẩm cũ không bị gỡ ngay — phản hồi có `grace_period_days = 14`, shop bổ sung trong 14 ngày (gửi thông báo cho shop làm cùng module Notification).
   - *Ngừng dùng thuộc tính:* `deactivate()` — dữ liệu cũ trong `specsJson` giữ nguyên.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories/{id}/attributes`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog`); kiểm thuộc tính bắt buộc khi gửi duyệt sản phẩm làm ở UC-CAT-09; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CategoryAttribute](../ClassDiagram/ENTITY.md#26-categoryattribute--bộ-thuộc-tính-chuẩn-theo-ngành-hàng), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu).
 

@@ -118,12 +118,12 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getCategoryTree` | catalog.api.ts | `GET /admin/categories` |
-| `createCategory` | catalog.api.ts | `POST /admin/categories` |
-| `updateCategory` | catalog.api.ts | `PATCH /admin/categories/{id}` |
-| `deleteCategory` | catalog.api.ts | `DELETE /admin/categories/{id}` |
-| `listAttributes` | catalog.api.ts | `GET /admin/categories/{categoryId}/attributes` |
-| `setAttributeActive` | catalog.api.ts | `PATCH /admin/categories/{categoryId}/attributes/{code}` |
+| `getCategoryTree` | catalog.api.ts | `GET /admin/categories`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `createCategory` | catalog.api.ts | `POST /admin/categories`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `updateCategory` | catalog.api.ts | `PATCH /admin/categories/{id}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `deleteCategory` | catalog.api.ts | `DELETE /admin/categories/{id}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `listAttributes` | catalog.api.ts | `GET /admin/categories/{categoryId}/attributes`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
+| `setAttributeActive` | catalog.api.ts | `PATCH /admin/categories/{categoryId}/attributes/{code}`  — **đã nối** (`PUBLIC_REAL_API=admin-catalog`, plan B2) |
 | `listProposals` | catalog.api.ts | `GET /admin/category-proposals` |
 | `approveProposal` | catalog.api.ts | `POST /admin/category-proposals/{id}/approve` |
 | `rejectProposal` | catalog.api.ts | `POST /admin/category-proposals/{id}/reject` |
@@ -163,9 +163,9 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `getWithdrawalTransfer` | finance.api.ts | `GET /admin/withdrawals/{id}/transfer` |
 | `rejectWithdrawal` | finance.api.ts | `POST /admin/withdrawals/{id}/reject` |
 | `completeWithdrawal` | finance.api.ts | `POST /admin/withdrawals/{id}/complete` |
-| `getCommission` | finance.api.ts | `GET /admin/commission-settings` |
-| `saveDefaultRate` | finance.api.ts | `PATCH /admin/commission-settings` |
-| `saveCategoryRates` | finance.api.ts | `PATCH /admin/commission-settings` |
+| `getCommission` | finance.api.ts | `GET /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
+| `saveDefaultRate` | finance.api.ts | `PATCH /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
+| `saveCategoryRates` | finance.api.ts | `PATCH /admin/commission-settings`  — **đã nối** (`PUBLIC_REAL_API=commission`, plan B2) |
 | `listLedger` | finance.api.ts | `GET /admin/ledger-entries` |
 | `listCodRemittances` | finance.api.ts | `GET /admin/cod-remittances` |
 | `getCodRemittance` | finance.api.ts | `GET /admin/cod-remittances/{id}` |
@@ -269,8 +269,8 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listCategories` | catalog.api.ts | `GET /public/categories` |
-| `getCategoryBySlug` | catalog.api.ts | `GET /public/categories/{slug}` |
+| `listCategories` | catalog.api.ts | `GET /public/categories`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
+| `getCategoryBySlug` | catalog.api.ts | `GET /public/categories/{slug}`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
 | `listAttributeFilters` | catalog.api.ts | `GET /public/categories/{categoryId}/attribute-filters` |
 | `listVerifiedBrands` | catalog.api.ts | `GET /public/brands/verified` |
 
@@ -426,7 +426,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `saveProduct` | product.api.ts | `PUT /seller/products/{id}`<br>`POST /seller/products` |
 | `setProductHidden` | product.api.ts | `PATCH /seller/products/{id}` |
 | `deleteProduct` | product.api.ts | `DELETE /seller/products/{id}` |
-| `getCategoryTree` | product.api.ts | `GET /public/categories` |
+| `getCategoryTree` | product.api.ts | `GET /public/categories`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
 | `getListingRules` | product.api.ts | `GET /seller/categories/{categoryId}/listing-rules` |
 | `searchBrands` | product.api.ts | `GET /seller/brands` |
 | `createBrand` | product.api.ts | `POST /seller/brands` |
