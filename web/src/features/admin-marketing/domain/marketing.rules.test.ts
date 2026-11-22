@@ -6,6 +6,7 @@ import {
   ctr,
   flashDiscount,
   nextOrder,
+  parentFirst,
   parseEmails,
   parseLink,
   plainText,
@@ -161,5 +162,19 @@ describe('thông báo sàn', () => {
     expect(notificationSchema.safeParse(ok).success).toBe(true);
     expect(notificationSchema.safeParse({ ...ok, contentHtml: '<p> </p>' }).success).toBe(false);
     expect(notificationSchema.safeParse({ ...ok, target: 'SPECIFIC_USERS' }).success).toBe(false);
+  });
+});
+
+describe('parentFirst', () => {
+  it('đưa danh mục con xuống ngay dưới danh mục cha', () => {
+    const list = [
+      { id: 1, parentId: null },
+      { id: 2, parentId: null },
+      { id: 10, parentId: 1 },
+      { id: 20, parentId: 2 },
+      { id: 11, parentId: 1 },
+      { id: 99, parentId: 50 },
+    ];
+    expect(parentFirst(list).map((c) => c.id)).toEqual([1, 10, 11, 2, 20, 99]);
   });
 });

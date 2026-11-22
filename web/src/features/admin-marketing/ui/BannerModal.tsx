@@ -23,6 +23,7 @@ import {
   FLASH_LINK,
   LINK_TYPES,
   nextOrder,
+  parentFirst,
   parseLink,
   sitePath,
   type LinkType,
@@ -206,7 +207,7 @@ function LinkPicker({
             onChange={(slug) => onChange(slug ? `/c/${slug}` : '')}
             options={[
               { value: '', label: t('admin-marketing.banner.link.pick_category') },
-              ...(cats.data ?? []).map((c) => ({
+              ...parentFirst(cats.data ?? []).map((c) => ({
                 value: c.slug,
                 label: c.parentId ? `— ${c.name}` : c.name,
               })),
