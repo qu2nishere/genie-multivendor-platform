@@ -31,6 +31,37 @@ class FaceResult:
     errors: list[str] = field(default_factory=list)
 
 
+# YuNet học ở ~320 px: mặt quá lớn trong ảnh điện thoại 2000 px không dò được (plan sửa KYC ảnh thật L4)
+WORK_SIDE = 960
+
+
+def shrink(image: np.ndarray, max_side: int = WORK_SIDE) -> np.ndarray:
+    """Thu ảnh về cạnh dài ≤ ``max_side`` (giữ tỉ lệ) để dò + căn mặt."""
+    h, w = image.shape[:2]
+    if max(h, w) <= max_side:
+        return image
+    scale = max_side / max(h, w)
+    return cv2.resize(image, (round(w * scale), round(h * scale)), interpolation=cv2.INTER_AREA)
+
+
+_ROTATIONS = (None, cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE, cv2.ROTATE_180)
+
+
+def upright_card(models: FaceModels, card: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Dựng thẳng ảnh thẻ: thử 4 hướng, chọn hướng có mặt tin cậy nhất (thẻ chụp dọc / ngược — L5).
+    Trả (ảnh đã xoay + thu nhỏ, các mặt dò được — rỗng nếu không hướng nào có mặt)."""
+    base = shrink(card)
+    best: tuple[float, np.ndarray, np.ndarray] | None = None
+    for rot in _ROTATIONS:
+        img = base if rot is None else cv2.rotate(base, rot)
+        faces = detect(models, img)
+        if len(faces) and (best is None or float(faces[0][14]) > best[0]):
+            best = (float(faces[0][14]), img, faces)
+    if best is None:
+        return base, np.empty((0, 15), np.float32)
+    return best[1], best[2]
+
+
 def detect(models: FaceModels, image: np.ndarray) -> np.ndarray:
     """Khuôn mặt (mỗi dòng: x, y, w, h, 5 điểm mốc, độ tin cậy) sắp theo diện tích giảm dần."""
     h, w = image.shape[:2]
@@ -106,7 +137,8 @@ def run(
         out.errors.append(MISSING_IMAGE)
         return out
     try:
-        card_faces = detect(models, card)
+        card, card_faces = upright_card(models, card)
+        selfie = shrink(selfie)
         selfie_faces = detect(models, selfie)
         if len(selfie_faces) == 0:
             out.errors.append(NO_SELFIE_FACE)

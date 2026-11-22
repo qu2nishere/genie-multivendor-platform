@@ -71,3 +71,13 @@ def test_quality_flags_blurry_and_small_images():
     assert not images.assess_quality(blurry, S).ok
     small = cv2.resize(sharp, (300, 200))
     assert not images.assess_quality(small, S).ok
+
+
+def test_sharp_document_on_a_plain_background_is_not_flagged_blurry():
+    """Ảnh điện thoại: thẻ nét nằm giữa nền trơn lớn — đo cả khung ra "mờ", đo theo ô thì đạt (lỗi thật 2026-11-22)."""
+    sharp = images.decode(_jpeg(900, 700))
+    canvas = np.full((2000, 1127, 3), 230, np.uint8)
+    canvas[600:1300, 100:1000] = sharp
+    assert images.assess_quality(canvas, S).ok
+    blurry = cv2.GaussianBlur(canvas, (51, 51), 20)
+    assert not images.assess_quality(blurry, S).ok

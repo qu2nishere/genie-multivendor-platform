@@ -81,7 +81,25 @@ def sharpness(image: np.ndarray) -> float:
     return float(cv2.Laplacian(gray, cv2.CV_64F).var())
 
 
+def document_sharpness(image: np.ndarray, side: int = 1000, grid: int = 8, pct: float = 75) -> float:
+    """Độ nét ảnh giấy tờ: chuẩn về cạnh dài ``side`` px, chia lưới ``grid``×``grid``, lấy phân vị ``pct`` của
+    phương sai Laplacian từng ô. Đo cả khung (cách cũ) bị nền bàn / bao nhựa / vùng trống kéo xuống — ảnh điện thoại
+    rõ nét vẫn bị coi là mờ (plan sửa KYC ảnh thật L1); đo theo ô thì vùng chữ quyết định, ảnh mờ toàn phần vẫn thấp."""
+    gray = image if image.ndim == 2 else cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    h, w = gray.shape
+    scale = side / max(h, w)
+    gray = cv2.resize(gray, (max(1, round(w * scale)), max(1, round(h * scale))), interpolation=cv2.INTER_AREA)
+    lap = cv2.Laplacian(gray, cv2.CV_64F)
+    gh, gw = lap.shape
+    tiles = [
+        lap[i * gh // grid : (i + 1) * gh // grid, j * gw // grid : (j + 1) * gw // grid].var()
+        for i in range(grid)
+        for j in range(grid)
+    ]
+    return float(np.percentile(tiles, pct))
+
+
 def assess_quality(image: np.ndarray, settings: Settings) -> Quality:
     short = min(image.shape[:2])
-    sharp = sharpness(image)
+    sharp = document_sharpness(image)
     return Quality(short >= settings.kyc_min_image_side and sharp >= settings.kyc_blur_threshold, short, sharp)
