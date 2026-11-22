@@ -55,7 +55,7 @@ public enum AuditAction {                                                       
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị AUTH (V14 — plan AUTH D20)
     BANNER_CHANGED,                                          // V18 — chỉ còn cho bản ghi cũ (plan 2026-11-22 nhật ký banner N2)
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED, // V20 — plan 2026-11-16 Mở shop & KYC D3
-    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED // V21 — plan 2026-11-22 nhật ký banner N1
+    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED // V24 — plan 2026-11-22 nhật ký banner N1
 }
 
 // ============================== ENTITIES (6) ==============================

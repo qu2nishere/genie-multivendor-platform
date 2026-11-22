@@ -1,5 +1,5 @@
--- V21 — hành động kiểm toán banner theo động từ cụ thể (UC-ADM-07, UC-ADM-12; plan 2026-11-22 nhật ký banner N1–N3; ENTITY Phụ lục A).
--- Chỉ nới CHECK (tương thích ngược): giữ NGUYÊN mọi giá trị của V20 (kể cả BANNER_CHANGED cho bản ghi cũ), thêm 5 giá trị.
+-- V24 — hành động kiểm toán banner theo động từ cụ thể (UC-ADM-07, UC-ADM-12; plan 2026-11-22 nhật ký banner N1–N3; ENTITY Phụ lục A).
+-- Chỉ nới CHECK (tương thích ngược): giữ NGUYÊN mọi giá trị của V20 (V21–V23 của catalog không đổi ràng buộc này) (kể cả BANNER_CHANGED cho bản ghi cũ), thêm 5 giá trị.
 -- Migration sau sửa lại ràng buộc này phải chép đủ danh sách bên dưới.
 ALTER TABLE system_logs DROP CONSTRAINT ck_system_logs_action_type;
 ALTER TABLE system_logs ADD CONSTRAINT ck_system_logs_action_type CHECK (action_type IN (

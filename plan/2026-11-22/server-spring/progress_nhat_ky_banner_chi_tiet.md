@@ -7,7 +7,7 @@
 | Giai đoạn | Việc | Trạng thái |
 |---|---|---|
 | P00 | Tài liệu ENTITY / API_SPEC | ☑ |
-| P01 | Migration V21 + enum | ☑ |
+| P01 | Migration V24 + enum | ☑ |
 | P02 | Ghi nhật ký banner | ☑ |
 | P03 | API Nhật ký trả chi tiết | ☑ |
 | P04 | Web | ☑ |
@@ -18,7 +18,7 @@
 - [x] **P00.01** ENTITY.md Phụ lục A + Diagram10
 - [x] **P00.02** API_SPEC 11.10 + 16
 - [x] **P00.03** COMMIT docs
-- [x] **P01.01** `V21__banner_audit_granular_actions.sql`
+- [x] **P01.01** `V24__banner_audit_granular_actions.sql`
 - [x] **P01.02** `AuditAction` + `category()`
 - [x] **P01.03** COMMIT db
 - [x] **P02.01** `BannerAdminService.record` ghi mã cụ thể

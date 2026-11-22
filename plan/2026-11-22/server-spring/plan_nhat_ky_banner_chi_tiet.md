@@ -17,7 +17,7 @@
 |---|---|---|
 | N1 | Tách mã hay giữ `op`? | **Tách** thành 5 mã động từ: `BANNER_CREATED`, `BANNER_UPDATED`, `BANNER_ACTIVATED`, `BANNER_DEACTIVATED`, `BANNER_DELETED` — cùng kiểu với các mã khác, lọc / thống kê được bằng cột `action_type`. |
 | N2 | `BANNER_CHANGED` cũ? | **Giữ** (NFR-12 chỉ thêm, không đổi tên / xóa enum) — chỉ còn cho bản ghi cũ, code mới không ghi nữa. Nhóm vẫn `CONFIG`. |
-| N3 | Đổi schema? | Migration mới `V21__banner_audit_granular_actions.sql` nới `ck_system_logs_action_type` (chép đủ danh sách V20 + 5 mã). ENTITY.md sửa trước (TS 7.3). |
+| N3 | Đổi schema? | Migration mới `V24__banner_audit_granular_actions.sql` nới `ck_system_logs_action_type` (chép đủ danh sách V20 + 5 mã). ENTITY.md sửa trước (TS 7.3). |
 | N4 | API trả thêm gì? | Mỗi dòng `GET /admin/audit-logs` thêm `reference_id`, `user_agent`, `changes` (object `{trường: {from, to}}` lấy từ `details.changes`, `null` nếu không có). Không trả nguyên `details` (có thể chứa dữ liệu nội bộ). CSV giữ nguyên cột. |
 | N5 | Hiển thị | Web dịch tên hành động qua i18n (`admin-system.audit.actions.<MÃ>`, thiếu khóa thì hiện mã), bấm một dòng mở hộp chi tiết: thời gian, người làm, hành động, đối tượng, mã tham chiếu, IP, user agent, bảng thay đổi trước → sau. |
 
@@ -29,7 +29,7 @@
 - **[P00.03]** COMMIT `docs(admin): split banner audit action into explicit verbs`
 
 ### P01 — CSDL & enum
-- **[P01.01]** `V21__banner_audit_granular_actions.sql` — DROP/ADD `ck_system_logs_action_type` với toàn bộ giá trị V20 + 5 mã mới.
+- **[P01.01]** `V24__banner_audit_granular_actions.sql` — DROP/ADD `ck_system_logs_action_type` với toàn bộ giá trị V20 + 5 mã mới.
 - **[P01.02]** `AuditAction` thêm 5 mã (khối Banner), `category()` → `CONFIG`; javadoc `BANNER_CHANGED` = bản ghi cũ.
 - **[P01.03]** COMMIT `feat(db): add explicit banner audit actions`
 

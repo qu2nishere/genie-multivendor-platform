@@ -18,7 +18,7 @@ public enum AuditAction {                                                       
     BANNER_CHANGED,
     // ===== Mở shop & KYC (plan 2026-11-16 Mở shop & KYC D3, V20) =====
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED,
-    // ===== Banner theo động từ cụ thể (plan 2026-11-22 nhật ký banner N1, V21) — sửa kèm details.changes {trường: {from, to}} =====
+    // ===== Banner theo động từ cụ thể (plan 2026-11-22 nhật ký banner N1, V24) — sửa kèm details.changes {trường: {from, to}} =====
     BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED;
 
     /**

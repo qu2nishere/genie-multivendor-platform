@@ -6846,7 +6846,7 @@ enum AuditAction {                                                              
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị của AUTH (V14 thay ck_system_logs_action_type — plan AUTH D20)
     BANNER_CHANGED,                                          // CHỈ CÒN cho bản ghi cũ (V18: tạo / sửa / bật / tắt / xóa gộp một mã, details.op) — code mới ghi 5 mã BANNER_* bên dưới
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED, // Mở shop & KYC (V20, plan 2026-11-16 D3): yêu cầu bổ sung, đưa lại hàng chờ, nhân viên mở giấy tờ (NFR-07), đổi / xóa tài khoản nhận tiền
-    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED // Banner theo động từ cụ thể (V21, plan 2026-11-22 nhật ký banner N1) — details.changes {trường: {from, to}} khi sửa
+    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED // Banner theo động từ cụ thể (V24, plan 2026-11-22 nhật ký banner N1) — details.changes {trường: {from, to}} khi sửa
 }
 ```
 
