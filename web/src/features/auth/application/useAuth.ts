@@ -1,7 +1,7 @@
 // Tầng ứng dụng xác thực (plan G09.04): gọi API, đặt $session, gộp giỏ khách, chuyển về `next`.
 import { useMutation } from '@tanstack/react-query';
 import { clearSession, loadSessionUser, setSession, type SessionUser } from '@/shared/auth/session';
-import { landingAfterLogin, type OtpPurpose } from '../domain/auth.rules';
+import { safeNext, type OtpPurpose } from '../domain/auth.rules';
 import type { AuthSession, SocialProvider } from '../domain/auth.types';
 import {
   completeOAuth,
@@ -28,10 +28,9 @@ export async function finishLogin(
   afterLogin?: () => Promise<unknown>,
 ): Promise<void> {
   // $AuthTokens chỉ có id / vai trò / tên / ảnh → nạp đủ email, shop, có mật khẩu chưa từ GET /me (plan AUTH D18)
-  const user = await loadSessionUser(session.accessToken, session.user);
-  setSession(session.accessToken, user);
+  setSession(session.accessToken, await loadSessionUser(session.accessToken, session.user));
   if (afterLogin) await afterLogin();
-  window.location.assign(landingAfterLogin(next, user.roles));
+  window.location.assign(safeNext(next));
 }
 
 /** Địa chỉ bắt đầu đăng nhập Google / Zalo (backend 302 sang nhà cung cấp). */
