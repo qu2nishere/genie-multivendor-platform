@@ -61,6 +61,41 @@ public class Category {
         return this.parentId == null;
     }
 
+    /** Đổi tên / đường dẫn (slug đã kiểm trùng ở service) — UC-CAT-14 */
+    public void rename(String name, String slug) {
+        this.name = name;
+        this.slug = slug;
+    }
+
+    /** Chuyển sang danh mục cha khác ({@code null} = lên gốc; độ sâu ≤ 3 cấp và không vòng — service kiểm) — UC-CAT-14 */
+    public void moveTo(Long parentId, int displayOrder) {
+        if (parentId != null && parentId.equals(this.id)) throw new IllegalArgumentException("Không thể là cha của chính nó");
+        this.parentId = parentId;
+        this.displayOrder = displayOrder;
+    }
+
+    /** Hiện lại trên cây công khai — UC-CAT-14 bước 7 */
+    public void show() {
+        this.isActive = true;
+    }
+
+    /** Ẩn khỏi cây công khai (kéo theo cả nhánh con khi hiển thị; sản phẩm giữ nguyên) — UC-CAT-14 bước 7 */
+    public void hide() {
+        this.isActive = false;
+    }
+
+    /** Đổi biểu tượng / mô tả / cờ ngành có điều kiện — UC-CAT-14 */
+    public void describe(String icon, String description, boolean requiresBusinessLicense) {
+        this.icon = icon;
+        this.description = description;
+        this.requiresBusinessLicense = requiresBusinessLicense;
+    }
+
+    /** Bỏ hoa hồng riêng của ngành → dùng của ngành cha / mặc định toàn sàn — UC-CAT-14 bước 8 */
+    public void clearCommissionRate() {
+        this.commissionRate = null;
+    }
+
     /** Đổi tỷ lệ hoa hồng ngành (chỉ áp dụng đơn mới) — UC-CAT-14 */
     public void changeCommissionRate(BigDecimal rate) {
         if (rate.compareTo(new BigDecimal("0.0350")) < 0 || rate.compareTo(new BigDecimal("0.0800")) > 0)
