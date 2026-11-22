@@ -3,6 +3,7 @@ package com.genie.common.audit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +35,10 @@ class AuditActionCategoryTest {
         assertThat(AuditAction.KYC_SUPPLEMENT_REQUESTED.category()).isEqualTo(AuditCategory.KYC);
         assertThat(AuditAction.KYC_REQUEUED.category()).isEqualTo(AuditCategory.KYC);
         assertThat(AuditAction.PAYOUT_ACCOUNT_CHANGED.category()).isEqualTo(AuditCategory.FINANCE);
+        for (AuditAction banner : List.of(AuditAction.BANNER_CHANGED, AuditAction.BANNER_CREATED,
+                AuditAction.BANNER_UPDATED, AuditAction.BANNER_ACTIVATED, AuditAction.BANNER_DEACTIVATED,
+                AuditAction.BANNER_DELETED)) {
+            assertThat(banner.category()).as(banner.name()).isEqualTo(AuditCategory.CONFIG);
+        }
     }
 }
