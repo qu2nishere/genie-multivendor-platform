@@ -199,19 +199,28 @@ function Detail({
         {d.ai && (
           <ul className="flex flex-wrap gap-2 mb-3.5 list-none m-0 p-0">
             {AI_CHECKS.map((c) => {
-              const ok = d.ai?.checks[c];
+              const ok = d.ai?.checks[c] ?? null;
               return (
                 <li
                   key={c}
+                  title={ok === null ? t('admin-kyc.ai.not_checked') : undefined}
                   className={cn(
                     'inline-flex items-center gap-[5px] px-2.5 py-1 rounded-pill text-xs font-semibold',
-                    ok ? 'bg-mint-50 text-mint-600' : 'bg-red-50 text-red-600',
+                    ok === null
+                      ? 'bg-gray-100 text-muted'
+                      : ok
+                        ? 'bg-mint-50 text-mint-600'
+                        : 'bg-red-50 text-red-600',
                   )}
                 >
-                  <Icon name={ok ? 'check' : 'x'} size={13} />
+                  <Icon name={ok === null ? 'minus-circle' : ok ? 'check' : 'x'} size={13} />
                   {t(`admin-kyc.ai.checks.${c}`)}
                   <span className="sr-only">
-                    {ok ? t('admin-kyc.ai.passed') : t('admin-kyc.ai.failed')}
+                    {ok === null
+                      ? t('admin-kyc.ai.not_checked')
+                      : ok
+                        ? t('admin-kyc.ai.passed')
+                        : t('admin-kyc.ai.failed')}
                   </span>
                 </li>
               );

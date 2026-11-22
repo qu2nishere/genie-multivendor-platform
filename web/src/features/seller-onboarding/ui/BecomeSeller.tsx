@@ -56,7 +56,8 @@ function Card({ categories }: BecomeSellerProps) {
     if (!user) return;
     const v = form.getValues();
     if (!v.ownerName) form.setValue('ownerName', user.name);
-    if (!v.email) form.setValue('email', user.email);
+    // Email shop = email tài khoản (nhận OTP mở shop) — không cho sửa (plan sửa KYC ảnh thật L8)
+    form.setValue('email', user.email);
     if (!v.phone && user.phone) form.setValue('phone', user.phone);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
@@ -144,9 +145,13 @@ function Card({ categories }: BecomeSellerProps) {
         <Input
           label="Email"
           type="email"
-          placeholder="shop@email.com"
           iconLeft="mail"
           autoComplete="email"
+          readOnly
+          aria-readonly
+          tabIndex={-1}
+          className="bg-gray-100 text-muted cursor-not-allowed"
+          hint={t('seller-onboarding.landing.email_locked')}
           error={err(errors.email?.message)}
           {...form.register('email')}
         />

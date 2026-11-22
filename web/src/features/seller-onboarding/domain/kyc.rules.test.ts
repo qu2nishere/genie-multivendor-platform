@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { bannerOf, canEdit, kycFileIssue, missingDocs, requiredDocs, sizeLabel } from './kyc.rules';
+import {
+  bannerOf,
+  canEdit,
+  kycFileIssue,
+  missingDocs,
+  requiredDocs,
+  shouldPollKyc,
+  sizeLabel,
+} from './kyc.rules';
 import { kycInfoSchema } from './kyc.schema';
 
 describe('kyc.rules', () => {
@@ -47,5 +55,21 @@ describe('kyc.rules', () => {
     expect(kycInfoSchema.safeParse({ ...v, businessType: 'INDIVIDUAL', taxCode: '' }).success).toBe(
       true,
     );
+  });
+});
+
+describe('shouldPollKyc', () => {
+  it('chỉ làm mới khi AI đang chấm', () => {
+    expect(shouldPollKyc('PENDING')).toBe(true);
+    expect(shouldPollKyc('AI_PROCESSING')).toBe(true);
+    for (const s of [
+      'NOT_SUBMITTED',
+      'MANUAL_REVIEW',
+      'VERIFIED',
+      'REJECTED',
+      'SUPPLEMENT_REQUESTED',
+    ] as const)
+      expect(shouldPollKyc(s)).toBe(false);
+    expect(shouldPollKyc(undefined)).toBe(false);
   });
 });

@@ -23,10 +23,10 @@ has_models = (MODELS_DIR / kyc_models.YUNET_FILE).is_file() and (MODELS_DIR / ky
 
 def _fake_models(card_faces: int = 1, selfie_faces: int = 1, vectors=((1.0, 0.0), (1.0, 0.0))) -> kyc_models.FaceModels:
     det = MagicMock()
-    counts = iter([card_faces, selfie_faces])
 
     def detect(img):
-        n = next(counts)
+        # selfie mẫu 480×480; mọi ảnh khác (thẻ ở các hướng thử) là ảnh thẻ
+        n = selfie_faces if img.shape[:2] == (480, 480) else card_faces
         rows = [[10 + i, 10, 200 - i, 200, *([0] * 10), 0.99] for i in range(n)]
         return 1, (np.array(rows, np.float32) if n else None)
 
@@ -101,3 +101,32 @@ def test_real_models_load_and_find_no_face_on_a_blank_selfie():
     assert len(face.detect(models, blank)) == 0
     res = face.run(models, card.front(), blank, True, S)
     assert face.NO_SELFIE_FACE in res.errors
+
+
+def test_card_is_turned_upright_before_matching():
+    """Ảnh thẻ chụp dọc (xoay 90°): chỉ hướng dựng thẳng có mặt → vẫn so được (lỗi thật 2026-11-22)."""
+    det = MagicMock()
+    upright_shape = face.shrink(card.front()).shape[:2]
+
+    def detect(img):
+        has = img.shape[:2] == (480, 480) or img.shape[:2] == upright_shape
+        return 1, (np.array([[10, 10, 200, 200, *([0] * 10), 0.95]], np.float32) if has else None)
+
+    det.detect.side_effect = detect
+    rec = MagicMock()
+    rec.alignCrop.side_effect = lambda img, f: img
+    rec.feature.side_effect = [np.array((1.0, 0.0), np.float32)] * 2
+    import cv2
+
+    sideways = cv2.rotate(card.front(), cv2.ROTATE_90_COUNTERCLOCKWISE)
+    res = face.run(kyc_models.FaceModels(detector=det, recognizer=rec), sideways, _selfie(), True, S)
+    assert face.NO_CARD_FACE not in res.errors
+    assert res.face_match is True
+
+
+def test_large_photos_are_shrunk_for_detection():
+    big = np.zeros((2560, 1440, 3), np.uint8)
+    out = face.shrink(big)
+    assert max(out.shape[:2]) == face.WORK_SIDE
+    small = np.zeros((480, 480, 3), np.uint8)
+    assert face.shrink(small) is small

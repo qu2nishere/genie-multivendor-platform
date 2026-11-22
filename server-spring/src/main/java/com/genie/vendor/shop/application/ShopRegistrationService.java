@@ -25,7 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Đăng ký mở gian hàng — UC-VND-01 (API_SPEC 9.1–9.2; plan Mở shop & KYC K03.02–K03.03):
  * <ol>
  *   <li>{@link #register}: kiểm chưa có shop ({@code 409 GNE-VND-4093}), tên hợp lệ / chưa dùng ({@code 409 GNE-VND-4094}),
- *       ngành hàng ({@code CategoryFacade} của catalog); gửi OTP {@code SHOP_REGISTRATION} tới email liên hệ của shop, giữ dữ liệu form trong challenge;</li>
+ *       ngành hàng ({@code CategoryFacade} của catalog); gửi OTP {@code SHOP_REGISTRATION} tới <b>email tài khoản</b> — email
+ *       liên hệ của shop luôn là email tài khoản, bỏ qua email client gửi (plan sửa KYC ảnh thật F-D6); giữ dữ liệu form trong challenge;</li>
  *   <li>{@link #confirm}: mã đúng → tạo {@code vendor_profiles} ({@code NOT_SUBMITTED}) + nâng tài khoản lên {@code VENDOR}
  *       (giữ phiên — D11) trong một transaction. Hai request song song chỉ tạo 1 shop nhờ {@code UNIQUE user_id} và
  *       {@code uk_vendor_profiles_shop_name_lower}.</li>
@@ -78,7 +79,9 @@ public class ShopRegistrationService {
             throw new BusinessException(ErrorCode.VALIDATION_FAILED, "Ngành hàng không tồn tại.",
                     Map.of("field", "main_category_id"));
         }
-        String email = r.email().trim().toLowerCase(Locale.ROOT);
+        // Email shop = email tài khoản (một nguồn sự thật; web hiện ô chỉ đọc) — email client gửi lên bị bỏ qua
+        String email = users.emailOf(userId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND))
+                .trim().toLowerCase(Locale.ROOT);
         Map<String, String> payload = new HashMap<>();
         payload.put(SHOP_NAME, shopName);
         payload.put(OWNER_NAME, r.ownerName().trim().replaceAll("\\s+", " "));

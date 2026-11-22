@@ -26,11 +26,11 @@ export const toKycDetail = (d: KycDetailDto): KycDetail => ({
     ? {
         overall: d.ai_result.overall,
         checks: {
-          qr_code: d.ai_result.checks.qr_code === true,
-          national_emblem: d.ai_result.checks.national_emblem === true,
-          mrz: d.ai_result.checks.mrz === true,
-          fingerprint: d.ai_result.checks.fingerprint === true,
-          face_match: d.ai_result.checks.face_match === true,
+          qr_code: d.ai_result.checks.qr_code ?? null,
+          national_emblem: d.ai_result.checks.national_emblem ?? null,
+          mrz: d.ai_result.checks.mrz ?? null,
+          fingerprint: d.ai_result.checks.fingerprint ?? null,
+          face_match: d.ai_result.checks.face_match ?? null,
         },
         faceMatchScore: d.ai_result.face_match_score ?? 0,
         errors: d.ai_result.errors,

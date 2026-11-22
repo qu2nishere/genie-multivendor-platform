@@ -1557,7 +1557,8 @@ UC-VND-01 · **Màn hình:** Trở thành Người bán (form Tên Shop, Họ t�
 ```json
 { "shop_name": "TechZone Official", "owner_name": "Đặng Quốc Huy", "phone_number": "0912345678", "email": "shop@techzone.vn", "main_category_id": 1, "business_type": "BUSINESS", "accept_terms": true }
 ```
-`business_type` ∈ `INDIVIDUAL` (Cá nhân), `HOUSEHOLD` (Hộ kinh doanh), `BUSINESS` (Doanh nghiệp). `202` → `$OtpChallenge` (`purpose = SHOP_REGISTRATION`, gửi tới `email`).
+`business_type` ∈ `INDIVIDUAL` (Cá nhân), `HOUSEHOLD` (Hộ kinh doanh), `BUSINESS` (Doanh nghiệp). `202` → `$OtpChallenge` (`purpose = SHOP_REGISTRATION`, gửi tới **email tài khoản**).
+**Sửa 2026-11-22:** email liên hệ của shop **luôn là email tài khoản** — trường `email` (tùy chọn) bị bỏ qua; web hiện ô chỉ đọc.
 
 | Lỗi | Khi nào |
 |---|---|

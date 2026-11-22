@@ -24,7 +24,8 @@ export type AiCheck = 'qr_code' | 'national_emblem' | 'mrz' | 'fingerprint' | 'f
 
 export interface AiResult {
   overall: 'PASS' | 'PARTIAL' | 'FAIL';
-  checks: Record<AiCheck, boolean>;
+  /** `null` = chưa kiểm (vd quốc huy / vân tay chưa làm) — không phải "không đạt". */
+  checks: Record<AiCheck, boolean | null>;
   faceMatchScore: number;
   errors: string[];
 }

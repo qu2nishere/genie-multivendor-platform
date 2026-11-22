@@ -12,6 +12,7 @@ dependencies = [
     "minio>=7.2",
     "numpy>=1.26",
     "opencv-python-headless>=4.10",
+    "zxing-cpp>=2.2",           # đọc QR CCCD trên ảnh điện thoại thật (OpenCV làm dự phòng)
     "onnxruntime>=1.19",
     "transformers>=4.45",       # tokenizer PhoBERT
     "python-json-logger>=2.0",  # MRZ dùng binary tesseract-ocr của hệ thống (Y-D2) qua stdin — không thư viện Python

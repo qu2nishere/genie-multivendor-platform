@@ -85,6 +85,8 @@ def parse(lines: list[str]) -> MrzData | None:
 # ===== Đọc ảnh: tìm dải MRZ + OCR =====
 
 _FIX_DIGIT = str.maketrans({"O": "0", "Q": "0", "D": "0", "I": "1", "L": "1", "Z": "2", "S": "5", "B": "8", "G": "6"})
+# Ô chữ bị OCR đọc thành số (ảnh thật: "IDVNM" → "1DVNM" — plan sửa KYC ảnh thật L3)
+_FIX_LETTER = str.maketrans({"0": "O", "1": "I", "2": "Z", "5": "S", "8": "B", "6": "G", "4": "A", "7": "T"})
 
 
 def locate(image: np.ndarray) -> np.ndarray | None:
@@ -119,17 +121,20 @@ def locate(image: np.ndarray) -> np.ndarray | None:
 
 
 def _fix_line(line: str, kind: int) -> str:
-    """Sửa nhầm thường gặp theo vị trí ô số (O↔0, I↔1, B↔8…)."""
+    """Sửa nhầm thường gặp theo vị trí: ô số (O→0, I→1, B→8…) và ô chữ (1→I, 0→O, 5→S…)."""
     chars = list(line)
     if kind == 1:
-        digit_pos = list(range(5, 15))
+        digit_pos, letter_pos = list(range(5, 15)), list(range(0, 5))
     elif kind == 2:
-        digit_pos = [*range(0, 7), *range(8, 15), 29]
+        digit_pos, letter_pos = [*range(0, 7), *range(8, 15), 29], [7, 15, 16, 17]
     else:
-        digit_pos = []
+        digit_pos, letter_pos = [], list(range(len(chars)))
     for i in digit_pos:
         if i < len(chars):
             chars[i] = chars[i].translate(_FIX_DIGIT)
+    for i in letter_pos:
+        if i < len(chars) and chars[i] != "<":
+            chars[i] = chars[i].translate(_FIX_LETTER)
     return "".join(chars)
 
 
@@ -137,7 +142,7 @@ def _rows(text: str) -> list[str] | None:
     rows = [re.sub(r"[^A-Z0-9<]", "", r.upper()) for r in text.splitlines()]
     rows = [r for r in rows if len(r) >= 20]
     for i, r in enumerate(rows):
-        if r.startswith("ID") and i + 2 < len(rows):
+        if r[:2].translate(_FIX_LETTER) == "ID" and i + 2 < len(rows):
             return [_fix_line(_pad(x), k + 1) for k, x in enumerate(rows[i : i + 3])]
     return None
 
@@ -173,6 +178,8 @@ def read(region: np.ndarray) -> list[str] | None:
     candidates = [gray]
     if gray.shape[1] < 900:
         candidates.append(cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC))
+    else:  # ảnh điện thoại lớn: bản thu nhỏ giúp Tesseract tách nét ký tự tốt hơn (lỗi thật 2026-11-22)
+        candidates.append(cv2.resize(gray, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA))
     for c in candidates:
         text = ocr(c)
         if text is None:

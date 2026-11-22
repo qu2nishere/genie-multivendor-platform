@@ -69,3 +69,18 @@ def test_read_rate_on_variants():
     rate = ok / len(variants)
     print(f"MRZ read rate: {ok}/{len(variants)} = {rate:.0%}")
     assert rate >= 0.8
+
+
+def test_rows_fix_letters_read_as_digits():
+    """OCR ảnh thật đọc "IDVNM" thành "1DVNM", tên lẫn số — vẫn ra MRZ hợp lệ (plan sửa KYC ảnh thật F02)."""
+    l1, l2, l3 = card.mrz_lines()
+    noisy = "\n".join(["1D" + l1[2:], l2[:15] + "VN" + "M" + l2[18:], l3.replace("A", "4", 1)])
+    lines = mrz._rows(noisy)
+    assert lines == [l1, l2, l3]
+    assert mrz.parse(lines).valid
+
+
+def test_fix_line_keeps_filler_and_digits():
+    l1 = card.mrz_lines()[0]
+    assert mrz._fix_line(l1, 1) == l1
+    assert mrz._fix_line("0" + l1[1:], 1)[0] == "O"

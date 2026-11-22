@@ -82,7 +82,8 @@ class ShopRegistrationIT extends IntegrationTestBase {
                 .andReturn();
         String challenge = json(sent, "$.data.challenge_id");
 
-        MvcResult done = confirm(token, challenge, mails.lastOtp(shopEmail))
+        // email shop client gửi lên bị bỏ qua: OTP về email tài khoản, contact_email = email tài khoản
+        MvcResult done = confirm(token, challenge, mails.lastOtp(email))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.kyc_status").value("NOT_SUBMITTED"))
                 .andReturn();
@@ -94,7 +95,7 @@ class ShopRegistrationIT extends IntegrationTestBase {
         assertThat(row.get("shop_name")).isEqualTo(shopName);
         assertThat(row.get("representative")).isEqualTo("Đặng Quốc Huy");
         assertThat(row.get("contact_phone")).isEqualTo("0912345678");
-        assertThat(row.get("contact_email")).isEqualTo(shopEmail);
+        assertThat(row.get("contact_email")).isEqualTo(email);
         assertThat(row.get("commission_rate")).isNull();
         assertThat(row.get("ghn_shop_id")).isNull();
         // K03.06 / K09.02: cấu hình vận chuyển mặc định (GHN, GHTK bật) được tạo sau commit
@@ -144,9 +145,9 @@ class ShopRegistrationIT extends IntegrationTestBase {
 
     @Test
     void fiveWrongCodesCancelTheRegistration() throws Exception {
-        long userId = createCustomer(uniqueEmail(), PASSWORD).getId();
+        String shopEmail = uniqueEmail();   // = email tài khoản (nơi nhận OTP)
+        long userId = createCustomer(shopEmail, PASSWORD).getId();
         String token = bearer(jwtService.issue(userId, UserRole.CUSTOMER, 1L).token());
-        String shopEmail = uniqueEmail();
         String challenge = json(register(token, uniqueShop(), shopEmail).andReturn(), "$.data.challenge_id");
         String wrong = "000000".equals(mails.lastOtp(shopEmail)) ? "111111" : "000000";
         for (int i = 1; i <= 4; i++) {
@@ -162,9 +163,9 @@ class ShopRegistrationIT extends IntegrationTestBase {
 
     @Test
     void concurrentConfirmsCreateOneShop() throws Exception {
-        long userId = createCustomer(uniqueEmail(), PASSWORD).getId();
+        String shopEmail = uniqueEmail();   // = email tài khoản (nơi nhận OTP)
+        long userId = createCustomer(shopEmail, PASSWORD).getId();
         String token = bearer(jwtService.issue(userId, UserRole.CUSTOMER, 1L).token());
-        String shopEmail = uniqueEmail();
         String challenge = json(register(token, uniqueShop(), shopEmail).andReturn(), "$.data.challenge_id");
         String otp = mails.lastOtp(shopEmail);
         ExecutorService pool = Executors.newFixedThreadPool(4);

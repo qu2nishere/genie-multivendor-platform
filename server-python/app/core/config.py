@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     kyc_face_low_threshold: float = 0.25  # dưới ngưỡng → FACE_SCORE_LOW; giữa hai ngưỡng → FACE_SCORE_BORDERLINE
     kyc_liveness_threshold: float = 0.5  # liveness_score dưới ngưỡng → LIVENESS_SUSPECT
     kyc_min_image_side: int = 600  # cạnh ngắn tối thiểu (px) của ảnh giấy tờ
-    kyc_blur_threshold: float = 60.0  # phương sai Laplacian tối thiểu
+    kyc_blur_threshold: float = 60.0  # độ nét tối thiểu (images.document_sharpness — ảnh rõ ~200+, ảnh mờ < 10)
     kyc_max_concurrency: int = 1  # số hồ sơ xử lý cùng lúc (ngân sách RAM — TS 16.2)
     kyc_pipeline_timeout_s: float = 20.0
     callback_retries: int = 3
