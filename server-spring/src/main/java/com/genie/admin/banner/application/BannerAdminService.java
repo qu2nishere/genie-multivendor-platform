@@ -30,7 +30,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 /**
  * Quản lý banner trang chủ — UC-ADM-12 (API_SPEC 11.16; plan banner B03). Mỗi thao tác một transaction: kiểm hợp lệ →
- * ghi → nhật ký {@code BANNER_CHANGED} → sự kiện xóa cache sau commit. Ảnh: khóa {@code tmp/…} được chuyển sang
+ * ghi → nhật ký {@code BANNER_CREATED / UPDATED / ACTIVATED / DEACTIVATED / DELETED} → sự kiện xóa cache sau commit. Ảnh: khóa {@code tmp/…} được chuyển sang
  * {@code banner/{id}/{desktop|mobile}-…} (D4); ảnh cũ xóa sau commit (giữ khóa {@code seed/}); rollback thì xóa ảnh vừa chuyển.
  */
 @Service
@@ -76,7 +76,7 @@ public class BannerAdminService {
         String mobile = blank(cmd.mobileImageObjectKey()) ? null
                 : promote(adminId, b.getId(), "mobile", cmd.mobileImageObjectKey(), "mobile_image_object_key");
         b.changeImages(desktop, mobile);
-        record(adminId, b, "CREATE", Map.of(), client);
+        record(adminId, b, AuditAction.BANNER_CREATED, "CREATE", Map.of(), client);
         return query.view(b);
     }
 
@@ -127,7 +127,7 @@ public class BannerAdminService {
                 changes.put(k, Map.of("from", String.valueOf(before.get(k)), "to", String.valueOf(v)));
             }
         });
-        record(adminId, b, "UPDATE", Map.of("changes", changes), client);
+        record(adminId, b, AuditAction.BANNER_UPDATED, "UPDATE", Map.of("changes", changes), client);
         return query.view(b);
     }
 
@@ -144,7 +144,8 @@ public class BannerAdminService {
         } else {
             b.deactivate();
         }
-        record(adminId, b, active ? "ACTIVATE" : "DEACTIVATE", Map.of(), client);
+        record(adminId, b, active ? AuditAction.BANNER_ACTIVATED : AuditAction.BANNER_DEACTIVATED,
+                active ? "ACTIVATE" : "DEACTIVATE", Map.of(), client);
         return query.view(b);
     }
 
@@ -155,7 +156,7 @@ public class BannerAdminService {
         if (!b.isDeletable(OffsetDateTime.now(clock))) {
             throw new BusinessException(ErrorCode.BANNER_NOT_DELETABLE);
         }
-        record(adminId, b, "DELETE", Map.of(), client);
+        record(adminId, b, AuditAction.BANNER_DELETED, "DELETE", Map.of(), client);
         banners.delete(b);
         deleteAfterCommit(b.getImageUrl());
         deleteAfterCommit(b.getMobileImageUrl());
@@ -251,13 +252,16 @@ public class BannerAdminService {
         });
     }
 
-    private void record(long adminId, HomeBanner b, String op, Map<String, Object> extra, ClientInfo client) {
+    /**
+     * Ghi nhật ký với mã động từ cụ thể (plan 2026-11-22 nhật ký banner N1) — {@code op} chỉ còn để báo sự kiện xóa cache.
+     */
+    private void record(long adminId, HomeBanner b, AuditAction action, String op, Map<String, Object> extra,
+                        ClientInfo client) {
         Map<String, Object> details = new LinkedHashMap<>();
-        details.put("op", op);
         details.put("target_label", "BN-" + b.getId() + " · " + b.getTitle());
         details.put("position", b.getPosition().name());
         details.putAll(extra);
-        audit.record(AuditAction.BANNER_CHANGED, adminId, String.valueOf(b.getId()), details, client, true);
+        audit.record(action, adminId, String.valueOf(b.getId()), details, client, true);
         events.publishEvent(new BannerChangedEvent(b.getId(), op));
     }
 
