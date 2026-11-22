@@ -42,11 +42,23 @@ Tài khoản: `yen.dh@genie.example` (có quyền `VIEW_AUDIT_LOG`). Màn: `/adm
 | TC-01-03 | Chọn ngày *đến* nhỏ hơn *từ* | Báo lỗi khoảng ngày không hợp lệ, không gọi được dữ liệu |
 | TC-01-04 | Lọc nhóm **AUTH** | Chỉ còn LOGIN_*, ACCOUNT_* |
 | TC-01-05 | Lọc nhóm **KYC** (sau khi đã làm phần 6) | Có KYC_SUBMITTED / KYC_APPROVED / KYC_REJECTED |
-| TC-01-06 | Ô tìm kiếm gõ `mai.tran` | Chỉ bản ghi của email đó; thử gõ một IP (vd `127.0.0.1` / `0:0:0:0:0:0:0:1`) → lọc theo IP |
-| TC-01-07 | Cuộn / bấm *Xem thêm* khi có > 1 trang | Tải trang tiếp theo, không trùng bản ghi |
+| TC-01-06 | Ô tìm kiếm gõ `mai.tran`; sau đó gõ IP đang hiện ở cột IP (máy dev thường là `0:0:0:0:0:0:0:1` — địa chỉ IPv6 của localhost, tương đương `127.0.0.1`); sau đó gõ một mã tham chiếu ở cột Chi tiết (nếu có) | Mỗi lần chỉ còn bản ghi khớp email / IP / mã tham chiếu |
+| TC-01-07 | Phân trang: cần **trên 50** bản ghi (mỗi lần tải 50). DB dev ít dữ liệu thì tạo 60 dòng giả bằng SQL ở cuối mục này → tải lại trang → bấm **Tải thêm** ở cuối bảng | Lần đầu 50 dòng, có nút **Tải thêm**; bấm thì nối thêm dòng xuống dưới, không trùng; hết dữ liệu thì nút biến mất. Ít hơn 50 bản ghi thì **không có nút** — đúng |
 | TC-01-08 | Bấm **Xuất CSV** | Tải về file `.csv`; mở Excel thấy tiếng Việt không lỗi font, đúng bộ lọc đang chọn |
-| TC-01-09 | Mở chi tiết một dòng (nếu có) | Thấy `details`, `user_agent`, `reference_id` |
+| TC-01-09 | Xem cột **Chi tiết** của các dòng: dòng đăng nhập (`LOGIN_*`) và dòng có đối tượng (vd `KYC_APPROVED`, `COMMISSION_UPDATED` sau khi làm phần 6) | Dòng `LOGIN_*` để **trống** cột Chi tiết (sự kiện đăng nhập không có đối tượng — đúng thiết kế). Dòng có đối tượng hiện tên đối tượng (`details.target_label`, vd tên shop) hoặc mã tham chiếu (`reference_id`). Màn **không** có trang chi tiết khi bấm vào dòng; `user_agent` chỉ lưu trong DB (`system_logs.user_agent`), không hiển thị |
 | TC-01-10 | Đăng nhập `phat.nt@genie.example` (Moderator) vào `/admin/audit-logs` | Menu không có mục Nhật ký; gõ URL trực tiếp → màn "không có quyền"; API trả 403 và **sinh thêm 1 bản ghi `ACCESS_DENIED`** (kiểm lại bằng Admin) |
+
+Tạo 60 dòng giả để thử phân trang (TC-01-07), chạy trong DB `genie` (DataGrip / psql):
+
+```sql
+INSERT INTO system_logs (id, created_at, user_id, user_email, user_role, action_type, details, ip_address, status, user_agent)
+SELECT gen_random_uuid()::text, now() - (g || ' minutes')::interval, NULL,
+       'test.paging@genie.test', 'CUSTOMER', 'LOGIN_FAILED', 'Dòng thử phân trang #' || g,
+       '127.0.0.1', 'FAILED', 'paging-test'
+FROM generate_series(1, 60) g;
+-- thử xong thì dọn:
+DELETE FROM system_logs WHERE user_email = 'test.paging@genie.test';
+```
 
 ---
 
@@ -60,7 +72,7 @@ Chuẩn bị 1 ảnh jpg/png/webp < 5MB và 1 ảnh > 5MB hoặc 1 file `.gif`/`
 | TC-02-01 | Vào `/admin/banners` | Danh sách banner seed, lọc được theo vị trí (HOME_TOP_CAROUSEL, HOME_TOP_SIDE, HOME_MIDDLE, CATEGORY_TOP, FLASH_SALE_TOP, POPUP) và trạng thái; có số lượt xem / click |
 | TC-02-02 | **Tạo banner**: vị trí HOME_TOP_CAROUSEL, tải ảnh hợp lệ, link `/flash-sale`, thời gian bắt đầu = bây giờ, kết thúc = +7 ngày, bật hoạt động → Lưu | Tạo thành công, banner hiện trong danh sách trạng thái đang chạy |
 | TC-02-03 | Mở trang chủ http://localhost:4321/ (tab mới) | Banner mới xuất hiện trong carousel đầu trang (cache Redis có thể trễ vài giây — tải lại trang) |
-| TC-02-04 | Bấm vào banner trên trang chủ, quay lại admin sau ~1 phút, tải lại danh sách | Số **click** (và view) của banner tăng (job gom thống kê chạy định kỳ) |
+| TC-02-04 | Ghi lại cột **Hiển thị / Bấm** của banner → mở trang chủ 1 lần, bấm vào banner đó → quay lại admin sau **tối đa 5 phút**, tải lại danh sách | **Hiển thị** của *mọi* banner trong carousel +1 (mỗi lần tải trang, carousel dựng sẵn tất cả slide nên đều được tính), **Bấm** của banner vừa bấm +1, CTR = Bấm ÷ Hiển thị. Số liệu không tăng ngay vì đi qua bộ đếm Redis rồi `BannerStatsFlushJob` mới ghi vào DB (5 phút / lần) |
 | TC-02-05 | Tạo banner với link ngoài `https://google.com` | Bị chặn: lỗi **GNE-BNR-4222** (link phải là đường dẫn nội bộ) |
 | TC-02-06 | Tải ảnh > 5MB hoặc sai định dạng | Bị chặn ngay khi tải, báo lỗi dung lượng / định dạng |
 | TC-02-07 | Thời gian kết thúc trước thời gian bắt đầu | Báo lỗi ở trường thời gian, không lưu được |
