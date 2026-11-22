@@ -2973,6 +2973,7 @@
       "title": "Admin Console",
       "home": "Admin Console — home",
       "nav_label": "Admin Console navigation",
+      "sign_out": "Sign out",
       "nav": {
         "overview": "Overview",
         "kyc": "KYC review",
