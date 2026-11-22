@@ -169,3 +169,6 @@ temp/
 *.bak
 *.orig
 *.rej
+
+# Ảnh giấy tờ thật để thử KYC trên máy dev — dữ liệu cá nhân, KHÔNG BAO GIỜ commit
+test-kyc/
