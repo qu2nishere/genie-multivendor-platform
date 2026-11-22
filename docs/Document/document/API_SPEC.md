@@ -9,7 +9,7 @@
 | Base URL | `https://api.genie.vn/api/v1` (staging: `https://api.staging.genie.vn/api/v1`) |
 | Định dạng | JSON `snake_case`, UTF-8 |
 | Tài liệu gốc | LLD.md mục 8 & 12, TECH_STACK_VA_QUY_UOC.md mục 8–9, ENTITY.md, Usecase.md, BAO_CAO_DOI_CHIEU_GIAO_DIEN.md |
-| Lịch sử | 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
+| Lịch sử | 1.7 (2026-11-22): plan B2 danh mục & hoa hồng — 5.1 ẩn cả nhánh khi cha ẩn, header `Cache-Control`; 5.2 thêm `parent_id`; 11.8 khung 3,5–8 % (thay 0–50), mặc định lưu `platform_settings`, quyền đổi hoa hồng; 11.11 thêm `description`, `level`, `requires_business_license`, `effective_commission_rate`, `details` của `GNE-CAT-4091 / 4092`, luật di chuyển / xóa, `summary.inherited` + luật trùng `code` trong nhánh, `data_type` không đổi được · 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
 
 > **Cách đọc:** mỗi endpoint ghi *màn hình dùng nó*, *quyền*, *mã UC*, rồi tới request/response mẫu. Đối tượng dùng lại nhiều lần được định nghĩa một lần ở **mục 1 (Schema dùng chung)** và gọi bằng tên `$TênSchema` — khi chuyển sang OpenAPI, mỗi `$TênSchema` là một `components/schemas`.
 >
@@ -874,7 +874,7 @@ UC-CAT-01 · **Màn hình:** hàng danh mục dưới header, bộ lọc "Theo d
   }
 ]
 ```
-Chỉ danh mục đang hiển thị, sắp theo `display_order`. Cache 1 giờ.
+Chỉ danh mục đang hiển thị; ẩn danh mục cha thì cả nhánh con bị ẩn theo. Sắp theo `display_order` (trống xếp cuối) → tên → `id`. `icon` luôn có mặt (`null` khi chưa đặt). Cache Redis 1 giờ (`catalog:categories:all`), xóa ngay sau khi Admin đổi cây (sau commit); header `Cache-Control: public, max-age=300`. Không cần đăng nhập. *(hiện thực plan B2, 2026-11-22)*
 
 ### 5.2 `GET /public/categories/{slug}` — Đầu trang danh mục
 **Màn hình:** trang danh mục (tiêu đề, mô tả, tổng số sản phẩm, chip danh mục con, breadcrumb)
@@ -883,12 +883,13 @@ Chỉ danh mục đang hiển thị, sắp theo `display_order`. Cache 1 giờ.
 {
   "id": 1, "name": "Điện tử", "slug": "dien-tu", "icon": "zap",
   "description": "Smartphone, laptop, tai nghe, camera và phụ kiện công nghệ chính hãng.",
+  "parent_id": null,
   "breadcrumb": [ { "id": 1, "name": "Điện tử", "slug": "dien-tu" } ],
   "children": [ { "id": 11, "name": "Máy tính & Laptop", "slug": "may-tinh-laptop" } ],
   "product_count": 1284
 }
 ```
-`404 GNE-CAT-4041` nếu slug không có / đã ẩn.
+`breadcrumb` đi từ gốc tới chính danh mục; `children` chỉ gồm con đang hiển thị; `product_count` = số sản phẩm `PUBLISHED` của cả nhánh (cache 10 phút). `description`, `parent_id` luôn có mặt (có thể `null`). `404 GNE-CAT-4041` nếu slug không có / đã ẩn / thuộc nhánh bị ẩn.
 
 ### 5.3 `GET /public/products` — Tìm kiếm & lọc sản phẩm
 UC-CAT-02, UC-CAT-05, UC-CAT-16 · **Màn hình:** Kết quả tìm kiếm (toàn sàn / trong shop), lưới trang danh mục, lưới & tab trang Shop (Tất cả / Mới nhất / Bán chạy / theo danh mục), "Có thể bạn quan tâm" khi không có kết quả, sản phẩm của trang chiến dịch, ô chọn sản phẩm làm đích banner (Admin)
@@ -2390,16 +2391,16 @@ Client đọc CSV (nhỏ, 3 cột) thành JSON rồi gửi — không upload t�
 Body như preview. `200` `{ "status": "DONE", "funded_order_count": 2 }` — các đơn COD khớp: ký quỹ `PENDING_FUNDING → HELD`, đơn `DELIVERED → PAID`, ghi `financial_ledger`. `422 GNE-LOG-4221` nếu không cân.
 
 ### 11.8 Cấu hình hoa hồng
-UC-CAT-14 · `UPDATE_COMMISSION` · **Màn hình:** Phí hoa hồng mặc định (Lưu mặc định), Hoa hồng theo ngành hàng (tỷ lệ + công tắc, Lưu cấu hình). Thứ tự áp dụng: riêng của shop → theo ngành → mặc định.
+UC-CAT-14 · `UPDATE_COMMISSION` · **Màn hình:** Phí hoa hồng mặc định (Lưu mặc định), Hoa hồng theo ngành hàng (tỷ lệ + công tắc, Lưu cấu hình). Thứ tự áp dụng: riêng của shop → ngành của sản phẩm → ngành cha gần nhất → mặc định toàn sàn. API dùng **phần trăm** (2 chữ số thập phân), CSDL lưu phân số (`categories.commission_rate`, `platform_settings` khóa `commission.default_rate`, scale 4). *(hiện thực plan B2, 2026-11-22)*
 
 #### `GET /admin/commission-settings`
 ```json
 { "default_rate": 5.0, "categories": [ { "category_id": 1, "name": "Điện tử", "rate": 5.0, "is_enabled": true } ] }
 ```
-`is_enabled = false` → ngành dùng tỷ lệ mặc định.
+`categories` = các ngành **gốc**; `is_enabled = false` → ngành chưa có tỷ lệ riêng, `rate` khi đó là mặc định toàn sàn.
 
 #### `PATCH /admin/commission-settings`
-`{ "default_rate": 5.0 }` hoặc `{ "categories": [ { "category_id": 3, "rate": 10.0, "is_enabled": true } ] }` → `200` như `GET`. Ghi `system_logs COMMISSION_UPDATED` (cũ → mới). Tỷ lệ 0–50.
+`{ "default_rate": 5.0 }` hoặc `{ "categories": [ { "category_id": 3, "rate": 10.0, "is_enabled": true } ] }` → `200` như `GET`. Gửi một hoặc cả hai khóa (thiếu cả hai → `422`). `is_enabled = false` xóa tỷ lệ riêng (`rate` bỏ qua). Cả lô chạy trong một transaction, khóa ngành theo thứ tự `id`; một `category_id` không tồn tại → `404 GNE-CAT-4041` cả lô. Tỷ lệ ngoài khung **3,5–8 %** → `422 GNE-VAL-4220` (`errors[].field` = `default_rate` / `categories[i].rate`, `code` = `OUT_OF_RANGE`). Mỗi thay đổi thật ghi một dòng `system_logs COMMISSION_UPDATED` — `reference_id` = id ngành hoặc `DEFAULT`, `details { scope, category_id, from, to }` (phần trăm); gửi lại cùng giá trị không ghi log.
 
 ### 11.9 Sổ cái tài chính
 UC-PAY-06 · `VIEW_FINANCE` · **Màn hình:** "Append-only · bất biến", tìm mã tham chiếu / tài khoản, lọc sự kiện, bảng Seq / Thời gian / Sự kiện / Tham chiếu / Tài khoản / Nợ / Có, Xuất sổ cái
@@ -2428,32 +2429,39 @@ UC-ADM-07 · `VIEW_AUDIT_LOG` · **Màn hình:** lọc thời gian (Hôm nay / 7
 Cùng bộ lọc (không `cursor` / `limit`). UTF-8 có BOM, ô bắt đầu bằng `= + - @` được thêm `'` (chống chèn công thức), giờ Việt Nam. **Tối đa 50.000 dòng** mới nhất — bị cắt thì có header `X-Truncated: true`. Giới hạn 5 lần / phút / người (`429 GNE-RAT-4290`).
 
 ### 11.11 Danh mục toàn sàn & bộ thuộc tính
-UC-CAT-14, UC-CAT-15, UC-CAT-17 · `MANAGE_CATALOG` · **Màn hình:** 4 chỉ số (Danh mục gốc, Danh mục con, Tổng sản phẩm, Chờ duyệt), cây danh mục gốc, chi tiết (hiển thị, Bộ thuộc tính, Sửa; bảng danh mục con Sản phẩm / Hoa hồng / Xem SP), "Đề xuất danh mục từ người bán" (Duyệt / Từ chối có lý do), modal Thêm/Sửa danh mục (tên, slug + Auto, danh mục cha 3 cấp, icon, hoa hồng mặc định, Xóa khi rỗng), Bộ thuộc tính (Mã, Tên, Kiểu, Giá trị/Đơn vị, Bắt buộc, Lọc được, Trục biến thể, Ngừng dùng)
+UC-CAT-14, UC-CAT-15, UC-CAT-17 · `MANAGE_CATALOG` (đặt / đổi `commission_rate` cần thêm `UPDATE_COMMISSION`, chỉ kiểm khi giá trị thật sự đổi — thiếu → `403 GNE-SEC-4030`) · **Màn hình:** 4 chỉ số (Danh mục gốc, Danh mục con, Tổng sản phẩm, Chờ duyệt), cây danh mục gốc, chi tiết (hiển thị, Bộ thuộc tính, Sửa; bảng danh mục con Sản phẩm / Hoa hồng / Xem SP), "Đề xuất danh mục từ người bán" (Duyệt / Từ chối có lý do), modal Thêm/Sửa danh mục (tên, slug + Auto, danh mục cha 3 cấp, icon, hoa hồng mặc định, Xóa khi rỗng), Bộ thuộc tính (Mã, Tên, Kiểu, Giá trị/Đơn vị, Bắt buộc, Lọc được, Trục biến thể, Ngừng dùng)
 
 #### `GET /admin/categories`
 ```json
 [
   {
-    "id": 1, "name": "Điện tử", "slug": "dien-tu", "icon": "zap", "is_active": true, "commission_rate": 5.0, "product_count": 12840, "shop_count": 312,
-    "children": [ { "id": 11, "name": "Điện thoại & Phụ kiện", "commission_rate": 4.0, "product_count": 4210, "children": [ { "id": 111, "name": "Điện thoại" } ] } ]
+    "id": 1, "name": "Điện tử", "slug": "dien-tu", "icon": "zap", "description": null, "parent_id": null, "level": 1,
+    "is_active": true, "requires_business_license": false,
+    "commission_rate": 5.0, "effective_commission_rate": 5.0, "product_count": 12840, "shop_count": 312,
+    "children": [ { "id": 11, "name": "Điện thoại & Phụ kiện", "level": 2, "commission_rate": null, "effective_commission_rate": 5.0, "product_count": 4210,
+                    "children": [ { "id": 111, "name": "Điện thoại", "level": 3, "children": [] } ] } ]
   }
 ]
 ```
-`summary`: `{ "root_count": 6, "child_count": 18, "product_count": 72730, "pending_proposals": 2 }`.
+`summary`: `{ "root_count": 6, "child_count": 18, "product_count": 72730, "pending_proposals": 2 }`. Mọi nút có đủ trường như nút gốc (rút gọn ở ví dụ). `commission_rate` = tỷ lệ riêng (`null` = kế thừa); `effective_commission_rate` = tỷ lệ đang áp dụng; `product_count` / `shop_count` tính cả nhánh, không đếm sản phẩm `DELETED`. `GET /admin/categories/{id}` trả một nút (`404 GNE-CAT-4041`).
 
 | Method & Path | Body | Phản hồi |
 |---|---|---|
-| `POST /admin/categories` | `{ "name": "Thú cưng", "slug": "thu-cung", "parent_id": null, "icon": "heart", "commission_rate": 5.0, "is_active": true }` | `201`; `409 GNE-CAT-4091` trùng slug |
-| `PATCH /admin/categories/{id}` | trường bất kỳ ở trên (công tắc "Hiển thị" = `{ "is_active": false }`) | `200` |
-| `DELETE /admin/categories/{id}` | — | `204`; `409 GNE-CAT-4092` còn sản phẩm hoặc danh mục con |
+| `POST /admin/categories` | `{ "name": "Thú cưng", "slug": "thu-cung", "parent_id": null, "icon": "heart", "description": null, "commission_rate": 5.0, "is_active": true, "requires_business_license": false }` — chỉ `name` bắt buộc; `slug` trống → sinh từ tên (bỏ dấu) | `201` nút như `GET`; `409 GNE-CAT-4091` trùng slug (toàn sàn) hoặc trùng tên cùng cha — `details { field, existing_category { id, name } }`; `422` `parent_id` `NOT_FOUND` / `TOO_DEEP` (tối đa 3 cấp), `slug` sai mẫu `^[a-z0-9]+(?:-[a-z0-9]+)*$`, `icon` sai mẫu `^[a-z0-9-]{1,50}$`, `description` > 500, `commission_rate` ngoài 3,5–8 |
+| `PATCH /admin/categories/{id}` | chỉ các trường gửi lên (công tắc "Hiển thị" = `{ "is_active": false }`; `"commission_rate": null` = bỏ tỷ lệ riêng; `parent_id` = chuyển nhánh) | `200`; chuyển vào chính nó / con cháu → `422 parent_id CYCLE`; cây sau khi chuyển quá 3 cấp → `422 TOO_DEEP` |
+| `DELETE /admin/categories/{id}` | — | `204`; `409 GNE-CAT-4092` với `details.reason` = `HAS_CHILDREN` (còn danh mục con) / `HAS_PRODUCTS` (còn sản phẩm chưa xóa trong nhánh) / `IN_USE` (đang được voucher tham chiếu) |
+
+Mọi thay đổi cây xóa cache 5.1 / 5.2 sau commit.
 
 #### Bộ thuộc tính
 | Method & Path | Body | Phản hồi |
 |---|---|---|
-| `GET /admin/categories/{id}/attributes` | — | `[{ "code": "warranty", "name": "Bảo hành", "data_type": "ENUM", "values": ["6 tháng", "12 tháng"], "unit": null, "is_required": true, "is_filterable": true, "is_variant_axis": false, "is_active": true }]` |
-| `POST /admin/categories/{id}/attributes` | `{ "code": "warranty", "name": "Bảo hành", "data_type": "ENUM", "values": [...], "unit": null, "is_required": true, "is_filterable": true, "is_variant_axis": false }` | `201`; `409 GNE-CAT-4095` trùng `code` trong ngành; `422 GNE-VAL-4220` `code` sai mẫu `^[a-z][a-z0-9_]*$` |
-| `PUT /admin/categories/{id}/attributes/{code}` | như POST (trừ `code`) | `200`; thêm thuộc tính bắt buộc → phản hồi có `"grace_period_days": 14` (shop có 14 ngày bổ sung cho sản phẩm cũ) |
-| `PATCH /admin/categories/{id}/attributes/{code}` | `{ "is_active": false }` ("Ngừng dùng" / "Dùng lại") | `200` |
+| `GET /admin/categories/{id}/attributes` | — | `[{ "code": "warranty", "name": "Bảo hành", "data_type": "ENUM", "values": ["6 tháng", "12 tháng"], "unit": null, "is_required": true, "is_filterable": true, "is_variant_axis": false, "is_active": true, "display_order": 1 }]`; `summary.inherited` = thuộc tính của các ngành tổ tiên (chỉ đọc): `[{ "code", "name", "data_type", "is_required", "is_active", "category_id", "category_name" }]` |
+| `POST /admin/categories/{id}/attributes` | `{ "code": "warranty", "name": "Bảo hành", "data_type": "ENUM", "values": [...], "unit": null, "is_required": true, "is_filterable": true, "is_variant_axis": false }` | `201`; `409 GNE-CAT-4095` trùng `code` ở chính ngành, ngành tổ tiên hoặc con cháu — `details { category_id, category_name }`; `422 GNE-VAL-4220`: `code` sai mẫu `^[a-z][a-z0-9_]*$`, `ENUM` / `MULTI_ENUM` thiếu `values`, kiểu khác mà có `values`, `unit` chỉ cho `NUMBER`, trục biến thể chỉ cho `ENUM` / `MULTI_ENUM` |
+| `PUT /admin/categories/{id}/attributes/{code}` | như POST (trừ `code`; `data_type` phải giữ nguyên — đổi → `422 data_type`) | `200`; vừa chuyển sang bắt buộc khi nhánh đang có sản phẩm (chưa xóa) → phản hồi có `"grace_period_days": 14` (shop có 14 ngày bổ sung cho sản phẩm cũ) |
+| `PATCH /admin/categories/{id}/attributes/{code}` | `{ "is_active": false }` ("Ngừng dùng" / "Dùng lại") | `200`; ngừng dùng → `is_required` tự về `false`; dùng lại không bật lại bắt buộc |
+
+Thuộc tính không bao giờ bị xóa cứng (sản phẩm cũ còn tham chiếu `code`).
 
 `data_type` ∈ `TEXT, NUMBER, BOOLEAN, ENUM, MULTI_ENUM, DATE`.
 
@@ -2891,11 +2899,11 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-USR-4093` | 409 | Địa chỉ đã có trong sổ (`existing_address_id`) | mới |
 | `GNE-CAT-4041` | 404 | Danh mục không tồn tại / đã ẩn | mới |
 | `GNE-CAT-4042` | 404 | Sản phẩm không còn bán | mới |
-| `GNE-CAT-4091` | 409 | Trùng tên / slug danh mục (`existing_category`) | mới |
-| `GNE-CAT-4092` | 409 | Danh mục còn sản phẩm / danh mục con | mới |
+| `GNE-CAT-4091` | 409 | Trùng slug (toàn sàn) / tên cùng cha (`details.field`, `existing_category`) | mới |
+| `GNE-CAT-4092` | 409 | Danh mục còn danh mục con / sản phẩm / đang được dùng (`details.reason`) | mới |
 | `GNE-CAT-4093` | 409 | Sản phẩm đang bị sàn khóa | mới |
 | `GNE-CAT-4094` | 409 | Sản phẩm còn đơn đang xử lý | mới |
-| `GNE-CAT-4095` | 409 | Trùng mã thuộc tính trong ngành | mới (v1.3) |
+| `GNE-CAT-4095` | 409 | Trùng mã thuộc tính trong cùng nhánh ngành (`details.category_id`, `category_name`) | mới (v1.3) |
 | `GNE-CAT-4221` | 422 | Đã có 5 đề xuất danh mục đang chờ | mới |
 | `GNE-CAT-4222` | 422 | Ngành bắt buộc giấy tờ chứng thực | mới |
 | `GNE-CAT-4223` | 422 | Thiếu thông số bắt buộc của ngành (`missing_specs`) | mới |
