@@ -1,0 +1,176 @@
+### UC-CAT-01, 14, 15 — Cây danh mục, quản lý cây, hoa hồng, bộ thuộc tính (API_SPEC 5.1, 5.2, 11.8, 11.11; plan B2)
+# Chạy bằng REST Client (VS Code) hoặc IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+# Thứ tự: chạy từ trên xuống — các bước sau dùng id danh mục tạo ở bước 7, 8.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập Admin seed (đủ 13 quyền) — chép access_token vào @admin
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "yen.dh@genie.example", "password": "Genie@123" }
+
+### 2. Đăng nhập nhân viên CS (không có MANAGE_CATALOG / UPDATE_COMMISSION) — chép access_token vào @cs
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "truc.ht@genie.example", "password": "Genie@123" }
+
+@admin = <access_token của bước 1>
+@cs = <access_token của bước 2>
+@rootId = <id ở phản hồi bước 7>
+@childId = <id ở phản hồi bước 8>
+
+# ===================== UC-CAT-01 — cây công khai (không cần đăng nhập) =====================
+
+### 3. ĐÚNG — cây 3 cấp, chỉ danh mục đang hiển thị; header Cache-Control: public, max-age=300
+GET {{base}}/public/categories
+
+### 4. ĐÚNG — đầu trang danh mục: breadcrumb, children, product_count (cả nhánh), parent_id
+GET {{base}}/public/categories/dien-tu
+
+### 5. LỖI — slug không có / đã ẩn → 404 GNE-CAT-4041
+GET {{base}}/public/categories/khong-ton-tai
+
+# ===================== UC-CAT-14 — quản lý cây =====================
+
+### 6. ĐÚNG — cây quản trị + summary { root_count, child_count, product_count, pending_proposals }
+GET {{base}}/admin/categories
+Authorization: Bearer {{admin}}
+
+### 7. ĐÚNG — tạo ngành gốc, slug trống → sinh từ tên ("thu-cung-http") → 201, effective_commission_rate = 6.0
+POST {{base}}/admin/categories
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "name": "Thú cưng http", "icon": "heart", "description": "Thức ăn, phụ kiện cho thú cưng.", "commission_rate": 6.0, "is_active": true }
+
+### 8. ĐÚNG — tạo ngành con, không đặt hoa hồng → commission_rate null, effective_commission_rate = 6.0 (kế thừa cha)
+POST {{base}}/admin/categories
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "name": "Thức ăn cho chó http", "parent_id": {{rootId}} }
+
+### 9. LỖI — trùng slug → 409 GNE-CAT-4091, details { field: "slug", existing_category { id, name } }
+POST {{base}}/admin/categories
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "name": "Điện tử khác", "slug": "dien-tu" }
+
+### 10. LỖI — hoa hồng ngoài khung 3,5–8 % → 422 GNE-VAL-4220 (field commission_rate, OUT_OF_RANGE)
+PATCH {{base}}/admin/categories/{{rootId}}
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "commission_rate": 12 }
+
+### 11. LỖI — chuyển ngành gốc vào chính con của nó → 422 (field parent_id, CYCLE)
+PATCH {{base}}/admin/categories/{{rootId}}
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "parent_id": {{childId}} }
+
+### 12. ĐÚNG — ẩn ngành gốc → bước 3 không còn cả nhánh, GET /public/categories/thu-cung-http → 404
+PATCH {{base}}/admin/categories/{{rootId}}
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "is_active": false }
+
+### 13. LỖI — xóa ngành còn con → 409 GNE-CAT-4092, details.reason = HAS_CHILDREN
+DELETE {{base}}/admin/categories/{{rootId}}
+Authorization: Bearer {{admin}}
+
+### 14. LỖI — nhân viên thiếu MANAGE_CATALOG → 403 GNE-SEC-4030
+GET {{base}}/admin/categories
+Authorization: Bearer {{cs}}
+
+# ===================== UC-CAT-15 — bộ thuộc tính =====================
+
+### 15. ĐÚNG — thêm thuộc tính ENUM cho ngành gốc → 201
+POST {{base}}/admin/categories/{{rootId}}/attributes
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "code": "pet_size", "name": "Kích cỡ thú cưng", "data_type": "ENUM", "values": ["Nhỏ", "Vừa", "Lớn"], "is_required": false, "is_filterable": true, "is_variant_axis": true }
+
+### 16. ĐÚNG — ngành con: data = thuộc tính riêng, summary.inherited có pet_size (category_name = ngành gốc)
+GET {{base}}/admin/categories/{{childId}}/attributes
+Authorization: Bearer {{admin}}
+
+### 17. LỖI — ngành con dùng lại mã của ngành cha → 409 GNE-CAT-4095, details { category_id, category_name }
+POST {{base}}/admin/categories/{{childId}}/attributes
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "code": "pet_size", "name": "Cỡ", "data_type": "TEXT" }
+
+### 18. LỖI — ENUM thiếu values, đơn vị cho kiểu TEXT → 422 GNE-VAL-4220 (2 lỗi)
+POST {{base}}/admin/categories/{{childId}}/attributes
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "code": "flavor", "name": "Hương vị", "data_type": "ENUM", "unit": "g" }
+
+### 19. ĐÚNG — chuyển sang bắt buộc → 200; ngành mới chưa có sản phẩm nên KHÔNG có grace_period_days
+# (làm tương tự với một ngành seed đang có sản phẩm, vd. id của "dien-tu", sẽ thấy "grace_period_days": 14)
+PUT {{base}}/admin/categories/{{rootId}}/attributes/pet_size
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "name": "Kích cỡ thú cưng", "data_type": "ENUM", "values": ["Nhỏ", "Vừa", "Lớn"], "is_required": true, "is_filterable": true, "is_variant_axis": true }
+
+### 20. ĐÚNG — ngừng dùng → is_active false, is_required tự về false
+PATCH {{base}}/admin/categories/{{rootId}}/attributes/pet_size
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "is_active": false }
+
+# ===================== UC-CAT-14 bước 8 — hoa hồng =====================
+
+### 21. ĐÚNG — mặc định toàn sàn + bảng theo ngành gốc
+GET {{base}}/admin/commission-settings
+Authorization: Bearer {{admin}}
+
+### 22. ĐÚNG — đổi mặc định 5 → 5.5 (nhật ký hệ thống có COMMISSION_UPDATED, reference_id DEFAULT)
+PATCH {{base}}/admin/commission-settings
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "default_rate": 5.5 }
+
+### 23. ĐÚNG — tắt hoa hồng riêng của ngành gốc → is_enabled false, rate = mặc định
+PATCH {{base}}/admin/commission-settings
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "categories": [ { "category_id": {{rootId}}, "is_enabled": false } ] }
+
+### 24. LỖI — ngoài khung → 422 (field default_rate, OUT_OF_RANGE)
+PATCH {{base}}/admin/commission-settings
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "default_rate": 9 }
+
+### 25. LỖI — nhân viên thiếu UPDATE_COMMISSION → 403 GNE-SEC-4030
+GET {{base}}/admin/commission-settings
+Authorization: Bearer {{cs}}
+
+### 26. Dọn dẹp — trả mặc định về 5, xóa ngành con rồi ngành gốc (204 khi không còn con / sản phẩm)
+PATCH {{base}}/admin/commission-settings
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "default_rate": 5 }
+
+###
+DELETE {{base}}/admin/categories/{{childId}}
+Authorization: Bearer {{admin}}
+
+###
+DELETE {{base}}/admin/categories/{{rootId}}
+Authorization: Bearer {{admin}}
