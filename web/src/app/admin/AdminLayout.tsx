@@ -5,6 +5,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { badgeLabel, useAdminQueues } from '@/features/admin-dashboard';
+import { signOut } from '@/features/auth';
 import type { AdminMe } from '@/features/admin-system';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
@@ -88,6 +89,19 @@ function Sidebar({ me, active }: { me: AdminMe; active: AdminNavItem | null }) {
           );
         })}
       </nav>
+      <div className="p-3">
+        <button
+          type="button"
+          onClick={() => void signOut()}
+          className={cn(
+            navCls,
+            'w-full bg-transparent cursor-pointer text-white/50 font-medium hover:text-white',
+          )}
+        >
+          <Icon name="log-out" size={19} />
+          {t('admin.shell.sign_out')}
+        </button>
+      </div>
       <Link
         to="/account"
         className="p-3 border-0 border-t border-solid border-white/[.08] flex items-center gap-2.5 no-underline hover:no-underline hover:bg-white/[.05] focus-visible:outline-none focus-visible:shadow-focus"
