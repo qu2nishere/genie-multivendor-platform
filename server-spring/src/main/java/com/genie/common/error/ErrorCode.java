@@ -68,8 +68,12 @@ public enum ErrorCode {
     STAFF_NOT_PENDING("GNE-ADM-4093", HttpStatus.CONFLICT, "Nhân viên này không còn ở trạng thái chờ kích hoạt."),
     STAFF_EMAIL_DOMAIN("GNE-ADM-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Email nhân viên không thuộc tên miền được phép."),
 
-    // ===== Danh mục & sản phẩm (API_SPEC 15) =====
+    // ===== Danh mục, thuộc tính & sản phẩm (API_SPEC 5.2, 11.11, 15 — UC-CAT-01, 14, 15: plan B2) =====
+    CATEGORY_NOT_FOUND("GNE-CAT-4041", HttpStatus.NOT_FOUND, "Danh mục không tồn tại hoặc đã ẩn."),
     PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn bán."),
+    CATEGORY_DUPLICATE("GNE-CAT-4091", HttpStatus.CONFLICT, "Tên hoặc đường dẫn danh mục đã tồn tại."),
+    CATEGORY_NOT_DELETABLE("GNE-CAT-4092", HttpStatus.CONFLICT, "Danh mục còn sản phẩm hoặc danh mục con."),
+    ATTRIBUTE_CODE_DUPLICATE("GNE-CAT-4095", HttpStatus.CONFLICT, "Mã thuộc tính đã có trong ngành này."),
 
     // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
     CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),

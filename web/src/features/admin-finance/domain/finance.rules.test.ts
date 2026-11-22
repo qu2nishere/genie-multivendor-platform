@@ -46,9 +46,11 @@ describe('finance.rules', () => {
       blockedAmount: 1200000,
     });
   });
-  it('tỷ lệ hoa hồng 0–50', () => {
+  it('tỷ lệ hoa hồng 3,5–8', () => {
     expect(parseRate('7,5')).toBe(7.5);
-    expect(parseRate('51')).toBeNull();
+    expect(parseRate('3.5')).toBe(3.5);
+    expect(parseRate('8,5')).toBeNull();
+    expect(parseRate('3')).toBeNull();
     expect(parseRate('')).toBeNull();
   });
 });

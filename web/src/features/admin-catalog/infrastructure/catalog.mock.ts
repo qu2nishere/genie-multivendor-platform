@@ -23,13 +23,16 @@ const root = (
   slug,
   icon,
   is_active: active,
+  requires_business_license: false,
   commission_rate: rate,
+  effective_commission_rate: rate,
   product_count: products,
   shop_count: shops,
   children: subs.map(([sid, sname, count, srate, leaves]) => ({
     id: sid,
     name: sname,
     commission_rate: srate,
+    effective_commission_rate: srate,
     product_count: count,
     children: leaves.map((l) => ({ id: ++leafId, name: l })),
   })),
@@ -47,10 +50,10 @@ export const categoriesStore = mockState<CategoryDto[]>('admin.categories', () =
     [22, 'Thời trang Nữ', 12400, 8, ['Đầm & Váy', 'Áo kiểu']],
     [23, 'Giày dép', 6210, 7, ['Sneaker', 'Sandal']],
   ]),
-  root(3, 'Làm đẹp', 'lam-dep', 'star', 9120, 421, 10, true, [
-    [31, 'Chăm sóc da', 3800, 10, ['Serum', 'Kem chống nắng']],
-    [32, 'Trang điểm', 3120, 10, ['Son', 'Phấn']],
-    [33, 'Nước hoa', 2200, 9, []],
+  root(3, 'Làm đẹp', 'lam-dep', 'star', 9120, 421, 7.5, true, [
+    [31, 'Chăm sóc da', 3800, 7.5, ['Serum', 'Kem chống nắng']],
+    [32, 'Trang điểm', 3120, 7.5, ['Son', 'Phấn']],
+    [33, 'Nước hoa', 2200, 8, []],
   ]),
   root(4, 'Nhà cửa & Đời sống', 'nha-cua', 'house', 15200, 540, 6, true, [
     [41, 'Nội thất', 4100, 6, ['Bàn', 'Ghế', 'Đèn']],
@@ -61,8 +64,8 @@ export const categoriesStore = mockState<CategoryDto[]>('admin.categories', () =
     [61, 'Đồ dùng cho bé', 3400, 7, []],
     [62, 'Thời trang mẹ & bé', 3440, 7, []],
   ]),
-  root(9, 'Voucher & Dịch vụ', 'voucher-dich-vu', 'ticket', 320, 28, 0, false, [
-    [91, 'Thẻ nạp & Dịch vụ', 320, 0, []],
+  root(9, 'Voucher & Dịch vụ', 'voucher-dich-vu', 'ticket', 320, 28, 3.5, false, [
+    [91, 'Thẻ nạp & Dịch vụ', 320, 3.5, []],
   ]),
 ]);
 

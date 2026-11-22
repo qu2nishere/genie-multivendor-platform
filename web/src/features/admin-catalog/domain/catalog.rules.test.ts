@@ -16,7 +16,9 @@ const root = (over: Partial<RootCategory> = {}): RootCategory => ({
   slug: 'dien-tu',
   icon: 'zap',
   active: true,
+  requiresLicense: false,
   commissionRate: 5,
+  ownCommission: true,
   productCount: 0,
   shopCount: 0,
   children: [],
@@ -83,7 +85,7 @@ describe('catalog.rules', () => {
       true,
     );
   });
-  it('lược đồ danh mục: slug + hoa hồng 0–50', () => {
+  it('lược đồ danh mục: slug + hoa hồng 3,5–8', () => {
     const ok = {
       name: 'Thú cưng',
       slug: 'thu-cung',
@@ -91,9 +93,12 @@ describe('catalog.rules', () => {
       icon: 'heart',
       commissionRate: 5,
       active: true,
+      requiresLicense: false,
     };
     expect(categorySchema.safeParse(ok).success).toBe(true);
     expect(categorySchema.safeParse({ ...ok, slug: 'Thú cưng' }).success).toBe(false);
-    expect(categorySchema.safeParse({ ...ok, commissionRate: 60 }).success).toBe(false);
+    expect(categorySchema.safeParse({ ...ok, commissionRate: 8.5 }).success).toBe(false);
+    expect(categorySchema.safeParse({ ...ok, commissionRate: 3 }).success).toBe(false);
+    expect(categorySchema.safeParse({ ...ok, commissionRate: 3.5 }).success).toBe(true);
   });
 });

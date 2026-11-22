@@ -3663,8 +3663,9 @@
         "name": "Nhập tên danh mục.",
         "name_long": "Tối đa 100 ký tự.",
         "slug": "Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.",
-        "rate": "Hoa hồng từ 0 đến 50%."
-      }
+        "rate": "Hoa hồng từ 3,5 đến 8%."
+      },
+      "license": "Ngành cần giấy tờ"
     },
     "attr": {
       "title": "Bộ thuộc tính — {name}",
@@ -3693,6 +3694,9 @@
       "deactivate": "Ngừng dùng",
       "activate": "Dùng lại",
       "empty": "Ngành này chưa có thuộc tính nào.",
+      "inherited_title": "Thuộc tính kế thừa từ ngành cha",
+      "inherited_desc": "Chỉ đọc — sửa tại ngành cha. Mã thuộc tính không được trùng trong cùng nhánh.",
+      "from": "Ngành gốc",
       "save": "Lưu thuộc tính",
       "saved": "Đã lưu thuộc tính",
       "saved_grace": "Đã lưu. Shop có {days} ngày bổ sung thuộc tính bắt buộc cho sản phẩm cũ",
@@ -3817,7 +3821,7 @@
       "toggle": "Áp dụng hoa hồng riêng cho ngành {name}",
       "save": "Lưu cấu hình",
       "saved": "Đã lưu tất cả thay đổi cấu hình",
-      "err": "Tỷ lệ phải từ 0 đến 50%."
+      "err": "Tỷ lệ phải từ 3,5 đến 8%."
     },
     "ledger": {
       "append_only": "Append-only · bất biến",

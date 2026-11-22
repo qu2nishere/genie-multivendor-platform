@@ -3663,8 +3663,9 @@
         "name": "Enter a category name.",
         "name_long": "At most 100 characters.",
         "slug": "Slug may only contain lowercase letters, digits and hyphens.",
-        "rate": "Commission must be 0 to 50%."
-      }
+        "rate": "Commission must be between 3.5 and 8%."
+      },
+      "license": "Requires documents"
     },
     "attr": {
       "title": "Attributes — {name}",
@@ -3693,6 +3694,9 @@
       "deactivate": "Retire",
       "activate": "Use again",
       "empty": "This category has no attributes yet.",
+      "inherited_title": "Inherited from parent categories",
+      "inherited_desc": "Read-only — edit them on the parent category. Codes must be unique within the branch.",
+      "from": "Defined in",
       "save": "Save attribute",
       "saved": "Attribute saved",
       "saved_grace": "Saved. Shops have {days} days to fill this required attribute on existing products",
@@ -3817,7 +3821,7 @@
       "toggle": "Use a specific rate for {name}",
       "save": "Save settings",
       "saved": "All settings saved",
-      "err": "Rate must be between 0 and 50%."
+      "err": "Rate must be between 3.5 and 8%."
     },
     "ledger": {
       "append_only": "Append-only · immutable",

@@ -55,7 +55,8 @@ function AttrModal({
   categoryId: number;
   open: boolean;
   editing: CategoryAttribute | null;
-  rows: CategoryAttribute[];
+  /** Mã đã dùng trong họ ngành (riêng + kế thừa) — chặn trùng trước khi gọi server (GNE-CAT-4095). */
+  rows: Pick<CategoryAttribute, 'code'>[];
   onClose: () => void;
 }) {
   const { t } = useT();
@@ -219,7 +220,8 @@ export default function AttributePanel() {
         <EmptyState icon="boxes" title={t('admin-catalog.not_found')} />
       </div>
     );
-  const rows = q.data ?? [];
+  const rows = q.data?.own ?? [];
+  const inherited = q.data?.inherited ?? [];
   const yes = (b: boolean, label: string) =>
     b ? (
       <Icon name="check" size={15} className="text-mint-600" aria-label={label} />
@@ -326,11 +328,64 @@ export default function AttributePanel() {
           </table>
         )}
       </div>
+      {inherited.length > 0 && (
+        <section className="mt-5">
+          <h3 className="m-0 mb-1 text-base font-semibold text-strong">
+            {t('admin-catalog.attr.inherited_title')}
+          </h3>
+          <p className="m-0 mb-2.5 text-sm text-muted">{t('admin-catalog.attr.inherited_desc')}</p>
+          <div className="bg-surface-card rounded-lg shadow-sm overflow-x-auto">
+            <table className="w-full min-w-[620px] border-collapse">
+              <thead>
+                <tr>
+                  <th className={th}>{t('admin-catalog.attr.code')}</th>
+                  <th className={th}>{t('admin-catalog.attr.name')}</th>
+                  <th className={th}>{t('admin-catalog.attr.type')}</th>
+                  <th className={th}>{t('admin-catalog.attr.required')}</th>
+                  <th className={th}>{t('admin-catalog.attr.status')}</th>
+                  <th className={th}>{t('admin-catalog.attr.from')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inherited.map((r) => (
+                  <tr
+                    key={r.code}
+                    className={cn(
+                      'border-0 border-t border-solid border-line-subtle text-[13px]',
+                      r.active ? 'text-body' : 'text-subtle',
+                    )}
+                  >
+                    <td className={cn(td, 'font-mono')}>{r.code}</td>
+                    <td className={td}>{r.name}</td>
+                    <td className={td}>
+                      <Badge variant="neutral">{r.dataType}</Badge>
+                    </td>
+                    <td className={td}>{yes(r.required, t('admin-catalog.attr.required'))}</td>
+                    <td className={td}>
+                      <Badge variant={r.active ? 'success' : 'neutral'}>
+                        {t(r.active ? 'admin-catalog.attr.active' : 'admin-catalog.attr.inactive')}
+                      </Badge>
+                    </td>
+                    <td className={td}>
+                      <Link
+                        to={`/catalog/${r.categoryId}/attributes`}
+                        className="text-brand-600 no-underline hover:underline"
+                      >
+                        {r.categoryName}
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
       <AttrModal
         categoryId={categoryId}
         open={!!modal}
         editing={modal?.editing ?? null}
-        rows={rows}
+        rows={[...rows, ...inherited]}
         onClose={() => setModal(null)}
       />
     </div>

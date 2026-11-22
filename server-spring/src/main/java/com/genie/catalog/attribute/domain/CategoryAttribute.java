@@ -92,6 +92,25 @@ public class CategoryAttribute {
         };
     }
 
+    /**
+     * Sửa thuộc tính (không đổi {@code code}, {@code dataType} — plan B2 D9; ràng buộc giá trị D10 kiểm ở service) —
+     * UC-CAT-15. Thuộc tính đang ngừng dùng thì không bật được "bắt buộc".
+     */
+    public void update(String name, String allowedValuesJson, String unit, boolean required, boolean filterable,
+                       boolean variantAxis) {
+        this.name = name;
+        this.allowedValuesJson = allowedValuesJson;
+        this.unit = unit;
+        this.isRequired = required && Boolean.TRUE.equals(this.isActive);
+        this.isFilterable = filterable;
+        this.isVariantAxis = variantAxis;
+    }
+
+    /** Dùng lại thuộc tính đã ngừng (không tự bật lại "bắt buộc" — plan B2 D12) — UC-CAT-15 */
+    public void activate() {
+        this.isActive = true;
+    }
+
     /** Ngừng dùng thuộc tính (dữ liệu cũ trong specsJson giữ nguyên) — UC-CAT-15 */
     public void deactivate() {
         this.isActive = false;
