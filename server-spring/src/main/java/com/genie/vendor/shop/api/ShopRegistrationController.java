@@ -40,7 +40,7 @@ public class ShopRegistrationController {
             @NotBlank @Size(min = 3, max = 100) String shopName,
             @NotBlank @Size(min = 2, max = 255) String ownerName,
             @NotBlank @Pattern(regexp = "^0\\d{9,10}$") String phoneNumber,
-            @NotBlank @Email @Size(max = 255) String email,
+            @Email @Size(max = 255) String email,           // bỏ qua — email shop = email tài khoản (plan sửa KYC ảnh thật F-D6)
             @NotNull @Positive Long mainCategoryId,
             @NotNull BusinessType businessType,
             @NotNull @AssertTrue Boolean acceptTerms) {
