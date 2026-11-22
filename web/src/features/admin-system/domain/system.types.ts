@@ -57,6 +57,16 @@ export interface AuditEntry {
   target: string;
   ip: string;
   result: AuditResult;
+  referenceId: string | null;
+  userAgent: string | null;
+  /** Trường bị đổi (giữ thứ tự lúc ghi); rỗng nếu dòng không có thay đổi. */
+  changes: AuditChange[];
+}
+
+export interface AuditChange {
+  field: string;
+  from: string | null;
+  to: string | null;
 }
 
 export type AuditRange = 'TODAY' | '7D' | '30D' | 'CUSTOM';

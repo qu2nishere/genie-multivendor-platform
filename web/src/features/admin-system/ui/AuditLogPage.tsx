@@ -11,7 +11,8 @@ import { formatDateTime } from '@/shared/lib/format';
 import { Badge, Button, Icon, Input, Select, Skeleton, toast, type IconName } from '@/shared/ui';
 import { auditNow, exportAuditLogs, useAuditLogs } from '../application/useSystem';
 import { actionTone, AUDIT_CATEGORIES, rangeOf } from '../domain/system.rules';
-import type { AuditCategory, AuditRange } from '../domain/system.types';
+import type { AuditCategory, AuditEntry, AuditRange } from '../domain/system.types';
+import { AuditLogDetail, useAuditLabels } from './AuditLogDetail';
 
 const th =
   'px-3.5 py-[11px] whitespace-nowrap font-semibold text-xs text-muted text-left bg-gray-25';
@@ -38,6 +39,8 @@ export default function AuditLogPage() {
   const [q, setQ] = useState('');
   const [term, setTerm] = useState('');
   const [exporting, setExporting] = useState(false);
+  const [opened, setOpened] = useState<AuditEntry | null>(null);
+  const label = useAuditLabels();
   useEffect(() => {
     const id = setTimeout(() => setTerm(q.trim()), 300);
     return () => clearTimeout(id);
@@ -212,7 +215,16 @@ export default function AuditLogPage() {
                 return (
                   <tr
                     key={r.id}
-                    className="border-0 border-t border-solid border-line-subtle text-[13px] text-body"
+                    tabIndex={0}
+                    aria-label={t('admin-system.audit.detail.open')}
+                    onClick={() => setOpened(r)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setOpened(r);
+                      }
+                    }}
+                    className="border-0 border-t border-solid border-line-subtle text-[13px] text-body cursor-pointer hover:bg-gray-25 focus-visible:outline-none focus-visible:shadow-focus"
                   >
                     <td className={cn(td, 'font-mono text-xs text-muted')}>
                       {formatDateTime(r.createdAt, { locale })}
@@ -246,7 +258,9 @@ export default function AuditLogPage() {
                       </div>
                     </td>
                     <td className={td}>
-                      <Badge variant={actionTone(r.action)}>{r.action}</Badge>
+                      <Badge variant={actionTone(r.action)} title={r.action}>
+                        {label.action(r.action)}
+                      </Badge>
                     </td>
                     <td className={cn(td, 'whitespace-normal max-w-[320px]')}>{r.target}</td>
                     <td className={cn(td, 'font-mono text-muted')}>{r.ip}</td>
@@ -294,6 +308,7 @@ export default function AuditLogPage() {
           </Button>
         )}
       </div>
+      <AuditLogDetail entry={opened} onClose={() => setOpened(null)} />
     </div>
   );
 }

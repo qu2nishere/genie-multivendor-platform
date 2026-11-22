@@ -35,4 +35,9 @@ export interface AuditLogDto {
   target: string | null;
   ip_address: string | null;
   result: 'SUCCESS' | 'FAILED' | 'DENIED';
+  /** Cột gốc — hộp chi tiết (API_SPEC 11.10; plan 2026-11-22 nhật ký banner N4). */
+  reference_id: string | null;
+  user_agent: string | null;
+  /** `{trường: {from, to}}` từ details.changes; null nếu không có. */
+  changes: Record<string, { from: string | null; to: string | null }> | null;
 }

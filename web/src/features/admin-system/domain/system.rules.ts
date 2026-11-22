@@ -138,12 +138,14 @@ export function rangeOf(
   return { from: custom.from || null, to: custom.to || null };
 }
 
-/** Màu nhãn hành động (prototype VARIANT). */
+/** Màu nhãn hành động (prototype VARIANT; plan 2026-11-22 nhật ký banner N5). */
 export function actionTone(
   action: string,
 ): 'danger' | 'success' | 'mint' | 'warning' | 'neutral' | 'primary' {
-  if (/FAILED|DENIED|REJECTED|REVOKED|LOCKED|SUSPENDED/.test(action)) return 'danger';
-  if (/APPROVED|RELEASED/.test(action)) return action.startsWith('PAYOUT') ? 'mint' : 'success';
+  if (/FAILED|DENIED|REJECTED|REVOKED|LOCKED|SUSPENDED|DELETED/.test(action)) return 'danger';
+  if (/DEACTIVATED/.test(action)) return 'neutral';
+  if (/APPROVED|RELEASED|CREATED|_ACTIVATED|REACTIVATED/.test(action))
+    return action.startsWith('PAYOUT') ? 'mint' : 'success';
   if (/REFUND/.test(action)) return 'warning';
   if (/HIDDEN/.test(action)) return 'neutral';
   return 'primary';
