@@ -95,7 +95,7 @@ $env:JAVA_HOME = "C:\Users\MSII\.jdks\ms-21.0.10"
 .\mvnw.cmd spring-boot:run
 ```
 
-- Lần đầu: Flyway tự chạy migration (V1 → V20) và nạp dữ liệu seed (`R__seed_*`).
+- Lần đầu: Flyway tự chạy mọi migration `V…` (V1 → số mới nhất) và nạp dữ liệu seed (`R__seed_*`).
 - Thấy log `Started GenieApplication in ... seconds` là xong. Kiểm tra:
   - http://localhost:8080/actuator/health → `{"status":"UP"}`
   - Swagger: http://localhost:8080/swagger-ui.html

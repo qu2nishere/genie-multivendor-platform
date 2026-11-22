@@ -22,10 +22,10 @@
 
 | Mã | Bước làm | Kết quả mong đợi |
 |---|---|---|
-| TC-00-01 | Chạy backend lần đầu trên DB trống | Log Flyway chạy hết `V…` (develop: tới `V20`), sau đó các `R__seed_*`; không lỗi; `Started GenieApplication` |
+| TC-00-01 | Chạy backend lần đầu trên DB trống | Log Flyway chạy hết các migration `V…` (số mới nhất trên `develop`), sau đó các `R__seed_*`; không lỗi; `Started GenieApplication` |
 | TC-00-02 | Mở http://localhost:8080/actuator/health | `{"status":"UP"}` |
 | TC-00-03 | Chạy `upload-assets.ps1`, mở Silo console http://localhost:9001 (`siloadmin` / `changeme`) | Bucket `product-media` (22 tệp), `content-assets` (15 tệp) có ảnh |
-| TC-00-04 | Đăng nhập web lần lượt 5 tài khoản seed | Đăng nhập được; Admin / Moderator / Finance / CS vào thẳng `/admin`, menu hiện theo quyền; có nút **Đăng xuất** cuối sidebar |
+| TC-00-04 | Đăng nhập web lần lượt 5 tài khoản seed | Đăng nhập được; Admin / Moderator / Finance / CS vào thẳng `/admin`, menu hiện theo quyền; góc phải thanh trên có **menu tài khoản** (Đăng xuất, sang trang mua hàng) |
 | TC-00-05 | Dừng backend, chạy lại lần 2 | Seed không chạy lại (checksum không đổi), không lỗi, không nhân đôi dữ liệu |
 
 ---
