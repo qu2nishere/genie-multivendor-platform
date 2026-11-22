@@ -1,7 +1,8 @@
 """Tầng 1 — mã QR mặt trước CCCD (plan AI Worker Y-D3, Y03.02–Y03.04).
 
 Chuỗi QR CCCD gắn chip: ``số CCCD|số CMND cũ|họ tên|ngày sinh ddMMyyyy|giới tính|nơi thường trú|ngày cấp ddMMyyyy``.
-Giải mã bằng ``cv2.QRCodeDetector`` với chuỗi tiền xử lý tăng dần (dừng ngay khi đọc được).
+Giải mã bằng **zxing-cpp** trước (đọc được QR nhỏ / qua bao nhựa / thẻ xoay trên ảnh điện thoại thật — plan sửa KYC
+ảnh thật F-D1), rồi ``cv2.QRCodeDetector`` với chuỗi tiền xử lý tăng dần làm dự phòng (dừng ngay khi đọc được).
 """
 
 import re
@@ -11,6 +12,11 @@ from datetime import date
 
 import cv2
 import numpy as np
+
+try:  # thư viện ngoài — thiếu thì vẫn chạy được bằng OpenCV
+    import zxingcpp
+except ImportError:  # pragma: no cover
+    zxingcpp = None
 
 
 @dataclass(frozen=True)
@@ -36,8 +42,28 @@ def _variants(image: np.ndarray) -> Iterator[np.ndarray]:
         yield cv2.rotate(clahe, rot)
 
 
+def _zxing(image: np.ndarray) -> str | None:
+    """zxing-cpp: tự thử nhiều hướng / tỉ lệ; chỉ nhận định dạng QR."""
+    if zxingcpp is None:
+        return None
+    gray = image if image.ndim == 2 else cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    try:
+        results = zxingcpp.read_barcodes(
+            gray, formats=zxingcpp.BarcodeFormat.QRCode, try_rotate=True, try_downscale=True
+        )
+    except Exception:  # noqa: BLE001 — lỗi thư viện ngoài → để OpenCV thử tiếp
+        return None
+    for r in results:
+        if r.valid and r.text:
+            return r.text
+    return None
+
+
 def decode(image: np.ndarray) -> str | None:
     """Chuỗi thô của mã QR hoặc ``None`` nếu không tìm / không giải được."""
+    text = _zxing(image)
+    if text:
+        return text
     detector = cv2.QRCodeDetector()
     for v in _variants(image):
         try:

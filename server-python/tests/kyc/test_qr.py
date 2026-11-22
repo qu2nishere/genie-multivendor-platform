@@ -66,3 +66,21 @@ def test_decode_rate_on_variants_is_at_least_90_percent():
     rate = ok / len(variants)
     print(f"QR decode rate: {ok}/{len(variants)} = {rate:.0%}")
     assert rate >= 0.9
+
+
+def test_opencv_fallback_still_decodes_when_zxing_is_missing(monkeypatch):
+    monkeypatch.setattr(qr, "zxingcpp", None)
+    assert qr.parse(qr.decode(card.front())) is not None
+
+
+@pytest.mark.parametrize("rotate", [90, 270])
+def test_small_rotated_qr_on_large_photo_is_decoded(rotate):
+    """Ảnh điện thoại: thẻ nhỏ giữa khung lớn, xoay 90° (lỗi thật 2026-11-22 — OpenCV không đọc được)."""
+    import numpy as np
+
+    small = cv2.resize(card.front(), None, fx=0.55, fy=0.55, interpolation=cv2.INTER_AREA)
+    canvas = np.full((2000, 1127, 3), 235, np.uint8)
+    rot = card.vary(small, rotate=rotate)
+    h, w = rot.shape[:2]
+    canvas[300 : 300 + h, 150 : 150 + w] = rot
+    assert qr.parse(qr.decode(canvas)) is not None
