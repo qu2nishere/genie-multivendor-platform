@@ -4,7 +4,7 @@
 > Tài liệu này là **Nguồn Sự Thật Duy Nhất (SSOT)** cho Cơ sở dữ liệu và Mô hình Thực thể của **bản MVP** (thư mục `TLCN/`).
 > Bản hoàn chỉnh cho đồ án tốt nghiệp (DATN — 162 + 7 entity) ở `DATN/diagrams/ClassDiagram/ENTITY.md`; mọi tên entity / bảng / cột / enum của TLCN có mặt ở DATN.
 > - **Khung Ứng dụng & ORM:** Java 21 LTS & Spring Boot 3.3.x, Jakarta Persistence (Hibernate 6), Spring Data JPA.
-> - **CSDL Quan hệ:** PostgreSQL 16 (**65 bảng vật lý ↔ 65 class `@Entity`**, 5 bảng nối dùng khóa gộp `@IdClass`), migration bằng Flyway.
+> - **CSDL Quan hệ:** PostgreSQL 16 (**65 bảng vật lý ↔ 65 class `@Entity`** + bảng cấu hình `platform_settings` thêm khi hiện thực — mục 12.2, 5 bảng nối dùng khóa gộp `@IdClass`), migration bằng Flyway.
 > - **Lưu trữ phụ trợ (chỉ 2 thành phần):**
 >   - **Redis 7:** OTP, giới hạn tần suất đơn giản, cache số liệu sản phẩm (`sold`, `rating`), khóa ngắn hạn khi giữ chỗ tồn kho.
 >   - **Silo (S3-compatible):** ảnh sản phẩm, ảnh đại diện, hồ sơ KYC (bucket riêng tư), ảnh/video bằng chứng trả hàng — qua Presigned URL.
@@ -38,7 +38,7 @@
 | 9 | [Đánh giá & tương tác shop](#9-nhóm-đánh-giá--tương-tác-shop) | ProductReview, ShopFollow, ReviewReport, ReviewHelpfulVote |
 | 10 | [Thông báo & nội dung sàn](#10-nhóm-thông-báo--nội-dung-sàn) | Notification, PlatformNotification, UserPlatformNotificationRead, HomeBanner, AdminNotification |
 | 11 | [Nhắn tin (chat)](#11-nhóm-nhắn-tin-chat) | Conversation, Message |
-| 12 | [Nhật ký hệ thống](#12-nhóm-nhật-ký-hệ-thống) | SystemLog |
+| 12 | [Nhật ký hệ thống](#12-nhóm-nhật-ký-hệ-thống) | SystemLog, PlatformSetting *(bổ sung plan B2)* |
 
 ### 🛠️ PHẦN II: TIÊU CHUẨN KỸ THUẬT & PHỤ LỤC
 | # | Mục | Nội dung |
@@ -1498,8 +1498,27 @@ public class Category {
             throw new IllegalArgumentException("Hoa hồng phải trong khung 3.5% – 8%");
         this.commissionRate = rate;
     }
+
+    // ----- Bổ sung khi hiện thực UC-CAT-14 (plan B2, 2026-11-22) -----
+    /** Bỏ tỷ lệ riêng → dùng ngành cha gần nhất / mặc định toàn sàn — UC-CAT-14 */
+    public void clearCommissionRate() { this.commissionRate = null; }
+
+    /** Đổi tên + slug (service đã kiểm trùng) — UC-CAT-14 */
+    public void rename(String name, String slug) { this.name = name; this.slug = slug; }
+
+    /** Chuyển nhánh (service kiểm vòng lặp & tối đa 3 cấp) — UC-CAT-14 */
+    public void moveTo(Long parentId, Integer displayOrder) { this.parentId = parentId; this.displayOrder = displayOrder; }
+
+    /** Hiện / ẩn — ẩn cha thì cả nhánh biến mất khỏi storefront — UC-CAT-14 */
+    public void show() { this.isActive = true; }
+    public void hide() { this.isActive = false; }
+
+    /** Biểu tượng, mô tả đầu trang, ngành có điều kiện — UC-CAT-14 */
+    public void describe(String icon, String description, boolean requiresBusinessLicense) { … }
 }
 ```
+
+> **Hiện thực (plan B2, 2026-11-22, `V22__categories_slug_unique.sql`):** `uk_categories_slug` UNIQUE `(slug) WHERE slug IS NOT NULL` — slug duy nhất toàn sàn (URL `/c/{slug}`). Tên trùng cùng cha do service chặn (`GNE-CAT-4091`). Mức mặc định toàn sàn (khi ngành và ngành cha đều `commissionRate = null`) lưu ở `PlatformSetting` khóa `commission.default_rate` (mục 12.2).
 
 ### 💡 Kiến thức chuyên sâu
 
@@ -2088,8 +2107,17 @@ public class CategoryAttribute {
         this.isActive = false;
         this.isRequired = false;
     }
+
+    // ----- Bổ sung khi hiện thực UC-CAT-15 (plan B2, 2026-11-22) -----
+    /** Sửa thuộc tính (không đổi code / dataType); bắt buộc chỉ bật được khi đang dùng — UC-CAT-15 */
+    public void update(String name, String allowedValuesJson, String unit, boolean required, boolean filterable, boolean variantAxis) { … }
+
+    /** Dùng lại thuộc tính đã ngừng (không tự bật lại "bắt buộc") — UC-CAT-15 */
+    public void activate() { this.isActive = true; }
 }
 ```
+
+> **Hiện thực (plan B2):** `code` duy nhất trong cả nhánh ngành (chính ngành, tổ tiên, con cháu — vì ngành con kế thừa bộ thuộc tính của cha), service chặn bằng `GNE-CAT-4095`; không thêm ràng buộc CSDL.
 
 ### 💡 Kiến thức chuyên sâu
 
@@ -6650,14 +6678,48 @@ Nhìn vào danh sách enum có thể thấy ngay hệ thống coi cái gì là n
 
 ---
 
+## 12.2. `PlatformSetting` — Cấu hình sàn dạng khóa – giá trị *(bổ sung plan B2, 2026-11-22 — `V23__platform_settings.sql`)*
+
+Lưu các tham số toàn sàn mà Admin đổi được lúc chạy (không phải sửa `application.yml` và khởi động lại). Hiện có một khóa: `commission.default_rate` = `0.0500` (hoa hồng mặc định toàn sàn, UC-CAT-14 bước 8).
+
+```java
+@Entity
+@Table(name = "platform_settings")
+public class PlatformSetting {
+    @Id
+    @Column(name = "setting_key", length = 100)
+    private String key;                       // NOT NULL — "commission.default_rate"
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "value_json", columnDefinition = "jsonb", nullable = false)
+    private String valueJson;                 // NOT NULL — giá trị JSON (số thập phân dạng phân số: 0.0500)
+
+    @Column(name = "updated_by_admin_id")
+    private Long updatedByAdminId;            // NULLABLE — FK users(id) ON DELETE SET NULL; null = giá trị seed
+
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;                // NOT NULL
+
+    /** Đổi giá trị — gọi sau khi khóa dòng (SELECT … FOR UPDATE) — UC-CAT-14 */
+    public void change(String valueJson, Long adminId, Instant now) { … }
+}
+```
+
+Mọi lần đổi ghi `SystemLog COMMISSION_UPDATED` (`reference_id = "DEFAULT"`, `details { from, to }`). Không cache ở Redis — đọc một dòng theo khóa chính.
+
+---
+
 # 13. TIÊU CHUẨN VẬT LÝ POSTGRESQL 16 (MỨC MVP)
 
 ## 13.1. Index cho các đường dẫn nóng (Hot Paths)
 
 | Bảng | Index | Phục vụ |
 |---|---|---|
-| `products` | `GIN (search_vector)` — cột `tsvector` sinh từ `name`, `brand`, `description` (qua `unaccent`) | UC-CAT-02 tìm kiếm theo từ khóa |
+| `products` | `GIN (search_vector)` — cột `tsvector` sinh từ `name` (trọng số A), `brand` (B), `description` (D) qua `immutable_unaccent(lower(…))` (`V21`) | UC-CAT-02 tìm kiếm theo từ khóa, xếp hạng `ts_rank_cd` |
 | `products` | `GIN (name gin_trgm_ops)` | Gợi ý khi gõ sai nhẹ (`similarity()`) |
+| `products` | `GIN (immutable_unaccent(lower(name)) gin_trgm_ops)` (`V21`) | Gợi ý khi gõ / bù gõ sai không dấu (`word_similarity`), độ giống tên của sản phẩm tương tự (UC-CAT-04, 07) |
+| `products` | `(status, sold DESC NULLS LAST)` (`V21`) | Lưới công khai sắp theo bán chạy (UC-CAT-05, 07) |
+| `product_variants` | `(product_id, price) WHERE deleted_at IS NULL` (`V21`) | Giá thấp nhất của sản phẩm — lọc / sắp theo giá, khoảng giá ±50% (UC-CAT-05, 07) |
 | `products` | `(category_id, status, created_at DESC)` | UC-CAT-01 / UC-CAT-05 duyệt & lọc |
 | `products` | `(vendor_id, status)` | UC-CAT-16 trang shop, kênh người bán |
 | `product_variants` | `UNIQUE (sku)` | Chống trùng SKU |
@@ -6674,6 +6736,7 @@ Nhìn vào danh sách enum có thể thấy ngay hệ thống coi cái gì là n
 | `users` | `idx_users_deletion_requested_at (deletion_requested_at)` partial `WHERE deletion_requested_at IS NOT NULL` *(V14)* | UC-AUTH-10 cron ẩn danh |
 | `refresh_tokens` | `idx_refresh_tokens_user_active (user_id)` partial `WHERE revoked_at IS NULL`, `idx_refresh_tokens_family (family_id)`, `idx_refresh_tokens_user_created (user_id, created_at DESC)` *(V14)* | UC-AUTH-02 làm mới / phát hiện thiết bị lạ, UC-AUTH-11 danh sách thiết bị |
 | `addresses` | `idx_addresses_user (user_id)` partial `WHERE is_deleted = FALSE` *(V14)* | UC-AUTH-09 sổ địa chỉ |
+| `categories` | `uk_categories_slug` UNIQUE `(slug)` partial `WHERE slug IS NOT NULL` *(V22)* | UC-CAT-01 / UC-CAT-14 slug duy nhất cho `/c/{slug}` |
 | `vendor_profiles` | `uk_vendor_profiles_shop_name_lower` UNIQUE `(lower(shop_name))` *(V20)* | UC-VND-01 / UC-VND-21 tên shop không trùng (không phân biệt hoa thường) |
 | `vendor_profiles` | `idx_vendor_profiles_kyc_status (kyc_status, kyc_submitted_at)` *(V20)* | UC-VND-04 hàng chờ KYC theo trạng thái |
 | `vendor_profiles` | `idx_vendor_profiles_supplement_deadline (kyc_supplement_deadline_at)` partial `WHERE kyc_status = 'SUPPLEMENT_REQUESTED'` *(V20)* | UC-VND-04 job hết hạn bổ sung hồ sơ |

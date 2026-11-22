@@ -53,7 +53,9 @@ export type LockReason = (typeof LOCK_REASONS)[number];
 /** Mã thuộc tính: chữ thường, số, gạch dưới, bắt đầu bằng chữ (API 11.11). */
 export const ATTR_CODE = /^[a-z][a-z0-9_]*$/;
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-export const MAX_COMMISSION = 50;
+/** Khung hoa hồng 3,5–8 % (plan B2 D1 — ENTITY 2.1, backend `CommissionRates`). */
+export const MIN_COMMISSION = 3.5;
+export const MAX_COMMISSION = 8;
 
 export const needsValues = (t: AttributeType): boolean => t === 'ENUM' || t === 'MULTI_ENUM';
 

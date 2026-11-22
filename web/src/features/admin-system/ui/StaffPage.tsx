@@ -7,6 +7,7 @@ import { errorMessage } from '@/shared/api/errors';
 import { PERMISSIONS } from '@/shared/auth/permissions';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
+import { formatDateTime } from '@/shared/lib/format';
 import { zodResolver } from '@/shared/lib/zodResolver';
 import {
   Avatar,
@@ -95,7 +96,7 @@ function LockModal({ s, onClose }: { s: StaffMember | null; onClose: () => void 
 }
 
 export default function StaffPage() {
-  const { t } = useT();
+  const { t, locale } = useT();
   const [q, setQ] = useState('');
   const [term, setTerm] = useState('');
   useEffect(() => {
@@ -223,10 +224,25 @@ export default function StaffPage() {
                       </div>
                     </td>
                     <td className={td}>
-                      {s.status === 'PENDING_ACTIVATION' ? (
-                        <Badge variant="warning" icon="clock">
-                          {t('admin-system.staff.status.PENDING_ACTIVATION')}
-                        </Badge>
+                      {s.status === 'PENDING_ACTIVATION' || s.status === 'INVITATION_EXPIRED' ? (
+                        <div className="flex flex-col items-start gap-1">
+                          <Badge
+                            variant={s.status === 'INVITATION_EXPIRED' ? 'danger' : 'warning'}
+                            icon="clock"
+                          >
+                            {t(`admin-system.staff.status.${s.status}`)}
+                          </Badge>
+                          {s.invitationExpiresAt && (
+                            <span className="text-xs text-muted">
+                              {t(
+                                s.status === 'INVITATION_EXPIRED'
+                                  ? 'admin-system.staff.invite_expired_at'
+                                  : 'admin-system.staff.invite_expires_at',
+                                { time: formatDateTime(s.invitationExpiresAt, { locale }) },
+                              )}
+                            </span>
+                          )}
+                        </div>
                       ) : (
                         <Badge variant={s.status === 'ACTIVE' ? 'success' : 'neutral'}>
                           {t(`admin-system.staff.status.${s.status}`)}
@@ -240,9 +256,10 @@ export default function StaffPage() {
                         <div className="flex gap-1 justify-end">
                           {acts.includes('resend') && (
                             <Button
-                              variant="ghost"
+                              variant={s.status === 'INVITATION_EXPIRED' ? 'primary' : 'ghost'}
                               size="sm"
                               iconLeft="send"
+                              loading={resend.isPending && resend.variables === s.id}
                               onClick={() =>
                                 resend.mutate(s.id, {
                                   onSuccess: () =>

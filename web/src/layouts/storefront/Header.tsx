@@ -15,10 +15,10 @@ import { LoginButton, LoginPrompt, requireLogin, UserMenu } from '@/features/aut
 import { $cartCount, $cartLines, loadCart, loadGuestCart, MiniCart } from '@/features/cart';
 import { badgeText, NotifPanel, useNotifications } from '@/features/notifications';
 import { SearchBox } from '@/features/search';
-import { $session } from '@/shared/auth/session';
+import { $session, isBuyerOnlyPath, isInternalUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { GenieMark, GenieWordmark } from '@/shared/ui/brand';
-import { Icon, Modal, toIconName } from '@/shared/ui';
+import { Icon, Modal, toast, toIconName } from '@/shared/ui';
 import LangSelect from './LangSelect';
 import ThemePickerSlot from './ThemePickerSlot';
 
@@ -68,6 +68,8 @@ function HoverPanel({
   );
 }
 
+const INTERNAL_NOTICE_KEY = 'genie.internal_no_buy';
+
 function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProps) {
   const { t } = useT();
   // Lần render đầu phải khớp HTML server: island khác có thể đã khởi động phiên / nạp giỏ trước khi
@@ -79,6 +81,8 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
   const loggedIn =
     session.status === 'authenticated' || (session.status === 'unknown' && loggedInHint);
   const user = session.status === 'authenticated' ? session.user : null;
+  // Tài khoản nội bộ chỉ xem storefront: không giỏ hàng, không vào khu người mua (plan B1 D16 hướng B)
+  const internal = isInternalUser(user);
   const lines = useStore($cartLines);
   const liveCount = useStore($cartCount);
   const cartCount = mounted ? liveCount : 0;
@@ -86,9 +90,27 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
   const [drawer, setDrawer] = useState(false);
 
   useEffect(() => {
-    if (session.status === 'authenticated') void loadCart();
-    else if (session.status === 'guest') loadGuestCart();
-  }, [session.status]);
+    if (session.status === 'authenticated') {
+      if (!internal) void loadCart();
+    } else if (session.status === 'guest') loadGuestCart();
+  }, [session.status, internal]);
+
+  // Tài khoản nội bộ mở giỏ / thanh toán / đơn mua / tài khoản người mua → về trang chủ kèm thông báo
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      if (sessionStorage.getItem(INTERNAL_NOTICE_KEY)) {
+        sessionStorage.removeItem(INTERNAL_NOTICE_KEY);
+        toast.info(t('layout.header.internal_no_buy'));
+      }
+      if (internal && isBuyerOnlyPath(window.location.pathname)) {
+        sessionStorage.setItem(INTERNAL_NOTICE_KEY, '1');
+        window.location.replace('/');
+      }
+    } catch {
+      // sessionStorage bị chặn — bỏ qua thông báo
+    }
+  }, [mounted, internal, t]);
 
   // Thanh + hàng danh mục dính chung; khi cuộn thì lấy nền theme (--top-bg). Công bố chiều cao qua --top-h.
   const top = useRef<HTMLDivElement>(null);
@@ -173,25 +195,27 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
               }
               panel={<NotifPanel items={notif.items} />}
             />
-            <HoverPanel
-              enabled={loggedIn}
-              trigger={
-                <a
-                  className="tr-iconbtn"
-                  href="/cart"
-                  onClick={guard}
-                  aria-label={
-                    cartCount > 0
-                      ? t('layout.header.cart_count', { count: cartCount })
-                      : t('layout.header.cart')
-                  }
-                >
-                  <Icon name="shopping-cart" size={22} />
-                  {cartCount > 0 && <span className="tr-badge">{cartCount}</span>}
-                </a>
-              }
-              panel={<MiniCart lines={lines} />}
-            />
+            {!internal && (
+              <HoverPanel
+                enabled={loggedIn}
+                trigger={
+                  <a
+                    className="tr-iconbtn"
+                    href="/cart"
+                    onClick={guard}
+                    aria-label={
+                      cartCount > 0
+                        ? t('layout.header.cart_count', { count: cartCount })
+                        : t('layout.header.cart')
+                    }
+                  >
+                    <Icon name="shopping-cart" size={22} />
+                    {cartCount > 0 && <span className="tr-badge">{cartCount}</span>}
+                  </a>
+                }
+                panel={<MiniCart lines={lines} />}
+              />
+            )}
             <div className="relative ml-1">
               {user ? (
                 <UserMenu user={user} shopName={user.shop_name} />

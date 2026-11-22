@@ -52,6 +52,7 @@ export function CatModal({
     icon: 'package',
     commissionRate: 5,
     active: true,
+    requiresLicense: false,
   };
   const form = useForm<CategoryValues>({
     resolver: zodResolver(categorySchema),
@@ -68,6 +69,7 @@ export function CatModal({
             icon: editing.icon,
             commissionRate: editing.commissionRate,
             active: editing.active,
+            requiresLicense: editing.requiresLicense,
           }
         : blank,
     );
@@ -85,10 +87,13 @@ export function CatModal({
       },
       onError: (e: unknown) => toast.error(errorMessage(e, t)),
     };
+    // Chỉ gửi hoa hồng khi người dùng thật sự sửa ô này: đổi hoa hồng cần thêm quyền UPDATE_COMMISSION (plan B2 N3)
+    const rateTouched = !!form.formState.dirtyFields.commissionRate;
+    const commissionRate = rateTouched ? values.commissionRate : null;
     if (editing) {
-      const { parentId: _p, ...patch } = values;
-      update.mutate({ id: editing.id, patch }, done);
-    } else create.mutate(values, done);
+      const { parentId: _p, ...rest } = values;
+      update.mutate({ id: editing.id, patch: { ...rest, commissionRate } }, done);
+    } else create.mutate({ ...values, commissionRate }, done);
   });
 
   return (
@@ -209,6 +214,15 @@ export function CatModal({
             <Switch
               checked={v.active}
               onChange={() => form.setValue('active', !v.active, { shouldDirty: true })}
+            />
+          </label>
+          <label className="flex items-center gap-2.5 mb-[11px] text-sm text-body">
+            {t('admin-catalog.cat.license')}
+            <Switch
+              checked={v.requiresLicense}
+              onChange={() =>
+                form.setValue('requiresLicense', !v.requiresLicense, { shouldDirty: true })
+              }
             />
           </label>
         </div>

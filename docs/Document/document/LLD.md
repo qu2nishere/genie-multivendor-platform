@@ -822,6 +822,14 @@ Ngày 1–6 liên tiếp: 100 Điểm; ngày 7 liên tiếp: 1.000 Điểm; đ�
 ### 9.10 Rút tiền (UC-ADM-04, UC-ADM-05)
 Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài khoản nhận tiền đã xác minh chính chủ (`GNE-WAL-4032`); OTP email. Finance Officer duyệt → chuyển khoản tay nội dung `TRWD{id}` → webhook SePay (tiền ra) tự hoàn tất; từ chối → hoàn ví.
 
+### 9.11 Tìm kiếm, gợi ý & sản phẩm tương tự (UC-CAT-02, 04, 05, 07 — đã hiện thực, plan 2026-11-17)
+- **Tìm theo từ khóa:** chuẩn hóa (NFC, chữ thường, bỏ ký tự đặc biệt, bỏ dấu khớp `unaccent()`) → `search_vector @@ to_tsquery('simple', 'tai & nghe:*')` (từ cuối khớp tiền tố) xếp `ts_rank_cd` trên vector có trọng số tên A / thương hiệu B / mô tả D (`V21`); dưới 5 kết quả thì bù trigram `:q <% immutable_unaccent(lower(name))` (`word_similarity ≥ 0,4` — ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"; index GIN `V21`). Xu hướng gộp biến thể chỉ khác dấu ("áo thun" + "ao thun").
+- **Lọc & facet:** SQL động chỉ tham số đặt tên; danh mục gồm danh mục con bằng CTE đệ quy; facet *disjunctive* (mỗi facet bỏ bộ lọc của chính nó). Đo p95 = 50 ms trên 10.000 sản phẩm (`SearchPerformanceIT`).
+- **Xu hướng:** Redis Sorted Set `search:kw:{ngày}` (`ZINCRBY`, một IP / từ / 10 phút), top-K bằng `ZUNION` hôm nay ×1 + hôm qua ×0,5, bỏ từ bị chặn; cache 10 phút.
+- **Lượt xem:** `HINCRBY pv:pending`, HyperLogLog `pv:uv:*` đếm khách duy nhất, chống lặp 30 phút / người xem.
+- **Sản phẩm tương tự:** ứng viên cùng lá, giá ±50%, còn hàng → điểm `0,5·similarity + 0,3·ln(1+sold)/ln(1+max) + 0,2·rating/5`; bù danh mục cha + anh em.
+- **Gợi ý hôm nay:** 300 bán chạy ∪ 300 mới, `ORDER BY md5(id ‖ yyyyMMdd)` (ổn định trong ngày), tối đa 240; có token → xen kẽ 3 : 2 với 3 danh mục xem gần đây (Redis LIST `recent:cat:{userId}`).
+
 ## 10. Tác vụ định kỳ (Cron)
 
 | Tác vụ | Chu kỳ | Việc | UC |
@@ -833,7 +841,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 | Hạn phản hồi trả hàng | 15 phút | Shop quá 48 giờ → tự chấp thuận; khách quá hạn → đóng | SUP-02, SUP-03 |
 | Đồng bộ trạng thái 3PL dự phòng | 30 phút | Gọi API tra cứu khi lỡ webhook | LOG-03 |
 | Mở / đóng Flash Sale | 1 phút | `SCHEDULED → ACTIVE → ENDED` | PRO-05 |
-| Ghi gộp bộ đếm | 5 phút | Lượt xem, từ khóa, hiển thị / bấm banner từ Redis vào PostgreSQL | CAT-04, CAT-06, ADM-12 |
+| Ghi gộp bộ đếm | 5 phút | Lượt xem, từ khóa, hiển thị / bấm banner từ Redis vào PostgreSQL. **Đã hiện thực** `SearchKeywordFlushJob`, `ProductViewFlushJob`: khóa `SET NX` → `RENAME pending → flushing` → UPSERT cộng dồn → xóa `flushing` sau commit (DB lỗi thì giữ để ghi lại) | CAT-04, CAT-06, ADM-12 |
 | Chạy lại phân tích cảm xúc | 15 phút | Đánh giá có chữ chưa có kết quả trong 24 giờ | AI-07 |
 | Phát thông báo hẹn giờ | 1 phút | Thông báo toàn sàn tới giờ phát | NOT-05 |
 | Thử gửi lại email | 5 phút **(đề xuất)** | Email lỗi, tối đa 3 lần | NOT-03 |

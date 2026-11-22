@@ -23,8 +23,11 @@ export const EDIT_TITLES: Exclude<StaffTitle, 'ADMIN'>[] = [
   'CUSTOM',
 ];
 
-/** Email công việc phải có đuôi @genie.example (GNE-ADM-4221). */
-export const STAFF_EMAIL = /^[^@\s]+@genie\.example$/i;
+/**
+ * Email nhân viên: mọi địa chỉ email hợp lệ (plan B1 D3, chốt 2026-11-20 — bỏ ràng buộc @genie.example). Server có thể
+ * giới hạn tên miền bằng biến STAFF_EMAIL_DOMAINS (production) → 422 GNE-ADM-4221.
+ */
+export const STAFF_EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 /** Bộ quyền mặc định của chức danh (CUSTOM giữ nguyên bộ đang chọn). */
 export function presetOf(
@@ -60,7 +63,9 @@ export type StaffAction = 'resend' | 'edit' | 'lock' | 'unlock' | 'delete';
 /** Thao tác: Admin / chính mình → không; chờ kích hoạt → gửi lại lời mời; khóa / mở khóa theo trạng thái. */
 export function staffActions(s: Pick<StaffMember, 'role' | 'status' | 'isSelf'>): StaffAction[] {
   if (s.isSelf || s.role === 'ADMIN') return [];
-  if (s.status === 'PENDING_ACTIVATION') return ['resend', 'edit', 'delete'];
+  // Lời mời đang chờ / đã hết hạn: gửi lại là thao tác chính (plan B1 mục 3.7); chưa kích hoạt thì không khóa
+  if (s.status === 'PENDING_ACTIVATION' || s.status === 'INVITATION_EXPIRED')
+    return ['resend', 'edit', 'delete'];
   return ['edit', s.status === 'LOCKED' ? 'unlock' : 'lock', 'delete'];
 }
 

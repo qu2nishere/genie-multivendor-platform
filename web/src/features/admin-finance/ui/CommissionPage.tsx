@@ -1,5 +1,5 @@
 // Cấu hình hoa hồng (prototype admin/Finance.jsx Commission) — plan G12.27: phí mặc định (Lưu mặc định),
-// hoa hồng theo ngành (tỷ lệ + công tắc; tắt = dùng mặc định), Lưu cấu hình. Tỷ lệ 0–50% (API 11.8),
+// hoa hồng theo ngành (tỷ lệ + công tắc; tắt = dùng mặc định), Lưu cấu hình. Tỷ lệ 3,5–8% (API 11.8, plan B2 D1),
 // nhận số thập phân; ô sai viền đỏ và khóa nút lưu.
 import { useEffect, useState } from 'react';
 import { errorMessage } from '@/shared/api/errors';

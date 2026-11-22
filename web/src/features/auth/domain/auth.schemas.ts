@@ -38,6 +38,15 @@ export const resetSchema = z
   .object({ password: strongPassword, confirm: z.string() })
   .refine((v) => v.confirm === v.password, { path: ['confirm'], message: 'ui.password.mismatch' });
 
+/** Kích hoạt lời mời nhân viên (UC-ADM-01, API_SPEC 2.11): OTP 6 số + mật khẩu mới + nhập lại. */
+export const staffActivationSchema = z
+  .object({
+    otp: z.string().regex(/^\d{6}$/, 'auth.staff_activation.err_otp'),
+    password: strongPassword,
+    confirm: z.string(),
+  })
+  .refine((v) => v.confirm === v.password, { path: ['confirm'], message: 'ui.password.mismatch' });
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ResetInput = z.infer<typeof resetSchema>;

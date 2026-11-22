@@ -14,6 +14,8 @@ interface Props {
   follow?: boolean;
   type?: 'website' | 'product' | 'article';
   jsonLd?: JsonLd[];
+  /** Giá sản phẩm cho thẻ Open Graph (UC-CAT-18). */
+  price?: number;
 }
 
 const props = Astro.props;

@@ -235,4 +235,18 @@ class OAuthLinkIT extends IntegrationTestBase {
         assertThat(done.getResponse().getStatus()).isEqualTo(200);
         return done;
     }
+
+    @Test
+    void internalAccountCannotStartLinkingGoogle() throws Exception {
+        String email = uniqueEmail();
+        long id = createCustomer(email, PASSWORD).getId();
+        jdbc.update("UPDATE users SET role = 'STAFF' WHERE id = ?", id);
+        String token = accessTokenOf(login(email, PASSWORD));
+
+        MvcResult r = mvc.perform(post("/api/v1/me/identities/google/authorize")
+                .header(HttpHeaders.AUTHORIZATION, bearer(token))).andReturn();
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(403);
+        assertThat(json(r, "$.code")).isEqualTo("GNE-AUTH-4033");
+    }
 }

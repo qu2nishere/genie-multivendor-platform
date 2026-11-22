@@ -100,6 +100,7 @@
     "GNE-AUTH-4012": "Tài khoản hoặc mật khẩu không chính xác.",
     "GNE-AUTH-4031": "Tài khoản đang bị tạm khóa.",
     "GNE-AUTH-4032": "Email của tài khoản Google chưa được xác minh.",
+    "GNE-AUTH-4033": "Tài khoản này hiện không thể tiếp tục với {provider}, vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu.",
     "GNE-AUTH-4091": "Email này đã được đăng ký. Hãy đăng nhập hoặc lấy lại mật khẩu.",
     "GNE-AUTH-4098": "Tài khoản Google bạn chọn có email khác với email tài khoản Genie. Vui lòng chọn tài khoản Google có cùng email.",
     "GNE-AUTH-4092": "Tài khoản mạng xã hội này đã gắn với người dùng khác, hoặc tài khoản của bạn đã liên kết một mạng xã hội khác.",
@@ -149,6 +150,7 @@
     "GNE-SOC-4095": "Không thể theo dõi shop của chính mình.",
     "GNE-SOC-4221": "Phản hồi không được chứa số điện thoại.",
     "GNE-VND-4031": "Shop chưa được xác minh (KYC).",
+    "GNE-VND-4041": "Gian hàng không tồn tại hoặc đã ngừng hoạt động.",
     "GNE-VND-4091": "Chỉ được đổi tên shop 1 lần trong 30 ngày.",
     "GNE-VND-4092": "Còn đơn chưa bàn giao, chưa thể bật chế độ nghỉ.",
     "GNE-VND-4093": "Tài khoản đã có shop.",
@@ -168,12 +170,14 @@
     "GNE-NOT-4091": "Thông báo đã phát, không thể sửa.",
     "GNE-NOT-4221": "Danh sách người nhận rỗng hoặc có email không tồn tại.",
     "GNE-ADM-4091": "Email nhân viên đã được dùng.",
-    "GNE-ADM-4092": "Bạn không thể xóa chính mình.",
-    "GNE-ADM-4221": "Email nhân viên phải có đuôi @genie.example.",
+    "GNE-ADM-4092": "Không thể thao tác trên chính tài khoản của bạn hoặc Quản trị viên cuối cùng.",
+    "GNE-ADM-4093": "Nhân viên này đã kích hoạt tài khoản, không cần gửi lại lời mời.",
+    "GNE-ADM-4221": "Email nhân viên không thuộc tên miền được phép.",
     "GNE-SYS-5030": "Hệ thống đang bận. Vui lòng thử lại sau.",
     "GNE-DB-5002": "Hệ thống đang bận. Vui lòng thử lại sau vài giây.",
     "GNE-MINIO-5003": "Liên kết tải tệp đã hết hạn. Vui lòng tải lại.",
-    "GNE-CMP-4041": "Chiến dịch không tồn tại hoặc đã kết thúc."
+    "GNE-CMP-4041": "Chiến dịch không tồn tại hoặc đã kết thúc.",
+    "GNE-ORD-4031": "Tài khoản nhân viên / quản trị không thể mua hàng — vui lòng dùng tài khoản khách hàng cá nhân."
   },
   "ui": {
     "close": "Đóng",
@@ -314,7 +318,8 @@
       "cart_count": "Giỏ hàng, {count} sản phẩm",
       "categories": "Danh mục",
       "all_categories": "Tất cả danh mục",
-      "theme": "Giao diện"
+      "theme": "Giao diện",
+      "internal_no_buy": "Tài khoản nhân viên / quản trị chỉ xem trang mua sắm, không dùng giỏ hàng và đơn mua. Hãy mua sắm bằng tài khoản khách hàng cá nhân."
     },
     "notfound": {
       "title": "Không tìm thấy trang",
@@ -468,6 +473,8 @@
       "orders": "Đơn mua",
       "seller": "Kênh người bán",
       "switch": "Chuyển sang Kênh người bán",
+      "admin": "Trang quản trị",
+      "admin_switch": "Chuyển sang Admin Console",
       "logout_confirm": "Bạn có chắc muốn đăng xuất khỏi tài khoản {name}?"
     },
     "meta": {
@@ -591,6 +598,33 @@
       "taken_text": "Hãy đăng nhập bằng email này, rồi liên kết {provider} ở Tài khoản › Liên kết đăng nhập.",
       "expired_title": "Phiên đăng ký đã hết hạn",
       "expired_text": "Vui lòng đăng nhập bằng {provider} lại từ đầu."
+    },
+    "staff_activation": {
+      "title": "Kích hoạt tài khoản",
+      "lead": "Hoàn tất 2 bước để bắt đầu làm việc tại Genie",
+      "sent_to": "Mã xác thực 6 số đã gửi tới",
+      "step_otp": "Nhập mã xác thực",
+      "step_password": "Đặt mật khẩu đăng nhập",
+      "resend": "Gửi lại mã",
+      "resend_in": "Gửi lại sau {time}",
+      "err_otp": "Vui lòng nhập đủ mã 6 số.",
+      "submit": "Kích hoạt và đăng nhập",
+      "sending": "Đang gửi mã xác thực tới email được mời…",
+      "signing_in": "Kích hoạt thành công, đang chuyển tới trang quản trị…",
+      "expired_title": "Lời mời đã hết hạn",
+      "expired_text": "Liên kết kích hoạt không còn hiệu lực (quá 48 giờ, đã được dùng hoặc đã có lời mời mới). Vui lòng liên hệ Quản trị viên để được gửi lại lời mời.",
+      "blocked_title": "Nhập sai mã quá 5 lần",
+      "blocked_text": "Mã xác thực này đã bị hủy. Bấm bên dưới để nhận mã mới qua email.",
+      "error_title": "Chưa gửi được mã xác thực",
+      "new_code": "Gửi mã mới"
+    },
+    "forced_logout": {
+      "title": "Bạn đã bị đăng xuất",
+      "SUSPENDED": "Tài khoản của bạn vừa bị khóa. Liên hệ bộ phận hỗ trợ nếu bạn cần biết thêm.",
+      "ACCOUNT_DELETED": "Tài khoản của bạn đã bị xóa.",
+      "ROLE_CHANGED": "Quyền truy cập của bạn vừa được thay đổi. Vui lòng đăng nhập lại.",
+      "PASSWORD_CHANGED": "Mật khẩu vừa được đặt lại. Vui lòng đăng nhập bằng mật khẩu mới.",
+      "DEFAULT": "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại."
     }
   },
   "search": {
@@ -996,7 +1030,8 @@
       "hold_b": "15 phút",
       "hold_c": "để bạn thanh toán.",
       "hold_note_a": "Khi trả trước qua VNPay hoặc VietQR, Genie giữ tiền của bạn và chỉ chuyển cho",
-      "hold_note_b": "sau khi bạn nhận hàng."
+      "hold_note_b": "sau khi bạn nhận hàng.",
+      "internal_no_buy": "Bạn đang dùng tài khoản nhân viên / quản trị — chỉ xem sản phẩm, không thể mua hàng. Hãy dùng tài khoản khách hàng cá nhân để mua."
     },
     "gallery": {
       "zoom": "Phóng to ảnh {title}",
@@ -1134,6 +1169,8 @@
     "empty": "Shop chưa có sản phẩm nào ở mục này.",
     "head": {
       "meta": "Online · Tham gia từ {year} · Phản hồi {time}",
+      "response_minutes": "trong vài phút",
+      "response_hours": "trong vài giờ",
       "reopen": "Dự kiến mở lại ngày {until}."
     },
     "stat": {
@@ -2972,6 +3009,10 @@
     "shell": {
       "title": "Admin Console",
       "home": "Admin Console — trang đầu",
+      "to_store": "Chuyển sang trang mua sắm",
+      "account_menu": "Tài khoản quản trị",
+      "my_account": "Tài khoản của tôi",
+      "buyer_channel": "Kênh người mua",
       "nav_label": "Điều hướng Admin Console",
       "nav": {
         "overview": "Tổng quan",
@@ -3010,7 +3051,9 @@
         "title": "Tài khoản không phải nhân viên sàn",
         "desc": "Admin Console chỉ dành cho nhân viên và quản trị viên Genie.",
         "cta": "Về trang chủ Genie"
-      }
+      },
+      "permissions_changed": "Quyền truy cập của bạn vừa được cập nhật.",
+      "permissions_lost": "Bạn không còn quyền xem mục {screen} — đã chuyển về trang chính."
     },
     "perm": {
       "VIEW_DASHBOARD": "Xem trang Tổng quan",
@@ -3620,8 +3663,9 @@
         "name": "Nhập tên danh mục.",
         "name_long": "Tối đa 100 ký tự.",
         "slug": "Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.",
-        "rate": "Hoa hồng từ 0 đến 50%."
-      }
+        "rate": "Hoa hồng từ 3,5 đến 8%."
+      },
+      "license": "Ngành cần giấy tờ"
     },
     "attr": {
       "title": "Bộ thuộc tính — {name}",
@@ -3650,6 +3694,9 @@
       "deactivate": "Ngừng dùng",
       "activate": "Dùng lại",
       "empty": "Ngành này chưa có thuộc tính nào.",
+      "inherited_title": "Thuộc tính kế thừa từ ngành cha",
+      "inherited_desc": "Chỉ đọc — sửa tại ngành cha. Mã thuộc tính không được trùng trong cùng nhánh.",
+      "from": "Ngành gốc",
       "save": "Lưu thuộc tính",
       "saved": "Đã lưu thuộc tính",
       "saved_grace": "Đã lưu. Shop có {days} ngày bổ sung thuộc tính bắt buộc cho sản phẩm cũ",
@@ -3774,7 +3821,7 @@
       "toggle": "Áp dụng hoa hồng riêng cho ngành {name}",
       "save": "Lưu cấu hình",
       "saved": "Đã lưu tất cả thay đổi cấu hình",
-      "err": "Tỷ lệ phải từ 0 đến 50%."
+      "err": "Tỷ lệ phải từ 3,5 đến 8%."
     },
     "ledger": {
       "append_only": "Append-only · bất biến",
@@ -4182,7 +4229,8 @@
       "status": {
         "ACTIVE": "Hoạt động",
         "LOCKED": "Tạm khoá",
-        "PENDING_ACTIVATION": "Chờ kích hoạt"
+        "PENDING_ACTIVATION": "Chờ kích hoạt",
+        "INVITATION_EXPIRED": "Lời mời hết hạn"
       },
       "all_perms": "Toàn quyền",
       "all_perms_desc": "Có tất cả quyền trong hệ thống",
@@ -4190,6 +4238,8 @@
       "empty": "Không tìm thấy nhân viên nào.",
       "resend": "Gửi lại lời mời",
       "resent": "Đã gửi lại lời mời tới {email}",
+      "invite_expires_at": "Hết hạn lúc {time}",
+      "invite_expired_at": "Hết hạn lúc {time} — hãy gửi lại lời mời",
       "edit": "Sửa quyền",
       "lock": "Khóa",
       "unlock": "Mở khóa",
@@ -4226,7 +4276,16 @@
       "footnote": "Quyền MANAGE_RBAC chỉ dành cho Admin, không cấp cho nhân viên.",
       "err": {
         "name": "Nhập họ tên (tối đa 100 ký tự)",
-        "email": "Email công việc phải có đuôi @genie.example"
+        "email": "Nhập địa chỉ email hợp lệ"
+      },
+      "email_checking": "Đang kiểm tra email…",
+      "email_available": "Email chưa thuộc tài khoản nào — có thể gửi lời mời.",
+      "email_taken": {
+        "CUSTOMER": "Email trùng với tài khoản khách hàng",
+        "VENDOR": "Email trùng với tài khoản người bán",
+        "STAFF": "Email trùng với tài khoản nhân viên",
+        "ADMIN": "Email trùng với tài khoản quản trị",
+        "OTHER": "Email trùng với tài khoản khác"
       }
     },
     "users": {

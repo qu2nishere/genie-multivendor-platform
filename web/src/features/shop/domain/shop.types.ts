@@ -29,4 +29,10 @@ export interface Shop {
   vacation: ShopVacation | null;
   /** Người dùng hiện tại đang theo dõi. */
   followed: boolean;
+  /** API thật: số phút phản hồi chat trung bình — trang tự dịch "trong vài phút / vài giờ" (mock dùng responseTime). */
+  responseMinutes?: number | null;
+  /** API thật: danh mục gốc của sản phẩm đang bán (tab danh mục — API_SPEC 5.11). */
+  categories?: { id: number; name: string }[];
+  /** API thật: ảnh đại diện shop. */
+  logoUrl?: string | null;
 }

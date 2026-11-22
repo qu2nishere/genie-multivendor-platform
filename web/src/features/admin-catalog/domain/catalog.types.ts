@@ -18,7 +18,12 @@ export interface RootCategory {
   slug: string;
   icon: string;
   active: boolean;
+  /** Ngành có điều kiện — sản phẩm phải kèm giấy tờ (plan B2 D17). */
+  requiresLicense: boolean;
+  /** Tỷ lệ đang áp dụng (riêng của ngành, hoặc kế thừa / mặc định toàn sàn khi chưa đặt riêng). */
   commissionRate: number;
+  /** Ngành có tỷ lệ riêng (false = đang dùng mặc định toàn sàn). */
+  ownCommission: boolean;
   productCount: number;
   shopCount: number;
   children: SubCategory[];
@@ -48,6 +53,22 @@ export interface CategoryAttribute {
   filterable: boolean;
   variantAxis: boolean;
   active: boolean;
+}
+
+/** Thuộc tính kế thừa từ ngành cha (chỉ đọc — sửa ở ngành cha; plan B2 D8). */
+export interface InheritedAttribute {
+  code: string;
+  name: string;
+  dataType: AttributeType;
+  required: boolean;
+  active: boolean;
+  categoryId: number;
+  categoryName: string;
+}
+
+export interface AttributeList {
+  own: CategoryAttribute[];
+  inherited: InheritedAttribute[];
 }
 
 export interface CategoryProposal {
@@ -81,6 +102,8 @@ export interface CategoryInput {
   /** null = danh mục gốc. */
   parentId: number | null;
   icon: string;
-  commissionRate: number;
+  /** `null` = không gửi (giữ / dùng mặc định) — chỉ gửi khi người dùng sửa ô hoa hồng (cần quyền UPDATE_COMMISSION). */
+  commissionRate: number | null;
   active: boolean;
+  requiresLicense: boolean;
 }

@@ -31,6 +31,13 @@ public enum ErrorCode {
             "Tài khoản đăng nhập bằng Google — dùng Google, đăng nhập bằng mã email hoặc thiết lập mật khẩu."),
     ACCOUNT_SUSPENDED("GNE-AUTH-4031", HttpStatus.FORBIDDEN, "Tài khoản đang bị đình chỉ."),
     OAUTH_EMAIL_UNVERIFIED("GNE-AUTH-4032", HttpStatus.FORBIDDEN, "Email của tài khoản mạng xã hội chưa được xác minh."),
+    /**
+     * Tài khoản nội bộ STAFF / ADMIN (kể cả nhân viên chờ kích hoạt) không đăng nhập / liên kết bằng Google, Zalo —
+     * {@code details.provider} = tên nhà cung cấp. Câu chữ cố ý chung chung để không lộ email đó là tài khoản nội bộ.
+     */
+    OAUTH_ACCOUNT_UNAVAILABLE("GNE-AUTH-4033", HttpStatus.FORBIDDEN,
+            "Tài khoản này hiện không thể tiếp tục với Google, "
+                    + "vui lòng chọn tài khoản khác hoặc thử đăng nhập bằng mật khẩu."),
     EMAIL_ALREADY_REGISTERED("GNE-AUTH-4091", HttpStatus.CONFLICT, "Email đã được đăng ký."),
     IDENTITY_ALREADY_LINKED("GNE-AUTH-4092", HttpStatus.CONFLICT, "Tài khoản mạng xã hội này đã gắn với người dùng khác."),
     LAST_LOGIN_METHOD("GNE-AUTH-4093", HttpStatus.CONFLICT, "Không thể gỡ cách đăng nhập duy nhất."),
@@ -54,8 +61,19 @@ public enum ErrorCode {
     DEFAULT_ADDRESS_NOT_DELETABLE("GNE-USR-4092", HttpStatus.CONFLICT, "Không thể xóa địa chỉ mặc định."),
     DUPLICATE_ADDRESS("GNE-USR-4093", HttpStatus.CONFLICT, "Địa chỉ này đã có trong sổ địa chỉ."),
 
-    // ===== Danh mục & sản phẩm (API_SPEC 15) =====
+    // ===== Quản trị — nhân viên & phân quyền (API_SPEC 11.18, 15 — UC-ADM-01/02/03, plan B1) =====
+    STAFF_EMAIL_TAKEN("GNE-ADM-4091", HttpStatus.CONFLICT, "Email đã được sử dụng."),
+    STAFF_SELF_OR_LAST_ADMIN("GNE-ADM-4092", HttpStatus.CONFLICT,
+            "Không thể thao tác trên chính tài khoản của bạn hoặc Quản trị viên cuối cùng."),
+    STAFF_NOT_PENDING("GNE-ADM-4093", HttpStatus.CONFLICT, "Nhân viên này không còn ở trạng thái chờ kích hoạt."),
+    STAFF_EMAIL_DOMAIN("GNE-ADM-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Email nhân viên không thuộc tên miền được phép."),
+
+    // ===== Danh mục, thuộc tính & sản phẩm (API_SPEC 5.2, 11.11, 15 — UC-CAT-01, 14, 15: plan B2) =====
+    CATEGORY_NOT_FOUND("GNE-CAT-4041", HttpStatus.NOT_FOUND, "Danh mục không tồn tại hoặc đã ẩn."),
     PRODUCT_UNAVAILABLE("GNE-CAT-4042", HttpStatus.NOT_FOUND, "Sản phẩm không còn bán."),
+    CATEGORY_DUPLICATE("GNE-CAT-4091", HttpStatus.CONFLICT, "Tên hoặc đường dẫn danh mục đã tồn tại."),
+    CATEGORY_NOT_DELETABLE("GNE-CAT-4092", HttpStatus.CONFLICT, "Danh mục còn sản phẩm hoặc danh mục con."),
+    ATTRIBUTE_CODE_DUPLICATE("GNE-CAT-4095", HttpStatus.CONFLICT, "Mã thuộc tính đã có trong ngành này."),
 
     // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
     CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),
@@ -84,10 +102,16 @@ public enum ErrorCode {
     REWARD_ALREADY_HELD("GNE-PRO-4092", HttpStatus.CONFLICT, "Bạn đang có voucher này trong Kho Voucher."),
     INSUFFICIENT_COINS("GNE-PRO-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Bạn không đủ Điểm để thực hiện."),
 
+    // ===== Gian hàng — trang shop công khai (API_SPEC 5.11, 15 — UC-CAT-16) =====
+    SHOP_UNAVAILABLE("GNE-VND-4041", HttpStatus.NOT_FOUND, "Gian hàng không tồn tại hoặc đã ngừng hoạt động."),
+
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
     FLASH_SALE_SOLD_OUT("GNE-INV-4091", HttpStatus.CONFLICT, "Suất Flash Sale đã hết."),
-    ORDER_CANNOT_CANCEL("GNE-ORD-4092", HttpStatus.CONFLICT, "Đơn hàng không thể hủy ở trạng thái hiện tại.");
+    ORDER_CANNOT_CANCEL("GNE-ORD-4092", HttpStatus.CONFLICT, "Đơn hàng không thể hủy ở trạng thái hiện tại."),
+    /** Tài khoản nội bộ (STAFF / ADMIN) gọi giỏ hàng / đặt hàng — plan B1 D16 (hướng B). */
+    INTERNAL_ACCOUNT_CANNOT_BUY("GNE-ORD-4031", HttpStatus.FORBIDDEN,
+            "Tài khoản nhân viên / quản trị không thể mua hàng — vui lòng dùng tài khoản khách hàng cá nhân.");
 
     private final String code;
     private final HttpStatus status;

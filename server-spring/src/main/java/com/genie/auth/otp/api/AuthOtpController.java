@@ -81,7 +81,8 @@ public class AuthOtpController {
     @PostMapping("/{challengeId}/resend")
     public ResponseEntity<ApiResponse<OtpChallengeResponse>> resend(@PathVariable String challengeId) {
         otps.peekPurpose(challengeId)
-                .filter(p -> p.isGuestRequestable() || p == OtpPurpose.REGISTER || p == OtpPurpose.OAUTH_SIGNUP)
+                .filter(p -> p.isGuestRequestable() || p == OtpPurpose.REGISTER || p == OtpPurpose.OAUTH_SIGNUP
+                        || p == OtpPurpose.STAFF_ACTIVATION)
                 .orElseThrow(() -> new BusinessException(ErrorCode.OTP_EXPIRED));
         return responses.accepted(OtpChallengeResponse.from(otps.resend(challengeId)));
     }

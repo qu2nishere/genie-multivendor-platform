@@ -7,5 +7,5 @@ export interface AdminMeDto {
   role: 'STAFF' | 'ADMIN';
   staff_title: 'MODERATOR' | 'CS_SPECIALIST' | 'FINANCE_OFFICER' | 'CUSTOM' | null;
   permissions: string[];
-  status: 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION';
+  status: 'ACTIVE' | 'LOCKED' | 'PENDING_ACTIVATION' | 'INVITATION_EXPIRED';
 }

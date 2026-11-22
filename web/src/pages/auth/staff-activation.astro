@@ -1,0 +1,14 @@
+---
+// Kích hoạt tài khoản nhân viên từ email mời (UC-ADM-01; API_SPEC 2.11; plan B1 R08.02) — AuthLayout, island client:load, noindex.
+// Liên kết: /auth/staff-activation?token=inv_… (mã dùng một lần, hạn 48 giờ).
+import AuthLayout from '@/layouts/AuthLayout.astro';
+import { StaffActivationForm } from '@/features/auth';
+import { createT } from '@/shared/lib/i18n';
+
+const t = createT(Astro.locals.lang ?? 'vi');
+const token = Astro.url.searchParams.get('token') ?? '';
+---
+
+<AuthLayout title={t('auth.staff_activation.title')} description={t('auth.meta.description')}>
+  <StaffActivationForm client:load token={token} />
+</AuthLayout>

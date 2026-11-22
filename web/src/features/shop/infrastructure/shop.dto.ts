@@ -26,3 +26,36 @@ export interface FollowedShopDto {
   rating_avg: number;
   follower_count: number;
 }
+
+// ===== API thật trang shop (API_SPEC 5.11, 5.12 — plan 2026-11-17 C07.06) =====
+
+/** `GET /public/shops/{id}` */
+export interface ShopPageDto {
+  id: number;
+  name: string;
+  logo_url: string | null;
+  cover_url: string | null;
+  description: string | null;
+  is_mall: boolean;
+  is_favorite: boolean;
+  rating_avg: number;
+  follower_count: number;
+  product_count: number;
+  province_name: string | null;
+  chat_response_rate: number | null;
+  avg_response_minutes: number | null;
+  joined_at: string | null;
+  is_online: boolean;
+  vacation: { until: string | null; message: string | null } | null;
+  categories: { id: number; name: string }[];
+}
+
+/** `GET /public/shops?featured=true` */
+export interface FeaturedShopDto {
+  id: number;
+  name: string;
+  logo_url: string | null;
+  rating_avg: number;
+  follower_count: number;
+  province_name: string | null;
+}

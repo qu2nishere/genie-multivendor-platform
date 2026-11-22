@@ -1,6 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiError } from '@/shared/api/errors';
-import { login, register, requestOtp, resetPassword, verifyOtp } from './auth.api';
+import {
+  activateStaff,
+  login,
+  register,
+  requestOtp,
+  requestStaffActivationOtp,
+  resetPassword,
+  verifyOtp,
+} from './auth.api';
 import { resetAuthMock } from './auth.mock';
 
 const fail = async (p: Promise<unknown>): Promise<ApiError> => {
@@ -66,5 +74,33 @@ describe('auth.api (mock)', () => {
       expect((await fail(resetPassword(r.resetToken, 'Genie@123'))).code).toBe('GNE-AUTH-4223');
       await expect(resetPassword(r.resetToken, 'Moi@20260')).resolves.toBeUndefined();
     }
+  });
+
+  it('kích hoạt nhân viên: xin OTP → OTP đúng + mật khẩu → phiên; dùng lại lời mời → GNE-AUTH-4103', async () => {
+    const c = await requestStaffActivationOtp('inv_moi-1');
+    expect(c.purpose).toBe('STAFF_ACTIVATION');
+    expect(c.emailMasked).toContain('@genie.example');
+    const wrong = await fail(
+      activateStaff({
+        invitationToken: 'inv_moi-1',
+        challengeId: c.id,
+        otp: '000000',
+        password: 'Staff@2026',
+      }),
+    );
+    expect(wrong.code).toBe('GNE-AUTH-4222');
+    const s = await activateStaff({
+      invitationToken: 'inv_moi-1',
+      challengeId: c.id,
+      otp: '123456',
+      password: 'Staff@2026',
+    });
+    expect(s.accessToken).toBeTruthy();
+    expect((await fail(requestStaffActivationOtp('inv_moi-1'))).code).toBe('GNE-AUTH-4103');
+  });
+
+  it('lời mời hết hạn hoặc sai dạng → GNE-AUTH-4103', async () => {
+    expect((await fail(requestStaffActivationOtp('inv_expired'))).code).toBe('GNE-AUTH-4103');
+    expect((await fail(requestStaffActivationOtp('abc'))).code).toBe('GNE-AUTH-4103');
   });
 });

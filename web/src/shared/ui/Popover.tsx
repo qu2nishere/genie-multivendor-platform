@@ -189,15 +189,24 @@ export function Dropdown({
   trigger,
   items,
   align,
+  panelClassName,
   'aria-label': ariaLabel,
 }: {
   trigger: PopoverProps['trigger'];
   items: MenuItem[];
   align?: 'start' | 'end';
+  /** Class thêm cho khung menu (vd. bề rộng tối thiểu khi nhãn có hai dòng). */
+  panelClassName?: string;
   'aria-label'?: string;
 }) {
   return (
-    <Popover trigger={trigger} role="menu" align={align} aria-label={ariaLabel}>
+    <Popover
+      trigger={trigger}
+      role="menu"
+      align={align}
+      panelClassName={panelClassName}
+      aria-label={ariaLabel}
+    >
       {(close) => <MenuList items={items} onDone={close} />}
     </Popover>
   );

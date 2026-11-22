@@ -4,7 +4,7 @@
 import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { errorMessage } from '@/shared/api/errors';
-import { $session } from '@/shared/auth/session';
+import { $session, isInternalUser } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { Button, toast, type ButtonSize, type ButtonVariant, type IconName } from '@/shared/ui';
 import { addToCart } from '../application/cart.store';
@@ -33,6 +33,8 @@ export default function AddToCartButton({
   const { t } = useT();
   const session = useStore($session);
   const [busy, setBusy] = useState(false);
+  // Tài khoản nội bộ (STAFF / ADMIN) không mua hàng — không hiện nút (plan B1 D16 hướng B; server: GNE-ORD-4031)
+  if (session.status === 'authenticated' && isInternalUser(session.user)) return null;
 
   const onClick = async () => {
     const line = getLine();

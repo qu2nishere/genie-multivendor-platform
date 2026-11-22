@@ -1,10 +1,12 @@
 // Providers dùng chung cho island lớn và SPA (plan G05.09; TS 2.4, 5.3):
-// QueryClientProvider (một client cho mỗi cây React), khởi tạo locale, khởi động phiên.
+// QueryClientProvider (một client cho mỗi cây React), khởi tạo locale, khởi động phiên, mở kênh realtime tài khoản
+// (đăng xuất ngay khi bị khóa / đổi quyền — plan B1).
 // Vùng hiện toast dùng chung là ToastHost (layouts/storefront/ToastHost.tsx, AppShell) — G06.14, G07.07.
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState, type ReactNode } from 'react';
 import { isApiError } from '@/shared/api';
 import { bootstrapSession } from '@/shared/auth/session';
+import { startAccountChannel } from '@/shared/realtime/accountChannel';
 import { $locale, toLocale } from '@/shared/lib/locale';
 
 export function createQueryClient(): QueryClient {
@@ -29,6 +31,7 @@ export function Providers({ children, locale }: { children?: ReactNode; locale?:
     const l = toLocale(locale ?? document.documentElement.lang);
     if ($locale.get() !== l) $locale.set(l);
     void bootstrapSession();
+    startAccountChannel();
   }, [locale]);
 
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;

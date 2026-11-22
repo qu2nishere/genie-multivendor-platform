@@ -118,17 +118,28 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
         ref={main}
         type="button"
         className="tr-gallery block aspect-square w-full cursor-zoom-in overflow-hidden rounded-md border-0 bg-gray-100 p-0"
-        onClick={() => setOpen(true)}
+        onClick={() => images.length > 0 && setOpen(true)}
         aria-label={t('product.gallery.zoom', { title })}
       >
-        <img
-          src={images[active]}
-          alt={title}
-          width={440}
-          height={440}
-          fetchPriority={active === 0 ? 'high' : undefined}
-          className="h-full w-full object-cover"
-        />
+        {images[active] ? (
+          <img
+            src={images[active]}
+            alt={title}
+            width={440}
+            height={440}
+            fetchPriority={active === 0 ? 'high' : undefined}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          // Chưa có ảnh — khung giữ chỗ thay cho <img src="">
+          <span
+            role="img"
+            aria-label={title}
+            className="flex h-full w-full items-center justify-center text-subtle"
+          >
+            <Icon name="image" size={56} />
+          </span>
+        )}
       </button>
       <div className="mt-2.5 flex gap-2" role="group" aria-label={t('product.gallery.thumbs')}>
         {images.map((src, i) => (
