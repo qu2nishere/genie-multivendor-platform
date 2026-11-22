@@ -5,7 +5,9 @@ import { fromSuggestionsDto, fromTrendingDto } from './suggest.mapper';
 describe('suggest mapper', () => {
   it('maps categories, shops then products with real links', () => {
     const rows = fromSuggestionsDto({
-      categories: [{ id: 13, name: 'Thiết bị âm thanh', slug: 'thiet-bi-am-thanh', icon: 'headphones' }],
+      categories: [
+        { id: 13, name: 'Thiết bị âm thanh', slug: 'thiet-bi-am-thanh', icon: 'headphones' },
+      ],
       shops: [{ id: 15, name: 'TechZone Official' }],
       products: [{ id: 1, name: 'Tai nghe ANC Pro 5', image_url: null }],
     });

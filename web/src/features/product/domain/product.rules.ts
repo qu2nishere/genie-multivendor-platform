@@ -176,7 +176,10 @@ export function shareVariantParam(
  * Đọc `?v=` của deeplink: id SKU (chuẩn UC-CAT-18) → chọn sẵn đúng phân loại (bỏ qua nếu SKU hết hàng);
  * không khớp SKU nào → thử định dạng cũ "0-1" (chỉ số theo nhóm).
  */
-export function decodeShared(p: Pick<Product, 'variantGroups' | 'skus'>, code: string | null): Selection {
+export function decodeShared(
+  p: Pick<Product, 'variantGroups' | 'skus'>,
+  code: string | null,
+): Selection {
   if (code && /^\d+$/.test(code)) {
     const sku = p.skus.find((s) => s.id === Number(code));
     if (sku && (sku.stock === undefined || sku.stock > 0)) {

@@ -1,12 +1,6 @@
 // Luật ma trận SKU thật (plan 2026-11-17 C07.07, A7) — cùng ca với VariantMatrixTest của backend.
 import { describe, expect, it } from 'vitest';
-import {
-  decodeShared,
-  isOptionOut,
-  priceOf,
-  shareVariantParam,
-  stockFor,
-} from './product.rules';
+import { decodeShared, isOptionOut, priceOf, shareVariantParam, stockFor } from './product.rules';
 import type { ProductSku, VariantGroup } from './product.types';
 
 const GROUPS: VariantGroup[] = [

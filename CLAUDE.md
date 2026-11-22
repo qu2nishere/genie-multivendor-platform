@@ -43,6 +43,8 @@ progress là bảng tick + nhật ký có mã commit).
 
 **Plan 2026-11-21 (seed từ Excel):** `scripts/seed/excel/` — `excel_to_seed.py template | check | build [--apply] [--flush-cache]` chuyển `products.xlsx` + ảnh (`anh/`, không commit) thành `db/seed/R__seed_demo_95_excel_products.sql` + ảnh thu nhỏ `scripts/seed/excel/assets/` (commit); `upload-assets` đẩy và kiểm ảnh `product-media/seed/excel/`. Hướng dẫn: `scripts/seed/excel/README.md`.
 
+**Plan 2026-11-22 (Nguyễn Ngọc Thiện):** `server-spring/plan_nhat_ky_banner_chi_tiet.md` — banner ghi nhật ký bằng 5 mã `BANNER_CREATED / UPDATED / ACTIVATED / DEACTIVATED / DELETED` (migration `V24__banner_audit_granular_actions.sql`; `BANNER_CHANGED` chỉ còn cho bản ghi cũ); `GET /admin/audit-logs` trả thêm `reference_id`, `user_agent`, `changes` (`AuditChange`); web `AuditLogDetail` (hộp chi tiết) + khóa `admin-system.audit.actions.*`. Migration mới tiếp theo từ `V25`.
+
 **Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file). Tiến độ theo use case toàn hệ thống (87 UC, 5 lớp GD / BE / Test / Nối / Chạy): `docs/document/CHECKLIST_TIEN_DO_UC.md`.
 
 ## 3. Lệnh hay dùng

@@ -8,9 +8,21 @@ import { env, isMocked } from '@/shared/config/env';
 import type { Page } from '@/shared/api/types';
 import { isPagePagination } from '@/shared/api/types';
 import type { ViewSource } from '../domain/product.rules';
-import type { Product, ProductFacets, ProductQuery, ProductSort, ProductSummary } from '../domain/product.types';
+import type {
+  Product,
+  ProductFacets,
+  ProductQuery,
+  ProductSort,
+  ProductSummary,
+} from '../domain/product.types';
 import type { ProductCardDto, ProductDetailApiDto, SearchFacetsDto } from './product.dto';
-import { fromCardDto, fromDetailDto, fromFacetsDto, toProduct, toProductSummary } from './product.mapper';
+import {
+  fromCardDto,
+  fromDetailDto,
+  fromFacetsDto,
+  toProduct,
+  toProductSummary,
+} from './product.mapper';
 import {
   facetsOf,
   findSeedProduct,
@@ -55,18 +67,26 @@ const scopeQuery = (q: ProductQuery): Query => ({
 });
 
 /** Facet của một phạm vi: bảng tên → id cho thương hiệu, nơi bán; mã thuộc tính lọc. */
-async function scopeFacets(q: ProductQuery): Promise<{ facets: SearchFacetsDto | null; total: number }> {
+async function scopeFacets(
+  q: ProductQuery,
+): Promise<{ facets: SearchFacetsDto | null; total: number }> {
   const res = await get<ProductCardDto[]>('/public/products', {
     ...scopeQuery(q),
     include_facets: true,
     size: 1,
   });
   const facets = (res.summary?.facets as SearchFacetsDto | undefined) ?? null;
-  return { facets, total: isPagePagination(res.pagination) ? res.pagination.total_items : res.data.length };
+  return {
+    facets,
+    total: isPagePagination(res.pagination) ? res.pagination.total_items : res.data.length,
+  };
 }
 
 /** Tên đã chọn → id; tên không có trong facet → -1 (lọc ra rỗng, không bỏ lọc). */
-const idsOf = (names: string[] | undefined, table: { id: number; name: string }[]): number[] | undefined =>
+const idsOf = (
+  names: string[] | undefined,
+  table: { id: number; name: string }[],
+): number[] | undefined =>
   names?.length ? names.map((n) => table.find((x) => x.name === n)?.id ?? -1) : undefined;
 
 /** Tham số lọc đầy đủ của API 5.3. */
@@ -91,7 +111,8 @@ export async function toApiQuery(q: ProductQuery): Promise<Query> {
     page: q.page ?? 1,
     size: q.size ?? 20,
   };
-  if (q.attributes?.length && facets?.attribute) query[`attr.${facets.attribute.code}`] = q.attributes;
+  if (q.attributes?.length && facets?.attribute)
+    query[`attr.${facets.attribute.code}`] = q.attributes;
   return query;
 }
 

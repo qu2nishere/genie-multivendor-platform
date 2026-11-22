@@ -79,6 +79,13 @@ const toAudit = (d: AuditLogDto): AuditEntry => ({
   target: d.target ?? '',
   ip: d.ip_address ?? '',
   result: d.result,
+  referenceId: d.reference_id ?? null,
+  userAgent: d.user_agent ?? null,
+  changes: Object.entries(d.changes ?? {}).map(([field, c]) => ({
+    field,
+    from: c.from ?? null,
+    to: c.to ?? null,
+  })),
 });
 
 // ---------- Nhân viên ----------

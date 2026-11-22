@@ -14,10 +14,12 @@ public enum AuditAction {                                                       
     // ===== AUTH (plan AUTH D20) =====
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,
-    // ===== Banner trang chủ (plan 2026-11-16 banner D1, V18) — details.op = CREATE / UPDATE / ACTIVATE / DEACTIVATE / DELETE =====
+    // ===== Banner trang chủ (plan 2026-11-16 banner D1, V18) — CHỈ CÒN cho bản ghi cũ (details.op); code mới ghi 5 mã bên dưới =====
     BANNER_CHANGED,
     // ===== Mở shop & KYC (plan 2026-11-16 Mở shop & KYC D3, V20) =====
-    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED;
+    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED,
+    // ===== Banner theo động từ cụ thể (plan 2026-11-22 nhật ký banner N1, V24) — sửa kèm details.changes {trường: {from, to}} =====
+    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED;
 
     /**
      * Nhóm hiển thị trên màn Nhật ký hệ thống (API_SPEC 16; plan nhật ký kiểm toán D2). {@code switch} không có
@@ -36,7 +38,7 @@ public enum AuditAction {                                                       
             case ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED ->
                     AuditCategory.SECURITY;
             case COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED,
-                 BANNER_CHANGED ->
+                 BANNER_CHANGED, BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED ->
                     AuditCategory.CONFIG;
         };
     }

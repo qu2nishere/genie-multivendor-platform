@@ -6793,6 +6793,11 @@
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_90891C0E_C6AF_5C35_BE22_61CE575A879B" name="KYC_REQUEUED"/>
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_D3BAB954_C4A3_59EB_8F67_024FF14CEC8E" name="KYC_DOCUMENT_VIEWED"/>
           <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_AC3345D9_886A_540F_B794_F45F1BD8B3E2" name="PAYOUT_ACCOUNT_CHANGED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_C5015D87_DC27_5C22_A8CA_FB8F2B44DD44" name="BANNER_CREATED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_5B2ECF1C_0A16_5501_93B9_C34E8678A9CB" name="BANNER_UPDATED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_0425C22E_F72C_5EDE_9A9D_401B907A3EAC" name="BANNER_ACTIVATED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_D6155BBC_4EA2_58B5_A3C4_46F36D5F1341" name="BANNER_DEACTIVATED"/>
+          <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="EAID_32B70107_32EB_5DBC_9CDE_B3EBED8A2A09" name="BANNER_DELETED"/>
         </packagedElement>
         <packagedElement xmi:type="uml:Association" xmi:id="EAID_A97CD29B_2FC4_53D1_994C_DFFFD7642CB6" name="userId" visibility="public">
           <memberEnd xmi:idref="EAID_097B3F05_CF45_5175_86F7_8B83C6C0A944"/>

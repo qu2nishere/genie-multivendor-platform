@@ -56,6 +56,37 @@ class AuditLogQueryIT extends AuditLogTestSupport {
                 .andExpect(jsonPath("$.pagination.limit").value(50));
     }
 
+    /** Plan 2026-11-22 nhật ký banner N4: reference_id, user_agent, changes {trường: {from, to}}; details lạ không vỡ. */
+    @Test
+    void exposesReferenceUserAgentAndChanges() throws Exception {
+        String token = adminToken();
+        clearLogs();
+        String updated = insertLog(NOW.minusSeconds(60), 1L, "yen.dh@genie.example", "ADMIN", "BANNER_UPDATED", "22",
+                "{\"target_label\":\"BN-22 · hihi\",\"changes\":{\"sort_order\":{\"from\":\"8\",\"to\":\"2\"},"
+                        + "\"ends_at\":{\"from\":null,\"to\":\"2026-11-26\"}}}", "::1", "SUCCESS");
+        jdbc.update("UPDATE system_logs SET user_agent = 'Mozilla/5.0 test' WHERE id = ?", updated);
+        insertLog(NOW.minusSeconds(120), 1L, "yen.dh@genie.example", "ADMIN", "BANNER_CHANGED", "21",
+                "{\"op\":\"UPDATE\",\"changes\":[\"title\"]}", "::1", "SUCCESS");
+        insertLog(NOW.minusSeconds(180), null, "system@genie.vn", "SYSTEM", "ESCROW_RELEASED", "TR-1", "khong-phai-json",
+                null, "SUCCESS");
+
+        mvc.perform(get("/api/v1/admin/audit-logs").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].action").value("BANNER_UPDATED"))
+                .andExpect(jsonPath("$.data[0].category").value("CONFIG"))
+                .andExpect(jsonPath("$.data[0].target").value("BN-22 · hihi"))
+                .andExpect(jsonPath("$.data[0].reference_id").value("22"))
+                .andExpect(jsonPath("$.data[0].user_agent").value("Mozilla/5.0 test"))
+                .andExpect(jsonPath("$.data[0].changes.sort_order.from").value("8"))
+                .andExpect(jsonPath("$.data[0].changes.sort_order.to").value("2"))
+                .andExpect(jsonPath("$.data[0].changes.ends_at.to").value("2026-11-26"))
+                .andExpect(jsonPath("$.data[1].category").value("CONFIG"))
+                .andExpect(jsonPath("$.data[1].target").value("21"))
+                .andExpect(jsonPath("$.data[1].changes").doesNotExist())
+                .andExpect(jsonPath("$.data[2].target").value("TR-1"))
+                .andExpect(jsonPath("$.data[2].changes").doesNotExist());
+    }
+
     @Test
     void timeWindowIncludesFromAndExcludesTo() throws Exception {
         String token = adminToken();

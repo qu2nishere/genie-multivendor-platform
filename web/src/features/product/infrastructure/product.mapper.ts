@@ -98,14 +98,14 @@ export function fromDetailDto(d: ProductDetailApiDto): Product {
     options: g.values.map((v) => ({
       label: v.value,
       priceDelta: 0,
-      stock: d.variants
-        .filter((x) => x.options[gi] === v.value)
-        .reduce((n, x) => n + x.stock, 0),
+      stock: d.variants.filter((x) => x.options[gi] === v.value).reduce((n, x) => n + x.stock, 0),
     })),
   }));
   const skus: ProductSku[] = d.variants.map((v) => ({
     id: v.id,
-    options: v.options.map((val, k) => d.option_groups[k]?.values.findIndex((x) => x.value === val) ?? -1),
+    options: v.options.map(
+      (val, k) => d.option_groups[k]?.values.findIndex((x) => x.value === val) ?? -1,
+    ),
     price: v.price,
     stock: v.stock,
   }));
@@ -143,7 +143,10 @@ export function fromDetailDto(d: ProductDetailApiDto): Product {
 }
 
 /** Facet API → giá trị lọc theo tên (UI lọc theo tên; tầng api tự đổi tên → id khi gọi). */
-export const fromFacetsDto = (f: SearchFacetsDto | null | undefined, total: number): ProductFacets => ({
+export const fromFacetsDto = (
+  f: SearchFacetsDto | null | undefined,
+  total: number,
+): ProductFacets => ({
   brands: (f?.brands ?? []).map((b) => b.name),
   locations: (f?.locations ?? []).map((l) => l.name),
   total,

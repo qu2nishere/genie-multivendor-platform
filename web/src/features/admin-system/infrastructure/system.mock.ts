@@ -127,6 +127,16 @@ type A = [
 export const AUDIT_DTOS: AuditLogDto[] = (
   [
     [
+      '2026-06-22T10:05:37',
+      'linh.tm@genie.example',
+      'FINANCE_OFFICER',
+      'BANNER_UPDATED',
+      'CONFIG',
+      'BN-22 · Siêu sale 12.12',
+      '113.161.40.88',
+      'SUCCESS',
+    ],
+    [
       '2026-06-22T09:42:11',
       'phat.nt@genie.example',
       'MODERATOR',
@@ -277,4 +287,14 @@ export const AUDIT_DTOS: AuditLogDto[] = (
   target,
   ip_address,
   result,
+  reference_id: action === 'BANNER_UPDATED' ? '22' : null,
+  user_agent:
+    actor_email === 'system' ? null : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0',
+  changes:
+    action === 'BANNER_UPDATED'
+      ? {
+          starts_at: { from: '2026-06-23T00:00:00+07:00', to: '2026-06-22T00:00:00+07:00' },
+          sort_order: { from: '8', to: '2' },
+        }
+      : null,
 }));

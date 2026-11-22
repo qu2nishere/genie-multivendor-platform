@@ -100,5 +100,11 @@ describe('nhật ký', () => {
     expect(actionTone('PAYOUT_APPROVED')).toBe('mint');
     expect(actionTone('REFUND_PROCESSED')).toBe('warning');
     expect(actionTone('STAFF_INVITED')).toBe('primary');
+    expect(actionTone('BANNER_CREATED')).toBe('success');
+    expect(actionTone('BANNER_UPDATED')).toBe('primary');
+    expect(actionTone('BANNER_ACTIVATED')).toBe('success');
+    expect(actionTone('BANNER_DEACTIVATED')).toBe('neutral');
+    expect(actionTone('BANNER_DELETED')).toBe('danger');
+    expect(actionTone('ACCOUNT_REACTIVATED')).toBe('success');
   });
 });

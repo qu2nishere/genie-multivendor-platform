@@ -37,8 +37,9 @@ class BannerAdminIT extends BannerTestSupport {
         return v == null ? null : v.toString();
     }
 
-    private int bannerAudits() {
-        return jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'BANNER_CHANGED'", Integer.class);
+    /** Mã hành động banner đã ghi (plan 2026-11-22 nhật ký banner N1) — code mới không còn ghi BANNER_CHANGED. */
+    private List<String> bannerAudits() {
+        return jdbc.queryForList("SELECT action_type FROM system_logs WHERE action_type LIKE 'BANNER_%'", String.class);
     }
 
     @Test
@@ -55,9 +56,9 @@ class BannerAdminIT extends BannerTestSupport {
         assertThat(key).startsWith("banner/" + id + "/desktop-");
         assertThat(existsInSilo(key)).isTrue();
         assertThat(existsInSilo(tmp)).isFalse();
-        assertThat(bannerAudits()).isEqualTo(1);
-        assertThat(jdbc.queryForObject("SELECT details FROM system_logs WHERE action_type = 'BANNER_CHANGED'", String.class))
-                .contains("\"op\":\"CREATE\"").contains("BN-" + id);
+        assertThat(bannerAudits()).containsExactly("BANNER_CREATED");
+        assertThat(jdbc.queryForObject("SELECT details FROM system_logs WHERE action_type = 'BANNER_CREATED'", String.class))
+                .contains("BN-" + id).doesNotContain("\"op\"");
     }
 
     @Test
@@ -114,8 +115,9 @@ class BannerAdminIT extends BannerTestSupport {
         assertThat(secondKey).isNotEqualTo(firstKey).startsWith("banner/" + id + "/desktop-");
         assertThat(existsInSilo(secondKey)).isTrue();
         assertThat(existsInSilo(firstKey)).isFalse();
-        assertThat(jdbc.queryForObject("SELECT details FROM system_logs WHERE action_type = 'BANNER_CHANGED' "
-                + "AND details LIKE '%UPDATE%' ORDER BY created_at DESC LIMIT 1", String.class)).contains("changes");
+        assertThat(jdbc.queryForObject("SELECT details FROM system_logs WHERE action_type = 'BANNER_UPDATED' "
+                + "ORDER BY created_at DESC LIMIT 1", String.class))
+                .contains("\"changes\"").contains("\"from\"").contains("\"to\"");
     }
 
     @Test
@@ -137,7 +139,7 @@ class BannerAdminIT extends BannerTestSupport {
         mvc.perform(delete(URL + "/" + live).header(HttpHeaders.AUTHORIZATION, token)).andExpect(status().isNoContent());
         mvc.perform(delete(URL + "/999999").header(HttpHeaders.AUTHORIZATION, token)).andExpect(status().isNotFound());
         // seed/… không bị xóa khỏi Silo (không có thật trong test — chỉ cần không lỗi) và mỗi thao tác 1 dòng nhật ký
-        assertThat(bannerAudits()).isEqualTo(3);
+        assertThat(bannerAudits()).containsExactlyInAnyOrder("BANNER_DELETED", "BANNER_DEACTIVATED", "BANNER_DELETED");
     }
 
     @Test

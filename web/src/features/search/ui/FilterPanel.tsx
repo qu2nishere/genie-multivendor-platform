@@ -2,7 +2,14 @@
 // plan G08.18. Là một <form method="get"> thật: tắt JS vẫn lọc được bằng nút "Áp dụng" (R16).
 // Có JS: màn rộng đổi lựa chọn là gửi ngay; màn hẹp là ngăn kéo, chọn xong bấm "Xem N sản phẩm".
 import { useStore } from '@nanostores/react';
-import { useEffect, useRef, useState, type FocusEvent, type FormEvent, type ReactNode } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap';
 import { MQ, useMediaQuery } from '@/shared/hooks/useMediaQuery';
 import { useScrollLock } from '@/shared/hooks/useScrollLock';
@@ -155,7 +162,11 @@ export default function FilterPanel({
   // Rời ô giá thì áp ngay — trừ khi chỉ chuyển sang ô giá còn lại (gõ "Từ" rồi bấm "Đến" không được tải lại trang)
   const submitPrice = (e: FocusEvent<HTMLInputElement>) => {
     const next = e.relatedTarget;
-    if (next instanceof HTMLInputElement && (next.name === 'min' || next.name === 'max') && next.form === form.current)
+    if (
+      next instanceof HTMLInputElement &&
+      (next.name === 'min' || next.name === 'max') &&
+      next.form === form.current
+    )
       return;
     if (!narrow && dirty) form.current?.requestSubmit();
   };
