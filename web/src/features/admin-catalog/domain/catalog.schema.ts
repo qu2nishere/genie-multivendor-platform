@@ -1,6 +1,13 @@
 // Form danh mục, thuộc tính, từ chối đề xuất (zod; API 11.11).
 import { z } from 'zod';
-import { ATTR_CODE, MAX_COMMISSION, needsValues, parseValues, SLUG } from './catalog.rules';
+import {
+  ATTR_CODE,
+  MAX_COMMISSION,
+  MIN_COMMISSION,
+  needsValues,
+  parseValues,
+  SLUG,
+} from './catalog.rules';
 
 export const categorySchema = z.object({
   name: z
@@ -13,9 +20,10 @@ export const categorySchema = z.object({
   icon: z.string().min(1),
   commissionRate: z
     .number({ invalid_type_error: 'admin-catalog.cat.err.rate' })
-    .min(0, 'admin-catalog.cat.err.rate')
+    .min(MIN_COMMISSION, 'admin-catalog.cat.err.rate')
     .max(MAX_COMMISSION, 'admin-catalog.cat.err.rate'),
   active: z.boolean(),
+  requiresLicense: z.boolean(),
 });
 export type CategoryValues = z.infer<typeof categorySchema>;
 
