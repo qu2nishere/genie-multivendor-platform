@@ -17,8 +17,8 @@ class CategoryIndexTest {
 
     private final CategoryIndex idx = new CategoryIndex(List.of(
             row(1, null, 2, "Thời trang", true), row(2, null, 1, "Điện tử", true), row(3, null, null, "Sách", true),
-            row(11, 2, 1, "Điện thoại", true), row(111, 11, 1, "Ốp lưng", true),
-            row(12, 2, 2, "Laptop", false), row(121, 12, 1, "Chuột", true)));
+            row(11, 2L, 1, "Điện thoại", true), row(111, 11L, 1, "Ốp lưng", true),
+            row(12, 2L, 2, "Laptop", false), row(121, 12L, 1, "Chuột", true)));
 
     @Test
     void ordersSiblingsAndWalksTheTree() {
