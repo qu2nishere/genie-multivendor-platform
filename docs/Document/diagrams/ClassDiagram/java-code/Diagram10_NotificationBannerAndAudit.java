@@ -53,8 +53,9 @@ public enum AuditAction {                                                       
     ACCESS_DENIED, PRODUCT_MODERATED,                 // lần truy cập bị chặn quyền (màn Nhật ký), kết quả duyệt sản phẩm
     PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED,
     ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED,  // +8 giá trị AUTH (V14 — plan AUTH D20)
-    BANNER_CHANGED,                                          // V15 — plan 2026-11-16 banner D1
-    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED // V20 — plan 2026-11-16 Mở shop & KYC D3
+    BANNER_CHANGED,                                          // V18 — chỉ còn cho bản ghi cũ (plan 2026-11-22 nhật ký banner N2)
+    KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED, // V20 — plan 2026-11-16 Mở shop & KYC D3
+    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED // V21 — plan 2026-11-22 nhật ký banner N1
 }
 
 // ============================== ENTITIES (6) ==============================

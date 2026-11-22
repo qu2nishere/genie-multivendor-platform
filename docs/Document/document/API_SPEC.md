@@ -2403,8 +2403,10 @@ UC-ADM-07 · `VIEW_AUDIT_LOG` · **Màn hình:** lọc thời gian (Hôm nay / 7
 #### `GET /admin/audit-logs?from&to&category&q&cursor&limit=50`
 `category` ∈ `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG`.
 ```json
-[ { "id": 55120, "created_at": "2026-06-22T09:42:11+07:00", "actor_email": "phat.nt@genie.example", "actor_role": "MODERATOR", "action": "KYC_APPROVED", "category": "KYC", "target": "KYC-1037 · TravelGear", "ip_address": "113.161.40.12", "result": "SUCCESS" } ]
+[ { "id": "0f9c…", "created_at": "2026-06-22T09:42:11+07:00", "actor_email": "linh.tm@genie.example", "actor_role": "FINANCE_OFFICER", "action": "BANNER_UPDATED", "category": "CONFIG", "target": "BN-22 · Sale 12.12", "reference_id": "22", "ip_address": "113.161.40.12", "user_agent": "Mozilla/5.0 …", "result": "SUCCESS",
+    "changes": { "starts_at": { "from": "2026-11-23T00:00+07:00", "to": "2026-11-22T00:00+07:00" }, "sort_order": { "from": "8", "to": "2" } } } ]
 ```
+- `reference_id`, `user_agent`: cột gốc của `system_logs` (có thể `null`) — màn hình hiện trong hộp chi tiết khi bấm một dòng. `changes`: lấy từ `details.changes` dạng `{trường: {from, to}}` (giá trị là chuỗi, `"null"` = trống); `null` nếu bản ghi không có. API **không** trả nguyên `details`. Export CSV giữ nguyên cột.
 `result` ∈ `SUCCESS, FAILED, DENIED` (`DENIED` = dòng `ACCESS_DENIED`); `actor_email = "system"` cho tác vụ định kỳ. `summary.denied_count` = số dòng `ACCESS_DENIED` trong bộ lọc. `id` là UUID (chuỗi).
 - `from` / `to`: ISO-8601 hoặc ngày `YYYY-MM-DD` (giờ Việt Nam; `to` dạng ngày tính hết ngày đó, dạng thời điểm thì loại trừ). Mặc định 7 ngày gần nhất; **tối đa 90 ngày / lần** → vượt `422 GNE-VAL-4220` (`errors[].code = RANGE_TOO_LONG`). `q` ≤ 100 ký tự, tìm không phân biệt hoa thường trong email / IP / mã tham chiếu. `limit` 1–100 (mặc định 50).
 - `actor_role`: vai trò chụp lúc ghi; riêng `STAFF` hiển thị **chức danh hiện tại** (`MODERATOR`…). `target` = `details.target_label` nếu có, không thì `reference_id`.
@@ -2999,7 +3001,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `KycDocumentType` | `ID_FRONT, ID_BACK, BUSINESS_LICENSE, BUSINESS_REGISTRATION, SELFIE, TAX_NOTICE` | 10.12, 11.3 |
 | `RiskLevel` | `LOW, MEDIUM, HIGH` | 11.3 |
 | `NotificationCategory` | `ORDER, PROMOTION, SYSTEM, CHAT` | 3.12 |
-| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, BANNER_CHANGED` | 11.10 |
+| `AuditCategory` | `AUTH, KYC, FINANCE, MODERATION, SECURITY, CONFIG` — ánh xạ từ `AuditAction`: **AUTH** = `LOGIN_SUCCESS, LOGIN_FAILED, PASSWORD_CHANGED, PASSWORD_RESET, EMAIL_CHANGED, OAUTH_LINKED, OAUTH_UNLINKED, SESSION_REVOKED, ACCOUNT_DELETION_REQUESTED, ACCOUNT_DELETION_CANCELLED` · **KYC** = `KYC_SUBMITTED, KYC_APPROVED, KYC_REJECTED, KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED` · **FINANCE** = `ESCROW_RELEASED, PAYOUT_APPROVED, PAYOUT_REJECTED, REFUND_PROCESSED, ORDER_STATUS_CHANGED, PAYOUT_ACCOUNT_CHANGED` · **MODERATION** = `REVIEW_HIDDEN, PRODUCT_MODERATED` · **SECURITY** = `ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED` · **CONFIG** = `COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED, BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED` (+ `BANNER_CHANGED` chỉ còn ở bản ghi cũ, trước V21) | 11.10 |
 
 ### 16.3 Ánh xạ trạng thái đơn → tab
 
