@@ -9,7 +9,7 @@ export const commissionStore = mockState<CommissionSettingsDto>('admin.commissio
     [
       [1, 'Điện tử', 5],
       [2, 'Thời trang', 8],
-      [3, 'Làm đẹp', 10],
+      [3, 'Làm đẹp', 7.5],
       [4, 'Nhà cửa', 6],
       [5, 'Phụ kiện', 7],
       [8, 'Bách hoá', 4],
