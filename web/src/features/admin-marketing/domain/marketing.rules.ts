@@ -196,3 +196,19 @@ export const plainText = (html: string): string =>
 
 export const readRate = (n: { readCount: number; reachCount: number }): number =>
   n.reachCount > 0 ? Math.round((n.readCount / n.reachCount) * 100) : 0;
+
+/**
+ * Xếp danh mục theo cây để hiện trong ô chọn: mỗi danh mục gốc rồi ngay dưới là các danh mục con của nó
+ * (giữ thứ tự gốc của danh sách). Con không tìm thấy cha thì đưa xuống cuối.
+ */
+export function parentFirst<T extends { id: number; parentId: number | null }>(
+  list: readonly T[],
+): T[] {
+  const roots = list.filter((c) => c.parentId === null);
+  const rootIds = new Set(roots.map((c) => c.id));
+  const out: T[] = [];
+  for (const r of roots) {
+    out.push(r, ...list.filter((c) => c.parentId === r.id));
+  }
+  return [...out, ...list.filter((c) => c.parentId !== null && !rootIds.has(c.parentId))];
+}
