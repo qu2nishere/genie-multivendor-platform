@@ -1,6 +1,7 @@
 // Quy tắc xác thực (prototype auth/index.html; UC-AUTH-01..05) — plan G09.01. TS thuần, có test.
 export { passwordIssue, passwordStrength } from '@/shared/lib/password';
 export type { PasswordIssue, PasswordStrength } from '@/shared/lib/password';
+import type { Role } from '@/shared/auth/permissions';
 
 /** OTP 6 chữ số, hiệu lực 5 phút, gửi lại sau 60 giây. */
 export const OTP_LENGTH = 6;
@@ -28,4 +29,14 @@ export function safeNext(next: string | null | undefined): string {
   if (!next || !next.startsWith('/') || next.startsWith('//') || next.startsWith('/\\')) return '/';
   if (next.startsWith('/auth/')) return '/';
   return next;
+}
+
+/**
+ * Đích sau đăng nhập theo vai trò (API_SPEC 1 — `user.role`: CUSTOMER/VENDOR → Storefront, STAFF/ADMIN → Admin Console).
+ * Có `next` hợp lệ (khác trang chủ) thì giữ nguyên; nhân viên / Admin không có đích cụ thể → `/admin`.
+ */
+export function landingAfterLogin(next: string | null | undefined, roles: readonly Role[]): string {
+  const target = safeNext(next);
+  if (target !== '/') return target;
+  return roles.includes('ADMIN') || roles.includes('STAFF') ? '/admin' : '/';
 }
