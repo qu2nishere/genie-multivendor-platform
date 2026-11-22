@@ -248,12 +248,18 @@ Cửa sổ này giữ để xem log, `Ctrl+C` để tắt (`--rm` tự xóa cont
 Thêm hoặc sửa trong `.env` gốc:
 
 ```dotenv
+# ===== AI Worker thật (mục 6.2) =====
 AI_WORKER_MODE=http
-AI_WORKER_URL=http://localhost:8000              # backend chạy trên Windows nên gọi worker qua localhost là được
+# backend chạy trên Windows nên gọi worker qua localhost là được
+AI_WORKER_URL=http://localhost:8000
 INTERNAL_TOKEN=local-internal-token
 BACKEND_INTERNAL_URL=http://host.docker.internal:8080
-PUBLIC_S3_URL=http://host.docker.internal:9000    # link ảnh ký bằng host này để worker tải được
+# link ảnh ký bằng host này để worker (trong Docker) tải được
+PUBLIC_S3_URL=http://host.docker.internal:9000
 ```
+
+> ⚠ `.env` của backend **không** hiểu chú thích nằm cuối dòng (`KHOA=giá_trị   # ghi chú` → ghi chú bị tính vào giá trị).
+> Chú thích luôn đặt ở **dòng riêng** bắt đầu bằng `#`.
 
 Rồi **khởi động lại backend** (`Ctrl+C`, chạy lại `.\mvnw.cmd spring-boot:run`).
 
@@ -261,7 +267,7 @@ Rồi **khởi động lại backend** (`Ctrl+C`, chạy lại `.\mvnw.cmd sprin
 
 #### Bước 5: thử
 
-1. Nộp KYC như kịch bản TC-06-12 trong [kich-ban-kiem-thu-2026-11-16.md](kich-ban-kiem-thu-2026-11-16.md).
+1. Nộp KYC theo giai đoạn **C** / **K** trong [kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md](kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md).
 2. Cửa sổ worker hiện log nhận `POST /kyc/verify`, xử lý khoảng 1–3 giây, rồi gọi lại backend.
 3. Backend log nhận `PATCH /internal/kyc/{id}/result`. Hồ sơ đổi trạng thái; admin mở `/admin/kyc` thấy các cờ QR / MRZ / khớp mặt, điểm khớp mặt và danh sách tín hiệu.
 
