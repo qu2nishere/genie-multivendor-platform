@@ -2,6 +2,7 @@ package com.genie.auth.profile.application;
 
 import com.genie.auth.login.event.NewDeviceLoginEvent;
 import com.genie.auth.password.event.PasswordChangedEvent;
+import com.genie.auth.profile.event.AccountReactivatedEvent;
 import com.genie.auth.token.application.UserAgentParser;
 import com.genie.common.mail.EmailSender;
 import com.genie.common.mail.MailTemplate;
@@ -21,7 +22,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * Email cảnh báo bảo mật gửi SAU khi transaction chính commit, chạy nền (TS 4.5): đổi / đặt lại mật khẩu (UC-AUTH-04, 06),
- * đăng nhập từ thiết bị lạ (UC-AUTH-02 luồng 8a). Gửi lỗi chỉ ghi log — không ảnh hưởng thao tác của người dùng.
+ * đăng nhập từ thiết bị lạ (UC-AUTH-02 luồng 8a), tài khoản được mở lại (UC-ADM-03 — cron hết hạn đình chỉ hoặc Admin mở
+ * thủ công, plan 2026-11-24 D2). Gửi lỗi chỉ ghi log — không ảnh hưởng thao tác của người dùng.
  */
 @Component
 public class AccountMailListener {
@@ -72,6 +74,17 @@ public class AccountMailListener {
                 "device", event.deviceName() == null ? "" : event.deviceName(),
                 "ip", event.ipAddress() == null ? "" : event.ipAddress(),
                 "loginAt", format(event.loginAt())));
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onReactivated(AccountReactivatedEvent event) {
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("name", nameOf(event.userId(), event.email()));
+        vars.put("email", event.email());
+        vars.put("reason", event.reason());
+        vars.put("reactivatedAt", format(event.reactivatedAt()));
+        send(event.userId(), event.email(), MailTemplate.ACCOUNT_REACTIVATED, vars);
     }
 
     private void send(Long userId, String email, MailTemplate template, Map<String, Object> vars) {

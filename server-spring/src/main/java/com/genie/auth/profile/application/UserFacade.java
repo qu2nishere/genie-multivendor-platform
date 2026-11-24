@@ -4,6 +4,7 @@ import com.genie.auth.profile.domain.AccountStatus;
 import com.genie.auth.staff.application.StaffInvitationStore;
 import com.genie.auth.profile.domain.User;
 import com.genie.auth.profile.domain.UserRepository;
+import com.genie.auth.profile.event.AccountReactivatedEvent;
 import com.genie.auth.token.application.SessionService;
 import com.genie.auth.token.domain.RevokeReason;
 import com.genie.common.audit.AuditAction;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,11 +49,13 @@ public class UserFacade {
     private final AuditLogger audit;
     private final StaffInvitationStore invitations;
     private final EmailSender emailSender;
+    private final ApplicationEventPublisher events;
     private final Clock clock;
     private final String webUrl;
 
     public UserFacade(UserRepository users, AccountSummaryService summaries, SessionService sessions, AuditLogger audit,
-                      StaffInvitationStore invitations, EmailSender emailSender, Clock clock,
+                      StaffInvitationStore invitations, EmailSender emailSender, ApplicationEventPublisher events,
+                      Clock clock,
                       @Value("${genie.web-url:http://localhost:4321}") String webUrl) {
         this.users = users;
         this.summaries = summaries;
@@ -59,6 +63,7 @@ public class UserFacade {
         this.audit = audit;
         this.invitations = invitations;
         this.emailSender = emailSender;
+        this.events = events;
         this.clock = clock;
         this.webUrl = webUrl;
     }
@@ -127,9 +132,12 @@ public class UserFacade {
             return;
         }
         if (user.getStatus() == AccountStatus.ACTIVE) {
-            user.clearLock();
+            user.clearLock();   // chỉ đang khóa tạm vì sai mật khẩu — không phải đình chỉ, không gửi email
         } else {
             user.reactivate();
+            // Báo người dùng sau commit (plan 2026-11-24 D2) — lý do chữ của Admin chỉ nằm trong nhật ký
+            events.publishEvent(new AccountReactivatedEvent(user.getId(), user.getEmail(),
+                    AccountReactivatedEvent.ADMIN, OffsetDateTime.now(clock)));
         }
         audit.record(AuditAction.ACCOUNT_REACTIVATED, actorId, String.valueOf(userId),
                 Map.of("reason", reason == null ? "ADMIN" : reason), client, true);
