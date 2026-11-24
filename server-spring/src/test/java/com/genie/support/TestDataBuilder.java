@@ -116,6 +116,54 @@ public class TestDataBuilder {
         }
     }
 
+    // ===== Voucher (plan 2026-11-24 H08 — bộ lọc "Shop có voucher") =====
+
+    /**
+     * Voucher SHOP của {@code shop}, mặc định đang dùng được quanh mốc {@code now} (đồng hồ test — cổng tìm kiếm dùng
+     * {@code Clock}, không dùng {@code now()} của CSDL). Đổi {@code type("PLATFORM")} / {@code type("FREESHIP")} → không gắn shop.
+     */
+    public VoucherBuilder voucher(Shop shop, OffsetDateTime now) {
+        return new VoucherBuilder(shop == null ? null : shop.userId(), now);
+    }
+
+    public final class VoucherBuilder {
+        private String type = "SHOP";
+        private Long vendorId;
+        private boolean active = true;
+        private OffsetDateTime validFrom;
+        private OffsetDateTime validTo;
+        private int usedCount;
+        private int usageLimit = 100;
+        private BigDecimal budget;
+        private BigDecimal totalDiscountUsed = BigDecimal.ZERO;
+
+        private VoucherBuilder(Long vendorId, OffsetDateTime now) {
+            this.vendorId = vendorId;
+            this.validFrom = now.minusDays(1);
+            this.validTo = now.plusDays(30);
+        }
+
+        public VoucherBuilder type(String v) { this.type = v; if (!"SHOP".equals(v)) this.vendorId = null; return this; }
+        public VoucherBuilder inactive() { this.active = false; return this; }
+        public VoucherBuilder valid(OffsetDateTime from, OffsetDateTime to) { this.validFrom = from; this.validTo = to; return this; }
+        public VoucherBuilder uses(int used, int limit) { this.usedCount = used; this.usageLimit = limit; return this; }
+        public VoucherBuilder budget(long budget, long used) {
+            this.budget = BigDecimal.valueOf(budget); this.totalDiscountUsed = BigDecimal.valueOf(used); return this;
+        }
+
+        public long create() {
+            return jdbc.queryForObject("""
+                    INSERT INTO vouchers (code, title, scope, type, discount_type, discount_value, min_order_value, usage_limit,
+                        usage_per_user, used_count, priority, vendor_id, valid_from, valid_to, is_active, version, budget,
+                        total_discount_used, sponsor_type)
+                    VALUES (?, 'Voucher test', 'ALL', ?, 'FIXED_AMOUNT', 10000, 0, ?, 1, ?, 1, ?, ?, ?, ?, 0, ?, ?, ?)
+                    RETURNING id""", Long.class,
+                    "T" + uniqueWord().toUpperCase(), type, usageLimit, usedCount, vendorId,
+                    Timestamp.from(validFrom.toInstant()), Timestamp.from(validTo.toInstant()), active, budget,
+                    totalDiscountUsed, "SHOP".equals(type) ? "VENDOR" : "PLATFORM");
+        }
+    }
+
     // ===== Sản phẩm =====
 
     public ProductBuilder product(Shop shop) {
