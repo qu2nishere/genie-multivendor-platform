@@ -2547,7 +2547,9 @@ UC-ADM-03 · `MANAGE_USER` · **Màn hình:** tab Tất cả / Khách hàng / Sh
 `{ "reason_code": "ABNORMAL_RETURNS", "note": null, "duration": "P7D" }` — `duration` ∈ `P7D, P30D, null` (vô thời hạn). `200`. Thu hồi mọi phiên; ghi `system_logs ACCOUNT_SUSPENDED`.
 
 #### `POST /admin/users/{id}/reactivate`
-`{ "reason": "Đã xác minh khiếu nại" }` → `200`. `ACCOUNT_REACTIVATED`.
+`{ "reason": "Đã xác minh khiếu nại" }` → `200`. `ACCOUNT_REACTIVATED` (`details.reason` = lý do Admin nhập); gửi email `account-reactivated` cho người dùng sau commit.
+
+**Tự mở khi hết hạn đình chỉ (plan 2026-11-24 D1–D4):** Cron `SuspensionExpiryJob` 5 phút / lần (LLD 10) mở mọi tài khoản `SUSPENDED` có `suspended_until <= now`; đăng nhập (mật khẩu / Google / Zalo) khi đã hết hạn cũng tự mở ngay, không chờ cron. Cả hai ghi `ACCOUNT_REACTIVATED` với `details.reason = "SUSPENSION_EXPIRED"` (cron thêm `details.source = "CRON"` và `details.suspended_until`), người làm = hệ thống; mở bằng cron hoặc thủ công gửi email `account-reactivated`. Khóa vô thời hạn (`suspension.until = null`, trạng thái hiển thị `LOCKED`) không bao giờ tự mở.
 
 ### 11.14 Voucher sàn
 UC-PRO-02 · `MANAGE_VOUCHER` · **Màn hình:** 5 chỉ số (Đang chạy, Lượt dùng hệ thống, Tổng giảm giá đã dùng, Sắp ra mắt, Ngân sách còn lại); tab trạng thái; bảng Mã / Loại / Giá trị / Đơn tối thiểu / Giảm tối đa / Sử dụng / Thời gian / Nhà tài trợ / Trạng thái; Nhân bản / Sửa / Tắt / Huỷ / Xoá vĩnh viễn; modal "Tạo Voucher Sàn"
