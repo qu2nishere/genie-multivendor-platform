@@ -45,6 +45,8 @@ progress là bảng tick + nhật ký có mã commit).
 
 **Plan 2026-11-22 (Nguyễn Ngọc Thiện):** `server-spring/plan_nhat_ky_banner_chi_tiet.md` — banner ghi nhật ký bằng 5 mã `BANNER_CREATED / UPDATED / ACTIVATED / DEACTIVATED / DELETED` (migration `V24__banner_audit_granular_actions.sql`; `BANNER_CHANGED` chỉ còn cho bản ghi cũ); `GET /admin/audit-logs` trả thêm `reference_id`, `user_agent`, `changes` (`AuditChange`); web `AuditLogDetail` (hộp chi tiết) + khóa `admin-system.audit.actions.*`. Migration mới tiếp theo từ `V25`.
 
+**Plan 2026-11-24 (Nguyễn Ngọc Thiện — rà soát làm bù B1 / B2 / B3):** `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` — `auth/profile/application/SuspensionExpiryJob` (cron 5 phút mở đình chỉ hết hạn, `SKIP LOCKED`) + `AccountReactivatedEvent` → email `account-reactivated`; `promotion/voucher/application/PromotionSearchPorts` cài `ShopVoucherAvailability` (cache 60 giây); web: bộ lọc thuộc tính từ `summary.facets.attribute`, ô "Shop có voucher" theo `has_shop_voucher_supported`; Admin danh mục sửa / ẩn / xóa / bộ thuộc tính được ngành mọi cấp (`flattenTree`, `findCategory`); `common/config/ContentEtagHeaderFilter` (ETag `/public/**` bỏ khối `meta` → `304`). Kịch bản: `docs/kiem-thu/kich-ban-2026-11-24-b1-b2-b3.md`.
+
 **Plan đang chạy:** `plan/2026-11-14/auth.md` — phân hệ AUTH (9 UC, task A00–A16, quyết định D2–D22 phải chốt trước — D1 đã đóng; tick task + ghi commit vào mục 10 của file). Tiến độ theo use case toàn hệ thống (87 UC, 5 lớp GD / BE / Test / Nối / Chạy): `docs/document/CHECKLIST_TIEN_DO_UC.md`.
 
 ## 3. Lệnh hay dùng

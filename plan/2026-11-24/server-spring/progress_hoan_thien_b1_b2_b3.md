@@ -7,13 +7,13 @@
 
 | UC | GD | BE | Test | Nối | Chạy | Trạng thái hiện tại | Mục tiêu |
 |---|:---:|:---:|:---:|:---:|:---:|---|---|
-| UC-ADM-03 Khóa / Mở khóa | ☑ | ◐ | ◐ | ☑ | ◐ | 🟡 thiếu cron hết hạn đình chỉ | ✅ |
-| UC-CAT-01 Cây danh mục | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 chưa chạy thật giao diện | ✅ |
-| UC-CAT-14 Danh mục & hoa hồng | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 chưa chạy thật giao diện | ✅ |
-| UC-CAT-15 Bộ thuộc tính | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 chưa chạy thật giao diện | ✅ |
-| UC-CAT-05 Lọc & sắp xếp | ☑ | ◐ | ☑ | ◐ | ◐ | 🟡 thiếu lọc "Shop có voucher", bộ lọc thuộc tính còn mock | ✅ |
+| UC-ADM-03 Khóa / Mở khóa | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai (2026-11-24) | ✅ |
+| UC-CAT-01 Cây danh mục | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai (2026-11-24) | ✅ |
+| UC-CAT-14 Danh mục & hoa hồng | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai (2026-11-24) | ✅ |
+| UC-CAT-15 Bộ thuộc tính | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai (2026-11-24) | ✅ |
+| UC-CAT-05 Lọc & sắp xếp | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai (2026-11-24) | ✅ |
 
-**Tổng quan dự án khi xong:** Đã triển khai 12 → 17 / 87 · Đang triển khai 22 → 17.
+**Tổng quan dự án (đã cập nhật CHECKLIST 2026-11-24):** Đã triển khai 12 → **17** / 87 · Đang triển khai 22 → **17**. Còn mở: H00.06 (push / PR — chờ người dùng).
 
 ## 2. Tiến độ theo giai đoạn
 
@@ -33,7 +33,7 @@
 | H11 | B3: web | 9 | ☑ | `b72b41b` |
 | H12 | B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3) | 3 | ☑ | |
 | H13 | Hồi quy toàn bộ | 4 | ☑ | — |
-| H14 | Đồng bộ tiến độ & đóng plan | 6 | ☐ | |
+| H14 | Đồng bộ tiến độ & đóng plan | 6 | ☑ | (commit này) |
 | H15 | B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật) | 8 | ☑ | `89483df` |
 
 **Tổng:** 82 task (74 + 8 của H15) · 60 kịch bản chạy thật.
@@ -168,12 +168,12 @@
 
 ### H14 — Đồng bộ tiến độ & đóng plan
 
-- [ ] **H14.01** CHECKLIST: tick 5 UC → ✅, Tổng quan 12 → 17, bảng phân hệ, mục 3, nhật ký
-- [ ] **H14.02** Usecase.md, BAO_CAO_UC_DOC_LAP, Excel (sửa XML giữ định dạng)
-- [ ] **H14.03** `b1.md` R06, `b2.md` chạy thật + `CatalogSecurityIT`, progress B3
-- [ ] **H14.04** Chép kịch bản sang `docs/kiem-thu/kich-ban-2026-11-24-b1-b2-b3.md`
-- [ ] **H14.05** `CLAUDE.md` mục 2: dòng *Plan 2026-11-24*
-- [ ] **H14.06** COMMIT `docs: update progress after completing b1, b2 and b3 use cases` + PR từng nhánh
+- [x] **H14.01** CHECKLIST: tick 5 UC → ✅, Tổng quan 12 → 17, bảng phân hệ, mục 3, nhật ký
+- [x] **H14.02** Usecase.md, BAO_CAO_UC_DOC_LAP, Excel (sửa XML giữ định dạng)
+- [x] **H14.03** `b1.md` R06, `b2.md` chạy thật + `CatalogSecurityIT`, progress B3
+- [x] **H14.04** Chép kịch bản sang `docs/kiem-thu/kich-ban-2026-11-24-b1-b2-b3.md`
+- [x] **H14.05** `CLAUDE.md` mục 2: dòng *Plan 2026-11-24*
+- [x] **H14.06** COMMIT `docs: update progress after completing b1, b2 and b3 use cases` (PR từng nhánh: chờ người dùng cho push)
 
 ### H15 — B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật)
 
@@ -304,3 +304,4 @@
 | 2026-11-24 | H13 hồi quy trên nhánh tổng: `./mvnw clean verify` 188 / 321 xanh; `SearchPerformanceIT` p95 51 ms; `npm run verify` 352 test; Playwright 46 pass / 2 skip; chạy lại `catalog-category.http` (28 đúng + 3 dòng script đoán sai định dạng), `catalog-search.http` (40 đúng + 1 dòng script — ca ETag `304` nay **đạt**), kịch bản voucher 12 / 12; dọn dữ liệu thử | — |
 | 2026-11-24 | Theo yêu cầu người dùng, Claude chạy 60 TC bằng Chromium thật (Playwright) trên hệ thống thật: **B1 12/12** (TC-B1-11 sửa kịch bản: khóa nhân viên = đình chỉ vô thời hạn, không phải `LOCKED`), **B2 27/32**, **B3 16/16** (tương phản 9 theme đo được ≥ 14:1). 5 TC B2 không đạt đều do **giao diện Admin**: (1) ngành cấp 2 / 3 không có Sửa / Ẩn / Xóa / Bộ thuộc tính (`CatalogPage` chỉ sửa ngành gốc, `AttributePanel` chỉ tìm `roots`) — TC-B2-17, 21, 22, 32; (2) đổi kiểu dữ liệu thuộc tính: form không khóa ô, lỗi `IMMUTABLE` chỉ hiện thông báo chung — TC-B2-23. API của các ca này đều đúng. Ghi chú thêm: lỗi trùng slug chỉ báo chung (không nêu tên ngành trùng); thanh công cụ `astro dev` đè nút "Áp dụng" ở khổ hẹp (chỉ dev). Trong lúc chạy, bước dọn của script tắt hoa hồng riêng Thể thao / Sách — đã trả lại đúng seed 5 % / 4 % | — |
 | 2026-11-24 | H15 (phát sinh khi chạy thật, người dùng cho sửa): giao diện Admin quản lý được ngành cấp 2 / 3 (dòng `SubRow` có Bộ thuộc tính / Sửa / Xem SP, form sửa / ẩn / xóa mọi cấp), trang Bộ thuộc tính mở cho ngành mọi cấp, ô Kiểu dữ liệu khóa khi sửa + gợi ý, lỗi API theo trường hiện tại ô; mock sửa / xóa mọi cấp; +3 Vitest (rules, mapper). `npm run verify` 349 test (nhánh b2). Chạy lại TC-B2-01 → 32 bằng Chromium: **32 / 32 đạt** (trong lúc chạy Docker Desktop bị sập vì thiếu RAM — khởi động lại, dọn dữ liệu thử, trả hoa hồng mặc định 5 %, Thể thao 5 %, Sách 4 % như seed rồi chạy lại). Tổng 60 / 60 TC đạt | `89483df` |
+| 2026-11-24 | H14 đồng bộ tiến độ: CHECKLIST (5 UC → ✅, Tổng quan 12 → 17 / 22 → 17, phân hệ 02: 10 / 1 / 6, phân hệ 11: 3 / 2 / 3, mục 3 tick R06 / chạy thật B2 / `CatalogSecurityIT` / lọc voucher, nhật ký), Usecase.md (câu *Hiện trạng* 5 UC), BAO_CAO_UC_DOC_LAP (bảng B1 / B2 / B3 + thành viên), Excel (cột *Hiện trạng mã nguồn* 5 UC + sheet Thành viên — sửa XML giữ định dạng), `b1.md` R06, `b2.md` C07 / C08, progress B3, CLAUDE.md mục 2, kịch bản `docs/kiem-thu/kich-ban-2026-11-24-b1-b2-b3.md` (+ README) | (commit này) |
