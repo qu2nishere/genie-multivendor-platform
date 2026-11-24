@@ -61,6 +61,33 @@ class UserTest {
         assertThat(u.isActive()).isTrue();
     }
 
+    /** Biên của cron hết hạn đình chỉ (plan 2026-11-24 H03.04): đúng bằng hạn là mở, xóa lý do / hạn. */
+    @Test
+    void suspensionEndsExactlyAtItsDeadlineAndClearsReason() {
+        User u = customer();
+        u.suspend("ABNORMAL_RETURNS", NOW);
+        assertThat(u.reactivateIfSuspensionExpired(NOW.minusNanos(1))).isFalse();
+        assertThat(u.reactivateIfSuspensionExpired(NOW)).isTrue();
+        assertThat(u.getStatus()).isEqualTo(AccountStatus.ACTIVE);
+        assertThat(u.getSuspensionReason()).isNull();
+        assertThat(u.getSuspendedUntil()).isNull();
+        assertThat(u.reactivateIfSuspensionExpired(NOW.plusDays(1))).isFalse();   // đã mở thì không mở lần nữa
+    }
+
+    @Test
+    void indefiniteSuspensionAndLockedAccountsNeverReopenByThemselves() {
+        User forever = customer();
+        forever.suspend("COUNTERFEIT_SELLER", null);
+        assertThat(forever.reactivateIfSuspensionExpired(NOW.plusYears(10))).isFalse();
+        assertThat(forever.getStatus()).isEqualTo(AccountStatus.SUSPENDED);
+
+        User locked = customer();
+        locked.setStatus(AccountStatus.LOCKED);
+        locked.setSuspendedUntil(NOW.minusDays(1));
+        assertThat(locked.reactivateIfSuspensionExpired(NOW)).isFalse();
+        assertThat(locked.getStatus()).isEqualTo(AccountStatus.LOCKED);
+    }
+
     @Test
     void cannotUnlinkOnlyLoginMethod() {
         User googleOnly = User.newCustomer("g@x.com", null, NOW);
