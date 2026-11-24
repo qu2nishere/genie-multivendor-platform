@@ -25,14 +25,14 @@
 | H03 | B1: backend + test | 9 | ☑ | `8e0e81e`, `a2e02d2` |
 | H04 | B1: chạy thật (kịch bản TC-B1 ở mục 6.1) | 2 | ☐ | |
 | H05 | B2: chuẩn bị | 2 | ☑ | — |
-| H06 | B2: test tự động còn thiếu | 8 | ☑ | `ca20841` |
+| H06 | B2: test tự động còn thiếu | 8 | ☑ | `0259f49` |
 | H07 | B2: tài liệu trước (chỉ khi H06 lộ lệch spec) | 2 | ☑ (không cần) | — |
-| H08 | B3: cổng "shop có voucher" (backend) | 7 | ☑ | `b9ffd83` |
-| H09 | B3: seed (D10) | 3 | ☑ | `2b10dac` |
-| H10 | B3: tài liệu | 5 | ☑ | `d4793b6` |
-| H11 | B3: web | 9 | ◐ (còn H11.07 kiểm 9 theme bằng mắt) | `9559019` |
+| H08 | B3: cổng "shop có voucher" (backend) | 7 | ☑ | `95bc152` |
+| H09 | B3: seed (D10) | 3 | ☑ | `a922955` |
+| H10 | B3: tài liệu | 5 | ☑ | `65a24a8` |
+| H11 | B3: web | 9 | ◐ (còn H11.07 kiểm 9 theme bằng mắt) | `b72b41b` |
 | H12 | B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3) | 3 | ☐ | |
-| H13 | Hồi quy toàn bộ | 4 | ☐ | |
+| H13 | Hồi quy toàn bộ | 4 | ☑ | — |
 | H14 | Đồng bộ tiến độ & đóng plan | 6 | ☐ | |
 
 **Tổng:** 74 task · 60 kịch bản chạy thật.
@@ -160,10 +160,10 @@
 
 ### H13 — Hồi quy toàn bộ
 
-- [ ] **H13.01** `./mvnw clean verify` (JDK 21), ghi số mục 7
-- [ ] **H13.02** `SearchPerformanceIT -Dperf=true` có lọc voucher (p95 không tệ hơn 20 %)
-- [ ] **H13.03** `npm run verify` + `npm run test:e2e`
-- [ ] **H13.04** Chạy lại `catalog-category.http`, `catalog-search.http` (thêm ca `has_shop_voucher`)
+- [x] **H13.01** `./mvnw clean verify` (JDK 21), ghi số mục 7
+- [x] **H13.02** `SearchPerformanceIT -Dperf=true` có lọc voucher (p95 không tệ hơn 20 %)
+- [x] **H13.03** `npm run verify` + `npm run test:e2e`
+- [x] **H13.04** Chạy lại `catalog-category.http`, `catalog-search.http` (thêm ca `has_shop_voucher`)
 
 ### H14 — Đồng bộ tiến độ & đóng plan
 
@@ -280,9 +280,11 @@
 | 2026-11-24 | H02: LLD 10 dòng `SuspensionExpiryJob`, API_SPEC 11.13 *Tự mở khi hết hạn*, Usecase UC-ADM-03 hiện trạng + email, `b1.md` D13 | `ec65c06` |
 | 2026-11-24 | H03: `UserRepository.findSuspensionExpired` (`SKIP LOCKED`), `SuspensionExpiryJob`, `AccountReactivatedEvent`, email `account-reactivated` (cron + Admin mở thủ công; gỡ khóa sai mật khẩu không gửi), `SuspensionExpiryJobIT` 8 test (phủ 11 ca plan; đặt ở package `admin` để dùng `AuditLogTestSupport`), unit `UserTest` + template test. Phát hiện: luồng đăng nhập ghi `ACCOUNT_REACTIVATED` với `user_id` (không `reference_id`) và không khóa dòng → sửa mục Rủi ro của plan | `8e0e81e`, `a2e02d2` |
 | 2026-11-24 | H01 + kiểm cron trên hệ thống thật (Claude, qua API — **chưa phải TC của người dùng**): đăng ký 4 tài khoản bằng OTP Mailpit (id 34–37); `b1.auto` khóa 7 ngày → đăng nhập `403 GNE-AUTH-4031` → dời hạn → 40 giây sau cron mở (log "Đã mở khóa 1 tài khoản…"), `system_logs` `SUSPENSION_EXPIRED · CRON` người làm `system@genie.vn`, Mailpit có thư "Tài khoản Genie Shop của bạn đã được mở lại", đăng nhập lại `201`. H04 (TC-B1 người dùng bấm) chờ | — |
-| 2026-11-24 | H05–H07 (nhánh `feature/b2-catalog-acceptance`): `CatalogSecurityIT` ma trận 7 vai trò × mọi endpoint B2 — **khớp spec**, H07 không cần; `AdminCategoryIT` xóa ngành bị voucher tham chiếu → `IN_USE`; `PublicCategoryIT` ETag → `304`, đổi tên → ETag mới; `CommissionIT` lưu hàng loạt chỉ ghi ngành đổi; `JsonCacheTest` Redis lỗi đọc / ghi / JSON hỏng → đọc nguồn; `catalog-category.http` thêm bước Moderator / Finance / `IN_USE`. Phát hiện cho Khoa: `ACCESS_DENIED` ghi **mọi** lần 403, chưa có giới hạn 1 dòng / người / phút như B1 D14 đề xuất | `ca20841` |
-| 2026-11-24 | H10 (tài liệu trước): API 5.3 quy tắc D5 + cache 60 giây + `has_shop_voucher_supported = true`, mục 14 trang danh mục dùng `facets.attribute`; handoff gạch `attribute-filters`; CLAUDE.md mục 9 (cổng đã cài, khóa cache B5 phải xóa, sửa câu "catalog chưa có backend") | `d4793b6` |
-| 2026-11-24 | H08: `VoucherRepository.findVendorIdsWithActiveShopVoucher`, `PromotionSearchPorts` (cache `JsonCache` 60 giây, Redis lỗi đọc CSDL), `TestDataBuilder.voucher(...)`; `PromotionSearchPortsIT` 7 test (11 ca plan; ca "Redis lỗi" do `JsonCacheTest` của nhánh B2 phủ), `FacetIT` 4 ca voucher (thay test "bị bỏ qua") | `b9ffd83` |
-| 2026-11-24 | H09: seed `SHOEREP30K` / `HOMEOFF10` (tắt) / `BEAUTY20K` (hết lượt); cột `used_count`, `is_active` lấy từ `VALUES` | `2b10dac` |
-| 2026-11-24 | H11: facets có `attribute` (mã + giá trị) và `voucherFilterSupported`; `FilterPanel` ẩn ô voucher khi không hỗ trợ, thêm ô ở trang danh mục (D8); 2 trang bỏ `listAttributeFilters`, dùng facets; xóa mock `attribute-filters` + DTO / mapper / type; `.env.example`, `huong-dan-chay-local.md` bỏ nhóm này | `9559019` |
+| 2026-11-24 | H05–H07 (nhánh `feature/b2-catalog-acceptance`): `CatalogSecurityIT` ma trận 7 vai trò × mọi endpoint B2 — **khớp spec**, H07 không cần; `AdminCategoryIT` xóa ngành bị voucher tham chiếu → `IN_USE`; `PublicCategoryIT` ETag → `304`, đổi tên → ETag mới; `CommissionIT` lưu hàng loạt chỉ ghi ngành đổi; `JsonCacheTest` Redis lỗi đọc / ghi / JSON hỏng → đọc nguồn; `catalog-category.http` thêm bước Moderator / Finance / `IN_USE`. Phát hiện cho Khoa: `ACCESS_DENIED` ghi **mọi** lần 403, chưa có giới hạn 1 dòng / người / phút như B1 D14 đề xuất | `0259f49` |
+| 2026-11-24 | H10 (tài liệu trước): API 5.3 quy tắc D5 + cache 60 giây + `has_shop_voucher_supported = true`, mục 14 trang danh mục dùng `facets.attribute`; handoff gạch `attribute-filters`; CLAUDE.md mục 9 (cổng đã cài, khóa cache B5 phải xóa, sửa câu "catalog chưa có backend") | `65a24a8` |
+| 2026-11-24 | H08: `VoucherRepository.findVendorIdsWithActiveShopVoucher`, `PromotionSearchPorts` (cache `JsonCache` 60 giây, Redis lỗi đọc CSDL), `TestDataBuilder.voucher(...)`; `PromotionSearchPortsIT` 7 test (11 ca plan; ca "Redis lỗi" do `JsonCacheTest` của nhánh B2 phủ), `FacetIT` 4 ca voucher (thay test "bị bỏ qua") | `95bc152` |
+| 2026-11-24 | H09: seed `SHOEREP30K` / `HOMEOFF10` (tắt) / `BEAUTY20K` (hết lượt); cột `used_count`, `is_active` lấy từ `VALUES` | `a922955` |
+| 2026-11-24 | H11: facets có `attribute` (mã + giá trị) và `voucherFilterSupported`; `FilterPanel` ẩn ô voucher khi không hỗ trợ, thêm ô ở trang danh mục (D8); 2 trang bỏ `listAttributeFilters`, dùng facets; xóa mock `attribute-filters` + DTO / mapper / type; `.env.example`, `huong-dan-chay-local.md` bỏ nhóm này | `b72b41b` |
 | 2026-11-24 | Kiểm thật B3 (Claude, API + SSR — **chưa phải TC người dùng**): 12 / 12 đạt — cờ hỗ trợ `true`; lọc voucher chỉ còn TechZone + Shoe Republic (99 sp), không có Home & Living / Beauty Box; voucher + từ khóa + giá tăng dần; `/search`, `/c/dien-tu` có ô voucher, tìm trong shop không có; `/c/dien-tu` nhóm "Bảo hành" lấy từ facets, `attr.warranty=12 tháng` = 43 sp khớp facet | — |
+| 2026-11-24 | Xếp lại nhánh cho thẳng hàng (chưa push nên rebase an toàn): `bugfix/public-etag-304` → `feature/b1-suspension-expiry-job` → `feature/b2-catalog-acceptance` → `feature/b3-shop-voucher-filter`; gỡ xung đột progress một lần, mã commit B2 / B3 đổi (đã thay trong file này). Gộp PR theo đúng thứ tự trên | — |
+| 2026-11-24 | H13 hồi quy trên nhánh tổng: `./mvnw clean verify` 188 / 321 xanh; `SearchPerformanceIT` p95 51 ms; `npm run verify` 352 test; Playwright 46 pass / 2 skip; chạy lại `catalog-category.http` (28 đúng + 3 dòng script đoán sai định dạng), `catalog-search.http` (40 đúng + 1 dòng script — ca ETag `304` nay **đạt**), kịch bản voucher 12 / 12; dọn dữ liệu thử | — |
