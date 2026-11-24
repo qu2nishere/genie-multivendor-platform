@@ -62,4 +62,31 @@ class CommissionIT extends CategoryITSupport {
                 + "\"rate\":5,\"is_enabled\":true}]}"), "$.code")).isEqualTo("GNE-CAT-4041");
         assertThat(status(send("GET", PATH, staffToken("MANAGE_CATALOG"), null))).isEqualTo(403);
     }
+
+    /** UC-CAT-14 bước 8: lưu hàng loạt một lần — mỗi ngành thật sự đổi đúng 1 dòng nhật ký, gửi lại giá trị cũ thì không ghi. */
+    @Test
+    void bulkSaveLogsOnlyTheCategoriesThatChanged() throws Exception {
+        String admin = adminToken();
+        String w = word();
+        long a = createCategory(admin, "Lô A " + w, null);
+        long b = createCategory(admin, "Lô B " + w, null);
+        long c = createCategory(admin, "Lô C " + w, null);
+        send("PATCH", PATH, admin, "{\"categories\":[{\"category_id\":" + c + ",\"rate\":4,\"is_enabled\":true}]}");
+        jdbc.update("DELETE FROM system_logs WHERE action_type = 'COMMISSION_UPDATED'");
+
+        MvcResult r = send("PATCH", PATH, admin, "{\"default_rate\":5.5,\"categories\":["
+                + "{\"category_id\":" + a + ",\"rate\":6,\"is_enabled\":true},"
+                + "{\"category_id\":" + b + ",\"rate\":7,\"is_enabled\":true},"
+                + "{\"category_id\":" + c + ",\"rate\":4,\"is_enabled\":true}]}");
+        assertThat(status(r)).isEqualTo(200);
+
+        for (long id : new long[] {a, b}) {
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'COMMISSION_UPDATED' "
+                    + "AND reference_id = ?", Integer.class, String.valueOf(id))).isEqualTo(1);
+        }
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'COMMISSION_UPDATED' "
+                + "AND reference_id = ?", Integer.class, String.valueOf(c))).isZero();
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'COMMISSION_UPDATED' "
+                + "AND reference_id = 'DEFAULT'", Integer.class)).isEqualTo(1);
+    }
 }

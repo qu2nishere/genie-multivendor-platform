@@ -87,6 +87,39 @@ Authorization: Bearer {{admin}}
 GET {{base}}/admin/categories
 Authorization: Bearer {{cs}}
 
+### 14a. Đăng nhập Moderator (MANAGE_CATALOG, không có UPDATE_COMMISSION) — chép access_token vào @mod
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+### 14b. Đăng nhập Finance (UPDATE_COMMISSION, không có MANAGE_CATALOG) — chép access_token vào @fin
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "linh.tm@genie.example", "password": "Genie@123" }
+
+@mod = <access_token của bước 14a>
+@fin = <access_token của bước 14b>
+
+### 14c. ĐÚNG — Moderator đổi tên ngành → 200 (không đụng hoa hồng)
+PATCH {{base}}/admin/categories/{{childId}}
+Authorization: Bearer {{mod}}
+Content-Type: application/json
+
+{ "name": "Thức ăn cho chó http (sửa)" }
+
+### 14d. LỖI — Moderator đổi hoa hồng → 403 GNE-SEC-4030 (cần UPDATE_COMMISSION; gửi lại đúng giá trị cũ thì 200)
+PATCH {{base}}/admin/categories/{{childId}}
+Authorization: Bearer {{mod}}
+Content-Type: application/json
+
+{ "commission_rate": 7 }
+
+### 14e. LỖI — Finance vào quản lý cây → 403; Finance vào cấu hình hoa hồng → 200 (bước 21 với @fin)
+GET {{base}}/admin/categories
+Authorization: Bearer {{fin}}
+
 # ===================== UC-CAT-15 — bộ thuộc tính =====================
 
 ### 15. ĐÚNG — thêm thuộc tính ENUM cho ngành gốc → 201
@@ -159,6 +192,13 @@ Content-Type: application/json
 ### 25. LỖI — nhân viên thiếu UPDATE_COMMISSION → 403 GNE-SEC-4030
 GET {{base}}/admin/commission-settings
 Authorization: Bearer {{cs}}
+
+### 25a. LỖI — xóa ngành đang được voucher tham chiếu → 409 GNE-CAT-4092, details.reason = IN_USE
+# Chuẩn bị bằng SQL: INSERT INTO voucher_categories (voucher_id, category_id, created_at)
+#                   SELECT id, <childId>, now() FROM vouchers WHERE code = 'TECHZONE5';
+# Thử xong dọn:     DELETE FROM voucher_categories WHERE category_id = <childId>;
+DELETE {{base}}/admin/categories/{{childId}}
+Authorization: Bearer {{admin}}
 
 ### 26. Dọn dẹp — trả mặc định về 5, xóa ngành con rồi ngành gốc (204 khi không còn con / sản phẩm)
 PATCH {{base}}/admin/commission-settings

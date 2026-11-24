@@ -1,6 +1,7 @@
 package com.genie.catalog.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -52,5 +53,25 @@ class PublicCategoryIT extends CategoryITSupport {
         send("PATCH", "/api/v1/admin/categories/" + id, admin, "{\"name\":\"Mới " + w + "\",\"slug\":\"moi-" + w + "\"}");
         List<String> names = read(call("/api/v1/public/categories"), "$.data[?(@.id == " + id + ")].name");
         assertThat(names).containsExactly("Mới " + w);
+    }
+
+    /** API 0.12 + sửa ETag 2026-11-24: gửi lại {@code If-None-Match} → 304; đổi tên ngành → ETag mới (plan 2026-11-24 H06.04). */
+    @Test
+    void etagGives304UntilTheTreeChanges() throws Exception {
+        String admin = adminToken();
+        String w = word();
+        long id = createCategory(admin, "Gốm sứ " + w, null);
+
+        MvcResult first = call("/api/v1/public/categories");
+        String etag = first.getResponse().getHeader("ETag");
+        assertThat(etag).isNotBlank();
+        MvcResult again = mvc.perform(get("/api/v1/public/categories").header("If-None-Match", etag)).andReturn();
+        assertThat(status(again)).isEqualTo(304);
+
+        assertThat(status(send("PATCH", "/api/v1/admin/categories/" + id, admin, "{\"name\":\"Gốm sứ mới " + w + "\"}")))
+                .isEqualTo(200);
+        MvcResult changed = mvc.perform(get("/api/v1/public/categories").header("If-None-Match", etag)).andReturn();
+        assertThat(status(changed)).isEqualTo(200);
+        assertThat(changed.getResponse().getHeader("ETag")).isNotEqualTo(etag);
     }
 }
