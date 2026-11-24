@@ -1,6 +1,7 @@
 import type {
   CatalogProduct,
   CatalogSummary,
+  CategoryBase,
   CategoryAttribute,
   CategoryInput,
   CategoryProposal,
@@ -14,8 +15,22 @@ import type {
   CategoryDto,
   CategoryInputDto,
   InheritedAttributeDto,
+  LeafCategoryDto,
   ProposalDto,
 } from './catalog.dto';
+
+/** Trường chung của ngành cấp 2 / 3; thiếu tỷ lệ thì kế thừa `parentRate`. */
+const toBase = (d: LeafCategoryDto, parentRate: number): CategoryBase => ({
+  id: d.id,
+  name: d.name,
+  slug: d.slug ?? '',
+  icon: d.icon ?? 'package',
+  active: d.is_active ?? true,
+  requiresLicense: d.requires_business_license ?? false,
+  commissionRate: d.commission_rate ?? d.effective_commission_rate ?? parentRate,
+  ownCommission: d.commission_rate !== null && d.commission_rate !== undefined,
+  productCount: d.product_count ?? 0,
+});
 
 export const toRoot = (d: CategoryDto): RootCategory => ({
   id: d.id,
@@ -28,13 +43,10 @@ export const toRoot = (d: CategoryDto): RootCategory => ({
   ownCommission: d.commission_rate !== null && d.commission_rate !== undefined,
   productCount: d.product_count,
   shopCount: d.shop_count,
-  children: d.children.map((s) => ({
-    id: s.id,
-    name: s.name,
-    commissionRate: s.commission_rate ?? s.effective_commission_rate,
-    productCount: s.product_count,
-    children: s.children,
-  })),
+  children: d.children.map((s) => {
+    const sub = toBase(s, d.commission_rate ?? d.effective_commission_rate);
+    return { ...sub, children: s.children.map((l) => toBase(l, sub.commissionRate)) };
+  }),
 });
 
 export const toSummary = (d: CatalogSummaryDto): CatalogSummary => ({

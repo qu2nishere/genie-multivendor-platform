@@ -2,10 +2,12 @@
 // /catalog/:id/attributes: bảng Mã / Tên / Kiểu / Giá trị–Đơn vị / Bắt buộc / Lọc được / Trục biến thể /
 // Trạng thái; Thêm / Sửa (zod: mã ^[a-z][a-z0-9_]*$, ENUM cần giá trị), Ngừng dùng / Dùng lại.
 // Thêm thuộc tính bắt buộc → thông báo shop có 14 ngày bổ sung cho sản phẩm cũ (API grace_period_days).
+// Plan 2026-11-24 H15: mở được cho ngành ở MỌI cấp (bảng kế thừa từ ngành cha); kiểu dữ liệu khóa khi sửa
+// (UC-CAT-15 bước 2 — API trả 422 IMMUTABLE); lỗi theo trường của API hiện tại ô.
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
-import { errorMessage } from '@/shared/api/errors';
+import { errorMessage, isApiError } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { zodResolver } from '@/shared/lib/zodResolver';
@@ -27,7 +29,13 @@ import {
   useSaveAttribute,
   useToggleAttribute,
 } from '../application/useCatalog';
-import { ATTR_TYPES, duplicateCode, needsValues, parseValues } from '../domain/catalog.rules';
+import {
+  ATTR_TYPES,
+  duplicateCode,
+  findCategory,
+  needsValues,
+  parseValues,
+} from '../domain/catalog.rules';
 import { attributeSchema, type AttributeValues } from '../domain/catalog.schema';
 import type { CategoryAttribute } from '../domain/catalog.types';
 
@@ -84,7 +92,8 @@ function AttrModal({
   }, [open, editing, form]);
   const v = form.watch();
   const err = form.formState.errors;
-  const msg = (k?: string) => (k ? t(k) : undefined);
+  /** Khóa i18n của zod thì dịch; câu báo lỗi từ API thì hiện nguyên văn. */
+  const msg = (k?: string) => (k ? (/^[\w-]+(\.[\w-]+)+$/.test(k) ? t(k) : k) : undefined);
   const submit = form.handleSubmit((x) => {
     if (duplicateCode(rows, x.code, editing?.code ?? null)) {
       form.setError('code', { message: 'admin-catalog.attr.err.duplicate' });
@@ -112,7 +121,24 @@ function AttrModal({
           );
           onClose();
         },
-        onError: (e) => toast.error(errorMessage(e, t)),
+        onError: (e) => {
+          const message = errorMessage(e, t);
+          if (isApiError(e)) {
+            const field: Record<string, keyof AttributeValues> = {
+              code: 'code',
+              name: 'name',
+              data_type: 'dataType',
+              values: 'valuesText',
+              unit: 'unit',
+            };
+            for (const fe of e.fieldErrors) {
+              const k = field[fe.field];
+              if (k) form.setError(k, { message: fe.message });
+            }
+            if (e.code === 'GNE-CAT-4095') form.setError('code', { message });
+          }
+          toast.error(message);
+        },
       },
     );
   });
@@ -159,6 +185,9 @@ function AttrModal({
           <Select
             label={t('admin-catalog.attr.type')}
             value={v.dataType}
+            disabled={!!editing}
+            hint={editing ? t('admin-catalog.attr.type_locked') : undefined}
+            error={msg(err.dataType?.message)}
             onChange={(x) => form.setValue('dataType', x, { shouldDirty: true })}
             options={ATTR_TYPES.map((x) => ({ value: x, label: x }))}
           />
@@ -166,6 +195,7 @@ function AttrModal({
             <Input
               label={t('admin-catalog.attr.unit')}
               placeholder={t('admin-catalog.attr.unit_placeholder')}
+              error={msg(err.unit?.message)}
               {...form.register('unit')}
             />
           )}
@@ -203,10 +233,10 @@ export default function AttributePanel() {
   const q = useAttributes(categoryId);
   const toggle = useToggleAttribute();
   const [modal, setModal] = useState<{ editing: CategoryAttribute | null } | null>(null);
-  const cat = tree.data?.roots.find((r) => r.id === categoryId);
+  const cat = tree.data ? findCategory(tree.data.roots, categoryId) : null;
   const back = (
     <Link
-      to={`/catalog?id=${categoryId}`}
+      to={`/catalog?id=${cat?.rootId ?? categoryId}`}
       className="inline-flex items-center gap-1.5 text-sm text-muted no-underline hover:underline mb-3"
     >
       <Icon name="chevron-left" size={16} />

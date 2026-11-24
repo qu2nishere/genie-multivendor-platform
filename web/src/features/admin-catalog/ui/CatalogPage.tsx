@@ -1,6 +1,8 @@
 // Danh mục toàn sàn (prototype admin/Catalog.jsx) — plan G12.21, G12.24: 4 chỉ số, cây danh mục gốc
 // (?id=), chi tiết (Hiển thị, Bộ thuộc tính, Sửa; bảng danh mục con: Sản phẩm / Hoa hồng / Xem SP),
 // "Đề xuất danh mục từ người bán" (Duyệt / Từ chối có lý do), Thêm danh mục.
+// Plan 2026-11-24 H15: mỗi dòng ngành cấp 2 / cấp 3 có Bộ thuộc tính + Sửa (ẩn / xóa trong form) — UC-CAT-14 bước 2, 7,
+// UC-CAT-15 (thuộc tính theo mọi ngành).
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -30,8 +32,14 @@ import {
   useRejectProposal,
   useUpdateCategory,
 } from '../application/useCatalog';
+import { findCategory } from '../domain/catalog.rules';
 import { proposalRejectSchema, type ProposalRejectValues } from '../domain/catalog.schema';
-import type { CategoryProposal, RootCategory } from '../domain/catalog.types';
+import type {
+  CategoryBase,
+  CategoryNode,
+  CategoryProposal,
+  RootCategory,
+} from '../domain/catalog.types';
 import { CatModal } from './CatModal';
 
 const sheet = 'bg-surface-card rounded-lg shadow-sm overflow-hidden';
@@ -170,7 +178,77 @@ function Proposals() {
   );
 }
 
-function Detail({ c, onEdit }: { c: RootCategory; onEdit: () => void }) {
+/** Một dòng ngành cấp 2 / cấp 3: tên (→ sản phẩm), số SP, hoa hồng, Bộ thuộc tính / Sửa / Xem SP. */
+function SubRow({
+  c,
+  depth,
+  onEdit,
+}: {
+  c: CategoryBase;
+  depth: 2 | 3;
+  onEdit: (id: number) => void;
+}) {
+  const { t, locale } = useT();
+  const to = `/catalog/sub/${c.id}/products?name=${encodeURIComponent(c.name)}`;
+  return (
+    <tr className="border-0 border-t border-solid border-line-subtle text-[13px] text-body">
+      <td className={td}>
+        <Link
+          to={to}
+          className={cn(
+            'inline-flex items-center gap-2 font-semibold no-underline hover:underline',
+            depth === 3 && 'ml-[23px] font-medium',
+            c.active ? 'text-blue-600' : 'text-subtle',
+          )}
+        >
+          <Icon
+            name={depth === 3 ? 'arrow-down-right' : 'chevron-right'}
+            size={15}
+            className="text-subtle"
+          />
+          {c.name}
+        </Link>
+        {!c.active && (
+          <Badge variant="outline" className="ml-2">
+            {t('admin-catalog.tree.hidden')}
+          </Badge>
+        )}
+      </td>
+      <td className={cn(td, 'text-right')}>{formatNumber(c.productCount, { locale })}</td>
+      <td className={cn(td, 'text-right')}>
+        <span className="text-xs font-semibold text-brand-600 bg-brand-50 rounded-pill px-2.5 py-0.5">
+          {formatNumber(c.commissionRate, { locale })}%
+        </span>
+      </td>
+      <td className={cn(td, 'text-right')}>
+        <div className="flex gap-1 justify-end">
+          <Link
+            to={`/catalog/${c.id}/attributes`}
+            className={buttonClass({ size: 'sm', variant: 'ghost' })}
+            aria-label={`${t('admin-catalog.detail.attributes')} — ${c.name}`}
+          >
+            <Icon name="sliders-horizontal" size={15} />
+            {t('admin-catalog.detail.attributes')}
+          </Link>
+          <Button
+            size="sm"
+            variant="ghost"
+            iconLeft="pencil"
+            aria-label={`${t('admin-catalog.detail.edit')} — ${c.name}`}
+            onClick={() => onEdit(c.id)}
+          >
+            {t('admin-catalog.detail.edit')}
+          </Button>
+          <Link to={to} className={buttonClass({ size: 'sm', variant: 'ghost' })}>
+            {t('admin-catalog.detail.view_products')}
+          </Link>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+function Detail({ c, onEdit }: { c: RootCategory; onEdit: (id: number) => void }) {
   const { t, locale } = useT();
   const update = useUpdateCategory();
   return (
@@ -218,7 +296,7 @@ function Detail({ c, onEdit }: { c: RootCategory; onEdit: () => void }) {
             <Icon name="sliders-horizontal" size={16} />
             {t('admin-catalog.detail.attributes')}
           </Link>
-          <Button size="sm" variant="outline" iconLeft="pencil" onClick={onEdit}>
+          <Button size="sm" variant="outline" iconLeft="pencil" onClick={() => onEdit(c.id)}>
             {t('admin-catalog.detail.edit')}
           </Button>
         </div>
@@ -241,43 +319,10 @@ function Detail({ c, onEdit }: { c: RootCategory; onEdit: () => void }) {
                 </td>
               </tr>
             )}
-            {c.children.map((s) => {
-              const to = `/catalog/sub/${s.id}/products?name=${encodeURIComponent(s.name)}`;
-              return (
-                <tr
-                  key={s.id}
-                  className="border-0 border-t border-solid border-line-subtle text-[13px] text-body"
-                >
-                  <td className={td}>
-                    <Link
-                      to={to}
-                      className="inline-flex items-center gap-2 font-semibold text-blue-600 no-underline hover:underline"
-                    >
-                      <Icon name="chevron-right" size={15} className="text-subtle" />
-                      {s.name}
-                    </Link>
-                    {s.children.length > 0 && (
-                      <div className="text-xs text-muted ml-[23px] whitespace-normal">
-                        {s.children.map((l) => l.name).join(' · ')}
-                      </div>
-                    )}
-                  </td>
-                  <td className={cn(td, 'text-right')}>
-                    {formatNumber(s.productCount, { locale })}
-                  </td>
-                  <td className={cn(td, 'text-right')}>
-                    <span className="text-xs font-semibold text-brand-600 bg-brand-50 rounded-pill px-2.5 py-0.5">
-                      {formatNumber(s.commissionRate, { locale })}%
-                    </span>
-                  </td>
-                  <td className={cn(td, 'text-right')}>
-                    <Link to={to} className={buttonClass({ size: 'sm', variant: 'ghost' })}>
-                      {t('admin-catalog.detail.view_products')}
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })}
+            {c.children.flatMap((s) => [
+              <SubRow key={s.id} c={s} depth={2} onEdit={onEdit} />,
+              ...s.children.map((l) => <SubRow key={l.id} c={l} depth={3} onEdit={onEdit} />),
+            ])}
           </tbody>
         </table>
       </div>
@@ -289,7 +334,7 @@ export default function CatalogPage() {
   const { t, locale } = useT();
   const q = useCategoryTree();
   const [params, setParams] = useSearchParams();
-  const [modal, setModal] = useState<{ editing: RootCategory | null } | null>(null);
+  const [modal, setModal] = useState<{ editing: CategoryNode | null } | null>(null);
   if (q.isPending) return <Skeleton lines={10} />;
   if (q.isError)
     return (
@@ -397,7 +442,9 @@ export default function CatalogPage() {
         </section>
 
         <div className="flex flex-col gap-[18px] min-w-0">
-          {current && <Detail c={current} onEdit={() => setModal({ editing: current })} />}
+          {current && (
+            <Detail c={current} onEdit={(id) => setModal({ editing: findCategory(roots, id) })} />
+          )}
           <Proposals />
         </div>
       </div>

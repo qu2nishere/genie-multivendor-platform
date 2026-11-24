@@ -4,6 +4,7 @@ import type {
   CatalogProduct,
   CatalogProductTab,
   CategoryAttribute,
+  CategoryNode,
   RootCategory,
 } from './catalog.types';
 
@@ -71,9 +72,33 @@ export function parseValues(text: string): string[] {
   ];
 }
 
-/** Danh mục chỉ xóa được khi không còn sản phẩm và danh mục con (GNE-CAT-4092). */
-export const canDeleteRoot = (c: Pick<RootCategory, 'productCount' | 'children'>): boolean =>
-  c.productCount === 0 && c.children.length === 0;
+/** Xóa được ở mọi cấp khi không còn sản phẩm và ngành con (GNE-CAT-4092; plan 2026-11-24 H15). */
+export const canDeleteCategory = (c: Pick<CategoryNode, 'productCount' | 'childCount'>): boolean =>
+  c.productCount === 0 && c.childCount === 0;
+
+/** Mọi ngành của cây (gốc → cấp 2 → cấp 3) kèm vị trí. */
+export function flattenTree(roots: RootCategory[]): CategoryNode[] {
+  return roots.flatMap((r) => {
+    const { children: subs, shopCount: _s, ...root } = r;
+    return [
+      { ...root, level: 1 as const, parentId: null, rootId: r.id, childCount: subs.length },
+      ...subs.flatMap(({ children: leaves, ...s }) => [
+        { ...s, level: 2 as const, parentId: r.id, rootId: r.id, childCount: leaves.length },
+        ...leaves.map((l) => ({
+          ...l,
+          level: 3 as const,
+          parentId: s.id,
+          rootId: r.id,
+          childCount: 0,
+        })),
+      ]),
+    ];
+  });
+}
+
+/** Tìm một ngành ở bất kỳ cấp nào (trang Bộ thuộc tính, form Sửa ngành con). */
+export const findCategory = (roots: RootCategory[], id: number): CategoryNode | null =>
+  flattenTree(roots).find((c) => c.id === id) ?? null;
 
 /** Danh mục cha chọn được: gốc + cấp 2 (cây tối đa 3 cấp). */
 export function parentOptions(
