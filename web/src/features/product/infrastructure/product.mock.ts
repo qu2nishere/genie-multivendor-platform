@@ -1,12 +1,14 @@
 // Sản phẩm mẫu dạng DTO (prototype data.jsx PRODUCTS + ProductDetail.jsx COLORS / SIZES / SpecsTable /
 // ProductDescription), dựng từ bộ seed chung. Lọc / sắp xếp ở đây mô phỏng việc backend làm.
 import {
+  SEED_ATTR_FILTERS,
   SEED_PRODUCTS,
   SEED_ROOT_CATEGORIES,
   SEED_SHOPS,
   SEED_SUB_CATEGORIES,
 } from '@/shared/api/mock/seed';
 import { productImg } from '@/shared/lib/assets';
+import { slugify } from '@/shared/lib/slug';
 import { BRAND_SPEC_KEY, type ProductQuery } from '../domain/product.types';
 import type { ProductDetailDto, ProductSummaryDto, VariantGroupDto } from './product.dto';
 
@@ -191,10 +193,21 @@ export function queryProducts(q: ProductQuery): SeedProduct[] {
 export const findSeedProduct = (id: number) => SEED_PRODUCTS.find((p) => p.id === id);
 
 /** Thương hiệu / nơi bán có trong tập (prototype brandList, placeList: lấy trước khi lọc). */
-export function facetsOf(list: SeedProduct[]) {
+export function facetsOf(list: SeedProduct[], categoryId?: number) {
   return {
     brands: Array.from(new Set(list.map((p) => p.brand))),
     locations: Array.from(new Set(list.map((p) => shopOf(p.shop_id).location))),
+    attribute: categoryId ? mockAttributeOf(categoryId) : null,
+    /** Mock lọc được "Shop có voucher" theo SHOPS_WITH_VOUCHER — như backend đã cài cổng promotion. */
+    voucherFilterSupported: true,
     total: list.length,
   };
+}
+
+/** Thuộc tính lọc mẫu của một danh mục gốc (như `summary.facets.attribute` của API 5.3). */
+export function mockAttributeOf(categoryId: number) {
+  const a = SEED_ATTR_FILTERS.find((x) => x.category_id === categoryId);
+  return a
+    ? { code: slugify(a.name).replace(/-/g, '_'), name: a.name, values: [...a.values] }
+    : null;
 }

@@ -132,7 +132,7 @@ Chức năng **chưa có cờ** (giỏ hàng, thanh toán, đơn hàng, chat, đ
 | `catalog` `product` `search` `shop` | Cây danh mục, sản phẩm, tìm kiếm, trang shop | ✅ |
 | `admin-catalog` `commission` | Quản lý danh mục, thuộc tính, hoa hồng (Admin) | ✅ |
 | `pickup` `vacation` `seller-search` | Kho lấy hàng GHN, chế độ nghỉ, tìm trong Seller Center | ❌ chưa có — **đừng thêm** |
-| `catalog-proposals` `catalog-products` `attribute-filters` | Duyệt đề xuất danh mục, kiểm duyệt sản phẩm, bộ lọc thuộc tính | ❌ chưa có — **đừng thêm** |
+| `catalog-proposals` `catalog-products` | Duyệt đề xuất danh mục, kiểm duyệt sản phẩm (bộ lọc thuộc tính ngành đã chạy thật qua nhóm `product` — không còn nhóm `attribute-filters`) | ❌ chưa có — **đừng thêm** |
 
 Đổi `web/.env` xong phải **tắt và chạy lại** `npm run dev`. Kiểm tra một màn đang dùng gì: DevTools → Network, thấy request `localhost:8080/api/v1/...` là dữ liệu thật.
 

@@ -149,5 +149,13 @@ export const fromFacetsDto = (
 ): ProductFacets => ({
   brands: (f?.brands ?? []).map((b) => b.name),
   locations: (f?.locations ?? []).map((l) => l.name),
+  attribute: f?.attribute
+    ? {
+        code: f.attribute.code,
+        name: f.attribute.name,
+        values: f.attribute.values.map((v) => v.value),
+      }
+    : null,
+  voucherFilterSupported: f?.has_shop_voucher_supported ?? false,
   total,
 });

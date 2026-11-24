@@ -29,9 +29,3 @@ export interface CategoryHeaderDto {
   children: { id: number; name: string; slug: string }[];
   product_count: number;
 }
-
-export interface AttributeFilterDto {
-  category_id: number;
-  name: string;
-  values: readonly string[];
-}

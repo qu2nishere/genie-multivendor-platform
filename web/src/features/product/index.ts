@@ -4,6 +4,7 @@ export type {
   ProductSummary,
   ProductQuery,
   ProductFacets,
+  FacetAttribute,
   ProductSort,
   ProductBadge,
   ProductSpec,
