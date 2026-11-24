@@ -905,7 +905,7 @@ UC-CAT-02, UC-CAT-05, UC-CAT-16 · **Màn hình:** Kết quả tìm kiếm (toà
 | `rating_min` | int | 3, 4, 5 |
 | `is_mall` | bool | "Shop Chính Hãng" |
 | `free_shipping` | bool | "Miễn phí vận chuyển" |
-| `has_shop_voucher` | bool | "Shop có voucher" |
+| `has_shop_voucher` | bool | "Shop có voucher" — shop có ít nhất một voucher `SHOP` đang dùng được: `is_active`, `valid_from ≤ now < valid_to`, `used_count < usage_limit`, chưa hết ngân sách (`budget` NULL hoặc `total_discount_used < budget`); voucher `PLATFORM` / `FREESHIP` không tính, không xét đơn tối thiểu (plan 2026-11-24 D5). Danh sách shop cache 60 giây → voucher mới / vừa hết hạn phản ánh trong ≤ 60 giây (D6) |
 | `attr.{code}` | string[] | Lọc thuộc tính có `is_filterable` — chỉ khi đã chọn đúng 1 danh mục, vd. `attr.warranty=12 tháng` |
 | `discount_min` | int | % giảm tối thiểu (trang chiến dịch cấu hình ở frontend) |
 | `sort` | enum | `RELEVANCE` (mặc định khi có `q`), `NEWEST`, `BEST_SELLING`, `PRICE_ASC`, `PRICE_DESC` |
@@ -923,7 +923,7 @@ UC-CAT-02, UC-CAT-05, UC-CAT-16 · **Màn hình:** Kết quả tìm kiếm (toà
 }
 ```
 `facets.attribute` = `null` khi chưa chọn đúng một danh mục.
-- `facets.attribute` = thuộc tính `is_filterable` đầu tiên (theo `display_order`) của danh mục đang chọn; `facets.has_shop_voucher_supported = false` khi chưa có voucher shop (bộ lọc `has_shop_voucher` bị bỏ qua).
+- `facets.attribute` = thuộc tính `is_filterable` đầu tiên (theo `display_order`) của danh mục đang chọn; `facets.has_shop_voucher_supported = false` khi chưa có voucher shop (bộ lọc `has_shop_voucher` bị bỏ qua). **Hiện thực 2026-11-24:** module promotion đã cài cổng → luôn `true`; không shop nào có voucher thì lọc ra 0 sản phẩm. Web chỉ hiện ô "Shop có voucher" khi cờ này `true` (D7).
 - Facet đếm theo kiểu *disjunctive* (facet thương hiệu không áp chính bộ lọc thương hiệu); khi từ khóa phải bù gõ sai (tầng trigram) thì facet đếm trên đúng tập kết quả.
 - `original_price` = `base_price` khi lớn hơn giá thấp nhất của SKU, ngược lại `null`; `discount_min` lọc theo công thức này.
 - Tìm theo chữ: full-text tiền tố (`tsvector` có trọng số + `unaccent`), dưới 5 kết quả thì bù bằng trigram `word_similarity ≥ 0,4` (ngưỡng 0,4 — đo 2026-11-19: lỗi gõ thật ≥ 0,42, mức 0,30 là khớp nhầm "ao thun" ↔ "…thể thao…"); `sort` khác `RELEVANCE` vẫn áp lên tập kết quả này. "Xu hướng" (5.4b) gộp biến thể chỉ khác dấu, hiển thị bản có dấu. Trang tối đa 100, `size` tối đa 60.
@@ -2784,7 +2784,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | Khung chung (header, chuông, mini cart, chat nổi) | `GET /me`, `GET /me/wishlist/product-ids`, `GET /me/following/shop-ids`, `GET /public/categories`; hover: `GET /me/notifications?limit=5`, `GET /me/cart/items?limit=5`; bấm vào ô tìm: `GET /public/search/trending`; gõ tìm: `GET /public/search/suggestions`; WS |
 | Trang chủ | `GET /public/banners?positions=HOME_TOP_CAROUSEL,HOME_TOP_SIDE,HOME_MIDDLE,FLASH_SALE_TOP,POPUP`, `GET /public/recommendations?size=36`, `GET /public/flash-sales/current?limit=6`, `GET /public/vouchers?featured=true&limit=4`, `GET /public/shops?featured=true&limit=6`, `POST /public/banner-events` |
 | Gợi ý hôm nay | `GET /public/recommendations?page=2&size=30` |
-| Trang danh mục | `GET /public/categories/{slug}`, `GET /public/banners?positions=CATEGORY_TOP&category_id=`, `GET /public/products?category_id=&include_facets=true` |
+| Trang danh mục | `GET /public/categories/{slug}`, `GET /public/banners?positions=CATEGORY_TOP&category_id=`, `GET /public/products?category_id=&include_facets=true` (bộ lọc thuộc tính ngành lấy từ `summary.facets.attribute` — không có endpoint `attribute-filters` riêng, plan 2026-11-24 D9; ô "Shop có voucher" theo D8) |
 | Tìm kiếm (toàn sàn / trong shop) | `GET /public/products?q=&include_facets=true[&shop_id=]`; rỗng: `GET /public/products?sort=BEST_SELLING&size=5` |
 | Trang Shop | `GET /public/shops/{id}`, `GET /public/vouchers?shop_id=`, `GET /public/products?shop_id=&sort=`, `PUT/DELETE /me/following/{id}`, `POST /me/vouchers`, `POST /me/conversations` |
 | Chi tiết sản phẩm | `GET /public/products/{id}`, `POST /public/products/{id}/views`, `GET /public/products/{id}/reviews`, `GET /public/products/{id}/similar`, `POST /me/cart/items`, `PUT/DELETE /me/wishlist/{id}`, `PUT/DELETE /me/following/{shop_id}`, `PUT/DELETE /reviews/{id}/helpful-vote`, `POST /reviews/{id}/reports` |
