@@ -31,11 +31,12 @@
 | H09 | B3: seed (D10) | 3 | ☑ | `a922955` |
 | H10 | B3: tài liệu | 5 | ☑ | `65a24a8` |
 | H11 | B3: web | 9 | ☑ | `b72b41b` |
-| H12 | B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3) | 3 | ◐ (B2 còn 5 TC do giao diện) | |
+| H12 | B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3) | 3 | ☑ | |
 | H13 | Hồi quy toàn bộ | 4 | ☑ | — |
 | H14 | Đồng bộ tiến độ & đóng plan | 6 | ☐ | |
+| H15 | B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật) | 8 | ☑ | `89483df` |
 
-**Tổng:** 74 task · 60 kịch bản chạy thật.
+**Tổng:** 82 task (74 + 8 của H15) · 60 kịch bản chạy thật.
 
 ## 3. Quyết định (chép kết quả từ plan mục 2)
 
@@ -156,7 +157,7 @@
 
 - [x] **H12.01** Chạy TC-B2-01 → TC-B2-32 (người dùng tự bấm), ghi mục 5
 - [x] **H12.02** Chạy TC-B3-01 → TC-B3-16, ghi mục 5
-- [ ] **H12.03** Lỗi phát sinh → sửa + test hồi quy + chạy lại TC, commit `fix(...)` riêng — **còn 5 TC B2 không đạt do giao diện** (TC-B2-17, 21, 22, 23, 32: chưa sửa / xóa / cấu hình thuộc tính được ngành con; lỗi đổi kiểu dữ liệu không hiện tại ô) — chờ người dùng / Khoa chốt có sửa trong plan này không
+- [x] **H12.03** Lỗi phát sinh → sửa ở **H15** (giao diện Admin ngành con + khóa kiểu dữ liệu), chạy lại 32 / 32 TC-B2 đạt
 
 ### H13 — Hồi quy toàn bộ
 
@@ -174,9 +175,20 @@
 - [ ] **H14.05** `CLAUDE.md` mục 2: dòng *Plan 2026-11-24*
 - [ ] **H14.06** COMMIT `docs: update progress after completing b1, b2 and b3 use cases` + PR từng nhánh
 
+### H15 — B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật)
+
+- [x] **H15.01** Domain: `CategoryBase`, `CategoryNode`, `flattenTree`, `findCategory`, `canDeleteCategory`
+- [x] **H15.02** DTO / mapper ngành cấp 2 / 3 + mock sửa / xóa mọi cấp
+- [x] **H15.03** `CatalogPage`: dòng cấp 2 / 3 có Bộ thuộc tính / Sửa / Xem SP, nhãn "Ẩn"
+- [x] **H15.04** `CatModal`: sửa / ẩn / xóa ngành mọi cấp, lỗi API hiện tại ô
+- [x] **H15.05** `AttributePanel`: ngành mọi cấp, khóa Kiểu dữ liệu khi sửa, lỗi API tại ô
+- [x] **H15.06** Test Vitest (rules + mapper) + `npm run verify`
+- [x] **H15.07** COMMIT `feat(admin-ui): manage sub-categories and lock attribute data type`
+- [x] **H15.08** Chạy lại TC-B2-01 → 32 trên trình duyệt thật — 32 / 32 đạt
+
 ## 5. Kết quả chạy thật
 
-> **Cách chạy (2026-11-24):** theo yêu cầu người dùng, Claude chạy toàn bộ 60 TC bằng **Chromium thật điều khiển qua Playwright** trên hệ thống thật (web `localhost:4321` + backend `8080` nhánh `feature/b3-shop-voucher-filter` + Postgres + Redis + Mailpit), đăng nhập qua màn `/auth/login` như người dùng, đối chiếu thêm CSDL / API; ảnh chụp ở scratchpad `ui/shots/`. Đây **không phải người bấm tay** — Khoa / Quân nên bấm lại vài ca chính trước khi gộp. Kết quả: **B1 12/12 · B2 27/32 · B3 16/16**.
+> **Cách chạy (2026-11-24):** theo yêu cầu người dùng, Claude chạy toàn bộ 60 TC bằng **Chromium thật điều khiển qua Playwright** trên hệ thống thật (web `localhost:4321` + backend `8080` nhánh `feature/b3-shop-voucher-filter` + Postgres + Redis + Mailpit), đăng nhập qua màn `/auth/login` như người dùng, đối chiếu thêm CSDL / API; ảnh chụp ở scratchpad `ui/shots/`. Đây **không phải người bấm tay** — Khoa / Quân nên bấm lại vài ca chính trước khi gộp. Kết quả lần đầu: **B1 12/12 · B2 27/32 · B3 16/16**; sau H15 (sửa giao diện) chạy lại B2 → **32/32** — tổng **60/60 đạt**.
 
 ### B1 · UC-ADM-03
 
@@ -213,15 +225,15 @@
 | TC-B2-12 | Sửa hoa hồng = 12, rồi 3 | Đạt | 2026-11-24 | 12 % và 3 % bị chặn ngay trên form (không gửi API); CSDL giữ 6 % |
 | TC-B2-13 | Sửa "Thú cưng thử": chọn cha = chính ngành con của nó | Đạt | 2026-11-24 | Form sửa ngành gốc không có ô "Danh mục cha" → không tạo được vòng trên giao diện (API `422 CYCLE` đã kiểm ở `.http` + IT) |
 | TC-B2-14 | Bật công tắc "Ngành cần giấy tờ" → Lưu → mở lại | Đạt | 2026-11-24 | Bật "Ngành cần giấy tờ" → mở lại vẫn bật; CSDL `true` |
-| TC-B2-15 | Ẩn "Thú cưng thử" → tải lại storefront | Đạt | 2026-11-24 | Ẩn → cả nhánh 3 cấp biến mất khỏi header + cây, `/c/thu-cung-thu` 404; hiện lại → đủ, 200 |
+| TC-B2-15 | Ẩn "Thú cưng thử" → tải lại storefront | Đạt | 2026-11-24 | Ẩn ngành gốc → cả nhánh 3 cấp biến mất khỏi header + cây, `/c/thu-cung-thu` 404; hiện lại → đủ, 200. **Sau H15:** ẩn riêng ngành con qua nút "Sửa" của dòng → chỉ nhánh con mất khỏi cây công khai, dòng có nhãn "Ẩn"; hiện lại được |
 | TC-B2-16 | Xóa "Thú cưng thử" (còn con) | Đạt | 2026-11-24 | Nút "Xóa" bị khóa sẵn, chú thích "Chỉ xóa được khi không còn sản phẩm và danh mục con" (chặn trước, không tới hộp xác nhận); API `409 HAS_CHILDREN`. Ngành rỗng thì có hộp "Hành động này không thể hoàn tác" (TC-B2-32) |
-| TC-B2-17 | SQL (d) cho voucher tham chiếu ngành cấp 3 → xóa ngành đó | **Không đạt** | 2026-11-24 | **Giao diện thiếu**: dòng ngành con chỉ có link tên + "Xem SP" — không xóa được ngành con / cấp 3. API đúng: `409 IN_USE`, gỡ voucher → 204 |
+| TC-B2-17 | SQL (d) cho voucher tham chiếu ngành cấp 3 → xóa ngành đó | Đạt | 2026-11-24 | **Sau H15:** dòng cấp 3 có "Sửa" → "Xóa" → hộp "Hành động này không thể hoàn tác" → `409 IN_USE`; gỡ liên kết voucher → xóa được 204. *(Lần chạy đầu: Không đạt — giao diện chưa có thao tác cho ngành con)* |
 | TC-B2-18 | Xóa "Điện tử" (có sản phẩm) — chỉ bấm, ngành sẽ không bị xóa | Đạt | 2026-11-24 | Nút "Xóa" của "Điện tử" bị khóa (còn con / sản phẩm); ngành vẫn còn |
 | TC-B2-19 | Ngành "Thú cưng thử": thêm `pet_size` "Kích cỡ thú cưng", ENUM [Nhỏ, Vừa, Lớn], lọc được, trục biến thể | Đạt | 2026-11-24 | `pet_size` ENUM [Nhỏ, Vừa, Lớn], lọc được, trục biến thể — CSDL đúng |
 | TC-B2-20 | Thêm `weight` NUMBER đơn vị `kg`; thêm `flavor` ENUM không có giá trị; thêm `note` TEXT có đơn vị | Đạt | 2026-11-24 | `weight` NUMBER kg lưu được; ENUM không giá trị bị chặn trên form; TEXT không có ô đơn vị (giao diện không cho nhập) |
-| TC-B2-21 | Mở bộ thuộc tính của ngành con (bảng kế thừa) | **Không đạt** | 2026-11-24 | **Giao diện thiếu**: `/admin/catalog/<id ngành con>/attributes` báo "Không tìm thấy danh mục" (`AttributePanel` chỉ tìm ngành gốc), không có nút "Bộ thuộc tính" ở dòng con. API đúng: `inherited` có `pet_size` |
-| TC-B2-22 | Ngành con thêm mã `pet_size` | **Không đạt** | 2026-11-24 | **Giao diện thiếu** (như TC-B2-21). API đúng: `409 GNE-CAT-4095` |
-| TC-B2-23 | Sửa `pet_size`: thử đổi kiểu dữ liệu | **Không đạt** | 2026-11-24 | **Giao diện**: form sửa vẫn cho chọn kiểu dữ liệu khác; lưu → API `422 IMMUTABLE` "Không đổi được kiểu dữ liệu — hãy ngừng dùng và tạo mã mới" nhưng màn chỉ hiện "Dữ liệu chưa hợp lệ, vui lòng kiểm tra các ô được đánh dấu.", ô không bị đánh dấu. CSDL giữ ENUM (không hỏng dữ liệu) |
+| TC-B2-21 | Mở bộ thuộc tính của ngành con (bảng kế thừa) | Đạt | 2026-11-24 | **Sau H15:** nút "Bộ thuộc tính" trên dòng ngành con mở trang "Bộ thuộc tính — Thức ăn cho chó thử", bảng kế thừa (chỉ đọc) có `pet_size` từ "Thú cưng thử". *(Lần đầu: "Không tìm thấy danh mục")* |
+| TC-B2-22 | Ngành con thêm mã `pet_size` | Đạt | 2026-11-24 | **Sau H15:** thêm mã `pet_size` ở ngành con → form chặn ngay (so cả thuộc tính kế thừa), ô Mã báo "Mã này đã có trong ngành này"; gọi thẳng API → `409 GNE-CAT-4095` |
+| TC-B2-23 | Sửa `pet_size`: thử đổi kiểu dữ liệu | Đạt | 2026-11-24 | **Sau H15:** ô "Kiểu dữ liệu" bị khóa khi sửa, gợi ý "Không đổi được kiểu dữ liệu sau khi tạo — muốn đổi thì ngừng dùng và tạo mã mới."; API vẫn chặn `422 IMMUTABLE` |
 | TC-B2-24 | Bật bắt buộc cho `pet_size` (ngành chưa có sản phẩm) | Đạt | 2026-11-24 | Bật bắt buộc → 200, không có thông báo ân hạn |
 | TC-B2-25 | Ngành `dien-tu` (có sản phẩm): thêm thuộc tính thử `b2_test` TEXT bắt buộc | Đạt | 2026-11-24 | `grace_period_days = 14`, màn "Shop có 14 ngày bổ sung thuộc tính bắt buộc cho sản phẩm cũ"; `/c/dien-tu` vẫn 200 |
 | TC-B2-26 | Ngừng dùng `b2_test` | Đạt | 2026-11-24 | Ngừng dùng → "Ngừng dùng · Dùng lại", CSDL `is_active` / `is_required` false; đã dọn |
@@ -230,7 +242,7 @@
 | TC-B2-29 | Đăng nhập Finance `linh.tm` | Đạt | 2026-11-24 | Finance: có "Cấu hình hoa hồng", không có Danh mục; `/admin/catalog` → không có quyền |
 | TC-B2-30 | Đăng nhập CS `truc.ht` → gõ cả 2 URL | Đạt | 2026-11-24 | CS: không có cả 2 menu; cả 2 URL → không có quyền |
 | TC-B2-31 | `/seller/products/new` → ô chọn danh mục | Đạt | 2026-11-24 | Ô chọn danh mục gọi API thật `/public/categories`, có "Thú cưng thử" |
-| TC-B2-32 | Dọn dữ liệu: xóa cấp 3 → cấp 2 → "Thú cưng thử" | **Không đạt** | 2026-11-24 | **Giao diện thiếu** (như TC-B2-17): xóa ngành con phải gọi API; xóa ngành gốc rỗng qua giao diện (hộp "không thể hoàn tác") 204, storefront 404, đã sạch dữ liệu thử |
+| TC-B2-32 | Dọn dữ liệu: xóa cấp 3 → cấp 2 → "Thú cưng thử" | Đạt | 2026-11-24 | **Sau H15:** dọn hoàn toàn qua giao diện từng cấp (ngành cùng tên dưới "Sách", cấp 2 → gốc) — mọi lệnh xóa 204; storefront 404, sạch dữ liệu thử |
 
 ### B3 · UC-CAT-05
 
@@ -291,3 +303,4 @@
 | 2026-11-24 | Xếp lại nhánh cho thẳng hàng (chưa push nên rebase an toàn): `bugfix/public-etag-304` → `feature/b1-suspension-expiry-job` → `feature/b2-catalog-acceptance` → `feature/b3-shop-voucher-filter`; gỡ xung đột progress một lần, mã commit B2 / B3 đổi (đã thay trong file này). Gộp PR theo đúng thứ tự trên | — |
 | 2026-11-24 | H13 hồi quy trên nhánh tổng: `./mvnw clean verify` 188 / 321 xanh; `SearchPerformanceIT` p95 51 ms; `npm run verify` 352 test; Playwright 46 pass / 2 skip; chạy lại `catalog-category.http` (28 đúng + 3 dòng script đoán sai định dạng), `catalog-search.http` (40 đúng + 1 dòng script — ca ETag `304` nay **đạt**), kịch bản voucher 12 / 12; dọn dữ liệu thử | — |
 | 2026-11-24 | Theo yêu cầu người dùng, Claude chạy 60 TC bằng Chromium thật (Playwright) trên hệ thống thật: **B1 12/12** (TC-B1-11 sửa kịch bản: khóa nhân viên = đình chỉ vô thời hạn, không phải `LOCKED`), **B2 27/32**, **B3 16/16** (tương phản 9 theme đo được ≥ 14:1). 5 TC B2 không đạt đều do **giao diện Admin**: (1) ngành cấp 2 / 3 không có Sửa / Ẩn / Xóa / Bộ thuộc tính (`CatalogPage` chỉ sửa ngành gốc, `AttributePanel` chỉ tìm `roots`) — TC-B2-17, 21, 22, 32; (2) đổi kiểu dữ liệu thuộc tính: form không khóa ô, lỗi `IMMUTABLE` chỉ hiện thông báo chung — TC-B2-23. API của các ca này đều đúng. Ghi chú thêm: lỗi trùng slug chỉ báo chung (không nêu tên ngành trùng); thanh công cụ `astro dev` đè nút "Áp dụng" ở khổ hẹp (chỉ dev). Trong lúc chạy, bước dọn của script tắt hoa hồng riêng Thể thao / Sách — đã trả lại đúng seed 5 % / 4 % | — |
+| 2026-11-24 | H15 (phát sinh khi chạy thật, người dùng cho sửa): giao diện Admin quản lý được ngành cấp 2 / 3 (dòng `SubRow` có Bộ thuộc tính / Sửa / Xem SP, form sửa / ẩn / xóa mọi cấp), trang Bộ thuộc tính mở cho ngành mọi cấp, ô Kiểu dữ liệu khóa khi sửa + gợi ý, lỗi API theo trường hiện tại ô; mock sửa / xóa mọi cấp; +3 Vitest (rules, mapper). `npm run verify` 349 test (nhánh b2). Chạy lại TC-B2-01 → 32 bằng Chromium: **32 / 32 đạt** (trong lúc chạy Docker Desktop bị sập vì thiếu RAM — khởi động lại, dọn dữ liệu thử, trả hoa hồng mặc định 5 %, Thể thao 5 %, Sách 4 % như seed rồi chạy lại). Tổng 60 / 60 TC đạt | `89483df` |

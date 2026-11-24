@@ -312,6 +312,19 @@ docs/ … (H02, H07, H10, H14 — liệt kê ở từng task)
 
 ---
 
+### H15 — B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật 2026-11-24)
+
+> Chạy thật lộ 5 TC B2 không đạt do **giao diện** (API đều đúng): ngành cấp 2 / 3 không có Sửa / Ẩn / Xóa / Bộ thuộc tính (`CatalogPage` chỉ sửa ngành gốc; `AttributePanel` chỉ tìm trong `roots` → "Không tìm thấy danh mục") — TC-B2-17, 21, 22, 32; đổi kiểu dữ liệu thuộc tính: form không khóa ô, lỗi `422 IMMUTABLE` chỉ hiện thông báo chung — TC-B2-23. Căn cứ: Usecase UC-CAT-14 bước 2, 7 (sửa / ẩn / xóa mọi danh mục), UC-CAT-15 bước 1–2 (thuộc tính theo mọi ngành, bảng kế thừa, kiểu dữ liệu không đổi được). Không đổi API / CSDL — backend đã trả đủ trường cho mọi cấp (`AdminCategoryView`), web chỉ ánh xạ thiếu.
+
+- **[H15.01]** Domain: `CategoryBase` (trường chung mọi cấp), `SubCategory` / `LeafCategory` đủ slug, icon, hiển thị, giấy tờ, hoa hồng riêng / kế thừa, số sản phẩm; `CategoryNode` (+ `level`, `parentId`, `rootId`, `childCount`); `flattenTree`, `findCategory`, `canDeleteCategory` (thay `canDeleteRoot`).
+- **[H15.02]** DTO / mapper: `SubCategoryDto`, `LeafCategoryDto` (trường của backend; mock thiếu thì mặc định, hoa hồng kế thừa ngành cha); mock sửa / xóa được ngành ở mọi cấp (`mapTree`, kiểm slug trùng toàn cây).
+- **[H15.03]** `CatalogPage`: dòng `SubRow` cho cấp 2 và cấp 3 (thụt lề), mỗi dòng có **Bộ thuộc tính**, **Sửa**, **Xem SP**, nhãn "Ẩn" khi ngành đang ẩn; nút Sửa mở `CatModal` với đúng ngành (`findCategory`).
+- **[H15.04]** `CatModal`: nhận `CategoryNode` (mọi cấp); Xóa theo `canDeleteCategory`; lỗi theo trường của API (`errors[].field`, `GNE-CAT-4091 details.field`) hiện tại ô.
+- **[H15.05]** `AttributePanel`: tìm ngành ở mọi cấp, "Quay lại" về đúng ngành gốc của nhánh; ô **Kiểu dữ liệu khóa khi sửa** + gợi ý `admin-catalog.attr.type_locked`; lỗi API theo trường (`data_type`, `values`, `code`, `GNE-CAT-4095`) hiện tại ô; cột "Ngành gốc" của bảng kế thừa → "Kế thừa từ" (cấp 3 kế thừa cả cấp 2).
+- **[H15.06]** Test: `catalog.rules.test.ts` (xóa được ở mọi cấp, dàn phẳng / tìm ngành 3 cấp), `catalog.mapper.test.ts` (trường ngành con, mặc định khi mock thiếu); `npm run verify`.
+- **[H15.07]** COMMIT `feat(admin-ui): manage sub-categories and lock attribute data type` (nhánh `feature/b2-catalog-acceptance`, rebase `feature/b3-shop-voucher-filter` lên trên).
+- **[H15.08]** Chạy lại TC-B2-01 → 32 trên trình duyệt thật — 32 / 32 đạt; ghi progress mục 5.
+
 ## 6. Kịch bản kiểm thử thủ công (chạy thật)
 
 > Môi trường H00.07. Mật khẩu mọi tài khoản seed: `Genie@123`. Mỗi dòng ghi Đạt / Không đạt vào progress. SQL chạy bằng `docker exec -it genie-local-postgres-1 psql -U genie -d genie`.
