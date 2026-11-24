@@ -849,6 +849,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 | Điểm hết hạn | Hằng ngày 00:15 (giờ VN) | Lô Điểm quá 12 tháng còn dư → một dòng `EXPIRED` âm / lô (`FOR UPDATE SKIP LOCKED`, chạy lại không trừ thêm) | PRO-09 |
 | Hết hạn Điểm | Hằng ngày | Trừ lô quá 12 tháng | PRO-09 |
 | Kết thúc chế độ nghỉ | Hằng giờ | Tới `vacationEndsAt` → mở bán | VND-19 |
+| Hết hạn đình chỉ (`SuspensionExpiryJob`) | 5 phút (chạy lần đầu sau 1 phút) | `SUSPENDED` có `suspended_until <= now` → `ACTIVE`, xóa lý do / hạn (`User.reactivateIfSuspensionExpired`), `ACCOUNT_REACTIVATED` (`details.reason = SUSPENSION_EXPIRED`, `source = CRON`, người làm = hệ thống), email `account-reactivated` sau commit; lô 100 (`FOR UPDATE SKIP LOCKED`), mỗi lô 1 transaction, tối đa 1.000 / lượt. Không đụng `LOCKED`, đình chỉ vô thời hạn, `ANONYMIZED` / `DELETED`. Đăng nhập khi đã hết hạn cũng tự mở (lưới an toàn) | ADM-03 |
 | Ẩn danh hóa tài khoản (`AnonymizeAccountsJob`, **đã hiện thực**) | 02:30 hằng ngày (giờ VN) | Yêu cầu xóa quá 30 ngày → ẩn danh user + hồ sơ, xóa mềm địa chỉ, thu hồi phiên, `PII_ANONYMIZED`; tối đa 1.000 tài khoản / lượt, mỗi tài khoản 1 transaction; xóa ảnh đại diện Silo sau commit | AUTH-10 |
 | Dọn refresh token (`RefreshTokenCleanupJob`, **đã hiện thực**) | 03:00 hằng ngày | Xóa token hết hạn / đã thu hồi quá 90 ngày (giữ 90 ngày cho phát hiện thiết bị lạ) | AUTH-02, AUTH-11 |
 | Tính chỉ số shop | Hằng giờ | Điểm đánh giá, tỉ lệ phản hồi chat | CAT-16 |

@@ -2603,11 +2603,11 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   6. Ghi nhật ký kiểm toán `ACCOUNT_LOCKED` hoặc `ACCOUNT_SUSPENDED` vào `system_logs`.
   7. Mục **"Người dùng"** của Admin Console: tìm khách / shop theo email, SĐT, tên shop; xem trạng thái, số đơn, cảnh báo; thao tác Khóa (nhập lý do, thời hạn) / Mở khóa.
 - **Luồng thay thế / Mở khóa:**
-  - *Hết thời hạn đình chỉ:* Cron `SuspensionExpiryJob` (5 phút/lần) quét `status = 'SUSPENDED' AND suspended_until <= now()` và gọi `User.reactivateIfSuspensionExpired(now)` → `ACTIVE`, xóa lý do/hạn đình chỉ, ghi `system_logs` `ACCOUNT_REACTIVATED` và thông báo cho người dùng. Đình chỉ vô thời hạn (`suspended_until IS NULL`) không bao giờ tự mở.
+  - *Hết thời hạn đình chỉ:* Cron `SuspensionExpiryJob` (5 phút/lần) quét `status = 'SUSPENDED' AND suspended_until <= now()` và gọi `User.reactivateIfSuspensionExpired(now)` → `ACTIVE`, xóa lý do/hạn đình chỉ, ghi `system_logs` `ACCOUNT_REACTIVATED` (`details.reason = SUSPENSION_EXPIRED`, `source = CRON`) và thông báo cho người dùng qua email `account-reactivated` (thông báo trong app làm cùng module Notification). Người dùng đăng nhập khi đã hết hạn cũng được mở ngay, không phải chờ cron. Đình chỉ vô thời hạn (`suspended_until IS NULL`) không bao giờ tự mở.
   - *Admin mở khóa thủ công:* bấm "Mở khóa" → `User.reactivate()` (từ `SUSPENDED` hoặc `LOCKED`), bắt buộc nhập lý do, ghi log kiểm toán.
 - **Quan hệ Use Case:** `<<include>>` Ghi nhật ký kiểm toán.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* 🟡 Đang triển khai — khóa / mở khóa nhân viên (`/admin/staff`) và khách / shop vi phạm (`/admin/users`: 4 tab, khóa 7 / 30 ngày / vô thời hạn, mở khóa có lý do, đăng xuất ngay qua WebSocket) đã có backend + test + web nối API thật, chạy thật 2026-11-21 (plan `plan/2026-11-19/b1.md`); cron tự mở khi hết hạn đình chỉ đang làm ở plan `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md`.
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [User](../ClassDiagram/ENTITY.md#11-user--tài-khoản-đăng-nhập) (`status`, `suspensionReason`, `suspendedUntil`).
 

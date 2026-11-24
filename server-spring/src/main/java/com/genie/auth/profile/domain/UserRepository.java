@@ -32,6 +32,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "order by u.id")
     List<User> findInternalAccounts();
 
+    /**
+     * Tài khoản đình chỉ có hạn đã tới hạn — Cron {@code SuspensionExpiryJob} (UC-ADM-03 luồng thay thế; LLD 10).
+     * {@code SKIP LOCKED}: dòng đang bị luồng khác giữ (đăng nhập cùng lúc, instance khác) thì để lượt sau.
+     */
+    @Query(value = "SELECT * FROM users WHERE status = 'SUSPENDED' AND suspended_until IS NOT NULL "
+            + "AND suspended_until <= :now ORDER BY suspended_until, id LIMIT :limit FOR UPDATE SKIP LOCKED",
+            nativeQuery = true)
+    List<User> findSuspensionExpired(@Param("now") OffsetDateTime now, @Param("limit") int limit);
+
     /** Tài khoản đã yêu cầu xóa trước {@code cutoff}, chưa ẩn danh — Cron UC-AUTH-10 (an toàn khi chạy nhiều instance). */
     @Query(value = "SELECT * FROM users WHERE deletion_requested_at IS NOT NULL AND deletion_requested_at < :cutoff "
             + "AND status NOT IN ('ANONYMIZED', 'DELETED') ORDER BY id LIMIT :limit FOR UPDATE SKIP LOCKED",

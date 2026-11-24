@@ -19,10 +19,10 @@
 
 | Giai đoạn | Việc | Số task | Trạng thái | Commit / PR |
 |---|---|---:|:---:|---|
-| H00 | Chuẩn bị (làm trước tiên) | 7 | ☐ | |
-| H01 | B1: chuẩn bị dữ liệu thử | 2 | ☐ | |
-| H02 | B1: tài liệu trước | 5 | ☐ | |
-| H03 | B1: backend + test | 9 | ☐ | |
+| H00 | Chuẩn bị (làm trước tiên) | 7 | ◐ (còn H00.06 push / PR) | `6d1a54e`, `0aca1bd` |
+| H01 | B1: chuẩn bị dữ liệu thử | 2 | ☑ | — |
+| H02 | B1: tài liệu trước | 5 | ☑ | `ec65c06` |
+| H03 | B1: backend + test | 9 | ☑ | `8e0e81e`, `a2e02d2` |
 | H04 | B1: chạy thật (kịch bản TC-B1 ở mục 6.1) | 2 | ☐ | |
 | H05 | B2: chuẩn bị | 2 | ☐ | |
 | H06 | B2: test tự động còn thiếu | 8 | ☐ | |
@@ -57,38 +57,38 @@
 
 ### H00 — Chuẩn bị (làm trước tiên)
 
-- [ ] **H00.01** Chốt D1–D11 với Khoa (B1, B2) và Quân (B3), ghi vào mục 3
-- [ ] **H00.02** Đổi tên nhánh `chore/minor-fixes` → `bugfix/public-etag-304` (D11)
-- [ ] **H00.03** Chạy lại `./mvnw clean verify` (JDK 21) + `npm run verify`, ghi số vào mục 7
-- [ ] **H00.04** COMMIT `fix(common): ignore response meta when computing public etags`
-- [ ] **H00.05** COMMIT `docs: record b2 and b3 verification results`
-- [ ] **H00.06** Push + PR vào `develop`; merge xong mới tạo 3 nhánh mới
-- [ ] **H00.07** Dựng môi trường chạy thật (Docker, Mailpit, `PUBLIC_REAL_API`, JDK 21)
+- [x] **H00.01** Chốt D1–D11 với Khoa (B1, B2) và Quân (B3), ghi vào mục 3
+- [x] **H00.02** Đổi tên nhánh `chore/minor-fixes` → `bugfix/public-etag-304` (D11)
+- [x] **H00.03** Chạy lại `./mvnw clean verify` (JDK 21) + `npm run verify`, ghi số vào mục 7
+- [x] **H00.04** COMMIT `fix(common): ignore response meta when computing public etags`
+- [x] **H00.05** COMMIT `docs: record b2 and b3 verification results`
+- [ ] **H00.06** Push + PR vào `develop` (chờ người dùng cho push; 3 nhánh mới xếp chồng lên `bugfix/public-etag-304` theo D11)
+- [x] **H00.07** Dựng môi trường chạy thật (Docker, Mailpit, `PUBLIC_REAL_API`, JDK 21)
 
 ### H01 — B1: chuẩn bị dữ liệu thử
 
-- [ ] **H01.01** Đăng ký 3 tài khoản khách thử `b1.cron7` / `b1.forever` / `b1.manual`
-- [ ] **H01.02** Ghi `users.id` 3 tài khoản vào mục 6
+- [x] **H01.01** Đăng ký 3 tài khoản khách thử `b1.cron7` / `b1.forever` / `b1.manual`
+- [x] **H01.02** Ghi `users.id` 3 tài khoản vào mục 6
 
 ### H02 — B1: tài liệu trước
 
-- [ ] **H02.01** `LLD.md` mục 10: thêm dòng `SuspensionExpiryJob`
-- [ ] **H02.02** `API_SPEC.md` 11.13: đoạn *Tự mở khi hết hạn*
-- [ ] **H02.03** `Usecase.md` UC-ADM-03: sửa *Hiện trạng* + kênh thông báo email
-- [ ] **H02.04** `b1.md`: sửa D13 theo D1, R06 trỏ sang plan này
-- [ ] **H02.05** COMMIT `docs(auth): specify suspension expiry job and reactivation email`.
+- [x] **H02.01** `LLD.md` mục 10: thêm dòng `SuspensionExpiryJob`
+- [x] **H02.02** `API_SPEC.md` 11.13: đoạn *Tự mở khi hết hạn*
+- [x] **H02.03** `Usecase.md` UC-ADM-03: sửa *Hiện trạng* + kênh thông báo email
+- [x] **H02.04** `b1.md`: sửa D13 theo D1, R06 trỏ sang plan này
+- [x] **H02.05** COMMIT `docs(auth): specify suspension expiry job and reactivation email`.
 
 ### H03 — B1: backend + test
 
-- [ ] **H03.01** `UserRepository.findSuspensionExpired` (`FOR UPDATE SKIP LOCKED`)
-- [ ] **H03.02** `SuspensionExpiryJob` (5 phút, lô 100, tối đa 1.000 / lượt)
-- [ ] **H03.03** `AccountReactivatedEvent` + mẫu email `account-reactivated` + `AccountMailListener` (D2)
-- [ ] **H03.04** Unit `UserTest`: biên đúng bằng hạn, `LOCKED`, vô thời hạn
-- [ ] **H03.05** `SuspensionExpiryJobIT` — 11 ca (hết hạn, còn hạn, vô thời hạn, LOCKED, DELETED, 150 tài khoản, song song, trùng đăng nhập, đăng nhập lại, email, mở thủ công)
-- [ ] **H03.06** `AccountReactivatedEmailTemplateTest` (vi / en)
-- [ ] **H03.07** Cổng `./mvnw verify` (ArchUnit xanh)
-- [ ] **H03.08** COMMIT `feat(auth): reactivate accounts when suspension expires` (repo + job + IT + unit).
-- [ ] **H03.09** COMMIT `feat(auth): email users when their account is reactivated` (sự kiện + template + listener + test).
+- [x] **H03.01** `UserRepository.findSuspensionExpired` (`FOR UPDATE SKIP LOCKED`)
+- [x] **H03.02** `SuspensionExpiryJob` (5 phút, lô 100, tối đa 1.000 / lượt)
+- [x] **H03.03** `AccountReactivatedEvent` + mẫu email `account-reactivated` + `AccountMailListener` (D2)
+- [x] **H03.04** Unit `UserTest`: biên đúng bằng hạn, `LOCKED`, vô thời hạn
+- [x] **H03.05** `SuspensionExpiryJobIT` — 11 ca (hết hạn, còn hạn, vô thời hạn, LOCKED, DELETED, 150 tài khoản, song song, trùng đăng nhập, đăng nhập lại, email, mở thủ công)
+- [x] **H03.06** `AccountReactivatedEmailTemplateTest` (vi / en)
+- [x] **H03.07** Cổng `./mvnw verify` (ArchUnit xanh)
+- [x] **H03.08** COMMIT `feat(auth): reactivate accounts when suspension expires` (repo + job + IT + unit).
+- [x] **H03.09** COMMIT `feat(auth): email users when their account is reactivated` (sự kiện + template + listener + test).
 
 ### H04 — B1: chạy thật (kịch bản TC-B1 ở mục 6.1)
 
@@ -255,9 +255,10 @@
 
 | Dùng cho | Đối tượng | Giá trị (id / mã) |
 |---|---|---|
-| TC-B1 | b1.cron7@example.com | |
-| TC-B1 | b1.forever@example.com | |
-| TC-B1 | b1.manual@example.com | |
+| TC-B1 | b1.cron7@example.com | id 34 |
+| TC-B1 | b1.forever@example.com | id 35 |
+| TC-B1 | b1.manual@example.com | id 36 |
+| Claude tự kiểm cron (không dùng cho TC) | b1.auto@example.com | id 37 |
 | TC-B2 | id `dien-tu` | |
 | TC-B2 | id ngành con có sản phẩm | |
 | TC-B2 | id "Thú cưng thử" / cấp 2 / cấp 3 | |
@@ -267,6 +268,7 @@
 
 | Ngày | Nhánh | `./mvnw verify` (unit / IT) | `npm run verify` | Playwright | Ghi chú |
 |---|---|---|---|---|---|
+| 2026-11-24 | `feature/b1-suspension-expiry-job` | 182 / 301 xanh (JDK 21; lượt đầu JVM test hết RAM ở `KycContractIT` — máy còn ~3 GB trống, chạy lại IT thì xanh) | — | — | +5 unit (`UserTest` 2, `AccountReactivatedEmailTemplateTest` 3), +8 IT (`SuspensionExpiryJobIT`) |
 | 2026-11-24 | `chore/minor-fixes` (trước plan) | 177 / 293 xanh (JDK 21) | 74 file / 346 test xanh | — | Mốc ban đầu; `SearchPerformanceIT` p50 27 ms / p95 51 ms |
 
 ## 8. Nhật ký
@@ -274,3 +276,7 @@
 | Ngày | Việc | Commit / PR |
 |---|---|---|
 | 2026-11-24 | Lập plan + progress: khảo sát B1 (thiếu `SuspensionExpiryJob`), B2 (thiếu chạy thật giao diện, `CatalogSecurityIT`, test `IN_USE`, Redis lỗi), B3 (cổng `ShopVoucherAvailability` chưa cài, web chưa đọc `has_shop_voucher_supported`, bộ lọc thuộc tính còn mock qua endpoint không có trong spec). Chờ chốt D1–D11 | (chưa commit) |
+| 2026-11-24 | Người dùng cho làm tiếp; D1–D11 chốt theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại). H00: đổi nhánh `chore/minor-fixes` → `bugfix/public-etag-304`, commit sửa ETag + tài liệu kiểm B2 / B3 | `6d1a54e`, `0aca1bd` |
+| 2026-11-24 | H02: LLD 10 dòng `SuspensionExpiryJob`, API_SPEC 11.13 *Tự mở khi hết hạn*, Usecase UC-ADM-03 hiện trạng + email, `b1.md` D13 | `ec65c06` |
+| 2026-11-24 | H03: `UserRepository.findSuspensionExpired` (`SKIP LOCKED`), `SuspensionExpiryJob`, `AccountReactivatedEvent`, email `account-reactivated` (cron + Admin mở thủ công; gỡ khóa sai mật khẩu không gửi), `SuspensionExpiryJobIT` 8 test (phủ 11 ca plan; đặt ở package `admin` để dùng `AuditLogTestSupport`), unit `UserTest` + template test. Phát hiện: luồng đăng nhập ghi `ACCOUNT_REACTIVATED` với `user_id` (không `reference_id`) và không khóa dòng → sửa mục Rủi ro của plan | `8e0e81e`, `a2e02d2` |
+| 2026-11-24 | H01 + kiểm cron trên hệ thống thật (Claude, qua API — **chưa phải TC của người dùng**): đăng ký 4 tài khoản bằng OTP Mailpit (id 34–37); `b1.auto` khóa 7 ngày → đăng nhập `403 GNE-AUTH-4031` → dời hạn → 40 giây sau cron mở (log "Đã mở khóa 1 tài khoản…"), `system_logs` `SUSPENSION_EXPIRED · CRON` người làm `system@genie.vn`, Mailpit có thư "Tài khoản Genie Shop của bạn đã được mở lại", đăng nhập lại `201`. H04 (TC-B1 người dùng bấm) chờ | — |

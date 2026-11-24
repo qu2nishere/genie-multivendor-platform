@@ -129,7 +129,7 @@ server-spring/src/main/resources/
 ├── templates/email/account-reactivated.html                          (mới — D2; vi + en theo cách các mẫu khác chọn ngôn ngữ)
 └── db/seed/R__seed_demo_50_vouchers.sql                              (sửa — D10)
 server-spring/src/test/java/com/genie/
-├── auth/profile/SuspensionExpiryJobIT.java                           (mới — H03.05)
+├── admin/SuspensionExpiryJobIT.java                                  (mới — H03.05; package admin để dùng AuditLogTestSupport gọi API Admin)
 ├── auth/profile/domain/UserTest.java                                 (sửa — biên "đúng bằng hạn", H03.04)
 ├── common/mail/AccountReactivatedEmailTemplateTest.java              (mới — H03.06)
 ├── catalog/category/CatalogSecurityIT.java                           (mới — H06.01)
@@ -471,7 +471,7 @@ Chung: `./mvnw clean verify` + `npm run verify` + Playwright xanh; không còn m
 
 | Rủi ro | Cách xử lý |
 |---|---|
-| Cron và đăng nhập cùng mở một tài khoản | Khóa dòng (`SKIP LOCKED` + `findByIdForUpdate` ở luồng đăng nhập) — IT ca 7, 8 |
+| Cron và đăng nhập cùng mở một tài khoản | Hai lượt cron không trùng nhờ `SKIP LOCKED` (IT ca 7). Luồng đăng nhập **không** khóa dòng: đăng nhập trước cron → cron bỏ qua (IT ca 8); chỉ khi đăng nhập đúng lúc cron đang giữ dòng mới có thể sinh 2 dòng `ACCOUNT_REACTIVATED` (vô hại — kết quả cuối vẫn `ACTIVE`). Luồng đăng nhập ghi `user_id` = người dùng, cron / Admin ghi `reference_id` = id |
 | Email lỗi làm hỏng mở khóa | Gửi sau commit, lỗi chỉ log (ca 10) |
 | Cache voucher làm kết quả lọc trễ | Chấp nhận ≤ 60 giây (D6); B5 xóa khóa khi tạo / sửa voucher — ghi vào CLAUDE.md mục 9 |
 | Đổi seed làm `SeedDataIT` đỏ | Sửa seed + test cùng commit (CLAUDE.md mục 9) |

@@ -27,7 +27,9 @@ public enum MailTemplate {
     /** Đổi / xóa tài khoản nhận tiền (UC-VND-07). Biến: {@code name}, {@code storeName}, {@code action}, {@code bankName}, {@code accountMasked}, {@code changedAt}. */
     PAYOUT_ACCOUNT_CHANGED("payout-account-changed", "Tài khoản nhận tiền của shop vừa thay đổi", "Your shop payout account was changed"),
     /** Mời nhân viên kích hoạt tài khoản (UC-ADM-01, plan B1 R01.03). Biến: {@code name}, {@code inviterName}, {@code staffTitle}, {@code activationUrl}, {@code expiresHours}. */
-    STAFF_INVITATION("staff-invitation", "Lời mời tham gia quản trị Genie Shop", "You are invited to Genie Shop admin");
+    STAFF_INVITATION("staff-invitation", "Lời mời tham gia quản trị Genie Shop", "You are invited to Genie Shop admin"),
+    /** Tài khoản được mở lại (UC-ADM-03, plan 2026-11-24 D2). Biến: {@code name}, {@code email}, {@code reason} ({@code SUSPENSION_EXPIRED} | {@code ADMIN}), {@code reactivatedAt}. */
+    ACCOUNT_REACTIVATED("account-reactivated", "Tài khoản Genie Shop của bạn đã được mở lại", "Your Genie Shop account has been reactivated");
 
     private final String file;
     private final String subjectVi;
