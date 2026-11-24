@@ -27,10 +27,10 @@
 | H05 | B2: chuẩn bị | 2 | ☑ | — |
 | H06 | B2: test tự động còn thiếu | 8 | ☑ | `ca20841` |
 | H07 | B2: tài liệu trước (chỉ khi H06 lộ lệch spec) | 2 | ☑ (không cần) | — |
-| H08 | B3: cổng "shop có voucher" (backend) | 7 | ☐ | |
-| H09 | B3: seed (D10) | 3 | ☐ | |
-| H10 | B3: tài liệu | 5 | ☐ | |
-| H11 | B3: web | 9 | ☐ | |
+| H08 | B3: cổng "shop có voucher" (backend) | 7 | ☑ | `b9ffd83` |
+| H09 | B3: seed (D10) | 3 | ☑ | `2b10dac` |
+| H10 | B3: tài liệu | 5 | ☑ | `d4793b6` |
+| H11 | B3: web | 9 | ◐ (còn H11.07 kiểm 9 theme bằng mắt) | `9559019` |
 | H12 | B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3) | 3 | ☐ | |
 | H13 | Hồi quy toàn bộ | 4 | ☐ | |
 | H14 | Đồng bộ tiến độ & đóng plan | 6 | ☐ | |
@@ -118,39 +118,39 @@
 
 ### H08 — B3: cổng "shop có voucher" (backend)
 
-- [ ] **H08.01** `VoucherRepository.findVendorIdsWithActiveShopVoucher` (quy tắc D5)
-- [ ] **H08.02** `PromotionSearchPorts implements ShopVoucherAvailability` + cache 60 giây (D6)
-- [ ] **H08.03** Khẳng định bản mặc định của `SearchPortsConfig` đã tắt
-- [ ] **H08.04** `PromotionSearchPortsIT` — 11 ca (hạn, lượt, ngân sách, loại voucher, DISTINCT, cache, Redis lỗi)
-- [ ] **H08.05** `ProductSearchIT` / `FacetIT` — 5 ca `has_shop_voucher` (shop, kết hợp lọc, facet, false, trigram)
-- [ ] **H08.06** Cổng `./mvnw verify` (ArchUnit: không vòng `promotion` ↔ `catalog`)
-- [ ] **H08.07** COMMIT `feat(promotion): provide shops with active vouchers to product search`.
+- [x] **H08.01** `VoucherRepository.findVendorIdsWithActiveShopVoucher` (quy tắc D5)
+- [x] **H08.02** `PromotionSearchPorts implements ShopVoucherAvailability` + cache 60 giây (D6)
+- [x] **H08.03** Khẳng định bản mặc định của `SearchPortsConfig` đã tắt
+- [x] **H08.04** `PromotionSearchPortsIT` — 11 ca (hạn, lượt, ngân sách, loại voucher, DISTINCT, cache, Redis lỗi)
+- [x] **H08.05** `ProductSearchIT` / `FacetIT` — 5 ca `has_shop_voucher` (shop, kết hợp lọc, facet, false, trigram)
+- [x] **H08.06** Cổng `./mvnw verify` (ArchUnit: không vòng `promotion` ↔ `catalog`)
+- [x] **H08.07** COMMIT `feat(promotion): provide shops with active vouchers to product search`.
 
 ### H09 — B3: seed (D10)
 
-- [ ] **H09.01** Thêm 3 voucher seed (còn hạn / đã tắt / hết lượt) theo D10
-- [ ] **H09.02** `SeedDataIT` xanh, `seed.ps1 -Docker` chạy lại không nhân đôi
-- [ ] **H09.03** COMMIT `feat(db): seed shop vouchers for more shops including inactive and used up ones`.
+- [x] **H09.01** Thêm 3 voucher seed (còn hạn / đã tắt / hết lượt) theo D10
+- [x] **H09.02** `SeedDataIT` xanh, `seed.ps1 -Docker` chạy lại không nhân đôi
+- [x] **H09.03** COMMIT `feat(db): seed shop vouchers for more shops including inactive and used up ones`.
 
 ### H10 — B3: tài liệu
 
-- [ ] **H10.01** `API_SPEC.md` 5.3 (quy tắc D5, độ trễ 60 giây) + mục 14 (facets thuộc tính)
-- [ ] **H10.02** `web-backend-handoff.md`: gạch dòng `attribute-filters`
-- [ ] **H10.03** `CLAUDE.md` mục 9: cổng voucher đã cài + khóa cache
-- [ ] **H10.04** (D8 = Không) ghi lệch vào `BAO_CAO_DOI_CHIEU_GIAO_DIEN.md`
-- [ ] **H10.05** COMMIT `docs(catalog): document shop voucher filter and attribute facets`.
+- [x] **H10.01** `API_SPEC.md` 5.3 (quy tắc D5, độ trễ 60 giây) + mục 14 (facets thuộc tính)
+- [x] **H10.02** `web-backend-handoff.md`: gạch dòng `attribute-filters`
+- [x] **H10.03** `CLAUDE.md` mục 9: cổng voucher đã cài + khóa cache
+- [x] ~~**H10.04** (D8 = Không) ghi lệch vào `BAO_CAO_DOI_CHIEU_GIAO_DIEN.md`~~ (không cần: D8 = Có)
+- [x] **H10.05** COMMIT `docs(catalog): document shop voucher filter and attribute facets`.
 
 ### H11 — B3: web
 
-- [ ] **H11.01** Domain / mapper: `voucherFilterSupported`, `attribute` (có `code`) từ facets; mock khớp
-- [ ] **H11.02** Hàm dựng query gửi `attr.<code>` đúng mã + test Vitest
-- [ ] **H11.03** `FilterPanel`: ẩn ô voucher khi không hỗ trợ (D7), ô ở trang danh mục (D8), thuộc tính từ facets
-- [ ] **H11.04** `search.astro`, `c/[slug].astro`: bỏ `listAttributeFilters`, truyền facets / `hasVoucher`
-- [ ] **H11.05** Xóa mock `attribute-filters` + `listAttributeFilters` khỏi `features/catalog`
-- [ ] **H11.06** Test Vitest: URL `voucher=1`, chip, mapper facets, ẩn / hiện ô
-- [ ] **H11.07** Kiểm 9 theme + khổ hẹp ở `/search`, `/c/dien-tu`
-- [ ] **H11.08** `npm run verify`
-- [ ] **H11.09** COMMIT `feat(web): drive voucher and attribute filters from search facets` (tách nếu > 400 dòng)
+- [x] **H11.01** Domain / mapper: `voucherFilterSupported`, `attribute` (có `code`) từ facets; mock khớp
+- [x] **H11.02** Hàm dựng query gửi `attr.<code>` đúng mã + test Vitest
+- [x] **H11.03** `FilterPanel`: ẩn ô voucher khi không hỗ trợ (D7), ô ở trang danh mục (D8), thuộc tính từ facets
+- [x] **H11.04** `search.astro`, `c/[slug].astro`: bỏ `listAttributeFilters`, truyền facets / `hasVoucher`
+- [x] **H11.05** Xóa mock `attribute-filters` + `listAttributeFilters` khỏi `features/catalog`
+- [x] **H11.06** Test Vitest: URL `voucher=1`, chip, mapper facets, ẩn / hiện ô
+- [ ] **H11.07** Kiểm 9 theme + khổ hẹp ở `/search`, `/c/dien-tu` (người dùng nhìn bằng mắt — gộp vào TC-B3-14, TC-B3-16)
+- [x] **H11.08** `npm run verify`
+- [x] **H11.09** COMMIT `feat(web): drive voucher and attribute filters from search facets` (tách nếu > 400 dòng)
 
 ### H12 — B2 + B3: chạy thật trên giao diện (kịch bản TC-B2, TC-B3 ở mục 6.2, 6.3)
 
@@ -262,7 +262,7 @@
 | TC-B2 | id `dien-tu` | id 4 (4 ngành con, sản phẩm nằm ở ngành con) |
 | TC-B2 | id ngành con có sản phẩm | id 13 `thiet-bi-am-thanh` (26 sản phẩm) |
 | TC-B2 | id "Thú cưng thử" / cấp 2 / cấp 3 | |
-| TC-B3 | mã voucher seed D10 (còn hạn / đã tắt / hết lượt) | |
+| TC-B3 | mã voucher seed D10 (còn hạn / đã tắt / hết lượt) | `SHOEREP30K` (Shoe Republic, vendor 6) / `HOMEOFF10` (Home & Living, vendor 8) / `BEAUTY20K` (Beauty Box, vendor 9) |
 
 ## 7. Kết quả cổng kiểm tra
 
@@ -281,3 +281,8 @@
 | 2026-11-24 | H03: `UserRepository.findSuspensionExpired` (`SKIP LOCKED`), `SuspensionExpiryJob`, `AccountReactivatedEvent`, email `account-reactivated` (cron + Admin mở thủ công; gỡ khóa sai mật khẩu không gửi), `SuspensionExpiryJobIT` 8 test (phủ 11 ca plan; đặt ở package `admin` để dùng `AuditLogTestSupport`), unit `UserTest` + template test. Phát hiện: luồng đăng nhập ghi `ACCOUNT_REACTIVATED` với `user_id` (không `reference_id`) và không khóa dòng → sửa mục Rủi ro của plan | `8e0e81e`, `a2e02d2` |
 | 2026-11-24 | H01 + kiểm cron trên hệ thống thật (Claude, qua API — **chưa phải TC của người dùng**): đăng ký 4 tài khoản bằng OTP Mailpit (id 34–37); `b1.auto` khóa 7 ngày → đăng nhập `403 GNE-AUTH-4031` → dời hạn → 40 giây sau cron mở (log "Đã mở khóa 1 tài khoản…"), `system_logs` `SUSPENSION_EXPIRED · CRON` người làm `system@genie.vn`, Mailpit có thư "Tài khoản Genie Shop của bạn đã được mở lại", đăng nhập lại `201`. H04 (TC-B1 người dùng bấm) chờ | — |
 | 2026-11-24 | H05–H07 (nhánh `feature/b2-catalog-acceptance`): `CatalogSecurityIT` ma trận 7 vai trò × mọi endpoint B2 — **khớp spec**, H07 không cần; `AdminCategoryIT` xóa ngành bị voucher tham chiếu → `IN_USE`; `PublicCategoryIT` ETag → `304`, đổi tên → ETag mới; `CommissionIT` lưu hàng loạt chỉ ghi ngành đổi; `JsonCacheTest` Redis lỗi đọc / ghi / JSON hỏng → đọc nguồn; `catalog-category.http` thêm bước Moderator / Finance / `IN_USE`. Phát hiện cho Khoa: `ACCESS_DENIED` ghi **mọi** lần 403, chưa có giới hạn 1 dòng / người / phút như B1 D14 đề xuất | `ca20841` |
+| 2026-11-24 | H10 (tài liệu trước): API 5.3 quy tắc D5 + cache 60 giây + `has_shop_voucher_supported = true`, mục 14 trang danh mục dùng `facets.attribute`; handoff gạch `attribute-filters`; CLAUDE.md mục 9 (cổng đã cài, khóa cache B5 phải xóa, sửa câu "catalog chưa có backend") | `d4793b6` |
+| 2026-11-24 | H08: `VoucherRepository.findVendorIdsWithActiveShopVoucher`, `PromotionSearchPorts` (cache `JsonCache` 60 giây, Redis lỗi đọc CSDL), `TestDataBuilder.voucher(...)`; `PromotionSearchPortsIT` 7 test (11 ca plan; ca "Redis lỗi" do `JsonCacheTest` của nhánh B2 phủ), `FacetIT` 4 ca voucher (thay test "bị bỏ qua") | `b9ffd83` |
+| 2026-11-24 | H09: seed `SHOEREP30K` / `HOMEOFF10` (tắt) / `BEAUTY20K` (hết lượt); cột `used_count`, `is_active` lấy từ `VALUES` | `2b10dac` |
+| 2026-11-24 | H11: facets có `attribute` (mã + giá trị) và `voucherFilterSupported`; `FilterPanel` ẩn ô voucher khi không hỗ trợ, thêm ô ở trang danh mục (D8); 2 trang bỏ `listAttributeFilters`, dùng facets; xóa mock `attribute-filters` + DTO / mapper / type; `.env.example`, `huong-dan-chay-local.md` bỏ nhóm này | `9559019` |
+| 2026-11-24 | Kiểm thật B3 (Claude, API + SSR — **chưa phải TC người dùng**): 12 / 12 đạt — cờ hỗ trợ `true`; lọc voucher chỉ còn TechZone + Shoe Republic (99 sp), không có Home & Living / Beauty Box; voucher + từ khóa + giá tăng dần; `/search`, `/c/dien-tu` có ô voucher, tìm trong shop không có; `/c/dien-tu` nhóm "Bảo hành" lấy từ facets, `attr.warranty=12 tháng` = 43 sp khớp facet | — |
