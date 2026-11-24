@@ -1,17 +1,16 @@
 // Danh mục: mock khi `isMocked('catalog')`; thật: /api/v1/public/categories (cây 5.1, web dàn phẳng) và
-// /public/categories/{slug} (5.2) — plan B2 C08.01. Bộ lọc thuộc tính (UC-CAT-05) chưa có backend → nhóm riêng
-// `attribute-filters`, vẫn mock.
+// /public/categories/{slug} (5.2) — plan B2 C08.01. Bộ lọc thuộc tính ngành (UC-CAT-05) lấy từ
+// `summary.facets.attribute` của 5.3 qua `getFacets` (feature product) — plan 2026-11-24 D9, không có endpoint riêng.
 import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import { SEED_VERIFIED_BRANDS } from '@/shared/api/mock/seed';
 import { serverHttp } from '@/shared/api/server-http';
-import type { AttributeFilter, Category } from '../domain/catalog.types';
-import type { AttributeFilterDto, CategoryHeaderDto, CategoryNodeDto } from './catalog.dto';
-import { flattenTree, fromHeader, toAttributeFilter, toCategory } from './catalog.mapper';
-import { ATTR_FILTER_DTOS, CATEGORY_DTOS, SUB_CATEGORY_PRODUCTS } from './catalog.mock';
+import type { Category } from '../domain/catalog.types';
+import type { CategoryHeaderDto, CategoryNodeDto } from './catalog.dto';
+import { flattenTree, fromHeader, toCategory } from './catalog.mapper';
+import { CATEGORY_DTOS, SUB_CATEGORY_PRODUCTS } from './catalog.mock';
 
 const CATALOG_MOCK = isMocked('catalog');
-const ATTR_FILTER_MOCK = isMocked('attribute-filters');
 
 /** Mọi danh mục đang hiển thị (gốc + con), phẳng. */
 export async function listCategories(): Promise<Category[]> {
@@ -37,16 +36,6 @@ export async function getCategoryBySlug(slug: string): Promise<Category> {
   return fromHeader(
     await serverHttp<CategoryHeaderDto>(`/public/categories/${encodeURIComponent(slug)}`),
   );
-}
-
-export async function listAttributeFilters(categoryId: number): Promise<AttributeFilter[]> {
-  if (ATTR_FILTER_MOCK) {
-    await mockDelay();
-    return ATTR_FILTER_DTOS.filter((a) => a.category_id === categoryId).map(toAttributeFilter);
-  }
-  return (
-    await serverHttp<AttributeFilterDto[]>(`/public/categories/${categoryId}/attribute-filters`)
-  ).map(toAttributeFilter);
 }
 
 /** Mock: id sản phẩm thuộc danh mục con (prototype nhóm theo ảnh). Backend lọc thẳng theo category_id. */

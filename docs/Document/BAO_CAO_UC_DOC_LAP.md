@@ -1,6 +1,6 @@
 # BÁO CÁO PHÂN NHÓM USE CASE THEO MỨC ĐỘ ĐỘC LẬP — GENIE (BẢN TLCN)
 
-> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-24) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
+> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-24, tiến độ B1 / B2 / B3 cập nhật 2026-11-24) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
 > **Mục đích:** chỉ ra use case nào làm riêng được (một plan riêng, chạy song song) mà không chờ hay làm ảnh hưởng use case khác, use case nào phải làm theo cụm hoặc theo chuỗi — làm đầu vào để lập plan trong `plan/<ngày>/<thể loại>/`.
 > **Nguồn đã quét:** quan hệ «include» / «extend», *Tiền điều kiện* và *Thực thể CSDL* của từng use case trong Usecase.md; bảng ánh xạ use case ↔ API ở [API_SPEC.md](document/API_SPEC.md); hiện trạng code `genie-multivendor-platform` (AUTH đã hiện thực; 65 bảng + `V1…V14` có sẵn; `common` đã có Silo, email, nhật ký kiểm toán, phân quyền). Tiến độ từng use case: [CHECKLIST_TIEN_DO_UC.md](CHECKLIST_TIEN_DO_UC.md).
 > **Cách ghi:** mỗi use case ghi **tên đầy đủ** theo Usecase.md, mã đặt trong ngoặc để tra cứu.
@@ -13,9 +13,9 @@
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
-| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm **B1 Nhân viên & phân quyền** (UC-ADM-01, 02, 03) · cụm **B2 Danh mục sàn** (UC-CAT-01, 14, 15) | AUTH: đang triển khai — xem mục 3 (UC-AUTH-09 xong 2026-11-18; còn phần còn lại của UC-AUTH-03, 08), plan `plan/2026-11-14/auth.md`. B1: 2 / 3 ✅ (UC-ADM-01, 02), UC-ADM-03 🟡 còn cron tự mở khóa, plan `plan/2026-11-19/b1.md`. B2: 3 / 3 🟡 — build xanh + kịch bản API đúng (2026-11-24), còn chạy thật trên giao diện Admin, plan `plan/2026-11-19/b2.md` |
+| **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm **B1 Nhân viên & phân quyền** (UC-ADM-01, 02, 03) · cụm **B2 Danh mục sàn** (UC-CAT-01, 14, 15) | AUTH: đang triển khai — xem mục 3 (UC-AUTH-09 xong 2026-11-18; còn phần còn lại của UC-AUTH-03, 08), plan `plan/2026-11-14/auth.md`. B1: **3 / 3 ✅** (UC-ADM-03 xong 2026-11-24). B2: **3 / 3 ✅** (2026-11-24). Phần còn thiếu của B1 / B2 do Nguyễn Ngọc Thiện rà soát làm bù — plan `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` |
 | **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); UC-VND-01, 02, 03 (backend), 04, 07, 21 chờ chạy thật (nhánh `feature/vendor-shop-kyc`), UC-VND-05 chờ danh mục hành chính GHN (A12) |
-| **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | 6 / 7 ✅ Đã triển khai (chạy thật 2026-11-21); *Lọc nâng cao & Sắp xếp* (UC-CAT-05) 🟡 — chỉ còn chờ lọc "Shop có voucher" (cụm B5 / module promotion) — lọc danh mục đã chạy với cây danh mục thật của cụm B2 (2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
+| **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | **7 / 7 ✅ Đã triển khai** (6 UC chạy thật 2026-11-21; *Lọc nâng cao & Sắp xếp* (UC-CAT-05) xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính, làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
 Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
 
@@ -95,7 +95,7 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 |---|---|---|
 | Quản lý danh sách nhân viên nội bộ & Lời mời kích hoạt (UC-ADM-01) | ✅ Đã triển khai | — |
 | Phân cấp vai trò & Cấp phát / Thu hồi mã quyền chi tiết — RBAC (UC-ADM-02) | ✅ Đã triển khai | — |
-| Khóa / Mở khóa tài khoản nhân viên và người dùng vi phạm (UC-ADM-03) | 🟡 Đang triển khai | Cron `SuspensionExpiryJob` tự mở khóa khi hết hạn đình chỉ (R06) |
+| Khóa / Mở khóa tài khoản nhân viên và người dùng vi phạm (UC-ADM-03) | ✅ Đã triển khai | — (cron `SuspensionExpiryJob` + email mở lại tài khoản xong 2026-11-24) |
 
 *Ghi chú:* *Quản lý danh sách nhân viên* «include» *Phân cấp vai trò & cấp quyền* nên phải làm chung. *Khóa / Mở khóa tài khoản* dùng `UserFacade.suspend` đã có. Nối phân hệ AUTH qua `POST /auth/staff-activations`; đổi quyền gọi `StaffPermissionAuthorityProvider.evict`.
 
@@ -108,9 +108,9 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 | Use case | Trạng thái | Còn lại |
 |---|---|---|
-| Duyệt cây danh mục đa cấp (UC-CAT-01) | 🟡 Đang triển khai | Chạy thật trên giao diện (API + SSR `/c/{slug}` đã đúng) |
-| Quản lý danh mục sàn toàn cục & Cấu hình tỷ lệ hoa hồng (UC-CAT-14) | 🟡 Đang triển khai | Chạy thật trên giao diện Admin (tạo ngành 3 cấp, ẩn ngành cha, đổi hoa hồng); duyệt đề xuất danh mục thuộc UC-CAT-17 |
-| Cấu hình bộ thuộc tính chuẩn theo ngành hàng (UC-CAT-15) | 🟡 Đang triển khai | Chạy thật trên giao diện Admin; `CategoryFacade.attributesFor` làm cùng *Thêm mới sản phẩm* (UC-CAT-09) |
+| Duyệt cây danh mục đa cấp (UC-CAT-01) | ✅ Đã triển khai | — |
+| Quản lý danh mục sàn toàn cục & Cấu hình tỷ lệ hoa hồng (UC-CAT-14) | ✅ Đã triển khai | Duyệt đề xuất danh mục thuộc UC-CAT-17 (còn mock) |
+| Cấu hình bộ thuộc tính chuẩn theo ngành hàng (UC-CAT-15) | ✅ Đã triển khai | `CategoryFacade.attributesFor` + kiểm thuộc tính bắt buộc làm cùng *Thêm mới sản phẩm* (UC-CAT-09) |
 
 *Ghi chú:* *Cấu hình bộ thuộc tính* cần ngành hàng tạo ở *Quản lý danh mục sàn*; *Duyệt cây danh mục* chỉ đọc. Là **gốc** của mọi cụm sản phẩm — nên làm sớm.
 
@@ -122,7 +122,7 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 |---|---|---|
 | Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) | ✅ Đã triển khai | — |
 | Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) | ✅ Đã triển khai | — |
-| Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) | 🟡 Đang triển khai | Lọc "Shop có voucher" chờ module promotion cài cổng `ShopVoucherAvailability` (cụm B5); lọc danh mục trên web đã khớp CSDL thật sau khi *Duyệt cây danh mục đa cấp* (UC-CAT-01, cụm B2) nối API (kiểm 2026-11-24) |
+| Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) | ✅ Đã triển khai | — (lọc "Shop có voucher" do module promotion cài 2026-11-24; cụm B5 tạo / sửa voucher shop phải xóa cache `promotion:shop_voucher_vendors`) |
 | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) | ✅ Đã triển khai | — |
 | Xem gợi ý sản phẩm tương tự (UC-CAT-07) | ✅ Đã triển khai | — |
 | Xem trang gian hàng (UC-CAT-16) | ✅ Đã triển khai | — |

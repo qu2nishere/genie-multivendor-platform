@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.genie.catalog.CatalogITSupport;
 import com.genie.support.TestDataBuilder;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -65,7 +66,7 @@ class FacetIT extends CatalogITSupport {
         assertThat(locations).hasSize(1);
         assertThat(((Number) locations.get(0).get("count")).intValue()).isEqualTo(2);   // nơi bán vẫn áp lọc thương hiệu
         assertThat((Object) read(r, "$.summary.facets.attribute")).isNull();
-        assertThat((Boolean) read(r, "$.summary.facets.has_shop_voucher_supported")).isFalse();
+        assertThat((Boolean) read(r, "$.summary.facets.has_shop_voucher_supported")).isTrue();   // promotion đã cài cổng (2026-11-24)
     }
 
     @Test
@@ -103,10 +104,76 @@ class FacetIT extends CatalogITSupport {
         assertThat(ids(call(URL, "shop_id", String.valueOf(shop.shopId()), "discount_min", "30"))).containsExactly(half);
     }
 
+    // ===== "Shop có voucher" (API 5.3 has_shop_voucher; plan 2026-11-24 H08.05, D5) =====
+
+    private OffsetDateTime now() {
+        return OffsetDateTime.now(clock);
+    }
+
     @Test
-    void shopVoucherFilterIsIgnoredUntilPromotionModuleExists() throws Exception {
+    void shopVoucherFilterKeepsOnlyShopsWithAnActiveVoucher() throws Exception {
+        String word = TestDataBuilder.uniqueWord();
+        var withVoucher = data.shop().create();
+        data.voucher(withVoucher, now()).create();
+        var withoutVoucher = data.shop().create();
+        var expired = data.shop().create();
+        data.voucher(expired, now()).valid(now().minusDays(9), now().minusDays(1)).create();
+        long a = data.product(withVoucher).name("Bình " + word).sku(150_000, 3).create();
+        long b = data.product(withoutVoucher).name("Bình " + word).sku(120_000, 3).create();
+        long c = data.product(expired).name("Bình " + word).sku(130_000, 3).create();
+
+        assertThat(ids(call(URL, "q", word, "has_shop_voucher", "true"))).contains(a).doesNotContain(b, c);
+        assertThat(ids(call(URL, "shop_id", String.valueOf(withoutVoucher.shopId()), "has_shop_voucher", "true"))).isEmpty();
+        // false / không gửi → không lọc
+        assertThat(ids(call(URL, "q", word, "has_shop_voucher", "false"))).contains(a, b, c);
+        assertThat(ids(call(URL, "q", word))).contains(a, b, c);
+    }
+
+    @Test
+    void shopVoucherFilterCombinesWithOtherFiltersAndSort() throws Exception {
+        String word = TestDataBuilder.uniqueWord();
+        long cat = data.category("Gia dụng " + word, null);
         var shop = data.shop().create();
-        data.product(shop).sku(1000, 1).create();
-        assertThat(ids(call(URL, "shop_id", String.valueOf(shop.shopId()), "has_shop_voucher", "true"))).hasSize(1);
+        data.voucher(shop, now()).create();
+        var other = data.shop().create();
+        long cheap = data.product(shop).name("Nồi " + word).category(cat).sku(200_000, 3).create();
+        long dear = data.product(shop).name("Chảo " + word).category(cat).sku(400_000, 3).create();
+        data.product(shop).name("Ấm " + word).category(cat).sku(900_000, 3).create();                 // ngoài khoảng giá
+        data.product(shop).name("Ly " + word).sku(250_000, 3).create();                                // khác danh mục
+        data.product(other).name("Nồi " + word).category(cat).sku(210_000, 3).create();                // shop không voucher
+
+        MvcResult r = call(URL, "category_id", String.valueOf(cat), "has_shop_voucher", "true",
+                "price_min", "100000", "price_max", "500000", "sort", "PRICE_ASC");
+        assertThat(ids(r)).containsExactly(cheap, dear);
+    }
+
+    @Test
+    void facetsCountTheVoucherFilteredSet() throws Exception {
+        var shop = data.shop().province(202, "TP. Hồ Chí Minh").create();
+        data.voucher(shop, now()).create();
+        var other = data.shop().province(201, "Hà Nội").create();
+        String word = TestDataBuilder.uniqueWord();
+        long brand = data.brand("Hiệu " + word, false);
+        data.product(shop).name("Quạt " + word).brand(brand, "Hiệu " + word).sku(300_000, 1).create();
+        data.product(other).name("Quạt " + word).brand(brand, "Hiệu " + word).sku(300_000, 1).create();
+
+        MvcResult r = call(URL, "q", word, "has_shop_voucher", "true", "include_facets", "true");
+        assertThat((Boolean) read(r, "$.summary.facets.has_shop_voucher_supported")).isTrue();
+        List<Number> brandCount = read(r, "$.summary.facets.brands[?(@.id == " + brand + ")].count");
+        assertThat(brandCount).extracting(Number::intValue).containsExactly(1);
+        List<String> places = read(r, "$.summary.facets.locations[*].name");
+        assertThat(places).contains("TP. Hồ Chí Minh").doesNotContain("Hà Nội");
+    }
+
+    @Test
+    void typoFallbackStillAppliesTheVoucherFilter() throws Exception {
+        var shop = data.shop().create();
+        data.voucher(shop, now()).create();
+        var other = data.shop().create();
+        long hit = data.product(shop).name("Tai nghe Bluetooth chống ồn").sku(389_000, 3).create();
+        long miss = data.product(other).name("Tai nghe Bluetooth chống ồn").sku(389_000, 3).create();
+
+        List<Long> found = ids(call(URL, "q", "tai nge bluetoth", "has_shop_voucher", "true", "size", "60"));
+        assertThat(found).contains(hit).doesNotContain(miss);
     }
 }

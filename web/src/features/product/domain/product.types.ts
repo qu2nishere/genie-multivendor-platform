@@ -126,10 +126,22 @@ export interface ProductQuery {
   size?: number;
 }
 
+/** Thuộc tính lọc theo ngành (`is_filterable` đầu tiên của danh mục — API 5.3 `summary.facets.attribute`). */
+export interface FacetAttribute {
+  /** Mã thuộc tính — gửi lọc dạng `attr.<code>=<giá trị>`. */
+  code: string;
+  name: string;
+  values: string[];
+}
+
 /** Giá trị lọc có trong một tập kết quả (thương hiệu, nơi bán) — backend trả kèm danh sách. */
 export interface ProductFacets {
   brands: string[];
   locations: string[];
+  /** Chỉ có khi phạm vi có đúng một danh mục; ngược lại `null` (plan 2026-11-24 D9). */
+  attribute: FacetAttribute | null;
+  /** Backend đã lọc được "Shop có voucher" (`has_shop_voucher_supported`) — false thì ẩn ô lọc (plan 2026-11-24 D7). */
+  voucherFilterSupported: boolean;
   total: number;
 }
 

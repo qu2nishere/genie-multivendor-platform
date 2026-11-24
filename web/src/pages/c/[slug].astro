@@ -6,7 +6,6 @@ import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
 import {
   categoryHref,
   getCategoryBySlug,
-  listAttributeFilters,
   listCategories,
   listVerifiedBrands,
 } from '@/features/catalog';
@@ -59,7 +58,7 @@ const sub = subs.find((s) => s.slug === state.sub) ?? null;
 if (state.sub && !sub) state.sub = null;
 
 const range = priceRange(state, CATEGORY_BANDS);
-const [page, facets, scopeFacets, banners, attrs, verified] = await Promise.all([
+const [page, facets, scopeFacets, banners, verified] = await Promise.all([
   listProducts({
     categoryId: category.id,
     subcategoryId: sub?.id,
@@ -68,6 +67,7 @@ const [page, facets, scopeFacets, banners, attrs, verified] = await Promise.all(
     maxPrice: range.max,
     authentic: state.authentic || undefined,
     freeship: state.freeship || undefined,
+    hasVoucher: state.voucher || undefined,
     minRating: state.rating || undefined,
     attributes: state.attrs,
     sort: sortParam(state),
@@ -77,9 +77,10 @@ const [page, facets, scopeFacets, banners, attrs, verified] = await Promise.all(
   getFacets({ categoryId: category.id }),
   getFacets({ categoryId: category.id, subcategoryId: sub?.id }),
   listLiveBanners('CATEGORY_TOP', category.slug, category.id),
-  listAttributeFilters(category.id),
   listVerifiedBrands(),
 ]);
+// Backend chưa lọc được "Shop có voucher" → bỏ khỏi trạng thái để không hiện chip / ô (plan 2026-11-24 D7)
+if (!facets.voucherFilterSupported) state.voucher = false;
 
 const names: Record<string, string> = Object.fromEntries(subs.map((s) => [s.slug, s.name]));
 const filtered = Astro.url.search.length > 0;
@@ -175,7 +176,8 @@ const title =
         variant="category"
         brands={scopeFacets.brands}
         verifiedBrands={verified}
-        attribute={attrs[0] ?? null}
+        attribute={facets.attribute}
+        voucherFilterSupported={facets.voucherFilterSupported}
         resultCount={page.total_items}
       />
 

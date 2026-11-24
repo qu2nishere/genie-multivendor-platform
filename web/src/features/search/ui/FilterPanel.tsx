@@ -38,8 +38,10 @@ export interface FilterPanelProps {
   /** Thương hiệu đã xác minh (hiện dấu tích). */
   verifiedBrands?: string[];
   places?: string[];
-  /** Thuộc tính lọc theo ngành (UC-CAT-05) khi đã chọn đúng một danh mục. */
+  /** Thuộc tính lọc theo ngành (UC-CAT-05) khi đã chọn đúng một danh mục — từ `summary.facets.attribute` (API 5.3). */
   attribute?: { name: string; values: string[] } | null;
+  /** Backend lọc được "Shop có voucher" (`has_shop_voucher_supported`); false → ẩn ô lọc (plan 2026-11-24 D7). */
+  voucherFilterSupported?: boolean;
   /** Đang tìm trong một shop: ẩn danh mục / thương hiệu / nơi bán (prototype !inShop). */
   inShop?: boolean;
   resultCount: number;
@@ -115,6 +117,7 @@ export default function FilterPanel({
   verifiedBrands = [],
   places = [],
   attribute,
+  voucherFilterSupported = false,
   inShop = false,
   resultCount,
 }: FilterPanelProps) {
@@ -248,6 +251,21 @@ export default function FilterPanel({
             >
               {t('search.filter.freeship')}
             </Checkbox>
+            {/* Usecase UC-CAT-05: lọc "shop đang có voucher" ở trang danh mục lẫn tìm kiếm (plan 2026-11-24 D8) */}
+            {voucherFilterSupported && (
+              <Checkbox
+                name="voucher"
+                value="1"
+                defaultChecked={s.voucher}
+                onChange={changed}
+                className={ROW}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <Icon name="ticket" size={14} className="text-primary" />
+                  {t('search.filter.voucher')}
+                </span>
+              </Checkbox>
+            )}
           </Group>
         )}
 
@@ -423,7 +441,7 @@ export default function FilterPanel({
                 {t('search.filter.freeship_long')}
               </span>
             </Checkbox>
-            {!inShop && (
+            {!inShop && voucherFilterSupported && (
               <Checkbox
                 name="voucher"
                 value="1"

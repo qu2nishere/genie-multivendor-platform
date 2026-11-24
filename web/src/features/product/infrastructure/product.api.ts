@@ -139,7 +139,7 @@ export async function getFacets(
 ): Promise<ProductFacets> {
   if (USE_MOCK) {
     await mockDelay();
-    return facetsOf(queryProducts(q));
+    return facetsOf(queryProducts(q), q.subcategoryId ? undefined : q.categoryId);
   }
   const { facets, total } = await scopeFacets(q);
   return fromFacetsDto(facets, total);

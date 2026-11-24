@@ -10,13 +10,6 @@ export interface Category {
   parentId: number | null;
 }
 
-/** Một thuộc tính lọc theo ngành (UC-CAT-05): "Bảo hành" 12 / 24 tháng… */
-export interface AttributeFilter {
-  categoryId: number;
-  name: string;
-  values: string[];
-}
-
 export interface CategoryTree extends Category {
   children: Category[];
 }

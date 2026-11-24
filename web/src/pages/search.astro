@@ -2,7 +2,7 @@
 // Kết quả tìm kiếm (prototype Search.jsx) — plan G08.21. Hai phạm vi: toàn sàn / trong một shop
 // (?scope=shop&shop=<id>). SSR theo `q` + bộ lọc trong query string; trang đặt noindex, follow (G08.46).
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
-import { listAttributeFilters, listRootCategories, listVerifiedBrands } from '@/features/catalog';
+import { listRootCategories, listVerifiedBrands } from '@/features/catalog';
 import { getFacets, listProducts, ProductGrid } from '@/features/product';
 import {
   filtersHref,
@@ -45,7 +45,7 @@ const catIds = state.cats
 const oneCat = catIds.length === 1 ? catIds[0] : null;
 const range = priceRange(state, SEARCH_BANDS);
 
-const [page, facets, attrs, verified, allShops] = await Promise.all([
+const [page, facets, catFacets, verified, allShops] = await Promise.all([
   listProducts({
     q: state.q || undefined,
     shopId: inShop ? shop?.id : undefined,
@@ -64,10 +64,14 @@ const [page, facets, attrs, verified, allShops] = await Promise.all([
     size: PAGE_SIZE,
   }),
   getFacets({ q: state.q || undefined, shopId: inShop ? shop?.id : undefined }),
-  oneCat ? listAttributeFilters(oneCat) : Promise.resolve([]),
+  // Thuộc tính lọc theo ngành: summary.facets.attribute khi chọn đúng một danh mục (API 5.3, plan 2026-11-24 D9)
+  oneCat ? getFacets({ q: state.q || undefined, categoryId: oneCat }) : Promise.resolve(null),
   listVerifiedBrands(),
   inShop || !state.q ? Promise.resolve([]) : listShops(),
 ]);
+
+// Backend chưa lọc được "Shop có voucher" → bỏ khỏi trạng thái để không hiện chip / ô (plan 2026-11-24 D7)
+if (!facets.voucherFilterSupported) state.voucher = false;
 
 // Khối shop khớp từ khóa (toàn sàn): tối đa 3 shop có tên chứa từ khóa
 const term = state.q.toLowerCase();
@@ -221,7 +225,8 @@ const scopeBtn =
         brands={facets.brands}
         verifiedBrands={verified}
         places={facets.locations}
-        attribute={attrs[0] ?? null}
+        attribute={catFacets?.attribute ?? null}
+        voucherFilterSupported={facets.voucherFilterSupported}
         inShop={inShop}
         resultCount={page.total_items}
       />

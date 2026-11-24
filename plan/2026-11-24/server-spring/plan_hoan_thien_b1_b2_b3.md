@@ -60,7 +60,7 @@
 | D8 | **Trang danh mục `/c/{slug}` có ô "Shop có voucher" không?** | Usecase UC-CAT-05: tiền điều kiện "trang danh mục hoặc trang kết quả tìm kiếm", bước 1 liệt kê "Tình trạng khuyến mãi (shop đang có voucher)"; giao diện hiện chỉ có ở `/search` (nhóm Dịch vụ & khuyến mãi chỉ ở `variant="search"`) | **Có** — bám Usecase: thêm ô vào nhóm lọc của `variant="category"` (giữ thứ tự / kiểu như `/search`), `pages/c/[slug].astro` truyền `hasVoucher`. Nếu nhóm muốn giữ đúng prototype thì chốt **Không** và ghi lệch vào `BAO_CAO_DOI_CHIEU_GIAO_DIEN.md` | ☑ 2026-11-24 theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại) |
 | D9 | **Nguồn bộ lọc thuộc tính ngành** (`attribute-filters` đang mock) | API 5.3 `summary.facets.attribute` (thuộc tính `is_filterable` đầu tiên của danh mục đang chọn); `web-backend-handoff.md` dòng 41 ("bổ sung spec **hoặc** trả trong `include_facets`") | **Dùng `facets.attribute` của 5.3** — không thêm endpoint mới (spec không có). Bỏ hàm `listAttributeFilters` gọi đường dẫn không có; lấy thuộc tính + giá trị + số lượng từ facets; giá trị lọc gửi `attr.{code}` (mã thật, không phải tên). Gạch dòng 41 + 274 của handoff | ☑ 2026-11-24 theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại) |
 | D10 | **Seed thêm voucher** để chạy thật có cả shop có / không có voucher và voucher hết hạn | `R__seed_demo_50_vouchers.sql` (chỉ TechZone có voucher SHOP) | Thêm 3 dòng vào file 50 (cùng kiểu `VALUES`, `ON CONFLICT DO NOTHING`): 1 voucher SHOP còn hạn cho shop thứ hai (`owner.shoe@genie.example`), 1 voucher SHOP **đã tắt** (`is_active = false`) cho `owner.home@genie.example`, 1 voucher SHOP **hết lượt** cho `owner.beauty@genie.example`. Báo Thiện (chủ plan seed) — chính người làm plan này | ☑ 2026-11-24 theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại) |
-| D11 | **Nhánh** | CLAUDE.md mục 4 (`feature/…`, `bugfix/…`; không có `chore/`) | Đổi tên nhánh hiện tại `chore/minor-fixes` → `bugfix/public-etag-304` (H00). Ba nhánh mới từ `develop` mới nhất: `feature/b1-suspension-expiry-job`, `feature/b2-catalog-acceptance`, `feature/b3-shop-voucher-filter`. Mỗi PR ≤ ~400 dòng, vào `develop` | ☑ 2026-11-24 theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại) |
+| D11 | **Nhánh** | CLAUDE.md mục 4 (`feature/…`, `bugfix/…`; không có `chore/`) | Đổi tên nhánh hiện tại `chore/minor-fixes` → `bugfix/public-etag-304` (H00). Ba nhánh xếp **thẳng hàng** (cập nhật 2026-11-24 — cả ba cùng sửa file progress, tách song song sẽ xung đột khi gộp): `bugfix/public-etag-304` → `feature/b1-suspension-expiry-job` → `feature/b2-catalog-acceptance` → `feature/b3-shop-voucher-filter`. Gộp PR vào `develop` đúng thứ tự đó, mỗi PR ≤ ~400 dòng; nhánh b3 có đủ cả ba cụm để chạy thật | ☑ 2026-11-24 theo đề xuất (Thiện rà soát — chờ Khoa / Quân xem lại) |
 
 ---
 
@@ -88,7 +88,7 @@ SuspensionExpiryJob.scheduled()            (mỗi 5 phút, chạy sau 1 phút k�
 AFTER_COMMIT: AccountMailListener.onReactivated → email "account-reactivated"
 ```
 
-- **Không đụng**: `status = 'LOCKED'` (khóa nhân viên ở `/admin/staff`, khóa vô thời hạn của API 11.13), `SUSPENDED` vô thời hạn (`suspended_until IS NULL`), `ANONYMIZED`, `DELETED`, khóa tạm vì sai mật khẩu (`locked_until` — tự hết, không phải đình chỉ).
+- **Không đụng**: `status = 'LOCKED'`, đình chỉ vô thời hạn (khóa nhân viên ở `/admin/staff` = `SUSPENDED` + `suspended_until` NULL; "vô thời hạn" ở API 11.13), `SUSPENDED` vô thời hạn (`suspended_until IS NULL`), `ANONYMIZED`, `DELETED`, khóa tạm vì sai mật khẩu (`locked_until` — tự hết, không phải đình chỉ).
 - **Không** khôi phục phiên đã thu hồi lúc khóa — người dùng đăng nhập lại như thường.
 - Đồng hồ lấy từ `Clock` (IT dùng `MutableClock`).
 
@@ -312,6 +312,19 @@ docs/ … (H02, H07, H10, H14 — liệt kê ở từng task)
 
 ---
 
+### H15 — B2: sửa giao diện Admin danh mục (phát sinh khi chạy thật 2026-11-24)
+
+> Chạy thật lộ 5 TC B2 không đạt do **giao diện** (API đều đúng): ngành cấp 2 / 3 không có Sửa / Ẩn / Xóa / Bộ thuộc tính (`CatalogPage` chỉ sửa ngành gốc; `AttributePanel` chỉ tìm trong `roots` → "Không tìm thấy danh mục") — TC-B2-17, 21, 22, 32; đổi kiểu dữ liệu thuộc tính: form không khóa ô, lỗi `422 IMMUTABLE` chỉ hiện thông báo chung — TC-B2-23. Căn cứ: Usecase UC-CAT-14 bước 2, 7 (sửa / ẩn / xóa mọi danh mục), UC-CAT-15 bước 1–2 (thuộc tính theo mọi ngành, bảng kế thừa, kiểu dữ liệu không đổi được). Không đổi API / CSDL — backend đã trả đủ trường cho mọi cấp (`AdminCategoryView`), web chỉ ánh xạ thiếu.
+
+- **[H15.01]** Domain: `CategoryBase` (trường chung mọi cấp), `SubCategory` / `LeafCategory` đủ slug, icon, hiển thị, giấy tờ, hoa hồng riêng / kế thừa, số sản phẩm; `CategoryNode` (+ `level`, `parentId`, `rootId`, `childCount`); `flattenTree`, `findCategory`, `canDeleteCategory` (thay `canDeleteRoot`).
+- **[H15.02]** DTO / mapper: `SubCategoryDto`, `LeafCategoryDto` (trường của backend; mock thiếu thì mặc định, hoa hồng kế thừa ngành cha); mock sửa / xóa được ngành ở mọi cấp (`mapTree`, kiểm slug trùng toàn cây).
+- **[H15.03]** `CatalogPage`: dòng `SubRow` cho cấp 2 và cấp 3 (thụt lề), mỗi dòng có **Bộ thuộc tính**, **Sửa**, **Xem SP**, nhãn "Ẩn" khi ngành đang ẩn; nút Sửa mở `CatModal` với đúng ngành (`findCategory`).
+- **[H15.04]** `CatModal`: nhận `CategoryNode` (mọi cấp); Xóa theo `canDeleteCategory`; lỗi theo trường của API (`errors[].field`, `GNE-CAT-4091 details.field`) hiện tại ô.
+- **[H15.05]** `AttributePanel`: tìm ngành ở mọi cấp, "Quay lại" về đúng ngành gốc của nhánh; ô **Kiểu dữ liệu khóa khi sửa** + gợi ý `admin-catalog.attr.type_locked`; lỗi API theo trường (`data_type`, `values`, `code`, `GNE-CAT-4095`) hiện tại ô; cột "Ngành gốc" của bảng kế thừa → "Kế thừa từ" (cấp 3 kế thừa cả cấp 2).
+- **[H15.06]** Test: `catalog.rules.test.ts` (xóa được ở mọi cấp, dàn phẳng / tìm ngành 3 cấp), `catalog.mapper.test.ts` (trường ngành con, mặc định khi mock thiếu); `npm run verify`.
+- **[H15.07]** COMMIT `feat(admin-ui): manage sub-categories and lock attribute data type` (nhánh `feature/b2-catalog-acceptance`, rebase `feature/b3-shop-voucher-filter` lên trên).
+- **[H15.08]** Chạy lại TC-B2-01 → 32 trên trình duyệt thật — 32 / 32 đạt; ghi progress mục 5.
+
 ## 6. Kịch bản kiểm thử thủ công (chạy thật)
 
 > Môi trường H00.07. Mật khẩu mọi tài khoản seed: `Genie@123`. Mỗi dòng ghi Đạt / Không đạt vào progress. SQL chạy bằng `docker exec -it genie-local-postgres-1 psql -U genie -d genie`.
@@ -330,7 +343,7 @@ docs/ … (H02, H07, H10, H14 — liệt kê ở từng task)
 | TC-B1-08 | Khóa `b1.manual@example.com` 30 ngày → Mở khóa thủ công, **bỏ trống lý do** | Không cho lưu, lỗi tại ô lý do (`GNE-VAL-4220`) |
 | TC-B1-09 | Mở khóa thủ công có lý do "Đã xác minh khiếu nại" | "Hoạt động"; log `ACCOUNT_REACTIVATED` lý do Admin nhập, người làm = Yến; 1 thư mở khóa (D2); sau ≥ 5 phút cron **không** log thêm |
 | TC-B1-10 | Khóa lại `b1.cron7` 7 ngày → SQL (a) dời hạn → **đăng nhập ngay** (trước khi cron chạy) | Đăng nhập được (luồng D4); đúng **1** dòng `ACCOUNT_REACTIVATED` (không có `source CRON`); cron lần sau không log thêm |
-| TC-B1-11 | Admin khóa một nhân viên thử ở `/admin/staff` (tạo nhân viên mời thử, không khóa nhân viên seed) → chờ ≥ 6 phút | Nhân viên vẫn khóa (`LOCKED` không thuộc cron) |
+| TC-B1-11 | Admin khóa một nhân viên thử ở `/admin/staff` (tạo nhân viên mời thử, không khóa nhân viên seed) → chờ ≥ 6 phút | Nhân viên vẫn "Tạm khoá" — khóa nhân viên lưu `SUSPENDED` **vô thời hạn** (`suspended_until` NULL, `UserFacade.lockStaff`), cron chỉ mở đình chỉ có hạn *(sửa 2026-11-24: bản đầu ghi nhầm là `LOCKED`)* |
 | TC-B1-12 | Đăng nhập `phat.nt@genie.example` (Moderator, không có `MANAGE_USER`) → `/admin/users` | Menu không có mục; gõ URL → màn "không có quyền"; API `403 GNE-SEC-4030` |
 
 SQL hỗ trợ:

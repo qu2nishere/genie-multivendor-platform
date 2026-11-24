@@ -1,10 +1,5 @@
-import type { AttributeFilter, Category } from '../domain/catalog.types';
-import type {
-  AttributeFilterDto,
-  CategoryDto,
-  CategoryHeaderDto,
-  CategoryNodeDto,
-} from './catalog.dto';
+import type { Category } from '../domain/catalog.types';
+import type { CategoryDto, CategoryHeaderDto, CategoryNodeDto } from './catalog.dto';
 
 export const toCategory = (d: CategoryDto): Category => ({
   id: d.id,
@@ -30,10 +25,4 @@ export const fromHeader = (d: CategoryHeaderDto): Category => ({
   icon: d.icon ?? '',
   description: d.description ?? '',
   parentId: d.parent_id,
-});
-
-export const toAttributeFilter = (d: AttributeFilterDto): AttributeFilter => ({
-  categoryId: d.category_id,
-  name: d.name,
-  values: [...d.values],
 });

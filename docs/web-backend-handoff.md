@@ -38,7 +38,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
 | `POST` / `DELETE /me/identities/GOOGLE` | `POST /me/identities/{provider}` (`google` chữ thường) | Sửa mã |
 | `GET /public/campaigns/{slug}` · `GET /public/campaigns/slugs` | Chưa có — spec dựng trang chiến dịch bằng `GET /public/products?discount_min=` + `GET /public/vouchers?code=` | **Bổ sung spec** (trang `/campaign/[slug]` cần tiêu đề, banner, mốc thời gian, mã voucher; sitemap cần danh sách slug) |
-| `GET /public/categories/{categoryId}/attribute-filters` | Chưa có (spec chỉ có thuộc tính ở `/admin/categories/{id}/attributes`) | **Bổ sung spec** hoặc trả trong `include_facets` (bộ lọc thuộc tính ngành UC-CAT-05) |
+| ~~`GET /public/categories/{categoryId}/attribute-filters`~~ | Không làm endpoint riêng — dùng `summary.facets.attribute` của `GET /public/products?category_id=&include_facets=true` (API 5.3) | **Đã xử lý** 2026-11-24 (plan `2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` D9, H11) |
 | `GET /public/brands/verified` | Chưa có | **Bổ sung spec** hoặc trả cờ `verified` trong facet thương hiệu (dấu tích ở bộ lọc Thương hiệu) |
 | `GET /public/variants?ids=` | Chưa có | **Bổ sung spec** — giỏ khách lưu SKU, cần tra dòng hiển thị (G10.02) |
 | `GET /public/shops/shipping-policies?ids=` | Chưa có — phí ship chỉ có trong preview 6.8 | **Bổ sung spec** hoặc tính phí ship ở `POST /me/checkout/preview` cho cả trang giỏ (G10.11) |
@@ -271,7 +271,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 |---|---|---|
 | `listCategories` | catalog.api.ts | `GET /public/categories`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
 | `getCategoryBySlug` | catalog.api.ts | `GET /public/categories/{slug}`  — **đã nối** (`PUBLIC_REAL_API=catalog`, plan B2) |
-| `listAttributeFilters` | catalog.api.ts | `GET /public/categories/{categoryId}/attribute-filters` |
+| ~~`listAttributeFilters`~~ | catalog.api.ts | **Đã bỏ** 2026-11-24 — thuộc tính lọc lấy từ `summary.facets.attribute` (API 5.3, D9) |
 | `listVerifiedBrands` | catalog.api.ts | `GET /public/brands/verified` |
 
 ### `chat`
