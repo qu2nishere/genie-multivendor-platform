@@ -554,7 +554,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   4. Giao diện hiển thị Menu đa cấp với Icon, Tên ngành hàng, và các danh mục con trực thuộc.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend (`catalog/category`: cây công khai có cache, xóa cache sau commit khi Admin đổi cây) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=catalog`); **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`catalog/category`: cây công khai có cache, xóa cache sau commit khi Admin đổi cây) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=catalog`); build xanh + kịch bản API `catalog-category.http` đúng trên backend thật (2026-11-24); còn chạy thật trên giao diện — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng).
 
@@ -631,7 +631,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   6. Tìm **trong shop** (từ trang shop) ↔ "Mở rộng tìm toàn sàn"; sắp xếp Liên quan / Mới nhất / Bán chạy / Giá.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), phần đã có đã chạy thật 2026-11-21 (sắp xếp, khoảng giá, đánh giá, Chính hãng, Freeship, nơi bán). Còn: lọc "Shop có voucher" (module promotion), lọc danh mục khi UC-CAT-01 nối API — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend + test xong, web nối API thật (cờ `PUBLIC_REAL_API=product,search,shop`), phần đã có đã chạy thật 2026-11-21 (sắp xếp, khoảng giá, đánh giá, Chính hãng, Freeship, nơi bán). Lọc danh mục + danh mục con đã khớp CSDL thật sau khi UC-CAT-01 nối API (kiểm 2026-11-24). Còn: lọc "Shop có voucher" (module promotion) — plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -884,7 +884,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   10. Duyệt đề xuất danh mục của người bán ở cùng màn (UC-CAT-17); xem danh sách sản phẩm trong từng danh mục và từ chối sản phẩm vi phạm.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories`, `/admin/commission-settings`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog,commission`); duyệt đề xuất (UC-CAT-17) và sản phẩm theo danh mục còn mock; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories`, `/admin/commission-settings`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog,commission`); duyệt đề xuất (UC-CAT-17) và sản phẩm theo danh mục còn mock; build xanh + kịch bản API `catalog-category.http` đúng trên backend thật (2026-11-24); còn chạy thật trên giao diện — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng) (`commissionRate`), `PlatformSetting` (mục 12.2), [CategoryProposal](../ClassDiagram/ENTITY.md#29-categoryproposal--đề-xuất-danh-mục-mới-của-người-bán), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
@@ -907,7 +907,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Ngừng dùng thuộc tính:* `deactivate()` — dữ liệu cũ trong `specsJson` giữ nguyên.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories/{id}/attributes`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog`); kiểm thuộc tính bắt buộc khi gửi duyệt sản phẩm làm ở UC-CAT-09; **chưa test** (chưa build, chưa chạy thật) — plan `plan/2026-11-19/b2.md`.
+  - *Hiện trạng:* 🟡 Đang triển khai — backend (`/admin/categories/{id}/attributes`) + test viết xong; web nối API thật (cờ `PUBLIC_REAL_API=admin-catalog`); kiểm thuộc tính bắt buộc khi gửi duyệt sản phẩm làm ở UC-CAT-09; build xanh + kịch bản API `catalog-category.http` đúng trên backend thật (2026-11-24); còn chạy thật trên giao diện — plan `plan/2026-11-19/b2.md`.
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CategoryAttribute](../ClassDiagram/ENTITY.md#26-categoryattribute--bộ-thuộc-tính-chuẩn-theo-ngành-hàng), [Category](../ClassDiagram/ENTITY.md#21-category--danh-mục-ngành-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu).
 
