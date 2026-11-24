@@ -1,6 +1,7 @@
 package com.genie.catalog.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.genie.catalog.CatalogITSupport;
 import com.genie.support.TestDataBuilder;
@@ -165,6 +166,27 @@ class ProductSearchIT extends CatalogITSupport {
         assertThat((Object) read(r, "$.data[0].flash_sale")).isNull();
         assertThat((Object) read(r, "$.summary")).isNull();
         assertThat(r.getResponse().getHeader("ETag")).isNotBlank();
+    }
+
+    /** Hồi quy 2026-11-24: ETag băm cả {@code meta.request_id} / {@code timestamp} nên không bao giờ {@code 304}. */
+    @Test
+    void sameContentGives304AndChangedContentGivesNewEtag() throws Exception {
+        var shop = data.shop().create();
+        data.product(shop).name("Bình giữ nhiệt inox").sku(250000, 5).create();
+        String shopId = String.valueOf(shop.shopId());
+
+        String etag = call(URL, "shop_id", shopId).getResponse().getHeader("ETag");
+        assertThat(etag).isNotBlank();
+        assertThat(call(URL, "shop_id", shopId).getResponse().getHeader("ETag")).isEqualTo(etag);
+
+        MvcResult again = mvc.perform(get(URL).param("shop_id", shopId).header("If-None-Match", etag)).andReturn();
+        assertThat(status(again)).isEqualTo(304);
+        assertThat(again.getResponse().getContentAsByteArray()).isEmpty();
+
+        data.product(shop).name("Ly sứ in hình").sku(90000, 5).create();
+        MvcResult changed = mvc.perform(get(URL).param("shop_id", shopId).header("If-None-Match", etag)).andReturn();
+        assertThat(status(changed)).isEqualTo(200);
+        assertThat(changed.getResponse().getHeader("ETag")).isNotEqualTo(etag);
     }
 
     @Test
