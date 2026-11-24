@@ -88,7 +88,7 @@ SuspensionExpiryJob.scheduled()            (mỗi 5 phút, chạy sau 1 phút k�
 AFTER_COMMIT: AccountMailListener.onReactivated → email "account-reactivated"
 ```
 
-- **Không đụng**: `status = 'LOCKED'` (khóa nhân viên ở `/admin/staff`, khóa vô thời hạn của API 11.13), `SUSPENDED` vô thời hạn (`suspended_until IS NULL`), `ANONYMIZED`, `DELETED`, khóa tạm vì sai mật khẩu (`locked_until` — tự hết, không phải đình chỉ).
+- **Không đụng**: `status = 'LOCKED'`, đình chỉ vô thời hạn (khóa nhân viên ở `/admin/staff` = `SUSPENDED` + `suspended_until` NULL; "vô thời hạn" ở API 11.13), `SUSPENDED` vô thời hạn (`suspended_until IS NULL`), `ANONYMIZED`, `DELETED`, khóa tạm vì sai mật khẩu (`locked_until` — tự hết, không phải đình chỉ).
 - **Không** khôi phục phiên đã thu hồi lúc khóa — người dùng đăng nhập lại như thường.
 - Đồng hồ lấy từ `Clock` (IT dùng `MutableClock`).
 
@@ -330,7 +330,7 @@ docs/ … (H02, H07, H10, H14 — liệt kê ở từng task)
 | TC-B1-08 | Khóa `b1.manual@example.com` 30 ngày → Mở khóa thủ công, **bỏ trống lý do** | Không cho lưu, lỗi tại ô lý do (`GNE-VAL-4220`) |
 | TC-B1-09 | Mở khóa thủ công có lý do "Đã xác minh khiếu nại" | "Hoạt động"; log `ACCOUNT_REACTIVATED` lý do Admin nhập, người làm = Yến; 1 thư mở khóa (D2); sau ≥ 5 phút cron **không** log thêm |
 | TC-B1-10 | Khóa lại `b1.cron7` 7 ngày → SQL (a) dời hạn → **đăng nhập ngay** (trước khi cron chạy) | Đăng nhập được (luồng D4); đúng **1** dòng `ACCOUNT_REACTIVATED` (không có `source CRON`); cron lần sau không log thêm |
-| TC-B1-11 | Admin khóa một nhân viên thử ở `/admin/staff` (tạo nhân viên mời thử, không khóa nhân viên seed) → chờ ≥ 6 phút | Nhân viên vẫn khóa (`LOCKED` không thuộc cron) |
+| TC-B1-11 | Admin khóa một nhân viên thử ở `/admin/staff` (tạo nhân viên mời thử, không khóa nhân viên seed) → chờ ≥ 6 phút | Nhân viên vẫn "Tạm khoá" — khóa nhân viên lưu `SUSPENDED` **vô thời hạn** (`suspended_until` NULL, `UserFacade.lockStaff`), cron chỉ mở đình chỉ có hạn *(sửa 2026-11-24: bản đầu ghi nhầm là `LOCKED`)* |
 | TC-B1-12 | Đăng nhập `phat.nt@genie.example` (Moderator, không có `MANAGE_USER`) → `/admin/users` | Menu không có mục; gõ URL → màn "không có quyền"; API `403 GNE-SEC-4030` |
 
 SQL hỗ trợ:
