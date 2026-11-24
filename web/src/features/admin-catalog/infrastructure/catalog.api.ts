@@ -24,6 +24,7 @@ import type {
   CatalogProductDto,
   CatalogSummaryDto,
   CategoryDto,
+  LeafCategoryDto,
   ProposalDto,
 } from './catalog.dto';
 import {
@@ -142,29 +143,55 @@ export async function createCategory(c: CategoryInput): Promise<void> {
   await api.post('/admin/categories', toCategoryInputDto(c));
 }
 
-/** Sửa danh mục gốc (tên, slug, icon, hoa hồng, hiển thị) — công tắc "Hiển thị" gửi riêng is_active. */
+/** Mock: áp `fn` cho ngành `id` ở bất kỳ cấp nào của cây. */
+function patchNode<T extends LeafCategoryDto>(
+  node: T,
+  id: number,
+  fn: (n: LeafCategoryDto) => LeafCategoryDto,
+): T {
+  return node.id === id ? ({ ...node, ...fn(node) } as T) : node;
+}
+function mapTree(
+  roots: CategoryDto[],
+  id: number,
+  fn: (n: LeafCategoryDto) => LeafCategoryDto,
+): CategoryDto[] {
+  return roots.map((r) => ({
+    ...patchNode(r, id, fn),
+    children: r.children.map((s) => ({
+      ...patchNode(s, id, fn),
+      children: s.children.map((l) => patchNode(l, id, fn)),
+    })),
+  }));
+}
+const allSlugs = (roots: CategoryDto[]) =>
+  roots.flatMap((r) => [
+    { id: r.id, slug: r.slug },
+    ...r.children.flatMap((s) => [
+      { id: s.id, slug: s.slug },
+      ...s.children.map((l) => ({ id: l.id, slug: l.slug })),
+    ]),
+  ]);
+
+/** Sửa danh mục ở mọi cấp (tên, slug, icon, hoa hồng, hiển thị) — công tắc "Hiển thị" gửi riêng is_active. */
 export async function updateCategory(id: number, patch: Partial<CategoryInput>): Promise<void> {
   if (CATALOG_MOCK) {
     await mockDelay(200);
     const roots = categoriesStore.get();
-    if (patch.slug && roots.some((r) => r.id !== id && r.slug === patch.slug))
+    if (patch.slug && allSlugs(roots).some((r) => r.id !== id && r.slug === patch.slug))
       mockFail('GNE-CAT-4091');
     categoriesStore.set(
-      roots.map((r) =>
-        r.id === id
-          ? {
-              ...r,
-              name: patch.name ?? r.name,
-              slug: patch.slug ?? r.slug,
-              icon: patch.icon ?? r.icon,
-              commission_rate: patch.commissionRate ?? r.commission_rate,
-              effective_commission_rate:
-                patch.commissionRate ?? r.commission_rate ?? r.effective_commission_rate,
-              is_active: patch.active ?? r.is_active,
-              requires_business_license: patch.requiresLicense ?? r.requires_business_license,
-            }
-          : r,
-      ),
+      mapTree(roots, id, (r) => ({
+        ...r,
+        name: patch.name ?? r.name,
+        slug: patch.slug ?? r.slug,
+        icon: patch.icon ?? r.icon,
+        commission_rate: patch.commissionRate ?? r.commission_rate,
+        effective_commission_rate:
+          patch.commissionRate ?? r.commission_rate ?? r.effective_commission_rate,
+        is_active: patch.active ?? r.is_active,
+        requires_business_license: patch.requiresLicense ?? r.requires_business_license,
+      })),
     );
     return;
   }
@@ -183,10 +210,21 @@ export async function deleteCategory(id: number): Promise<void> {
   if (CATALOG_MOCK) {
     await mockDelay(200);
     const roots = categoriesStore.get();
-    const r = roots.find((x) => x.id === id);
-    if (!r) mockFail('GNE-CAT-4041');
-    if (r.product_count > 0 || r.children.length > 0) mockFail('GNE-CAT-4092');
-    categoriesStore.set(roots.filter((x) => x.id !== id));
+    const node = roots
+      .flatMap((r) => [r, ...r.children, ...r.children.flatMap((x) => x.children)])
+      .find((x) => x.id === id) as (LeafCategoryDto & { children?: unknown[] }) | undefined;
+    if (!node) mockFail('GNE-CAT-4041');
+    if ((node.product_count ?? 0) > 0 || (node.children?.length ?? 0) > 0) mockFail('GNE-CAT-4092');
+    categoriesStore.set(
+      roots
+        .filter((r) => r.id !== id)
+        .map((r) => ({
+          ...r,
+          children: r.children
+            .filter((x) => x.id !== id)
+            .map((x) => ({ ...x, children: x.children.filter((l) => l.id !== id) })),
+        })),
+    );
     return;
   }
   await api.delete(`/admin/categories/${id}`);

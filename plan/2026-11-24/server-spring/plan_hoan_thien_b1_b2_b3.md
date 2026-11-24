@@ -226,7 +226,7 @@ docs/ … (H02, H07, H10, H14 — liệt kê ở từng task)
   | `GET /admin/commission-settings` | 401 | 403 | 403 | 403 | 403 | 200 | 200 |
   | `PATCH /admin/commission-settings` | 401 | 403 | 403 | 403 | 403 | 200 | 200 |
 
-  Mã lỗi: 401 → `GNE-SEC-4010`, 403 → `GNE-SEC-4030`. Mỗi ô 403 kiểm thêm: có dòng `ACCESS_DENIED` (plan B1 D14, giới hạn 1 dòng / người / đường dẫn / phút). Nhân viên bị thu hồi `MANAGE_CATALOG` giữa chừng → request kế tiếp 403 (plan B1 D19).
+  Mã lỗi: 401 → `GNE-SEC-4010`, 403 → `GNE-SEC-4030`. 403 ghi dòng `ACCESS_DENIED` kèm `method` + `path` (plan B1 D14); 401 không ghi. *(Rà soát 2026-11-24: `RestAccessDeniedHandler` ghi **mọi** lần 403 — chưa có giới hạn "1 dòng / người / đường dẫn / phút" như D14 đề xuất; báo Khoa quyết có cần thêm không.)* Nhân viên bị thu hồi `MANAGE_CATALOG` giữa chừng → request kế tiếp 403 (plan B1 D19).
 - **[H06.02]** `AdminCategoryIT.deleteRejectedWhileAVoucherReferencesTheCategory`: chèn voucher + `voucher_categories` trỏ ngành rỗng → `DELETE` → `409 GNE-CAT-4092`, `details.reason = IN_USE`; ngành vẫn còn; xóa liên kết → xóa được `204`.
 - **[H06.03]** Unit cây công khai khi **Redis lỗi** (mẫu `BannerCacheTest.redisFailureIsIgnored`): `StringRedisTemplate` ném lỗi khi đọc / ghi → vẫn trả cây từ CSDL, không ném ra ngoài (UC-CAT-01 bước 3).
 - **[H06.04]** `PublicCategoryIT`: header `Cache-Control: public, max-age=300` (API 0.12) và `If-None-Match` → `304` (nhờ sửa ETag H00); đổi tên ngành → ETag mới.

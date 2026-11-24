@@ -1,9 +1,11 @@
 // Thêm / Sửa danh mục (prototype Catalog.jsx CatModal) — plan G12.22: tên, slug (tự sinh + nút Auto),
 // danh mục cha (gốc / cấp 2 — cây 3 cấp, chỉ khi thêm), biểu tượng, hoa hồng mặc định, hiển thị;
 // Xóa chỉ khi danh mục rỗng (hỏi lại). react-hook-form + zod.
+// Plan 2026-11-24 H15: sửa / ẩn / xóa được ngành ở MỌI cấp (UC-CAT-14 bước 2, 7); lỗi của API theo từng
+// trường (`errors[].field`, `GNE-CAT-4091 details.field`) hiện ngay tại ô.
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { errorMessage } from '@/shared/api/errors';
+import { errorMessage, isApiError } from '@/shared/api/errors';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { slugify } from '@/shared/lib/slug';
@@ -20,9 +22,9 @@ import {
   toIconName,
 } from '@/shared/ui';
 import { useCreateCategory, useDeleteCategory, useUpdateCategory } from '../application/useCatalog';
-import { CAT_ICONS, canDeleteRoot, parentOptions } from '../domain/catalog.rules';
+import { CAT_ICONS, canDeleteCategory, parentOptions } from '../domain/catalog.rules';
 import { categorySchema, type CategoryValues } from '../domain/catalog.schema';
-import type { RootCategory } from '../domain/catalog.types';
+import type { CategoryNode, RootCategory } from '../domain/catalog.types';
 
 const labelCls = 'block text-sm font-semibold text-strong mb-1.5';
 
@@ -34,8 +36,8 @@ export function CatModal({
   onDeleted,
 }: {
   open: boolean;
-  /** null = thêm mới. */
-  editing: RootCategory | null;
+  /** null = thêm mới; sửa được ngành ở mọi cấp. */
+  editing: CategoryNode | null;
   roots: RootCategory[];
   onClose: () => void;
   onDeleted?: () => void;
@@ -77,6 +79,8 @@ export function CatModal({
   }, [open, editing]);
   const v = form.watch();
   const err = form.formState.errors;
+  /** Khóa i18n của zod thì dịch; câu báo lỗi từ API thì hiện nguyên văn. */
+  const msg = (m?: string) => (m ? (/^[\w-]+(\.[\w-]+)+$/.test(m) ? t(m) : m) : undefined);
   const pending = create.isPending || update.isPending;
 
   const submit = form.handleSubmit((values) => {
@@ -85,7 +89,25 @@ export function CatModal({
         toast.success(t('admin-catalog.cat.saved'));
         onClose();
       },
-      onError: (e: unknown) => toast.error(errorMessage(e, t)),
+      onError: (e: unknown) => {
+        const message = errorMessage(e, t);
+        // Lỗi theo trường của API → hiện tại ô (snake_case → tên ô của form)
+        if (isApiError(e)) {
+          const field: Record<string, keyof CategoryValues> = {
+            name: 'name',
+            slug: 'slug',
+            parent_id: 'parentId',
+            commission_rate: 'commissionRate',
+          };
+          for (const fe of e.fieldErrors) {
+            const k = field[fe.field];
+            if (k) form.setError(k, { message: fe.message });
+          }
+          const dup = typeof e.details.field === 'string' ? field[e.details.field] : undefined;
+          if (dup) form.setError(dup, { message });
+        }
+        toast.error(message);
+      },
     };
     // Chỉ gửi hoa hồng khi người dùng thật sự sửa ô này: đổi hoa hồng cần thêm quyền UPDATE_COMMISSION (plan B2 N3)
     const rateTouched = !!form.formState.dirtyFields.commissionRate;
@@ -117,8 +139,8 @@ export function CatModal({
               variant="ghost"
               iconLeft="trash-2"
               className="mr-auto !text-red-600"
-              disabled={!canDeleteRoot(editing)}
-              title={canDeleteRoot(editing) ? undefined : t('admin-catalog.cat.delete_hint')}
+              disabled={!canDeleteCategory(editing)}
+              title={canDeleteCategory(editing) ? undefined : t('admin-catalog.cat.delete_hint')}
               onClick={() => setConfirmDel(true)}
             >
               {t('admin-catalog.cat.delete')}
@@ -139,7 +161,7 @@ export function CatModal({
           placeholder={t('admin-catalog.cat.name_placeholder')}
           required
           maxLength={100}
-          error={err.name?.message ? t(err.name.message) : undefined}
+          error={msg(err.name?.message)}
           {...form.register('name', {
             onChange: (e: { target: { value: string } }) => {
               if (!editing) form.setValue('slug', slugify(e.target.value));
@@ -152,7 +174,7 @@ export function CatModal({
             <Input
               aria-label={t('admin-catalog.cat.slug')}
               wrapperClassName="flex-1"
-              error={err.slug?.message ? t(err.slug.message) : undefined}
+              error={msg(err.slug?.message)}
               {...form.register('slug')}
             />
             <Button
@@ -206,7 +228,7 @@ export function CatModal({
             wrapperClassName="w-[160px]"
             inputMode="decimal"
             iconRight="percent"
-            error={err.commissionRate?.message ? t(err.commissionRate.message) : undefined}
+            error={msg(err.commissionRate?.message)}
             {...form.register('commissionRate', { valueAsNumber: true })}
           />
           <label className="flex items-center gap-2.5 mb-[11px] text-sm text-body">

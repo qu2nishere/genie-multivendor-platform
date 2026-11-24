@@ -1,30 +1,37 @@
 // Danh mục toàn sàn & bộ thuộc tính (API_SPEC 11.11; prototype admin/Catalog.jsx).
-export interface LeafCategory {
-  id: number;
-  name: string;
-}
-
-export interface SubCategory {
-  id: number;
-  name: string;
-  commissionRate: number;
-  productCount: number;
-  children: LeafCategory[];
-}
-
-export interface RootCategory {
+/** Trường chung của mọi ngành (sửa được ở mọi cấp — plan 2026-11-24 H15). */
+export interface CategoryBase {
   id: number;
   name: string;
   slug: string;
   icon: string;
   active: boolean;
-  /** Ngành có điều kiện — sản phẩm phải kèm giấy tờ (plan B2 D17). */
   requiresLicense: boolean;
-  /** Tỷ lệ đang áp dụng (riêng của ngành, hoặc kế thừa / mặc định toàn sàn khi chưa đặt riêng). */
+  /** Tỷ lệ đang áp dụng (riêng, hoặc kế thừa ngành cha / mặc định toàn sàn). */
   commissionRate: number;
-  /** Ngành có tỷ lệ riêng (false = đang dùng mặc định toàn sàn). */
+  /** Ngành có tỷ lệ riêng. */
   ownCommission: boolean;
   productCount: number;
+}
+
+/** Ngành cấp 3. */
+export type LeafCategory = CategoryBase;
+
+/** Ngành cấp 2. */
+export interface SubCategory extends CategoryBase {
+  children: LeafCategory[];
+}
+
+/** Một ngành bất kỳ cấp, kèm vị trí trong cây — dùng cho form Sửa và trang Bộ thuộc tính. */
+export interface CategoryNode extends CategoryBase {
+  level: 1 | 2 | 3;
+  parentId: number | null;
+  /** Ngành gốc của nhánh (để quay lại đúng ngành trên màn cây). */
+  rootId: number;
+  childCount: number;
+}
+
+export interface RootCategory extends CategoryBase {
   shopCount: number;
   children: SubCategory[];
 }

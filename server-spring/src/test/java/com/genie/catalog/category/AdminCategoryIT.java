@@ -120,4 +120,29 @@ class AdminCategoryIT extends CategoryITSupport {
         assertThat(status(send("GET", BASE, staffToken("UPDATE_COMMISSION"), null))).isEqualTo(403);
         assertThat(status(send("GET", BASE, null, null))).isEqualTo(401);
     }
+
+    /** API 11.11: ngành đang được voucher tham chiếu → {@code 4092 IN_USE}; gỡ tham chiếu thì xóa được (plan 2026-11-24 H06.02). */
+    @Test
+    void deleteRejectedWhileAVoucherReferencesTheCategory() throws Exception {
+        String admin = adminToken();
+        long cat = createCategory(admin, "Có voucher " + word(), null);
+        Long voucher = jdbc.queryForObject("""
+                INSERT INTO vouchers (code, title, scope, type, discount_type, discount_value, min_order_value, usage_limit,
+                                      usage_per_user, used_count, priority, valid_from, valid_to, is_active, version,
+                                      total_discount_used, sponsor_type)
+                VALUES (?, 'Voucher theo ngành', 'CATEGORY', 'PLATFORM', 'FIXED_AMOUNT', 10000, 0, 10, 1, 0, 1,
+                        now(), now() + interval '7 days', TRUE, 0, 0, 'PLATFORM') RETURNING id""",
+                Long.class, "CAT" + word().toUpperCase());
+        jdbc.update("INSERT INTO voucher_categories (voucher_id, category_id, created_at) VALUES (?, ?, now())", voucher, cat);
+        try {
+            MvcResult inUse = send("DELETE", BASE + "/" + cat, admin, null);
+            assertThat(status(inUse)).isEqualTo(409);
+            assertThat((String) read(inUse, "$.code")).isEqualTo("GNE-CAT-4092");
+            assertThat((String) read(inUse, "$.details.reason")).isEqualTo("IN_USE");
+            assertThat(jdbc.queryForObject("SELECT count(*) FROM categories WHERE id = ?", Integer.class, cat)).isEqualTo(1);
+        } finally {
+            jdbc.update("DELETE FROM voucher_categories WHERE category_id = ?", cat);
+        }
+        assertThat(status(send("DELETE", BASE + "/" + cat, admin, null))).isEqualTo(204);
+    }
 }

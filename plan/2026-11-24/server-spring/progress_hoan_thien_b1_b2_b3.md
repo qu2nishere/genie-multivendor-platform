@@ -24,9 +24,9 @@
 | H02 | B1: tài liệu trước | 5 | ☑ | `ec65c06` |
 | H03 | B1: backend + test | 9 | ☑ | `8e0e81e`, `a2e02d2` |
 | H04 | B1: chạy thật (kịch bản TC-B1 ở mục 6.1) | 2 | ☐ | |
-| H05 | B2: chuẩn bị | 2 | ☐ | |
-| H06 | B2: test tự động còn thiếu | 8 | ☐ | |
-| H07 | B2: tài liệu trước (chỉ khi H06 lộ lệch spec) | 2 | ☐ | |
+| H05 | B2: chuẩn bị | 2 | ☑ | — |
+| H06 | B2: test tự động còn thiếu | 8 | ☑ | `ca20841` |
+| H07 | B2: tài liệu trước (chỉ khi H06 lộ lệch spec) | 2 | ☑ (không cần) | — |
 | H08 | B3: cổng "shop có voucher" (backend) | 7 | ☐ | |
 | H09 | B3: seed (D10) | 3 | ☐ | |
 | H10 | B3: tài liệu | 5 | ☐ | |
@@ -97,24 +97,24 @@
 
 ### H05 — B2: chuẩn bị
 
-- [ ] **H05.01** Ghi id các ngành seed dùng để thử vào mục 6
-- [ ] **H05.02** Chuẩn bị SQL voucher tham chiếu danh mục (TC-B2-17) + SQL dọn
+- [x] **H05.01** Ghi id các ngành seed dùng để thử vào mục 6
+- [x] **H05.02** Chuẩn bị SQL voucher tham chiếu danh mục (TC-B2-17) + SQL dọn
 
 ### H06 — B2: test tự động còn thiếu
 
-- [ ] **H06.01** `CatalogSecurityIT` — ma trận 7 vai trò × mọi endpoint B2 (+ `ACCESS_DENIED`, thu hồi quyền giữa chừng)
-- [ ] **H06.02** `AdminCategoryIT`: xóa ngành bị voucher tham chiếu → `4092 IN_USE`
-- [ ] **H06.03** Unit cây công khai khi Redis lỗi → đọc CSDL
-- [ ] **H06.04** `PublicCategoryIT`: `Cache-Control`, ETag → `304`, đổi tên → ETag mới
-- [ ] **H06.05** `CommissionIT`: lưu hàng loạt, mỗi ngành đổi đúng 1 `COMMISSION_UPDATED`
-- [ ] **H06.06** Bổ sung `catalog-category.http` (Moderator / Finance 403, `IN_USE`)
-- [ ] **H06.07** Cổng `./mvnw verify`.
-- [ ] **H06.08** COMMIT `test(catalog): cover role matrix, voucher-referenced delete and redis fallback`.
+- [x] **H06.01** `CatalogSecurityIT` — ma trận 7 vai trò × mọi endpoint B2 (+ `ACCESS_DENIED`, thu hồi quyền giữa chừng)
+- [x] **H06.02** `AdminCategoryIT`: xóa ngành bị voucher tham chiếu → `4092 IN_USE`
+- [x] **H06.03** Unit cây công khai khi Redis lỗi → đọc CSDL
+- [x] **H06.04** `PublicCategoryIT`: `Cache-Control`, ETag → `304`, đổi tên → ETag mới
+- [x] **H06.05** `CommissionIT`: lưu hàng loạt, mỗi ngành đổi đúng 1 `COMMISSION_UPDATED`
+- [x] **H06.06** Bổ sung `catalog-category.http` (Moderator / Finance 403, `IN_USE`)
+- [x] **H06.07** Cổng `./mvnw verify`.
+- [x] **H06.08** COMMIT `test(catalog): cover role matrix, voucher-referenced delete and redis fallback`.
 
 ### H07 — B2: tài liệu trước (chỉ khi H06 lộ lệch spec)
 
-- [ ] **H07.01** Ma trận lệch spec → dừng, chốt với Khoa (không lệch → "không cần")
-- [ ] **H07.02** COMMIT `docs(catalog): …` (nếu có).
+- [x] ~~**H07.01** Ma trận lệch spec → dừng, chốt với Khoa~~ (không cần: ma trận khớp API 11.8 / 11.11 + LLD 11.1)
+- [x] ~~**H07.02** COMMIT `docs(catalog): …`~~ (không cần: không có lệch spec)
 
 ### H08 — B3: cổng "shop có voucher" (backend)
 
@@ -259,8 +259,8 @@
 | TC-B1 | b1.forever@example.com | id 35 |
 | TC-B1 | b1.manual@example.com | id 36 |
 | Claude tự kiểm cron (không dùng cho TC) | b1.auto@example.com | id 37 |
-| TC-B2 | id `dien-tu` | |
-| TC-B2 | id ngành con có sản phẩm | |
+| TC-B2 | id `dien-tu` | id 4 (4 ngành con, sản phẩm nằm ở ngành con) |
+| TC-B2 | id ngành con có sản phẩm | id 13 `thiet-bi-am-thanh` (26 sản phẩm) |
 | TC-B2 | id "Thú cưng thử" / cấp 2 / cấp 3 | |
 | TC-B3 | mã voucher seed D10 (còn hạn / đã tắt / hết lượt) | |
 
@@ -280,3 +280,4 @@
 | 2026-11-24 | H02: LLD 10 dòng `SuspensionExpiryJob`, API_SPEC 11.13 *Tự mở khi hết hạn*, Usecase UC-ADM-03 hiện trạng + email, `b1.md` D13 | `ec65c06` |
 | 2026-11-24 | H03: `UserRepository.findSuspensionExpired` (`SKIP LOCKED`), `SuspensionExpiryJob`, `AccountReactivatedEvent`, email `account-reactivated` (cron + Admin mở thủ công; gỡ khóa sai mật khẩu không gửi), `SuspensionExpiryJobIT` 8 test (phủ 11 ca plan; đặt ở package `admin` để dùng `AuditLogTestSupport`), unit `UserTest` + template test. Phát hiện: luồng đăng nhập ghi `ACCOUNT_REACTIVATED` với `user_id` (không `reference_id`) và không khóa dòng → sửa mục Rủi ro của plan | `8e0e81e`, `a2e02d2` |
 | 2026-11-24 | H01 + kiểm cron trên hệ thống thật (Claude, qua API — **chưa phải TC của người dùng**): đăng ký 4 tài khoản bằng OTP Mailpit (id 34–37); `b1.auto` khóa 7 ngày → đăng nhập `403 GNE-AUTH-4031` → dời hạn → 40 giây sau cron mở (log "Đã mở khóa 1 tài khoản…"), `system_logs` `SUSPENSION_EXPIRED · CRON` người làm `system@genie.vn`, Mailpit có thư "Tài khoản Genie Shop của bạn đã được mở lại", đăng nhập lại `201`. H04 (TC-B1 người dùng bấm) chờ | — |
+| 2026-11-24 | H05–H07 (nhánh `feature/b2-catalog-acceptance`): `CatalogSecurityIT` ma trận 7 vai trò × mọi endpoint B2 — **khớp spec**, H07 không cần; `AdminCategoryIT` xóa ngành bị voucher tham chiếu → `IN_USE`; `PublicCategoryIT` ETag → `304`, đổi tên → ETag mới; `CommissionIT` lưu hàng loạt chỉ ghi ngành đổi; `JsonCacheTest` Redis lỗi đọc / ghi / JSON hỏng → đọc nguồn; `catalog-category.http` thêm bước Moderator / Finance / `IN_USE`. Phát hiện cho Khoa: `ACCESS_DENIED` ghi **mọi** lần 403, chưa có giới hạn 1 dòng / người / phút như B1 D14 đề xuất | `ca20841` |

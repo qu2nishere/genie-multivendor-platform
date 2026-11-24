@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
-  canDeleteRoot,
+  canDeleteCategory,
   duplicateCode,
+  findCategory,
+  flattenTree,
   inProductTab,
   parentOptions,
   parseValues,
   productActions,
 } from './catalog.rules';
 import { attributeSchema, categorySchema } from './catalog.schema';
-import type { RootCategory } from './catalog.types';
+import type { CategoryBase, RootCategory, SubCategory } from './catalog.types';
 
 const root = (over: Partial<RootCategory> = {}): RootCategory => ({
   id: 1,
@@ -21,6 +23,24 @@ const root = (over: Partial<RootCategory> = {}): RootCategory => ({
   ownCommission: true,
   productCount: 0,
   shopCount: 0,
+  children: [],
+  ...over,
+});
+
+const base = (id: number, name: string, over: Partial<CategoryBase> = {}): CategoryBase => ({
+  id,
+  name,
+  slug: name.toLowerCase(),
+  icon: 'package',
+  active: true,
+  requiresLicense: false,
+  commissionRate: 5,
+  ownCommission: false,
+  productCount: 0,
+  ...over,
+});
+const sub = (id: number, name: string, over: Partial<SubCategory> = {}): SubCategory => ({
+  ...base(id, name),
   children: [],
   ...over,
 });
@@ -40,21 +60,41 @@ describe('catalog.rules', () => {
   it('tách danh sách giá trị, bỏ trống và trùng', () => {
     expect(parseValues(' 6 tháng, ,12 tháng,6 tháng ')).toEqual(['6 tháng', '12 tháng']);
   });
-  it('chỉ xóa danh mục rỗng', () => {
-    expect(canDeleteRoot(root())).toBe(true);
-    expect(canDeleteRoot(root({ productCount: 3 }))).toBe(false);
+  it('chỉ xóa danh mục rỗng — ở mọi cấp', () => {
+    const tree = [
+      root({
+        children: [
+          sub(11, 'Laptop', { children: [base(111, 'Gaming')] }),
+          sub(12, 'Tai nghe', { productCount: 4 }),
+          sub(13, 'Rỗng'),
+        ],
+      }),
+      root({ id: 2, name: 'Sách', slug: 'sach' }),
+    ];
+    const can = (id: number) => canDeleteCategory(findCategory(tree, id)!);
+    expect(can(1)).toBe(false); // còn ngành con
+    expect(can(2)).toBe(true);
+    expect(can(11)).toBe(false); // còn cấp 3
+    expect(can(12)).toBe(false); // còn sản phẩm
+    expect(can(13)).toBe(true);
+    expect(can(111)).toBe(true);
+  });
+  it('dàn phẳng cây 3 cấp, tìm ngành ở mọi cấp kèm vị trí', () => {
+    const tree = [root({ children: [sub(11, 'Laptop', { children: [base(111, 'Gaming')] })] })];
     expect(
-      canDeleteRoot(
-        root({
-          children: [{ id: 11, name: 'x', commissionRate: 5, productCount: 0, children: [] }],
-        }),
-      ),
-    ).toBe(false);
+      flattenTree(tree).map((c) => [c.id, c.level, c.parentId, c.rootId, c.childCount]),
+    ).toEqual([
+      [1, 1, null, 1, 1],
+      [11, 2, 1, 1, 1],
+      [111, 3, 11, 1, 0],
+    ]);
+    expect(findCategory(tree, 111)).toMatchObject({ name: 'Gaming', level: 3, rootId: 1 });
+    expect(findCategory(tree, 999)).toBeNull();
   });
   it('danh mục cha gồm gốc và cấp 2', () => {
     const opts = parentOptions([
       root({
-        children: [{ id: 11, name: 'Laptop', commissionRate: 5, productCount: 0, children: [] }],
+        children: [sub(11, 'Laptop')],
       }),
     ]);
     expect(opts).toEqual([

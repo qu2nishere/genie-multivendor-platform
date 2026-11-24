@@ -12,14 +12,27 @@ export interface CategoryDto {
   effective_commission_rate: number;
   product_count: number;
   shop_count: number;
-  children: {
-    id: number;
-    name: string;
-    commission_rate: number | null;
-    effective_commission_rate: number;
-    product_count: number;
-    children: { id: number; name: string }[];
-  }[];
+  children: SubCategoryDto[];
+}
+
+/** Ngành cấp 2 / 3 — backend trả đủ trường như ngành gốc (AdminCategoryView); mock chỉ có một phần nên để tùy chọn. */
+export interface LeafCategoryDto {
+  id: number;
+  name: string;
+  slug?: string;
+  icon?: string | null;
+  is_active?: boolean;
+  requires_business_license?: boolean;
+  commission_rate?: number | null;
+  effective_commission_rate?: number;
+  product_count?: number;
+}
+
+export interface SubCategoryDto extends LeafCategoryDto {
+  commission_rate: number | null;
+  effective_commission_rate: number;
+  product_count: number;
+  children: LeafCategoryDto[];
 }
 
 export interface CatalogSummaryDto {
