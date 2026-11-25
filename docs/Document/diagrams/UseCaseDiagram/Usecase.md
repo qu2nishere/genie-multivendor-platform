@@ -1587,7 +1587,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Địa chỉ kho lưu trực tiếp ở `vendor_profiles.pickup*` (bản đầy đủ tách bảng `vendor_warehouses` cho đa kho); đổi kho phải gọi lại API GHN cập nhật cửa hàng.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Backend + test xong (2026-11-25, plan `2026-11-16/server-spring/plan_mo_shop_kyc.md` K07, D16): `PUT /seller/pickup-address`, cổng `PickupShopRegistrar` (giả lập mặc định / GHN `http` chưa kiểm với GHN thật vì `shop/register` còn đòi mã quận cũ); web nối API thật theo cờ `vendor`.
+  - *Hiện trạng:* Backend + test xong (2026-11-25, plan `2026-11-16/server-spring/plan_mo_shop_kyc.md` K07, D16): `PUT /seller/pickup-address`, cổng `PickupShopRegistrar` (giả lập mặc định / GHN `http` chưa kiểm với GHN thật vì `shop/register` còn đòi mã quận cũ); web nối API thật theo cờ `vendor`; đã chạy thật (Chromium / Playwright + `vendor-pickup-address.http`) — **Đã triển khai**.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop) (`pickupDistrictId`, `pickupWardCode`, tên tỉnh/huyện/xã, `ghnShopId` — NULLABLE tới bước này).
 
