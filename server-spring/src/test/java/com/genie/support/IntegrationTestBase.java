@@ -148,6 +148,9 @@ public abstract class IntegrationTestBase {
     protected FakeReverseGeocoder geocoder;
 
     @Autowired
+    protected FakePickupShopRegistrar ghnPickup;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -289,6 +292,13 @@ public abstract class IntegrationTestBase {
         @Primary
         FakeReverseGeocoder fakeReverseGeocoder() {
             return new FakeReverseGeocoder();
+        }
+
+        /** {@code @Primary} → thay {@code StubPickupShopRegistrar} / GHN thật cho kho lấy hàng (UC-VND-05). */
+        @Bean
+        @Primary
+        FakePickupShopRegistrar fakePickupShopRegistrar() {
+            return new FakePickupShopRegistrar();
         }
     }
 }

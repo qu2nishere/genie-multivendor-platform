@@ -2082,7 +2082,13 @@ UC-VND-05
 ```json
 { "phone_number": "0912345678", "province_id": 79, "ward_code": "27478", "address_line": "Kho TechZone, 88 Nguyễn Văn Linh" }
 ```
-`200` `{ "...pickup_address", "ghn_shop_id": 884120 }`. GHN lỗi → `502 GNE-LOG-5022`.
+`200` khối `pickup_address` như `GET` (`phone_number`, `province`, `ward`, `address_line`, `ghn_shop_id`) — địa giới 2 cấp, không có quận. Tên tỉnh / phường do server tra từ mã. Chỉ shop `VERIFIED`.
+
+| Lỗi | Khi nào |
+|---|---|
+| `403 GNE-VND-4031` | Shop chưa `VERIFIED` (`details.kyc_status`) |
+| `422 GNE-VAL-4220` | `phone_number` không đúng `^0\d{9,10}$`, thiếu trường, `ward_code` không thuộc `province_id` (`details.field = ward_code`) |
+| `502 GNE-LOG-5022` | GHN lỗi / hết thời gian chờ — không lưu, kho cũ giữ nguyên |
 
 #### Tài khoản nhận tiền
 UC-VND-07 · **Màn hình:** modal "Cập nhật tài khoản nhận tiền" (Ngân hàng, Tên chủ TK, Số TK → "Xác minh chính chủ" → OTP → "Xác nhận & lưu"), modal "Xóa tài khoản" (OTP)

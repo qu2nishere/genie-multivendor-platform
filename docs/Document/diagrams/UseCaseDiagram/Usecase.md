@@ -1573,17 +1573,21 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Người bán vào Cài đặt gian hàng > Địa chỉ lấy hàng.
   2. Nhập Địa chỉ chi tiết (Số nhà, ngõ ngách, tên đường).
-  3. Chọn Tỉnh/Thành phố, Quận/Huyện, Phường/Xã từ danh mục chuẩn hóa của GHN.
-  4. Nhập Tên người liên hệ kho và Số điện thoại hotline kho.
+  3. Chọn Tỉnh/Thành phố, Phường/Xã/Đặc khu từ danh mục hành chính **2 cấp** (địa giới từ 01/07/2025 — không còn Quận/Huyện; `GET /public/regions/**`, cùng nguồn với sổ địa chỉ UC-AUTH-09).
+  4. Nhập Số điện thoại hotline kho (tên liên hệ gửi GHN = tên shop).
   5. Người bán bấm "Lưu và Đồng bộ với GHN".
-  6. Backend Spring Boot gửi request sang API GHN `https://dev-online-gateway.ghn.vn/.../shop/register` với thông tin kho hàng.
+  6. Backend kiểm shop `VERIFIED`, tra tên tỉnh / phường từ mã (không tin tên client gửi), rồi gửi thông tin kho sang GHN `…/v2/shop/register` (ngoài transaction, timeout 5 giây, thử lại 2 lần). Máy dev / demo dùng bản giả lập (`GHN_PICKUP_MODE=stub`).
   7. GHN phản hồi thành công và trả về mã `shop_id` của GHN.
-  8. Backend lưu thông tin vào `vendor_profiles` : `pickupAddressLine`, `pickupProvinceId` + `pickupProvince`, `pickupDistrictId` + `pickupDistrict`, `pickupWardCode` + `pickupWard` (tên dùng để hiển thị, không cần gọi lại API GHN), `ghnShopId`. Từ đây `isPickupConfigured() = true`.
-  9. Giao diện: khối "Địa chỉ lấy hàng (GHN)" trong Cài đặt Shop (Tỉnh / Quận / Phường theo mã GHN, địa chỉ chi tiết).
+  8. Backend lưu thông tin vào `vendor_profiles` : `pickupPhone`, `pickupAddressLine`, `pickupProvinceId` + `pickupProvince`, `pickupWardCode` + `pickupWard` (tên dùng để hiển thị, không cần gọi lại API GHN), `ghnShopId`; `pickupDistrictId` / `pickupDistrict` = `NULL` (2 cấp). Từ đây `isPickupConfigured() = true`.
+  9. Giao diện: khối "Địa chỉ lấy hàng (GHN)" trong Cài đặt Shop (Tỉnh / Phường theo mã chuẩn, địa chỉ chi tiết, GHN Shop ID).
+- **Luồng thay thế / Ngoại lệ:**
+  - *Shop chưa `VERIFIED`:* `403 GNE-VND-4031`.
+  - *Phường không thuộc tỉnh đã chọn / SĐT sai định dạng:* `422 GNE-VAL-4220`.
+  - *GHN lỗi / hết thời gian chờ:* `502 GNE-LOG-5022`, không lưu gì — địa chỉ kho cũ giữ nguyên.
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Địa chỉ kho lưu trực tiếp ở `vendor_profiles.pickup*` (bản đầy đủ tách bảng `vendor_warehouses` cho đa kho); đổi kho phải gọi lại API GHN cập nhật cửa hàng.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — chờ danh mục hành chính GHN (plan AUTH A12); cột `pickup_phone` + `VendorProfile.updatePickup` đã có (V20). Giao diện chạy mock (cờ `pickup`).
+  - *Hiện trạng:* Backend + test xong (2026-11-25, plan `2026-11-16/server-spring/plan_mo_shop_kyc.md` K07, D16): `PUT /seller/pickup-address`, cổng `PickupShopRegistrar` (giả lập mặc định / GHN `http` chưa kiểm với GHN thật vì `shop/register` còn đòi mã quận cũ); web nối API thật theo cờ `vendor`.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop) (`pickupDistrictId`, `pickupWardCode`, tên tỉnh/huyện/xã, `ghnShopId` — NULLABLE tới bước này).
 
