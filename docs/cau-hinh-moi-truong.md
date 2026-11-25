@@ -199,7 +199,7 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | Google | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (redirect URI `http://localhost:4321/auth/oauth-callback`) |
 | Zalo | `ZALO_APP_ID`, `ZALO_APP_SECRET` |
 | Thanh toán | `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`, `VNPAY_URL`, `VNPAY_RETURN_URL`, `SEPAY_API_KEY`, `SEPAY_ACCOUNT_NUMBER` |
-| Vận chuyển | `GHN_TOKEN`, `GHN_SHOP_ID`, `GHTK_TOKEN`, `VTP_TOKEN`, `JT_KEY` |
+| Vận chuyển | `GHN_TOKEN`, `GHN_SHOP_ID`, `GHN_PICKUP_MODE` (`stub` mặc định — giả lập đăng ký kho lấy hàng UC-VND-05; `http` gọi GHN `v2/shop/register`, cần `GHN_TOKEN`), `GHTK_TOKEN`, `VTP_TOKEN`, `JT_KEY` |
 | AI | `GEMINI_API_KEY` |
 
 ### 6.6 Vận hành

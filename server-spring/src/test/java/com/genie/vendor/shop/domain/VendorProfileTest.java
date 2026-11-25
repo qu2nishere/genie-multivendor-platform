@@ -150,8 +150,11 @@ class VendorProfileTest {
     @Test
     void pickupAndCommission() {
         VendorProfile p = shop();
-        p.updatePickup("0912345678", 202, "TP. Hồ Chí Minh", 1449, "Quận 7", "20710", "P. Tân Phong", "88 NVL", 884120);
+        p.updatePickup("0912345678", 79, "Thành phố Hồ Chí Minh", "26740", "Phường Sài Gòn", "88 NVL", 884120);
         assertThat(p.isPickupConfigured()).isTrue();
+        assertThat(p.getPickupDistrictId()).isNull();      // địa giới 2 cấp — không còn quận (D16)
+        p.updatePickup("0912345678", 79, "Thành phố Hồ Chí Minh", "26740", "Phường Sài Gòn", "88 NVL", null);
+        assertThat(p.isPickupConfigured()).isFalse();      // chưa có GHN Shop ID
         p.setNegotiatedCommission(new BigDecimal("0.0300"));
         assertThat(p.effectiveCommissionRate(new BigDecimal("0.08"))).isEqualByComparingTo("0.03");
         assertThatThrownBy(() -> p.setNegotiatedCommission(new BigDecimal("1.5"))).isInstanceOf(IllegalArgumentException.class);

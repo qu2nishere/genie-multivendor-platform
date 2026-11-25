@@ -59,8 +59,8 @@ public class ShopSettingsService {
     public record Ward(String code, String name) {
     }
 
-    public record PickupAddress(String phoneNumber, Region province, Region district, Ward ward, String addressLine,
-                                Integer ghnShopId) {
+    /** Khối {@code pickup_address} (API 10.11) — địa giới 2 cấp Tỉnh → Phường, không còn quận (plan D16). */
+    public record PickupAddress(String phoneNumber, Region province, Ward ward, String addressLine, Integer ghnShopId) {
     }
 
     public record AutoReply(Boolean enabled, String greeting, String awayMessage) {
@@ -161,12 +161,16 @@ public class ShopSettingsService {
         return f.publicUrl();
     }
 
+    /** Kho lấy hàng đang lưu; chưa cấu hình → {@code null}. */
+    static PickupAddress pickupOf(VendorProfile p) {
+        return p.getPickupAddressLine() == null ? null
+                : new PickupAddress(p.getPickupPhone(), new Region(p.getPickupProvinceId(), p.getPickupProvince()),
+                new Ward(p.getPickupWardCode(), p.getPickupWard()), p.getPickupAddressLine(), p.getGhnShopId());
+    }
+
     private Settings view(VendorProfile p) {
         OffsetDateTime now = OffsetDateTime.now(clock);
-        PickupAddress pickup = p.getPickupAddressLine() == null ? null
-                : new PickupAddress(p.getPickupPhone(), new Region(p.getPickupProvinceId(), p.getPickupProvince()),
-                new Region(p.getPickupDistrictId(), p.getPickupDistrict()), new Ward(p.getPickupWardCode(), p.getPickupWard()),
-                p.getPickupAddressLine(), p.getGhnShopId());
+        PickupAddress pickup = pickupOf(p);
         Vacation vacation = p.isOnVacation(now) || (p.getVacationStartsAt() != null && p.getVacationStartsAt().isAfter(now))
                 ? new Vacation(p.getVacationEndsAt(), p.getVacationMessage()) : null;
         return new Settings(

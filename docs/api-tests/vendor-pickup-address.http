@@ -1,0 +1,53 @@
+### UC-VND-05 — Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (API_SPEC 10.11; plan Mở shop & KYC K07.08, D16)
+# Địa giới 2 cấp (Tỉnh → Phường). Máy dev: GHN_PICKUP_MODE=stub (mặc định) → ghn_shop_id giả = 880000 + shop_id.
+@base = http://localhost:8080/api/v1
+@tok = <access_token VENDOR của shop đã VERIFIED>
+@tokNew = <access_token VENDOR của shop chưa VERIFIED>
+
+### 1. Danh mục: tỉnh, rồi phường của TP. HCM (79)
+GET {{base}}/public/regions/provinces
+
+###
+GET {{base}}/public/regions/provinces/79/wards
+
+### 2. ĐÚNG — lưu kho lần đầu → 200, tên tỉnh / phường do server điền, có ghn_shop_id, không có quận
+PUT {{base}}/seller/pickup-address
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "phone_number": "0912345678", "province_id": 79, "ward_code": "26740", "address_line": "Kho TechZone, 88 Nguyễn Văn Linh" }
+
+### 3. ĐÚNG — đổi kho → 200, giữ nguyên ghn_shop_id (cập nhật cửa hàng cũ)
+PUT {{base}}/seller/pickup-address
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "phone_number": "0987654321", "province_id": 79, "ward_code": "26743", "address_line": "12 Lê Lợi" }
+
+### 4. ĐÚNG — Cài đặt trả lại khối pickup_address vừa lưu
+GET {{base}}/seller/settings
+Authorization: Bearer {{tok}}
+
+### 5. LỖI — phường của An Giang nhưng chọn TP. HCM → 422 GNE-VAL-4220 {field: ward_code}
+PUT {{base}}/seller/pickup-address
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "phone_number": "0912345678", "province_id": 79, "ward_code": "30985", "address_line": "1 A" }
+
+### 6. LỖI — SĐT sai định dạng → 422 GNE-VAL-4220
+PUT {{base}}/seller/pickup-address
+Authorization: Bearer {{tok}}
+Content-Type: application/json
+
+{ "phone_number": "12345", "province_id": 79, "ward_code": "26740", "address_line": "1 A" }
+
+### 7. LỖI — shop chưa VERIFIED → 403 GNE-VND-4031 {kyc_status}
+PUT {{base}}/seller/pickup-address
+Authorization: Bearer {{tokNew}}
+Content-Type: application/json
+
+{ "phone_number": "0912345678", "province_id": 79, "ward_code": "26740", "address_line": "1 A" }
+
+# GHN lỗi → 502 GNE-LOG-5022 (kho cũ giữ nguyên): kiểm bằng PickupAddressIT (GHN giả), hoặc chạy backend với
+# GHN_PICKUP_MODE=http + GHN_API_URL trỏ tới địa chỉ không tồn tại.

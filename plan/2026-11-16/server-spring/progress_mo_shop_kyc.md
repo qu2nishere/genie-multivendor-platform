@@ -4,11 +4,11 @@
 |---|---|
 | **Plan** | [plan_mo_shop_kyc.md](./plan_mo_shop_kyc.md) — chi tiết từng task tra theo mã `Kxx.yy` |
 | **Ngày lập** | 2026-11-16 |
-| **Tổng** | 112 task + 25 commit, 13 giai đoạn |
+| **Tổng** | 117 task + 27 commit, 13 giai đoạn (K07 viết lại 2026-11-25: 10 task + 3 commit) |
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-18 — đang làm (136 / 137) |
+| **Cập nhật gần nhất** | 2026-11-25 — K07 xong (143 / 144; còn K11.08) |
 
 **Cách dùng**
 
@@ -38,6 +38,7 @@
 | D13 | Xác minh chính chủ tài khoản ngân hàng | ☑ | Theo đề xuất: `BankAccountLookup` giả lập, số TK đuôi `000` → tên khác · 2026-11-18 |
 | D14 | `PATCH /seller/settings` chứa khối `auto_reply` (UC-VND-06) và `GET` trả `vacation` (UC-VND-19) — hai UC ngoài cụm | ☑ | Theo đề xuất: lưu / trả `auto_reply`, `vacation` chỉ đọc; hành vi để cụm khác · 2026-11-18 |
 | D15 | Số điện thoại / email liên hệ shop và "Họ tên chủ shop" của form mở shop | ☑ | Theo đề xuất: `owner_name` → `representative`, `phone_number` → `contact_phone`, `email` → `contact_email` (OTP gửi tới đây) · 2026-11-18 |
+| D16 | Kho lấy hàng 2 cấp + cách gọi GHN `shop/register` (bổ sung 2026-11-25) | ☑ | Theo đề xuất (theo D25 của plan AUTH người dùng đã đồng ý 2026-11-18): quận = `NULL`, `GHN_PICKUP_MODE` = `stub` mặc định / `http` · 2026-11-25 |
 
 ## Tổng quan
 
@@ -50,13 +51,13 @@
 | K04 | Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 10 | 2 | 12 / 12 | — | `feature/vendor-k04-kyc-submission` |
 | K05 | Thẩm định KYC tự động qua AI — phần backend (UC-VND-03) | 14 | 3 | 17 / 17 | — | `feature/vendor-k05-kyc-ai` |
 | K06 | Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 13 | 2 | 15 / 15 | — | `feature/vendor-k06-kyc-review` |
-| K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 5 | 1 | 6 / 6 | — | `feature/vendor-k07-pickup` |
+| K07 | Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | 10 | 3 | 13 / 13 | — | `feature/vendor-k07-pickup` |
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
 | K11 | Nối giao diện `web/` | 10 | 3 | 12 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 9 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **112** | **25** | **136 / 137** | | |
+| **Tổng** | | **117** | **27** | **143 / 144** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -165,12 +166,21 @@
 
 ## K07 — Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05)
 
+> Viết lại 2026-11-25 theo D16 (lần đầu dừng ở K07.01 vì chưa có A12).
+
 - [x] **K07.01** Kiểm điều kiện
-- [-] **K07.02** `PickupShopRegistrar` (cổng)
-- [-] **K07.03** Entity
-- [-] **K07.04** `PUT /seller/pickup-address`
-- [-] **K07.05** `PickupAddressIT`
-- [-] **K07.C1** 🔖 COMMIT `feat(vendor): save pickup address and register the shop with ghn` · hash: `…`
+- [x] **K07.02** `PickupShopRegistrar` (cổng) + bản giả lập + bản GHN
+- [x] **K07.03** Entity 2 cấp
+- [x] **K07.04** `PUT /seller/pickup-address`
+- [x] **K07.05** `PickupAddressIT`
+- [x] **K07.06** Tài liệu nguồn
+- [x] **K07.C1** 🔖 COMMIT `feat(vendor): save pickup address and register the shop with ghn` · hash: `fffef67`
+- [x] **K07.07** Web bỏ cờ mock `pickup`
+- [x] **K07.C2** 🔖 COMMIT `feat(seller-ui): connect the pickup address form to the real api` · hash: `0273177`
+- [x] **K07.08** Bộ kiểm thử API + `./mvnw verify`
+- [x] **K07.09** Chạy thật hai phía
+- [x] **K07.10** Tiến độ
+- [x] **K07.C3** 🔖 COMMIT `docs(vendor): record pickup address use case as implemented` · hash: (chính commit này — `git log --grep "record pickup address"`)
 
 ## K08 — Đăng ký tài khoản nhận giải ngân (UC-VND-07)
 
@@ -244,12 +254,12 @@ Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Doc
 - [x] `UC-VND-02` Tải hồ sơ pháp lý & Giấy tờ định danh KYC (xong K04 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] `UC-VND-03` Thẩm định KYC tự động qua AI — tick `◐` khi xong K05 (chế độ giả lập); chỉ `☑` khi plan AI Worker cũng xong (Y07) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] `UC-VND-04` Kiểm duyệt thủ công hồ sơ KYC (xong K06 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
-- [ ] `UC-VND-05` Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (xong K07 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
+- [x] `UC-VND-05` Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (xong K07 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] `UC-VND-07` Đăng ký tài khoản nhận giải ngân (xong K08 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] `UC-VND-21` Cập nhật thông tin gian hàng & cài đặt vận hành (xong K09 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
 - [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
-- [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
+- [x] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx` (UC-VND-05 — 2026-11-25)
 - [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
 
 ## Ghi chú
@@ -293,6 +303,13 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K06.05 | Hoa hồng riêng 0–50% (cùng giới hạn web `MAX_COMMISSION_RATE`). `request-supplement` nhận 6 loại giấy tờ của API 16.1 (kể cả BUSINESS_REGISTRATION, TAX_NOTICE). |
 | K06.13 | Chưa mở PR — chờ người dùng. |
 | K07.01 | Đã kiểm: **chưa có** danh mục hành chính GHN (`RegionDirectory` / `AddressFacade.resolveRegion` — plan AUTH A12 chưa hiện thực; `auth/address` mới có entity). Theo D12 dừng K07: `PUT /seller/pickup-address` chưa có (cổng KYC đã mở sẵn đường dẫn). Phương thức entity `updatePickup` + cột `pickup_phone` đã có (K01). Làm tiếp K07.02–K07.05 khi A12 merge. |
+| K07.01 (2026-11-25) | Kiểm lại: `RegionDirectory` 2 cấp đã có trên `develop` (plan AUTH A12, D25); `ModuleBoundaryTest` cho `vendor` dùng gói `application` của `auth`. Làm K07 theo D16 trên nhánh `feature/vendor-k07-pickup` tách từ `develop` (qua commit tài liệu `57193bb` của `docs/update-b4-progress`). |
+| K07.02 | Tra tài liệu GHN: `v2/shop/register` nhận `district_id` + `ward_code` theo địa giới cũ, cờ `is_new_to_address` chỉ có ở API tạo đơn → bản `http` gửi `ward_code` (mã mới), `name`, `phone`, `address`; chưa kiểm với GHN thật. `GhnPickupShopRegistrarTest` dùng `MockRestServiceServer` (5 ca). |
+| K07.03 | `updatePickup` đổi chữ ký (bỏ 2 tham số quận); seed cũ còn mã quận vẫn `isPickupConfigured() = true` (chỉ cần tỉnh + phường + địa chỉ + Shop ID). Không cần migration (cột quận cho `NULL` từ V1). |
+| K07.04 | Lưu xong xóa cache trang shop công khai (`PublicShopService.evict`) vì trang shop hiện tỉnh của kho; cache chi tiết sản phẩm ("Gửi từ") tự hết hạn sau 5 phút. Lỗi định dạng SĐT trả `errors[]` theo trường như các API khác. |
+| K07.05 | `FakePickupShopRegistrar` (`@Primary` trong `IntegrationTestBase`, Shop ID giả `770000 + id`); 5 ca IT. |
+| K07.08 | `./mvnw clean verify` (JDK 21 `~/.jdks/ms-21.0.10`): 193 unit + 326 IT xanh (bỏ qua `SearchPerformanceIT` như thường lệ). `vendor-pickup-address.http` chạy trên backend `local` 7 / 7 ca đúng (body gửi bằng tệp UTF-8 — curl trên dòng lệnh Windows làm hỏng tiếng Việt). |
+| K07.09 | Theo yêu cầu người dùng (2026-11-25), Claude chạy bằng **Chromium thật điều khiển qua Playwright** (web 4321 cờ `vendor` + backend 8080 `GHN_PICKUP_MODE=stub` + Postgres + Redis), đăng nhập `owner.shoe@genie.example` qua `/auth/login`: 6 / 6 ca đạt (khối kho trống, nút khóa khi thiếu dữ liệu, lưu → thông báo + `GHN-880002`, tải lại còn dữ liệu, đổi phường giữ Shop ID). Sau khi chạy đã trả kho của shop Shoe Republic về như seed. |
 | K08.05 | OTP bước 2 qua `@RequireStepUp` (aspect của auth — mã kiểm sau khi body qua `@Valid`). Email `payout-account-changed` gửi sau commit; nhật ký chỉ ghi số tài khoản đã che. |
 | K08.06 | `PayoutAccountService` cài `StepUpPrecondition` cho `PAYOUT_ACCOUNT_DELETE` → chặn ngay khi xin mã nếu cổng `PayoutAccountGuard` (payment, chưa có cài đặt) báo còn lệnh rút chờ. |
 | K09.02 | `VendorShippingSettingsAdapter` (shipping) cài cả `ShopShippingSettings` lẫn `ShopBootstrapContributor` → mở shop xong có `vendor_shipping_config` (GHN, GHTK bật) — kiểm trong `ShopRegistrationIT`. `free_shipping_enabled` không có cột: bật = có ngưỡng. |
@@ -321,3 +338,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 |---|---|---|
 | 2026-11-16 | Lập plan + progress (112 task, 25 commit, 13 giai đoạn) — chưa bắt đầu làm | — |
 | 2026-11-18 | Plan Mở shop & KYC: K00–K06, K08–K12 xong (K07 chờ A12); full verify 131 unit + 181 IT xanh; web verify xanh; chạy thử stub 10/45/90 đúng. Còn: chạy thật giao diện (K11.08), PR. | 9e81d28 … 8da73a7 + commit tài liệu |
+| 2026-11-25 | K07 làm lại theo D16 (địa giới 2 cấp): cổng `PickupShopRegistrar` + giả lập / GHN, `PUT /seller/pickup-address`, IT + unit, tài liệu nguồn, web bỏ cờ mock `pickup`; `./mvnw clean verify` + `npm run verify` xanh; chạy thật API 7 / 7 + Chromium 6 / 6 → UC-VND-05 ✅. Còn K11.08 (chạy thật 6 UC còn lại) | `fffef67`, `0273177` + commit tài liệu |

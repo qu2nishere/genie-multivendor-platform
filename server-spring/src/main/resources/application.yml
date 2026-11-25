@@ -154,6 +154,7 @@ genie:
     ghn:
       token: ${GHN_TOKEN:}
       shop-id: ${GHN_SHOP_ID:}
+      pickup-mode: ${GHN_PICKUP_MODE:stub}   # kho lấy hàng shop (UC-VND-05): stub | http (GHN v2/shop/register)
     ghtk-token: ${GHTK_TOKEN:}
     vtp-token: ${VTP_TOKEN:}
     jt-key: ${JT_KEY:}

@@ -616,7 +616,7 @@ public class VendorProfile {
     @Column(length = 100)
     private String pickupProvince;            // NULLABLE — Tên tỉnh/thành kho hàng (cache hiển thị, như Address.province)
 
-    private Integer pickupDistrictId;         // NULLABLE — Mã quận/huyện kho hàng (GHN)
+    private Integer pickupDistrictId;         // NULLABLE — Mã quận/huyện kho hàng (GHN) — địa giới cũ; từ 01/07/2025 (2 cấp) luôn NULL khi lưu qua UC-VND-05
 
     @Column(length = 100)
     private String pickupDistrict;            // NULLABLE — Tên quận/huyện kho hàng (cache hiển thị)
@@ -884,23 +884,23 @@ public class VendorProfile {
         this.autoReplyOffline = awayMessage;
     }
 
-    /** Lưu kho lấy hàng sau khi GHN đã cấp / cập nhật Shop ID — UC-VND-05 */
-    public void updatePickup(String phone, Integer provinceId, String provinceName, Integer districtId, String districtName,
-                             String wardCode, String wardName, String addressLine, Integer ghnShopId) {
+    /** Lưu kho lấy hàng sau khi GHN đã cấp / cập nhật Shop ID — UC-VND-05. Địa giới 2 cấp (Tỉnh → Phường) từ 01/07/2025: quận = NULL */
+    public void updatePickup(String phone, Integer provinceId, String provinceName, String wardCode, String wardName,
+                             String addressLine, Integer ghnShopId) {
         this.pickupPhone = phone;
         this.pickupProvinceId = provinceId;
         this.pickupProvince = provinceName;
-        this.pickupDistrictId = districtId;
-        this.pickupDistrict = districtName;
+        this.pickupDistrictId = null;
+        this.pickupDistrict = null;
         this.pickupWardCode = wardCode;
         this.pickupWard = wardName;
         this.pickupAddressLine = addressLine;
         this.ghnShopId = ghnShopId;
     }
 
-    /** Đã cấu hình kho lấy hàng & đăng ký GHN (điều kiện đăng bán / nhận đơn) — UC-VND-05 */
+    /** Đã cấu hình kho lấy hàng & đăng ký GHN (điều kiện đăng bán / nhận đơn) — UC-VND-05 (2 cấp: tỉnh + phường) */
     public boolean isPickupConfigured() {
-        return this.ghnShopId != null && this.pickupDistrictId != null && this.pickupWardCode != null && this.pickupAddressLine != null;
+        return this.ghnShopId != null && this.pickupProvinceId != null && this.pickupWardCode != null && this.pickupAddressLine != null;
     }
 
     /** Tỷ lệ hoa hồng áp dụng: thỏa thuận riêng của shop → ngành hàng → mặc định 5% — UC-PAY-05 */
