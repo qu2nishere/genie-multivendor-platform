@@ -2259,6 +2259,7 @@ UC-VND-04 · `REVIEW_KYC` · **Màn hình:** hàng chờ (tab Chờ duyệt / Ch
     "face_match_score": 0.91,
     "errors": ["MRZ mờ, không đọc được 2 ký tự cuối."]
   },
+  "risk_signals": [ { "code": "FACE_SCORE_BORDERLINE", "points": 25, "label": "ảnh chân dung chưa khớp rõ với ảnh trên CCCD" } ],
   "declared": { "identity_number_masked": "0790•••••041", "representative": "Trần Quốc Bảo", "tax_code": "0312345678" },
   "shop_commission_rate": null,
   "rejection_reason": null,
@@ -2266,6 +2267,7 @@ UC-VND-04 · `REVIEW_KYC` · **Màn hình:** hàng chờ (tab Chờ duyệt / Ch
 }
 ```
 - `risk_level` ∈ `LOW` (< 30), `MEDIUM` (30–69), `HIGH` (≥ 70). `ai_result.overall` ∈ `PASS, PARTIAL, FAIL`; `ai_result` = `null` khi AI chưa chạy xong / lỗi.
+- `risk_signals`: các tín hiệu đã cộng vào `risk_score` (bảng điểm ENTITY 1.6) kèm nhãn tiếng Việt — cho nhân viên biết vì sao hồ sơ vào hàng chờ (UC-VND-03 bước 5); chưa chấm → `[]`. `ai_result.face_match_score` = `null` khi không so khớp khuôn mặt (không đồng ý sinh trắc). Bổ sung 2026-11-25.
 - URL tài liệu là Presigned GET 5 phút; mỗi lần mở ghi `system_logs` (NFR-07).
 
 | Method & Path | Body | Kết quả |

@@ -78,12 +78,16 @@ public class KycQueryService {
     public record Supplement(List<String> documents, String note, OffsetDateTime deadlineAt) {
     }
 
+    /** Tín hiệu rủi ro đã cộng điểm (ENTITY 1.6) — nhân viên thấy vì sao hồ sơ vào hàng chờ (UC-VND-03 bước 5). */
+    public record RiskSignal(String code, int points, String label) {
+    }
+
     /** {@code GET /admin/kyc-submissions/{id}} (API 11.3). {@code shop_commission_rate} theo phần trăm (3.0 = 3%). */
     public record SubmissionDetail(long id, String code, ShopRef shop, String ownerName, String businessType, String status,
                                    OffsetDateTime submittedAt, String riskLevel, Integer riskScore, boolean isRandomAudit,
                                    boolean isMall, List<Document> documents, AiResultView aiResult, Declared declared,
                                    BigDecimal shopCommissionRate, String rejectionReason, Supplement supplement,
-                                   boolean manualReviewRequested) {
+                                   boolean manualReviewRequested, List<RiskSignal> riskSignals) {
     }
 
     @Transactional(readOnly = true)
@@ -153,7 +157,25 @@ public class KycQueryService {
                 row.submittedAt(), riskLevel(score), score, r != null && Boolean.TRUE.equals(r.getSampledForReview()),
                 Boolean.TRUE.equals(p.getIsMall()), docs, ai,
                 new Declared(maskIdentity(p.getIdentityCode()), p.getRepresentative(), p.getTaxCode()), commission,
-                s == KycStatus.REJECTED ? p.getKycRejectionReason() : null, supplement, p.isManualReviewRequested());
+                s == KycStatus.REJECTED ? p.getKycRejectionReason() : null, supplement, p.isManualReviewRequested(),
+                r == null ? List.of() : readSignals(r.getRiskSignalsJson()));
+    }
+
+    /** {@code [{"code":"DUPLICATE_ID","points":50}]} → danh sách kèm nhãn tiếng Việt; JSON hỏng / trống → rỗng. */
+    private List<RiskSignal> readSignals(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return List.of();
+        }
+        try {
+            List<Map<String, Object>> rows = json.readValue(raw, new TypeReference<List<Map<String, Object>>>() {
+            });
+            return rows.stream().filter(m -> m.get("code") != null)
+                    .map(m -> new RiskSignal(String.valueOf(m.get("code")),
+                            m.get("points") instanceof Number n ? n.intValue() : 0, KycSignals.label(String.valueOf(m.get("code")))))
+                    .toList();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
     private SubmissionRow row(VendorProfile p) {
