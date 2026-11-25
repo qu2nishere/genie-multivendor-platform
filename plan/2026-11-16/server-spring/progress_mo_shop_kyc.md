@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/vendor-shop-kyc` |
 | **Phụ trách** | Nguyễn Ngọc Thiện — lập plan và thực hiện (phân công 2026-11-17; xem bảng Thành viên trong `docs/Document/CHECKLIST_TIEN_DO_UC.md`) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-25 — K07 xong (143 / 144; còn K11.08) |
+| **Cập nhật gần nhất** | 2026-11-25 — xong cả plan (144 / 144) |
 
 **Cách dùng**
 
@@ -55,9 +55,9 @@
 | K08 | Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 8 | 1 | 9 / 9 | — | `feature/vendor-k08-payout-account` |
 | K09 | Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 8 | 2 | 10 / 10 | — | `feature/vendor-k09-settings` |
 | K10 | Cổng cho module khác & API phụ | 5 | 1 | 6 / 6 | — | `feature/vendor-shop-kyc` |
-| K11 | Nối giao diện `web/` | 10 | 3 | 12 / 13 | — | `feature/web-vendor-integration` |
+| K11 | Nối giao diện `web/` | 10 | 3 | 13 / 13 | — | `feature/web-vendor-integration` |
 | K12 | Hoàn thiện cụm | 7 | 2 | 9 / 9 | — | `feature/vendor-shop-kyc` |
-| **Tổng** | | **117** | **27** | **143 / 144** | | |
+| **Tổng** | | **117** | **27** | **144 / 144** | | |
 
 ## K00 — Chuẩn bị & chốt quyết định
 
@@ -225,7 +225,7 @@
 - [x] **K11.05** `admin-kyc/infrastructure/kyc.api.ts`
 - [x] **K11.06** Kiểm DTO
 - [x] **K11.07** i18n
-- [ ] **K11.08** Chạy thật hai phía
+- [x] **K11.08** Chạy thật hai phía
 - [x] **K11.09** E2E
 - [x] **K11.10** `cd web && npm run verify`.
 - [x] **K11.C1** 🔖 COMMIT `feat(seller-ui): connect shop registration and kyc screens to the real api` · hash: `6e4cafc`
@@ -325,7 +325,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | K11.05 | `approveKyc(id, rate, isMall)` + ô "Gắn nhãn Shop Chính hãng" trong khối hoa hồng; mapper đọc `supplement.deadline_at` (fallback `due_at` của mock); `risk_level` / `risk_score` / `checks.*` null-safe. |
 | K11.09 | Đã viết `web/tests/e2e/kyc-onboarding-real.spec.ts` (đăng ký qua API + OTP Mailpit → mở shop → nộp KYC CCCD đuôi 10 → chờ giả lập AI duyệt) — **chưa chạy** (cần backend + Mailpit + web cờ thật; chạy cùng K11.08). |
 | K11.10 | eslint 0 lỗi, prettier, `astro check` 0 lỗi, vitest 320/320, `astro build` OK, i18n OK (3272 khóa); `npm run verify` gọi trực tiếp lỗi 127 trên máy này nên chạy từng bước. |
-| K11.08 | Chờ người dùng chạy thật hai phía trên giao diện (không tick thay). |
+| K11.08 | Xong 2026-11-25 — theo yêu cầu người dùng, Claude chạy kịch bản `docs/kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md` bằng **Chromium thật điều khiển qua Playwright** (web bản build cổng 4321 vì máy thiếu RAM cho `astro dev` + backend `local` + Postgres + Redis + Silo + Mailpit + AI Worker Docker `AI_WORKER_MODE=http`), dùng ảnh CCCD + selfie thật của người dùng trong `test-kyc/` (người dùng cho phép; dữ liệu đọc từ ảnh không in ra log). 3 shop mới: A khai đúng → AI tự duyệt (QR + MRZ đạt, khớp mặt 0,57, 0 điểm); B selfie không có mặt + khai sai → `LIVENESS_SUSPECT` + `DECLARED_DATA_MISMATCH` 60 điểm → duyệt tay → từ chối / xin xem xét / từ chối lại / đưa lại hàng chờ; C không đồng ý sinh trắc + trùng CCCD → duyệt tay → bổ sung selfie → Admin duyệt 6 % + Chính hãng. Khoảng 80 ca đạt (mở shop, KYC, AI, duyệt, tài khoản nhận tiền, cài đặt). Lỗi tìm ra và đã sửa ở nhánh `bugfix/b4-real-run-fixes`: màn duyệt thiếu tín hiệu rủi ro (`8bbb2e5`, `6acef4f`), menu Seller Center không tự mở khóa + hộp thoại xóa TK nhận tiền treo khi xin OTP lỗi (`a4c7606`), gợi ý "mã thử: 123456" hiện khi chạy API thật (`0c5103e`); kiểm lại 5 / 5 đạt. Lưu ý môi trường: file `hosts` của Windows còn trỏ `host.docker.internal` về IP cũ `192.168.1.151` → trình duyệt không PUT ảnh lên Silo được (bài test ép phân giải về `127.0.0.1`); khởi động lại Docker Desktop để nó ghi lại IP. Ngoài phạm vi B4 (AUTH): chuyển trang ngay sau đăng nhập có thể hủy lượt làm mới token → bị đăng xuất. |
 | K05.14 | Đã chạy (2026-11-18): jar profile local, DB mới `genie_kyc`, `AI_WORKER_MODE=stub`, SMTP → Mailpit; đăng ký tài khoản → mở shop (OTP Mailpit) → tải 3 ảnh qua presigned PUT Silo → nộp: CCCD đuôi **10 → VERIFIED**, **45 → MANUAL_REVIEW**, **90 → REJECTED** (lý do theo tín hiệu). Log không có ERROR. Lưu ý: `.env` máy dev trỏ SMTP Gmail — lần chạy đầu gửi nhầm 1 OTP tới địa chỉ giả `@genie.test` qua Gmail; chạy thử phải ghi đè `SMTP_HOST=localhost SMTP_PORT=1025`. |
 | K12.02 | Log backend chạy thử không chứa số CCCD; GET không ký tệp `kyc-dossiers/vendor/1/front-….enc` → 403; `Cache-Control: no-store` ở `/seller/kyc`, `/seller/settings`, `/seller/payout-account`, `/admin/kyc-submissions/**` (có IT kiểm). Nhật ký chỉ ghi số tài khoản đã che. |
 | K12.03 | `/v3/api-docs` có đủ 22 endpoint của cụm, summary mang mã UC. Repo không giữ bản xuất OpenAPI. |
@@ -339,3 +339,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, vi
 | 2026-11-16 | Lập plan + progress (112 task, 25 commit, 13 giai đoạn) — chưa bắt đầu làm | — |
 | 2026-11-18 | Plan Mở shop & KYC: K00–K06, K08–K12 xong (K07 chờ A12); full verify 131 unit + 181 IT xanh; web verify xanh; chạy thử stub 10/45/90 đúng. Còn: chạy thật giao diện (K11.08), PR. | 9e81d28 … 8da73a7 + commit tài liệu |
 | 2026-11-25 | K07 làm lại theo D16 (địa giới 2 cấp): cổng `PickupShopRegistrar` + giả lập / GHN, `PUT /seller/pickup-address`, IT + unit, tài liệu nguồn, web bỏ cờ mock `pickup`; `./mvnw clean verify` + `npm run verify` xanh; chạy thật API 7 / 7 + Chromium 6 / 6 → UC-VND-05 ✅. Còn K11.08 (chạy thật 6 UC còn lại) | `fffef67`, `0273177` + commit tài liệu |
+| 2026-11-25 | K11.08 chạy thật cả cụm bằng Playwright + AI Worker thật (ảnh CCCD thật); sửa 4 lỗi phát hiện; `./mvnw clean verify` 193 unit + 326 IT, `npm run verify` 358 test xanh → 6 UC còn lại ✅, cụm B4 7 / 7 | `8bbb2e5`, `6acef4f`, `a4c7606`, `0c5103e` + commit tài liệu |
