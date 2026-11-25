@@ -1,7 +1,7 @@
 // Cài đặt Shop (API_SPEC 10.11): GET / PATCH /seller/settings, PUT /seller/pickup-address, tài khoản nhận tiền
 // (xác minh chính chủ → PUT 🔐 / DELETE 🔐), chế độ nghỉ (PUT / DELETE /seller/vacation), GET /public/banks.
-// API thật khi PUBLIC_REAL_API có `vendor` (K11.04). Kho lấy hàng GHN (cờ `pickup` — chờ danh mục hành chính A12) và
-// chế độ nghỉ (cờ `vacation` — cụm khác, D14) vẫn mock.
+// API thật khi PUBLIC_REAL_API có `vendor` (K11.04; kho lấy hàng GHN nối 2026-11-25 — K07.07). Chế độ nghỉ
+// (cờ `vacation` — cụm khác, D14) vẫn mock.
 // Mock: dữ liệu prototype Settings; tên trên CCCD "Đặng Quốc Huy"; OTP 123456; còn đơn chưa bàn giao →
 // không bật được chế độ nghỉ (lấy từ kho đơn dùng chung).
 import { api } from '@/shared/api/http';
@@ -19,7 +19,6 @@ import type {
 import { KYC_NAME } from './shop.mock';
 
 const USE_MOCK = isMocked('vendor');
-const PICKUP_MOCK = isMocked('pickup');
 const VACATION_MOCK = isMocked('vacation');
 
 interface SettingsDto {
@@ -242,7 +241,7 @@ export async function patchSettings(p: SettingsPatch): Promise<ShopSettings> {
 }
 
 export async function savePickupAddress(a: PickupAddress): Promise<PickupAddress> {
-  if (PICKUP_MOCK) {
+  if (USE_MOCK) {
     await mockDelay(500);
     const s = db.get();
     const next = {

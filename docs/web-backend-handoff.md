@@ -459,7 +459,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 |---|---|---|
 | `getSettings` | settings.api.ts | `GET /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 | `patchSettings` | settings.api.ts | `PATCH /seller/settings`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
-| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` — giữ mock (cờ `pickup`, chờ A12) |
+| `savePickupAddress` | settings.api.ts | `PUT /seller/pickup-address` — **đã nối** theo cờ `vendor` (2026-11-25, plan B4 K07; 2 cấp Tỉnh → Phường) |
 | `listBanks` | settings.api.ts | `GET /public/banks` |
 | `savePayoutAccount` | settings.api.ts | `PUT /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
 | `deletePayoutAccount` | settings.api.ts | `DELETE /seller/payout-account`  — **đã nối** (`PUBLIC_REAL_API=vendor`) |
