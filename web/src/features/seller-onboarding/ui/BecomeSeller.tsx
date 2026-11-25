@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { requireLogin } from '@/features/auth';
 import { errorMessage, isApiError } from '@/shared/api/errors';
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { $session } from '@/shared/auth/session';
 import { useT } from '@/shared/hooks/useT';
 import { zodResolver } from '@/shared/lib/zodResolver';
@@ -243,7 +243,8 @@ function Card({ categories }: BecomeSellerProps) {
       >
         <p className="m-0 mb-3 text-sm text-muted">
           {t('seller-onboarding.landing.otp_sent', { email: challenge?.maskedTarget ?? '' })}
-          {USE_MOCK && <> ({t('account.otp.demo')})</>}
+          {/* gợi ý mã thử chỉ khi mở shop còn chạy mock (cờ `vendor`) — API thật thì mã ở email */}
+          {isMocked('vendor') && <> ({t('account.otp.demo')})</>}
         </p>
         <OtpInput
           value={otp}

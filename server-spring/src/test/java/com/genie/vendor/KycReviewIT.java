@@ -101,6 +101,20 @@ class KycReviewIT extends KycTestSupport {
         assertThat(img.body()).hasSize(30_000);   // bản giải mã đúng kích thước ảnh gốc
         assertThat(jdbc.queryForObject("SELECT count(*) FROM system_logs WHERE action_type = 'KYC_DOCUMENT_VIEWED' "
                 + "AND reference_id = ?", Integer.class, String.valueOf(s[1]))).isEqualTo(1);
+
+        // tín hiệu rủi ro đã cộng điểm hiện cho nhân viên kèm nhãn (UC-VND-03 bước 5)
+        jdbc.update("UPDATE kyc_results SET risk_signals_json = ? WHERE vendor_profile_id = ?",
+                "[{\"code\":\"DUPLICATE_ID\",\"points\":50},{\"code\":\"UNREADABLE_IMAGE\",\"points\":30}]", s[1]);
+        mvc.perform(get(URL + "/" + s[1]).header(HttpHeaders.AUTHORIZATION, moderator()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.risk_signals.length()").value(2))
+                .andExpect(jsonPath("$.data.risk_signals[0].code").value("DUPLICATE_ID"))
+                .andExpect(jsonPath("$.data.risk_signals[0].points").value(50))
+                .andExpect(jsonPath("$.data.risk_signals[0].label").value("số CCCD đã được dùng cho một shop khác"));
+        jdbc.update("UPDATE kyc_results SET risk_signals_json = 'không phải JSON' WHERE vendor_profile_id = ?", s[1]);
+        mvc.perform(get(URL + "/" + s[1]).header(HttpHeaders.AUTHORIZATION, moderator()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.risk_signals.length()").value(0));
     }
 
     @Test

@@ -41,6 +41,39 @@ export const AI_CHECKS: AiCheck[] = [
 /** Hạn bổ sung hồ sơ (API 11.3 request-supplement). */
 export const SUPPLEMENT_DAYS = 7;
 
+/** Mã tín hiệu rủi ro có bản dịch `admin-kyc.signals.codes.*` (ENTITY 1.6); mã khác hiện nhãn server gửi. */
+export const KNOWN_SIGNALS = [
+  'QR_MRZ_MISMATCH',
+  'ID_STRUCTURE_MISMATCH',
+  'EXPIRY_RULE_MISMATCH',
+  'DUPLICATE_ID',
+  'FACE_DUPLICATE',
+  'FACE_SCORE_BORDERLINE',
+  'FACE_SCORE_LOW',
+  'LIVENESS_SUSPECT',
+  'LEGACY_CARD',
+  'DECLARED_DATA_MISMATCH',
+  'UNREADABLE_IMAGE',
+] as const;
+
+/** Mã lỗi AI Worker / backend có bản dịch `admin-kyc.ai.error_codes.*`; lỗi khác hiện nguyên văn. */
+export const KNOWN_AI_ERRORS = [
+  'BIOMETRIC_CONSENT_NOT_GIVEN',
+  'CARD_FACE_NOT_FOUND',
+  'SELFIE_FACE_NOT_FOUND',
+  'SELFIE_MULTIPLE_FACES',
+  'FACE_MODEL_UNAVAILABLE',
+  'PIPELINE_TIMEOUT',
+  'AI_WORKER_UNAVAILABLE',
+  'AI_TIMEOUT',
+] as const;
+
+export const isKnownSignal = (code: string): code is (typeof KNOWN_SIGNALS)[number] =>
+  (KNOWN_SIGNALS as readonly string[]).includes(code);
+
+export const isKnownAiError = (code: string): code is (typeof KNOWN_AI_ERRORS)[number] =>
+  (KNOWN_AI_ERRORS as readonly string[]).includes(code);
+
 /** Hoa hồng riêng 0–50% (cùng giới hạn cấu hình hoa hồng 11.8). */
 export const MAX_COMMISSION_RATE = 50;
 

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { inTab, kycActions, parseShopRate, riskOf, statusKey } from './kyc.rules';
+import {
+  inTab,
+  isKnownAiError,
+  isKnownSignal,
+  kycActions,
+  parseShopRate,
+  riskOf,
+  statusKey,
+} from './kyc.rules';
 import { rejectSchema, supplementSchema } from './kyc.schema';
 
 describe('kyc.rules', () => {
@@ -35,5 +43,14 @@ describe('kyc.rules', () => {
   it('form bổ sung: ít nhất 1 giấy tờ', () => {
     expect(supplementSchema.safeParse({ documents: [], note: '' }).success).toBe(false);
     expect(supplementSchema.safeParse({ documents: ['ID_FRONT'], note: '' }).success).toBe(true);
+  });
+});
+
+describe('mã tín hiệu / lỗi AI có bản dịch', () => {
+  it('nhận mã đã biết, mã lạ thì không (hiện nhãn server / nguyên văn)', () => {
+    expect(isKnownSignal('DUPLICATE_ID')).toBe(true);
+    expect(isKnownSignal('NEW_SIGNAL')).toBe(false);
+    expect(isKnownAiError('BIOMETRIC_CONSENT_NOT_GIVEN')).toBe(true);
+    expect(isKnownAiError('MRZ mờ, không đọc được 2 ký tự cuối.')).toBe(false);
   });
 });

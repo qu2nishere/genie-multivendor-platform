@@ -5,6 +5,7 @@ import {
   kycFileIssue,
   missingDocs,
   requiredDocs,
+  kycJustSettled,
   shouldPollKyc,
   sizeLabel,
 } from './kyc.rules';
@@ -71,5 +72,19 @@ describe('shouldPollKyc', () => {
     ] as const)
       expect(shouldPollKyc(s)).toBe(false);
     expect(shouldPollKyc(undefined)).toBe(false);
+  });
+});
+
+describe('kycJustSettled', () => {
+  it('true khi AI chấm xong (rời trạng thái đang chấm)', () => {
+    expect(kycJustSettled('AI_PROCESSING', 'VERIFIED')).toBe(true);
+    expect(kycJustSettled('PENDING', 'MANUAL_REVIEW')).toBe(true);
+    expect(kycJustSettled('AI_PROCESSING', 'REJECTED')).toBe(true);
+  });
+  it('false khi còn đang chấm, chưa có dữ liệu hoặc không đổi', () => {
+    expect(kycJustSettled('PENDING', 'AI_PROCESSING')).toBe(false);
+    expect(kycJustSettled(undefined, 'VERIFIED')).toBe(false);
+    expect(kycJustSettled('VERIFIED', 'VERIFIED')).toBe(false);
+    expect(kycJustSettled('AI_PROCESSING', undefined)).toBe(false);
   });
 });

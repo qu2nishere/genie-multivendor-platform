@@ -227,6 +227,12 @@ function DeletePayoutModal({ onClose }: { onClose: () => void }) {
           onResent={setChallenge}
           error={err}
         />
+      ) : err ? (
+        // không xin được mã (còn lệnh rút chờ GNE-WAL-4091 / gửi OTP quá nhiều) → báo lý do, không treo khung chờ
+        <p className="m-0 flex items-center gap-1.5 text-sm text-red-600" role="alert">
+          <Icon name="circle-alert" size={14} />
+          {err}
+        </p>
       ) : (
         <Skeleton lines={2} />
       )}

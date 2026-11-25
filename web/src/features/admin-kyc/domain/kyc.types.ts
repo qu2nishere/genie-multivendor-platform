@@ -26,8 +26,17 @@ export interface AiResult {
   overall: 'PASS' | 'PARTIAL' | 'FAIL';
   /** `null` = chưa kiểm (vd quốc huy / vân tay chưa làm) — không phải "không đạt". */
   checks: Record<AiCheck, boolean | null>;
-  faceMatchScore: number;
+  /** `null` = chưa so khớp khuôn mặt (người bán không đồng ý sinh trắc / AI không thấy mặt). */
+  faceMatchScore: number | null;
   errors: string[];
+}
+
+/** Tín hiệu rủi ro đã cộng điểm (ENTITY 1.6) — vì sao hồ sơ vào hàng chờ (UC-VND-03 bước 5). */
+export interface RiskSignal {
+  code: string;
+  points: number;
+  /** Nhãn tiếng Việt do server gửi — dùng khi web chưa có bản dịch cho mã. */
+  label: string;
 }
 
 export interface KycDocument {
@@ -42,6 +51,7 @@ export interface KycDetail extends KycSubmission {
   randomAudit: boolean;
   documents: KycDocument[];
   ai: AiResult | null;
+  riskSignals: RiskSignal[];
   declared: { identityNumberMasked: string; representative: string; taxCode: string | null };
   shopCommissionRate: number | null;
   /** Huy hiệu "Chính hãng" (UC-VND-04 bước 8). */

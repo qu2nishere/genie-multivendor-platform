@@ -13,7 +13,7 @@ bổ sung 7 ngày (01:00) · job dọn bản xem tạm · nhân viên Duyệt / 
 (quyền `UPDATE_COMMISSION`, 0–50%) · nhãn Chính hãng · xin xem xét 1 lần · email kết quả (duyệt / từ chối / bổ sung) · tài khoản nhận tiền
 có OTP bước 2 · cài đặt shop. Web gọi đủ 6 API admin + 4 API người bán + API cài đặt / tài khoản nhận tiền.
 
-Tất cả UC-VND-01, 02, 03, 04, 07, 21 **chưa tick cột "Chạy"** trong `CHECKLIST_TIEN_DO_UC.md` (chưa ai thao tác thật trên giao diện xác nhận).
+UC-VND-01, 02, 03, 04, 07, 21 **đã chạy thật 2026-11-25** (Chromium / Playwright + AI Worker thật với ảnh CCCD thật) → ✅ trong `CHECKLIST_TIEN_DO_UC.md`; UC-VND-05 (kho lấy hàng) cũng xong cùng ngày.
 
 ## 2. Chưa làm — code mới có "cổng chờ" (port) hoặc trả `null`
 
@@ -26,7 +26,7 @@ Tất cả UC-VND-01, 02, 03, 04, 07, 21 **chưa tick cột "Chạy"** trong `CH
 | 5 | **Chặn đổi / xóa tài khoản nhận tiền khi còn lệnh rút chờ** (`GNE-WAL-4091`) | Cổng `PayoutAccountGuard` **chưa có cài đặt** → không chặn | Chờ module `payment` (rút tiền) | Không test được `GNE-WAL-4091` |
 | 6 | **Tạo ví shop khi mở shop** | `ShopBootstrapContributor`: shipping đã cài, **payment chưa** | Chờ module `payment` | Shop mới chưa có ví |
 | 7 | **Badge số việc chờ ở Seller Center** | `SellerBadgeContributor` **chưa có cài đặt** | Chờ module order / chat | Badge trống |
-| 8 | **Kho lấy hàng GHN (UC-VND-05)**, **chế độ tạm nghỉ** | Backend **chưa có** `/seller/pickup-address`, `/seller/vacation` (cổng KYC đã chừa đường); web chạy mock (`pickup`, `vacation`) | Chờ danh mục hành chính GHN (A12) | Không test trên dữ liệu thật |
+| 8 | ~~Kho lấy hàng GHN (UC-VND-05)~~ **đã làm 2026-11-25** (`PUT /seller/pickup-address`, GHN giả lập mặc định); còn **chế độ tạm nghỉ** | Backend **chưa có** `/seller/pickup-address`, `/seller/vacation` (cổng KYC đã chừa đường); web chạy mock (`pickup`, `vacation`) | Chờ danh mục hành chính GHN (A12) | Không test trên dữ liệu thật |
 | 9 | **Kiểm quốc huy, vân tay** trên CCCD | AI luôn trả `national_emblem = null`, `fingerprint = null` | **Y-D5**, DATN | — |
 | 10 | **Liveness chủ động** (chớp mắt / quay đầu), **đọc chip NFC**, **đối chiếu VNeID / C06** | Chỉ có liveness **thụ động** trên 1 ảnh selfie | DATN | Ảnh in / chụp màn hình tinh vi có thể lọt |
 
@@ -34,7 +34,7 @@ Tất cả UC-VND-01, 02, 03, 04, 07, 21 **chưa tick cột "Chạy"** trong `CH
 
 | # | Việc | Chi tiết | Đề xuất |
 |---|---|---|---|
-| A | **AI Worker chế độ `http` chưa chạy thật cùng backend** | Mới có `pytest` của worker (thẻ CCCD giả tự dựng) và test backend dùng stub / client giả. Chưa ai chạy cả vòng: link 5 phút → worker tải ảnh → callback → token nội bộ | Chạy giai đoạn **K** của kịch bản ([hướng dẫn mục 6.2](../huong-dan-chay-local.md)) |
+| A | ~~AI Worker chế độ `http` chưa chạy thật cùng backend~~ **Đã chạy 2026-11-25** | Mới có `pytest` của worker (thẻ CCCD giả tự dựng) và test backend dùng stub / client giả. Chưa ai chạy cả vòng: link 5 phút → worker tải ảnh → callback → token nội bộ | Chạy giai đoạn **K** của kịch bản ([hướng dẫn mục 6.2](../huong-dan-chay-local.md)) |
 | B | ~~Trang `/seller/kyc` không tự làm mới~~ **Đã sửa** | Nút "Yêu cầu nhân viên xem xét" không hiện vì trang không làm mới sau khi AI chấm | PR `bugfix/kyc-real-photo-pipeline`: tự làm mới 3 giây khi `PENDING` / `AI_PROCESSING` |
 | F | ~~AI thật đọc sai ảnh điện thoại thật~~ **Đã sửa** | Ảnh CCCD rõ vẫn bị từ chối 120 điểm: QR (OpenCV), MRZ (`1DVNM`), dò mặt ảnh lớn / thẻ xoay, độ nét đo cả khung | PR `bugfix/kyc-real-photo-pipeline` (plan `2026-11-22/server-python/plan_sua_kyc_anh_that.md`): cùng bộ ảnh → 0 điểm, tự duyệt |
 | G | **Ảnh nhòe chỉ biết sau khi gửi** | Web chỉ chặn ảnh < 20 KB lúc tải; ảnh nhòe dung lượng lớn vẫn tải lên, AI mới bắt (`UNREADABLE_IMAGE`) | Đo độ nét ngay trên trình duyệt (canvas, cùng công thức AI) → cảnh báo chụp lại, vẫn cho gửi |

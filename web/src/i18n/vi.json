@@ -3250,6 +3250,16 @@
         "mrz": "MRZ",
         "fingerprint": "Vân tay",
         "face_match": "Khớp khuôn mặt"
+      },
+      "error_codes": {
+        "BIOMETRIC_CONSENT_NOT_GIVEN": "Người bán không đồng ý xử lý sinh trắc — đối chiếu khuôn mặt bằng mắt",
+        "CARD_FACE_NOT_FOUND": "Không thấy khuôn mặt trên ảnh CCCD",
+        "SELFIE_FACE_NOT_FOUND": "Không thấy khuôn mặt trong ảnh chân dung",
+        "SELFIE_MULTIPLE_FACES": "Ảnh chân dung có nhiều khuôn mặt",
+        "FACE_MODEL_UNAVAILABLE": "Mô hình nhận diện khuôn mặt chưa sẵn sàng",
+        "PIPELINE_TIMEOUT": "AI xử lý quá thời gian cho phép",
+        "AI_WORKER_UNAVAILABLE": "Không gọi được dịch vụ AI — cần duyệt tay",
+        "AI_TIMEOUT": "AI không trả kết quả kịp — cần duyệt tay"
       }
     },
     "face": {
@@ -3327,6 +3337,22 @@
       "zoom_out": "Thu nhỏ",
       "rotate": "Xoay",
       "flip": "Lật"
+    },
+    "signals": {
+      "title": "Tín hiệu rủi ro (tổng {score} điểm)",
+      "codes": {
+        "QR_MRZ_MISMATCH": "Thông tin mã QR và dòng MRZ trên CCCD không khớp nhau",
+        "ID_STRUCTURE_MISMATCH": "Số CCCD không đúng cấu trúc",
+        "EXPIRY_RULE_MISMATCH": "Ngày hết hạn CCCD không đúng quy định",
+        "DUPLICATE_ID": "Số CCCD đã được dùng cho một shop khác",
+        "FACE_DUPLICATE": "Khuôn mặt trùng với hồ sơ của người khác",
+        "FACE_SCORE_BORDERLINE": "Ảnh chân dung chưa khớp rõ với ảnh trên CCCD",
+        "FACE_SCORE_LOW": "Ảnh chân dung không khớp với ảnh trên CCCD",
+        "LIVENESS_SUSPECT": "Ảnh chân dung có dấu hiệu chụp lại, không phải người thật",
+        "LEGACY_CARD": "Thẻ mẫu cũ cần đối chiếu thêm",
+        "DECLARED_DATA_MISMATCH": "Thông tin kê khai không khớp với giấy tờ",
+        "UNREADABLE_IMAGE": "Ảnh giấy tờ mờ, không đọc được"
+      }
     }
   },
   "admin-disputes": {
