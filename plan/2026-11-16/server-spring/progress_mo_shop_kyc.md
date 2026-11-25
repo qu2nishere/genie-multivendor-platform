@@ -248,7 +248,7 @@ Làm **ngay khi xong plan** (hoặc xong từng use case), trong file [`docs/Doc
 - [x] `UC-VND-07` Đăng ký tài khoản nhận giải ngân (xong K08 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] `UC-VND-21` Cập nhật thông tin gian hàng & cài đặt vận hành (xong K09 + K11) — tick các lớp BE / Test / Nối / Chạy đã xong, đổi cột Trạng thái
 - [x] Cập nhật số ở mục 1 *Tổng quan* của checklist (Đã triển khai / Đang triển khai / Chưa có backend)
-- [ ] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
+- [x] Thêm một dòng vào mục 5 *Nhật ký cập nhật* của checklist (ngày · use case · mã commit / PR)
 - [ ] Đổi cột *Hiện trạng mã nguồn* của các use case trên trong `Quản Lý UseCase.xlsx`
 - [ ] Tick dòng plan này ở bảng *Tiến độ các plan* trong [README](../README.md) mục 6
 
