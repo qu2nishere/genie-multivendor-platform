@@ -32,10 +32,15 @@ export const toKycDetail = (d: KycDetailDto): KycDetail => ({
           fingerprint: d.ai_result.checks.fingerprint ?? null,
           face_match: d.ai_result.checks.face_match ?? null,
         },
-        faceMatchScore: d.ai_result.face_match_score ?? 0,
+        faceMatchScore: d.ai_result.face_match_score ?? null,
         errors: d.ai_result.errors,
       }
     : null,
+  riskSignals: (d.risk_signals ?? []).map((x) => ({
+    code: x.code,
+    points: x.points,
+    label: x.label,
+  })),
   declared: {
     identityNumberMasked: d.declared.identity_number_masked,
     representative: d.declared.representative,

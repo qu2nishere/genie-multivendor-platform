@@ -24,6 +24,8 @@ import { useKycDecision, useKycDetail, useKycQueue } from '../application/useKyc
 import {
   AI_CHECKS,
   KYC_TABS,
+  isKnownAiError,
+  isKnownSignal,
   kycActions,
   parseShopRate,
   statusKey,
@@ -260,7 +262,7 @@ function Detail({
                 </div>
               ))}
             </div>
-            {d.ai && (
+            {d.ai && d.ai.faceMatchScore !== null && (
               <p className="m-0 mt-2 text-xs text-muted">
                 {t('admin-kyc.face.score', {
                   score: formatPercent(d.ai.faceMatchScore, { locale }),
@@ -317,6 +319,24 @@ function Detail({
             )}
           </div>
         </div>
+        {d.riskSignals.length > 0 && (
+          <div className="mt-3">
+            <h4 className="m-0 text-sm font-semibold text-strong mb-1">
+              {t('admin-kyc.signals.title', { score: d.riskScore })}
+            </h4>
+            <ul className="list-none m-0 p-0">
+              {d.riskSignals.map((s) => (
+                <li key={s.code} className="flex items-center gap-1.5 text-sm text-body py-0.5">
+                  <Icon name="triangle-alert" size={14} className="text-amber-600 flex-none" />
+                  <span className="flex-1">
+                    {isKnownSignal(s.code) ? t(`admin-kyc.signals.codes.${s.code}`) : s.label}
+                  </span>
+                  <span className="code text-xs text-muted">+{s.points}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {d.ai && d.ai.errors.length > 0 && (
           <div className="mt-3">
             <h4 className="m-0 text-sm font-semibold text-red-600 mb-1">
@@ -326,7 +346,7 @@ function Detail({
               {d.ai.errors.map((e) => (
                 <li key={e} className="flex items-center gap-1.5 text-sm text-body py-0.5">
                   <Icon name="triangle-alert" size={14} className="text-red-600 flex-none" />
-                  {e}
+                  {isKnownAiError(e) ? t(`admin-kyc.ai.error_codes.${e}`) : e}
                 </li>
               ))}
             </ul>

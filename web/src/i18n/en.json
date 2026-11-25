@@ -3250,6 +3250,16 @@
         "mrz": "MRZ",
         "fingerprint": "Fingerprint",
         "face_match": "Face match"
+      },
+      "error_codes": {
+        "BIOMETRIC_CONSENT_NOT_GIVEN": "Seller didn't consent to biometric processing — compare faces manually",
+        "CARD_FACE_NOT_FOUND": "No face found on the ID card photo",
+        "SELFIE_FACE_NOT_FOUND": "No face found in the selfie",
+        "SELFIE_MULTIPLE_FACES": "The selfie contains more than one face",
+        "FACE_MODEL_UNAVAILABLE": "Face recognition model isn't ready",
+        "PIPELINE_TIMEOUT": "AI processing timed out",
+        "AI_WORKER_UNAVAILABLE": "AI service unreachable — review manually",
+        "AI_TIMEOUT": "AI didn't respond in time — review manually"
       }
     },
     "face": {
@@ -3327,6 +3337,22 @@
       "zoom_out": "Zoom out",
       "rotate": "Rotate",
       "flip": "Flip"
+    },
+    "signals": {
+      "title": "Risk signals ({score} points in total)",
+      "codes": {
+        "QR_MRZ_MISMATCH": "QR code and MRZ lines on the ID card don't match",
+        "ID_STRUCTURE_MISMATCH": "ID number has an invalid structure",
+        "EXPIRY_RULE_MISMATCH": "ID card expiry date breaks the issuing rules",
+        "DUPLICATE_ID": "ID number is already used by another shop",
+        "FACE_DUPLICATE": "Face matches another person's dossier",
+        "FACE_SCORE_BORDERLINE": "Selfie only loosely matches the ID photo",
+        "FACE_SCORE_LOW": "Selfie doesn't match the ID photo",
+        "LIVENESS_SUSPECT": "Selfie looks re-photographed, not a live person",
+        "LEGACY_CARD": "Old card format, needs extra checks",
+        "DECLARED_DATA_MISMATCH": "Declared details don't match the documents",
+        "UNREADABLE_IMAGE": "Document image is blurry or unreadable"
+      }
     }
   },
   "admin-disputes": {

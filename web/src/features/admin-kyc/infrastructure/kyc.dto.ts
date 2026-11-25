@@ -21,6 +21,8 @@ export interface KycDetailDto extends KycSubmissionDto {
     face_match_score: number | null;
     errors: string[];
   } | null;
+  /** Có từ 2026-11-25 (plan B4 — rà chạy thật); mock cũ không có. */
+  risk_signals?: { code: string; points: number; label: string }[];
   declared: { identity_number_masked: string; representative: string; tax_code: string | null };
   shop_commission_rate: number | null;
   is_mall?: boolean;
