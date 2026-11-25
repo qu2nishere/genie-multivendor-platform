@@ -1,6 +1,6 @@
 # BÁO CÁO PHÂN NHÓM USE CASE THEO MỨC ĐỘ ĐỘC LẬP — GENIE (BẢN TLCN)
 
-> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-24, tiến độ B1 / B2 / B3 cập nhật 2026-11-24) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
+> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-24, tiến độ B1 / B2 / B3 cập nhật 2026-11-24, B4 cập nhật 2026-11-25) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
 > **Mục đích:** chỉ ra use case nào làm riêng được (một plan riêng, chạy song song) mà không chờ hay làm ảnh hưởng use case khác, use case nào phải làm theo cụm hoặc theo chuỗi — làm đầu vào để lập plan trong `plan/<ngày>/<thể loại>/`.
 > **Nguồn đã quét:** quan hệ «include» / «extend», *Tiền điều kiện* và *Thực thể CSDL* của từng use case trong Usecase.md; bảng ánh xạ use case ↔ API ở [API_SPEC.md](document/API_SPEC.md); hiện trạng code `genie-multivendor-platform` (AUTH đã hiện thực; 65 bảng + `V1…V14` có sẵn; `common` đã có Silo, email, nhật ký kiểm toán, phân quyền). Tiến độ từng use case: [CHECKLIST_TIEN_DO_UC.md](CHECKLIST_TIEN_DO_UC.md).
 > **Cách ghi:** mỗi use case ghi **tên đầy đủ** theo Usecase.md, mã đặt trong ngoặc để tra cứu.
@@ -14,7 +14,7 @@
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm **B1 Nhân viên & phân quyền** (UC-ADM-01, 02, 03) · cụm **B2 Danh mục sàn** (UC-CAT-01, 14, 15) | AUTH: đang triển khai — xem mục 3 (UC-AUTH-09 xong 2026-11-18; còn phần còn lại của UC-AUTH-03, 08), plan `plan/2026-11-14/auth.md`. B1: **3 / 3 ✅** (UC-ADM-03 xong 2026-11-24). B2: **3 / 3 ✅** (2026-11-24). Phần còn thiếu của B1 / B2 do Nguyễn Ngọc Thiện rà soát làm bù — plan `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` |
-| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); UC-VND-01, 02, 03 (backend), 04, 07, 21 chờ chạy thật (nhánh `feature/vendor-shop-kyc`), UC-VND-05 chờ danh mục hành chính GHN (A12) |
+| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: code **6 / 7** đã merge vào `develop` (PR #83, #84, #96) — UC-VND-01, 02, 03, 04, 07, 21 chờ chạy thật trên giao diện; UC-VND-05 chưa có backend (A12 đã có, còn K07) — xem cụm B4 mục 5 |
 | **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | **7 / 7 ✅ Đã triển khai** (6 UC chạy thật 2026-11-21; *Lọc nâng cao & Sắp xếp* (UC-CAT-05) xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính, làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
 Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
@@ -132,15 +132,17 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 ### B4. Mở shop & KYC (7 use case)
 
-*Phụ trách:* **Nguyễn Ngọc Thiện** — đang lập plan: `plan/2026-11-16/server-spring/plan_mo_shop_kyc.md` (backend + nối web) và `plan/2026-11-16/server-python/plan_kyc_ai_worker.md` (AI Worker).
+*Phụ trách:* **Nguyễn Ngọc Thiện** — plan `plan/2026-11-16/server-spring/plan_mo_shop_kyc.md` (backend + nối web, K00–K12, xong trừ K07 và K11.08 chạy thật) và `plan/2026-11-16/server-python/plan_kyc_ai_worker.md` (AI Worker) + plan sửa `plan/2026-11-22/server-python/plan_sua_kyc_anh_that.md`. Đã merge vào `develop`: PR #83 (`feature/vendor-shop-kyc`), #84 (`feature/ai-worker-kyc`), #96 (sửa KYC với ảnh điện thoại thật). Rà 2026-11-25: đủ endpoint mở shop / KYC / duyệt tay / callback AI / tài khoản nhận tiền / cài đặt shop + 12 lớp IT vendor + `pytest` AI Worker; kịch bản kiểm thử `docs/kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md`, việc chưa làm `docs/kiem-thu/kyc-viec-chua-lam.md`.
 
-- Đăng ký mở gian hàng — Become a Seller (UC-VND-01)
-- Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02)
-- Thẩm định KYC tự động qua AI — QR, MRZ & Face Match (UC-VND-03)
-- Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04)
-- Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05)
-- Đăng ký tài khoản nhận giải ngân (UC-VND-07)
-- Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21)
+| Use case | Trạng thái | Còn lại |
+|---|---|---|
+| Đăng ký mở gian hàng — Become a Seller (UC-VND-01) | 🟡 Code + test + nối web xong | Chạy thật trên giao diện |
+| Tải hồ sơ pháp lý & Giấy tờ định danh KYC (UC-VND-02) | 🟡 Code + test + nối web xong | Chạy thật trên giao diện |
+| Thẩm định KYC tự động qua AI — QR, MRZ & Face Match (UC-VND-03) | 🟡 Backend + AI Worker + test xong | Chạy thật qua web với `AI_WORKER_MODE=http` (pipeline đã đạt trên ảnh CCCD thật 2026-11-22); `FACE_DUPLICATE`, quốc huy / vân tay để DATN |
+| Kiểm duyệt thủ công hồ sơ KYC (UC-VND-04) | 🟡 Code + test + nối web xong | Chạy thật trên giao diện; báo nhân viên khi có hồ sơ mới chờ module `notification` |
+| Cấu hình kho lấy hàng & Đồng bộ GHN Shop ID (UC-VND-05) | ⬜ Chưa triển khai | K07: `PickupShopRegistrar` + `PUT /seller/pickup-address` + IT — A12 (`RegionDirectory`) nay đã có nên hết bị chặn; web đang chạy mock (cờ `pickup`) |
+| Đăng ký tài khoản nhận giải ngân (UC-VND-07) | 🟡 Code + test + nối web xong | Chạy thật; tra tên chủ tài khoản đang giả lập (`MockBankAccountLookup`); chặn đổi khi còn lệnh rút chờ module `payment` |
+| Cập nhật thông tin gian hàng & cài đặt vận hành (UC-VND-21) | 🟡 Code + test + nối web xong | Chạy thật trên giao diện |
 
 *Ghi chú:* *Tải hồ sơ KYC* «include» *Thẩm định KYC tự động qua AI*; *Kiểm duyệt thủ công hồ sơ KYC* «extend» *Thẩm định KYC tự động*. Thẩm định AI cần AI Worker (`server-python` mới có khung) — có thể làm *Kiểm duyệt thủ công* trước, AI sau. *Cấu hình kho lấy hàng*, *Đăng ký tài khoản nhận giải ngân*, *Cập nhật thông tin gian hàng* chỉ cần shop `VERIFIED`.
 
@@ -264,5 +266,5 @@ Use case độc lập về nghiệp vụ nhưng các nhánh vẫn sửa chung v�
 ## 8. Thứ tự đề xuất
 
 1. **Song song ngay:** nhóm A (bắt đầu *Quản lý sổ địa chỉ giao hàng chuẩn GHN* và *Tra cứu nhật ký kiểm toán hệ thống*) + cụm **B1 Nhân viên & phân quyền** + cụm **B2 Danh mục sàn**.
-2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed — 6 / 7 đã xong 2026-11-21), **B4 Mở shop & KYC** (*Kiểm duyệt thủ công hồ sơ KYC* trước, thẩm định AI sau), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher**.
+2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed — 6 / 7 đã xong 2026-11-21), **B4 Mở shop & KYC** (code 6 / 7 đã merge 2026-11-22; còn chạy thật + *Cấu hình kho lấy hàng*), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher**.
 3. **Sau cùng:** nhóm C theo chuỗi C1 Đăng bán → C2 Giỏ → Checkout → C3 Thanh toán & ký quỹ → C4 Vận chuyển → C5 Sau giao hàng → C6 Khuyến mãi khi mua / C7 Đánh giá / C8 Trả hàng & hoàn tiền / C9 Ví & rút tiền → C10 Báo cáo, C11 Email giao dịch.
