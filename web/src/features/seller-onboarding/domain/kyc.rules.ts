@@ -33,6 +33,11 @@ export const KYC_POLL_MS = 3000;
 export const shouldPollKyc = (s: KycStatus | undefined): boolean =>
   s === 'PENDING' || s === 'AI_PROCESSING';
 
+/** AI vừa chấm xong (trạng thái rời PENDING / AI_PROCESSING) → khung Seller Center phải tải lại `/seller/me`
+ * để đổi chip KYC + mở / khóa menu ngay, không đợi lượt làm mới 60 giây. */
+export const kycJustSettled = (prev: KycStatus | undefined, next: KycStatus | undefined): boolean =>
+  shouldPollKyc(prev) && next !== undefined && !shouldPollKyc(next);
+
 export const isResubmit = (s: KycStatus): boolean =>
   s === 'REJECTED' || s === 'SUPPLEMENT_REQUESTED';
 
