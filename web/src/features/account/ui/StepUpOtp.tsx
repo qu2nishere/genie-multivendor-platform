@@ -1,7 +1,7 @@
 // Ô nhập OTP bước 2 (API_SPEC 0.7) dùng chung: đổi mật khẩu, xóa tài khoản, đổi email. Báo email nhận
 // mã (đã che), đếm ngược "Gửi lại mã" 60 giây, lỗi sai mã / hết hạn hiện ngay dưới ô.
 import { useState } from 'react';
-import { USE_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { errorMessage } from '@/shared/api/errors';
 import { useCountdown } from '@/shared/hooks/useCountdown';
 import { useT } from '@/shared/hooks/useT';
@@ -39,7 +39,8 @@ export function StepUpOtp({
         <Icon name="mail" size={16} className="text-brand-500 flex-none" />
         <span>
           {t('account.otp.sent', { email: challenge.maskedTarget })}
-          {USE_MOCK && <span className="text-muted"> ({t('account.otp.demo')})</span>}
+          {/* gợi ý mã thử chỉ khi API OTP bước 2 còn chạy mock (cờ `security`) — API thật thì mã ở email */}
+          {isMocked('security') && <span className="text-muted"> ({t('account.otp.demo')})</span>}
         </span>
       </p>
       <OtpInput
