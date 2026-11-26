@@ -107,6 +107,7 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
         if (notice.adjusted > 0) toast.info(t('cart.merge.adjusted', { count: notice.adjusted }));
       }
     } else if (session.status === 'guest') loadGuestCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ chạy khi đổi trạng thái phiên (không theo ngôn ngữ)
   }, [session.status, internal]);
 
   // Tài khoản nội bộ mở giỏ / thanh toán / đơn mua / tài khoản người mua → về trang chủ kèm thông báo

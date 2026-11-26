@@ -20,6 +20,10 @@ export interface ShopOrderCardProps {
   shipCut: number;
   shipFee: number;
   freeByShop: boolean;
+  /** Phí ship tạm tính (bảng dự phòng — API 6.8 `is_estimated_fee`). */
+  estimatedShip?: boolean;
+  /** Hiện nút "Chọn Voucher của Shop" (ẩn khi chưa có voucher thật — plan C2 D2). */
+  vouchersOn?: boolean;
   note: string;
   onNote: (v: string) => void;
   onShopVoucher: () => void;
@@ -36,6 +40,8 @@ export function ShopOrderCard({
   shipCut,
   shipFee,
   freeByShop,
+  estimatedShip = false,
+  vouchersOn = true,
   note,
   onNote,
   onShopVoucher,
@@ -140,19 +146,21 @@ export function ShopOrderCard({
       )}
 
       <div className="grid grid-cols-2 gap-2.5 py-3 border-0 border-b border-solid border-line-subtle max-sm:grid-cols-1">
-        <button
-          type="button"
-          onClick={onShopVoucher}
-          className="flex items-center gap-2 bg-gray-25 rounded-md px-3 py-[9px] text-sm text-body cursor-pointer border-0 text-left min-h-11"
-        >
-          <Icon name="ticket" size={15} className="text-flash-500" />
-          <span>
-            {shopCut
-              ? t('checkout.order.shop_voucher_on', { amount: vnd(shopCut) })
-              : t('checkout.order.shop_voucher')}
-          </span>
-          <Icon name="chevron-right" size={14} className="ml-auto text-subtle" />
-        </button>
+        {vouchersOn && (
+          <button
+            type="button"
+            onClick={onShopVoucher}
+            className="flex items-center gap-2 bg-gray-25 rounded-md px-3 py-[9px] text-sm text-body cursor-pointer border-0 text-left min-h-11"
+          >
+            <Icon name="ticket" size={15} className="text-flash-500" />
+            <span>
+              {shopCut
+                ? t('checkout.order.shop_voucher_on', { amount: vnd(shopCut) })
+                : t('checkout.order.shop_voucher')}
+            </span>
+            <Icon name="chevron-right" size={14} className="ml-auto text-subtle" />
+          </button>
+        )}
         <label className="flex items-center gap-2 bg-gray-25 rounded-md px-3 py-[9px] cursor-text min-h-11">
           <Icon name="message-square" size={15} className="text-muted" />
           <input
@@ -180,6 +188,9 @@ export function ShopOrderCard({
         <span className="text-sm text-body">
           {t('checkout.order.ship')} ·{' '}
           {fee === 0 && freeByShop ? t('cart.group.ship_free') : vnd(fee)}
+          {estimatedShip && !(fee === 0 && freeByShop) && (
+            <span className="text-muted ml-1.5">({t('checkout.order.ship_estimated')})</span>
+          )}
           {shipCut > 0 && (
             <span className="text-mint-600 ml-1.5">
               ({t('checkout.order.freeship', { amount: vnd(shipCut) })})

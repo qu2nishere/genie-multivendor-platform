@@ -1241,6 +1241,7 @@
       "note_label": "Lời nhắn cho {shop}",
       "platform_cut": "Voucher Sàn phân bổ:",
       "ship": "Giao nhanh",
+      "ship_estimated": "phí tạm tính",
       "freeship": "Freeship −{amount}",
       "total": "Tổng đơn ({count} SP):"
     },

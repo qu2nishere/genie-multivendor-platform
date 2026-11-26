@@ -10,6 +10,7 @@ export {
   type ShipPolicy,
 } from './domain/shipping.rules';
 export { useShipPolicies } from './application/useShipping';
+export { DISCOUNTS_ENABLED, type ShipQuoteScope } from './infrastructure/shipping.api';
 export type {
   PaymentMethod,
   CheckoutSession,

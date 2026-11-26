@@ -79,13 +79,18 @@ function CartScreen({ buyKey }: CartPageProps) {
     [cart.lines, sel],
   );
   const buyableKeys = cart.lines.filter(isBuyable).map((l) => l.key);
+  const shipScope = useMemo(
+    () => ({ cartItemIds: cart.lines.filter(isBuyable).map((l) => l.id), addressId: null }),
+    [cart.lines],
+  );
   const pricing = useCartPricing(
     picked,
     groups.map((g) => g.shop.id),
+    shipScope,
   );
   const { price } = pricing;
   const vnd = (n: number) => formatVND(n, { locale });
-  const vouchersOn = !cart.guest;
+  const vouchersOn = !cart.guest && pricing.discountsOn;
 
   const run = async (job: () => Promise<void> | void) => {
     setBusy(true);

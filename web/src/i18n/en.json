@@ -1241,6 +1241,7 @@
       "note_label": "Message to {shop}",
       "platform_cut": "Platform voucher share:",
       "ship": "Fast delivery",
+      "ship_estimated": "estimated fee",
       "freeship": "Free shipping −{amount}",
       "total": "Order total ({count} items):"
     },
