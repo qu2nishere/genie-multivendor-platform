@@ -1,6 +1,7 @@
 # PROGRESS — Chuỗi C2 Giỏ → Checkout
 
 > Plan: [plan_gio_hang_checkout_c2.md](plan_gio_hang_checkout_c2.md) · Ngày lập: 2026-11-25 · Phụ trách: _(chưa phân công)_
+> Chạy song song với C1 Đăng bán — ranh giới ở **plan mục 8** (migration chung `V25` đã tạo, file sở hữu, luật ghi `product_variants`, cổng `ProductOrderGuard`).
 > Cách dùng: xong task nào thì đổi `- [ ]` → `- [x]`, điền cột **Commit / PR** ở mục 2 và ghi **một dòng Nhật ký** ở mục 6 (ngày, mã task, việc, mã commit / nhánh). Kịch bản chạy thật ghi **Đạt / Không đạt** vào mục 5. Task không cần làm ghi `- [x] ~~…~~ (không cần: lý do)`. Đồng thời cập nhật `docs/Document/CHECKLIST_TIEN_DO_UC.md` khi xong một lớp của UC (CLAUDE.md mục 4).
 
 ## 1. Tổng quan
@@ -13,7 +14,7 @@
 | UC-ORD-07 Phiên checkout & đơn con | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
 | UC-ORD-08 Cron hủy đơn quá hạn | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai | ✅ |
 
-**Tổng quan dự án (CHECKLIST 2026-11-24):** Đã triển khai 17 / 87 → mục tiêu **22** / 87 khi đóng plan.
+**Tổng quan dự án (CHECKLIST 2026-11-25):** Đã triển khai 24 / 87 → mục tiêu **29** / 87 khi đóng plan (đếm lại từ các dòng UC lúc đóng — C1 có thể đã đổi số).
 
 ## 2. Tiến độ theo giai đoạn
 
@@ -56,24 +57,25 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | D2 | Voucher & Điểm trong C2 (cổng mặc định 0) | ☐ | | |
 | D3 | Thanh toán trong C2 (COD trọn, online stub) | ☐ | | |
 | D4 | GHN với địa giới 2 cấp (spike) | ☐ | | |
-| D5 | Shop chưa cấu hình kho lấy hàng | ☐ | | |
+| D5 | Shop chưa cấu hình kho lấy hàng (VND-05 ✅ — không sửa seed, phí dự phòng cho sản phẩm cũ) | ☐ | | |
 | D6 | Chế độ GHN `stub\|http`, `SHIPPING_UNAVAILABLE` | ☐ | | |
-| D7 | Khối lượng mặc định / freeship shop | ☐ | | |
+| D7 | Khối lượng (gram, mặc định 500 g chỉ cho dữ liệu cũ) / freeship chỉ cấp shop | ☐ | | |
 | D8 | Giỏ vãng lai & kết quả gộp giỏ | ☐ | | |
 | D9 | Giới hạn giỏ (100 dòng, 999 / dòng) | ☐ | | |
 | D10 | Mã đơn `TR-yyyyMMdd-######` | ☐ | | |
 | D11 | Idempotency đặt hàng | ☐ | | |
 | D12 | Hoa hồng chụp vào `order_items` | ☐ | | |
 | D13 | Cron hủy phiên quá hạn | ☐ | | |
-| D14 | Chặn xóa tài khoản khi còn đơn | ☐ | | |
-| D15 | Migration (`V25` nếu cần) | ☐ | | |
+| D14 | Chặn xóa tài khoản + cài `ProductOrderGuard` của C1 | ☐ | | |
+| D15 | Migration — đã có 2 index trong `V25` chung với C1 | ☑ | 2026-11-26 | chủ dự án |
+| D16 | Ghi `product_variants` (tăng `version`, lọc trạng thái) & luật "mua được" — plan mục 8.3, 8.5 | ☐ | | |
 
 ## 4. Task
 
 ### O00 — Chuẩn bị (`develop`)
-- [ ] **O00.01** Chốt D1–D15, ghi mục 3
+- [ ] **O00.01** Đọc plan mục 8, xác nhận với người làm C1; chốt D1–D16, ghi mục 3
 - [ ] **O00.02** `git switch develop && git pull`, ghi mã commit gốc vào mục 2
-- [ ] **O00.03** Giữ số migration `V25` với nhóm (nếu D15 cần)
+- [ ] **O00.03** Duyệt PR schema `V25` (plan C1 P00.06); vào `develop` rồi mới tạo nhánh
 - [ ] **O00.04** Dựng môi trường + `./mvnw verify` + `npm run verify` mốc xanh, ghi mục 7
 - [ ] **O00.05** Ghi người phụ trách vào BAO_CAO / CHECKLIST / Excel
 
@@ -81,11 +83,11 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O01.01** Tạo nhánh `feature/c2-cart` từ `develop`
 - [ ] **O01.02** `API_SPEC.md` 6.3 (D9), 6.7 (D8)
 - [ ] **O01.03** `web-backend-handoff.md` mục `cart`
-- [ ] **O01.04** Kiểm / thêm `GNE-INV-4093`, `GNE-INV-4094` (ErrorCode + web + i18n)
+- [ ] **O01.04** Thêm `GNE-INV-4093/4094`, `GNE-ORD-4093/4094` (ErrorCode khối đơn hàng + web + i18n)
 - [ ] **O01.05** COMMIT `docs(order): specify cart limits and merge result`
 
 ### O02 — `feature/c2-cart`: backend + test
-- [ ] **O02.01** Cổng `VariantFacade` (catalog) + `ShopFacade` (vendor) cho dòng giỏ
+- [ ] **O02.01** `VariantFacade` (file mới, JdbcTemplate, luật D16) + `ShopFacade` (vendor) cho dòng giỏ
 - [ ] **O02.02** Repository + `CartService`
 - [ ] **O02.03** `CartMergeService` + `GET /public/variants`
 - [ ] **O02.04** `CartController` 6.1–6.7
@@ -108,9 +110,9 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O05.02** Tài liệu 6.8 / UC-ORD-06 / `.env.example` + COMMIT `docs(shipping): specify shipping fee quote and fallback`
 - [ ] **O05.03** `FlatFeeTable`, `Parcel`, `ShippingFeeQuoter`
 - [ ] **O05.04** `GhnFeeClient` + cache 10 phút
-- [ ] **O05.05** Seed kho lấy hàng shop demo (báo Thiện)
+- [ ] **O05.05** Kiểm seed shop demo đã đủ kho lấy hàng + `ghn_shop_id` (không sửa file có sẵn)
 - [ ] **O05.06** `FlatFeeTableTest`, `ShippingFeeQuoterTest`, `GhnFeeClientTest`
-- [ ] **O05.07** COMMIT `feat(shipping): quote ghn shipping fee with flat fallback` + `chore(db): seed pickup addresses for demo shops`
+- [ ] **O05.07** COMMIT `feat(shipping): quote ghn shipping fee with flat fallback` (+ seed file mới nếu O05.05 cần)
 - [ ] **O05.08** CHECKLIST UC-ORD-06, push + PR
 
 ### O06 — `feature/c2-checkout-preview` (UC-ORD-04)
@@ -128,10 +130,10 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O07.03** `OrderCodeGenerator`, `ReservationService`
 - [ ] **O07.04** `CheckoutService.place`, `PaymentInitiator` stub, `CheckoutCreatedEvent`
 - [ ] **O07.05** `POST /me/checkout-sessions` (Idempotency), `GET /me/checkout-sessions/{id}`
-- [ ] **O07.06** `OrderAccountDeletionBlocker`
-- [ ] **O07.07** `CheckoutSessionIT`, `CheckoutConcurrencyIT`, `OrderCodeGeneratorTest`, `AccountDeletionGuardIT`
+- [ ] **O07.06** `OrderAccountDeletionBlocker` + `OrderProductGuard` (cổng C1)
+- [ ] **O07.07** `CheckoutSessionIT`, `CheckoutConcurrencyIT` (+ biến thể đã bỏ / sản phẩm ẩn → 4090), `OrderProductGuardIT`, `OrderCodeGeneratorTest`, `AccountDeletionGuardIT`
 - [ ] **O07.08** Web đặt hàng thật + trang kết quả + xử lý `4090`, cờ `checkout`
-- [ ] **O07.09** COMMIT `feat(order): persist checkout session and per-shop orders` + `feat(order): block account deletion with open orders` + `feat(web): place orders through real checkout api`
+- [ ] **O07.09** COMMIT `feat(order): persist checkout session and per-shop orders` + `feat(order): block account and product deletion with open orders` + `feat(web): place orders through real checkout api`
 - [ ] **O07.10** CHECKLIST UC-ORD-07, push + PR
 
 ### O08 — `feature/c2-order-sweeper` (UC-ORD-08)
@@ -153,7 +155,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 ### O10 — Hồi quy & đóng plan
 - [ ] **O10.01** `./mvnw clean verify` + `npm run verify` + `npm run test:e2e`, ghi mục 7
 - [ ] **O10.02** CHECKLIST: 5 UC → ✅, tổng quan, nhật ký
-- [ ] **O10.03** Usecase.md / Excel / BAO_CAO / CLAUDE.md mục 2
+- [ ] **O10.03** Usecase.md / Excel (sau `git merge develop`) / BAO_CAO / CLAUDE.md mục 2; nếu C1 đã merge → kịch bản nối chuỗi (plan mục 8.9)
 - [ ] **O10.04** COMMIT `docs: close c2 cart and checkout plan`
 
 ## 5. Kết quả chạy thật
@@ -181,6 +183,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | Ngày | Task | Việc đã làm | Nhánh | Commit / PR |
 |---|---|---|---|---|
 | 2026-11-25 | — | Lập plan + progress chuỗi C2 (5 UC, 64 task, 15 quyết định chờ chốt) | `develop` @ `0e34dce` | (chưa commit) |
+| 2026-11-26 | — | Rà chéo với plan C1: cập nhật hiện trạng (UC-VND-05 ✅, mã lỗi `GNE-ORD-4093/4094` chưa có trong code, seed đã có kho lấy hàng), migration `V25` → `V26`, thêm D16 (ghi `product_variants`, luật "mua được"), D14 cài `ProductOrderGuard`, D5 / D7 theo ranh giới với C1 | `feature/c1` @ `609a0c4` | (chưa commit) |
 
 ## 7. Số liệu kiểm tra & ghi chú kỹ thuật
 
@@ -189,3 +192,4 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | | `develop` (mốc O00.04) | | | | |
 
 **Kết quả spike GHN 2 cấp (O05.01 — D4):** _(điền: endpoint đã thử, tham số, phản hồi, kết luận dùng `to_ward_code` hay dự phòng)_
+| 2026-11-26 | — | Gộp migration với C1: `V25__listing_and_checkout_schema.sql` (có `uk_cart_items_cart_variant`, `idx_checkout_sessions_open_expires`) → D15 ☑; sửa tên cột `reservation_expires_at` → `expires_at` trong luồng 3.4, 3.5, D13; phần phối hợp chuyển vào plan **mục 8** (bỏ file ranh giới riêng); O00.03 = chờ PR schema | `feature/c1` | (chưa commit) |
