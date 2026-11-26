@@ -11,7 +11,7 @@
 | UC-ORD-01 Giỏ hàng | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
 | UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
 | UC-ORD-04 Xem trước & tách giỏ | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-07 Phiên checkout & đơn con | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
+| UC-ORD-07 Phiên checkout & đơn con | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
 | UC-ORD-08 Cron hủy đơn quá hạn | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai | ✅ |
 
 **Tổng quan dự án (CHECKLIST 2026-11-25):** Đã triển khai 24 / 87 → mục tiêu **29** / 87 khi đóng plan (đếm lại từ các dòng UC lúc đóng — C1 có thể đã đổi số).
@@ -27,7 +27,7 @@
 | O04 | `feature/c2-cart` | ORD-01: kiểm tra & PR | 3 | ☐ | |
 | O05 | `feature/c2-shipping-fee` | ORD-06: phí GHN + dự phòng | 8 | ◐ | `06a24fc`, `0a72e65` (chưa push / PR) |
 | O06 | `feature/c2-checkout-preview` | ORD-04: xem trước & tách giỏ | 7 | ◐ | `e656097`, `8f6c0e4`, `de696ca` (chưa push / PR) |
-| O07 | `feature/c2-checkout-session` | ORD-07: đặt hàng | 10 | ☐ | |
+| O07 | `feature/c2-checkout-session` | ORD-07: đặt hàng | 10 | ◐ | `c32ab06`, `c4467f8`, `df1fb03`, `d81c428` (chưa push / PR) |
 | O08 | `feature/c2-order-sweeper` | ORD-08: cron hủy quá hạn | 6 | ☐ | |
 | O09 | nhánh cuối | Chạy thật trên giao diện | 6 | ☐ | |
 | O10 | nhánh cuối | Hồi quy & đóng plan | 4 | ☐ | |
@@ -46,7 +46,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | `feature/c2-cart` | `develop` @ `c108096` | 2026-11-26 | | |
 | `feature/c2-shipping-fee` | `feature/c2-cart` | 2026-11-26 | | |
 | `feature/c2-checkout-preview` | `feature/c2-shipping-fee` | 2026-11-26 | | |
-| `feature/c2-checkout-session` | `feature/c2-checkout-preview` | | | |
+| `feature/c2-checkout-session` | `feature/c2-checkout-preview` | 2026-11-26 | | |
 | `feature/c2-order-sweeper` | `feature/c2-checkout-session` | | | |
 
 ## 3. Quyết định (chép kết quả từ plan mục 2)
@@ -125,15 +125,15 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O06.07** CHECKLIST UC-ORD-04 (+ Nối ORD-06), push + PR
 
 ### O07 — `feature/c2-checkout-session` (UC-ORD-07)
-- [ ] **O07.01** Tạo nhánh từ `feature/c2-checkout-preview`
-- [ ] **O07.02** Tài liệu 6.10 / LLD 6.1 (D3), migration nếu D15 + COMMIT `docs(order): specify checkout session before payment gateway`
-- [ ] **O07.03** `OrderCodeGenerator`, `ReservationService`
-- [ ] **O07.04** `CheckoutService.place`, `PaymentInitiator` stub, `CheckoutCreatedEvent`
-- [ ] **O07.05** `POST /me/checkout-sessions` (Idempotency), `GET /me/checkout-sessions/{id}`
-- [ ] **O07.06** `OrderAccountDeletionBlocker` + `OrderProductGuard` (cổng C1)
-- [ ] **O07.07** `CheckoutSessionIT`, `CheckoutConcurrencyIT` (+ biến thể đã bỏ / sản phẩm ẩn → 4090), `OrderProductGuardIT`, `OrderCodeGeneratorTest`, `AccountDeletionGuardIT`
-- [ ] **O07.08** Web đặt hàng thật + trang kết quả + xử lý `4090`, cờ `checkout`
-- [ ] **O07.09** COMMIT `feat(order): persist checkout session and per-shop orders` + `feat(order): block account and product deletion with open orders` + `feat(web): place orders through real checkout api`
+- [x] **O07.01** Tạo nhánh từ `feature/c2-checkout-preview`
+- [x] **O07.02** Tài liệu 6.10 / LLD 6.1 (D3), migration nếu D15 + COMMIT `docs(order): specify checkout session before payment gateway`
+- [x] **O07.03** `OrderCodeGenerator`, `ReservationService`
+- [x] **O07.04** `CheckoutService.place`, `PaymentInitiator` stub, `CheckoutCreatedEvent`
+- [x] **O07.05** `POST /me/checkout-sessions` (Idempotency), `GET /me/checkout-sessions/{id}`
+- [x] **O07.06** `OrderAccountDeletionBlocker` + `OrderProductGuard` (cổng C1)
+- [x] **O07.07** `CheckoutSessionIT`, `CheckoutConcurrencyIT` (+ biến thể đã bỏ / sản phẩm ẩn → 4090), `OrderProductGuardIT`, `OrderCodeGeneratorTest`, `AccountDeletionGuardIT`
+- [x] **O07.08** Web đặt hàng thật + trang kết quả + xử lý `4090`, cờ `checkout`
+- [x] **O07.09** COMMIT `feat(order): persist checkout session and per-shop orders` + `feat(order): block account and product deletion with open orders` + `feat(web): place orders through real checkout api`
 - [ ] **O07.10** CHECKLIST UC-ORD-07, push + PR
 
 ### O08 — `feature/c2-order-sweeper` (UC-ORD-08)
@@ -187,11 +187,13 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | 2026-11-26 | O01–O04 | Giỏ hàng UC-ORD-01: tài liệu (API 6.3 giới hạn, 6.7 `skipped` / `adjusted`, handoff), mã lỗi `GNE-INV-4093/4094`, `GNE-ORD-4093/4094`; `VariantFacade` + `ShopFacade.buyInfo`; `CartService` / `CartMergeService` / `CartController` / `PublicVariantController`; `CartIT`, `CartMergeIT`; web nối `cart` + toast gộp giỏ; `order-cart.http` | `feature/c2-cart` | `07f49f5`, `845b880`, `0c108ff` |
 | 2026-11-26 | O05.01–O05.07 | Phí vận chuyển UC-ORD-06: tài liệu (6.8 `is_estimated_fee`, `SHIPPING_UNAVAILABLE`, `GHN_MODE`), `shipping/fee` (`Parcel`, `ShippingQuote`, `FlatFeeTable`, `ShippingFeeQuoter`, `GhnFeeClient`, `HttpGhnFeeClient`), seed shop demo đã đủ `pickup_*` + `ghn_shop_id` (không sửa); test 11 ca; spike D4 chưa chạy (thiếu token) | `feature/c2-shipping-fee` | `06a24fc`, `0a72e65` |
 | 2026-11-26 | O06.01–O06.06 | Xem trước UC-ORD-04: tài liệu 6.8 (giảm giá = 0 / `null` trước C6, `base_shipping_fee`, `free_ship_threshold`; gạch `shipping-policies` ở handoff); `CheckoutDiscountPolicy` + `CheckoutPorts` + `CheckoutPricer`; `POST /me/checkout/preview`; `CheckoutPreviewIT` (5), `CheckoutPricerTest` (2); web phí ship từ 6.8, ẩn Voucher / Điểm, nhãn "phí tạm tính" | `feature/c2-checkout-preview` | `e656097`, `8f6c0e4`, `de696ca` |
+| 2026-11-26 | O07.01–O07.09 | Đặt hàng UC-ORD-07: tài liệu 6.10 / LLD 6.1 (D3, D10, D11); `IdempotencyStore` (Redis `SET NX` — plan ghi `IdempotencyFilter` sẵn có nhưng thực tế chỉ là khung rỗng, đã thay), `OrderCodeGenerator` (ngày giờ VN; Redis mất khóa đếm → nối tiếp số lớn nhất trong CSDL), `ReservationService`, `CheckoutService.place` / `get`, `PaymentInitiator` giả lập, `CheckoutCreatedEvent`, `CheckoutSessionController`; `ProductOrderGuard` (nguyên văn mục 8.4) + `OrderProductGuard`, `OrderAccountDeletionBlocker`; test `CheckoutSessionIT` (6), `CheckoutConcurrencyIT` (2 — 8 người tranh tồn 3), `OrderGuardsIT`, `CheckoutServiceTest` (3); web đặt hàng thật, cổng giả lập → sang trang kết quả | `feature/c2-checkout-session` | `c32ab06`, `c4467f8`, `df1fb03`, `d81c428` |
 
 ## 7. Số liệu kiểm tra & ghi chú kỹ thuật
 
 | Ngày | Nhánh | `./mvnw verify` | `npm run verify` | E2E | Ghi chú |
 |---|---|---|---|---|---|
+| 2026-11-26 | `feature/c2-checkout-session` | 209 unit + 353 IT xanh (1 skip) | xanh — 76 file | — | mốc sau O07 |
 | 2026-11-26 | `feature/c2-cart` | 339 IT xanh (1 skip) | xanh — 76 file / 359 test | — | mốc sau O02 (thêm `CartIT` 10, `CartMergeIT` 3) |
 
 **Kết quả spike GHN 2 cấp (O05.01 — D4):** 2026-11-26 — **chưa gọi được GHN sandbox**: `.env` máy dev không có `GHN_TOKEN` / `GHN_SHOP_ID`. Làm theo nhánh dự phòng của D4: `HttpGhnFeeClient` gọi `POST /v2/shipping-order/fee` (`service_type_id = 2`, `from/to_district_id` + `from/to_ward_code`) **chỉ khi cả hai đầu có mã quận** (kho cũ + seed demo có `pickup_district_id`; địa chỉ người mua 2 cấp không có quận → `AddressSnapshot` không mang `districtId`); còn lại bảng phí 15.000 / 30.000đ, `is_estimated_fee = true`. Việc còn lại khi có token: thử `to_ward_code` không kèm quận (API v3 / tham số mới), nếu được thì bỏ điều kiện mã quận trong `ShippingFeeQuoter`.

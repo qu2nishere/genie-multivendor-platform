@@ -1129,7 +1129,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Áp dụng triệt để **Snapshot Pattern**: Đơn hàng cũ không bao giờ bị biến đổi giá trị hay tên sản phẩm dù sau này người bán có sửa giá hay đổi tên.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `POST /me/checkout-sessions` (Idempotency-Key), `GET /me/checkout-sessions/{id}` (`order/checkout`: `CheckoutService.place` một transaction — tính lại giá, tách đơn theo shop, mã `TR-yyyyMMdd-######` từ Redis, snapshot + hoa hồng, giữ chỗ tồn 15 phút, xóa dòng giỏ; COD hoàn tất ngay, VNPAY / VIETQR chờ thanh toán qua cổng `PaymentInitiator` — bản giả lập tới khi có UC-PAY-01) + test `CheckoutSessionIT`, `CheckoutConcurrencyIT`; web đặt hàng thật (cờ `PUBLIC_REAL_API=checkout`). Còn: cổng thanh toán thật (C3), chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop), [OrderItem](../ClassDiagram/ENTITY.md#53-orderitem--dòng-sản-phẩm-trong-đơn), [OrderDiscount](../ClassDiagram/ENTITY.md#54-orderdiscount--chi-tiết-các-mã-đã-áp-cho-đơn), [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [FlashSaleItem](../ClassDiagram/ENTITY.md#46-flashsaleitem--sản-phẩm-trong-flash-sale).
 
