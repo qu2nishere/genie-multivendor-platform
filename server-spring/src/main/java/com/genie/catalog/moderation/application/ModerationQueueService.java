@@ -120,8 +120,9 @@ public class ModerationQueueService {
         String needle = q == null || q.isBlank() ? null : q.trim();
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("q", needle).addValue("limit", s)
                 .addValue("offset", (p - 1) * s);
-        String search = needle == null ? "" : """
-                 AND (immutable_unaccent(lower(p.name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
+        // Khối văn bản """ cắt khoảng trắng đầu dòng → phải tự thêm dấu cách, nếu không thành "WHERE TRUEAND" (lỗi SQL)
+        String search = needle == null ? "" : " " + """
+                AND (immutable_unaccent(lower(p.name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
                       OR immutable_unaccent(lower(vp.shop_name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
                       OR CAST(p.id AS TEXT) = :q)""";
 

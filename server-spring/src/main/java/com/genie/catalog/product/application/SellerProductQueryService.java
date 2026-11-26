@@ -78,8 +78,9 @@ public class SellerProductQueryService {
 
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("vid", vendorUserId)
                 .addValue("q", needle).addValue("limit", s).addValue("offset", (p - 1) * s);
-        String search = needle == null ? "" : """
-                 AND (immutable_unaccent(lower(p.name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
+        // Khối văn bản """ cắt khoảng trắng đầu dòng → tự thêm dấu cách khi ghép vào câu SQL
+        String search = needle == null ? "" : " " + """
+                AND (immutable_unaccent(lower(p.name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
                       OR EXISTS (SELECT 1 FROM product_variants sv WHERE sv.product_id = p.id AND sv.deleted_at IS NULL
                                  AND lower(sv.sku) LIKE '%' || lower(:q) || '%'))""";
 
@@ -108,7 +109,7 @@ public class SellerProductQueryService {
                   LEFT JOIN LATERAL (SELECT count(*) AS variant_count, MIN(pv.price) AS price_min,
                                             COALESCE(SUM(pv.stock_count), 0) AS stock_total
                                        FROM product_variants pv WHERE pv.product_id = p.id AND pv.deleted_at IS NULL) v ON TRUE
-                 WHERE p.vendor_id = :vid""" + filter + search + """
+                 WHERE p.vendor_id = :vid""" + filter + search + " " + """
                  ORDER BY p.updated_at DESC, p.id DESC LIMIT :limit OFFSET :offset""", params, (rs, i) -> {
             String st = rs.getString("status");
             boolean locked = rs.getBoolean("is_locked");
