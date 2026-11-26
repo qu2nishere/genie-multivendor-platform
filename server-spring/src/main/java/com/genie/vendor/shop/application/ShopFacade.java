@@ -83,6 +83,30 @@ public class ShopFacade {
                 .orElseGet(() -> categoryRate != null ? categoryRate : new BigDecimal("0.0500"));
     }
 
+    /**
+     * Thông tin shop cho giỏ / checkout (plan C2 O02.01, D5): {@code $ShopMini}, tạm nghỉ ở thời điểm {@code now}, kho
+     * lấy hàng 2 cấp ({@code pickupDistrictId} chỉ còn ở kho cũ) và mã shop GHN.
+     */
+    public record ShopBuyInfo(long shopId, long vendorUserId, ShopMiniView mini, boolean onVacation,
+                              Integer pickupProvinceId, Integer pickupDistrictId, String pickupWardCode,
+                              Integer ghnShopId, boolean pickupConfigured) {
+    }
+
+    /** Nạp theo lô theo {@code users.id} của chủ shop; không có shop → không có trong kết quả. */
+    @Transactional(readOnly = true)
+    public java.util.Map<Long, ShopBuyInfo> buyInfo(java.util.Collection<Long> vendorUserIds, OffsetDateTime now) {
+        java.util.Map<Long, ShopBuyInfo> out = new java.util.LinkedHashMap<>();
+        if (vendorUserIds == null || vendorUserIds.isEmpty()) {
+            return out;
+        }
+        for (VendorProfile p : profiles.findByUserIdIn(vendorUserIds)) {
+            out.put(p.getUserId(), new ShopBuyInfo(p.getId(), p.getUserId(), view(p).mini(), p.isOnVacation(now),
+                    p.getPickupProvinceId(), p.getPickupDistrictId(), p.getPickupWardCode(), p.getGhnShopId(),
+                    p.isPickupConfigured()));
+        }
+        return out;
+    }
+
     /** Shop đã xác minh theo tên — ô chọn shop của Admin (API 11.16; K10.04). */
     @Transactional(readOnly = true)
     public List<ShopMiniView> searchVerified(String q, int limit) {

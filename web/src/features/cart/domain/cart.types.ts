@@ -58,6 +58,13 @@ export interface GuestCart {
   items: GuestCartItem[];
 }
 
+/** Kết quả gộp giỏ khách (API 6.7) — số dòng đã gộp / bỏ qua / bị hạ số lượng cho toast. */
+export interface MergeResult {
+  merged: number;
+  skipped: number;
+  adjusted: number;
+}
+
 /** Dữ liệu nút "Thêm vào giỏ" gửi đi (trang sản phẩm dựng từ lựa chọn phân loại). */
 export interface CartLineInput {
   variantId: number;

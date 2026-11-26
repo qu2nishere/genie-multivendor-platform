@@ -66,9 +66,14 @@ function CheckoutScreen() {
   );
   const live = useMemo(() => lines.filter((l) => !dead.has(l.key)), [lines, dead]);
   const groups = useMemo(() => groupByShop(lines), [lines]);
+  const shipScope = useMemo(
+    () => ({ cartItemIds: live.map((l) => l.id), addressId: address?.id ?? null }),
+    [live, address?.id],
+  );
   const pricing = useCartPricing(
     live,
     groups.map((g) => g.shop.id),
+    shipScope,
   );
   const { price } = pricing;
   const saving = useMemo(
@@ -211,24 +216,30 @@ function CheckoutScreen() {
               shipCut={price.shipCutByShop[g.shop.id] ?? 0}
               shipFee={pricing.shipOfShop(g.shop.id)}
               freeByShop={pricing.freeByShop(g.shop.id)}
+              estimatedShip={pricing.estimatedShip(g.shop.id)}
+              vouchersOn={pricing.discountsOn}
               note={notes[g.shop.id] ?? ''}
               onNote={(v) => setNote(g.shop.id, v)}
               onShopVoucher={() => setPicker({ mode: 'shop', shopId: g.shop.id })}
               onDrop={drop}
             />
           ))}
-          <PlatformVoucherCard
-            price={price}
-            extraSaving={saving}
-            onOpen={() => setPicker({ mode: 'platform' })}
-            onBest={() => pricing.setSelection(bestVouchers(pricing.lines, pricing.ctx))}
-          />
-          <PointsCard
-            balance={pricing.pointsBalance}
-            price={price}
-            on={pricing.usePoints}
-            onToggle={() => pricing.setUsePoints(!pricing.usePoints)}
-          />
+          {pricing.discountsOn && (
+            <>
+              <PlatformVoucherCard
+                price={price}
+                extraSaving={saving}
+                onOpen={() => setPicker({ mode: 'platform' })}
+                onBest={() => pricing.setSelection(bestVouchers(pricing.lines, pricing.ctx))}
+              />
+              <PointsCard
+                balance={pricing.pointsBalance}
+                price={price}
+                on={pricing.usePoints}
+                onToggle={() => pricing.setUsePoints(!pricing.usePoints)}
+              />
+            </>
+          )}
           <PaymentMethodList value={method} onChange={setMethod} />
         </div>
         <CheckoutSummary

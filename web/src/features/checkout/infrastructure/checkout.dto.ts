@@ -1,6 +1,7 @@
 // $CheckoutSession + khối payment (API_SPEC 6.10–6.12) — snake_case.
 export type PaymentDto =
-  | { method: 'VNPAY'; payment_url: string }
+  /** payment_url = null khi chưa có cổng thanh toán thật (plan C2 D3 — cổng giả lập). */
+  | { method: 'VNPAY'; payment_url: string | null }
   | {
       method: 'VIETQR';
       vietqr: {
@@ -11,7 +12,7 @@ export type PaymentDto =
         transfer_content: string;
         qr_payload: string;
         expires_at: string;
-      };
+      } | null;
     }
   | { method: 'COD' };
 
@@ -36,11 +37,12 @@ export interface CheckoutSessionDto {
 export interface PlaceOrderDto {
   cart_item_ids: number[];
   address_id: number;
+  /** null khi backend chưa áp voucher (plan C2 D2) — mã voucher của mock là chuỗi, API thật nhận id số. */
   vouchers: {
     platform_voucher_id: string | null;
     freeship_voucher_id: string | null;
     shop_vouchers: { shop_id: number; voucher_id: string }[];
-  };
+  } | null;
   use_coins: boolean;
   notes: { shop_id: number; note: string }[];
   payment_method: 'VNPAY' | 'VIETQR' | 'COD';

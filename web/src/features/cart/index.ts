@@ -29,7 +29,7 @@ export {
   type AddResult,
 } from './application/cart.store';
 export { useCart, type CartView } from './application/useCart';
-export { mergeGuestCart } from './application/mergeGuestCart';
+export { mergeGuestCart, takeMergeNotice } from './application/mergeGuestCart';
 export { default as AddToCartButton, type AddToCartButtonProps } from './ui/AddToCartButton';
 export { MiniCart } from './ui/MiniCart';
 export { default as CartPage, type CartPageProps } from './ui/CartPage';

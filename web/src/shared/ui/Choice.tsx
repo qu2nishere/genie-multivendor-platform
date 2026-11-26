@@ -38,7 +38,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   useEffect(() => {
     if (inner.current) inner.current.indeterminate = indeterminate;
   }, [indeterminate]);
-  const Tag = children ? 'label' : 'span';
+  // Luôn là <label> (kể cả ô không có chữ, chỉ có aria-label): bấm vào ô vuông hiển thị mới bật / tắt được input
+  // sr-only — trước đây ô không chữ bọc bằng <span> nên bấm vào ô không có tác dụng (ô chọn từng dòng ở giỏ hàng).
+  // Không đặt Checkbox trong một <label> khác (label lồng nhau không hợp lệ).
+  const Tag = 'label';
   return (
     <Tag className={cn('lz-check', WRAP, className)}>
       <input

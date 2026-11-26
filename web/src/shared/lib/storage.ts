@@ -7,6 +7,8 @@ export const STORAGE_PREFIX = 'genie.';
 /** Danh mục khóa (LUU_TRU_DU_LIEU 6.2) — chỉ dùng các khóa trong bảng này. */
 export const STORAGE_KEYS = {
   cartGuest: { area: 'local', key: 'cart.guest' },
+  /** Kết quả gộp giỏ khách chờ báo toast ở trang kế tiếp (sau đăng nhập trang chuyển hướng ngay). */
+  cartMergeNotice: { area: 'session', key: 'cart.merge_notice' },
   checkoutDraft: { area: 'session', key: 'checkout.draft' },
   checkoutIdem: { area: 'session', key: 'checkout.idem' },
   popupSeen: { area: 'session', key: 'popup.seen' },

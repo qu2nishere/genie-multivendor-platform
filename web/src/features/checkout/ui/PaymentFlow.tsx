@@ -36,8 +36,9 @@ export function PaymentFlow({ session: placed, pick = false, onClose }: PaymentF
 
   // Bắt đầu theo phương thức của phiên
   useEffect(() => {
-    if (picking || !pay) return;
-    if (pay.method === 'COD') go();
+    if (picking) return;
+    // Cổng chưa trả liên kết / mã QR (cổng giả lập trước chuỗi C3) → trang kết quả: phiên chờ thanh toán
+    if (!pay || pay.method === 'COD') go();
     else if (pay.method === 'VNPAY' && pay.paymentUrl !== MOCK_VNPAY_URL)
       window.location.assign(pay.paymentUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps

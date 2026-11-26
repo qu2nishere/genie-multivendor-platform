@@ -182,6 +182,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* *Tính phí vận chuyển* cần *Quản lý sổ địa chỉ* (nhóm A) + *Cấu hình kho lấy hàng* (cụm B4); *Tạo phiên Checkout* «include» *Xem trước đơn hàng* «include» *Tính phí vận chuyển*.
 
+*Tiến độ (2026-11-26, plan `plan/2026-11-25/server-spring/plan_gio_hang_checkout_c2.md`):* 5 / 5 UC **đang triển khai** — backend + test xong cả 5, web nối API thật (cờ `cart`, `checkout`) cho UC-ORD-01 / 04 / 06 / 07; còn chạy thật trên giao diện (kịch bản `docs/kiem-thu/kich-ban-2026-11-26-c2.md`). Chờ chuỗi sau: voucher / Điểm (C6 — cổng `CheckoutDiscountPolicy`, `CheckoutCompensation`), cổng thanh toán thật (C3 — cổng `PaymentInitiator`), spike GHN địa giới 2 cấp (cần `GHN_TOKEN`). Phụ trách: chưa phân công.
+
 ### C3. Thanh toán & ký quỹ (5 use case)
 - Khởi tạo thanh toán trực tuyến — VNPay / chuyển khoản VietQR qua SePay (UC-PAY-01)
 - Xử lý IPN VNPay & webhook SePay idempotent (UC-PAY-03)

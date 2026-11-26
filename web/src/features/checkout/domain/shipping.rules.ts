@@ -5,6 +5,8 @@ export interface ShipPolicy {
   fee: number;
   /** Ngưỡng shop tự miễn phí vận chuyển; null = không có. */
   freeFrom: number | null;
+  /** Phí tạm tính theo bảng dự phòng (API 6.8 `is_estimated_fee`) — giao diện ghi "phí tạm tính". */
+  estimated?: boolean;
 }
 
 interface ShipLine {

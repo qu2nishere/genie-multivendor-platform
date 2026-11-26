@@ -1,11 +1,25 @@
-// Giỏ hàng của người dùng đã đăng nhập (API_SPEC 6.1–6.7). Mock khi USE_MOCK: kho dòng giỏ giữ
-// trong phiên tab (mockState) để sửa ở /cart còn nguyên khi sang /checkout.
+// Giỏ hàng của người dùng đã đăng nhập (API_SPEC 6.1–6.7). Nối API thật khi `PUBLIC_REAL_API` có `cart` (plan C2 O03);
+// mock: kho dòng giỏ giữ trong phiên tab (mockState) để sửa ở /cart còn nguyên khi sang /checkout.
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { placedStore } from '@/shared/api/mock/placed';
-import type { CartLine, CartLineInput, GuestCartItem, VariantChoice } from '../domain/cart.types';
-import type { BatchAddResultDto, CartDto, CartItemDto, VariantChoiceDto } from './cart.dto';
-import { toCartLines, toVariantChoice } from './cart.mapper';
+import type {
+  CartLine,
+  CartLineInput,
+  GuestCartItem,
+  MergeResult,
+  VariantChoice,
+} from '../domain/cart.types';
+import type {
+  BatchAddResultDto,
+  CartDto,
+  CartItemDto,
+  MergeResultDto,
+  PublicVariantDto,
+  VariantChoiceDto,
+} from './cart.dto';
+import { toCartLines, toGuestLines, toMergeResult, toVariantChoice } from './cart.mapper';
 import {
   rowFromVariant,
   seedCartRows,
@@ -13,6 +27,9 @@ import {
   variantChoiceDto,
   type MockCartRow,
 } from './cart.mock';
+
+/** Giỏ hàng chạy mock khi chưa bật nhóm `cart` trong PUBLIC_REAL_API. */
+const USE_MOCK = isMocked('cart');
 
 const store = mockState<MockCartRow[]>('cart', seedCartRows);
 /** Kho giỏ mock; dòng đã đặt hàng (checkout mock) bị bỏ như server xóa sau khi đặt (6.10). */
@@ -154,25 +171,26 @@ export async function addCartItemsBatch(
   return { added: r.added, skipped: r.skipped.length };
 }
 
-/** POST /me/cart/merge — gộp giỏ khách sau đăng nhập (cùng SKU cộng dồn, chặn theo tồn). */
-export async function mergeCart(items: GuestCartItem[]): Promise<{ merged: number }> {
+/** POST /me/cart/merge — gộp giỏ khách sau đăng nhập (cùng SKU cộng dồn, chặn theo tồn; 6.7 trả skipped / adjusted). */
+export async function mergeCart(items: GuestCartItem[]): Promise<MergeResult> {
   if (USE_MOCK) {
     await mockDelay(250);
     let merged = 0;
+    let skipped = 0;
     for (const it of items) {
       if (mockAdd(it.product_variant_id, it.quantity) !== 'skipped') merged += 1;
+      else skipped += 1;
     }
-    return { merged };
+    return { merged, skipped, adjusted: 0 };
   }
-  return api.post<{ merged: number }>('/me/cart/merge', {
-    items: items.map((i) => ({ variant_id: i.product_variant_id, quantity: i.quantity })),
-  });
+  return toMergeResult(
+    await api.post<MergeResultDto>('/me/cart/merge', {
+      items: items.map((i) => ({ variant_id: i.product_variant_id, quantity: i.quantity })),
+    }),
+  );
 }
 
-/**
- * Dòng hiển thị cho giỏ khách (chỉ có SKU + số lượng). API_SPEC chưa có endpoint công khai tra SKU →
- * dùng tạm GET /public/variants?ids= (ghi vào danh sách nối backend G13.20).
- */
+/** Dòng hiển thị cho giỏ khách (chỉ có SKU + số lượng) — GET /public/variants?ids= (API 5.18, tối đa 50 id). */
 export async function resolveGuestItems(items: GuestCartItem[]): Promise<CartLine[]> {
   if (!items.length) return [];
   if (USE_MOCK) {
@@ -182,11 +200,11 @@ export async function resolveGuestItems(items: GuestCartItem[]): Promise<CartLin
       .filter((r): r is MockCartRow => r !== null);
     return toCartLines(toCartDto(rows));
   }
-  return toCartLines(
-    await api.get<CartDto>('/public/variants', {
-      query: { ids: items.map((i) => `${i.product_variant_id}:${i.quantity}`).join(',') },
-    }),
-  );
+  const variants = await api.get<PublicVariantDto[]>('/public/variants', {
+    auth: false,
+    query: { ids: items.map((i) => i.product_variant_id).join(',') },
+  });
+  return toGuestLines(variants, items);
 }
 
 /** GET /public/products/{id}/variants — nhóm phân loại + SKU để đổi phân loại trong giỏ. */
