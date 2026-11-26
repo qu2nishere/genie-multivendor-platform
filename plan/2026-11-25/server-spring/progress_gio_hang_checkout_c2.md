@@ -152,6 +152,9 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O09.05** TC-C2-13 (cron hủy)
 - [ ] **O09.06** Ghi kết quả mục 5; lỗi → task `O11.xx`
 
+### O11 — Sửa sau spike / chạy thật
+- [x] **O11.01** `HttpGhnFeeClient` đổi sang `POST /v2/shipping-order/preview` (địa giới 2 cấp, `is_new_to_address`), `ShippingFeeQuoter` chỉ cần `ghnShopId` + mã phường; thử lại 1 lần khi GHN trả "To address conflict" ngẫu nhiên; tự parse JSON khi GHN trả `Content-Type: application/octet-stream` — nhánh `feature/c2-ghn-preview-fee`
+
 ### O10 — Hồi quy & đóng plan
 - [ ] **O10.01** `./mvnw clean verify` + `npm run verify` + `npm run test:e2e`, ghi mục 7
 - [ ] **O10.02** CHECKLIST: 5 UC → ✅, tổng quan, nhật ký
@@ -191,6 +194,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | 2026-11-26 | O08.01–O08.05 | Cron UC-ORD-08: tài liệu LLD 10 (D13); `CheckoutCompensation` (mặc định không làm gì), `ExpiredSessionSweeper`, `CheckoutSessionRepository.findExpiredIds / lockIfExpired`; `ExpiredSessionSweeperIT` (5: quá hạn → EXPIRED / AUTO_CANCELLED / nhả tồn + audit, chưa tới hạn không đụng, IPN đã chốt → bỏ qua, COD không quét, 2 cron song song không nhả hai lần, phiên lỗi không chặn phiên khác) | `feature/c2-order-sweeper` | `d703a78`, `d9c6d19` |
 | 2026-11-26 | O09.01, O10.01–O10.03 | Kịch bản `docs/kiem-thu/kich-ban-2026-11-26-c2.md` (TC-C2-01…13); hồi quy backend + web xanh; cập nhật CHECKLIST / Usecase / Excel (5 UC → Đang triển khai) / BAO_CAO / CLAUDE.md | `feature/c2-order-sweeper` | (commit đóng plan) |
 | 2026-11-26 | O05.01 (spike D4) | Tạo cửa hàng mẫu GHN thử `241931` (kho Quận 1), điền `GHN_SHOP_ID` vào `.env`; spike: `/v2/shipping-order/fee` không nhận phường mới, `/v2/shipping-order/preview` + `is_new_to_address` + mã phường v3 tính đúng phí — kết quả ở mục 7 | `feature/c2-order-sweeper` | (commit này) |
+| 2026-11-26 | O11.01 | Phí GHN theo địa giới 2 cấp: `Parcel` bỏ mã quận, thêm tên / SĐT / địa chỉ người nhận; `HttpGhnFeeClient` gọi `/v2/shipping-order/preview` (đọc `total_fee`), thử lại 1 lần khi "To address conflict", tự parse JSON (GHN có lúc trả `application/octet-stream`); `ShippingFeeQuoter` chỉ cần `ghnShopId` + mã phường; test `HttpGhnFeeClientTest` (9), `ShippingFeeQuoterTest` (8). Gọi thật lớp đã biên dịch trên GHN thử: 12 / 12 lần đúng (Q1 → Đống Đa 53.900đ, → Sài Gòn 20.900đ) | `feature/c2-ghn-preview-fee` | (commit này) |
 
 ## 7. Số liệu kiểm tra & ghi chú kỹ thuật
 

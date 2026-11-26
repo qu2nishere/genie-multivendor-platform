@@ -1081,7 +1081,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Hệ thống (trong `UC-ORD-04`) gom thông tin từng kiện: `from_district_id`, `from_ward_code` (kho shop), `to_district_id`, `to_ward_code` (địa chỉ khách), tổng `weight` (gram) và kích thước lớn nhất của các sản phẩm.
   2. Kiểm tra cache Redis `ship:fee:{hash(tham số)}`; có thì trả ngay.
-  3. Gửi request tới API GHN `POST /shiip/public-api/v2/shipping-order/fee` với token của sàn và `shop_id` = `VendorProfile.ghnShopId`.
+  3. Gửi request tới API GHN `POST /shiip/public-api/v2/shipping-order/preview` (xem trước đơn — địa giới 2 cấp: `is_new_to_address: true` + mã phường mới; hiện thực 2026-11-26, plan C2 O11.01) với token của sàn và `shop_id` = `VendorProfile.ghnShopId`.
   4. Nhận số tiền cước, lưu cache 10 phút và trả về cho bước tính tổng đơn hàng.
   5. Shop đạt ngưỡng **freeship của shop** (`VendorShippingConfig.freeshipThreshold`): phí ship khách trả = 0, shop chịu (`EscrowLedger.shopShippingSubsidy`).
   6. Sản phẩm đặt trước: ngày giao dự kiến cộng thêm `preOrderDays`.
@@ -1091,7 +1091,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được bao gồm bởi `UC-ORD-04`.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Gói dịch vụ mặc định GHN "Chuẩn"; `Product.shippingPayer = SELLER` thì phí ship hiển thị 0đ cho khách và ghi `EscrowLedger.shopShippingSubsidy`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`; web hiển thị phí từ `POST /me/checkout/preview` (nhãn "phí tạm tính" khi `is_estimated_fee`). Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp: API phí v2 còn đòi mã quận → địa chỉ / kho không có quận dùng bảng dự phòng (spike D4 chờ `GHN_TOKEN`). Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: chạy thật.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`; web hiển thị phí từ `POST /me/checkout/preview` (nhãn "phí tạm tính" khi `is_estimated_fee`). Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp (spike D4, 2026-11-26): `POST /v2/shipping-order/fee` không nhận mã phường mới → phí thật lấy qua `POST /v2/shipping-order/preview` (xem trước, không tạo đơn) với `is_new_to_address` + mã phường v3, kho gửi theo `ShopId` của shop; đã gọi thật trên môi trường thử GHN. Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
