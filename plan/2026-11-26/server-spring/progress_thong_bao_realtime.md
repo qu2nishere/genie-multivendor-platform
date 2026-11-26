@@ -90,7 +90,7 @@
 - [ ] **N02.02** API_SPEC 13
 - [ ] **N02.03** API_SPEC 11.17
 - [ ] **N02.04** Usecase.md
-- [ ] **N02.05** `ErrorCode` thêm `GNE-NOT-4091`, `GNE-NOT-4221` (khối `// ===== Thông báo`); `UploadPurpose.PLATFORM_NOTICE_IMAGE` (D14); `UserChannel.NOTIFICATIONS` + `sendToTopicAfterCommit`.
+- [ ] **N02.05** `ErrorCode` thêm `GNE-NOT-4091`, `GNE-NOT-4221` (khối `// ===== Thông báo`); `UploadPurpose.NOTIFICATION_IMAGE` (D14); `UserChannel.NOTIFICATIONS` + `sendToTopicAfterCommit`.
 - [ ] **N02.06** `common/realtime/OnlineUsers`
 - [ ] **N02.07** `HtmlSanitizer` + phụ thuộc `jsoup` (D13)
 - [ ] **N02.C1** 🔖 COMMIT `docs(notification): specify inbox merge, realtime events and broadcast rules` · hash: `…`
