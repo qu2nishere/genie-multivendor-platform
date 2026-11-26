@@ -4,6 +4,8 @@
 // ShippingInfo.
 import { useId, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { useShopSettings } from '@/features/seller-settings';
 import { errorMessage } from '@/shared/api/errors';
 import { UploadError, uploadFile } from '@/shared/api/upload';
 import { useClickOutside } from '@/shared/hooks/useClickOutside';
@@ -503,8 +505,9 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
   const payer = useWatch({ control: form.control, name: 'shippingPayer' });
   const dims = useWatch({ control: form.control, name: 'dims' });
   const weight = useWatch({ control: form.control, name: 'weightGrams' });
-  const threshold = useWatch({ control: form.control, name: 'freeShippingThreshold' });
   const pre = useWatch({ control: form.control, name: 'isPreOrder' });
+  const pickup = useShopSettings().data?.pickup;
+  const fromText = [pickup?.ward?.name, pickup?.province?.name].filter(Boolean).join(', ');
   const days = useWatch({ control: form.control, name: 'preOrderDays' });
   const dayBad = pre && (days === null || days < PRE_ORDER_MIN || days > PRE_ORDER_MAX);
   const weightBad = issues.includes('weight');
@@ -568,9 +571,14 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
       <div className="grid grid-cols-2 gap-[18px] max-md:grid-cols-1">
         <div>
           <span className={labCls}>{t('seller-products.shipping.from')}</span>
+          {/* Địa chỉ lấy hàng thật của shop (Cài đặt › Địa chỉ lấy hàng — API 10.11) */}
           <div className="flex items-center gap-2 h-11 px-3 rounded-md bg-surface-sunken text-sm text-body">
             <Icon name="map-pin" size={16} className="text-subtle" />
-            {t('seller-products.shipping.from_value')}
+            {fromText || (
+              <Link to="/settings" className="text-brand-600 font-semibold">
+                {t('seller-products.shipping.from_none')}
+              </Link>
+            )}
           </div>
           <p className={hintCls}>{t('seller-products.shipping.from_hint')}</p>
         </div>
@@ -586,31 +594,18 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
             >
               {t('seller-products.shipping.buyer')}
             </Radio>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Radio
-                name="payer"
-                checked={payer === 'SELLER'}
-                disabled={readOnly}
-                onChange={() => form.setValue('shippingPayer', 'SELLER', { shouldDirty: true })}
-                className="text-sm"
-              >
-                {t('seller-products.shipping.seller')}
-              </Radio>
-              <input
-                aria-label={t('seller-products.shipping.threshold')}
-                inputMode="numeric"
-                disabled={readOnly || payer !== 'SELLER'}
-                value={threshold ?? ''}
-                onChange={(e) =>
-                  form.setValue('freeShippingThreshold', toInt(e.target.value), {
-                    shouldDirty: true,
-                  })
-                }
-                className="w-[110px] h-9 border-[1.5px] border-solid border-line rounded-md px-2.5 text-sm outline-none disabled:opacity-50"
-              />
-              <span className="text-muted text-sm">₫</span>
-            </div>
+            <Radio
+              name="payer"
+              checked={payer === 'SELLER'}
+              disabled={readOnly}
+              onChange={() => form.setValue('shippingPayer', 'SELLER', { shouldDirty: true })}
+              className="text-sm"
+            >
+              {t('seller-products.shipping.seller')}
+            </Radio>
           </div>
+          {/* Mức đơn được freeship đặt ở cấp shop (plan C1 D23) */}
+          <p className={hintCls}>{t('seller-products.shipping.threshold_hint')}</p>
         </fieldset>
       </div>
       <div className="flex items-center gap-3 mt-4 pt-3.5 border-0 border-t border-solid border-line-subtle flex-wrap">
