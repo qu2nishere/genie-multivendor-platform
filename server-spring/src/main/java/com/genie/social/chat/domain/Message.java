@@ -47,6 +47,10 @@ public class Message {
     private Long productVariantId;            // NULLABLE — FK → product_variants.id (khi type = PRODUCT_CARD — UC-SOC-02)
     private Long orderId;                     // NULLABLE — FK → orders.id (khi type = ORDER_CARD — UC-SOC-02, TLCN v1.3)
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isAuto = false;           // Tin tự động của shop (lời chào / vắng mặt / tạm nghỉ — UC-VND-06), không tính tỉ lệ phản hồi (V26)
+
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 

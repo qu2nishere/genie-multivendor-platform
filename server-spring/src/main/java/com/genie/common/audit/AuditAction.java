@@ -19,7 +19,10 @@ public enum AuditAction {                                                       
     // ===== Mở shop & KYC (plan 2026-11-16 Mở shop & KYC D3, V20) =====
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED,
     // ===== Banner theo động từ cụ thể (plan 2026-11-22 nhật ký banner N1, V24) — sửa kèm details.changes {trường: {from, to}} =====
-    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED;
+    BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED,
+    // ===== Thông báo toàn sàn (UC-NOT-05) + voucher sàn (UC-PRO-02) — plan 2026-11-26, V26 =====
+    PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED,
+    VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED;
 
     /**
      * Nhóm hiển thị trên màn Nhật ký hệ thống (API_SPEC 16; plan nhật ký kiểm toán D2). {@code switch} không có
@@ -38,7 +41,9 @@ public enum AuditAction {                                                       
             case ACCOUNT_LOCKED, ACCOUNT_SUSPENDED, ACCOUNT_REACTIVATED, ACCESS_DENIED, PII_ANONYMIZED ->
                     AuditCategory.SECURITY;
             case COMMISSION_UPDATED, PERMISSION_GRANTED, PERMISSION_REVOKED, RBAC_ROLE_CHANGED, STAFF_INVITED,
-                 BANNER_CHANGED, BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED ->
+                 BANNER_CHANGED, BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED,
+                 PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED,
+                 VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED ->
                     AuditCategory.CONFIG;
         };
     }

@@ -58,11 +58,32 @@ public class PlatformNotification {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String recipientUserIdsJson;      // NULLABLE — Mảng users.id khi target = SPECIFIC_USERS — UC-NOT-05 (TLCN v1.3)
+
+    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm đã phát; NULL = đang hẹn giờ — UC-NOT-05 (V26, plan 2026-11-26 thông báo D2)
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
     /** Đếm lượt đọc broadcast — UC-NOT-05 */
     public void incrementRead() {
         this.readCount += 1;
+    }
+
+    /** Đã phát chưa — UC-NOT-05 (chỉ sửa được khi chưa phát, GNE-NOT-4091) */
+    public boolean isDispatched() {
+        return this.dispatchedAt != null;
+    }
+
+    /** Đang hẹn giờ (chưa phát) — {@code is_scheduled} ở API 11.17 — UC-NOT-05 */
+    public boolean isScheduled() {
+        return this.dispatchedAt == null;
+    }
+
+    /** Phát: chốt số người nhận tại thời điểm phát — gọi đúng một lần (phát ngay hoặc cron hẹn giờ) — UC-NOT-05 */
+    public void dispatch(long reach, OffsetDateTime at) {
+        if (this.dispatchedAt != null) throw new IllegalStateException("Thông báo đã phát");
+        if (reach < 0) throw new IllegalArgumentException("reach < 0");
+        Objects.requireNonNull(at, "at");
+        this.reachCount = reach;
+        this.dispatchedAt = at;
     }
 }
