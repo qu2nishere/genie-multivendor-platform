@@ -1660,6 +1660,20 @@ public class Product {
     @Column(nullable = false)
     private Long viewCount = 0L;              // Lượt xem tích lũy (flush từ Redis product:{id}:views; chi tiết theo ngày ở product_view_stats)
 
+    // ---- Hàng chờ duyệt / sàn khóa / video (plan 2026-11-26 C1 D1 — V25) ----
+    private OffsetDateTime submittedAt;       // NULLABLE — Lần gửi duyệt gần nhất: sắp hàng chờ, đối chiếu kết quả kiểm duyệt AI cũ / mới (UC-CAT-12, 13)
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isRequeued = false;       // true = "Chờ duyệt lại" (sửa trường quan trọng của sản phẩm đã bán / Staff đưa lại hàng chờ) — UC-CAT-10, 13
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isLocked = false;         // true = sàn khóa (đi kèm status HIDDEN) — shop không tự mở bán lại, phải sửa và gửi duyệt (UC-CAT-11)
+
+    @Column(length = 500)
+    private String videoUrl;                  // NULLABLE — Khóa video sản phẩm trên Silo (bucket product-media, mp4 ≤ 30 MB — UC-CAT-09)
+
 
     // ===== QUAN HỆ =====
     @ManyToOne
@@ -1726,6 +1740,8 @@ public class Product {
 
 }
 ```
+
+> **Hiện thực (2026-11-26, `V25__listing_and_checkout_schema.sql` — plan C1 D1):** thêm `submittedAt`, `isRequeued`, `isLocked`, `videoUrl`. Sàn khóa = `status = HIDDEN` + `isLocked = true` (shop tự ẩn thì `isLocked = false`) — không thêm giá trị `ProductStatus`. Ngưỡng freeship **không** lưu theo sản phẩm (chỉ `vendor_shipping_config.freeship_threshold` của shop); `weight` là **gram**. Index hàng chờ duyệt ở mục 13.1.
 
 ### 💡 Kiến thức chuyên sâu
 
@@ -6726,6 +6742,9 @@ Mọi lần đổi ghi `SystemLog COMMISSION_UPDATED` (`reference_id = "DEFAULT"
 | `orders` | `(customer_id, created_at DESC)`, `(vendor_id, status, created_at DESC)` | UC-ORD-09 lịch sử đơn, kênh người bán |
 | `orders` | `(status, delivered_at)` partial `WHERE status = 'DELIVERED'` | UC-ORD-12 cron tự hoàn tất |
 | `stock_reservations` | `(status, expires_at)` partial `WHERE status = 'ACTIVE'` | UC-ORD-08 sweeper hủy đơn quá hạn |
+| `products` | `(status, moderator_id, submitted_at)` partial `WHERE status IN ('PENDING_APPROVAL', 'FLAGGED')` (`V25`) | UC-CAT-13 hàng chờ kiểm duyệt (lọc theo người được giao, sắp theo lúc gửi duyệt) |
+| `cart_items` | `UNIQUE (cart_id, product_variant_id)` (`V25`) | UC-ORD-01 một dòng / biến thể — thêm lại cùng SKU cộng dồn bằng `INSERT … ON CONFLICT` |
+| `checkout_sessions` | `(status, expires_at)` partial `WHERE status IN ('INITIATED', 'PAYMENT_PENDING')` (`V25`) | UC-ORD-08 cron hủy phiên quá hạn thanh toán |
 | `escrow_ledgers` | `(status, release_eligible_at)` partial `WHERE status = 'HELD'` | UC-PAY-07 cron giải ngân |
 | `payment_transactions` | `UNIQUE (idempotency_key)`, `UNIQUE (gateway_transaction_id)` | UC-PAY-03 IPN VNPay / webhook SePay idempotent |
 | `notifications` | `(user_id, is_read, created_at DESC)` | UC-NOT-01 hộp thông báo |
