@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-26 — N01 xong (PR #112), bắt đầu N02 (17 / 98) |
+| **Cập nhật gần nhất** | 2026-11-26 — N02 xong, đang làm N03 (27 / 98) |
 
 **Cách dùng**
 
@@ -50,7 +50,7 @@
 |---|---|---:|---:|---:|
 | N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
 | N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
-| N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 0 / 10 |
+| N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 10 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 0 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 0 / 11 |
 | N05 | Nối web: hub realtime + chuông + hộp thư (UC-NOT-01) | 8 | 2 | 0 / 10 |
@@ -59,7 +59,7 @@
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **17 / 98** |
+| **Tổng** | | **81** | **17** | **27 / 98** |
 
 ## N00 — Chuẩn bị
 
@@ -86,16 +86,16 @@
 
 ## N02 — Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`)
 
-- [ ] **N02.01** API_SPEC 3.12
-- [ ] **N02.02** API_SPEC 13
-- [ ] **N02.03** API_SPEC 11.17
-- [ ] **N02.04** Usecase.md
-- [ ] **N02.05** `ErrorCode` thêm `GNE-NOT-4091`, `GNE-NOT-4221` (khối `// ===== Thông báo`); `UploadPurpose.NOTIFICATION_IMAGE` (D14); `UserChannel.NOTIFICATIONS` + `sendToTopicAfterCommit`.
-- [ ] **N02.06** `common/realtime/OnlineUsers`
-- [ ] **N02.07** `HtmlSanitizer` + phụ thuộc `jsoup` (D13)
-- [ ] **N02.C1** 🔖 COMMIT `docs(notification): specify inbox merge, realtime events and broadcast rules` · hash: `…`
-- [ ] **N02.C2** 🔖 COMMIT `build(deps): add jsoup for server-side html sanitizing` · hash: `…`
-- [ ] **N02.C3** 🔖 COMMIT `feat(common): add notification error codes, notice image purpose and online users` · hash: `…`
+- [x] **N02.01** API_SPEC 3.12
+- [x] **N02.02** API_SPEC 13
+- [x] **N02.03** API_SPEC 11.17
+- [x] **N02.04** Usecase.md
+- [x] **N02.05** `ErrorCode` thêm `GNE-NOT-4091`, `GNE-NOT-4221` (khối `// ===== Thông báo`); `UploadPurpose.NOTIFICATION_IMAGE` (D14); `UserChannel.NOTIFICATIONS` + `sendToTopicAfterCommit`.
+- [x] **N02.06** `common/realtime/OnlineUsers`
+- [x] **N02.07** `HtmlSanitizer` + phụ thuộc `jsoup` (D13)
+- [x] **N02.C1** 🔖 COMMIT `docs(notification): specify inbox merge, realtime events and broadcast rules` · hash: `5bc76c5`
+- [x] **N02.C2** 🔖 COMMIT `build(deps): add jsoup for server-side html sanitizing` · hash: `88636db`
+- [x] **N02.C3** 🔖 COMMIT `feat(common): add notification error codes, notice image purpose and online users` · hash: `f8bf25b`
 
 ## N03 — Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01)
 
@@ -214,6 +214,9 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N02.03 | API 4.1 đã đặt tên purpose là **`NOTIFICATION_IMAGE`** (web `upload.rules.ts` + `PlatformNotificationsPage.tsx` cũng dùng tên này); LUU_TRU ghi `PLATFORM_NOTICE_IMAGE`. Theo luật ưu tiên (hình dạng request lấy theo API) dùng `NOTIFICATION_IMAGE`; đã đổi tên trong plan / README / progress. API lịch sử phiên bản 1.8 |
+| N02.05 | `ErrorCode.PLATFORM_NOTIFICATION_DISPATCHED` (`GNE-NOT-4091`), `PLATFORM_NOTIFICATION_RECIPIENTS` (`GNE-NOT-4221`); `UploadPurpose.NOTIFICATION_IMAGE` (quyền `MANAGE_PLATFORM_NOTIFICATION`); `UserChannel.NOTIFICATIONS`, `PLATFORM_TOPIC`, `sendToTopicAfterCommit` (tách `runAfterCommit` dùng chung) |
+| N02.07 | `common/html/HtmlSanitizer` (jsoup `Cleaner` + danh sách thẻ D13; `a` chỉ `https:` / đường dẫn tương đối, thêm `rel` + `target`; `img` chỉ từ tiền tố `content-assets`) + `HtmlSanitizerConfig` (tiền tố lấy từ `ObjectStorage.publicUrl`) + `plainPreview`. `HtmlSanitizerTest` 7 ca, `OnlineUsersTest` 1 ca. Cổng: `./mvnw clean verify` **228 unit + 359 IT** xanh |
 | N01.09 | PR #112 `feature/b56-shared-schema` → `develop` (https://github.com/qu2nishere/genie-multivendor-platform/pull/112). Không chờ duyệt: nhánh `feature/notification-inbox` **xếp chồng** lên `feature/b56-shared-schema` (như C2) — PR #112 merge xong thì `git rebase develop` |
 | N01.01 | ENTITY v1.6: 10.2 (`dispatchedAt`, `isDispatched/isScheduled/dispatch`), 11.2 (`isAuto`, cách suy `DELIVERED/SEEN`), Phụ lục A (`CHAT_MESSAGE` + bảng nhóm `category`, 7 `AuditAction`), bảng đếm enum (17 / 47), 13.1 (9 index), E.10, CHANGELOG; đồng bộ `GIAI_NGHIA_ENTITY.md`, `Diagram07`, `Diagram10` |
 | N01.07 | `PlatformNotification.dispatch()` kiểm tham số **trước** khi gán (viết test phát hiện: `dispatch(1, null)` từng gán `reachCount` rồi mới ném lỗi) |
@@ -232,3 +235,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 |---|---|---|
 | 2026-11-26 | Lập plan + progress (81 task, 17 commit, 11 giai đoạn) — chưa bắt đầu làm | — |
 | 2026-11-26 | N00 (chốt D1–D20, kiểm `V26` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V26`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
+| 2026-11-26 | N02: API_SPEC 3.12 / 4.1 / 11.17 / 13 + Usecase UC-NOT-01 / 05; jsoup; mã lỗi `GNE-NOT-*`, `NOTIFICATION_IMAGE`, `OnlineUsers`, `HtmlSanitizer`; verify xanh 228 unit + 359 IT. Nhánh `feature/notification-inbox` xếp chồng trên `feature/b56-shared-schema` | `5bc76c5` `88636db` `f8bf25b` |
