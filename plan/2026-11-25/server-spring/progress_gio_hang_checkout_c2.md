@@ -154,6 +154,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 
 ### O11 — Sửa sau spike / chạy thật
 - [x] **O11.01** `HttpGhnFeeClient` đổi sang `POST /v2/shipping-order/preview` (địa giới 2 cấp, `is_new_to_address`), `ShippingFeeQuoter` chỉ cần `ghnShopId` + mã phường; thử lại 1 lần khi GHN trả "To address conflict" ngẫu nhiên; tự parse JSON khi GHN trả `Content-Type: application/octet-stream` — nhánh `feature/c2-ghn-preview-fee`
+- [ ] **O11.02** Hai hệ mã địa giới cùng tồn tại: thiếu `GHN_TOKEN` / `GHN_SHOP_ID` → sổ địa chỉ dùng `regions/regions.json` (**mã nhà nước**, vd TP.HCM `79`, Phường Sài Gòn `26740`); có đủ → GHN master-data v3 (**mã GHN**, vd `1000001`, `1003506`). GHN preview từ chối mã nhà nước ("phường/xã người nhận mới không tồn tại") → địa chỉ seed / tạo khi chưa có token chỉ được phí tạm tính. Cần chốt một hệ mã (hoặc bảng đối chiếu mã nhà nước → mã GHN) — liên quan plan AUTH D25, báo người giữ UC-AUTH-09. Phát hiện 2026-11-26 khi gán `ghn_shop_id = 241931` cho shop seed *Boutique Sài Gòn* (CSDL máy dev, không commit)
 
 ### O10 — Hồi quy & đóng plan
 - [ ] **O10.01** `./mvnw clean verify` + `npm run verify` + `npm run test:e2e`, ghi mục 7
