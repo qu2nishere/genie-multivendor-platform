@@ -1,6 +1,8 @@
 // Đặt hàng & thanh toán (API_SPEC 6.10–6.12). Mọi lệnh tạo tiền gửi Idempotency-Key (TS 8).
+// Đặt hàng / xem phiên nối API thật khi `PUBLIC_REAL_API` có `checkout` (plan C2 O07.08); thanh toán lại (6.12) thuộc C3.
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, USE_MOCK as ALL_MOCK } from '@/shared/api/mock';
+import { isMocked } from '@/shared/config/env';
 import { placedStore } from '@/shared/api/mock/placed';
 import type {
   CheckoutQuote,
@@ -9,6 +11,7 @@ import type {
   PlaceOrderInput,
 } from '../domain/checkout.types';
 import type { CheckoutSessionDto, PaymentDto } from './checkout.dto';
+import { DISCOUNTS_ENABLED } from './shipping.api';
 import { toCheckoutSession, toPayment, toPlaceOrderDto } from './checkout.mapper';
 import {
   MOCK_SEPAY_MS,
@@ -20,6 +23,8 @@ import {
 } from './checkout.mock';
 
 export { MOCK_VNPAY_URL };
+
+const USE_MOCK = isMocked('checkout');
 
 /**
  * POST /me/checkout-sessions — đặt hàng: server tính lại giá, giữ chỗ 15 phút, tách đơn theo shop,
@@ -41,9 +46,13 @@ export async function createCheckout(
     return toCheckoutSession(sessionDto(mockPlace(input, quote, new Date(), idempotencyKey), true));
   }
   return toCheckoutSession(
-    await api.post<CheckoutSessionDto>('/me/checkout-sessions', toPlaceOrderDto(input), {
-      idempotencyKey,
-    }),
+    await api.post<CheckoutSessionDto>(
+      '/me/checkout-sessions',
+      toPlaceOrderDto(input, DISCOUNTS_ENABLED),
+      {
+        idempotencyKey,
+      },
+    ),
   );
 }
 
@@ -71,7 +80,7 @@ export async function retryPayment(
   method: PaymentMethod,
   idempotencyKey: string,
 ): Promise<CheckoutSession> {
-  if (USE_MOCK) {
+  if (ALL_MOCK) {
     await mockDelay(400);
     const s = mockRepay(id, method);
     if (!s) mockFail('GNE-ORD-4041');
