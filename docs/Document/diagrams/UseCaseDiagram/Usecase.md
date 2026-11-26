@@ -1032,7 +1032,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   4. Trả về danh sách dòng bị điều chỉnh / loại bỏ để giao diện thông báo; client xóa giỏ tạm.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `order/cart` (API 6.1–6.7, `/public/variants`; giới hạn 100 dòng / 999 mỗi dòng; gộp giỏ trả `skipped` / `adjusted`) + test `CartIT`, `CartMergeIT`; web nối API thật (cờ `PUBLIC_REAL_API=cart`). Còn: chạy thật trên giao diện.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Cart](../ClassDiagram/ENTITY.md#31-cart--giỏ-hàng), [CartItem](../ClassDiagram/ENTITY.md#32-cartitem--dòng-sản-phẩm-trong-giỏ).
 

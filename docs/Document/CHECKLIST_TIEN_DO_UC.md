@@ -20,8 +20,8 @@
 |---|---:|
 | Tổng use case | **87** |
 | Đã triển khai (backend + test + web nối API thật) | **24** |
-| Đang triển khai | **11** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **41** |
+| Đang triển khai | **12** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **40** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **11** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
 | Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (83 test xanh — 2026-11-17); 10 module còn lại chưa có service |
@@ -79,7 +79,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 |---|---:|---:|---:|---:|
 | 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
 | 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 10 | 1 | 6 |
-| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 0 | 9 |
+| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 1 | 8 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
 | 05. Gian hàng & KYC người bán | 11 | 7 | 0 | 4 |
 | 06. Vận chuyển 3PL | 5 | 0 | 0 | 5 |
@@ -131,7 +131,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
-| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
+| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-cart`): API 6.1–6.7 + `/public/variants`, `CartIT` / `CartMergeIT`; web nối qua `PUBLIC_REAL_API=cart`; chưa chạy thật</sub> | — |
 | `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
@@ -359,3 +359,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-25 | VND-01, 02, 03, 04, 05, 07, 21 | Rà tiến độ cụm B4 trên `develop` (`0e34dce`): code 6 / 7 UC đã merge — PR #83 (`feature/vendor-shop-kyc`), #84 (`feature/ai-worker-kyc`), #96 (sửa KYC ảnh điện thoại thật: QR zxing-cpp, MRZ, dò mặt / độ nét; `/seller/kyc` tự làm mới; email shop = email tài khoản). Có đủ endpoint `/me/shop-registrations`, `/seller/kyc`, `/admin/kyc-submissions`, `/internal/kyc`, `/seller/payout-account`, `/seller/settings` + 12 lớp IT vendor + `pytest` AI Worker. Cột *Chạy* vẫn ☐ — chưa ai thao tác thật trên giao diện (K11.08, F06.01 chưa xong). UC-VND-05: A12 đã có nhưng K07 chưa làm → vẫn ⬜. Trạng thái UC và số Tổng quan không đổi | nhánh `docs/update-b4-progress` |
 | 2026-11-25 | VND-05 | Kho lấy hàng GHN (plan `2026-11-16/server-spring/plan_mo_shop_kyc.md` K07 viết lại theo D16 — địa giới 2 cấp): `PUT /seller/pickup-address` (chỉ shop `VERIFIED`, tên tỉnh / phường server tra từ `RegionDirectory`, gọi GHN ngoài transaction, lỗi → `502 GNE-LOG-5022` giữ kho cũ), `PickupShopRegistrar` + `StubPickupShopRegistrar` / `GhnPickupShopRegistrar` (`GHN_PICKUP_MODE`), `isPickupConfigured()` bỏ điều kiện quận; `GET /seller/settings` bỏ `district`; web bỏ cờ mock `pickup`. `./mvnw clean verify` xanh (JDK 21: 193 unit + 326 IT, +5 `GhnPickupShopRegistrarTest`, +5 `PickupAddressIT`); `npm run verify` xanh (355 test). Chạy thật: `vendor-pickup-address.http` 7 / 7 ca đúng trên backend `local`; Chromium điều khiển bằng Playwright (web 4321 + backend 8080 + Postgres + Redis, tài khoản `owner.shoe`) 6 / 6 ca đạt — lưu lần đầu (GHN-880002), tải lại còn dữ liệu, đổi phường giữ Shop ID. **UC-VND-05 → ✅**. Tổng quan: Đã triển khai 17 → 18, Chưa (mock) 42 → 41; phân hệ 05: 1 / 6 / 4 | nhánh `feature/vendor-k07-pickup` (`fffef67`, `0273177`) |
 | 2026-11-25 | VND-01, 02, 03, 04, 07, 21 | Chạy thật cụm B4 theo `docs/kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md` bằng Chromium điều khiển qua Playwright (người dùng cho phép tự chạy + dùng ảnh CCCD thật trong `test-kyc/`): web bản build + backend `local` + Postgres + Redis + Silo + Mailpit + AI Worker thật (`AI_WORKER_MODE=http`). Kết quả: mở shop 15 ca, nộp KYC 11 ca, AI thật 6 ca (QR + MRZ đọc được, khớp mặt 0,57 → tự duyệt; selfie không có mặt → `LIVENESS_SUSPECT`; trùng CCCD → `DUPLICATE_ID`), duyệt tay 27 ca (quyền, xem ảnh 5 phút + nhật ký, từ chối / bổ sung / xin xem xét / đưa lại hàng chờ, hoa hồng + Chính hãng), tài khoản nhận tiền 11 ca, cài đặt shop 10 ca — đều đạt. Lỗi phát hiện và đã sửa: (1) màn duyệt không hiện tín hiệu rủi ro → API 11.3 thêm `risk_signals` + khối "Tín hiệu rủi ro", dịch mã lỗi AI, ẩn độ khớp mặt khi không so khớp; (2) AI duyệt xong menu Seller Center vẫn khóa tới khi tải lại → làm mới `/seller/me`; (3) hộp thoại xóa tài khoản nhận tiền treo khung chờ khi không xin được OTP (vd `GNE-WAL-4091`) → hiện lý do; (4) hộp OTP mở shop / bước 2 hiện "mã thử: 123456" khi chạy API thật. `./mvnw clean verify` 193 unit + 326 IT, `npm run verify` 358 test xanh; kiểm lại 5 / 5 trên giao diện. **6 UC → ✅** — cụm B4 7 / 7. Tổng quan: Đã triển khai 18 → 24, Đang triển khai 17 → 11; phân hệ 05: 7 / 0 / 4. Ghi nhận ngoài B4 (phân hệ AUTH): chuyển trang ngay sau đăng nhập có thể hủy lượt làm mới token đang chạy → phiên bị đăng xuất (1 / 5 lần khi chuyển ngay, 0 / 5 khi chờ 2,5 giây) | nhánh `bugfix/b4-real-run-fixes` (`8bbb2e5`, `6acef4f`, `a4c7606`, `0c5103e`) |
+| 2026-11-26 | ORD-01 | Plan C2 O01–O04 (nhánh `feature/c2-cart`): giỏ hàng `GET/POST/PATCH/DELETE /me/cart…`, Mua lại, gộp giỏ khách (`skipped` / `adjusted`), `GET /public/variants`; `VariantFacade` (đọc thẳng CSDL, luật "mua được"), giới hạn 100 dòng / 999; `CartIT`, `CartMergeIT`; web nối `PUBLIC_REAL_API=cart` + toast gộp giỏ. BE / Test / Nối ☑, chờ chạy thật | `07f49f5`, `845b880`, `0c108ff` |
