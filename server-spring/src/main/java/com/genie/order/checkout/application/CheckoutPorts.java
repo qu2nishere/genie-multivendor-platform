@@ -17,4 +17,11 @@ public class CheckoutPorts {
     CheckoutDiscountPolicy noCheckoutDiscounts() {
         return (userId, shops, selection) -> CheckoutDiscountPolicy.Discounts.NONE;
     }
+
+    /** Chưa có cổng thanh toán thật (C3 — D3): khối payment không có liên kết / mã QR. */
+    @Bean
+    @ConditionalOnMissingBean(PaymentInitiator.class)
+    PaymentInitiator stubPaymentInitiator() {
+        return request -> new PaymentInitiator.Payment(request.method().name(), null, null);
+    }
 }
