@@ -26,6 +26,13 @@ export function outOfStockIds(details: unknown): number[] {
   return Array.isArray(ids) ? ids.filter((x): x is number => Number.isInteger(x)) : [];
 }
 
+/**
+ * Lỗi 422 `cart_item_ids` (API 6.10): có dòng đã rời giỏ — thường vì đã đặt ở lần trước rồi quay lại trang Thanh toán
+ * cũ (nút Back / thẻ khác). Khi đó tải lại giỏ để bỏ dòng cũ thay vì báo "Dữ liệu không hợp lệ".
+ */
+export const hasStaleCartItems = (fieldErrors: readonly { field: string }[]): boolean =>
+  fieldErrors.some((f) => f.field === 'cart_item_ids');
+
 /** Kết quả hiển thị ở /checkout/result (chỉ đọc trạng thái, không đổi đơn — TS 10.3). */
 export type ResultView = 'success' | 'pending' | 'failed';
 export function resultView(s: Pick<CheckoutSession, 'status' | 'paymentMethod'>): ResultView {

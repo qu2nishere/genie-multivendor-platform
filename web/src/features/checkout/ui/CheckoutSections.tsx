@@ -9,7 +9,7 @@ import { cn } from '@/shared/lib/cn';
 import { formatMmSs, formatNumber, formatVND } from '@/shared/lib/format';
 import { Badge, Button, Icon, Radio, Skeleton, Switch } from '@/shared/ui';
 import { isEscrowed, placeLabelKey, secondsLeft } from '../domain/checkout.rules';
-import { PAYMENT_METHODS, type PaymentMethod } from '../domain/checkout.types';
+import { HOLD_MINUTES, PAYMENT_METHODS, type PaymentMethod } from '../domain/checkout.types';
 
 export const cardClass = 'bg-surface-card rounded-lg px-[18px] py-4 mb-3.5 shadow-sm';
 
@@ -259,6 +259,17 @@ export function HoldCountdown({ deadline, onRenew }: { deadline: number; onRenew
   );
 }
 
+/** Trước khi đặt hàng (API thật): server chưa giữ hàng → chỉ báo sẽ giữ bao lâu sau khi đặt, không đếm ngược. */
+export function HoldNotice() {
+  const { t } = useT();
+  return (
+    <div className="flex items-center gap-2 bg-amber-50 text-amber-600 rounded-md px-3 py-[9px] text-sm mb-4">
+      <Icon name="lock" size={16} className="flex-none" />
+      <span>{t('checkout.hold.notice', { minutes: HOLD_MINUTES })}</span>
+    </div>
+  );
+}
+
 export function CheckoutSummary({
   price,
   orderCount,
@@ -276,8 +287,9 @@ export function CheckoutSummary({
   method: PaymentMethod;
   canPlace: boolean;
   placing: boolean;
-  deadline: number;
-  onRenew: () => void;
+  /** Có hạn giữ (chế độ mock) → đồng hồ + nút "Giữ lại"; không có (API thật) → dòng thông báo tĩnh. */
+  deadline?: number;
+  onRenew?: () => void;
   onPlace: () => void;
 }) {
   const { t, locale } = useT();
@@ -291,7 +303,11 @@ export function CheckoutSummary({
   return (
     <aside className="sticky top-[calc(var(--top-h,86px)+12px)]" aria-labelledby="co-sum">
       <div className={cardClass}>
-        <HoldCountdown deadline={deadline} onRenew={onRenew} />
+        {deadline !== undefined && onRenew ? (
+          <HoldCountdown deadline={deadline} onRenew={onRenew} />
+        ) : (
+          <HoldNotice />
+        )}
         <h2 id="co-sum" className="m-0 mb-3 font-bold text-base text-strong">
           {t('checkout.summary.title')}
         </h2>

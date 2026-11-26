@@ -37,14 +37,14 @@ import { useCartPricing } from './useCartPricing';
 import { VariantModal } from './VariantModal';
 
 export interface CartPageProps {
-  /** ?buy=<khóa dòng> từ nút "Mua ngay": chỉ chọn sẵn dòng đó. */
-  buyKey: string | null;
+  /** ?buy=<mã biến thể> từ nút "Mua ngay": chỉ chọn sẵn dòng đó. */
+  buyVariantId: number | null;
 }
 
 type Confirm =
   { kind: 'remove'; lines: CartLine[]; zero?: boolean } | { kind: 'over_stock'; stock: number };
 
-function CartScreen({ buyKey }: CartPageProps) {
+function CartScreen({ buyVariantId }: CartPageProps) {
   const { t, locale } = useT();
   const cart = useCart();
   const [selected, setSelected] = useState<Set<string> | null>(null);
@@ -60,17 +60,17 @@ function CartScreen({ buyKey }: CartPageProps) {
   useEffect(() => {
     if (cart.loading || cart.pending) return;
     setSelected((s) =>
-      s === null ? initialSelection(cart.lines, buyKey) : pruneSelection(s, cart.lines),
+      s === null ? initialSelection(cart.lines, buyVariantId) : pruneSelection(s, cart.lines),
     );
-  }, [cart.lines, cart.loading, cart.pending, buyKey]);
+  }, [cart.lines, cart.loading, cart.pending, buyVariantId]);
 
   // Bỏ ?buy= khỏi URL để tải lại trang không chọn lại riêng dòng đó
   useEffect(() => {
-    if (!buyKey) return;
+    if (buyVariantId == null) return;
     const u = new URL(window.location.href);
     u.searchParams.delete('buy');
     window.history.replaceState(null, '', u.pathname + u.search + u.hash);
-  }, [buyKey]);
+  }, [buyVariantId]);
 
   const sel = useMemo(() => selected ?? new Set<string>(), [selected]);
   const groups = useMemo(() => groupByShop(cart.lines), [cart.lines]);

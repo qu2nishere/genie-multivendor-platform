@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  hasStaleCartItems,
   holdDeadline,
   isEscrowed,
   orderCode,
@@ -30,6 +31,12 @@ describe('checkout.rules', () => {
     expect(outOfStockIds({ out_of_stock_cart_item_ids: [7001, 'x', 7002] })).toEqual([7001, 7002]);
     expect(outOfStockIds(null)).toEqual([]);
     expect(outOfStockIds({})).toEqual([]);
+  });
+
+  it('nhận ra lỗi dòng giỏ đã rời giỏ (422 cart_item_ids)', () => {
+    expect(hasStaleCartItems([{ field: 'cart_item_ids' }])).toBe(true);
+    expect(hasStaleCartItems([{ field: 'address_id' }])).toBe(false);
+    expect(hasStaleCartItems([])).toBe(false);
   });
 
   it('trang kết quả chỉ đọc trạng thái phiên', () => {

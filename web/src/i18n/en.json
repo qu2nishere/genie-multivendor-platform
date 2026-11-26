@@ -1282,7 +1282,8 @@
     "hold": {
       "left": "Stock is held for",
       "expired": "The 15-minute stock hold has expired.",
-      "renew": "Hold again"
+      "renew": "Hold again",
+      "notice": "After you place the order, items are held for {minutes} minutes for payment."
     },
     "summary": {
       "title": "Payment details",
@@ -1302,7 +1303,8 @@
       "vietqr": "Place order & get QR code",
       "cod": "Place order",
       "short": "Place order",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "stale_items": "Some items were already ordered or are no longer in your cart — your cart has been refreshed."
     }
   },
   "account": {

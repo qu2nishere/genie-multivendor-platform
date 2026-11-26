@@ -7,6 +7,7 @@ import {
 } from '@/shared/api/idempotency';
 import type { CheckoutQuote, PaymentMethod, PlaceOrderInput } from '../domain/checkout.types';
 import {
+  HOLD_TIMER_BEFORE_ORDER,
   MOCK_VNPAY_URL,
   createCheckout,
   getCheckoutSession,
@@ -56,3 +57,5 @@ export function useSettleMockPayment() {
 
 /** URL cổng VNPAY giả lập của mock (UI mở cổng mô phỏng thay vì chuyển trang). */
 export { MOCK_VNPAY_URL };
+
+export { HOLD_TIMER_BEFORE_ORDER };
