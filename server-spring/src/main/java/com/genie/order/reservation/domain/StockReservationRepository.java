@@ -16,7 +16,7 @@ public interface StockReservationRepository extends JpaRepository<StockReservati
      * Đóng một lượt giữ chỗ CÒN {@code ACTIVE} (cron UC-ORD-08 / hủy nhóm đơn) — có điều kiện để không đua với IPN (C3)
      * đã chốt trước: 0 dòng = lượt này không còn ACTIVE, KHÔNG được nhả tồn (plan C2 D13).
      */
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Modifying(flushAutomatically = true)
     @Query(value = """
             UPDATE stock_reservations SET status = :status, released_at = :now, version = version + 1
             WHERE id = :id AND status = 'ACTIVE'""", nativeQuery = true)

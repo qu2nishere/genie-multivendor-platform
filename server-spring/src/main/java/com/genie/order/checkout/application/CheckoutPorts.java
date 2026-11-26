@@ -24,4 +24,12 @@ public class CheckoutPorts {
     PaymentInitiator stubPaymentInitiator() {
         return request -> new PaymentInitiator.Payment(request.method().name(), null, null);
     }
+
+    /** C2 chưa trừ voucher / Điểm / suất Flash Sale nên hủy phiên không có gì để hoàn (C6 cài bản thật). */
+    @Bean
+    @ConditionalOnMissingBean(CheckoutCompensation.class)
+    CheckoutCompensation noCheckoutCompensation() {
+        return (sessionId, userId, orderIds) -> {
+        };
+    }
 }
