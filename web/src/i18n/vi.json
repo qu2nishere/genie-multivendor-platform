@@ -382,6 +382,11 @@
     }
   },
   "cart": {
+    "merge": {
+      "done": "Đã gộp {count} sản phẩm từ giỏ hàng tạm vào tài khoản của bạn",
+      "skipped": "{count} sản phẩm không còn bán (hết hàng, shop tạm nghỉ…) đã được bỏ qua",
+      "adjusted": "{count} sản phẩm đã được giảm số lượng cho vừa tồn kho"
+    },
     "mini": {
       "empty_title": "Giỏ hàng của bạn đang trống",
       "empty_text": "Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm",

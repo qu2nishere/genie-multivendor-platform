@@ -18,8 +18,8 @@ export interface CartItemDto {
   product_slug: string;
   category_name: string | null;
   product_name: string;
-  image_url: string;
-  variant_name: string;
+  image_url: string | null;
+  variant_name: string | null;
   unit_price: number;
   original_price: number | null;
   price_at_add: number | null;
@@ -33,6 +33,31 @@ export interface CartItemDto {
 export interface CartDto {
   shops: { shop: CartShopDto; items: CartItemDto[] }[];
   item_count: number;
+}
+
+/** POST /me/cart/merge (API_SPEC 6.7 — plan C2 D8). */
+export interface MergeResultDto {
+  merged: number;
+  skipped: { variant_id: number; reason: string }[];
+  adjusted: { variant_id: number; quantity: number }[];
+  cart_item_count: number;
+}
+
+/** GET /public/variants?ids= (API_SPEC 5.18) — dòng hiển thị của giỏ khách. */
+export interface PublicVariantDto {
+  variant_id: number;
+  product_id: number;
+  product_slug: string;
+  product_name: string;
+  category_name: string | null;
+  variant_name: string | null;
+  image_url: string | null;
+  unit_price: number;
+  original_price: number | null;
+  stock: number;
+  is_available: boolean;
+  unavailable_reason: CartItemDto['unavailable_reason'];
+  shop: CartShopDto | null;
 }
 
 /** POST /me/cart/items/batch (API_SPEC 6.6). */

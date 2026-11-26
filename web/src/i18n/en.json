@@ -382,6 +382,11 @@
     }
   },
   "cart": {
+    "merge": {
+      "done": "Merged {count} item(s) from your guest cart into your account",
+      "skipped": "{count} item(s) no longer available (sold out, shop on vacation…) were skipped",
+      "adjusted": "{count} item(s) were reduced to the available stock"
+    },
     "mini": {
       "empty_title": "Your cart is empty",
       "empty_text": "Add products to your cart to keep shopping",
