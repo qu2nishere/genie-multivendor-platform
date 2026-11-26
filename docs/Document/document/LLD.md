@@ -236,7 +236,8 @@ stateDiagram-v2
 2. `PAYMENT_PENDING`: Khách hàng chọn phương thức thanh toán. Với thanh toán trực tuyến, hệ thống sinh URL chuyển hướng sang cổng thanh toán (VNPay, ZaloPay, VietQR); với đơn COD, phiên ghi nhận phương thức thu hộ.
 3. `COMPLETED`: Khi nhận được Webhook IPN hợp lệ có chữ ký điện tử an toàn từ cổng thanh toán (hoặc khi xác thực đơn COD hợp lệ), phiên thanh toán chuyển sang `COMPLETED`. Hệ thống kích hoạt Saga Orchestrator tự động phân tách phiên thành N đơn hàng con vật lý (`orders`) tương ứng với từng gian hàng (`vendor_id`).
 4. `FAILED` & `EXPIRED`: Nếu giao dịch bị cổng từ chối hoặc quá thời hạn thanh toán 15 phút, Scheduler tự động cập nhật phiên sang `EXPIRED`, giải phóng tồn kho (`StockReservation` chuyển `RELEASED`), hoàn trả lượt dùng Voucher và Điểm Genie.
-5. *Phân tách trách nhiệm:* Mọi trạng thái nghiệp vụ tiếp theo (chuẩn bị hàng, giao vận, ký quỹ, khiếu nại, hoàn tiền) được bàn giao hoàn toàn cho từng đơn hàng con (`Order`) độc lập theo máy trạng thái `OrderStatus` (19 trạng thái chuẩn) tại mục 6.2 bên dưới.
+5. *Hiện thực (plan C2 D3, 2026-11-26):* đơn con (`orders`) được tạo **ngay trong transaction đặt hàng** (UC-ORD-07), không chờ IPN. COD → phiên `INITIATED → COMPLETED` cùng transaction, giữ chỗ `CONFIRMED` (trừ `stock_count`), đơn con `PENDING_PAYMENT` = chờ shop xác nhận. VNPAY / VIETQR → phiên `PAYMENT_PENDING`, giữ chỗ `ACTIVE` tới khi IPN (C3) chốt hoặc cron UC-ORD-08 nhả (`EXPIRED`); cổng `PaymentInitiator` dựng khối `payment` (bản giả lập tới khi có UC-PAY-01). Cột hạn phiên là `checkout_sessions.expires_at` (API gọi `reservation_expires_at`).
+6. *Phân tách trách nhiệm:* Mọi trạng thái nghiệp vụ tiếp theo (chuẩn bị hàng, giao vận, ký quỹ, khiếu nại, hoàn tiền) được bàn giao hoàn toàn cho từng đơn hàng con (`Order`) độc lập theo máy trạng thái `OrderStatus` (19 trạng thái chuẩn) tại mục 6.2 bên dưới.
 
 ### 6.2 Máy trạng thái Đơn hàng Con (Sub-Order Lifecycle)
 

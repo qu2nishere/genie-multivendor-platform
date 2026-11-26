@@ -1311,6 +1311,12 @@ UC-ORD-07, UC-PAY-01 · **Màn hình:** nút "Đặt hàng & thanh toán VNPAY" 
 ```
 `payment_method` ∈ `VNPAY, VIETQR, COD`. Lời nhắn ≤ 500 ký tự. Server tính lại giá (không tin giá client), giữ chỗ tồn kho 15 phút, tách N đơn con theo shop, xóa các dòng đã đặt khỏi giỏ.
 
+*Hiện thực trước cổng thanh toán (plan C2 D3, D10, D11 — 2026-11-26):*
+- Header `Idempotency-Key` **bắt buộc** (thiếu → `422`, `errors[].field = Idempotency-Key`); gửi lại cùng khóa trong 24 giờ → `201` trả lại phiên đã tạo; yêu cầu trùng đang chạy dở → `503 GNE-SYS-5030` (thử lại cùng khóa).
+- **COD** → phiên `COMPLETED` ngay, tồn kho bị trừ, đơn con `PENDING_PAYMENT` (chờ shop xác nhận). **VNPAY / VIETQR** → phiên `PAYMENT_PENDING`, tồn giữ chỗ 15 phút; khối `payment` lấy từ cổng thanh toán — chưa có chuỗi C3 thì `payment_url = null` / `vietqr = null`.
+- `code` phiên = `CS-` + id ở base32 (5 ký tự trở lên); mã đơn `TR-yyyyMMdd-######` theo ngày giờ Việt Nam.
+- `address_id` bắt buộc; `cart_item_ids` có id không còn trong giỏ của người gọi → `422 GNE-VAL-4220` (`errors[].code = NOT_FOUND`); dòng là sản phẩm của chính shop mình → `409 GNE-ORD-4094`; GHN không phục vụ tuyến (`SHIPPING_UNAVAILABLE` ở 6.8) → `409 GNE-ORD-4093 {shop_ids}`.
+
 `201` → `$CheckoutSession` (6.11) có thêm khối `payment` theo phương thức:
 ```json
 "payment": { "method": "VNPAY", "payment_url": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?..." }
