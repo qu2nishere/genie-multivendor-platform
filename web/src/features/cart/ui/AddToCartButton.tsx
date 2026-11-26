@@ -46,7 +46,8 @@ export default function AddToCartButton({
       toast.error(r.reason === 'guest_full' ? t('cart.add.guest_full') : errorMessage(r.error, t));
       return;
     }
-    if (mode === 'buy') window.location.assign(`/cart?buy=${encodeURIComponent(r.key)}`);
+    // ?buy=<mã biến thể>: giỏ chỉ tick sẵn đúng món vừa bấm "Mua ngay"
+    if (mode === 'buy') window.location.assign(`/cart?buy=${line.variantId}`);
     else toast.success(t('cart.add.added'));
   };
 

@@ -15,7 +15,7 @@ export interface CartShop {
 export interface CartLine {
   /** Mã dòng giỏ (cart_item_id) — gửi lên API khi sửa / xóa / đặt hàng. */
   id: number;
-  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn); dùng cho ?buy= và chọn dòng. */
+  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn); dùng để chọn dòng (?buy= khớp theo variantId). */
   key: string;
   productId: number;
   /** SKU (product_variant_id). */
@@ -56,6 +56,13 @@ export interface GuestCart {
   version: 1;
   expires_at: string;
   items: GuestCartItem[];
+}
+
+/** Kết quả gộp giỏ khách (API 6.7) — số dòng đã gộp / bỏ qua / bị hạ số lượng cho toast. */
+export interface MergeResult {
+  merged: number;
+  skipped: number;
+  adjusted: number;
 }
 
 /** Dữ liệu nút "Thêm vào giỏ" gửi đi (trang sản phẩm dựng từ lựa chọn phân loại). */

@@ -1183,6 +1183,10 @@ UC-ORD-01 · **Màn hình:** trang sản phẩm (Thêm vào giỏ, Mua ngay, Đ�
 | `409 GNE-ORD-4093` | Shop đang tạm nghỉ |
 | `409 GNE-ORD-4094` | Sản phẩm của chính shop mình |
 | `403 GNE-ORD-4031` | Tài khoản nội bộ (`STAFF` / `ADMIN`) — áp dụng cho mọi endpoint mục 6 |
+| `404 GNE-CAT-4042` | Biến thể không tồn tại / sản phẩm không còn bán (khác `PUBLISHED`, biến thể đã bỏ) |
+| `422 GNE-VAL-4220` | `quantity` ngoài 1–999 (`errors[].field = quantity`); giỏ đã đủ **100 dòng** (`errors[].code = CART_FULL`) |
+
+Giới hạn giỏ *(plan C2 D9, 2026-11-26)*: tối đa **100 dòng / giỏ**, **999 / dòng** — áp cho 6.3, 6.4, 6.6, 6.7 (6.6, 6.7 không trả lỗi mà ghi vào `skipped` / `adjusted`).
 
 ### 6.4 `PATCH /me/cart/items/{id}` — Đổi số lượng / đổi phân loại
 ```json
@@ -1211,7 +1215,16 @@ Toast "Đã thêm sản phẩm còn bán, bỏ qua sản phẩm của shop đang
 ```json
 { "items": [ { "variant_id": 101, "quantity": 1 } ] }
 ```
-`200` `{ "merged": 1, "cart_item_count": 12 }`. Cùng SKU cộng dồn, chặn ở tồn kho.
+`200`:
+```json
+{
+  "merged": 1,
+  "skipped": [ { "variant_id": 1801, "reason": "SHOP_ON_VACATION" } ],
+  "adjusted": [ { "variant_id": 101, "quantity": 3 } ],
+  "cart_item_count": 12
+}
+```
+Cùng SKU cộng dồn, chặn ở tồn kho *(plan C2 D8, 2026-11-26)*: dòng không mua được → `skipped[].reason` ∈ `OUT_OF_STOCK, SHOP_ON_VACATION, PRODUCT_UNAVAILABLE, OWN_PRODUCT, CART_FULL`; dòng bị hạ số lượng cho vừa tồn khả dụng / 999 → `adjusted[].quantity` = số lượng cuối cùng trong giỏ. Toast "Đã gộp giỏ hàng tạm…" dựa vào ba trường này. 6.6 dùng cùng tập `reason` (thêm `OWN_PRODUCT`, `CART_FULL`).
 
 ### 6.8 `POST /me/checkout/preview` — Tính giá (Giỏ hàng & Thanh toán)
 UC-ORD-04, UC-ORD-06, UC-PRO-04, UC-PRO-10 · **Màn hình:** thanh tổng của Giỏ hàng (tạm tính từng shop, Voucher Genie, "Dùng 1.250 Điểm", "Genie giữ … đến khi bạn nhận hàng", "2 đơn · gồm phí ship …"), toàn bộ trang Thanh toán (đơn con theo shop, phí ship, voucher shop / sàn phân bổ / freeship, "Có bộ mã tiết kiệm thêm …", Điểm, chi tiết thanh toán, đồng hồ giữ hàng)
@@ -1260,9 +1273,13 @@ UC-ORD-04, UC-ORD-06, UC-PRO-04, UC-PRO-10 · **Màn hình:** thanh tổng của
 }
 ```
 - Thứ tự tính: Voucher Shop → Voucher Sàn (phân bổ theo dòng, phần dư dồn dòng cuối) → Freeship → Điểm (≤ 50% tiền hàng còn lại, 1 Điểm = 1₫). Tổng giảm tầng 1+2 ≤ 85% tiền hàng (LLD 9.3).
-- `is_free_shipping_by_shop = true` → "Shop miễn phí vận chuyển" (đạt ngưỡng freeship của shop).
+- `is_free_shipping_by_shop = true` → "Shop miễn phí vận chuyển" (đạt ngưỡng freeship của shop, hoặc mọi món có `shipping_payer = SELLER`); `shipping_fee` khách trả = 0.
+- `is_estimated_fee` *(plan C2 D4–D6, 2026-11-26)* — `true` khi phí lấy từ bảng dự phòng (15.000đ cùng tỉnh / 30.000đ khác tỉnh): shop chưa cấu hình kho lấy hàng hoặc chưa có mã shop GHN, GHN lỗi / quá 3 giây (phí thật tính theo địa giới 2 cấp qua GHN `POST /v2/shipping-order/preview` + `is_new_to_address` — spike D4, plan C2 O11.01) → web ghi "phí tạm tính". `GHN_MODE=stub` (máy dev) trả bảng phí như phí thật (`false`).
+- GHN báo không phục vụ tuyến → các dòng của shop đó `is_available = false`, `unavailable_reason = "SHIPPING_UNAVAILABLE"` (chỉ ở 6.8 / 6.10, không phải enum CSDL); đặt hàng có dòng như vậy → `409 GNE-ORD-4093` `details.shop_ids`.
 - Voucher đã chọn mà không còn hợp lệ → bị bỏ và có `warnings: [{ "voucher_id": 1, "code": "GNE-VCH-4221", "message": "..." }]` trong phản hồi (không trả lỗi, để giỏ vẫn hiển thị).
 - Không cung cấp mã đơn trước khi đặt (xem mục 17).
+- Khối shop có thêm *(plan C2, 2026-11-26)* `base_shipping_fee` (phí hãng trước freeship; `null` khi chưa có địa chỉ), `free_ship_threshold` (ngưỡng freeship của shop; `0` khi mọi món người bán trả ship; `null` = không có) — trang Giỏ tính lại phí khi khách bỏ chọn bớt món mà không gọi lại 6.8; và `is_estimated_fee` (xem trên). Không có địa chỉ nào → `address = null`, `shipping_fee = null`, `shipping_total` chỉ cộng phí đã biết.
+- **Trước khi có voucher / Điểm (chuỗi C6 — plan C2 D2):** server nhận `vouchers`, `use_coins` nhưng bỏ qua; mọi khoản giảm = 0, `shop_voucher = null`, `vouchers_applied = null`, `best_selection = null`, `coins = null`. Web khi `PUBLIC_REAL_API` có `checkout` mà chưa có nhóm voucher thì ẩn ô Voucher / Điểm. Dòng của người khác / id lạ trong `cart_item_ids` bị bỏ qua; tối đa 100 id.
 
 ### 6.9 `POST /me/checkout/applicable-vouchers` — Danh sách cho Voucher Picker
 UC-PRO-03, UC-PRO-04 · **Màn hình:** modal "Chọn Voucher Genie" (nhóm Mã Giảm Giá / Miễn Phí Vận Chuyển) và "Chọn Voucher của Shop" — voucher không dùng được vẫn hiện, mờ, kèm lý do; ô "Nhập mã voucher"
@@ -1293,6 +1310,12 @@ UC-ORD-07, UC-PAY-01 · **Màn hình:** nút "Đặt hàng & thanh toán VNPAY" 
 }
 ```
 `payment_method` ∈ `VNPAY, VIETQR, COD`. Lời nhắn ≤ 500 ký tự. Server tính lại giá (không tin giá client), giữ chỗ tồn kho 15 phút, tách N đơn con theo shop, xóa các dòng đã đặt khỏi giỏ.
+
+*Hiện thực trước cổng thanh toán (plan C2 D3, D10, D11 — 2026-11-26):*
+- Header `Idempotency-Key` **bắt buộc** (thiếu → `422`, `errors[].field = Idempotency-Key`); gửi lại cùng khóa trong 24 giờ → `201` trả lại phiên đã tạo; yêu cầu trùng đang chạy dở → `503 GNE-SYS-5030` (thử lại cùng khóa).
+- **COD** → phiên `COMPLETED` ngay, tồn kho bị trừ, đơn con `PENDING_PAYMENT` (chờ shop xác nhận). **VNPAY / VIETQR** → phiên `PAYMENT_PENDING`, tồn giữ chỗ 15 phút; khối `payment` lấy từ cổng thanh toán — chưa có chuỗi C3 thì `payment_url = null` / `vietqr = null`.
+- `code` phiên = `CS-` + id ở base32 (5 ký tự trở lên); mã đơn `TR-yyyyMMdd-######` theo ngày giờ Việt Nam.
+- `address_id` bắt buộc; `cart_item_ids` có id không còn trong giỏ của người gọi → `422 GNE-VAL-4220` (`errors[].code = NOT_FOUND`); dòng là sản phẩm của chính shop mình → `409 GNE-ORD-4094`; GHN không phục vụ tuyến (`SHIPPING_UNAVAILABLE` ở 6.8) → `409 GNE-ORD-4093 {shop_ids}`.
 
 `201` → `$CheckoutSession` (6.11) có thêm khối `payment` theo phương thức:
 ```json

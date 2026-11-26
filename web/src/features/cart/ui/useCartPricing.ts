@@ -4,10 +4,12 @@
 import { useStore } from '@nanostores/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  DISCOUNTS_ENABLED,
   loadCheckoutDraft,
   makeShipFn,
   saveCheckoutDraft,
   useShipPolicies,
+  type ShipQuoteScope,
 } from '@/features/checkout';
 import { useCoins } from '@/features/coins';
 import {
@@ -48,19 +50,29 @@ export interface CartPricing {
   /** Phí ship của shop với các dòng đang chọn; policy để biết shop tự miễn phí. */
   shipOfShop: (shopId: number) => number;
   freeByShop: (shopId: number) => boolean;
+  /** Phí ship của shop là phí tạm tính (bảng dự phòng — API 6.8 `is_estimated_fee`). */
+  estimatedShip: (shopId: number) => boolean;
+  /** Có hiện ô Voucher / Điểm (false khi nối checkout thật mà chưa có voucher — plan C2 D2). */
+  discountsOn: boolean;
   addVoucher: (v: Voucher) => void;
 }
 
 /**
  * @param picked dòng đang chọn để tính giá.
  * @param allShopIds shop của mọi dòng trong giỏ (nạp phí ship một lần).
+ * @param scope dòng giỏ + địa chỉ để server báo phí ship (API thật 6.8); bỏ trống khi chạy mock / khách vãng lai.
  */
-export function useCartPricing(picked: CartLine[], allShopIds: number[]): CartPricing {
+export function useCartPricing(
+  picked: CartLine[],
+  allShopIds: number[],
+  scope?: ShipQuoteScope,
+): CartPricing {
   const session = useStore($session);
   const authed = session.status === 'authenticated';
-  const vouchersQ = useMyVouchers(authed);
-  const coinsQ = useCoins(authed);
-  const policiesQ = useShipPolicies(allShopIds);
+  const discountsOn = DISCOUNTS_ENABLED;
+  const vouchersQ = useMyVouchers(authed && discountsOn);
+  const coinsQ = useCoins(authed && discountsOn);
+  const policiesQ = useShipPolicies(allShopIds, authed ? scope : undefined);
   const [extra, setExtra] = useState<Voucher[]>([]);
   const [selection, setSel] = useState<VoucherSelection | null>(null);
   const [usePoints, setUse] = useState(() => loadCheckoutDraft().usePoints);
@@ -68,16 +80,18 @@ export function useCartPricing(picked: CartLine[], allShopIds: number[]): CartPr
   const policies = useMemo(() => policiesQ.data ?? {}, [policiesQ.data]);
   const ctx = useMemo<PricingContext>(
     () => ({
-      vouchers: [
-        ...(vouchersQ.data ?? []),
-        ...extra.filter((e) => !vouchersQ.data?.some((v) => v.id === e.id)),
-      ],
+      vouchers: discountsOn
+        ? [
+            ...(vouchersQ.data ?? []),
+            ...extra.filter((e) => !vouchersQ.data?.some((v) => v.id === e.id)),
+          ]
+        : [],
       ship: makeShipFn(policies),
     }),
-    [vouchersQ.data, extra, policies],
+    [vouchersQ.data, extra, policies, discountsOn],
   );
   const lines = useMemo(() => picked.map(toPricingLine), [picked]);
-  const ready = !authed || (vouchersQ.isSuccess && policiesQ.isSuccess);
+  const ready = !authed || ((!discountsOn || vouchersQ.isSuccess) && policiesQ.isSuccess);
 
   // Lựa chọn ban đầu: mã trong nháp (người dùng đã chọn) hoặc bộ mã giảm nhiều nhất
   useEffect(() => {
@@ -90,10 +104,10 @@ export function useCartPricing(picked: CartLine[], allShopIds: number[]): CartPr
     () => selection ?? { platform: null, freeship: null, shop: {} },
     [selection],
   );
-  const balance = coinsQ.data?.balance ?? 0;
+  const balance = discountsOn ? (coinsQ.data?.balance ?? 0) : 0;
   const price = useMemo(
-    () => priceCart(lines, sel, ctx, { use: usePoints, balance }),
-    [lines, sel, ctx, usePoints, balance],
+    () => priceCart(lines, sel, ctx, { use: usePoints && discountsOn, balance }),
+    [lines, sel, ctx, usePoints, balance, discountsOn],
   );
 
   const setSelection = useCallback(
@@ -124,6 +138,8 @@ export function useCartPricing(picked: CartLine[], allShopIds: number[]): CartPr
       const p = policies[shopId];
       return !!p && p.fee > 0 && ctx.ship(shopId, lines) === 0;
     },
+    estimatedShip: (shopId) => !!policies[shopId]?.estimated,
+    discountsOn,
     addVoucher: (v) => setExtra((x) => [...x.filter((y) => y.id !== v.id), v]),
   };
 }

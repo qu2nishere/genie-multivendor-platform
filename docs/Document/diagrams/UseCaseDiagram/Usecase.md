@@ -1032,7 +1032,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   4. Trả về danh sách dòng bị điều chỉnh / loại bỏ để giao diện thông báo; client xóa giỏ tạm.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `order/cart` (API 6.1–6.7, `/public/variants`; giới hạn 100 dòng / 999 mỗi dòng; gộp giỏ trả `skipped` / `adjusted`) + test `CartIT`, `CartMergeIT`; web nối API thật (cờ `PUBLIC_REAL_API=cart`). Còn: chạy thật trên giao diện.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Cart](../ClassDiagram/ENTITY.md#31-cart--giỏ-hàng), [CartItem](../ClassDiagram/ENTITY.md#32-cartitem--dòng-sản-phẩm-trong-giỏ).
 
@@ -1065,7 +1065,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** `<<include>>` Tính phí vận chuyển qua GHN API (`UC-ORD-06`); được bao gồm bởi `UC-ORD-07`; được mở rộng bởi `UC-PRO-04` (điểm «Chọn voucher»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Đơn hàng từ các người bán khác nhau tuyệt đối không gộp chung 1 gói hàng vì xuất phát từ các kho vật lý ở các tỉnh thành khác nhau.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `POST /me/checkout/preview` (`order/checkout`: `CheckoutPricer` dùng chung cho xem trước và đặt hàng; tách đơn theo shop; phí ship UC-ORD-06; voucher / Điểm qua cổng `CheckoutDiscountPolicy` — bản mặc định chưa giảm, chờ UC-PRO-04/10) + test `CheckoutPreviewIT`, `CheckoutPricerTest`; web lấy phí ship từ 6.8 (cờ `PUBLIC_REAL_API=checkout`), ẩn ô Voucher / Điểm khi chưa có voucher thật. Còn: chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng).
 
@@ -1081,7 +1081,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Hệ thống (trong `UC-ORD-04`) gom thông tin từng kiện: `from_district_id`, `from_ward_code` (kho shop), `to_district_id`, `to_ward_code` (địa chỉ khách), tổng `weight` (gram) và kích thước lớn nhất của các sản phẩm.
   2. Kiểm tra cache Redis `ship:fee:{hash(tham số)}`; có thì trả ngay.
-  3. Gửi request tới API GHN `POST /shiip/public-api/v2/shipping-order/fee` với token của sàn và `shop_id` = `VendorProfile.ghnShopId`.
+  3. Gửi request tới API GHN `POST /shiip/public-api/v2/shipping-order/preview` (xem trước đơn — địa giới 2 cấp: `is_new_to_address: true` + mã phường mới; hiện thực 2026-11-26, plan C2 O11.01) với token của sàn và `shop_id` = `VendorProfile.ghnShopId`.
   4. Nhận số tiền cước, lưu cache 10 phút và trả về cho bước tính tổng đơn hàng.
   5. Shop đạt ngưỡng **freeship của shop** (`VendorShippingConfig.freeshipThreshold`): phí ship khách trả = 0, shop chịu (`EscrowLedger.shopShippingSubsidy`).
   6. Sản phẩm đặt trước: ngày giao dự kiến cộng thêm `preOrderDays`.
@@ -1091,7 +1091,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được bao gồm bởi `UC-ORD-04`.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Gói dịch vụ mặc định GHN "Chuẩn"; `Product.shippingPayer = SELLER` thì phí ship hiển thị 0đ cho khách và ghi `EscrowLedger.shopShippingSubsidy`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`; web hiển thị phí từ `POST /me/checkout/preview` (nhãn "phí tạm tính" khi `is_estimated_fee`). Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp (spike D4, 2026-11-26): `POST /v2/shipping-order/fee` không nhận mã phường mới → phí thật lấy qua `POST /v2/shipping-order/preview` (xem trước, không tạo đơn) với `is_new_to_address` + mã phường v3, kho gửi theo `ShopId` của shop; đã gọi thật trên môi trường thử GHN. Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 
@@ -1129,7 +1129,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Áp dụng triệt để **Snapshot Pattern**: Đơn hàng cũ không bao giờ bị biến đổi giá trị hay tên sản phẩm dù sau này người bán có sửa giá hay đổi tên.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `POST /me/checkout-sessions` (Idempotency-Key), `GET /me/checkout-sessions/{id}` (`order/checkout`: `CheckoutService.place` một transaction — tính lại giá, tách đơn theo shop, mã `TR-yyyyMMdd-######` từ Redis, snapshot + hoa hồng, giữ chỗ tồn 15 phút, xóa dòng giỏ; COD hoàn tất ngay, VNPAY / VIETQR chờ thanh toán qua cổng `PaymentInitiator` — bản giả lập tới khi có UC-PAY-01) + test `CheckoutSessionIT`, `CheckoutConcurrencyIT`; web đặt hàng thật (cờ `PUBLIC_REAL_API=checkout`). Còn: cổng thanh toán thật (C3), chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop), [OrderItem](../ClassDiagram/ENTITY.md#53-orderitem--dòng-sản-phẩm-trong-đơn), [OrderDiscount](../ClassDiagram/ENTITY.md#54-orderdiscount--chi-tiết-các-mã-đã-áp-cho-đơn), [UserCoin](../ClassDiagram/ENTITY.md#47-usercoin--số-dư-điểm), [FlashSaleItem](../ClassDiagram/ENTITY.md#46-flashsaleitem--sản-phẩm-trong-flash-sale).
 
@@ -1154,7 +1154,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   5. Hoàn Điểm đã dùng (`ORDER_REFUND`), trả lượt voucher và trả suất Flash Sale (`FlashSaleItem.releaseReservation()`).
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai — xử lý phía máy chủ (cron / webhook / AI), chưa có backend; giao diện chỉ hiển thị kết quả trên lớp mock.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `order/reservation/application/ExpiredSessionSweeper` (cron 60 giây, lô 50, `SKIP LOCKED`, mỗi phiên một transaction; nhả giữ chỗ có điều kiện `status = 'ACTIVE'` để không đua với IPN; đơn → `AUTO_CANCELLED`; hoàn voucher / Điểm qua cổng `CheckoutCompensation` — chờ C6) + test `ExpiredSessionSweeperIT`. Còn: chạy thật (đặt VNPAY giả lập rồi bỏ, chờ hết hạn).
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop), [StockReservation](../ClassDiagram/ENTITY.md#55-stockreservation--giữ-chỗ-tồn-kho).
 

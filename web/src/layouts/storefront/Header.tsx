@@ -12,7 +12,14 @@ import {
 } from 'react';
 import { Providers } from '@/shared/providers/Providers';
 import { LoginButton, LoginPrompt, requireLogin, UserMenu } from '@/features/auth';
-import { $cartCount, $cartLines, loadCart, loadGuestCart, MiniCart } from '@/features/cart';
+import {
+  $cartCount,
+  $cartLines,
+  loadCart,
+  loadGuestCart,
+  MiniCart,
+  takeMergeNotice,
+} from '@/features/cart';
 import { badgeText, NotifPanel, useNotifications } from '@/features/notifications';
 import { SearchBox } from '@/features/search';
 import { $session, isBuyerOnlyPath, isInternalUser } from '@/shared/auth/session';
@@ -92,7 +99,15 @@ function HeaderBody({ categories, loggedInHint, path, initialQuery }: HeaderProp
   useEffect(() => {
     if (session.status === 'authenticated') {
       if (!internal) void loadCart();
+      // Kết quả gộp giỏ khách lúc đăng nhập (API 6.7) — báo ở trang đầu tiên sau khi chuyển hướng
+      const notice = takeMergeNotice();
+      if (notice) {
+        if (notice.merged > 0) toast.success(t('cart.merge.done', { count: notice.merged }));
+        if (notice.skipped > 0) toast.info(t('cart.merge.skipped', { count: notice.skipped }));
+        if (notice.adjusted > 0) toast.info(t('cart.merge.adjusted', { count: notice.adjusted }));
+      }
     } else if (session.status === 'guest') loadGuestCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ chạy khi đổi trạng thái phiên (không theo ngôn ngữ)
   }, [session.status, internal]);
 
   // Tài khoản nội bộ mở giỏ / thanh toán / đơn mua / tài khoản người mua → về trang chủ kèm thông báo

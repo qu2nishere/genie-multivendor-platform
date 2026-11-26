@@ -37,14 +37,14 @@ import { useCartPricing } from './useCartPricing';
 import { VariantModal } from './VariantModal';
 
 export interface CartPageProps {
-  /** ?buy=<khóa dòng> từ nút "Mua ngay": chỉ chọn sẵn dòng đó. */
-  buyKey: string | null;
+  /** ?buy=<mã biến thể> từ nút "Mua ngay": chỉ chọn sẵn dòng đó. */
+  buyVariantId: number | null;
 }
 
 type Confirm =
   { kind: 'remove'; lines: CartLine[]; zero?: boolean } | { kind: 'over_stock'; stock: number };
 
-function CartScreen({ buyKey }: CartPageProps) {
+function CartScreen({ buyVariantId }: CartPageProps) {
   const { t, locale } = useT();
   const cart = useCart();
   const [selected, setSelected] = useState<Set<string> | null>(null);
@@ -60,17 +60,17 @@ function CartScreen({ buyKey }: CartPageProps) {
   useEffect(() => {
     if (cart.loading || cart.pending) return;
     setSelected((s) =>
-      s === null ? initialSelection(cart.lines, buyKey) : pruneSelection(s, cart.lines),
+      s === null ? initialSelection(cart.lines, buyVariantId) : pruneSelection(s, cart.lines),
     );
-  }, [cart.lines, cart.loading, cart.pending, buyKey]);
+  }, [cart.lines, cart.loading, cart.pending, buyVariantId]);
 
   // Bỏ ?buy= khỏi URL để tải lại trang không chọn lại riêng dòng đó
   useEffect(() => {
-    if (!buyKey) return;
+    if (buyVariantId == null) return;
     const u = new URL(window.location.href);
     u.searchParams.delete('buy');
     window.history.replaceState(null, '', u.pathname + u.search + u.hash);
-  }, [buyKey]);
+  }, [buyVariantId]);
 
   const sel = useMemo(() => selected ?? new Set<string>(), [selected]);
   const groups = useMemo(() => groupByShop(cart.lines), [cart.lines]);
@@ -79,13 +79,24 @@ function CartScreen({ buyKey }: CartPageProps) {
     [cart.lines, sel],
   );
   const buyableKeys = cart.lines.filter(isBuyable).map((l) => l.key);
+  // Phí ship do server tính theo đúng các món đang chọn của từng shop (API 6.8): món shop trả ship, ngưỡng freeship
+  // phụ thuộc tập món. Shop chưa chọn món nào vẫn gửi các món của shop đó để nhãn "Phí ship" có số.
+  const shipScope = useMemo(() => {
+    const buyable = cart.lines.filter(isBuyable);
+    const pickedShops = new Set(picked.map((l) => l.shop.id));
+    const ids = buyable
+      .filter((l) => (pickedShops.has(l.shop.id) ? sel.has(l.key) : true))
+      .map((l) => l.id);
+    return { cartItemIds: ids, addressId: null };
+  }, [cart.lines, picked, sel]);
   const pricing = useCartPricing(
     picked,
     groups.map((g) => g.shop.id),
+    shipScope,
   );
   const { price } = pricing;
   const vnd = (n: number) => formatVND(n, { locale });
-  const vouchersOn = !cart.guest;
+  const vouchersOn = !cart.guest && pricing.discountsOn;
 
   const run = async (job: () => Promise<void> | void) => {
     setBusy(true);

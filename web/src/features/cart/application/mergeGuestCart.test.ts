@@ -17,6 +17,14 @@ vi.mock('../infrastructure/cart.api', () => ({
   removeCartItems: vi.fn(),
   updateCartItem: vi.fn(),
 }));
+const session = vi.hoisted(() => new Map<string, unknown>());
+vi.mock('@/shared/lib/storage', () => ({
+  store: {
+    get: (k: string) => session.get(k) ?? null,
+    set: (k: string, v: unknown) => session.set(k, v),
+    remove: (k: string) => session.delete(k),
+  },
+}));
 vi.mock('../infrastructure/guestCart.storage', () => ({
   readGuestCart: () => ({ version: 1, expires_at: '', items: storage.items }),
   writeGuestCart: vi.fn(),
@@ -27,7 +35,7 @@ vi.mock('../infrastructure/guestCart.storage', () => ({
 }));
 
 import { $guestItems } from './cart.store';
-import { mergeGuestCart } from './mergeGuestCart';
+import { mergeGuestCart, takeMergeNotice } from './mergeGuestCart';
 
 describe('mergeGuestCart', () => {
   beforeEach(() => {
@@ -44,7 +52,7 @@ describe('mergeGuestCart', () => {
   });
 
   it('gộp xong thì xóa giỏ khách và tải lại giỏ tài khoản', async () => {
-    api.mergeCart.mockResolvedValue({ merged: 1 });
+    api.mergeCart.mockResolvedValue({ merged: 1, skipped: 0, adjusted: 0 });
     expect(await mergeGuestCart()).toBe(1);
     expect(api.mergeCart).toHaveBeenCalledWith([
       { product_variant_id: 100, quantity: 2, added_at: '' },
@@ -52,6 +60,13 @@ describe('mergeGuestCart', () => {
     expect(storage.cleared).toBe(1);
     expect($guestItems.get()).toEqual([]);
     expect(api.fetchCart).toHaveBeenCalled();
+  });
+
+  it('giữ kết quả gộp để báo toast ở trang kế tiếp, đọc một lần', async () => {
+    api.mergeCart.mockResolvedValue({ merged: 1, skipped: 2, adjusted: 1 });
+    await mergeGuestCart();
+    expect(takeMergeNotice()).toEqual({ merged: 1, skipped: 2, adjusted: 1 });
+    expect(takeMergeNotice()).toBeNull();
   });
 
   it('lỗi mạng → giữ giỏ khách để thử lại lần sau', async () => {

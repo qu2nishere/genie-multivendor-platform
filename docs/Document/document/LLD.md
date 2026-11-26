@@ -236,7 +236,8 @@ stateDiagram-v2
 2. `PAYMENT_PENDING`: Khách hàng chọn phương thức thanh toán. Với thanh toán trực tuyến, hệ thống sinh URL chuyển hướng sang cổng thanh toán (VNPay, ZaloPay, VietQR); với đơn COD, phiên ghi nhận phương thức thu hộ.
 3. `COMPLETED`: Khi nhận được Webhook IPN hợp lệ có chữ ký điện tử an toàn từ cổng thanh toán (hoặc khi xác thực đơn COD hợp lệ), phiên thanh toán chuyển sang `COMPLETED`. Hệ thống kích hoạt Saga Orchestrator tự động phân tách phiên thành N đơn hàng con vật lý (`orders`) tương ứng với từng gian hàng (`vendor_id`).
 4. `FAILED` & `EXPIRED`: Nếu giao dịch bị cổng từ chối hoặc quá thời hạn thanh toán 15 phút, Scheduler tự động cập nhật phiên sang `EXPIRED`, giải phóng tồn kho (`StockReservation` chuyển `RELEASED`), hoàn trả lượt dùng Voucher và Điểm Genie.
-5. *Phân tách trách nhiệm:* Mọi trạng thái nghiệp vụ tiếp theo (chuẩn bị hàng, giao vận, ký quỹ, khiếu nại, hoàn tiền) được bàn giao hoàn toàn cho từng đơn hàng con (`Order`) độc lập theo máy trạng thái `OrderStatus` (19 trạng thái chuẩn) tại mục 6.2 bên dưới.
+5. *Hiện thực (plan C2 D3, 2026-11-26):* đơn con (`orders`) được tạo **ngay trong transaction đặt hàng** (UC-ORD-07), không chờ IPN. COD → phiên `INITIATED → COMPLETED` cùng transaction, giữ chỗ `CONFIRMED` (trừ `stock_count`), đơn con `PENDING_PAYMENT` = chờ shop xác nhận. VNPAY / VIETQR → phiên `PAYMENT_PENDING`, giữ chỗ `ACTIVE` tới khi IPN (C3) chốt hoặc cron UC-ORD-08 nhả (`EXPIRED`); cổng `PaymentInitiator` dựng khối `payment` (bản giả lập tới khi có UC-PAY-01). Cột hạn phiên là `checkout_sessions.expires_at` (API gọi `reservation_expires_at`).
+6. *Phân tách trách nhiệm:* Mọi trạng thái nghiệp vụ tiếp theo (chuẩn bị hàng, giao vận, ký quỹ, khiếu nại, hoàn tiền) được bàn giao hoàn toàn cho từng đơn hàng con (`Order`) độc lập theo máy trạng thái `OrderStatus` (19 trạng thái chuẩn) tại mục 6.2 bên dưới.
 
 ### 6.2 Máy trạng thái Đơn hàng Con (Sub-Order Lifecycle)
 
@@ -834,7 +835,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 
 | Tác vụ | Chu kỳ | Việc | UC |
 |---|---|---|---|
-| Hủy phiên / đơn quá hạn thanh toán | 60 giây | `EXPIRED` / `AUTO_CANCELLED`, nhả tồn, hoàn voucher & Điểm | ORD-08 |
+| Hủy phiên / đơn quá hạn thanh toán | 60 giây | `EXPIRED` / `AUTO_CANCELLED`, nhả tồn, hoàn voucher & Điểm. *Hiện thực (plan C2 D13, 2026-11-26):* `ExpiredSessionSweeper` — phiên `INITIATED / PAYMENT_PENDING` có `expires_at <= now` (index `idx_checkout_sessions_open_expires`), lô 50 `FOR UPDATE SKIP LOCKED`, **mỗi phiên một transaction** (lỗi một phiên không chặn phiên khác); giữ chỗ chỉ nhả khi `UPDATE … SET status = 'EXPIRED' WHERE status = 'ACTIVE'` trúng 1 dòng (IPN đã chốt trước → bỏ qua cả phiên); đơn `PENDING_PAYMENT → AUTO_CANCELLED`, nhật ký `ORDER_STATUS_CHANGED` (`reason = PAYMENT_TIMEOUT`, người làm = hệ thống); hoàn voucher / Điểm / suất Flash Sale qua cổng `CheckoutCompensation` (bản mặc định không làm gì — chuỗi C6). Phiên COD đã `COMPLETED` không bị quét | ORD-08 |
 | Tự xác nhận đơn shop chưa xử lý | 15 phút **(đề xuất)** | Quá 24 giờ → tự xác nhận, ghi điểm "chậm xác nhận" | LOG-16 |
 | Tự hoàn tất đơn | 1 giờ **(đề xuất)** | `DELIVERED` quá 7 ngày không khiếu nại → `COMPLETED` | ORD-12 |
 | Giải ngân ký quỹ | 15 phút **(đề xuất)** | Đơn `COMPLETED` + ký quỹ `HELD` → cộng ví shop | PAY-07 |

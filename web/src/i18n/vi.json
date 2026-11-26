@@ -385,6 +385,11 @@
     }
   },
   "cart": {
+    "merge": {
+      "done": "Đã gộp {count} sản phẩm từ giỏ hàng tạm vào tài khoản của bạn",
+      "skipped": "{count} sản phẩm không còn bán (hết hàng, shop tạm nghỉ…) đã được bỏ qua",
+      "adjusted": "{count} sản phẩm đã được giảm số lượng cho vừa tồn kho"
+    },
     "mini": {
       "empty_title": "Giỏ hàng của bạn đang trống",
       "empty_text": "Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm",
@@ -1239,6 +1244,7 @@
       "note_label": "Lời nhắn cho {shop}",
       "platform_cut": "Voucher Sàn phân bổ:",
       "ship": "Giao nhanh",
+      "ship_estimated": "phí tạm tính",
       "freeship": "Freeship −{amount}",
       "total": "Tổng đơn ({count} SP):"
     },
@@ -1279,7 +1285,8 @@
     "hold": {
       "left": "Tồn kho được giữ trong",
       "expired": "Đã hết thời gian giữ hàng 15 phút.",
-      "renew": "Giữ lại"
+      "renew": "Giữ lại",
+      "notice": "Sau khi đặt hàng, sản phẩm được giữ {minutes} phút để bạn thanh toán."
     },
     "summary": {
       "title": "Chi tiết thanh toán",
@@ -1299,7 +1306,8 @@
       "vietqr": "Đặt hàng & lấy mã QR",
       "cod": "Đặt hàng",
       "short": "Đặt hàng",
-      "processing": "Đang xử lý..."
+      "processing": "Đang xử lý...",
+      "stale_items": "Một số sản phẩm đã được đặt hoặc không còn trong giỏ hàng — giỏ hàng đã được tải lại."
     }
   },
   "account": {

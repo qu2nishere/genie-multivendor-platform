@@ -18,8 +18,8 @@ import { formatVND } from '@/shared/lib/format';
 import { Providers } from '@/shared/providers/Providers';
 import { Button, Icon, Skeleton, toast } from '@/shared/ui';
 import { loadCheckoutDraft, saveCheckoutDraft } from '../application/draft';
-import { usePlaceOrder } from '../application/useCheckout';
-import { holdDeadline, outOfStockIds } from '../domain/checkout.rules';
+import { HOLD_TIMER_BEFORE_ORDER, usePlaceOrder } from '../application/useCheckout';
+import { hasStaleCartItems, holdDeadline, outOfStockIds } from '../domain/checkout.rules';
 import type {
   CheckoutQuote,
   CheckoutSession,
@@ -45,6 +45,7 @@ function CheckoutScreen() {
   useEffect(() => setDraft(loadCheckoutDraft()), []);
   const [dead, setDead] = useState<Set<string>>(new Set());
   const [method, setMethod] = useState<PaymentMethod>('VNPAY');
+  // Đồng hồ giữ hàng trước khi đặt chỉ có ở chế độ mock; API thật giữ hàng sau khi đặt (plan O11.03)
   const [deadline, setDeadline] = useState(() => holdDeadline(Date.now()));
   const [picker, setPicker] = useState<
     { mode: 'platform' } | { mode: 'shop'; shopId: number } | null
@@ -56,6 +57,16 @@ function CheckoutScreen() {
   /** Phiên vừa tạo → bước thanh toán (cổng VNPAY / mã VietQR / COD). */
   const [placed, setPlaced] = useState<CheckoutSession | null>(null);
 
+  // Back từ trang kết quả: trình duyệt có thể khôi phục nguyên trang cũ từ bfcache (còn các món vừa đặt) →
+  // tải lại để lấy giỏ mới, không cho đặt lại dòng đã thành đơn.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) window.location.reload();
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
+
   useEffect(() => {
     if (!address && addresses.data) setAddress(defaultAddress(addresses.data));
   }, [addresses.data, address]);
@@ -66,9 +77,14 @@ function CheckoutScreen() {
   );
   const live = useMemo(() => lines.filter((l) => !dead.has(l.key)), [lines, dead]);
   const groups = useMemo(() => groupByShop(lines), [lines]);
+  const shipScope = useMemo(
+    () => ({ cartItemIds: live.map((l) => l.id), addressId: address?.id ?? null }),
+    [live, address?.id],
+  );
   const pricing = useCartPricing(
     live,
     groups.map((g) => g.shop.id),
+    shipScope,
   );
   const { price } = pricing;
   const saving = useMemo(
@@ -159,8 +175,14 @@ function CheckoutScreen() {
     place.mutate(
       { input, quote },
       {
+        // Không tải lại giỏ ở đây: giỏ rỗng thì trang đổi sang màn "chưa có sản phẩm" và gỡ PaymentFlow
         onSuccess: (s) => setPlaced(s),
         onError: (e) => {
+          if (isApiError(e) && hasStaleCartItems(e.fieldErrors)) {
+            cart.reload();
+            toast.error(t('checkout.place.stale_items'));
+            return;
+          }
           if (isApiError(e) && e.code === 'GNE-INV-4090') {
             const ids = outOfStockIds(e.details);
             setDead(new Set(lines.filter((l) => ids.includes(l.id)).map((l) => l.key)));
@@ -211,24 +233,30 @@ function CheckoutScreen() {
               shipCut={price.shipCutByShop[g.shop.id] ?? 0}
               shipFee={pricing.shipOfShop(g.shop.id)}
               freeByShop={pricing.freeByShop(g.shop.id)}
+              estimatedShip={pricing.estimatedShip(g.shop.id)}
+              vouchersOn={pricing.discountsOn}
               note={notes[g.shop.id] ?? ''}
               onNote={(v) => setNote(g.shop.id, v)}
               onShopVoucher={() => setPicker({ mode: 'shop', shopId: g.shop.id })}
               onDrop={drop}
             />
           ))}
-          <PlatformVoucherCard
-            price={price}
-            extraSaving={saving}
-            onOpen={() => setPicker({ mode: 'platform' })}
-            onBest={() => pricing.setSelection(bestVouchers(pricing.lines, pricing.ctx))}
-          />
-          <PointsCard
-            balance={pricing.pointsBalance}
-            price={price}
-            on={pricing.usePoints}
-            onToggle={() => pricing.setUsePoints(!pricing.usePoints)}
-          />
+          {pricing.discountsOn && (
+            <>
+              <PlatformVoucherCard
+                price={price}
+                extraSaving={saving}
+                onOpen={() => setPicker({ mode: 'platform' })}
+                onBest={() => pricing.setSelection(bestVouchers(pricing.lines, pricing.ctx))}
+              />
+              <PointsCard
+                balance={pricing.pointsBalance}
+                price={price}
+                on={pricing.usePoints}
+                onToggle={() => pricing.setUsePoints(!pricing.usePoints)}
+              />
+            </>
+          )}
           <PaymentMethodList value={method} onChange={setMethod} />
         </div>
         <CheckoutSummary
@@ -238,8 +266,10 @@ function CheckoutScreen() {
           method={method}
           canPlace={canPlace}
           placing={place.isPending}
-          deadline={deadline}
-          onRenew={() => setDeadline(holdDeadline(Date.now()))}
+          deadline={HOLD_TIMER_BEFORE_ORDER ? deadline : undefined}
+          onRenew={
+            HOLD_TIMER_BEFORE_ORDER ? () => setDeadline(holdDeadline(Date.now())) : undefined
+          }
           onPlace={submit}
         />
       </div>

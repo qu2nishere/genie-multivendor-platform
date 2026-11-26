@@ -85,9 +85,13 @@ export function pruneSelection(sel: ReadonlySet<string>, lines: CartLine[]): Set
   return new Set([...sel].filter((k) => keys.has(k)));
 }
 
-/** Lựa chọn ban đầu: "Mua ngay" chỉ chọn dòng vừa thêm; còn lại chọn mọi dòng mua được. */
-export function initialSelection(lines: CartLine[], buyKey: string | null): Set<string> {
-  if (buyKey && lines.some((l) => l.key === buyKey)) return new Set([buyKey]);
+/**
+ * Lựa chọn ban đầu: "Mua ngay" chỉ chọn dòng vừa thêm (khớp theo mã biến thể — tên phân loại server trả, vd
+ * "Mặc định", có thể khác nhãn ghép ở trang sản phẩm); còn lại chọn mọi dòng mua được.
+ */
+export function initialSelection(lines: CartLine[], buyVariantId: number | null): Set<string> {
+  const hit = buyVariantId == null ? undefined : lines.find((l) => l.variantId === buyVariantId);
+  if (hit) return new Set([hit.key]);
   return new Set(lines.filter(isBuyable).map((l) => l.key));
 }
 
