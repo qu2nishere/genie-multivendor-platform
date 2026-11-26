@@ -752,7 +752,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Ràng buộc quan hệ: `ON DELETE CASCADE` từ Product sang ProductVariant và ProductImage.
   - Tồn kho ban đầu trong `product_variants.stock_count` phải lớn hơn hoặc bằng 0.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (2026-11-26, plan C1 P01–P04, P10): backend `GET`/`POST`/`PUT /seller/products`, listing-rules, thương hiệu; web nối API thật (cờ `seller-products`). Chủ dự án đã chạy thật một phần (đăng → bị từ chối → sửa, gửi lại → được duyệt); chưa chạy `./mvnw verify`, chưa kiểm sửa sản phẩm đang bán / hiển thị ở storefront.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [ProductImage](../ClassDiagram/ENTITY.md#24-productimage--ảnh-sản-phẩm), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [ProductDocument](../ClassDiagram/ENTITY.md#28-productdocument--giấy-tờ-chứng-thực-sản-phẩm), [CategoryAttribute](../ClassDiagram/ENTITY.md#26-categoryattribute--bộ-thuộc-tính-chuẩn-theo-ngành-hàng), [ProductModerationResult](../ClassDiagram/ENTITY.md#210-productmoderationresult--kết-quả-kiểm-duyệt-sản-phẩm-tự-động).
 
@@ -776,7 +776,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   8. Sản phẩm đang chờ duyệt chỉ xem, không sửa được ("Sản phẩm đang chờ duyệt. Bạn chỉ có thể xem thông tin…").
 - **Quan hệ Use Case:** `<<include>>` Tải tệp lên Silo (Presigned URL) — tác nhân phụ: `ACT-MIN` Silo S3 Storage; `<<include>>` Kiểm duyệt sản phẩm tự động qua AI (Google Gemini API) (`UC-CAT-12`).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (2026-11-26, plan C1 P01–P04, P10): backend `GET`/`POST`/`PUT /seller/products`, listing-rules, thương hiệu; web nối API thật (cờ `seller-products`). Chủ dự án đã chạy thật một phần (đăng → bị từ chối → sửa, gửi lại → được duyệt); chưa chạy `./mvnw verify`, chưa kiểm sửa sản phẩm đang bán / hiển thị ở storefront.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductDocument](../ClassDiagram/ENTITY.md#28-productdocument--giấy-tờ-chứng-thực-sản-phẩm).
 
@@ -858,7 +858,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   8. Danh sách có tab Chờ duyệt / Đang bán / Bị từ chối, tìm theo tên sản phẩm hoặc tên nhà bán.
 - **Quan hệ Use Case:** `<<extend>>` Kiểm duyệt sản phẩm tự động qua AI (Google Gemini API) (`UC-CAT-12`) tại điểm mở rộng «Kết luận kiểm duyệt» khi {Gemini không tự từ chối (APPROVE / NEED_REVIEW / REJECT dưới ngưỡng)}.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (2026-11-26, plan C1 P07, P10): backend hàng chờ, duyệt / từ chối / đưa lại / giao lại, cấu hình nhân viên duyệt, phân công, email kết quả; web nối API thật (cờ `product-moderation`). Chủ dự án đã chạy thật từ chối + duyệt; chưa chạy `./mvnw verify`, chưa kiểm đưa lại / giao lại / email.
   - *Kế hoạch:* Sprint 2 (tuần 3–4) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu) (`moderatorId`), [AdminProfile](../ClassDiagram/ENTITY.md#15-adminprofile--hồ-sơ-quản-trị-viên--nhân-viên), [ProductModerationResult](../ClassDiagram/ENTITY.md#210-productmoderationresult--kết-quả-kiểm-duyệt-sản-phẩm-tự-động), [ProductDocument](../ClassDiagram/ENTITY.md#28-productdocument--giấy-tờ-chứng-thực-sản-phẩm), [Brand](../ClassDiagram/ENTITY.md#27-brand--thương-hiệu), [SystemLog](../ClassDiagram/ENTITY.md#121-systemlog--nhật-ký-kiểm-toán).
 
