@@ -19,7 +19,7 @@ import { Providers } from '@/shared/providers/Providers';
 import { Button, Icon, Skeleton, toast } from '@/shared/ui';
 import { loadCheckoutDraft, saveCheckoutDraft } from '../application/draft';
 import { HOLD_TIMER_BEFORE_ORDER, usePlaceOrder } from '../application/useCheckout';
-import { holdDeadline, outOfStockIds } from '../domain/checkout.rules';
+import { hasStaleCartItems, holdDeadline, outOfStockIds } from '../domain/checkout.rules';
 import type {
   CheckoutQuote,
   CheckoutSession,
@@ -56,6 +56,16 @@ function CheckoutScreen() {
   const place = usePlaceOrder();
   /** Phiên vừa tạo → bước thanh toán (cổng VNPAY / mã VietQR / COD). */
   const [placed, setPlaced] = useState<CheckoutSession | null>(null);
+
+  // Back từ trang kết quả: trình duyệt có thể khôi phục nguyên trang cũ từ bfcache (còn các món vừa đặt) →
+  // tải lại để lấy giỏ mới, không cho đặt lại dòng đã thành đơn.
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) window.location.reload();
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
 
   useEffect(() => {
     if (!address && addresses.data) setAddress(defaultAddress(addresses.data));
@@ -165,8 +175,14 @@ function CheckoutScreen() {
     place.mutate(
       { input, quote },
       {
+        // Không tải lại giỏ ở đây: giỏ rỗng thì trang đổi sang màn "chưa có sản phẩm" và gỡ PaymentFlow
         onSuccess: (s) => setPlaced(s),
         onError: (e) => {
+          if (isApiError(e) && hasStaleCartItems(e.fieldErrors)) {
+            cart.reload();
+            toast.error(t('checkout.place.stale_items'));
+            return;
+          }
           if (isApiError(e) && e.code === 'GNE-INV-4090') {
             const ids = outOfStockIds(e.details);
             setDead(new Set(lines.filter((l) => ids.includes(l.id)).map((l) => l.key)));

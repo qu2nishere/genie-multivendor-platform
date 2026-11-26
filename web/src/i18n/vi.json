@@ -1303,7 +1303,8 @@
       "vietqr": "Đặt hàng & lấy mã QR",
       "cod": "Đặt hàng",
       "short": "Đặt hàng",
-      "processing": "Đang xử lý..."
+      "processing": "Đang xử lý...",
+      "stale_items": "Một số sản phẩm đã được đặt hoặc không còn trong giỏ hàng — giỏ hàng đã được tải lại."
     }
   },
   "account": {

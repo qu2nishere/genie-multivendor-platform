@@ -1303,7 +1303,8 @@
       "vietqr": "Place order & get QR code",
       "cod": "Place order",
       "short": "Place order",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "stale_items": "Some items were already ordered or are no longer in your cart — your cart has been refreshed."
     }
   },
   "account": {
