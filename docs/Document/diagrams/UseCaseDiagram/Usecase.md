@@ -1154,7 +1154,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   5. Hoàn Điểm đã dùng (`ORDER_REFUND`), trả lượt voucher và trả suất Flash Sale (`FlashSaleItem.releaseReservation()`).
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai — xử lý phía máy chủ (cron / webhook / AI), chưa có backend; giao diện chỉ hiển thị kết quả trên lớp mock.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `order/reservation/application/ExpiredSessionSweeper` (cron 60 giây, lô 50, `SKIP LOCKED`, mỗi phiên một transaction; nhả giữ chỗ có điều kiện `status = 'ACTIVE'` để không đua với IPN; đơn → `AUTO_CANCELLED`; hoàn voucher / Điểm qua cổng `CheckoutCompensation` — chờ C6) + test `ExpiredSessionSweeperIT`. Còn: chạy thật (đặt VNPAY giả lập rồi bỏ, chờ hết hạn).
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop), [StockReservation](../ClassDiagram/ENTITY.md#55-stockreservation--giữ-chỗ-tồn-kho).
 
