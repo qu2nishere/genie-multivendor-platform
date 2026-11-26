@@ -1,6 +1,6 @@
 # BÁO CÁO PHÂN NHÓM USE CASE THEO MỨC ĐỘ ĐỘC LẬP — GENIE (BẢN TLCN)
 
-> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-24, tiến độ B1 / B2 / B3 cập nhật 2026-11-24, B4 cập nhật 2026-11-25) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
+> **Ngày lập:** 2026-11-16 (phân công cập nhật 2026-11-26, tiến độ B1 / B2 / B3 cập nhật 2026-11-24, B4 cập nhật 2026-11-25) · **Phạm vi:** 87 use case của [Usecase.md](diagrams/UseCaseDiagram/Usecase.md) (TLCN v1.4)
 > **Mục đích:** chỉ ra use case nào làm riêng được (một plan riêng, chạy song song) mà không chờ hay làm ảnh hưởng use case khác, use case nào phải làm theo cụm hoặc theo chuỗi — làm đầu vào để lập plan trong `plan/<ngày>/<thể loại>/`.
 > **Nguồn đã quét:** quan hệ «include» / «extend», *Tiền điều kiện* và *Thực thể CSDL* của từng use case trong Usecase.md; bảng ánh xạ use case ↔ API ở [API_SPEC.md](document/API_SPEC.md); hiện trạng code `genie-multivendor-platform` (AUTH đã hiện thực; 65 bảng + `V1…V14` có sẵn; `common` đã có Silo, email, nhật ký kiểm toán, phân quyền). Tiến độ từng use case: [CHECKLIST_TIEN_DO_UC.md](CHECKLIST_TIEN_DO_UC.md).
 > **Cách ghi:** mỗi use case ghi **tên đầy đủ** theo Usecase.md, mã đặt trong ngoặc để tra cứu.
@@ -9,12 +9,12 @@
 
 ## Thành viên & phân công
 
-> Cập nhật 2026-11-24. Cột **Phụ trách** ở bảng mục 3, 4 và dòng *Phụ trách* của từng cụm / chuỗi ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
+> Cập nhật 2026-11-26. Cột **Phụ trách** ở bảng mục 3, 4 và dòng *Phụ trách* của từng cụm / chuỗi ghi người nhận làm; `—` = chưa phân công. Đổi / nhận thêm use case thì sửa cột đó, bảng này, cột *Người phụ trách* trong `Quản Lý UseCase.xlsx` và ghi một dòng Nhật ký.
 
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm **B1 Nhân viên & phân quyền** (UC-ADM-01, 02, 03) · cụm **B2 Danh mục sàn** (UC-CAT-01, 14, 15) | AUTH: đang triển khai — xem mục 3 (UC-AUTH-09 xong 2026-11-18; còn phần còn lại của UC-AUTH-03, 08), plan `plan/2026-11-14/auth.md`. B1: **3 / 3 ✅** (UC-ADM-03 xong 2026-11-24). B2: **3 / 3 ✅** (2026-11-24). Phần còn thiếu của B1 / B2 do Nguyễn Ngọc Thiện rà soát làm bù — plan `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` |
-| **Nguyễn Ngọc Thiện** | 13 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: **7 / 7 ✅** (2026-11-25 — UC-VND-05 làm xong ở nhánh `feature/vendor-k07-pickup`; 6 UC còn lại chạy thật bằng Playwright + AI Worker thật, sửa lỗi ở nhánh `bugfix/b4-real-run-fixes`) — xem cụm B4 mục 5 |
+| **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm **B5 Voucher** (UC-PRO-01, 02, 03) · cụm **B6 Chat & realtime** (UC-SOC-01, 02, UC-VND-06, UC-NOT-01) | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: **7 / 7 ✅** (2026-11-25 — UC-VND-05 làm xong ở nhánh `feature/vendor-k07-pickup`; 6 UC còn lại chạy thật bằng Playwright + AI Worker thật, sửa lỗi ở nhánh `bugfix/b4-real-run-fixes`) — xem cụm B4 mục 5. UC-NOT-05, B5, B6: **đã lập plan 2026-11-26** (`plan/2026-11-26/server-spring/` — 3 plan + progress), chưa bắt đầu code |
 | **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | **7 / 7 ✅ Đã triển khai** (6 UC chạy thật 2026-11-21; *Lọc nâng cao & Sắp xếp* (UC-CAT-05) xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính, làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
 Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
@@ -63,7 +63,7 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 | **Đăng nhập & Liên kết tài khoản Google / Apple** — phần Apple (UC-AUTH-03) | Chỉ thêm một nhà cung cấp, đã có cờ `genie.oauth.apple.enabled` | Tài khoản Apple Developer (trả phí) — **xem phương án thay thế miễn phí ở mục 4.1** | Nguyễn Quốc Khoa |
 | **Tra cứu nhật ký kiểm toán hệ thống bất biến** (UC-ADM-07) | Chỉ *đọc* `system_logs` — bảng phân hệ AUTH đang ghi thật | Không | Nguyễn Ngọc Thiện |
 | **Quản lý banner trang chủ & chiến dịch tĩnh** (UC-ADM-12) | Bảng `home_banners` riêng; storefront chỉ đọc `GET /public/banners` | Thêm purpose `BANNER_IMAGE` ở `UploadPurpose` | Nguyễn Ngọc Thiện |
-| **Admin phát thông báo toàn sàn** (UC-NOT-05) | Bảng `platform_notifications`, `user_platform_notification_reads` riêng | Đẩy realtime cần *Thông báo trong ứng dụng thời gian thực* (cụm B6); không có thì vẫn xem được qua danh sách thông báo | — |
+| **Admin phát thông báo toàn sàn** (UC-NOT-05) | Bảng `platform_notifications`, `user_platform_notification_reads` riêng | Đẩy realtime cần *Thông báo trong ứng dụng thời gian thực* (cụm B6); không có thì vẫn xem được qua danh sách thông báo — gộp chung plan với UC-NOT-01: `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` | Nguyễn Ngọc Thiện |
 | **Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh** (UC-PRO-08) + **Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm** (UC-PRO-09) | Chỉ cần user; ghi `daily_checkins`, `user_coins`, `coin_transactions` | Không — nguồn Điểm từ đơn / đánh giá cộng thêm sau | Nguyễn Ngọc Thiện |
 | **Quản lý danh sách sản phẩm yêu thích** (UC-CAT-08) | Bảng `user_wishlists` riêng | Seed vài sản phẩm | Nguyễn Ngọc Thiện |
 | **Khách hàng theo dõi gian hàng** (UC-SOC-06) | Bảng `shop_follows` riêng | Seed shop đã KYC; thông báo "shop có hàng mới" để sau | Nguyễn Ngọc Thiện |
@@ -151,6 +151,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Khách hàng thu thập Voucher vào Kho Voucher cá nhân (UC-PRO-03)
 - Tạo & Quản lý Voucher Gian hàng (UC-PRO-01)
 
+*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — plan `plan/2026-11-26/server-spring/plan_voucher_b5.md` (+ progress, V00–V10), nhánh `feature/voucher-management` → `feature/voucher-wallet`. Chưa bắt đầu code.
+
 *Ghi chú:* chỉ tạo / sửa / lưu voucher. *Voucher Gian hàng* cần shop `VERIFIED` (seed được). Việc **áp** voucher khi mua (*Thuật toán Stacking Voucher 3 Tầng & Điểm*) thuộc nhóm C.
 
 ### B6. Chat & realtime (4 use case)
@@ -158,6 +160,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Gửi thẻ sản phẩm, hình ảnh và trạng thái đơn hàng trong chat (UC-SOC-02)
 - Cấu hình tin nhắn trả lời tự động (UC-VND-06)
 - Thông báo trong ứng dụng thời gian thực — WebSocket (UC-NOT-01)
+
+*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — 2 plan: `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (UC-NOT-01 + UC-NOT-05, N00–N10) và `plan_chat_khach_shop.md` (UC-SOC-01, 02, UC-VND-06, M00–M10); migration chung `V26` (tạm) cho cả B5 / B6. Chưa bắt đầu code. Lưu ý: phần *cấu hình* tự trả lời (UC-VND-06 bước 1–3) đã có từ B4 (`PATCH /seller/settings` khối `auto_reply`) — plan chat làm phần gửi tự động.
 
 *Ghi chú:* cùng hạ tầng WebSocket / STOMP. *Gửi thẻ sản phẩm, hình ảnh trong chat* «extend» *Nhắn tin trò chuyện*; *Tin nhắn trả lời tự động* cần chat. *Thông báo thời gian thực* là nền mà nhiều use case khác đẩy thông báo vào → làm cụm này *sớm* thì các nhóm khác đỡ chờ.
 
