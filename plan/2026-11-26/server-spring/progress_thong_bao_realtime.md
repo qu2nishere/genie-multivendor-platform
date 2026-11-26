@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-26 — N02 xong, đang làm N03 (27 / 98) |
+| **Cập nhật gần nhất** | 2026-11-26 — N03 xong, tiếp N04 (41 / 98) |
 
 **Cách dùng**
 
@@ -51,7 +51,7 @@
 | N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
 | N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 10 / 10 |
-| N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 0 / 14 |
+| N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 14 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 0 / 11 |
 | N05 | Nối web: hub realtime + chuông + hộp thư (UC-NOT-01) | 8 | 2 | 0 / 10 |
 | N06 | API quản trị thông báo sàn (UC-NOT-05) | 10 | 1 | 0 / 11 |
@@ -59,7 +59,7 @@
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **27 / 98** |
+| **Tổng** | | **81** | **17** | **41 / 98** |
 
 ## N00 — Chuẩn bị
 
@@ -99,20 +99,20 @@
 
 ## N03 — Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01)
 
-- [ ] **N03.01** `NotificationCategory` + `of(NotificationType)` (D6)
-- [ ] **N03.02** `NotificationCommand`, `NotificationLink` (`type` ∈ API 3.12 `link.type` + `CONVERSATION`, `id`), `NotificationView` (phần tử 3.12: `id` có tiền tố, `category`, `type`, `title`, `body`, `image_url`, `created_at`, `is_read`, `link`).
-- [ ] **N03.03** `NotificationFacade.send(cmd)`
-- [ ] **N03.04** `NotificationFacade.upsertChat(userId, conversationId, title, body)`
-- [ ] **N03.05** `AdminInboxFacade.raise(type, title, content, referenceUrl)`
-- [ ] **N03.06** `AuthEventNotificationListener` (trong notification)
-- [ ] **N03.07** `vendor/kyc/application/KycAdminNotifierImpl` (cài cổng có sẵn) → `AdminInboxFacade.raise(USER_APPROVAL, "Hồ sơ KYC mới: {shop}", …, "/admin/kyc")`; `KycNotificationListener` (`KycDecidedEvent` AFTER_COMMIT) → chủ shop `KYC_APPROVED` / `KYC_REJECTED` (`metadata.event` = `APPROVED / REJECTED / SUPPLEMENT_REQUESTED`), `link.type = KYC`.
-- [ ] **N03.08** `promotion/coin/application/CoinAlertNotifier` (cài `CoinAlertPort`) → `SYSTEM_ALERT` "Lệch số dư Điểm của người dùng #{id}" `referenceUrl = /admin/users?q={id}`.
-- [ ] **N03.09** (D11e
-- [ ] **N03.10** Test
-- [ ] **N03.C1** 🔖 COMMIT `feat(notification): create in-app notifications after commit and push them over websocket` · hash: `…`
-- [ ] **N03.C2** 🔖 COMMIT `feat(vendor): notify sellers and staff about kyc events` · hash: `…`
-- [ ] **N03.C3** 🔖 COMMIT `feat(promotion): raise staff alert when a coin balance is tampered` · hash: `…`
-- [ ] **N03.C4** 🔖 COMMIT `feat(order): notify buyer and shops when a cod checkout is placed` (bỏ nếu N03.09 `[-]`) · hash: `…`
+- [x] **N03.01** `NotificationCategory` + `of(NotificationType)` (D6)
+- [x] **N03.02** `NotificationCommand`, `NotificationLink` (`type` ∈ API 3.12 `link.type` + `CONVERSATION`, `id`), `NotificationView` (phần tử 3.12: `id` có tiền tố, `category`, `type`, `title`, `body`, `image_url`, `created_at`, `is_read`, `link`).
+- [x] **N03.03** `NotificationFacade.send(cmd)`
+- [x] **N03.04** `NotificationFacade.upsertChat(userId, conversationId, title, body)`
+- [x] **N03.05** `AdminInboxFacade.raise(type, title, content, referenceUrl)`
+- [x] **N03.06** `AuthEventNotificationListener` (trong notification)
+- [x] **N03.07** `vendor/kyc/application/KycAdminNotifierImpl` (cài cổng có sẵn) → `AdminInboxFacade.raise(USER_APPROVAL, "Hồ sơ KYC mới: {shop}", …, "/admin/kyc")`; `KycNotificationListener` (`KycDecidedEvent` AFTER_COMMIT) → chủ shop `KYC_APPROVED` / `KYC_REJECTED` (`metadata.event` = `APPROVED / REJECTED / SUPPLEMENT_REQUESTED`), `link.type = KYC`.
+- [x] **N03.08** `promotion/coin/application/CoinAlertNotifier` (cài `CoinAlertPort`) → `SYSTEM_ALERT` "Lệch số dư Điểm của người dùng #{id}" `referenceUrl = /admin/users?q={id}`.
+- [x] **N03.09** (D11e
+- [x] **N03.10** Test
+- [x] **N03.C1** 🔖 COMMIT `feat(notification): create in-app notifications after commit and push them over websocket` · hash: `ba5b0c4`
+- [x] **N03.C2** 🔖 COMMIT `feat(vendor): notify sellers and staff about kyc events` · hash: `34e27cf`
+- [x] **N03.C3** 🔖 COMMIT `feat(promotion): raise staff alert when a coin balance is tampered` · hash: `4dba62b`
+- [x] **N03.C4** 🔖 COMMIT `feat(order): notify buyer and shops when a cod checkout is placed` (bỏ nếu N03.09 `[-]`) · hash: `436d7ef`
 
 ## N04 — API hộp thư `/me/notifications`
 
@@ -214,6 +214,11 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N03.02 | **Khác plan:** `ModuleBoundaryTest` cấm module khác chạm `notification..domain..` → thêm 2 enum công khai ở tầng `application`: `NotificationKind` (mirror `NotificationType`) và `StaffAlertKind` (mirror `AdminNotificationType`); `NotificationKindTest` bảo đảm luôn cùng tập giá trị. `NotificationCommand.type` dùng `NotificationKind` |
+| N03.03 | **Khác plan:** trong listener `@TransactionalEventListener(AFTER_COMMIT)` đăng ký thêm "sau commit" sẽ không bao giờ chạy (Spring đã chụp danh sách synchronization) → facade có 2 cửa: `send` / `sendMany` / `upsertChat` (gọi TRONG transaction nghiệp vụ — ghi sau commit, rollback thì không) và `sendNow` / `sendManyNow` (gọi từ listener sau commit). Cả hai ghi trong `REQUIRES_NEW`, lỗi chỉ log. Dòng `IN_APP` lưu là đã tới hộp thư → ghi thẳng `delivery_status = SENT` (không qua `PENDING` → `markSent` như plan) |
+| N03.05 | `AdminInboxFacade.raise` / `raiseNow`; người nhận realtime = `OnlineUsers.allOnline()` ∩ nhân viên có quyền (`InboxReadModel.staffAllowed` — SQL `users` + `staff_permissions`, ADMIN luôn có). Luật quyền / đích ở `AdminInboxRules` |
+| N03.06–N03.09 | Listener / cài cổng: `AuthEventNotificationListener` (NEW_DEVICE_LOGIN), `vendor/KycAdminNotifierImpl` + `KycInAppNotificationListener` (KYC_APPROVED / KYC_REJECTED + `metadata.event`), `promotion/CoinAlertNotifier` (**`raiseNow`** — `CoinLedgerService` ném lỗi rồi rollback ngay sau khi báo), `order/CheckoutNotificationListener` (chỉ COD — 1 thông báo người mua + 1 / shop). Đều là file mới, không sửa file của C2 / B4 |
+| N03.10 | `NotificationFacadeIT` 6 ca (ghi sau commit, rollback không ghi, không transaction ghi ngay, FK lỗi không hỏng nghiệp vụ gốc, gộp chat theo hội thoại tới khi đọc, `raiseNow` vs `raise` khi rollback), `KycNotificationIT` 2 ca, `CheckoutNotificationIT` 2 ca (COD 2 shop, VNPAY chưa báo), `NotificationCategoryTest`, `NotificationKindTest`; `ModuleBoundaryTest` xanh. Cổng: **232 unit + 369 IT** xanh |
 | N02.03 | API 4.1 đã đặt tên purpose là **`NOTIFICATION_IMAGE`** (web `upload.rules.ts` + `PlatformNotificationsPage.tsx` cũng dùng tên này); LUU_TRU ghi `PLATFORM_NOTICE_IMAGE`. Theo luật ưu tiên (hình dạng request lấy theo API) dùng `NOTIFICATION_IMAGE`; đã đổi tên trong plan / README / progress. API lịch sử phiên bản 1.8 |
 | N02.05 | `ErrorCode.PLATFORM_NOTIFICATION_DISPATCHED` (`GNE-NOT-4091`), `PLATFORM_NOTIFICATION_RECIPIENTS` (`GNE-NOT-4221`); `UploadPurpose.NOTIFICATION_IMAGE` (quyền `MANAGE_PLATFORM_NOTIFICATION`); `UserChannel.NOTIFICATIONS`, `PLATFORM_TOPIC`, `sendToTopicAfterCommit` (tách `runAfterCommit` dùng chung) |
 | N02.07 | `common/html/HtmlSanitizer` (jsoup `Cleaner` + danh sách thẻ D13; `a` chỉ `https:` / đường dẫn tương đối, thêm `rel` + `target`; `img` chỉ từ tiền tố `content-assets`) + `HtmlSanitizerConfig` (tiền tố lấy từ `ObjectStorage.publicUrl`) + `plainPreview`. `HtmlSanitizerTest` 7 ca, `OnlineUsersTest` 1 ca. Cổng: `./mvnw clean verify` **228 unit + 359 IT** xanh |
@@ -236,3 +241,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | 2026-11-26 | Lập plan + progress (81 task, 17 commit, 11 giai đoạn) — chưa bắt đầu làm | — |
 | 2026-11-26 | N00 (chốt D1–D20, kiểm `V26` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V26`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
 | 2026-11-26 | N02: API_SPEC 3.12 / 4.1 / 11.17 / 13 + Usecase UC-NOT-01 / 05; jsoup; mã lỗi `GNE-NOT-*`, `NOTIFICATION_IMAGE`, `OnlineUsers`, `HtmlSanitizer`; verify xanh 228 unit + 359 IT. Nhánh `feature/notification-inbox` xếp chồng trên `feature/b56-shared-schema` | `5bc76c5` `88636db` `f8bf25b` |
+| 2026-11-26 | N03: `NotificationFacade` (ghi sau commit + đẩy WebSocket), `AdminInboxFacade`, read-model đếm chưa đọc 3 nguồn, nguồn thông báo KYC / thiết bị mới / lệch Điểm / đặt COD; verify xanh 232 unit + 369 IT | `ba5b0c4` `34e27cf` `4dba62b` `436d7ef` |
