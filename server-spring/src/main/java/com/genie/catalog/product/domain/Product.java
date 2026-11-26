@@ -125,6 +125,20 @@ public class Product {
     @Column(nullable = false)
     private Long viewCount = 0L;              // Lượt xem tích lũy (flush từ Redis product:{id}:views; chi tiết theo ngày ở product_view_stats)
 
+    // ---- Hàng chờ duyệt / sàn khóa / video (plan 2026-11-26 C1 D1 — V25) ----
+    private OffsetDateTime submittedAt;       // NULLABLE — Lần gửi duyệt gần nhất: sắp hàng chờ, đối chiếu kết quả kiểm duyệt AI cũ / mới (UC-CAT-12, 13)
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isRequeued = false;       // true = "Chờ duyệt lại" (sửa trường quan trọng của sản phẩm đã bán / Staff đưa lại hàng chờ) — UC-CAT-10, 13
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isLocked = false;         // true = sàn khóa (đi kèm status HIDDEN) — shop không tự mở bán lại, phải sửa và gửi duyệt (UC-CAT-11)
+
+    @Column(length = 500)
+    private String videoUrl;                  // NULLABLE — Khóa video sản phẩm trên Silo (bucket product-media, mp4 ≤ 30 MB — UC-CAT-09)
+
 
     // ===== QUAN HỆ =====
     @ManyToOne
