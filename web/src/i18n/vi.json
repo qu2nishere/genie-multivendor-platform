@@ -1282,7 +1282,8 @@
     "hold": {
       "left": "Tồn kho được giữ trong",
       "expired": "Đã hết thời gian giữ hàng 15 phút.",
-      "renew": "Giữ lại"
+      "renew": "Giữ lại",
+      "notice": "Sau khi đặt hàng, sản phẩm được giữ {minutes} phút để bạn thanh toán."
     },
     "summary": {
       "title": "Chi tiết thanh toán",

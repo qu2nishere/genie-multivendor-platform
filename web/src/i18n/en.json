@@ -1282,7 +1282,8 @@
     "hold": {
       "left": "Stock is held for",
       "expired": "The 15-minute stock hold has expired.",
-      "renew": "Hold again"
+      "renew": "Hold again",
+      "notice": "After you place the order, items are held for {minutes} minutes for payment."
     },
     "summary": {
       "title": "Payment details",

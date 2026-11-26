@@ -27,6 +27,12 @@ export { MOCK_VNPAY_URL };
 const USE_MOCK = isMocked('checkout');
 
 /**
+ * Đồng hồ giữ hàng ở trang Thanh toán (trước khi đặt) chỉ là mô phỏng của chế độ mock (G10.19). Nối API thật thì server
+ * chỉ giữ hàng sau khi đặt (15 phút cố định, UC-ORD-07) → trang Thanh toán hiện dòng thông báo tĩnh (plan O11.03).
+ */
+export const HOLD_TIMER_BEFORE_ORDER = USE_MOCK;
+
+/**
  * POST /me/checkout-sessions — đặt hàng: server tính lại giá, giữ chỗ 15 phút, tách đơn theo shop,
  * xóa dòng đã đặt khỏi giỏ. Lỗi: 409 GNE-INV-4090 (hết hàng — details.out_of_stock_cart_item_ids),
  * GNE-ORD-4093 (shop nghỉ), 422 GNE-VCH-4221 (voucher hết hiệu lực), 503 GNE-SYS-5030 (thử lại cùng key).

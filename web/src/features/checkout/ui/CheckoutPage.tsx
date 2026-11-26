@@ -18,7 +18,7 @@ import { formatVND } from '@/shared/lib/format';
 import { Providers } from '@/shared/providers/Providers';
 import { Button, Icon, Skeleton, toast } from '@/shared/ui';
 import { loadCheckoutDraft, saveCheckoutDraft } from '../application/draft';
-import { usePlaceOrder } from '../application/useCheckout';
+import { HOLD_TIMER_BEFORE_ORDER, usePlaceOrder } from '../application/useCheckout';
 import { holdDeadline, outOfStockIds } from '../domain/checkout.rules';
 import type {
   CheckoutQuote,
@@ -45,6 +45,7 @@ function CheckoutScreen() {
   useEffect(() => setDraft(loadCheckoutDraft()), []);
   const [dead, setDead] = useState<Set<string>>(new Set());
   const [method, setMethod] = useState<PaymentMethod>('VNPAY');
+  // Đồng hồ giữ hàng trước khi đặt chỉ có ở chế độ mock; API thật giữ hàng sau khi đặt (plan O11.03)
   const [deadline, setDeadline] = useState(() => holdDeadline(Date.now()));
   const [picker, setPicker] = useState<
     { mode: 'platform' } | { mode: 'shop'; shopId: number } | null
@@ -249,8 +250,10 @@ function CheckoutScreen() {
           method={method}
           canPlace={canPlace}
           placing={place.isPending}
-          deadline={deadline}
-          onRenew={() => setDeadline(holdDeadline(Date.now()))}
+          deadline={HOLD_TIMER_BEFORE_ORDER ? deadline : undefined}
+          onRenew={
+            HOLD_TIMER_BEFORE_ORDER ? () => setDeadline(holdDeadline(Date.now())) : undefined
+          }
           onPlace={submit}
         />
       </div>
