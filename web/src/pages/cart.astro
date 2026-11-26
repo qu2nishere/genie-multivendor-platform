@@ -1,12 +1,14 @@
 ---
 // Giỏ hàng (plan G10.08; prototype Cart.jsx) — khung SSR + island lớn client:load. Khách vãng lai xem
-// được giỏ tạm (middleware không chặn /cart), noindex. ?buy=<khóa dòng> từ nút "Mua ngay".
+// được giỏ tạm (middleware không chặn /cart), noindex. ?buy=<mã biến thể> từ nút "Mua ngay".
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
 import { CartPage } from '@/features/cart';
 import { createT } from '@/shared/lib/i18n';
 
 const t = createT(Astro.locals.lang ?? 'vi');
-const buyKey = Astro.url.searchParams.get('buy');
+// ?buy=<mã biến thể> từ nút "Mua ngay" (số nguyên dương; giá trị lạ → bỏ qua)
+const buyParam = Number(Astro.url.searchParams.get('buy'));
+const buyVariantId = Number.isInteger(buyParam) && buyParam > 0 ? buyParam : null;
 ---
 
 <StorefrontLayout
@@ -16,5 +18,5 @@ const buyKey = Astro.url.searchParams.get('buy');
   variant="cart"
   task
 >
-  <CartPage client:load buyKey={buyKey} />
+  <CartPage client:load buyVariantId={buyVariantId} />
 </StorefrontLayout>

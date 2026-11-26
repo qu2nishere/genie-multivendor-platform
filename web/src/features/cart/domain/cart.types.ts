@@ -15,7 +15,7 @@ export interface CartShop {
 export interface CartLine {
   /** Mã dòng giỏ (cart_item_id) — gửi lên API khi sửa / xóa / đặt hàng. */
   id: number;
-  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn); dùng cho ?buy= và chọn dòng. */
+  /** Khóa dòng = sản phẩm + phân loại (cùng SKU cộng dồn); dùng để chọn dòng (?buy= khớp theo variantId). */
   key: string;
   productId: number;
   /** SKU (product_variant_id). */

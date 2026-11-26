@@ -106,10 +106,14 @@ describe('cart.rules — chọn dòng', () => {
   });
 
   it('Mua ngay chỉ chọn dòng vừa thêm; mặc định chọn dòng mua được', () => {
-    const lines = [line({ key: 'a' }), line({ key: 'b', available: false })];
-    expect([...initialSelection(lines, 'a')]).toEqual(['a']);
-    expect([...initialSelection(lines, null)]).toEqual(['a']);
-    expect([...initialSelection(lines, 'zzz')]).toEqual(['a']);
+    const lines = [
+      line({ key: 'a', variantId: 11 }),
+      line({ key: 'c', variantId: 13 }),
+      line({ key: 'b', variantId: 12, available: false }),
+    ];
+    expect([...initialSelection(lines, 13)]).toEqual(['c']);
+    expect([...initialSelection(lines, null)]).toEqual(['a', 'c']);
+    expect([...initialSelection(lines, 999)]).toEqual(['a', 'c']);
     expect([...pruneSelection(new Set(['a', 'x']), lines)]).toEqual(['a']);
   });
 });
