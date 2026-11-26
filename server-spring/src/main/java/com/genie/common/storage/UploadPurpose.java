@@ -29,7 +29,31 @@ public enum UploadPurpose {
     SHOP_LOGO("avatar-assets", Set.of("image/jpeg", "image/png"), 1L * 1024 * 1024, 0, true, false, "ROLE_VENDOR"),
 
     /** Ảnh bìa shop (UC-VND-21) — {@code avatar-assets} công khai, JPEG / PNG ≤ 2 MB, chỉ VENDOR. */
-    SHOP_COVER("avatar-assets", Set.of("image/jpeg", "image/png"), 2L * 1024 * 1024, 0, true, false, "ROLE_VENDOR");
+    SHOP_COVER("avatar-assets", Set.of("image/jpeg", "image/png"), 2L * 1024 * 1024, 0, true, false, "ROLE_VENDOR"),
+
+    /** Ảnh sản phẩm (UC-CAT-09/10; plan C1 D6) — {@code product-media} công khai, JPEG / PNG / WebP ≤ 5 MB, chỉ VENDOR. */
+    PRODUCT_IMAGE("product-media", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
+            "ROLE_VENDOR"),
+
+    /** Ảnh của một giá trị phân loại (vd. màu Đen) — như {@link #PRODUCT_IMAGE}. */
+    VARIANT_IMAGE("product-media", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
+            "ROLE_VENDOR"),
+
+    /** Ảnh chèn trong mô tả rich-text — như {@link #PRODUCT_IMAGE}. */
+    DESCRIPTION_IMAGE("product-media", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
+            "ROLE_VENDOR"),
+
+    /** Video sản phẩm — {@code product-media} công khai, MP4 ≤ 30 MB, chỉ VENDOR. */
+    PRODUCT_VIDEO("product-media", Set.of("video/mp4"), 30L * 1024 * 1024, 0, true, false, "ROLE_VENDOR"),
+
+    /**
+     * Giấy tờ chứng thực sản phẩm — bucket RIÊNG TƯ {@code product-docs}, PDF / DOC(X) / XLS(X) ≤ 10 MB (không nhận ảnh),
+     * chỉ VENDOR; Staff xem qua link ký 5 phút (UC-CAT-13).
+     */
+    PRODUCT_DOCUMENT("product-docs", Set.of("application/pdf", "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), 10L * 1024 * 1024, 0, false, false,
+            "ROLE_VENDOR");
 
     private static final Map<String, String> EXTENSIONS = Map.of(
             "image/jpeg", "jpg",
@@ -37,7 +61,11 @@ public enum UploadPurpose {
             "image/webp", "webp",
             "image/gif", "gif",
             "video/mp4", "mp4",
-            "application/pdf", "pdf");
+            "application/pdf", "pdf",
+            "application/msword", "doc",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx",
+            "application/vnd.ms-excel", "xls",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx");
 
     private final String bucket;
     private final Set<String> contentTypes;
