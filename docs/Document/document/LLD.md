@@ -835,7 +835,7 @@ Tối thiểu 100.000đ, tối đa số dư khả dụng (`GNE-WAL-4001`); tài 
 
 | Tác vụ | Chu kỳ | Việc | UC |
 |---|---|---|---|
-| Hủy phiên / đơn quá hạn thanh toán | 60 giây | `EXPIRED` / `AUTO_CANCELLED`, nhả tồn, hoàn voucher & Điểm | ORD-08 |
+| Hủy phiên / đơn quá hạn thanh toán | 60 giây | `EXPIRED` / `AUTO_CANCELLED`, nhả tồn, hoàn voucher & Điểm. *Hiện thực (plan C2 D13, 2026-11-26):* `ExpiredSessionSweeper` — phiên `INITIATED / PAYMENT_PENDING` có `expires_at <= now` (index `idx_checkout_sessions_open_expires`), lô 50 `FOR UPDATE SKIP LOCKED`, **mỗi phiên một transaction** (lỗi một phiên không chặn phiên khác); giữ chỗ chỉ nhả khi `UPDATE … SET status = 'EXPIRED' WHERE status = 'ACTIVE'` trúng 1 dòng (IPN đã chốt trước → bỏ qua cả phiên); đơn `PENDING_PAYMENT → AUTO_CANCELLED`, nhật ký `ORDER_STATUS_CHANGED` (`reason = PAYMENT_TIMEOUT`, người làm = hệ thống); hoàn voucher / Điểm / suất Flash Sale qua cổng `CheckoutCompensation` (bản mặc định không làm gì — chuỗi C6). Phiên COD đã `COMPLETED` không bị quét | ORD-08 |
 | Tự xác nhận đơn shop chưa xử lý | 15 phút **(đề xuất)** | Quá 24 giờ → tự xác nhận, ghi điểm "chậm xác nhận" | LOG-16 |
 | Tự hoàn tất đơn | 1 giờ **(đề xuất)** | `DELIVERED` quá 7 ngày không khiếu nại → `COMPLETED` | ORD-12 |
 | Giải ngân ký quỹ | 15 phút **(đề xuất)** | Đơn `COMPLETED` + ký quỹ `HELD` → cộng ví shop | PAY-07 |
