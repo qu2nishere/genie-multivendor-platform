@@ -9,7 +9,7 @@
 | UC | GD | BE | Test | Nối | Chạy | Trạng thái hiện tại | Mục tiêu |
 |---|:---:|:---:|:---:|:---:|:---:|---|---|
 | UC-ORD-01 Giỏ hàng | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
+| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☐ | ☐ | 🟡 Đang triển khai | ✅ |
 | UC-ORD-04 Xem trước & tách giỏ | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
 | UC-ORD-07 Phiên checkout & đơn con | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
 | UC-ORD-08 Cron hủy đơn quá hạn | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai | ✅ |
@@ -25,7 +25,7 @@
 | O02 | `feature/c2-cart` | ORD-01: backend + test | 6 | ☑ | `845b880` |
 | O03 | `feature/c2-cart` | ORD-01: nối web | 4 | ☑ | `0c108ff` |
 | O04 | `feature/c2-cart` | ORD-01: kiểm tra & PR | 3 | ☐ | |
-| O05 | `feature/c2-shipping-fee` | ORD-06: phí GHN + dự phòng | 8 | ☐ | |
+| O05 | `feature/c2-shipping-fee` | ORD-06: phí GHN + dự phòng | 8 | ◐ | `06a24fc`, `0a72e65` (chưa push / PR) |
 | O06 | `feature/c2-checkout-preview` | ORD-04: xem trước & tách giỏ | 7 | ☐ | |
 | O07 | `feature/c2-checkout-session` | ORD-07: đặt hàng | 10 | ☐ | |
 | O08 | `feature/c2-order-sweeper` | ORD-08: cron hủy quá hạn | 6 | ☐ | |
@@ -44,7 +44,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | Nhánh | Tạo từ | Ngày tạo | PR | Ngày gộp |
 |---|---|---|---|---|
 | `feature/c2-cart` | `develop` @ `c108096` | 2026-11-26 | | |
-| `feature/c2-shipping-fee` | `feature/c2-cart` | | | |
+| `feature/c2-shipping-fee` | `feature/c2-cart` | 2026-11-26 | | |
 | `feature/c2-checkout-preview` | `feature/c2-shipping-fee` | | | |
 | `feature/c2-checkout-session` | `feature/c2-checkout-preview` | | | |
 | `feature/c2-order-sweeper` | `feature/c2-checkout-session` | | | |
@@ -106,13 +106,13 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O04.03** Push + PR vào `develop` (chờ người dùng)
 
 ### O05 — `feature/c2-shipping-fee` (UC-ORD-06)
-- [ ] **O05.01** Tạo nhánh từ `feature/c2-cart` + spike GHN 2 cấp (D4), ghi mục 7
-- [ ] **O05.02** Tài liệu 6.8 / UC-ORD-06 / `.env.example` + COMMIT `docs(shipping): specify shipping fee quote and fallback`
-- [ ] **O05.03** `FlatFeeTable`, `Parcel`, `ShippingFeeQuoter`
-- [ ] **O05.04** `GhnFeeClient` + cache 10 phút
-- [ ] **O05.05** Kiểm seed shop demo đã đủ kho lấy hàng + `ghn_shop_id` (không sửa file có sẵn)
-- [ ] **O05.06** `FlatFeeTableTest`, `ShippingFeeQuoterTest`, `GhnFeeClientTest`
-- [ ] **O05.07** COMMIT `feat(shipping): quote ghn shipping fee with flat fallback` (+ seed file mới nếu O05.05 cần)
+- [x] **O05.01** Tạo nhánh từ `feature/c2-cart` + spike GHN 2 cấp (D4), ghi mục 7
+- [x] **O05.02** Tài liệu 6.8 / UC-ORD-06 / `.env.example` + COMMIT `docs(shipping): specify shipping fee quote and fallback`
+- [x] **O05.03** `FlatFeeTable`, `Parcel`, `ShippingFeeQuoter`
+- [x] **O05.04** `GhnFeeClient` + cache 10 phút
+- [x] **O05.05** Kiểm seed shop demo đã đủ kho lấy hàng + `ghn_shop_id` (không sửa file có sẵn)
+- [x] **O05.06** `FlatFeeTableTest`, `ShippingFeeQuoterTest`, `GhnFeeClientTest`
+- [x] **O05.07** COMMIT `feat(shipping): quote ghn shipping fee with flat fallback` (+ seed file mới nếu O05.05 cần)
 - [ ] **O05.08** CHECKLIST UC-ORD-06, push + PR
 
 ### O06 — `feature/c2-checkout-preview` (UC-ORD-04)
@@ -185,6 +185,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | 2026-11-25 | — | Lập plan + progress chuỗi C2 (5 UC, 64 task, 15 quyết định chờ chốt) | `develop` @ `0e34dce` | (chưa commit) |
 | 2026-11-26 | — | Rà chéo với plan C1: cập nhật hiện trạng (UC-VND-05 ✅, mã lỗi `GNE-ORD-4093/4094` chưa có trong code, seed đã có kho lấy hàng), migration `V25` → `V26`, thêm D16 (ghi `product_variants`, luật "mua được"), D14 cài `ProductOrderGuard`, D5 / D7 theo ranh giới với C1 | `feature/c1` @ `609a0c4` | (chưa commit) |
 | 2026-11-26 | O01–O04 | Giỏ hàng UC-ORD-01: tài liệu (API 6.3 giới hạn, 6.7 `skipped` / `adjusted`, handoff), mã lỗi `GNE-INV-4093/4094`, `GNE-ORD-4093/4094`; `VariantFacade` + `ShopFacade.buyInfo`; `CartService` / `CartMergeService` / `CartController` / `PublicVariantController`; `CartIT`, `CartMergeIT`; web nối `cart` + toast gộp giỏ; `order-cart.http` | `feature/c2-cart` | `07f49f5`, `845b880`, `0c108ff` |
+| 2026-11-26 | O05.01–O05.07 | Phí vận chuyển UC-ORD-06: tài liệu (6.8 `is_estimated_fee`, `SHIPPING_UNAVAILABLE`, `GHN_MODE`), `shipping/fee` (`Parcel`, `ShippingQuote`, `FlatFeeTable`, `ShippingFeeQuoter`, `GhnFeeClient`, `HttpGhnFeeClient`), seed shop demo đã đủ `pickup_*` + `ghn_shop_id` (không sửa); test 11 ca; spike D4 chưa chạy (thiếu token) | `feature/c2-shipping-fee` | `06a24fc`, `0a72e65` |
 
 ## 7. Số liệu kiểm tra & ghi chú kỹ thuật
 
@@ -192,5 +193,5 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 |---|---|---|---|---|---|
 | 2026-11-26 | `feature/c2-cart` | 339 IT xanh (1 skip) | xanh — 76 file / 359 test | — | mốc sau O02 (thêm `CartIT` 10, `CartMergeIT` 3) |
 
-**Kết quả spike GHN 2 cấp (O05.01 — D4):** _(điền: endpoint đã thử, tham số, phản hồi, kết luận dùng `to_ward_code` hay dự phòng)_
+**Kết quả spike GHN 2 cấp (O05.01 — D4):** 2026-11-26 — **chưa gọi được GHN sandbox**: `.env` máy dev không có `GHN_TOKEN` / `GHN_SHOP_ID`. Làm theo nhánh dự phòng của D4: `HttpGhnFeeClient` gọi `POST /v2/shipping-order/fee` (`service_type_id = 2`, `from/to_district_id` + `from/to_ward_code`) **chỉ khi cả hai đầu có mã quận** (kho cũ + seed demo có `pickup_district_id`; địa chỉ người mua 2 cấp không có quận → `AddressSnapshot` không mang `districtId`); còn lại bảng phí 15.000 / 30.000đ, `is_estimated_fee = true`. Việc còn lại khi có token: thử `to_ward_code` không kèm quận (API v3 / tham số mới), nếu được thì bỏ điều kiện mã quận trong `ShippingFeeQuoter`.
 | 2026-11-26 | — | Gộp migration với C1: `V25__listing_and_checkout_schema.sql` (có `uk_cart_items_cart_variant`, `idx_checkout_sessions_open_expires`) → D15 ☑; sửa tên cột `reservation_expires_at` → `expires_at` trong luồng 3.4, 3.5, D13; phần phối hợp chuyển vào plan **mục 8** (bỏ file ranh giới riêng); O00.03 = chờ PR schema | `feature/c1` | (chưa commit) |
