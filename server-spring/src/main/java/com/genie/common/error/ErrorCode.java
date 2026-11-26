@@ -108,7 +108,15 @@ public enum ErrorCode {
     // ===== Đơn hàng / tồn kho (giữ từ khung ban đầu) =====
     OUT_OF_STOCK("GNE-INV-4090", HttpStatus.CONFLICT, "Sản phẩm đã hết hàng."),
     FLASH_SALE_SOLD_OUT("GNE-INV-4091", HttpStatus.CONFLICT, "Suất Flash Sale đã hết."),
+    /** Thanh toán lại sau khi giữ chỗ 15 phút đã hết (API 6.12) — plan C2 O01.04. */
+    RESERVATION_EXPIRED("GNE-INV-4093", HttpStatus.CONFLICT, "Thời gian giữ hàng 15 phút đã hết."),
+    /** Số lượng trong giỏ vượt tồn khả dụng — {@code details.stock} (API 6.3, 6.4) — plan C2 O01.04. */
+    CART_QUANTITY_EXCEEDS_STOCK("GNE-INV-4094", HttpStatus.CONFLICT, "Số lượng vượt quá tồn kho hiện có."),
     ORDER_CANNOT_CANCEL("GNE-ORD-4092", HttpStatus.CONFLICT, "Đơn hàng không thể hủy ở trạng thái hiện tại."),
+    /** Shop đang tạm nghỉ — giỏ: không chi tiết; đặt hàng: {@code details.shop_ids} (API 6.3, 6.10) — plan C2 O01.04. */
+    SHOP_ON_VACATION("GNE-ORD-4093", HttpStatus.CONFLICT, "Shop đang tạm nghỉ, chưa nhận đơn."),
+    /** Người mua là chủ shop của sản phẩm (API 6.3) — plan C2 O01.04. */
+    OWN_SHOP_PRODUCT("GNE-ORD-4094", HttpStatus.CONFLICT, "Bạn không thể mua sản phẩm của chính shop mình."),
     /** Tài khoản nội bộ (STAFF / ADMIN) gọi giỏ hàng / đặt hàng — plan B1 D16 (hướng B). */
     INTERNAL_ACCOUNT_CANNOT_BUY("GNE-ORD-4031", HttpStatus.FORBIDDEN,
             "Tài khoản nhân viên / quản trị không thể mua hàng — vui lòng dùng tài khoản khách hàng cá nhân.");

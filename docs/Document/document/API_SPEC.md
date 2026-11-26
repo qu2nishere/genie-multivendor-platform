@@ -1183,6 +1183,10 @@ UC-ORD-01 · **Màn hình:** trang sản phẩm (Thêm vào giỏ, Mua ngay, Đ�
 | `409 GNE-ORD-4093` | Shop đang tạm nghỉ |
 | `409 GNE-ORD-4094` | Sản phẩm của chính shop mình |
 | `403 GNE-ORD-4031` | Tài khoản nội bộ (`STAFF` / `ADMIN`) — áp dụng cho mọi endpoint mục 6 |
+| `404 GNE-CAT-4042` | Biến thể không tồn tại / sản phẩm không còn bán (khác `PUBLISHED`, biến thể đã bỏ) |
+| `422 GNE-VAL-4220` | `quantity` ngoài 1–999 (`errors[].field = quantity`); giỏ đã đủ **100 dòng** (`errors[].code = CART_FULL`) |
+
+Giới hạn giỏ *(plan C2 D9, 2026-11-26)*: tối đa **100 dòng / giỏ**, **999 / dòng** — áp cho 6.3, 6.4, 6.6, 6.7 (6.6, 6.7 không trả lỗi mà ghi vào `skipped` / `adjusted`).
 
 ### 6.4 `PATCH /me/cart/items/{id}` — Đổi số lượng / đổi phân loại
 ```json
@@ -1211,7 +1215,16 @@ Toast "Đã thêm sản phẩm còn bán, bỏ qua sản phẩm của shop đang
 ```json
 { "items": [ { "variant_id": 101, "quantity": 1 } ] }
 ```
-`200` `{ "merged": 1, "cart_item_count": 12 }`. Cùng SKU cộng dồn, chặn ở tồn kho.
+`200`:
+```json
+{
+  "merged": 1,
+  "skipped": [ { "variant_id": 1801, "reason": "SHOP_ON_VACATION" } ],
+  "adjusted": [ { "variant_id": 101, "quantity": 3 } ],
+  "cart_item_count": 12
+}
+```
+Cùng SKU cộng dồn, chặn ở tồn kho *(plan C2 D8, 2026-11-26)*: dòng không mua được → `skipped[].reason` ∈ `OUT_OF_STOCK, SHOP_ON_VACATION, PRODUCT_UNAVAILABLE, OWN_PRODUCT, CART_FULL`; dòng bị hạ số lượng cho vừa tồn khả dụng / 999 → `adjusted[].quantity` = số lượng cuối cùng trong giỏ. Toast "Đã gộp giỏ hàng tạm…" dựa vào ba trường này. 6.6 dùng cùng tập `reason` (thêm `OWN_PRODUCT`, `CART_FULL`).
 
 ### 6.8 `POST /me/checkout/preview` — Tính giá (Giỏ hàng & Thanh toán)
 UC-ORD-04, UC-ORD-06, UC-PRO-04, UC-PRO-10 · **Màn hình:** thanh tổng của Giỏ hàng (tạm tính từng shop, Voucher Genie, "Dùng 1.250 Điểm", "Genie giữ … đến khi bạn nhận hàng", "2 đơn · gồm phí ship …"), toàn bộ trang Thanh toán (đơn con theo shop, phí ship, voucher shop / sàn phân bổ / freeship, "Có bộ mã tiết kiệm thêm …", Điểm, chi tiết thanh toán, đồng hồ giữ hàng)

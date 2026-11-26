@@ -258,11 +258,13 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `fetchCart` | cart.api.ts | `GET /me/cart` |
-| `addCartItem` | cart.api.ts | `POST /me/cart/items` |
-| `updateCartItem` | cart.api.ts | `PATCH /me/cart/items/{id}` |
-| `removeCartItems` | cart.api.ts | `DELETE /me/cart/items` |
-| `resolveGuestItems` | cart.api.ts | `GET /public/variants` |
+| `fetchCart` | cart.api.ts | `GET /me/cart` — **nối ở plan C2** (`PUBLIC_REAL_API=cart`) |
+| `addCartItem` | cart.api.ts | `POST /me/cart/items` — **nối ở plan C2** |
+| `updateCartItem` | cart.api.ts | `PATCH /me/cart/items/{id}` — **nối ở plan C2** |
+| `removeCartItems` | cart.api.ts | `DELETE /me/cart/items` — **nối ở plan C2** |
+| `addCartItemsBatch` | cart.api.ts | `POST /me/cart/items/batch` — **nối ở plan C2** |
+| `mergeCart` | cart.api.ts | `POST /me/cart/merge` — **nối ở plan C2** (trả thêm `skipped`, `adjusted` — API 6.7) |
+| `resolveGuestItems` | cart.api.ts | `GET /public/variants?ids=` — **nối ở plan C2** (chỉ gửi id, số lượng ghép ở client) |
 | `getVariantChoice` | cart.api.ts | `GET /public/products/{productId}/variants` |
 
 ### `catalog`
