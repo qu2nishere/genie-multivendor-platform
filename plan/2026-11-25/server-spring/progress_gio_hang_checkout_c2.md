@@ -9,8 +9,8 @@
 | UC | GD | BE | Test | Nối | Chạy | Trạng thái hiện tại | Mục tiêu |
 |---|:---:|:---:|:---:|:---:|:---:|---|---|
 | UC-ORD-01 Giỏ hàng | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☐ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-04 Xem trước & tách giỏ | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
+| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
+| UC-ORD-04 Xem trước & tách giỏ | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
 | UC-ORD-07 Phiên checkout & đơn con | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai | ✅ |
 | UC-ORD-08 Cron hủy đơn quá hạn | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai | ✅ |
 
@@ -26,7 +26,7 @@
 | O03 | `feature/c2-cart` | ORD-01: nối web | 4 | ☑ | `0c108ff` |
 | O04 | `feature/c2-cart` | ORD-01: kiểm tra & PR | 3 | ☐ | |
 | O05 | `feature/c2-shipping-fee` | ORD-06: phí GHN + dự phòng | 8 | ◐ | `06a24fc`, `0a72e65` (chưa push / PR) |
-| O06 | `feature/c2-checkout-preview` | ORD-04: xem trước & tách giỏ | 7 | ☐ | |
+| O06 | `feature/c2-checkout-preview` | ORD-04: xem trước & tách giỏ | 7 | ◐ | `e656097`, `8f6c0e4`, `de696ca` (chưa push / PR) |
 | O07 | `feature/c2-checkout-session` | ORD-07: đặt hàng | 10 | ☐ | |
 | O08 | `feature/c2-order-sweeper` | ORD-08: cron hủy quá hạn | 6 | ☐ | |
 | O09 | nhánh cuối | Chạy thật trên giao diện | 6 | ☐ | |
@@ -45,7 +45,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 |---|---|---|---|---|
 | `feature/c2-cart` | `develop` @ `c108096` | 2026-11-26 | | |
 | `feature/c2-shipping-fee` | `feature/c2-cart` | 2026-11-26 | | |
-| `feature/c2-checkout-preview` | `feature/c2-shipping-fee` | | | |
+| `feature/c2-checkout-preview` | `feature/c2-shipping-fee` | 2026-11-26 | | |
 | `feature/c2-checkout-session` | `feature/c2-checkout-preview` | | | |
 | `feature/c2-order-sweeper` | `feature/c2-checkout-session` | | | |
 
@@ -116,12 +116,12 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 - [ ] **O05.08** CHECKLIST UC-ORD-06, push + PR
 
 ### O06 — `feature/c2-checkout-preview` (UC-ORD-04)
-- [ ] **O06.01** Tạo nhánh từ `feature/c2-shipping-fee`
-- [ ] **O06.02** Tài liệu 6.8 (D2) + handoff dòng 44 + COMMIT `docs(order): clarify checkout preview before vouchers`
-- [ ] **O06.03** `CheckoutDiscountPolicy` + `CheckoutPricer`
-- [ ] **O06.04** `POST /me/checkout/preview`
-- [ ] **O06.05** `CheckoutPricerTest`, `CheckoutPreviewIT`
-- [ ] **O06.06** Web preview thật + COMMIT `feat(order): add checkout preview with per-shop split` + `feat(web): use real checkout preview`
+- [x] **O06.01** Tạo nhánh từ `feature/c2-shipping-fee`
+- [x] **O06.02** Tài liệu 6.8 (D2) + handoff dòng 44 + COMMIT `docs(order): clarify checkout preview before vouchers`
+- [x] **O06.03** `CheckoutDiscountPolicy` + `CheckoutPricer`
+- [x] **O06.04** `POST /me/checkout/preview`
+- [x] **O06.05** `CheckoutPricerTest`, `CheckoutPreviewIT`
+- [x] **O06.06** Web preview thật + COMMIT `feat(order): add checkout preview with per-shop split` + `feat(web): use real checkout preview`
 - [ ] **O06.07** CHECKLIST UC-ORD-04 (+ Nối ORD-06), push + PR
 
 ### O07 — `feature/c2-checkout-session` (UC-ORD-07)
@@ -186,6 +186,7 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 | 2026-11-26 | — | Rà chéo với plan C1: cập nhật hiện trạng (UC-VND-05 ✅, mã lỗi `GNE-ORD-4093/4094` chưa có trong code, seed đã có kho lấy hàng), migration `V25` → `V26`, thêm D16 (ghi `product_variants`, luật "mua được"), D14 cài `ProductOrderGuard`, D5 / D7 theo ranh giới với C1 | `feature/c1` @ `609a0c4` | (chưa commit) |
 | 2026-11-26 | O01–O04 | Giỏ hàng UC-ORD-01: tài liệu (API 6.3 giới hạn, 6.7 `skipped` / `adjusted`, handoff), mã lỗi `GNE-INV-4093/4094`, `GNE-ORD-4093/4094`; `VariantFacade` + `ShopFacade.buyInfo`; `CartService` / `CartMergeService` / `CartController` / `PublicVariantController`; `CartIT`, `CartMergeIT`; web nối `cart` + toast gộp giỏ; `order-cart.http` | `feature/c2-cart` | `07f49f5`, `845b880`, `0c108ff` |
 | 2026-11-26 | O05.01–O05.07 | Phí vận chuyển UC-ORD-06: tài liệu (6.8 `is_estimated_fee`, `SHIPPING_UNAVAILABLE`, `GHN_MODE`), `shipping/fee` (`Parcel`, `ShippingQuote`, `FlatFeeTable`, `ShippingFeeQuoter`, `GhnFeeClient`, `HttpGhnFeeClient`), seed shop demo đã đủ `pickup_*` + `ghn_shop_id` (không sửa); test 11 ca; spike D4 chưa chạy (thiếu token) | `feature/c2-shipping-fee` | `06a24fc`, `0a72e65` |
+| 2026-11-26 | O06.01–O06.06 | Xem trước UC-ORD-04: tài liệu 6.8 (giảm giá = 0 / `null` trước C6, `base_shipping_fee`, `free_ship_threshold`; gạch `shipping-policies` ở handoff); `CheckoutDiscountPolicy` + `CheckoutPorts` + `CheckoutPricer`; `POST /me/checkout/preview`; `CheckoutPreviewIT` (5), `CheckoutPricerTest` (2); web phí ship từ 6.8, ẩn Voucher / Điểm, nhãn "phí tạm tính" | `feature/c2-checkout-preview` | `e656097`, `8f6c0e4`, `de696ca` |
 
 ## 7. Số liệu kiểm tra & ghi chú kỹ thuật
 

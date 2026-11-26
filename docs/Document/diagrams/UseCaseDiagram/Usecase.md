@@ -1065,7 +1065,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** `<<include>>` Tính phí vận chuyển qua GHN API (`UC-ORD-06`); được bao gồm bởi `UC-ORD-07`; được mở rộng bởi `UC-PRO-04` (điểm «Chọn voucher»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Đơn hàng từ các người bán khác nhau tuyệt đối không gộp chung 1 gói hàng vì xuất phát từ các kho vật lý ở các tỉnh thành khác nhau.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `POST /me/checkout/preview` (`order/checkout`: `CheckoutPricer` dùng chung cho xem trước và đặt hàng; tách đơn theo shop; phí ship UC-ORD-06; voucher / Điểm qua cổng `CheckoutDiscountPolicy` — bản mặc định chưa giảm, chờ UC-PRO-04/10) + test `CheckoutPreviewIT`, `CheckoutPricerTest`; web lấy phí ship từ 6.8 (cờ `PUBLIC_REAL_API=checkout`), ẩn ô Voucher / Điểm khi chưa có voucher thật. Còn: chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [CheckoutSession](../ClassDiagram/ENTITY.md#51-checkoutsession--phiên-thanh-toán), [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng).
 
@@ -1091,7 +1091,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được bao gồm bởi `UC-ORD-04`.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Gói dịch vụ mặc định GHN "Chuẩn"; `Product.shippingPayer = SELLER` thì phí ship hiển thị 0đ cho khách và ghi `EscrowLedger.shopShippingSubsidy`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`. Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp: API phí v2 còn đòi mã quận → địa chỉ / kho không có quận dùng bảng dự phòng, `is_estimated_fee = true` (spike D4 chờ `GHN_TOKEN`). Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: nối web (qua 6.8), chạy thật.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`; web hiển thị phí từ `POST /me/checkout/preview` (nhãn "phí tạm tính" khi `is_estimated_fee`). Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp: API phí v2 còn đòi mã quận → địa chỉ / kho không có quận dùng bảng dự phòng (spike D4 chờ `GHN_TOKEN`). Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 

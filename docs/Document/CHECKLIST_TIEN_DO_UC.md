@@ -20,8 +20,8 @@
 |---|---:|
 | Tổng use case | **87** |
 | Đã triển khai (backend + test + web nối API thật) | **24** |
-| Đang triển khai | **13** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **39** |
+| Đang triển khai | **14** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **38** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **11** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
 | Backend `server-spring` | 65 entity + `V1…V14`; module **AUTH** đang làm (83 test xanh — 2026-11-17); 10 module còn lại chưa có service |
@@ -79,7 +79,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 |---|---:|---:|---:|---:|
 | 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
 | 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 10 | 1 | 6 |
-| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 2 | 7 |
+| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 3 | 6 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
 | 05. Gian hàng & KYC người bán | 11 | 7 | 0 | 4 |
 | 06. Vận chuyển 3PL | 5 | 0 | 0 | 5 |
@@ -132,8 +132,8 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
 | `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-cart`): API 6.1–6.7 + `/public/variants`, `CartIT` / `CartMergeIT`; web nối qua `PUBLIC_REAL_API=cart`; chưa chạy thật</sub> | — |
-| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
-| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☑ | ☑ | ☐ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-shipping-fee`): `ShippingFeeQuoter` + bảng dự phòng 15k / 30k + `HttpGhnFeeClient` (`GHN_MODE=http`, chưa kiểm GHN thật — thiếu `GHN_TOKEN`); nối web qua 6.8 ở ORD-04</sub> | — |
+| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-checkout-preview`): `POST /me/checkout/preview` + `CheckoutPricer` dùng chung với đặt hàng; chưa áp voucher / Điểm (cổng `CheckoutDiscountPolicy` chờ C6 — web ẩn ô Voucher / Điểm); chưa chạy thật</sub> | — |
+| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2: `ShippingFeeQuoter` + bảng dự phòng 15k / 30k + `HttpGhnFeeClient` (`GHN_MODE=http`, chưa kiểm GHN thật — thiếu `GHN_TOKEN`); web lấy phí từ 6.8 (`PUBLIC_REAL_API=checkout`, nhãn "phí tạm tính"); chưa chạy thật</sub> | — |
 | `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ORD-08` | Tự động hủy đơn quá hạn thanh toán & Hoàn kho (Sweeper Cron) | S3 | (nền) đơn tự hủy ở `/orders` | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
 | `UC-ORD-09` | Khách hàng theo dõi chi tiết hành trình đơn hàng | S4 | `/orders`, `/orders/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
@@ -361,3 +361,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-25 | VND-01, 02, 03, 04, 07, 21 | Chạy thật cụm B4 theo `docs/kiem-thu/kich-ban-2026-11-16-mo-shop-kyc.md` bằng Chromium điều khiển qua Playwright (người dùng cho phép tự chạy + dùng ảnh CCCD thật trong `test-kyc/`): web bản build + backend `local` + Postgres + Redis + Silo + Mailpit + AI Worker thật (`AI_WORKER_MODE=http`). Kết quả: mở shop 15 ca, nộp KYC 11 ca, AI thật 6 ca (QR + MRZ đọc được, khớp mặt 0,57 → tự duyệt; selfie không có mặt → `LIVENESS_SUSPECT`; trùng CCCD → `DUPLICATE_ID`), duyệt tay 27 ca (quyền, xem ảnh 5 phút + nhật ký, từ chối / bổ sung / xin xem xét / đưa lại hàng chờ, hoa hồng + Chính hãng), tài khoản nhận tiền 11 ca, cài đặt shop 10 ca — đều đạt. Lỗi phát hiện và đã sửa: (1) màn duyệt không hiện tín hiệu rủi ro → API 11.3 thêm `risk_signals` + khối "Tín hiệu rủi ro", dịch mã lỗi AI, ẩn độ khớp mặt khi không so khớp; (2) AI duyệt xong menu Seller Center vẫn khóa tới khi tải lại → làm mới `/seller/me`; (3) hộp thoại xóa tài khoản nhận tiền treo khung chờ khi không xin được OTP (vd `GNE-WAL-4091`) → hiện lý do; (4) hộp OTP mở shop / bước 2 hiện "mã thử: 123456" khi chạy API thật. `./mvnw clean verify` 193 unit + 326 IT, `npm run verify` 358 test xanh; kiểm lại 5 / 5 trên giao diện. **6 UC → ✅** — cụm B4 7 / 7. Tổng quan: Đã triển khai 18 → 24, Đang triển khai 17 → 11; phân hệ 05: 7 / 0 / 4. Ghi nhận ngoài B4 (phân hệ AUTH): chuyển trang ngay sau đăng nhập có thể hủy lượt làm mới token đang chạy → phiên bị đăng xuất (1 / 5 lần khi chuyển ngay, 0 / 5 khi chờ 2,5 giây) | nhánh `bugfix/b4-real-run-fixes` (`8bbb2e5`, `6acef4f`, `a4c7606`, `0c5103e`) |
 | 2026-11-26 | ORD-01 | Plan C2 O01–O04 (nhánh `feature/c2-cart`): giỏ hàng `GET/POST/PATCH/DELETE /me/cart…`, Mua lại, gộp giỏ khách (`skipped` / `adjusted`), `GET /public/variants`; `VariantFacade` (đọc thẳng CSDL, luật "mua được"), giới hạn 100 dòng / 999; `CartIT`, `CartMergeIT`; web nối `PUBLIC_REAL_API=cart` + toast gộp giỏ. BE / Test / Nối ☑, chờ chạy thật | `07f49f5`, `845b880`, `0c108ff` |
 | 2026-11-26 | ORD-06 | Plan C2 O05 (nhánh `feature/c2-shipping-fee`): `shipping/fee` — freeship cấp shop / người bán trả ship, shop chưa có kho → phí liên tỉnh tạm tính, `GHN_MODE=stub` bảng phí 15k / 30k, `http` gọi GHN v2 fee (timeout 3 giây, cache 10 phút, lỗi → dự phòng, tuyến không hỗ trợ → `SHIPPING_UNAVAILABLE`); `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`. Spike D4 chưa chạy (máy dev chưa có `GHN_TOKEN`). BE / Test ☑ | `06a24fc`, `0a72e65` |
+| 2026-11-26 | ORD-04, ORD-06 | Plan C2 O06 (nhánh `feature/c2-checkout-preview`): `POST /me/checkout/preview` — tách theo shop, phí ship từng shop (`base_shipping_fee`, `free_ship_threshold`, `is_estimated_fee`), dòng của người khác bị bỏ, dòng hết hàng `is_available = false`; giảm giá qua cổng `CheckoutDiscountPolicy` (mặc định 0 — C6); `CheckoutPreviewIT`, `CheckoutPricerTest`. Web: phí ship trang Giỏ / Thanh toán lấy từ 6.8 (`PUBLIC_REAL_API=checkout`), ẩn Voucher / Điểm khi chưa có voucher thật. ORD-04 BE / Test / Nối ☑; ORD-06 Nối ☑ | `e656097`, `8f6c0e4`, `de696ca` |
