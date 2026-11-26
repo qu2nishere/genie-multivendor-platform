@@ -1091,7 +1091,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Quan hệ Use Case:** được bao gồm bởi `UC-ORD-04`.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:** Gói dịch vụ mặc định GHN "Chuẩn"; `Product.shippingPayer = SELLER` thì phí ship hiển thị 0đ cho khách và ghi `EscrowLedger.shopShippingSubsidy`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đang triển khai** (plan C2, 2026-11-26) — backend `shipping/fee` (`ShippingFeeQuoter`, bảng phí dự phòng `FlatFeeTable`, `HttpGhnFeeClient` cache Redis 10 phút) + test `ShippingFeeQuoterTest`, `HttpGhnFeeClientTest`. Chế độ `GHN_MODE=stub` (mặc định — bảng phí 15k / 30k làm phí thật) / `http` (GHN thật). Địa giới 2 cấp: API phí v2 còn đòi mã quận → địa chỉ / kho không có quận dùng bảng dự phòng, `is_estimated_fee = true` (spike D4 chờ `GHN_TOKEN`). Shop chưa có kho lấy hàng → phí liên tỉnh 30.000đ tạm tính. Còn: nối web (qua 6.8), chạy thật.
   - *Kế hoạch:* Sprint 3 (tuần 5–6) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Address](../ClassDiagram/ENTITY.md#13-address--địa-chỉ-giao-hàng), [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [VendorShippingConfig](../ClassDiagram/ENTITY.md#73-vendorshippingconfig--cấu-hình-vận-chuyển-của-shop).
 

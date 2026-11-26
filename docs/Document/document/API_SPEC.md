@@ -1273,7 +1273,9 @@ UC-ORD-04, UC-ORD-06, UC-PRO-04, UC-PRO-10 · **Màn hình:** thanh tổng của
 }
 ```
 - Thứ tự tính: Voucher Shop → Voucher Sàn (phân bổ theo dòng, phần dư dồn dòng cuối) → Freeship → Điểm (≤ 50% tiền hàng còn lại, 1 Điểm = 1₫). Tổng giảm tầng 1+2 ≤ 85% tiền hàng (LLD 9.3).
-- `is_free_shipping_by_shop = true` → "Shop miễn phí vận chuyển" (đạt ngưỡng freeship của shop).
+- `is_free_shipping_by_shop = true` → "Shop miễn phí vận chuyển" (đạt ngưỡng freeship của shop, hoặc mọi món có `shipping_payer = SELLER`); `shipping_fee` khách trả = 0.
+- `is_estimated_fee` *(plan C2 D4–D6, 2026-11-26)* — `true` khi phí lấy từ bảng dự phòng (15.000đ cùng tỉnh / 30.000đ khác tỉnh): shop chưa cấu hình kho lấy hàng, thiếu mã quận GHN (địa giới 2 cấp), GHN lỗi / quá 3 giây → web ghi "phí tạm tính". `GHN_MODE=stub` (máy dev) trả bảng phí như phí thật (`false`).
+- GHN báo không phục vụ tuyến → các dòng của shop đó `is_available = false`, `unavailable_reason = "SHIPPING_UNAVAILABLE"` (chỉ ở 6.8 / 6.10, không phải enum CSDL); đặt hàng có dòng như vậy → `409 GNE-ORD-4093` `details.shop_ids`.
 - Voucher đã chọn mà không còn hợp lệ → bị bỏ và có `warnings: [{ "voucher_id": 1, "code": "GNE-VCH-4221", "message": "..." }]` trong phản hồi (không trả lỗi, để giỏ vẫn hiển thị).
 - Không cung cấp mã đơn trước khi đặt (xem mục 17).
 
