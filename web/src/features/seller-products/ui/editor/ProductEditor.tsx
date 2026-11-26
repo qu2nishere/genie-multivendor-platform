@@ -61,7 +61,7 @@ function Editor({ product }: { product: ProductDetail | null }) {
   const save = useSaveProduct();
   const initial = useMemo<ProductForm>(() => {
     if (!product) return emptyForm();
-    const { id: _id, status: _s, rejectReason: _r, ...f } = product;
+    const { id: _id, status: _s, rejectReason: _r, version: _v, isLocked: _l, ...f } = product;
     return f;
   }, [product]);
   const form = useForm<ProductForm>({ defaultValues: initial });
@@ -93,7 +93,7 @@ function Editor({ product }: { product: ProductDetail | null }) {
   const doSave = (submit: boolean) => {
     const f = form.getValues();
     save.mutate(
-      { id: product?.id ?? null, form: f, submit },
+      { id: product?.id ?? null, form: f, submit, version: product?.version ?? null },
       {
         onSuccess: (r) => {
           form.reset(f);
@@ -111,7 +111,14 @@ function Editor({ product }: { product: ProductDetail | null }) {
             setIssues((x) => [...new Set([...x, 'documents' as const])]);
           if (isApiError(e) && e.code === 'GNE-CAT-4223')
             setIssues((x) => [...new Set([...x, 'specs' as const])]);
-          toast.error(errorMessage(e, t));
+          // Sửa trên dữ liệu cũ (người khác / tab khác vừa lưu, hoặc sàn vừa duyệt) — plan C1 D24
+          if (isApiError(e) && e.code === 'GNE-CAT-4097' && e.details.reason === 'STALE_VERSION') {
+            toast.error(t('seller-products.editor.stale'));
+            return;
+          }
+          // 422 theo từng ô (SKU trùng, giá…) — hiện tối đa 3 lỗi đầu
+          const fields = isApiError(e) ? e.fieldErrors.map((x) => x.message) : [];
+          toast.error(fields.length ? fields.slice(0, 3).join(' · ') : errorMessage(e, t));
         },
       },
     );
@@ -130,7 +137,6 @@ function Editor({ product }: { product: ProductDetail | null }) {
       width: f.dims.width,
       height: f.dims.height,
       shippingPayer: f.shippingPayer,
-      freeShippingThreshold: f.freeShippingThreshold,
       isPreOrder: f.isPreOrder,
       preOrderDays: f.preOrderDays,
     });
@@ -179,10 +185,11 @@ function Editor({ product }: { product: ProductDetail | null }) {
       )}
       {product?.status === 'REJECTED' && (
         <div
-          className="flex gap-3 bg-red-50 border border-solid border-red-200 rounded-md px-4 py-3.5 mb-3.5"
+          className="flex gap-3.5 items-center bg-red-50 border border-solid border-red-200 rounded-md px-4 py-3.5 mb-3.5"
           role="status"
         >
-          <Icon name="triangle-alert" size={22} className="text-red-600 flex-none" />
+          {/* Biểu tượng cao bằng 2 dòng chữ (tiêu đề + lý do), canh giữa theo chiều dọc */}
+          <Icon name="triangle-alert" size={40} className="text-red-600 flex-none" />
           <div>
             <div className="font-bold text-sm text-red-600">
               {t('seller-products.editor.rejected')}

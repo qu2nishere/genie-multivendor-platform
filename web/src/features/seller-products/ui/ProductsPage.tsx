@@ -139,13 +139,19 @@ export default function ProductsPage() {
                     >
                       <td className={td}>
                         <div className="flex items-center gap-2.5">
-                          <img
-                            src={p.imageUrl}
-                            alt=""
-                            width={44}
-                            height={44}
-                            className="w-11 h-11 rounded-md object-cover flex-none"
-                          />
+                          {p.imageUrl ? (
+                            <img
+                              src={p.imageUrl}
+                              alt=""
+                              width={44}
+                              height={44}
+                              className="w-11 h-11 rounded-md object-cover flex-none"
+                            />
+                          ) : (
+                            <span className="w-11 h-11 rounded-md bg-surface-sunken text-subtle flex items-center justify-center flex-none">
+                              <Icon name="image" size={18} />
+                            </span>
+                          )}
                           <Link
                             to={`/products/${p.id}/edit`}
                             className="font-medium text-strong max-w-[280px] truncate no-underline hover:underline"

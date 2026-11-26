@@ -29,7 +29,11 @@ public enum MailTemplate {
     /** Mời nhân viên kích hoạt tài khoản (UC-ADM-01, plan B1 R01.03). Biến: {@code name}, {@code inviterName}, {@code staffTitle}, {@code activationUrl}, {@code expiresHours}. */
     STAFF_INVITATION("staff-invitation", "Lời mời tham gia quản trị Genie Shop", "You are invited to Genie Shop admin"),
     /** Tài khoản được mở lại (UC-ADM-03, plan 2026-11-24 D2). Biến: {@code name}, {@code email}, {@code reason} ({@code SUSPENSION_EXPIRED} | {@code ADMIN}), {@code reactivatedAt}. */
-    ACCOUNT_REACTIVATED("account-reactivated", "Tài khoản Genie Shop của bạn đã được mở lại", "Your Genie Shop account has been reactivated");
+    ACCOUNT_REACTIVATED("account-reactivated", "Tài khoản Genie Shop của bạn đã được mở lại", "Your Genie Shop account has been reactivated"),
+    /** Sản phẩm được duyệt (UC-CAT-13 bước 5; plan C1 D14). Biến: {@code name}, {@code storeName}, {@code productName}, {@code productId}. */
+    PRODUCT_APPROVED("product-approved", "Sản phẩm của bạn đã được duyệt", "Your product has been approved"),
+    /** Sản phẩm bị từ chối / sàn khóa (UC-CAT-11, 13). Biến: {@code name}, {@code storeName}, {@code productName}, {@code productId}, {@code reason}. */
+    PRODUCT_REJECTED("product-rejected", "Sản phẩm của bạn chưa được duyệt", "Your product was not approved");
 
     private final String file;
     private final String subjectVi;

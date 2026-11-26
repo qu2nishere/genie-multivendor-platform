@@ -214,7 +214,6 @@ const base = (
   weight_grams: 400,
   dimensions_cm: { length: 20, width: 15, height: 8 },
   shipping_payer: 'BUYER',
-  free_shipping_threshold: null,
   is_pre_order: false,
   pre_order_days: null,
   ...extra,

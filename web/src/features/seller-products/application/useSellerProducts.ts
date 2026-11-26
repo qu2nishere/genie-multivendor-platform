@@ -45,8 +45,9 @@ export const useSellerProduct = (id: number | null) =>
   });
 
 export const useSaveProduct = () =>
-  useSellerMutation((v: { id: number | null; form: ProductForm; submit: boolean }) =>
-    saveProduct(v.id, v.form, v.submit),
+  useSellerMutation(
+    (v: { id: number | null; form: ProductForm; submit: boolean; version?: number | null }) =>
+      saveProduct(v.id, v.form, v.submit, v.version ?? null),
   );
 export const useSetHidden = () =>
   useSellerMutation((v: { id: number; hidden: boolean }) => setProductHidden(v.id, v.hidden));

@@ -1,4 +1,4 @@
-// Khối Thông tin cơ bản (G11.25: tên, CategoryPicker 3 cột, BrandCombo tìm / thêm mới, tình trạng, xuất xứ),
+// Khối Thông tin cơ bản (G11.25: tên, CategoryPicker chọn ngành lá (cây 2 cấp thật / 3 cấp mock), BrandCombo tìm / thêm mới, tình trạng, xuất xứ),
 // Thông số kỹ thuật (G11.26: gợi ý + bắt buộc theo ngành), Mô tả (G11.27: trình soạn có định dạng) —
 // prototype Products.jsx BasicInfo, CategoryPicker, BrandCombo, SpecsTable, RichDescription.
 import { useEffect, useId, useRef, useState } from 'react';
@@ -50,18 +50,29 @@ function CategoryPicker({ form, readOnly, issues }: SectionProps) {
     );
   }
   const nodes = tree.data ?? [];
-  const c2 = nodes.find((n) => n.id === l1)?.children ?? null;
-  const c3 = c2?.find((n) => n.id === l2)?.children ?? null;
+  const hasKids = (n: CategoryNode | undefined) => !!n?.children?.length;
+  const a = nodes.find((n) => n.id === l1);
+  const c2 = hasKids(a) ? (a?.children ?? null) : null;
+  const b = c2?.find((n) => n.id === l2);
+  const c3 = hasKids(b) ? (b?.children ?? null) : null;
+  const leafId = path.at(-1)?.id ?? null;
+  // Ngành lá ở cấp nào cũng chọn được: cây thật 2 cấp (plan C1 D3), cây mock 3 cấp
+  const pick = (chain: CategoryNode[]) => {
+    form.setValue(
+      'categoryPath',
+      chain.map(({ id, name }) => ({ id, name })),
+      { shouldDirty: true },
+    );
+    setOpen(false);
+  };
   const Col = ({
     items,
     active,
-    leaf,
     onPick,
     label,
   }: {
     items: CategoryNode[];
     active: number | null;
-    leaf?: boolean;
     onPick: (n: CategoryNode) => void;
     label: string;
   }) => (
@@ -70,7 +81,8 @@ function CategoryPicker({ form, readOnly, issues }: SectionProps) {
       className="m-0 p-0 list-none w-[200px] h-[280px] overflow-y-auto bg-surface-card border border-solid border-line-subtle rounded-md max-sm:w-full max-sm:h-auto max-sm:max-h-[220px]"
     >
       {items.map((n) => {
-        const on = active === n.id;
+        const leaf = !hasKids(n);
+        const on = active === n.id || (leaf && leafId === n.id);
         return (
           <li key={n.id}>
             <button
@@ -114,33 +126,26 @@ function CategoryPicker({ form, readOnly, issues }: SectionProps) {
             onPick={(n) => {
               setL1(n.id);
               setL2(null);
+              if (!hasKids(n)) pick([n]);
             }}
           />
-          {c2 && (
+          {a && c2 && (
             <Col
               label={t('seller-products.basic.level', { n: 2 })}
               items={c2}
               active={l2}
-              onPick={(n) => setL2(n.id)}
+              onPick={(n) => {
+                setL2(n.id);
+                if (!hasKids(n)) pick([a, n]);
+              }}
             />
           )}
-          {c3 && (
+          {a && b && c3 && (
             <Col
               label={t('seller-products.basic.level', { n: 3 })}
               items={c3}
-              leaf
-              active={path[2]?.id ?? null}
-              onPick={(n) => {
-                const a = nodes.find((x) => x.id === l1);
-                const b = c2?.find((x) => x.id === l2);
-                if (!a || !b) return;
-                form.setValue(
-                  'categoryPath',
-                  [a, b, n].map(({ id, name }) => ({ id, name })),
-                  { shouldDirty: true },
-                );
-                setOpen(false);
-              }}
+              active={null}
+              onPick={(n) => pick([a, b, n])}
             />
           )}
         </div>

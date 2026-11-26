@@ -10,7 +10,8 @@ import type {
 export interface ProductRowDto {
   id: number;
   name: string;
-  image_url: string;
+  /** null = nháp chưa có ảnh. */
+  image_url: string | null;
   variant_count: number;
   price_min: number;
   stock_total: number;
@@ -21,6 +22,9 @@ export interface ProductRowDto {
 
 export interface ProductDetailDto {
   id: number;
+  /** Có ở API thật (plan C1 D24). */
+  version?: number;
+  is_locked?: boolean;
   status: ProductStatus;
   reject_reason: string | null;
   images: { object_key: string; url: string }[];
@@ -30,9 +34,9 @@ export interface ProductDetailDto {
   category_path: { id: number; name: string }[];
   brand: { id: number; name: string } | null;
   condition: Condition;
-  origin: string;
+  origin: string | null;
   specs: { name: string; value: string }[];
-  description_html: string;
+  description_html: string | null;
   option_groups: {
     name: string;
     values: { value: string; image_object_key?: string | null; image_url?: string | null }[];
@@ -46,9 +50,8 @@ export interface ProductDetailDto {
     stock: number;
   }[];
   weight_grams: number | null;
-  dimensions_cm: { length: number | null; width: number | null; height: number | null };
+  dimensions_cm: { length: number | null; width: number | null; height: number | null } | null;
   shipping_payer: ShippingPayer;
-  free_shipping_threshold: number | null;
   is_pre_order: boolean;
   pre_order_days: number | null;
 }
@@ -63,6 +66,8 @@ export interface ProductInputDto {
   image_object_keys: string[];
   video_object_key: string | null;
   document_object_keys: string[];
+  /** Tên gốc của giấy tờ, song song `document_object_keys`. */
+  document_file_names: string[];
   specs: { name: string; value: string }[];
   description_html: string;
   option_groups: { name: string; values: { value: string; image_object_key: string | null }[] }[];
@@ -77,9 +82,9 @@ export interface ProductInputDto {
   weight_grams: number | null;
   dimensions_cm: { length: number | null; width: number | null; height: number | null };
   shipping_payer: ShippingPayer;
-  free_shipping_threshold: number | null;
   is_pre_order: boolean;
   pre_order_days: number | null;
+  version: number | null;
 }
 
 export interface ListingRulesDto {
@@ -89,8 +94,8 @@ export interface ListingRulesDto {
   attributes: {
     code: string;
     name: string;
-    data_type: 'TEXT' | 'ENUM' | 'NUMBER';
-    values: string[];
+    data_type: string;
+    values: string[] | null;
     unit: string | null;
     is_required: boolean;
     is_variant_axis: boolean;

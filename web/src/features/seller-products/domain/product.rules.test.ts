@@ -82,6 +82,17 @@ describe('thông số + điều kiện gửi duyệt', () => {
     ]);
   });
 
+  it('ngành lá cấp 2 (cây thật) là đủ danh mục', () => {
+    const f: ProductForm = {
+      ...emptyForm(),
+      categoryPath: [
+        { id: 1, name: 'Phụ kiện' },
+        { id: 12, name: 'Đồng hồ & Trang sức' },
+      ],
+    };
+    expect(publishIssues(f, rules)).not.toContain('category');
+  });
+
   it('độ dài mô tả không tính thẻ (xuống dòng tính 1 ký tự như innerText)', () => {
     expect(textLength('<p><b>Bàn</b> phím</p><ul><li>A&amp;B</li></ul>')).toBe(12);
   });
@@ -108,11 +119,10 @@ describe('lược đồ', () => {
     width: 20,
     height: 10,
     shippingPayer: 'BUYER' as const,
-    freeShippingThreshold: null,
     isPreOrder: false,
     preOrderDays: null,
   };
-  it('đặt trước 7–30 ngày; freeship cần mức đơn', () => {
+  it('đặt trước 7–30 ngày; shop trả phí không cần mức đơn', () => {
     expect(basicsSchema.safeParse(base).success).toBe(true);
     expect(basicsSchema.safeParse({ ...base, isPreOrder: true, preOrderDays: 5 }).success).toBe(
       false,
@@ -120,7 +130,7 @@ describe('lược đồ', () => {
     expect(basicsSchema.safeParse({ ...base, isPreOrder: true, preOrderDays: 14 }).success).toBe(
       true,
     );
-    expect(basicsSchema.safeParse({ ...base, shippingPayer: 'SELLER' }).success).toBe(false);
+    expect(basicsSchema.safeParse({ ...base, shippingPayer: 'SELLER' }).success).toBe(true);
   });
   it('đề xuất danh mục cần lý do', () => {
     expect(proposalSchema.safeParse({ name: 'Đồng hồ', parentId: 1, reason: '' }).success).toBe(

@@ -1,0 +1,214 @@
+### C1 — Đăng bán (UC-CAT-09, 10) + Kiểm duyệt thủ công (UC-CAT-13) — API_SPEC 10.5, 10.6, 11.12 (plan C1 P09.02)
+# Chạy bằng VS Code REST Client (extension "humao.rest-client"): bấm "Send Request" trên từng khối, TỪ TRÊN XUỐNG.
+# Các khối có "# @name" lưu phản hồi để khối sau dùng lại (token, id) — không phải chép tay.
+# Cần: Docker (postgres, redis, silo, mailpit) + backend profile local + dữ liệu mẫu (mật khẩu chung Genie@123).
+#   mai.tran@gmail.com   — chủ shop TechZone (VERIFIED, đã có kho lấy hàng)
+#   phat.nt@genie.example — nhân viên Moderator (MANAGE_CATALOG)
+#   yen.dh@genie.example  — Admin
+@base = http://localhost:8080/api/v1
+
+############################################################################
+# A. NGƯỜI BÁN — dữ liệu cho form
+############################################################################
+
+### A1. Đăng nhập chủ shop
+# @name seller
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+### A2. Cây danh mục 2 cấp (hoa hồng %, số sản phẩm đang bán)
+# @name cats
+GET {{base}}/seller/categories
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### A3. Luật đăng bán của ngành con đầu tiên — xem thuộc tính BẮT BUỘC (is_required) để điền ở bước B3
+GET {{base}}/seller/categories/{{cats.response.body.$.data[0].children[0].id}}/listing-rules
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### A4. Tìm thương hiệu
+GET {{base}}/seller/brands?q=sam
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### A5. Thêm thương hiệu mới (gửi lại lần 2 → 200, cùng id)
+# @name brand
+POST {{base}}/seller/brands
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "name": "Thương hiệu thử C1" }
+
+############################################################################
+# B. NGƯỜI BÁN — tải ảnh, lưu nháp, gửi duyệt (UC-CAT-09)
+############################################################################
+
+### B1. Xin link tải ảnh (content_length = đúng dung lượng tệp ở B2: 21953 byte)
+# @name up
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "purpose": "PRODUCT_IMAGE", "file_name": "anh.jpg", "content_type": "image/jpeg", "content_length": 21953 }
+
+### B2. PUT ảnh thẳng lên Silo bằng link vừa nhận (phải 200)
+PUT {{up.response.body.data.upload_url}}
+Content-Type: image/jpeg
+
+< ../../scripts/seed/excel/assets/8153c26f.jpg
+
+### B3. Lưu NHÁP — chỉ cần tên → 201, status DRAFT
+# @name draft
+POST {{base}}/seller/products
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "submit": false, "name": "Sản phẩm nháp C1" }
+
+### B4. GỬI DUYỆT đầy đủ → 201, status PENDING_APPROVAL, requires_review true
+# Nếu nhận 422 GNE-CAT-4223: thêm vào "specs" các thuộc tính bắt buộc thấy ở A3 ({ "name": "<tên>", "value": "<giá trị>" }).
+# Nếu nhận 422 GNE-CAT-4222: ngành cần giấy tờ — chọn ngành khác hoặc tải PRODUCT_DOCUMENT.
+# @name created
+POST {{base}}/seller/products
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{
+  "submit": true,
+  "name": "Tai nghe thử nghiệm C1 ANC",
+  "category_id": {{cats.response.body.$.data[0].children[0].id}},
+  "brand_id": {{brand.response.body.data.id}},
+  "condition": "NEW",
+  "origin": "Việt Nam",
+  "image_object_keys": ["{{up.response.body.data.object_key}}"],
+  "specs": [],
+  "description_html": "<p>Pin <strong>40 giờ</strong></p><script>alert(1)</script>",
+  "option_groups": [ { "name": "Màu sắc", "values": [ { "value": "Đen" }, { "value": "Trắng" } ] } ],
+  "variant_image_group": null,
+  "variants": [
+    { "id": null, "options": ["Đen"], "sku": null, "price": 389000, "stock": 10 },
+    { "id": null, "options": ["Trắng"], "sku": null, "price": 359000, "stock": 5 }
+  ],
+  "weight_grams": 350,
+  "dimensions_cm": { "length": 20, "width": 15, "height": 8 },
+  "shipping_payer": "BUYER",
+  "is_pre_order": false
+}
+
+### B5. Lỗi theo từng ô: 9 ảnh / giá 0 / thiếu cân nặng → 422 GNE-VAL-4220, xem mảng "errors"
+POST {{base}}/seller/products
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "submit": true, "name": "Sai dữ liệu", "category_id": {{cats.response.body.$.data[0].children[0].id}},
+  "image_object_keys": ["a","b","c","d","e","f","g","h","i"],
+  "variants": [ { "options": [], "price": 0, "stock": 1 } ] }
+
+### B6. Danh sách tab "Chờ duyệt" — thấy sản phẩm B4, summary.counts
+GET {{base}}/seller/products?status=PENDING_APPROVAL
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### B7. Chi tiết (mở form sửa) — SKU tự sinh G{id}-1, G{id}-2; mô tả đã bỏ <script>; có "version"
+GET {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### B8. Sửa khi đang chờ duyệt → 409 GNE-CAT-4096 (chỉ xem)
+PUT {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "submit": false, "name": "Đổi tên khi đang chờ" }
+
+############################################################################
+# C. NHÂN VIÊN — hàng chờ & duyệt (UC-CAT-13)
+############################################################################
+
+### C1. Đăng nhập Moderator
+# @name mod
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+### C2. Danh sách nhân viên duyệt + trạng thái nhận việc
+GET {{base}}/admin/moderators
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C3. Hàng chờ tab PENDING — sản phẩm B4 có "assignee" (người đang nhận việc ít việc nhất)
+GET {{base}}/admin/product-moderation?tab=PENDING&q=thu nghiem
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C4. Chi tiết duyệt — ảnh, bảng SKU, ai_result = null (chưa có Gemini)
+GET {{base}}/admin/product-moderation/{{created.response.body.data.id}}
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C5. TỪ CHỐI — sai mã → 422; đúng mã → REJECTED
+POST {{base}}/admin/products/{{created.response.body.data.id}}/reject
+Authorization: Bearer {{mod.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "reason_code": "BAD_IMAGE", "note": "Ảnh mờ, có chữ chèn" }
+
+### C6. Người bán thấy lý do (reject_reason) — rồi mở Mailpit http://localhost:8025 xem email "chưa được duyệt"
+GET {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### C7. Đưa lại hàng chờ ("Chờ duyệt lại")
+POST {{base}}/admin/products/{{created.response.body.data.id}}/requeue
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C8. DUYỆT → PUBLISHED, thương hiệu mới được xác minh, email "đã được duyệt" trong Mailpit
+POST {{base}}/admin/products/{{created.response.body.data.id}}/approve
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C9. Duyệt lần nữa → 409 GNE-CAT-4097 (đã duyệt rồi)
+POST {{base}}/admin/products/{{created.response.body.data.id}}/approve
+Authorization: Bearer {{mod.response.body.data.access_token}}
+
+### C10. Storefront thấy sản phẩm (không cần đăng nhập)
+GET {{base}}/public/products/{{created.response.body.data.id}}
+
+############################################################################
+# D. NGƯỜI BÁN — sửa sản phẩm đang bán (UC-CAT-10)
+############################################################################
+
+### D1. Lấy lại chi tiết (version mới, id biến thể) — dùng để soạn D2 / D3
+# @name live
+GET {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+
+### D2. Chỉ đổi GIÁ biến thể 1 → status vẫn PUBLISHED, requires_review false
+PUT {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{
+  "submit": false,
+  "version": {{live.response.body.data.version}},
+  "name": "Tai nghe thử nghiệm C1 ANC",
+  "category_id": {{cats.response.body.$.data[0].children[0].id}},
+  "brand_id": {{brand.response.body.data.id}},
+  "condition": "NEW",
+  "origin": "Việt Nam",
+  "image_object_keys": ["{{live.response.body.$.data.images[0].object_key}}"],
+  "specs": [],
+  "description_html": "{{live.response.body.data.description_html}}",
+  "option_groups": [ { "name": "Màu sắc", "values": [ { "value": "Đen" }, { "value": "Trắng" } ] } ],
+  "variants": [
+    { "id": {{live.response.body.$.data.variants[0].id}}, "options": ["{{live.response.body.$.data.variants[0].options[0]}}"], "price": 399000, "stock": 10 },
+    { "id": {{live.response.body.$.data.variants[1].id}}, "options": ["{{live.response.body.$.data.variants[1].options[0]}}"], "price": 359000, "stock": 5 }
+  ],
+  "weight_grams": 350,
+  "dimensions_cm": { "length": 20, "width": 15, "height": 8 },
+  "shipping_payer": "BUYER",
+  "is_pre_order": false
+}
+
+### D3. Gửi lại với "version" cũ → 409 GNE-CAT-4097 (STALE_VERSION)
+PUT {{base}}/seller/products/{{created.response.body.data.id}}
+Authorization: Bearer {{seller.response.body.data.access_token}}
+Content-Type: application/json
+
+{ "submit": false, "version": 0, "name": "Tên mới" }
+
+### D4. Đổi TÊN (gửi đủ như D2 nhưng đổi "name", lấy "version" mới từ D1 chạy lại) → PENDING_APPROVAL, requires_review true

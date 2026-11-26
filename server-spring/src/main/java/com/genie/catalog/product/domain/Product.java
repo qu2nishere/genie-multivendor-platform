@@ -168,6 +168,8 @@ public class Product {
         this.isPublished = true;
         this.moderatorId = moderatorId;
         this.moderationReason = null;
+        this.isRequeued = false;
+        this.isLocked = false;            // sản phẩm bị sàn khóa, shop sửa rồi được duyệt lại → mở khóa (plan C1 D18)
     }
 
     /** Từ chối kèm lý do — UC-CAT-13 */
@@ -176,6 +178,7 @@ public class Product {
         this.isPublished = false;
         this.moderatorId = moderatorId;
         this.moderationReason = reason;
+        this.isRequeued = false;
     }
 
     /** Shop tự ẩn sản phẩm — UC-CAT-11 */
@@ -200,4 +203,48 @@ public class Product {
         this.moderationReason = reason;
     }
 
+
+    /** Đang nằm trong hàng chờ duyệt — shop chỉ xem, không sửa (UC-CAT-10 bước 8; plan C1 D3) */
+    public boolean isUnderReview() {
+        return this.status == ProductStatus.PENDING_APPROVAL || this.status == ProductStatus.FLAGGED;
+    }
+
+    /** Đang bán hoặc đang ẩn (shop tự ẩn / sàn khóa) — sửa trường quan trọng thì phải duyệt lại (UC-CAT-10; plan C1 D4) */
+    public boolean isLive() {
+        return this.status == ProductStatus.PUBLISHED || this.status == ProductStatus.HIDDEN;
+    }
+
+    /**
+     * Gửi duyệt: lần đầu (DRAFT), gửi lại sau khi bị từ chối (REJECTED), hoặc sản phẩm đang bán / đang ẩn vừa sửa trường
+     * quan trọng — khi đó gắn "Chờ duyệt lại" ({@code isRequeued}). Xóa người duyệt / lý do cũ để vào hàng chờ mới
+     * (UC-CAT-09 bước 18, UC-CAT-10 bước 5, 7; plan C1 D4). Cờ sàn khóa giữ nguyên tới khi được duyệt ({@link #approve}).
+     */
+    public void submit(OffsetDateTime now) {
+        if (this.status != ProductStatus.DRAFT && this.status != ProductStatus.REJECTED && !isLive())
+            throw new IllegalStateException("Không gửi duyệt được sản phẩm ở trạng thái " + this.status);
+        this.isRequeued = isLive();
+        this.status = ProductStatus.PENDING_APPROVAL;
+        this.isPublished = false;            // đang chờ duyệt thì không còn trên sàn
+        this.submittedAt = now;
+        this.moderatorId = null;
+        this.moderationReason = null;
+    }
+
+    /** Giao sản phẩm đang chờ duyệt cho một nhân viên kiểm duyệt ({@code null} = chưa giao ai) — UC-CAT-13 bước 2, 7 */
+    public void assignTo(Long staffId) {
+        if (!isUnderReview())
+            throw new IllegalStateException("Chỉ giao người duyệt cho sản phẩm đang chờ duyệt");
+        this.moderatorId = staffId;
+    }
+
+    /** Staff đưa sản phẩm đã duyệt / đã từ chối về hàng chờ ("Chờ duyệt lại") — UC-CAT-13 (API 11.12 requeue) */
+    public void requeue(OffsetDateTime now) {
+        if (this.status != ProductStatus.PUBLISHED && this.status != ProductStatus.REJECTED)
+            throw new IllegalStateException("Chỉ đưa lại hàng chờ sản phẩm đã duyệt / đã từ chối");
+        this.status = ProductStatus.PENDING_APPROVAL;
+        this.isPublished = false;
+        this.isRequeued = true;
+        this.submittedAt = now;
+        this.moderatorId = null;
+    }
 }

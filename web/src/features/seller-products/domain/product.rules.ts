@@ -119,7 +119,8 @@ export function publishIssues(
   const out: PublishIssue[] = [];
   if (f.images.length === 0 || f.images.length > MAX_IMAGES) out.push('images');
   if (f.name.trim().length < 5) out.push('name');
-  if (f.categoryPath.length < 3) out.push('category');
+  // Ô chọn chỉ ghi ngành lá (2 cấp thật / 3 cấp mock) → có đường dẫn là đủ
+  if (f.categoryPath.length === 0) out.push('category');
   if (rules?.requiresDocuments && f.documents.length === 0) out.push('documents');
   if (missingSpecs(f.specs, rules).length) out.push('specs');
   if (f.variants.length > MAX_VARIANTS) out.push('variants_limit');
@@ -191,7 +192,6 @@ export const emptyForm = (): ProductForm => ({
   weightGrams: null,
   dims: { length: null, width: null, height: null },
   shippingPayer: 'BUYER',
-  freeShippingThreshold: null,
   isPreOrder: false,
   preOrderDays: null,
 });

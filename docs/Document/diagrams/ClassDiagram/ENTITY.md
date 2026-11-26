@@ -1741,7 +1741,7 @@ public class Product {
 }
 ```
 
-> **Hiện thực (2026-11-26, `V25__listing_and_checkout_schema.sql` — plan C1 D1):** thêm `submittedAt`, `isRequeued`, `isLocked`, `videoUrl`. Sàn khóa = `status = HIDDEN` + `isLocked = true` (shop tự ẩn thì `isLocked = false`) — không thêm giá trị `ProductStatus`. Ngưỡng freeship **không** lưu theo sản phẩm (chỉ `vendor_shipping_config.freeship_threshold` của shop); `weight` là **gram**. Index hàng chờ duyệt ở mục 13.1.
+> **Hiện thực (2026-11-26, `V25__listing_and_checkout_schema.sql` — plan C1 D1):** thêm `submittedAt`, `isRequeued`, `isLocked`, `videoUrl`. Sàn khóa = `status = HIDDEN` + `isLocked = true` (shop tự ẩn thì `isLocked = false`) — không thêm giá trị `ProductStatus`. Ngưỡng freeship **không** lưu theo sản phẩm (chỉ `vendor_shipping_config.freeship_threshold` của shop); `weight` là **gram**. Index hàng chờ duyệt ở mục 13.1. Phương thức thêm (plan C1 P02): `isUnderReview()` (PENDING_APPROVAL / FLAGGED — shop chỉ xem), `isLive()` (PUBLISHED / HIDDEN), `submit(now)` (DRAFT / REJECTED / đang bán → PENDING_APPROVAL; đang bán thì `isRequeued = true`; xóa người duyệt / lý do cũ); `approve()` xóa `isRequeued`, `isLocked`; `reject()` xóa `isRequeued`. Luật "sửa trường nào thì duyệt lại": `ProductEditPolicy` (domain, thuần).
 
 ### 💡 Kiến thức chuyên sâu
 
