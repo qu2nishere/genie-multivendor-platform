@@ -53,9 +53,14 @@ class ShippingFeeQuoterTest {
         return new ShippingFeeQuoter(configs, provider, cache);
     }
 
-    /** Kho ở tỉnh 79 có mã quận (kho cũ) + shop GHN; giao tới tỉnh {@code to}. */
-    private static Parcel parcel(int to, Integer toDistrict, long subtotal, boolean sellerPays) {
-        return new Parcel(5L, 79, 1442, "20101", 99, to, toDistrict, "W1", 800, 20, 10, 5, subtotal, sellerPays);
+    /** Kho ở tỉnh 79 có shop GHN {@code 99}; giao tới tỉnh {@code to}, phường {@code ward} (mã v3; NULL = thiếu). */
+    private static Parcel parcel(int to, String ward, long subtotal, boolean sellerPays) {
+        return parcel(to, ward, subtotal, sellerPays, 99);
+    }
+
+    private static Parcel parcel(int to, String ward, long subtotal, boolean sellerPays, Integer ghnShopId) {
+        return new Parcel(5L, 79, ghnShopId, to, ward, "Người nhận", "0901234567", "25 Nguyễn Huệ, Phường A, Tỉnh B",
+                800, 20, 10, 5, subtotal, sellerPays);
     }
 
     @Test
@@ -68,7 +73,8 @@ class ShippingFeeQuoterTest {
 
     @Test
     void shopWithoutPickupGetsEstimatedInterProvinceFee() {
-        Parcel noPickup = new Parcel(5L, null, null, null, null, 79, null, "W1", 500, null, null, null, 10_000, false);
+        Parcel noPickup = new Parcel(5L, null, null, 79, "1003506", "A", "0901", "addr", 500, null, null, null, 10_000,
+                false);
         ShippingQuote q = quoter(ghn).quote(noPickup);
         assertThat(q.customerFee()).isEqualTo(30_000);
         assertThat(q.estimated()).isTrue();
@@ -88,18 +94,27 @@ class ShippingFeeQuoterTest {
     }
 
     @Test
-    void httpModeWithoutDistrictFallsBackToEstimatedFee() {
-        ShippingQuote q = quoter(ghn).quote(parcel(1, null, 100_000, false));
-        assertThat(q.estimated()).isTrue();
-        assertThat(q.customerFee()).isEqualTo(30_000);
+    void httpModeWithoutGhnShopOrWardFallsBackToEstimatedFee() {
+        ShippingQuote noShop = quoter(ghn).quote(parcel(1, "1003476", 100_000, false, null));
+        assertThat(noShop.estimated()).isTrue();
+        assertThat(noShop.customerFee()).isEqualTo(30_000);
+        assertThat(quoter(ghn).quote(parcel(1, null, 100_000, false)).estimated()).isTrue();
         verify(ghn, never()).fee(any());
+    }
+
+    @Test
+    void twoLevelAddressIsQuotedByGhnWithoutDistrict() {
+        when(ghn.fee(any())).thenReturn(53_900L);
+        ShippingQuote q = quoter(ghn).quote(parcel(1000000, "1003476", 100_000, false));
+        assertThat(q.customerFee()).isEqualTo(53_900);
+        assertThat(q.estimated()).isFalse();
     }
 
     @Test
     void httpModeAsksGhnOnceThenServesFromCache() {
         when(ghn.fee(any())).thenReturn(27_500L);
-        ShippingQuote first = quoter(ghn).quote(parcel(1, 1450, 100_000, false));
-        ShippingQuote second = quoter(ghn).quote(parcel(1, 1450, 100_000, false));
+        ShippingQuote first = quoter(ghn).quote(parcel(1, "1003476", 100_000, false));
+        ShippingQuote second = quoter(ghn).quote(parcel(1, "1003476", 100_000, false));
         assertThat(first.customerFee()).isEqualTo(27_500);
         assertThat(first.estimated()).isFalse();
         assertThat(second.customerFee()).isEqualTo(27_500);
@@ -109,13 +124,13 @@ class ShippingFeeQuoterTest {
     @Test
     void ghnErrorFallsBackAndUnsupportedRouteIsUnavailable() {
         when(ghn.fee(any())).thenThrow(new IllegalStateException("timeout"));
-        ShippingQuote err = quoter(ghn).quote(parcel(79, 1450, 100_000, false));
+        ShippingQuote err = quoter(ghn).quote(parcel(79, "1003506", 100_000, false));
         assertThat(err.estimated()).isTrue();
         assertThat(err.customerFee()).isEqualTo(15_000);
 
         GhnFeeClient noRoute = mock(GhnFeeClient.class);
         when(noRoute.fee(any())).thenThrow(new GhnFeeClient.RouteNotSupportedException("route"));
-        assertThat(quoter(noRoute).quote(parcel(1, 1460, 100_000, false)).unavailable()).isTrue();
+        assertThat(quoter(noRoute).quote(parcel(1, "1003477", 100_000, false)).unavailable()).isTrue();
     }
 
     @Test

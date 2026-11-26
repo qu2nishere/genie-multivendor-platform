@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
  *   <li>Freeship (D7): tạm tính ≥ ngưỡng của shop, hoặc mọi món người bán trả ship → khách trả 0, vẫn tính phí thật.</li>
  *   <li>Shop chưa có kho lấy hàng (D5) → bảng dự phòng, {@code estimated = true}.</li>
  *   <li>{@code GHN_MODE=stub} (không có {@link GhnFeeClient}) → bảng phí giả lập, {@code estimated = false}.</li>
- *   <li>{@code GHN_MODE=http}: thiếu mã quận GHN ở một trong hai đầu (địa giới 2 cấp — D4) hoặc chưa có shop GHN →
- *       bảng dự phòng; còn lại hỏi GHN (cache 10 phút), lỗi / timeout → bảng dự phòng, không phục vụ tuyến →
- *       {@code unavailable}.</li>
+ *   <li>{@code GHN_MODE=http}: shop chưa có mã shop GHN hoặc địa chỉ thiếu mã phường → bảng dự phòng; còn lại hỏi GHN
+ *       theo địa giới 2 cấp ({@code /v2/shipping-order/preview} — spike D4, O11.01; cache 10 phút), lỗi / timeout →
+ *       bảng dự phòng, không phục vụ tuyến → {@code unavailable}.</li>
  * </ol>
  */
 @Component
@@ -67,7 +67,7 @@ public class ShippingFeeQuoter {
         if (client == null) {
             return new Fee(flat, false, false);
         }
-        if (p.fromDistrictId() == null || p.toDistrictId() == null || p.ghnShopId() == null) {
+        if (p.ghnShopId() == null || p.toWardCode() == null || p.toWardCode().isBlank()) {
             return new Fee(flat, true, false);
         }
         try {
@@ -89,10 +89,9 @@ public class ShippingFeeQuoter {
                 .orElse(null);
     }
 
-    /** Khóa cache = SHA-256 các tham số gửi GHN (không chứa dữ liệu cá nhân). */
+    /** Khóa cache = SHA-256 các tham số ảnh hưởng tới phí (không đưa tên / SĐT / địa chỉ người nhận vào khóa). */
     static String hash(Parcel p) {
-        String raw = String.join("|", String.valueOf(p.ghnShopId()), String.valueOf(p.fromDistrictId()),
-                p.fromWardCode(), String.valueOf(p.toDistrictId()), p.toWardCode(), String.valueOf(p.weightGrams()),
+        String raw = String.join("|", String.valueOf(p.ghnShopId()), p.toWardCode(), String.valueOf(p.weightGrams()),
                 String.valueOf(p.lengthCm()), String.valueOf(p.widthCm()), String.valueOf(p.heightCm()),
                 String.valueOf(p.subtotal()));
         try {

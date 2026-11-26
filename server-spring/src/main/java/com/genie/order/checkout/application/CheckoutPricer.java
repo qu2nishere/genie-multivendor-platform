@@ -216,10 +216,9 @@ public class CheckoutPricer {
         Integer height = max(items.stream().map(i -> i.line().heightCm()).toList());
         boolean sellerPays = items.stream().allMatch(i -> i.line().sellerPaysShipping());
         boolean hasPickup = s != null && s.pickupProvinceId() != null;
-        return new Parcel(vendorUserId, hasPickup ? s.pickupProvinceId() : null,
-                hasPickup ? s.pickupDistrictId() : null, hasPickup ? s.pickupWardCode() : null,
-                s == null ? null : s.ghnShopId(), to.provinceId(), null, to.wardCode(), grams, length, width, height,
-                subtotal, sellerPays);
+        return new Parcel(vendorUserId, hasPickup ? s.pickupProvinceId() : null, s == null ? null : s.ghnShopId(),
+                to.provinceId(), to.wardCode(), to.recipientName(), to.phoneNumber(), to.fullAddress(), grams, length,
+                width, height, subtotal, sellerPays);
     }
 
     private static Integer max(List<Integer> values) {

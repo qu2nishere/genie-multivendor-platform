@@ -36,7 +36,9 @@ class CheckoutPricerTest {
         assertThat(p.allSellerPays()).isFalse();
         assertThat(p.fromProvinceId()).isEqualTo(1);
         assertThat(p.toProvinceId()).isEqualTo(79);
-        assertThat(p.toDistrictId()).isNull();   // địa chỉ 2 cấp không có quận (D4)
+        assertThat(p.toWardCode()).isEqualTo("26740");   // mã phường mới, không cần quận (D4, O11.01)
+        assertThat(p.toName()).isEqualTo("A");
+        assertThat(p.toAddress()).isEqualTo("25 Nguyễn Huệ, P, HCM");
     }
 
     @Test

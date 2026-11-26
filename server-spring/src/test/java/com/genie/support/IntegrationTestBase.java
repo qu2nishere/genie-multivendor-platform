@@ -111,6 +111,8 @@ public abstract class IntegrationTestBase {
         // Danh mục hành chính luôn đọc ảnh chụp JSON trong test (kể cả khi .env của máy dev có GHN_TOKEN)
         registry.add("genie.shipping.ghn.token", () -> "");
         registry.add("genie.shipping.ghn.shop-id", () -> "");
+        // Phí ship luôn dùng bảng giả lập trong test (kể cả khi .env máy dev đặt GHN_MODE=http — plan C2 O11.01)
+        registry.add("GHN_MODE", () -> "stub");
     }
 
     public static final String START = "2026-06-08T07:00:00Z";
