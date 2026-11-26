@@ -67,8 +67,8 @@ function CheckoutScreen() {
   const live = useMemo(() => lines.filter((l) => !dead.has(l.key)), [lines, dead]);
   const groups = useMemo(() => groupByShop(lines), [lines]);
   const shipScope = useMemo(
-    () => ({ cartItemIds: lines.map((l) => l.id), addressId: address?.id ?? null }),
-    [lines, address?.id],
+    () => ({ cartItemIds: live.map((l) => l.id), addressId: address?.id ?? null }),
+    [live, address?.id],
   );
   const pricing = useCartPricing(
     live,
