@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-26 — N01 xong, chờ PR `feature/b56-shared-schema` (16 / 98) |
+| **Cập nhật gần nhất** | 2026-11-26 — N01 xong (PR #112), bắt đầu N02 (17 / 98) |
 
 **Cách dùng**
 
@@ -49,7 +49,7 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong |
 |---|---|---:|---:|---:|
 | N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
-| N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 10 / 11 |
+| N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 0 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 0 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 0 / 11 |
@@ -59,7 +59,7 @@
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **16 / 98** |
+| **Tổng** | | **81** | **17** | **17 / 98** |
 
 ## N00 — Chuẩn bị
 
@@ -82,7 +82,7 @@
 - [x] **N01.08** Test
 - [x] **N01.C1** 🔖 COMMIT `docs(db): add schema changes for notifications, chat and vouchers` · hash: `51f57ac`
 - [x] **N01.C2** 🔖 COMMIT `feat(db): add shared schema for notification, chat and voucher clusters` · hash: `79c110d`
-- [ ] **N01.09** Mở PR `feature/b56-shared-schema` → `develop` (mô tả: chỉ thêm cột / index / giá trị CHECK, tương thích ngược); sau khi merge mới tạo nhánh N02.
+- [x] **N01.09** Mở PR `feature/b56-shared-schema` → `develop` (mô tả: chỉ thêm cột / index / giá trị CHECK, tương thích ngược); sau khi merge mới tạo nhánh N02.
 
 ## N02 — Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`)
 
@@ -214,6 +214,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N01.09 | PR #112 `feature/b56-shared-schema` → `develop` (https://github.com/qu2nishere/genie-multivendor-platform/pull/112). Không chờ duyệt: nhánh `feature/notification-inbox` **xếp chồng** lên `feature/b56-shared-schema` (như C2) — PR #112 merge xong thì `git rebase develop` |
 | N01.01 | ENTITY v1.6: 10.2 (`dispatchedAt`, `isDispatched/isScheduled/dispatch`), 11.2 (`isAuto`, cách suy `DELIVERED/SEEN`), Phụ lục A (`CHAT_MESSAGE` + bảng nhóm `category`, 7 `AuditAction`), bảng đếm enum (17 / 47), 13.1 (9 index), E.10, CHANGELOG; đồng bộ `GIAI_NGHIA_ENTITY.md`, `Diagram07`, `Diagram10` |
 | N01.07 | `PlatformNotification.dispatch()` kiểm tham số **trước** khi gán (viết test phát hiện: `dispatch(1, null)` từng gán `reachCount` rồi mới ném lỗi) |
 | N01.08 | Thêm `SchemaValidationIT.checkConstraintsAcceptEveryEnumValue`: đọc `pg_get_constraintdef` của `ck_system_logs_action_type`, `ck_notifications_type`, `ck_messages_type` và khẳng định chứa mọi giá trị enum Java — migration sau quên chép giá trị là đỏ ngay. `AuditActionCategoryTest` thêm 7 giá trị CONFIG; `PlatformNotificationTest` 5 ca. Cổng: `./mvnw clean verify` (JDK 21) **BUILD SUCCESS — 220 unit + 359 IT** (1 bỏ qua: `SearchPerformanceIT` chỉ chạy với `-Dperf`) |
