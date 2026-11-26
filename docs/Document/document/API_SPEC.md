@@ -1278,6 +1278,8 @@ UC-ORD-04, UC-ORD-06, UC-PRO-04, UC-PRO-10 · **Màn hình:** thanh tổng của
 - GHN báo không phục vụ tuyến → các dòng của shop đó `is_available = false`, `unavailable_reason = "SHIPPING_UNAVAILABLE"` (chỉ ở 6.8 / 6.10, không phải enum CSDL); đặt hàng có dòng như vậy → `409 GNE-ORD-4093` `details.shop_ids`.
 - Voucher đã chọn mà không còn hợp lệ → bị bỏ và có `warnings: [{ "voucher_id": 1, "code": "GNE-VCH-4221", "message": "..." }]` trong phản hồi (không trả lỗi, để giỏ vẫn hiển thị).
 - Không cung cấp mã đơn trước khi đặt (xem mục 17).
+- Khối shop có thêm *(plan C2, 2026-11-26)* `base_shipping_fee` (phí hãng trước freeship; `null` khi chưa có địa chỉ), `free_ship_threshold` (ngưỡng freeship của shop; `0` khi mọi món người bán trả ship; `null` = không có) — trang Giỏ tính lại phí khi khách bỏ chọn bớt món mà không gọi lại 6.8; và `is_estimated_fee` (xem trên). Không có địa chỉ nào → `address = null`, `shipping_fee = null`, `shipping_total` chỉ cộng phí đã biết.
+- **Trước khi có voucher / Điểm (chuỗi C6 — plan C2 D2):** server nhận `vouchers`, `use_coins` nhưng bỏ qua; mọi khoản giảm = 0, `shop_voucher = null`, `vouchers_applied = null`, `best_selection = null`, `coins = null`. Web khi `PUBLIC_REAL_API` có `checkout` mà chưa có nhóm voucher thì ẩn ô Voucher / Điểm. Dòng của người khác / id lạ trong `cart_item_ids` bị bỏ qua; tối đa 100 id.
 
 ### 6.9 `POST /me/checkout/applicable-vouchers` — Danh sách cho Voucher Picker
 UC-PRO-03, UC-PRO-04 · **Màn hình:** modal "Chọn Voucher Genie" (nhóm Mã Giảm Giá / Miễn Phí Vận Chuyển) và "Chọn Voucher của Shop" — voucher không dùng được vẫn hiện, mờ, kèm lý do; ô "Nhập mã voucher"

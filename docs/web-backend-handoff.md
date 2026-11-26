@@ -41,7 +41,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | ~~`GET /public/categories/{categoryId}/attribute-filters`~~ | Không làm endpoint riêng — dùng `summary.facets.attribute` của `GET /public/products?category_id=&include_facets=true` (API 5.3) | **Đã xử lý** 2026-11-24 (plan `2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` D9, H11) |
 | `GET /public/brands/verified` | Chưa có | **Bổ sung spec** hoặc trả cờ `verified` trong facet thương hiệu (dấu tích ở bộ lọc Thương hiệu) |
 | `GET /public/variants?ids=` | Chưa có | **Bổ sung spec** — giỏ khách lưu SKU, cần tra dòng hiển thị (G10.02) |
-| `GET /public/shops/shipping-policies?ids=` | Chưa có — phí ship chỉ có trong preview 6.8 | **Bổ sung spec** hoặc tính phí ship ở `POST /me/checkout/preview` cho cả trang giỏ (G10.11) |
+| ~~`GET /public/shops/shipping-policies?ids=`~~ | **Đã bỏ** (plan C2 O06.02, 2026-11-26) — phí ship trang Giỏ / Thanh toán lấy từ `POST /me/checkout/preview` (6.8: `base_shipping_fee`, `free_ship_threshold`, `is_estimated_fee`) | — |
 
 ## 3. Trường dữ liệu client cần mà API_SPEC chưa có
 
@@ -299,7 +299,7 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `getCheckoutSession` | checkout.api.ts | `GET /me/checkout-sessions/{id}` |
 | `retryPayment` | checkout.api.ts | `POST /me/checkout-sessions/{id}/payments` |
 | `settleMockPayment` | checkout.api.ts | — |
-| `getShipPolicies` | shipping.api.ts | `GET /public/shops/shipping-policies` |
+| `getShipPolicies` | shipping.api.ts | `POST /me/checkout/preview` — **nối ở plan C2** (`PUBLIC_REAL_API=checkout`; thay cho `shipping-policies`) |
 
 ### `coins`
 
