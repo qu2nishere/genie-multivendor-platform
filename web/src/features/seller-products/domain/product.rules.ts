@@ -13,6 +13,8 @@ export const MAX_IMAGES = 8;
 export const MAX_GROUPS = 2;
 export const MAX_VARIANTS = 50;
 export const MAX_DOCS = 4;
+/** Giá trị một dòng thông số (được xuống dòng) — khớp backend `ProductWriteService.MAX_SPEC_VALUE`. */
+export const SPEC_VALUE_MAX = 1000;
 export const DESC_MAX = 10_000;
 export const PRE_ORDER_MIN = 7;
 export const PRE_ORDER_MAX = 30;

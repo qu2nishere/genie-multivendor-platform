@@ -16,7 +16,13 @@ import {
   useCategoryTree,
   useCreateBrand,
 } from '../../application/useSellerProducts';
-import { DESC_MAX, missingSpecs, suggestedSpecs, textLength } from '../../domain/product.rules';
+import {
+  DESC_MAX,
+  missingSpecs,
+  SPEC_VALUE_MAX,
+  suggestedSpecs,
+  textLength,
+} from '../../domain/product.rules';
 import type { CategoryNode, SpecRow } from '../../domain/product.types';
 import { errCls, hintCls, labCls, SectionCard, type SectionProps } from './editorKit';
 
@@ -309,6 +315,13 @@ export function BasicInfo(props: SectionProps) {
   );
 }
 
+/** Ô giá trị thông số tự cao theo số dòng (không thanh cuộn). */
+const growToFit = (el: HTMLTextAreaElement | null) => {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = `${el.scrollHeight}px`;
+};
+
 export function SpecsTable({ form, readOnly, rules, issues }: SectionProps) {
   const { t } = useT();
   const specs = useWatch({ control: form.control, name: 'specs' });
@@ -371,18 +384,28 @@ export function SpecsTable({ form, readOnly, rules, issues }: SectionProps) {
                 placeholder={t('seller-products.specs.name_placeholder')}
                 className={cn(
                   cell,
-                  'flex-none w-[220px] max-sm:w-[40%] border-0 border-r border-solid border-line-subtle',
+                  'flex-none self-stretch w-[220px] max-sm:w-[40%] border-0 border-r border-solid border-line-subtle',
                 )}
               />
-              <input
+              {/* Giá trị dài: Enter xuống dòng, ô tự cao theo nội dung (storefront hiện đúng các dòng) */}
+              <textarea
+                ref={growToFit}
+                rows={1}
                 value={r.value}
                 disabled={readOnly}
+                maxLength={SPEC_VALUE_MAX}
                 aria-label={t('seller-products.specs.value_n', { n: i + 1 })}
-                onChange={(e) => setRow(i, { value: e.target.value })}
+                onChange={(e) => {
+                  growToFit(e.currentTarget);
+                  setRow(i, { value: e.target.value });
+                }}
                 placeholder={t('seller-products.specs.value_placeholder')}
-                className={cn(cell, 'flex-1')}
+                className={cn(
+                  cell,
+                  'flex-1 resize-none overflow-hidden leading-normal font-[inherit]',
+                )}
               />
-              <div className="w-11 grid place-items-center">
+              <div className="w-11 h-[41px] grid place-items-center">
                 {!empty && !readOnly && (
                   <button
                     type="button"
