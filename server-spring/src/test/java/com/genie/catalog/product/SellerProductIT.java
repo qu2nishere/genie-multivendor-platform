@@ -378,6 +378,43 @@ class SellerProductIT extends IntegrationTestBase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void imagesForTwoOptionGroupsAreStoredAndReturned() throws Exception {
+        Map<String, Object> body = fullBody(false);
+        body.put("option_groups", List.of(
+                Map.of("name", "Màu sắc", "values", List.of(
+                        Map.of("value", "Đen", "image_object_key", tmpImage()), Map.of("value", "Trắng"))),
+                Map.of("name", "Dung lượng", "values", List.of(
+                        Map.of("value", "128 GB", "image_object_key", tmpImage()), Map.of("value", "256 GB")))));
+        body.put("variant_image_group", "Màu sắc");
+        List<Map<String, Object>> variants = new ArrayList<>();
+        for (String c : List.of("Đen", "Trắng")) {
+            for (String g : List.of("128 GB", "256 GB")) {
+                Map<String, Object> v = variant(null, c, null, 300_000, 1);
+                v.put("options", List.of(c, g));
+                variants.add(v);
+            }
+        }
+        body.put("variants", variants);
+        long id = created(send("POST", URL, body).andExpect(status().isCreated()));
+
+        String json = jdbc.queryForObject("SELECT option_images_json::text FROM products WHERE id = ?", String.class, id);
+        assertThat(json).contains("Màu sắc").contains("Đen").contains("Dung lượng").contains("128 GB");
+        assertThat(jdbc.queryForObject("SELECT variant_image_attribute FROM products WHERE id = ?", String.class, id))
+                .isEqualTo("Màu sắc");
+        // ảnh SKU theo nhóm ảnh chính (Màu sắc): 2 SKU màu Đen có ảnh
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM product_variants WHERE product_id = ? AND image_url IS NOT NULL",
+                Integer.class, id)).isEqualTo(2);
+
+        List<Map<String, Object>> groups = (List<Map<String, Object>>) detail(id).get("option_groups");
+        assertThat(groups).extracting(g -> g.get("name")).containsExactly("Màu sắc", "Dung lượng");
+        Map<String, Object> gb128 = ((List<Map<String, Object>>) groups.get(1).get("values")).get(0);
+        assertThat(gb128.get("value")).isEqualTo("128 GB");
+        assertThat((String) gb128.get("image_object_key")).startsWith("vendor/" + vendor + "/product/" + id + "/");
+        assertThat(gb128.get("image_url")).isNotNull();
+    }
+
+    @Test
     void shopNotVerifiedIsBlockedByKycGate() throws Exception {
         jdbc.update("UPDATE vendor_profiles SET kyc_status = 'PENDING' WHERE user_id = ?", vendor);
         send("POST", URL, Map.of("submit", false, "name", "x")).andExpect(status().isForbidden())

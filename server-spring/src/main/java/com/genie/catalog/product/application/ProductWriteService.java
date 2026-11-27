@@ -496,8 +496,15 @@ public class ProductWriteService {
         // mô tả: ảnh vừa tải lên (tmp) trong mô tả → khóa chính thức
         p.setDescription(promoteDescriptionImages(plan.description, vendorUserId, prefix));
 
+        // ảnh theo giá trị của MỌI nhóm có ảnh (V26) — nhóm chính (variant_image_attribute) còn gắn ảnh vào SKU
+        Map<String, Map<String, String>> optionImages = promoteOptionImages(plan, vendorUserId, prefix, ownedKeys);
+        p.setOptionImagesJson(optionImages.isEmpty() ? null : store.toJson(optionImages));
+        String primaryImageGroup = plan.imageGroup != null && optionImages.containsKey(plan.imageGroup) ? plan.imageGroup
+                : optionImages.keySet().stream().findFirst().orElse(plan.imageGroup);
+
         // biến thể
-        BigDecimal minPrice = writeVariants(pid, plan, vendorUserId, prefix, ownedKeys);
+        BigDecimal minPrice = writeVariants(pid, plan, primaryImageGroup,
+                optionImages.getOrDefault(primaryImageGroup, Map.of()));
 
         // trường của dòng products
         p.setName(plan.name);
@@ -517,14 +524,37 @@ public class ProductWriteService {
         p.setHeight(plan.dims == null || plan.dims.height() == null ? null : plan.dims.height().doubleValue());
         if (shop.pickupProvinceName() != null) p.setShipsFrom(shop.pickupProvinceName());
         p.setShippingPayer(plan.payer);
-        p.setVariantImageAttribute(plan.imageGroup);
+        p.setVariantImageAttribute(primaryImageGroup);
         p.setIsPreOrder(plan.preOrder);
         p.setPreOrderDays(plan.preOrder ? plan.preOrderDays : null);
         p.setBasePrice(minPrice);
     }
 
     /** Ghi biến thể theo hợp đồng mục 10.3: không ghi reserved_count; trả giá thấp nhất (base_price). */
-    private BigDecimal writeVariants(long pid, Plan plan, long vendorUserId, String prefix, Set<String> ownedKeys) {
+    /**
+     * Ảnh của từng giá trị ở mọi nhóm: tệp {@code tmp/} → khóa chính thức, khóa cũ của sản phẩm giữ nguyên. Thứ tự nhóm
+     * theo người bán nhập; nhóm không có ảnh nào thì không ghi.
+     */
+    private Map<String, Map<String, String>> promoteOptionImages(Plan plan, long vendorUserId, String prefix,
+                                                                 Set<String> ownedKeys) {
+        Map<String, Map<String, String>> out = new LinkedHashMap<>();
+        for (int g = 0; g < plan.groups.size(); g++) {
+            OptionGroupInput group = plan.groups.get(g);
+            Map<String, String> values = new LinkedHashMap<>();
+            for (int k = 0; k < group.values().size(); k++) {
+                OptionValueInput val = group.values().get(k);
+                if (val.imageObjectKey() != null && !val.imageObjectKey().isBlank()) {
+                    values.put(val.value().trim(), media(vendorUserId, UploadPurpose.VARIANT_IMAGE,
+                            val.imageObjectKey().trim(), prefix, ownedKeys,
+                            "option_groups[" + g + "].values[" + k + "].image_object_key"));
+                }
+            }
+            if (!values.isEmpty()) out.put(group.name().trim(), values);
+        }
+        return out;
+    }
+
+    private BigDecimal writeVariants(long pid, Plan plan, String imageGroup, Map<String, String> valueImages) {
         Map<Long, ProductListingStore.VariantRow> current = new LinkedHashMap<>();
         store.activeVariants(pid).forEach(r -> current.put(r.id(), r));
 
@@ -545,21 +575,10 @@ public class ProductWriteService {
             }
         }
 
-        // ảnh theo giá trị của nhóm có ảnh
-        Map<String, String> valueImages = new HashMap<>();
+        // ảnh của SKU = ảnh giá trị của nhóm ảnh chính (giỏ hàng / đơn hàng chụp ảnh SKU)
         int imageGroupIndex = -1;
         for (int g = 0; g < plan.groups.size(); g++) {
-            OptionGroupInput group = plan.groups.get(g);
-            if (!group.name().trim().equals(plan.imageGroup)) continue;
-            imageGroupIndex = g;
-            for (int k = 0; k < group.values().size(); k++) {
-                OptionValueInput val = group.values().get(k);
-                if (val.imageObjectKey() != null && !val.imageObjectKey().isBlank()) {
-                    valueImages.put(val.value().trim(), media(vendorUserId, UploadPurpose.VARIANT_IMAGE,
-                            val.imageObjectKey().trim(), prefix, ownedKeys,
-                            "option_groups[" + g + "].values[" + k + "].image_object_key"));
-                }
-            }
+            if (plan.groups.get(g).name().trim().equals(imageGroup)) imageGroupIndex = g;
         }
 
         String generatedPrefix = SkuGenerator.generatedPrefix(pid);
@@ -684,6 +703,7 @@ public class ProductWriteService {
         Set<String> keys = new HashSet<>(store.galleryKeys(p.getId()));
         store.activeVariants(p.getId()).forEach(r -> { if (r.imageUrl() != null) keys.add(r.imageUrl()); });
         if (p.getVideoUrl() != null) keys.add(p.getVideoUrl());
+        OptionImages.parse(json, p.getOptionImagesJson()).values().forEach(m -> keys.addAll(m.values()));
         return keys;
     }
 
