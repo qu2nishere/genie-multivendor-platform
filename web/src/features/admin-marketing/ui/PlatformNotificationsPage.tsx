@@ -2,7 +2,7 @@
 // dung, lọc đối tượng, bảng Mã TB / Thông báo / Ảnh / Đối tượng / Người gửi / Thời gian / Đã đọc (%) hoặc
 // "Đã hẹn giờ" (5 dòng / trang); chi tiết (Sửa khi chưa phát / Xóa); soạn (đối tượng, email người nhận cụ
 // thể, tiêu đề ≤ 100, nội dung rich-text, ảnh, hẹn giờ) → xác nhận phát.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAdminMe } from '@/features/admin-system';
 import { errorMessage, isApiError } from '@/shared/api/errors';
@@ -111,7 +111,9 @@ function ComposeModal({
     resolver: zodResolver(notificationSchema),
     defaultValues: { target: 'ALL', emailsText: '', title: '', contentHtml: '', sendAt: '' },
   });
-  useEffect(() => {
+  // useLayoutEffect: nạp giá trị trước khi hộp thoại vẽ lần đầu — tránh khung hình mang dữ liệu lần soạn trước và
+  // tránh xóa mất chữ người dùng gõ ngay khi vừa mở (plan 2026-11-26 thông báo N09.03)
+  useLayoutEffect(() => {
     if (!open) return;
     form.reset(
       editing
