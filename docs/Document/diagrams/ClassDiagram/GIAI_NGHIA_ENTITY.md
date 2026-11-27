@@ -1637,6 +1637,7 @@
 | `reachCount` | số người nhận | số nguyên lớn | Có | Số người ĐÃ NHẬN (tính lúc phát) — mẫu số để tính tỷ lệ đọc. Mặc định: `0L`. |
 | `sendAt` | thời điểm hẹn phát | ngày + giờ (có múi giờ) | Không | Hẹn giờ phát thông báo; trống = phát ngay (UC-NOT-05, TLCN v1.3). |
 | `recipientUserIdsJson` | danh sách người nhận | JSON | Không | Mảng users.id khi target = SPECIFIC_USERS (UC-NOT-05, TLCN v1.3). |
+| `dispatchedAt` | thời điểm đã phát | ngày + giờ (có múi giờ) | Không | Lúc thông báo thật sự được phát (phát ngay = lúc tạo, hẹn giờ = lúc cron phát); trống = đang hẹn giờ, người dùng chưa thấy (UC-NOT-05, V26). |
 
 <a id="userplatformnotificationread"></a>
 ## 10.3 `UserPlatformNotificationRead` — Đánh dấu đã đọc thông báo sàn
@@ -1755,6 +1756,7 @@
 | `createdAt` | thời điểm tạo | ngày + giờ (có múi giờ) | Có | Thời điểm gửi. Hệ thống tự ghi khi tạo dòng. |
 | `productVariantId` | mã biến thể sản phẩm (SKU) | số nguyên lớn | Không | FK → product_variants.id (khi type = PRODUCT_CARD — UC-SOC-02). **Khóa ngoại** → bảng của `ProductVariant`. |
 | `orderId` | mã đơn hàng | số nguyên lớn | Không | FK → orders.id (khi type = ORDER_CARD — thẻ đơn hàng trong chat, UC-SOC-02, TLCN v1.3). **Khóa ngoại** → bảng của `Order`. |
+| `isAuto` | tin tự động | đúng / sai | Có | Tin do hệ thống gửi thay shop (lời chào, vắng mặt, tạm nghỉ — UC-VND-06); không tính vào tỉ lệ phản hồi của shop. Mặc định: `false` (V26). |
 
 # Nhóm 12 — Nhật ký hệ thống
 
