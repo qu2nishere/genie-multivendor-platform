@@ -96,6 +96,24 @@ public class NotificationFacade {
         afterCurrentCommit(() -> deliverChat(recipientId, conversationId, title, body));
     }
 
+    /**
+     * Người dùng đã mở hội thoại → thông báo {@code CHAT_MESSAGE} chưa đọc của hội thoại đó thành đã đọc (API_SPEC 8.5;
+     * plan chat D10). Chạy trong transaction của người gọi; có dòng đổi thì đẩy {@code NOTIFICATIONS_READ} sau commit để
+     * chuông header giảm số.
+     */
+    public void markChatRead(long userId, long conversationId) {
+        List<Long> ids = jdbc.queryForList("""
+                UPDATE notifications SET is_read = TRUE, read_at = COALESCE(read_at, :now)
+                WHERE user_id = :uid AND type = 'CHAT_MESSAGE' AND is_read = FALSE AND reference_id = :ref
+                RETURNING id""", new MapSqlParameterSource("uid", userId).addValue("ref", String.valueOf(conversationId))
+                .addValue("now", java.sql.Timestamp.from(clock.instant())), Long.class);
+        if (!ids.isEmpty()) {
+            long unread = readModel.viewer(userId).map(readModel::unreadCount).orElse(0L);
+            channel.sendAfterCommit(userId, UserChannel.NOTIFICATIONS, NotificationEvent.read(
+                    ids.stream().map(id -> NotificationView.PERSONAL_PREFIX + id).toList(), null, unread));
+        }
+    }
+
     void deliver(List<NotificationCommand> cmds) {
         try {
             requiresNew.executeWithoutResult(status -> {

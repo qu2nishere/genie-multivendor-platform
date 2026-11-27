@@ -56,11 +56,47 @@ public class Conversation {
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
-    /** Cập nhật tóm tắt & bộ đếm chưa đọc — UC-SOC-01 */
+    /** Người dùng đứng ở phía nào của hội thoại (kiểm IDOR — plan chat N5). */
+    public enum Side { CUSTOMER, VENDOR, NONE }
+
+    public Side sideOf(long userId) {
+        if (customerId != null && customerId == userId) return Side.CUSTOMER;
+        if (vendorId != null && vendorId == userId) return Side.VENDOR;
+        return Side.NONE;
+    }
+
+    /** id người ở phía bên kia so với {@code userId} (đã là thành viên). */
+    public long otherThan(long userId) {
+        return sideOf(userId) == Side.CUSTOMER ? vendorId : customerId;
+    }
+
+    /** Số tin chưa đọc phía {@code side}. */
+    public int unreadFor(Side side) {
+        return side == Side.CUSTOMER ? customerUnread : side == Side.VENDOR ? vendorUnread : 0;
+    }
+
+    /**
+     * Cập nhật tóm tắt & bộ đếm chưa đọc — UC-SOC-01 (plan chat M03.01): trích đoạn theo loại khi không có chữ ("[Hình ảnh]",
+     * "[Sản phẩm]", "[Đơn hàng]"), cắt 100 ký tự; chỉ tăng bộ đếm của <b>bên nhận</b>. Gọi khi đang khóa dòng (N3).
+     */
     public void onNewMessage(Message m, boolean fromCustomer) {
-        this.lastMessageSnippet = m.getContent() == null ? "[" + m.getType() + "]" : m.getContent().substring(0, Math.min(100, m.getContent().length()));
+        this.lastMessageSnippet = snippetOf(m);
         this.lastMessageAt = m.getCreatedAt();
         if (fromCustomer) this.vendorUnread += 1; else this.customerUnread += 1;
+    }
+
+    static String snippetOf(Message m) {
+        String text = m.getContent();
+        if (m.getType() == MessageType.TEXT && text != null && !text.isBlank()) {
+            String flat = text.replaceAll("\\s+", " ").trim();
+            return flat.length() <= 100 ? flat : flat.substring(0, 100);
+        }
+        return switch (m.getType()) {
+            case IMAGE -> "[Hình ảnh]";
+            case PRODUCT_CARD -> "[Sản phẩm]";
+            case ORDER_CARD -> "[Đơn hàng]";
+            case TEXT -> "";
+        };
     }
 
     /** Đặt lại badge chưa đọc — UC-SOC-01 */
