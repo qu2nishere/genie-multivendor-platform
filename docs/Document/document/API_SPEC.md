@@ -9,7 +9,7 @@
 | Base URL | `https://api.genie.vn/api/v1` (staging: `https://api.staging.genie.vn/api/v1`) |
 | Định dạng | JSON `snake_case`, UTF-8 |
 | Tài liệu gốc | LLD.md mục 8 & 12, TECH_STACK_VA_QUY_UOC.md mục 8–9, ENTITY.md, Usecase.md, BAO_CAO_DOI_CHIEU_GIAO_DIEN.md |
-| Lịch sử | 1.7 (2026-11-22): plan B2 danh mục & hoa hồng — 5.1 ẩn cả nhánh khi cha ẩn, header `Cache-Control`; 5.2 thêm `parent_id`; 11.8 khung 3,5–8 % (thay 0–50), mặc định lưu `platform_settings`, quyền đổi hoa hồng; 11.11 thêm `description`, `level`, `requires_business_license`, `effective_commission_rate`, `details` của `GNE-CAT-4091 / 4092`, luật di chuyển / xóa, `summary.inherited` + luật trùng `code` trong nhánh, `data_type` không đổi được · 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
+| Lịch sử | 1.10 (2026-11-27): plan voucher B5 (UC-PRO-01, 02, 03 — `plan/2026-11-26/server-spring/plan_voucher_b5.md`) — `$Voucher.shop.id` = `vendor_profiles.id`; 3.14 luật lưu (quà đổi Điểm `404`, hết lượt `USAGE_LIMIT_REACHED`, tài khoản nội bộ `403 GNE-ORD-4031`, xóa idempotent); 5.13 thêm `codes`, `limit` 1–12, không trả voucher đã kết thúc / đã tắt, cache 60 giây; 10.7 / 11.14 trạng thái `ACTIVE / SCHEDULED / ENDED / DISABLED`, tiêu đề voucher shop tự sinh, FREESHIP nhận `max_discount`, giới hạn giá trị, `excluded_product_ids`, luật sửa khi đang chạy, tắt một chiều, `summary`, `is_coin_reward`, xóa khi đã kết thúc hoặc đã tắt; 15 thêm `GNE-VCH-4094` · 1.7 (2026-11-22): plan B2 danh mục & hoa hồng — 5.1 ẩn cả nhánh khi cha ẩn, header `Cache-Control`; 5.2 thêm `parent_id`; 11.8 khung 3,5–8 % (thay 0–50), mặc định lưu `platform_settings`, quyền đổi hoa hồng; 11.11 thêm `description`, `level`, `requires_business_license`, `effective_commission_rate`, `details` của `GNE-CAT-4091 / 4092`, luật di chuyển / xóa, `summary.inherited` + luật trùng `code` trong nhánh, `data_type` không đổi được · 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
 
 > **Cách đọc:** mỗi endpoint ghi *màn hình dùng nó*, *quyền*, *mã UC*, rồi tới request/response mẫu. Đối tượng dùng lại nhiều lần được định nghĩa một lần ở **mục 1 (Schema dùng chung)** và gọi bằng tên `$TênSchema` — khi chuyển sang OpenAPI, mỗi `$TênSchema` là một `components/schemas`.
 >
@@ -291,8 +291,9 @@ Phường/xã/đặc khu dùng `code` (chuỗi) thay cho `id`: `{ "code": "26740
 }
 ```
 - `type` ∈ `PLATFORM, SHOP, FREESHIP`; `discount_type` ∈ `PERCENTAGE, FIXED_AMOUNT, FREESHIP`.
-- `shop` = `null` với voucher sàn. `included_categories` / `excluded_categories` là mảng **tên** danh mục (để hiện "Chỉ áp dụng: Điện tử" / "Ngoại trừ: Điện tử").
-- `state` ∈ `AVAILABLE` (dùng được), `UPCOMING` (chưa tới giờ), `USED`, `EXPIRED`.
+- `shop` = `null` với voucher sàn; `shop.id` là **`shop_id`** (`vendor_profiles.id`, dùng cho `/shop/{id}`), không phải `users.id` chủ shop. `included_categories` / `excluded_categories` là mảng **tên** danh mục (để hiện "Chỉ áp dụng: Điện tử" / "Ngoại trừ: Điện tử").
+- `state` ∈ `AVAILABLE` (dùng được), `UPCOMING` (chưa tới giờ), `USED`, `EXPIRED` — suy từ trạng thái quản lý (10.7): `SCHEDULED` → `UPCOMING`, `ACTIVE` → `AVAILABLE`, `ENDED` / `DISABLED` → `EXPIRED`; người dùng đã dùng đủ `usage_per_user` lượt → `USED`.
+- Voucher shop có `discount_type = FREESHIP` (shop tài trợ phí ship) vẫn `type = SHOP`; tab "Freeship" của Kho gom cả loại này.
 - `is_saved` chỉ có khi gọi kèm token; `used_order_code` có thêm khi `state = USED`.
 
 ### `$OrderItem` — dòng hàng trên đơn
@@ -806,8 +807,8 @@ UC-PRO-08, UC-PRO-09 · **Màn hình:** Tài khoản › Điểm Genie (số dư
 UC-PRO-03 · **Màn hình:** Tài khoản › Kho Voucher (tab Tất cả / Voucher Sàn / Voucher Shop / Freeship; "Xem lịch sử voucher" với tab Hết hiệu lực / Đã sử dụng; nhập mã để lưu; xóa; modal chi tiết)
 
 #### `GET /me/vouchers?state=AVAILABLE&type=SHOP&page&size=20`
-- `state` ∈ `AVAILABLE` (gồm cả `UPCOMING`), `USED`, `EXPIRED`.
-- `200` `$Voucher[]` + `summary.counts: { "ALL": 13, "PLATFORM": 7, "SHOP": 5, "FREESHIP": 2 }`.
+- `state` ∈ `AVAILABLE` (gồm cả `UPCOMING`), `USED`, `EXPIRED`; `type` ∈ `PLATFORM, SHOP, FREESHIP` (`FREESHIP` gồm voucher shop miễn phí ship); bỏ `type` = tất cả.
+- `200` `$Voucher[]` + `summary.counts: { "ALL": 13, "PLATFORM": 7, "SHOP": 5, "FREESHIP": 2 }` (đếm theo `state` đang xem). Sắp: dùng được trước, sắp hết hạn trước. `state = USED` kèm `used_order_code`.
 - Modal chi tiết dùng luôn dữ liệu trong danh sách (không có endpoint chi tiết riêng).
 
 #### `POST /me/vouchers` — Lưu voucher
@@ -815,14 +816,15 @@ Từ nút "Lưu" (trang chủ, trang shop, chiến dịch) hoặc ô nhập mã:
 ```json
 { "code": "GENIE30K" }
 ```
-hoặc `{ "voucher_id": 1 }`. `201` `$Voucher`.
+hoặc `{ "voucher_id": 1 }`. `201` `$Voucher` (`is_saved = true`). Mã không phân biệt hoa thường. Lưu được cả voucher **sắp diễn ra**.
 
 | Lỗi | Khi nào |
 |---|---|
-| `404 GNE-VCH-4041` | "Mã voucher không tồn tại hoặc đã hết hạn." |
-| `409 GNE-VCH-4091` | "Voucher đã được lưu trước đó" |
+| `404 GNE-VCH-4041` | "Mã voucher không tồn tại hoặc đã hết hạn." — cả khi voucher đã kết thúc / đã tắt, là **quà đổi Điểm** (chỉ nhận qua 3.13), hoặc shop của voucher không còn hoạt động |
+| `409 GNE-VCH-4091` | "Voucher đã được lưu trước đó"; đã dùng đủ lượt / người → `details.reason = "USAGE_LIMIT_REACHED"` |
+| `403 GNE-ORD-4031` | Tài khoản nội bộ (STAFF / ADMIN) — Kho voucher là chức năng mua hàng |
 
-#### `DELETE /me/vouchers/{voucher_id}` — Xóa khỏi kho · `204`
+#### `DELETE /me/vouchers/{voucher_id}` — Xóa khỏi kho · `204` (idempotent — không có trong kho vẫn `204`)
 
 ---
 
@@ -1079,11 +1081,12 @@ UC-PRO-03 · **Màn hình:** 4 vé "Lưu voucher" ở khu Flash Sale trang chủ
 
 | Query | Mô tả |
 |---|---|
-| `shop_id` | Voucher đang chạy của shop |
+| `shop_id` | Voucher đang chạy / sắp diễn ra của shop (`vendor_profiles.id`; shop chưa `VERIFIED` hoặc chủ bị khóa → `[]`) |
 | `code` | Một mã cụ thể (trang chiến dịch, vd. `SALE1212`) |
-| `featured=true&limit=4` | Voucher sàn / freeship nổi bật (theo `priority`) cho trang chủ |
+| `codes` | Nhiều mã, cách dấu phẩy, tối đa 20 (trang chiến dịch nhiều vé) |
+| `featured=true&limit=4` | Voucher sàn / freeship nổi bật (`priority` giảm dần, hết hạn sớm trước) cho trang chủ; `limit` 1–12 |
 
-`200` → `$Voucher[]` (gồm cả `UPCOMING` để lưu trước). Có token → kèm `is_saved` (nút "Lưu" thành dấu ✓).
+`200` → `$Voucher[]` (gồm cả `UPCOMING` để lưu trước; **không** trả voucher đã kết thúc / đã tắt và quà đổi Điểm). Có token → kèm `is_saved` (nút "Lưu" thành dấu ✓). Phải có đúng một trong `shop_id` / `code` / `codes` / `featured` (`422`). Danh sách cache Redis 60 giây, xóa ngay khi voucher thay đổi.
 
 ### 5.14 `GET /public/banners?positions=…&category_id=…` — Banner
 UC-ADM-12 · **Màn hình:** băng chuyền đầu trang chủ, 2 ô cạnh băng chuyền, banner giữa trang, banner khu Flash Sale, popup xếp chồng (1 lần/phiên), banner đầu trang danh mục
@@ -1913,7 +1916,7 @@ UC-PRO-01, UC-PRO-05 · **Màn hình:** Khuyến mãi (banner Flash Sale đăng 
 ```json
 [ { "id": 51, "code": "SALE15", "discount_type": "PERCENTAGE", "discount_value": 15, "max_discount": 50000, "min_order_value": 250000, "usage": { "used": 142, "limit": 500 }, "status": "ACTIVE", "valid_to": "2026-06-20T23:59:59+07:00" } ]
 ```
-`status` ∈ `ACTIVE, SCHEDULED, ENDED, DISABLED`. `summary`: `{ "active_count": 2, "usage_this_month": 522, "revenue_from_promotions_this_month": 8400000 }`.
+`status` ∈ `ACTIVE, SCHEDULED, ENDED, DISABLED` (bỏ = tất cả): `DISABLED` = shop / sàn đã tắt; `SCHEDULED` = chưa tới `valid_from`; `ENDED` = quá `valid_to`, hết lượt hoặc hết ngân sách; còn lại `ACTIVE`. Mỗi dòng có thêm `title` (server tự sinh), `scope`, `valid_from`. `summary`: `{ "active_count": 2, "usage_this_month": 522, "revenue_from_promotions_this_month": 8400000 }` (tháng theo giờ VN; doanh thu = tổng đơn `COMPLETED` có dùng voucher của shop — bằng 0 tới khi luồng đặt hàng áp voucher).
 
 #### `GET /seller/vouchers/{id}` — Mở form sửa / nhân bản
 → `$ShopVoucherInput` + `id`, `status`, `usage`.
@@ -1935,17 +1938,21 @@ UC-PRO-01, UC-PRO-05 · **Màn hình:** Khuyến mãi (banner Flash Sale đăng 
   "scope": "CATEGORY",
   "category_ids": [13],
   "product_ids": [],
-  "excluded_category_ids": [14]
+  "excluded_category_ids": [14],
+  "excluded_product_ids": []
 }
 ```
-- `code` 6–12 ký tự `A-Z0-9`, duy nhất toàn hệ thống (`409 GNE-VCH-4092`). Nút "Tự tạo" sinh mã phía client.
-- `discount_type = FREESHIP` → bỏ `discount_value`, `max_discount`. `PERCENTAGE` ≤ 100.
-- `scope` ∈ `ALL` (tất cả sản phẩm shop), `CATEGORY` (cần `category_ids`), `PRODUCT` (cần `product_ids`); `excluded_category_ids` chỉ dùng khi `scope ≠ PRODUCT`.
-- Voucher shop: `type = SHOP`, `funded_by = VENDOR` (server tự đặt).
+- `code` 6–12 ký tự `A-Z0-9` (chữ thường tự đổi HOA), duy nhất toàn hệ thống kể cả voucher đã kết thúc (`409 GNE-VCH-4092`). Nút "Tự tạo" sinh mã phía client.
+- Tiêu đề **server tự sinh** từ điều kiện ("Giảm 15% tối đa 50.000₫ đơn từ 200.000₫", "Giảm 30.000₫ đơn từ 399.000₫", "Freeship tối đa 30.000₫ đơn từ 99.000₫").
+- `PERCENTAGE`: `discount_value` 1–100, **bắt buộc** `max_discount` ≥ 1.000. `FIXED_AMOUNT`: 1.000–50.000.000 và `min_order_value ≥ discount_value`. `FREESHIP` → bỏ `discount_value`; `max_discount` (tùy chọn) = trần hỗ trợ phí ship, `null` = hỗ trợ toàn bộ.
+- `min_order_value` 0–1.000.000.000; `usage_limit` 1–1.000.000; `usage_per_user` 1–min(`usage_limit`, 100); `budget` (tùy chọn) ≥ mức giảm tối đa một lượt; `valid_from` không sớm hơn hiện tại 5 phút khi tạo; `valid_to > valid_from`, tối đa 180 ngày. Lỗi trả một lần `422 GNE-VAL-4220` + `errors[]` theo trường.
+- `scope` ∈ `ALL` (tất cả sản phẩm shop), `CATEGORY` (cần `category_ids`, ≤ 20), `PRODUCT` (cần `product_ids`, ≤ 100, sản phẩm **của chính shop**); `excluded_category_ids` / `excluded_product_ids` chỉ dùng khi `scope ≠ PRODUCT`.
+- Voucher shop: `type = SHOP`, `funded_by = VENDOR`, `vendor_id` = người gọi (server tự đặt — không nhận từ body). Voucher của shop khác → `404`.
+- **Sửa (`PUT`):** `SCHEDULED` chưa ai lưu → sửa mọi trường. `ACTIVE`, hoặc `SCHEDULED` đã có người lưu → chỉ được kéo dài `valid_to`, tăng `usage_limit`, tăng `budget`; đổi trường khác → `409 GNE-VCH-4094` `details.locked_fields`. `ENDED` / `DISABLED` → `409 GNE-VCH-4094` (dùng *Nhân bản*).
 - `201` / `200` → voucher như danh sách.
 
 #### `PATCH /seller/vouchers/{id}` — Tắt voucher
-`{ "is_active": false }` → `200`.
+`{ "is_active": false }` → `200` (tắt bản `SCHEDULED` = huỷ lịch; tắt lại vẫn `200`). Chỉ tắt một chiều: `{ "is_active": true }` → `422`.
 
 #### `GET /seller/flash-sales?registrable=true` — Chiến dịch đang mở đăng ký
 ```json
@@ -2608,7 +2615,7 @@ UC-PRO-02 · `MANAGE_VOUCHER` · **Màn hình:** 5 chỉ số (Đang chạy, Lư
 ```json
 [ { "id": 1, "title": "Siêu Sale Giữa Tháng", "code": "GENIE50", "discount_type": "PERCENTAGE", "discount_value": 50, "min_order_value": 500000, "max_discount": 100000, "usage": { "used": 3420, "limit": 10000 }, "usage_per_user": 1, "valid_from": "...", "valid_to": "...", "funded_by": "PLATFORM", "status": "ACTIVE" } ]
 ```
-`summary`: `{ "active_count": 2, "total_usage": 27320, "total_discount_used": 456800000, "scheduled_count": 1, "remaining_budget": 543200000 }`.
+`summary`: `{ "active_count": 2, "total_usage": 27320, "total_discount_used": 456800000, "scheduled_count": 1, "remaining_budget": 543200000 }` (`remaining_budget` = Σ ngân sách còn lại của voucher đang chạy / sắp diễn ra có ngân sách). Mỗi dòng thêm `type`, `scope`, `budget`, `platform_share_percent`, `is_coin_reward` (voucher là quà đổi Điểm — không đổi mã, không xóa).
 
 #### `GET /admin/vouchers/{id}` → `$PlatformVoucherInput` + `id`, `status`, `usage`
 
@@ -2634,16 +2641,16 @@ UC-PRO-02 · `MANAGE_VOUCHER` · **Màn hình:** 5 chỉ số (Đang chạy, Lư
   "platform_share_percent": 50
 }
 ```
-- `discount_type = FREESHIP` → voucher `type = FREESHIP`; còn lại `type = PLATFORM`.
-- `scope` ∈ `ALL, CATEGORY`. `funded_by` ∈ `PLATFORM, CO_SPONSOR` (`platform_share_percent` bắt buộc khi `CO_SPONSOR`).
-- `budget` hết → voucher tự tắt.
-- `valid_from` không ở quá khứ khi tạo mới; `valid_to > valid_from`. `409 GNE-VCH-4092` trùng mã.
+- `title` bắt buộc 5–100 ký tự. `discount_type = FREESHIP` → voucher `type = FREESHIP` (`max_discount` = trần hỗ trợ phí ship); còn lại `type = PLATFORM`. Giới hạn giá trị như 10.7.
+- `scope` ∈ `ALL, CATEGORY` (+ `excluded_product_ids`). `funded_by` ∈ `PLATFORM, CO_SPONSOR`; `platform_share_percent` 1–99 bắt buộc khi `CO_SPONSOR` (phần còn lại do shop có sản phẩm trong đơn chịu — chia khi áp voucher), bỏ khi `PLATFORM`.
+- `budget` hết → voucher tự tắt (trạng thái `ENDED`).
+- `valid_from` không ở quá khứ khi tạo mới; `valid_to > valid_from`. `409 GNE-VCH-4092` trùng mã. Luật sửa khi đang chạy như 10.7 (thêm được đổi `title`). Mỗi thao tác ghi nhật ký `VOUCHER_CREATED / UPDATED / DISABLED / DELETED`.
 
 #### `PATCH /admin/vouchers/{id}` — Tắt / Huỷ lịch
-`{ "is_active": false }` → `200`.
+`{ "is_active": false }` → `200` (một chiều như 10.7).
 
 #### `DELETE /admin/vouchers/{id}` — Xoá vĩnh viễn
-Chỉ khi `ENDED` và `usage.used = 0`. `204`; `409 GNE-VCH-4093` nếu đã có lượt dùng.
+Chỉ khi `ENDED` hoặc `DISABLED` **và** `usage.used = 0` (xóa luôn phạm vi + bản lưu trong Kho). `204`; `409 GNE-VCH-4093` nếu đã có lượt dùng; `409 GNE-VCH-4094` khi đang chạy / sắp diễn ra (tắt trước) hoặc là quà đổi Điểm.
 
 ### 11.15 Flash Sale
 UC-PRO-05 · `MANAGE_VOUCHER` · **Màn hình:** danh sách chiến dịch + trạng thái (Nháp / Đã lên lịch / Đang chạy / Đã kết thúc); chi tiết chiến dịch (khung giờ, tối đa SP/shop, hạn đăng ký; bảng sản phẩm Shop / Giá gốc 30 ngày / Giá Flash / Suất / Duyệt – Từ chối); Lên lịch (cần ≥ 1 SP đã duyệt) / Kết thúc sớm; modal "Tạo chiến dịch"
@@ -2981,6 +2988,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-VCH-4091` | 409 | Voucher đã được lưu | mới |
 | `GNE-VCH-4092` | 409 | Trùng mã voucher | mới |
 | `GNE-VCH-4093` | 409 | Voucher đã có lượt dùng, không xóa được | mới |
+| `GNE-VCH-4094` | 409 | Không sửa / xóa được ở trạng thái hiện tại (`details.locked_fields`) | mới (v1.10) |
 | `GNE-VCH-4221` | 422 | Voucher không áp dụng được (hết hạn, chưa đạt tối thiểu, vượt 85%…) | LLD |
 | `GNE-PRO-4091` | 409 | Đã điểm danh hôm nay | mới |
 | `GNE-PRO-4092` | 409 | Đổi Điểm lấy voucher đang có trong Kho Voucher (còn lượt dùng) hoặc đã dùng hết lượt / người (`details.reason = "USAGE_LIMIT_REACHED"`) | mới |
