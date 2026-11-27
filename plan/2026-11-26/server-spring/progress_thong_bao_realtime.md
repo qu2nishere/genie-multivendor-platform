@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-26 — N03 xong, tiếp N04 (41 / 98) |
+| **Cập nhật gần nhất** | 2026-11-27 — N04 xong, tiếp N05 (web) (52 / 98) |
 
 **Cách dùng**
 
@@ -52,14 +52,14 @@
 | N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 10 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 14 / 14 |
-| N04 | API hộp thư `/me/notifications` | 10 | 1 | 0 / 11 |
+| N04 | API hộp thư `/me/notifications` | 10 | 1 | 11 / 11 |
 | N05 | Nối web: hub realtime + chuông + hộp thư (UC-NOT-01) | 8 | 2 | 0 / 10 |
 | N06 | API quản trị thông báo sàn (UC-NOT-05) | 10 | 1 | 0 / 11 |
 | N07 | Phát & đẩy realtime thông báo sàn | 4 | 1 | 0 / 5 |
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **41 / 98** |
+| **Tổng** | | **81** | **17** | **52 / 98** |
 
 ## N00 — Chuẩn bị
 
@@ -116,17 +116,17 @@
 
 ## N04 — API hộp thư `/me/notifications`
 
-- [ ] **N04.01** `NotificationRepository`
-- [ ] **N04.02** `PlatformNotificationRepository` / `UserPlatformNotificationReadRepository`
-- [ ] **N04.03** `AdminInboxQueryService`
-- [ ] **N04.04** `InboxCursor` (D8)
-- [ ] **N04.05** `InboxQueryService.page(me, category, cursor, limit)`
-- [ ] **N04.06** `InboxReadService`
-- [ ] **N04.07** `MeNotificationController`
-- [ ] **N04.08** `MeNotificationIT`
-- [ ] **N04.09** `AdminInboxIT`
-- [ ] **N04.10** `NotificationRealtimeIT`
-- [ ] **N04.C1** 🔖 COMMIT `feat(notification): serve merged inbox with cursor paging and read marks` · hash: `…`
+- [x] **N04.01** `NotificationRepository`
+- [x] **N04.02** `PlatformNotificationRepository` / `UserPlatformNotificationReadRepository`
+- [x] **N04.03** `AdminInboxQueryService`
+- [x] **N04.04** `InboxCursor` (D8)
+- [x] **N04.05** `InboxQueryService.page(me, category, cursor, limit)`
+- [x] **N04.06** `InboxReadService`
+- [x] **N04.07** `MeNotificationController`
+- [x] **N04.08** `MeNotificationIT`
+- [x] **N04.09** `AdminInboxIT`
+- [x] **N04.10** `NotificationRealtimeIT`
+- [x] **N04.C1** 🔖 COMMIT `feat(notification): serve merged inbox with cursor paging and read marks` · hash: `60d7620`
 
 ## N05 — Nối web: hub realtime + chuông + hộp thư (UC-NOT-01)
 
@@ -214,6 +214,10 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N04.01–N04.03 | **Khác plan:** truy vấn hộp thư viết bằng `NamedParameterJdbcTemplate` trong `InboxQueryService` / `InboxReadService` (trộn 3 bảng, `INSERT … SELECT … ON CONFLICT`) thay vì thêm phương thức vào 3 repository JPA — điều kiện "thông báo sàn hiển thị cho người xem" viết một lần ở `InboxReadModel.PLATFORM_VISIBLE`, dùng chung cho đếm / phân trang / đánh dấu đọc |
+| N04.04–N04.05 | `InboxCursor` = Base64URL `at(micro giây):nguồn:id`, khóa sắp toàn phần giảm dần (cùng thời điểm: `an_` > `pn_` > `ntf_`); điều kiện SQL theo hạng nguồn (`cursorClause`). `body` của `pn_` = văn bản thuần 160 ký tự, `content_html` = HTML đã lọc; thời gian trả +07:00 |
+| N04.08–N04.10 | `MeNotificationIT` 6 ca (trộn 5 dòng qua 3 trang không trùng / sót, lọc nhóm + 422, đối tượng `ALL/CUSTOMER/VENDOR/SPECIFIC_USERS` + người đăng ký sau không thấy + Admin không nhận `pn_`, IDOR 404, `is_read:false` 422, mark-all-read theo nhóm), `AdminInboxIT` (Moderator / Finance / Admin / khách, 404 khi thiếu quyền, đọc chung), `NotificationRealtimeIT` 3 ca STOMP thật (chỉ chủ nhận + `unread_count`, `NOTIFICATIONS_READ` đồng bộ tab 2, cảnh báo nhân viên chỉ tới người có quyền). Lớp hỗ trợ dọn `platform_notifications` / `admin_notifications` trước mỗi ca (bảng không gắn người). MockMvc trả ISO-8859-1 mặc định → đọc `getContentAsString(UTF_8)`. Cổng: **235 unit + 379 IT** xanh |
+| Môi trường | Qua ngày Docker Desktop tự tắt → bật lại trước khi chạy IT |
 | N03.02 | **Khác plan:** `ModuleBoundaryTest` cấm module khác chạm `notification..domain..` → thêm 2 enum công khai ở tầng `application`: `NotificationKind` (mirror `NotificationType`) và `StaffAlertKind` (mirror `AdminNotificationType`); `NotificationKindTest` bảo đảm luôn cùng tập giá trị. `NotificationCommand.type` dùng `NotificationKind` |
 | N03.03 | **Khác plan:** trong listener `@TransactionalEventListener(AFTER_COMMIT)` đăng ký thêm "sau commit" sẽ không bao giờ chạy (Spring đã chụp danh sách synchronization) → facade có 2 cửa: `send` / `sendMany` / `upsertChat` (gọi TRONG transaction nghiệp vụ — ghi sau commit, rollback thì không) và `sendNow` / `sendManyNow` (gọi từ listener sau commit). Cả hai ghi trong `REQUIRES_NEW`, lỗi chỉ log. Dòng `IN_APP` lưu là đã tới hộp thư → ghi thẳng `delivery_status = SENT` (không qua `PENDING` → `markSent` như plan) |
 | N03.05 | `AdminInboxFacade.raise` / `raiseNow`; người nhận realtime = `OnlineUsers.allOnline()` ∩ nhân viên có quyền (`InboxReadModel.staffAllowed` — SQL `users` + `staff_permissions`, ADMIN luôn có). Luật quyền / đích ở `AdminInboxRules` |
@@ -242,3 +246,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | 2026-11-26 | N00 (chốt D1–D20, kiểm `V26` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V26`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
 | 2026-11-26 | N02: API_SPEC 3.12 / 4.1 / 11.17 / 13 + Usecase UC-NOT-01 / 05; jsoup; mã lỗi `GNE-NOT-*`, `NOTIFICATION_IMAGE`, `OnlineUsers`, `HtmlSanitizer`; verify xanh 228 unit + 359 IT. Nhánh `feature/notification-inbox` xếp chồng trên `feature/b56-shared-schema` | `5bc76c5` `88636db` `f8bf25b` |
 | 2026-11-26 | N03: `NotificationFacade` (ghi sau commit + đẩy WebSocket), `AdminInboxFacade`, read-model đếm chưa đọc 3 nguồn, nguồn thông báo KYC / thiết bị mới / lệch Điểm / đặt COD; verify xanh 232 unit + 369 IT | `ba5b0c4` `34e27cf` `4dba62b` `436d7ef` |
+| 2026-11-27 | N04: `GET /me/notifications` (gộp `ntf_` / `pn_` / `an_`, cursor), `PATCH /{id}`, `POST /mark-all-read`, gói tin `NOTIFICATIONS_READ`; verify xanh 235 unit + 379 IT | `60d7620` |
