@@ -7,6 +7,7 @@ import { signOut } from '@/features/auth';
 import {
   badgeText,
   NotifPanel,
+  SafeHtml,
   useNotifications,
   type AppNotification,
 } from '@/features/notifications';
@@ -88,7 +89,20 @@ export function NotifBell() {
             <div className="text-xs text-muted mt-1.5 mb-3.5">
               {formatDateTime(detail.createdAt, { locale })}
             </div>
-            <p className="m-0 text-sm text-body leading-relaxed">{detail.body}</p>
+            {detail.imageUrl && (
+              <img
+                src={detail.imageUrl}
+                alt=""
+                width={460}
+                height={230}
+                className="w-full h-auto rounded-md mb-3 object-cover"
+              />
+            )}
+            {detail.contentHtml ? (
+              <SafeHtml html={detail.contentHtml} className="text-sm" />
+            ) : (
+              <p className="m-0 text-sm text-body leading-relaxed">{detail.body}</p>
+            )}
           </div>
         )}
       </Modal>

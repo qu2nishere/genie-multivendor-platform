@@ -1,8 +1,8 @@
 // Thông báo mẫu (prototype data.jsx NOTIFICATIONS). Tiêu đề / nội dung là dữ liệu từ server nên giữ
 // nguyên tiếng Việt như prototype.
-import type { NotificationDto } from './notifications.dto';
+import type { MockNotificationDto } from './notifications.dto';
 
-export const NOTIFICATION_DTOS: NotificationDto[] = [
+export const NOTIFICATION_DTOS: MockNotificationDto[] = [
   {
     id: 'n1',
     type: 'order',
@@ -97,7 +97,7 @@ export const NOTIFICATION_DTOS: NotificationDto[] = [
 ];
 
 /** Thông báo của chủ shop ở Seller Center (prototype vendor/data.jsx NOTIFICATIONS). */
-export const SELLER_NOTIFICATION_DTOS: NotificationDto[] = [
+export const SELLER_NOTIFICATION_DTOS: MockNotificationDto[] = [
   {
     id: 'vn1',
     type: 'system',
@@ -153,7 +153,7 @@ export const SELLER_NOTIFICATION_DTOS: NotificationDto[] = [
 ];
 
 /** Thông báo của nhân viên ở Admin Portal (prototype admin/data.jsx NOTIFS). */
-export const ADMIN_NOTIFICATION_DTOS: NotificationDto[] = [
+export const ADMIN_NOTIFICATION_DTOS: MockNotificationDto[] = [
   {
     id: 'an1',
     type: 'system',
