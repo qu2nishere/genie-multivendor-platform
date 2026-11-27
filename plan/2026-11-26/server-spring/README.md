@@ -91,7 +91,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 | Thứ tự | Plan | Use case phải tick khi xong | Phụ trách | Xong plan |
 |:---:|---|---|---|:---:|
 | 1 | [1] Thông báo & realtime | `UC-NOT-01`, `UC-NOT-05` — ✅ 2026-11-27 (chạy thật 13 / 13) | Nguyễn Ngọc Thiện | ☑ |
-| 2 | [2] Chat Khách – Shop | `UC-SOC-01`, `UC-SOC-02`, `UC-VND-06` | Nguyễn Ngọc Thiện | ☐ |
+| 2 | [2] Chat Khách – Shop | `UC-SOC-01`, `UC-SOC-02`, `UC-VND-06` — ✅ 2026-11-27 (chạy thật 15 / 15, 50 cặp p95 235 ms) | Nguyễn Ngọc Thiện | ☑ |
 | 3 | [3] Voucher B5 | `UC-PRO-01`, `UC-PRO-02`, `UC-PRO-03` | Nguyễn Ngọc Thiện | ☐ |
 
 Khi cả 3 dòng `☑`: tổng quan checklist dự kiến **Đã triển khai +8** (24 → 32 theo số 2026-11-26; đếm lại từ các dòng UC lúc đóng plan), phân hệ 07: +3, 08: +2, 05: +1, 10: +2.
