@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  chatImageValid,
   flattenPages,
   insertMessage,
   markSeen,
@@ -98,5 +99,13 @@ describe('chat.rules', () => {
     expect(presenceOf(true, '2026-06-08T00:00:00Z')).toEqual({ key: 'chat.online', at: null });
     expect(presenceOf(false, '2026-06-08T00:00:00Z').key).toBe('chat.active_ago');
     expect(presenceOf(false, null).key).toBe('chat.offline');
+  });
+
+  it('ảnh chat: JPEG / PNG / WebP ≤ 5 MB, kiểm trước khi nén', () => {
+    expect(chatImageValid({ type: 'image/png', size: 1000 })).toBe(true);
+    expect(chatImageValid({ type: 'image/webp', size: 5 * 1024 * 1024 })).toBe(true);
+    expect(chatImageValid({ type: 'image/jpeg', size: 5 * 1024 * 1024 + 1 })).toBe(false);
+    expect(chatImageValid({ type: 'image/gif', size: 10 })).toBe(false);
+    expect(chatImageValid({ type: 'image/png', size: 0 })).toBe(false);
   });
 });

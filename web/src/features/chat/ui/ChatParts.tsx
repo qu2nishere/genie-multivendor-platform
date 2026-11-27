@@ -11,6 +11,7 @@ import { Icon, Seal, Spinner, toast } from '@/shared/ui';
 import { useConversationOrders, useTyping } from '../application/chatThread';
 import { useMarkRead, useMessages, useSendMessage } from '../application/useChat';
 import {
+  chatImageValid,
   MAX_TEXT,
   mergeMessages,
   presenceOf,
@@ -275,6 +276,7 @@ export function Thread({
   };
   const pickImage = async (f: File | undefined) => {
     if (!f) return;
+    if (!chatImageValid(f)) return void toast.error(t('chat.image_invalid'));
     setUploading(true);
     try {
       const up = await uploadFile(f, 'CHAT_IMAGE');
