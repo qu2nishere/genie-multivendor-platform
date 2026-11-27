@@ -6,6 +6,8 @@ import com.genie.common.error.BusinessException;
 import com.genie.common.error.ErrorCode;
 import com.genie.common.error.InvalidRequestException;
 import com.genie.common.security.RateLimiter;
+import com.genie.common.storage.UploadPurpose;
+import com.genie.common.storage.UploadService;
 import com.genie.notification.inbox.application.NotificationFacade;
 import com.genie.social.chat.application.ChatShopDirectory.ChatShop;
 import com.genie.social.chat.application.ChatViews.MessageView;
@@ -15,6 +17,7 @@ import com.genie.social.chat.domain.Conversation.Side;
 import com.genie.social.chat.domain.ConversationRepository;
 import com.genie.social.chat.domain.Message;
 import com.genie.social.chat.domain.MessageRepository;
+import com.genie.social.chat.domain.MessageType;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -23,6 +26,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -47,6 +52,9 @@ public class ChatService {
     private final RateLimiter rateLimiter;
     private final NotificationFacade notifications;
     private final ChatRealtime realtime;
+    private final ChatProductLookup products;
+    private final ChatOrderLookup orders;
+    private final UploadService uploads;
     private final NamedParameterJdbcTemplate jdbc;
     private final Clock clock;
     private final TransactionTemplate tx;
@@ -54,6 +62,7 @@ public class ChatService {
     public ChatService(ConversationRepository conversations, MessageRepository messages, ChatShopDirectory shops,
                        UserFacade users, ChatQueryService query, ChatMessageViews views, ChatIdempotency idempotency,
                        RateLimiter rateLimiter, NotificationFacade notifications, ChatRealtime realtime,
+                       ChatProductLookup products, ChatOrderLookup orders, UploadService uploads,
                        NamedParameterJdbcTemplate jdbc,
                        Clock clock, PlatformTransactionManager transactionManager) {
         this.conversations = conversations;
@@ -66,6 +75,9 @@ public class ChatService {
         this.rateLimiter = rateLimiter;
         this.notifications = notifications;
         this.realtime = realtime;
+        this.products = products;
+        this.orders = orders;
+        this.uploads = uploads;
         this.jdbc = jdbc;
         this.clock = clock;
         this.tx = new TransactionTemplate(transactionManager);
@@ -95,11 +107,8 @@ public class ChatService {
     /** 8.4 / {@code /app/chat.send} (3.2). */
     public Sent send(long me, Side side, long conversationId, SendCommand cmd) {
         String cmid = ChatIdempotency.normalize(cmd.clientMessageId());
-        String type = cmd.type() == null ? "" : cmd.type().trim().toUpperCase();
-        String text = "TEXT".equals(type) ? normalizeText(cmd.text()) : null;
-        if (!"TEXT".equals(type)) {
-            throw InvalidRequestException.of("type", "UNSUPPORTED", cmd.type(), "Loại tin không được hỗ trợ.");
-        }
+        MessageType type = typeOf(cmd);
+        String text = type == MessageType.TEXT ? normalizeText(cmd.text()) : null;
         ChatIdempotency.Claim claim = idempotency.claim(me, cmid);
         if (!claim.fresh()) {
             long existing = claim.existingId().orElseThrow(() -> new BusinessException(ErrorCode.RATE_LIMITED));
@@ -110,7 +119,7 @@ public class ChatService {
             Message saved = tx.execute(status -> {
                 Conversation c = lockMember(me, side, conversationId);
                 ensureWritable(c);
-                Message m = Message.text(c.getId(), me, text, now());
+                Message m = build(c, me, type, text, cmd);
                 messages.save(m);
                 c.onNewMessage(m, c.sideOf(me) == Side.CUSTOMER);
                 realtime.messageCreated(c, m, cmid);
@@ -149,6 +158,87 @@ public class ChatService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
         checkSide(c, me, null);
         realtime.typing(c, me);
+    }
+
+    /** Loại tin + kiểm trường bắt buộc theo loại (API_SPEC 8.4) — 422 trước khi tốn lượt rate limit. */
+    static MessageType typeOf(SendCommand cmd) {
+        MessageType type;
+        try {
+            type = MessageType.valueOf(cmd.type() == null ? "" : cmd.type().trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw InvalidRequestException.of("type", "UNSUPPORTED", cmd.type(), "Loại tin không được hỗ trợ.");
+        }
+        switch (type) {
+            case IMAGE -> {
+                if (cmd.imageObjectKey() == null || cmd.imageObjectKey().isBlank()) {
+                    throw InvalidRequestException.of("image_object_key", "REQUIRED", null, "Thiếu ảnh.");
+                }
+            }
+            case PRODUCT_CARD -> {
+                if (cmd.productId() == null || cmd.productId() <= 0) {
+                    throw InvalidRequestException.of("product_id", "REQUIRED", cmd.productId(), "Thiếu sản phẩm.");
+                }
+            }
+            case ORDER_CARD -> {
+                if (cmd.orderId() == null || cmd.orderId() <= 0) {
+                    throw InvalidRequestException.of("order_id", "REQUIRED", cmd.orderId(), "Thiếu đơn hàng.");
+                }
+            }
+            case TEXT -> {
+                // kiểm ở normalizeText
+            }
+        }
+        return type;
+    }
+
+    /** Dựng tin theo loại (UC-SOC-02 — D7, D8, D9); gọi khi đang khóa hội thoại. */
+    private Message build(Conversation c, long me, MessageType type, String text, SendCommand cmd) {
+        OffsetDateTime at = now();
+        return switch (type) {
+            case TEXT -> Message.text(c.getId(), me, text, at);
+            case IMAGE -> {
+                // khóa tmp/user/{me}/… của CHÍNH người gửi → conversation/{id}/{uuid}.{ext} (bucket riêng tư)
+                String key = uploads.promoteTo(me, UploadPurpose.CHAT_IMAGE, cmd.imageObjectKey().trim(),
+                        "conversation/" + c.getId() + "/").objectKey();
+                deleteOnRollback(key);
+                yield Message.image(c.getId(), me, key, at);
+            }
+            case PRODUCT_CARD -> {
+                ChatProductLookup.ProductRef ref = products.resolve(cmd.productId(), cmd.variantId())
+                        .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_CARD_FORBIDDEN));
+                if (ref.vendorUserId() != c.getVendorId() || !ref.published()) {
+                    throw new BusinessException(ErrorCode.CHAT_CARD_FORBIDDEN);
+                }
+                if (ref.variantId() == null) {
+                    if (cmd.variantId() != null) {
+                        throw InvalidRequestException.of("variant_id", "NOT_IN_PRODUCT", cmd.variantId(),
+                                "Biến thể không thuộc sản phẩm.");
+                    }
+                    throw new BusinessException(ErrorCode.CHAT_CARD_FORBIDDEN);
+                }
+                yield Message.productCard(c.getId(), me, ref.variantId(), at);
+            }
+            case ORDER_CARD -> {
+                if (!orders.belongs(cmd.orderId(), c.getCustomerId(), c.getVendorId())) {
+                    throw new BusinessException(ErrorCode.CHAT_CARD_FORBIDDEN);
+                }
+                yield Message.orderCard(c.getId(), me, cmd.orderId(), at);
+            }
+        };
+    }
+
+    /** Transaction rollback sau khi đã chuyển ảnh → xóa tệp để không sót ảnh mồ côi trong bucket riêng tư. */
+    private void deleteOnRollback(String key) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCompletion(int status) {
+                    if (status == STATUS_ROLLED_BACK) {
+                        uploads.deleteQuietly(UploadPurpose.CHAT_IMAGE, key);
+                    }
+                }
+            });
+        }
     }
 
     /** Chữ: bỏ ký tự điều khiển (giữ xuống dòng / tab), cắt khoảng trắng hai đầu, 1–2.000 ký tự (D6). */
