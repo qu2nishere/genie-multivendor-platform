@@ -77,6 +77,9 @@ public enum ErrorCode {
 
     // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
     CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),
+    // ===== Tương tác — chat (API_SPEC 8, 15 — UC-SOC-01, UC-SOC-02; plan 2026-11-26 chat M02.01) =====
+    CHAT_CARD_FORBIDDEN("GNE-SOC-4031", HttpStatus.FORBIDDEN, "Đơn hàng / sản phẩm không thuộc cuộc trò chuyện này."),
+    CHAT_OWN_SHOP("GNE-SOC-4096", HttpStatus.CONFLICT, "Không thể nhắn tin với shop của chính mình."),
 
     // ===== Mở shop & KYC người bán (API_SPEC 0.9, 9, 10.11, 10.12, 15 — UC-VND-01/02/05/07/21) =====
     SHOP_NOT_VERIFIED("GNE-VND-4031", HttpStatus.FORBIDDEN, "Shop chưa được xác minh (KYC)."),

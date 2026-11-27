@@ -21,6 +21,13 @@ public enum UploadPurpose {
      * Ảnh banner của thông báo toàn sàn (UC-NOT-05; API_SPEC 4.1; plan 2026-11-26 thông báo D14) — {@code content-assets}
      * công khai, JPEG / PNG / WebP ≤ 5 MB, quyền {@code MANAGE_PLATFORM_NOTIFICATION}; khóa chính thức {@code notice/{id}/…}.
      */
+    /**
+     * Ảnh gửi trong chat (UC-SOC-02; API_SPEC 4.1; plan 2026-11-26 chat D7) — bucket RIÊNG TƯ {@code chat-media},
+     * JPEG / PNG / WebP ≤ 5 MB, ai đã đăng nhập cũng xin được; khóa chính thức {@code conversation/{id}/…}, chỉ đọc qua
+     * link ký tạm 10 phút (người xem phải là thành viên hội thoại — kiểm ở module chat).
+     */
+    CHAT_IMAGE("chat-media", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, false, false, null),
+
     NOTIFICATION_IMAGE("content-assets", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
             "MANAGE_PLATFORM_NOTIFICATION"),
 

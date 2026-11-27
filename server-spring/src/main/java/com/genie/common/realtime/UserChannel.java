@@ -19,6 +19,9 @@ public class UserChannel {
     /** Thông báo mới / đã đọc — chuông header (API_SPEC 13; UC-NOT-01, UC-NOT-05). */
     public static final String NOTIFICATIONS = "/queue/notifications";
 
+    /** Tin nhắn / đã xem / đang gõ của chat (API_SPEC 13; UC-SOC-01, UC-SOC-02). */
+    public static final String CHAT = "/queue/chat";
+
     /** Kênh chung: thông báo sàn {@code target = ALL} (API_SPEC 13) — client nào đã đăng nhập cũng đăng ký được. */
     public static final String PLATFORM_TOPIC = "/topic/platform";
 
