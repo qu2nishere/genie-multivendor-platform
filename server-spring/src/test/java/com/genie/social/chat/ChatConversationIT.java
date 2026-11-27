@@ -291,10 +291,10 @@ class ChatConversationIT extends ChatTestSupport {
         chat.send(buyer, Side.CUSTOMER, conv, SendCommand.text("Shop ơi", null));
         long last = chat.send(buyer, Side.CUSTOMER, conv, SendCommand.text("Còn hàng không?", null)).view().id();
         chat.send(shop.userId(), Side.VENDOR, conv, SendCommand.text("Dạ đợi chút", null));
-        jdbc.update("INSERT INTO notifications (user_id, type, title, body, reference_id, reference_type, channel, "
-                + "delivery_status, retry_count, is_read, sent_at, created_at) VALUES (?, 'CHAT_MESSAGE', 'Tin mới', "
-                + "'Shop ơi', ?, 'CONVERSATION', 'IN_APP', 'SENT', 0, FALSE, now(), now())", shop.userId(),
-                String.valueOf(conv));
+        // chủ shop không trực tuyến → đã có một thông báo CHAT_MESSAGE chưa đọc cho hội thoại (M04.03)
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM notifications WHERE user_id = ? AND type = 'CHAT_MESSAGE' "
+                + "AND is_read = FALSE AND reference_id = ?", Integer.class, shop.userId(), String.valueOf(conv)))
+                .isEqualTo(1);
 
         Long upTo = chat.read(shop.userId(), Side.VENDOR, conv);
         assertThat(upTo).isEqualTo(last);

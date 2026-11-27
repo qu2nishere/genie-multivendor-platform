@@ -46,13 +46,15 @@ public class ChatService {
     private final ChatIdempotency idempotency;
     private final RateLimiter rateLimiter;
     private final NotificationFacade notifications;
+    private final ChatRealtime realtime;
     private final NamedParameterJdbcTemplate jdbc;
     private final Clock clock;
     private final TransactionTemplate tx;
 
     public ChatService(ConversationRepository conversations, MessageRepository messages, ChatShopDirectory shops,
                        UserFacade users, ChatQueryService query, ChatMessageViews views, ChatIdempotency idempotency,
-                       RateLimiter rateLimiter, NotificationFacade notifications, NamedParameterJdbcTemplate jdbc,
+                       RateLimiter rateLimiter, NotificationFacade notifications, ChatRealtime realtime,
+                       NamedParameterJdbcTemplate jdbc,
                        Clock clock, PlatformTransactionManager transactionManager) {
         this.conversations = conversations;
         this.messages = messages;
@@ -63,6 +65,7 @@ public class ChatService {
         this.idempotency = idempotency;
         this.rateLimiter = rateLimiter;
         this.notifications = notifications;
+        this.realtime = realtime;
         this.jdbc = jdbc;
         this.clock = clock;
         this.tx = new TransactionTemplate(transactionManager);
@@ -110,6 +113,7 @@ public class ChatService {
                 Message m = Message.text(c.getId(), me, text, now());
                 messages.save(m);
                 c.onNewMessage(m, c.sideOf(me) == Side.CUSTOMER);
+                realtime.messageCreated(c, m, cmid);
                 return m;
             });
             idempotency.complete(me, cmid, saved.getId());
@@ -134,8 +138,17 @@ public class ChatService {
                     SELECT MAX(id) FROM u""", new MapSqlParameterSource("cid", conversationId).addValue("me", me),
                     Long.class);
             notifications.markChatRead(me, conversationId);
+            realtime.seen(c, me, upTo);
             return upTo;
         });
+    }
+
+    /** {@code /app/chat.typing} — chuyển tiếp cho bên kia, không lưu (D14). */
+    public void typing(long me, long conversationId) {
+        Conversation c = conversations.findById(conversationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
+        checkSide(c, me, null);
+        realtime.typing(c, me);
     }
 
     /** Chữ: bỏ ký tự điều khiển (giữ xuống dòng / tab), cắt khoảng trắng hai đầu, 1–2.000 ký tự (D6). */
