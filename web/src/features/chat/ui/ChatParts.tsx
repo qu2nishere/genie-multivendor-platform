@@ -9,9 +9,28 @@ import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatDateTime, formatRelative, formatVND } from '@/shared/lib/format';
 import { Icon, Seal, Spinner, toast } from '@/shared/ui';
-import { isTyping, useMarkRead, useMessages, useSendMessage } from '../application/useChat';
-import { mergeMessages, previewKey, QUICK_REPLIES, statusKey } from '../domain/chat.rules';
+import { useTyping } from '../application/chatThread';
+import { useMarkRead, useMessages, useSendMessage } from '../application/useChat';
+import {
+  MAX_TEXT,
+  mergeMessages,
+  presenceOf,
+  previewKey,
+  QUICK_REPLIES,
+  statusKey,
+} from '../domain/chat.rules';
 import type { ChatMessage, Conversation } from '../domain/chat.types';
+
+/** "Đang hoạt động" / "Hoạt động 5 phút trước" / "Ngoại tuyến" (API_SPEC 8.1 is_online, last_active_at). */
+export function presenceText(
+  t: ReturnType<typeof useT>['t'],
+  locale: ReturnType<typeof useT>['locale'],
+  online: boolean,
+  lastActiveAt: string | null,
+): string {
+  const p = presenceOf(online, lastActiveAt);
+  return t(p.key, { time: p.at ? formatRelative(p.at, { locale }) : '' });
+}
 
 export function ConversationList({
   items,
@@ -94,11 +113,14 @@ export function Bubble({
   m,
   avatar,
   orderHref = (o) => `/orders/${o.id}`,
+  onRetry,
 }: {
   m: ChatMessage;
   /** Ảnh đại diện bên kia (con dấu shop / avatar khách). */
   avatar: ReactNode;
   orderHref?: (o: { id: number; code: string }) => string;
+  /** Bong bóng lỗi → "Gửi lại" (cùng client_message_id). */
+  onRetry?: (clientId: string) => void;
 }) {
   const { t, locale } = useT();
   const st = statusKey(m);
@@ -144,32 +166,57 @@ export function Bubble({
         {m.type === 'PRODUCT_CARD' && m.product && (
           <div className="w-[210px] bg-surface-card border border-solid border-line rounded-lg overflow-hidden">
             <div className="flex gap-[9px] p-[9px]">
-              <img
-                src={m.product.image}
-                alt=""
-                width={48}
-                height={48}
-                className="w-12 h-12 rounded-sm object-cover flex-none"
-              />
+              {m.product.image ? (
+                <img
+                  src={m.product.image}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="w-12 h-12 rounded-sm object-cover flex-none"
+                />
+              ) : (
+                <span className="w-12 h-12 rounded-sm bg-gray-100 flex-none" />
+              )}
               <div className="min-w-0">
                 <div className="text-xs text-body line-clamp-2">{m.product.name}</div>
-                <div className="font-bold text-[13px] text-price mt-0.5">
-                  {formatVND(m.product.price, { locale })}
-                </div>
+                {m.product.available && m.product.price != null ? (
+                  <div className="font-bold text-[13px] text-price mt-0.5">
+                    {formatVND(m.product.price, { locale })}
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-muted mt-0.5">
+                    {t('chat.product_unavailable')}
+                  </div>
+                )}
               </div>
             </div>
-            <a
-              href={`/p/${m.product.slug}-${m.product.id}`}
-              className="block border-0 border-t border-solid border-line-subtle px-2.5 py-1.5 font-semibold text-xs text-link text-center no-underline"
-            >
-              {t('chat.view_product')}
-            </a>
+            {m.product.available && (
+              <a
+                href={`/p/${m.product.slug}-${m.product.id}`}
+                className="block border-0 border-t border-solid border-line-subtle px-2.5 py-1.5 font-semibold text-xs text-link text-center no-underline"
+              >
+                {t('chat.view_product')}
+              </a>
+            )}
           </div>
         )}
       </div>
       <span className={cn('text-[10px] text-subtle mt-[3px]', m.mine ? 'mr-1' : 'ml-[33px]')}>
+        {m.auto && <span className="font-semibold">{t('chat.auto_reply')} · </span>}
         <time dateTime={m.sentAt}>{formatDateTime(m.sentAt, { locale })}</time>
         {st && ` · ${t(st)}`}
+        {m.status === 'FAILED' && m.clientId && onRetry && (
+          <>
+            {' · '}
+            <button
+              type="button"
+              onClick={() => onRetry(m.clientId as string)}
+              className="border-0 bg-transparent p-0 text-[10px] font-semibold text-link cursor-pointer underline"
+            >
+              {t('chat.retry')}
+            </button>
+          </>
+        )}
       </span>
     </div>
   );
@@ -186,23 +233,37 @@ export function Thread({
 }) {
   const { t } = useT();
   const q = useMessages(c.id);
-  const { send, pending } = useSendMessage(c.id);
+  const { send, retry, pending } = useSendMessage(c.id);
   const read = useMarkRead();
+  const { typing, notifyTyping } = useTyping(c.id, q.isFetched);
   const orders = useOrders();
   const [draft, setDraft] = useState('');
   const [orderMenu, setOrderMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
   const body = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLInputElement>(null);
-  const list = mergeMessages(q.data ?? [], pending);
-  const typing = isTyping(c.id) && q.isFetched;
+  const list = mergeMessages(q.messages, pending);
+  const lastIncoming = [...q.messages].reverse().find((m) => !m.mine)?.id ?? null;
   const shopOrders = (orders.data?.items ?? []).filter((o) => o.shop.id === c.shop.id).slice(0, 8);
 
   useEffect(() => {
-    if (c.unread > 0) read.mutate(c.id);
+    if (c.unread > 0) void read(c.id);
     // chỉ khi mở hội thoại
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [c.id]);
+  // tin mới của bên kia tới khi đang mở hội thoại (và tab đang hiện) → "Đã xem" ngay
+  const seenIncoming = useRef<number | string | null>(null);
+  useEffect(() => {
+    if (lastIncoming == null || !q.isFetched) return;
+    if (seenIncoming.current == null) {
+      seenIncoming.current = lastIncoming;
+      return;
+    }
+    if (lastIncoming !== seenIncoming.current && document.visibilityState === 'visible') {
+      seenIncoming.current = lastIncoming;
+      void read(c.id);
+    }
+  }, [lastIncoming, q.isFetched, c.id, read]);
   useEffect(() => {
     if (body.current) body.current.scrollTop = body.current.scrollHeight;
   }, [list.length, typing]);
@@ -245,11 +306,24 @@ export function Thread({
             <Spinner />
           </div>
         )}
+        {q.hasOlder && (
+          <div className="text-center mb-2">
+            <button
+              type="button"
+              onClick={q.loadOlder}
+              disabled={q.loadingOlder}
+              className="border-0 bg-transparent text-xs font-semibold text-link cursor-pointer"
+            >
+              {q.loadingOlder ? <Spinner size={14} /> : t('chat.load_older')}
+            </button>
+          </div>
+        )}
         {list.map((m) => (
           <Bubble
             key={String(m.id)}
             m={m}
             avatar={<Seal id={c.shop.id} name={c.shop.name} size={26} />}
+            onRetry={retry}
           />
         ))}
         {typing && (
@@ -342,8 +416,11 @@ export function Thread({
         </div>
         <input
           value={draft}
-          maxLength={1000}
-          onChange={(e) => setDraft(e.target.value)}
+          maxLength={MAX_TEXT}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (e.target.value) notifyTyping();
+          }}
           placeholder={t('chat.placeholder')}
           aria-label={t('chat.placeholder')}
           className="flex-1 min-w-0 h-10 border-[1.5px] border-solid border-line rounded-pill px-[15px] text-sm outline-none bg-surface-card focus:border-primary"

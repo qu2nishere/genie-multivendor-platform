@@ -148,6 +148,7 @@
     "GNE-SOC-4093": "Bạn đã báo cáo đánh giá này.",
     "GNE-SOC-4094": "Shop đã phản hồi đánh giá này.",
     "GNE-SOC-4095": "Không thể theo dõi shop của chính mình.",
+    "GNE-SOC-4096": "Không thể nhắn tin với shop của chính mình.",
     "GNE-SOC-4221": "Phản hồi không được chứa số điện thoại.",
     "GNE-VND-4031": "Shop chưa được xác minh (KYC).",
     "GNE-VND-4041": "Gian hàng không tồn tại hoặc đã ngừng hoạt động.",
@@ -1808,7 +1809,13 @@
     "open_full": "Mở toàn trang",
     "launcher": "Chat với shop",
     "launcher_unread": "Chat với shop, {count} tin chưa đọc",
-    "response": "Phản hồi {rate}% · trong khoảng {minutes} phút"
+    "response": "Phản hồi {rate}% · trong khoảng {minutes} phút",
+    "response_rate": "Phản hồi {rate}%",
+    "active_ago": "Hoạt động {time}",
+    "product_unavailable": "Sản phẩm không còn bán",
+    "auto_reply": "Tin nhắn tự động",
+    "retry": "Gửi lại",
+    "load_older": "Xem tin cũ hơn"
   },
   "seller-onboarding": {
     "landing": {
