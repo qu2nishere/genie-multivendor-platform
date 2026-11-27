@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.genie.catalog.product.domain.VariantAttributes;
 import com.genie.catalog.product.domain.VariantMatrix;
 import com.genie.catalog.search.domain.SlugUtil;
 import com.genie.common.cache.JsonCache;
@@ -151,14 +152,16 @@ public class ProductDetailService {
         List<VariantMatrix.Sku> skus = new ArrayList<>();
         Map<Long, String> variantImages = new HashMap<>();
         jdbc.query("""
-                SELECT v.id, v.attributes_json::text AS attrs, v.price,
+                SELECT v.id, v.attributes_json::text AS attrs, v.variant_name, v.price,
                        COALESCE(v.image_url, (SELECT i.image_url FROM product_images i WHERE i.variant_id = v.id
                                                ORDER BY i.display_order, i.id LIMIT 1)) AS image_url
                   FROM product_variants v WHERE v.product_id = ? AND v.deleted_at IS NULL ORDER BY v.id""", rs -> {
             long vid = rs.getLong("id");
             String img = media.product(rs.getString("image_url"));
             variantImages.put(vid, img);
-            skus.add(new VariantMatrix.Sku(vid, attributes(rs.getString("attrs")),
+            // thứ tự nhóm theo variant_name — JSONB tự sắp khóa (vd "Màu sắc" lên trước "Phiên bản")
+            skus.add(new VariantMatrix.Sku(vid, VariantAttributes.ordered(attributes(rs.getString("attrs")),
+                    rs.getString("variant_name")),
                     Pricing.price(rs.getBigDecimal("price"), null), img));
         }, id);
         VariantMatrix.Result matrix = VariantMatrix.build(skus, (String) r.get("variant_image_attribute"));
