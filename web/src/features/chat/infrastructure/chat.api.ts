@@ -13,6 +13,7 @@ import type {
   MessagePage,
   MessageType,
   OpenedConversation,
+  OrderPick,
   OutgoingMessage,
 } from '../domain/chat.types';
 
@@ -440,6 +441,59 @@ export async function sendMessage(
       outgoingBody(m, clientId),
     ),
   );
+}
+
+interface OrderPickDto {
+  id: number;
+  code: string;
+  status: string;
+  total: number;
+  created_at: string;
+  item_count: number;
+  thumbnail_url: string | null;
+}
+
+/** Mock: hai đơn mẫu cho ô "Gửi đơn". */
+const MOCK_ORDER_PICKS: OrderPickDto[] = [
+  {
+    id: 44,
+    code: 'TR-20260608-000044',
+    status: 'DELIVERING',
+    total: 389000,
+    created_at: daysAgo(1, 10),
+    item_count: 1,
+    thumbnail_url: null,
+  },
+  {
+    id: 41,
+    code: 'TR-20260601-000041',
+    status: 'COMPLETED',
+    total: 129000,
+    created_at: daysAgo(7, 10),
+    item_count: 2,
+    thumbnail_url: null,
+  },
+];
+
+/** 8.6 — `scope` = `me` (khách) hoặc `seller` (shop). */
+export async function listConversationOrders(
+  scope: 'me' | 'seller',
+  conversationId: number,
+): Promise<OrderPick[]> {
+  const rows = CHAT_MOCKED
+    ? (await mockDelay(100), MOCK_ORDER_PICKS)
+    : await api.get<OrderPickDto[]>(`/${scope}/conversations/${conversationId}/orders`, {
+        query: { limit: 10 },
+      });
+  return rows.map((o) => ({
+    id: o.id,
+    code: o.code,
+    status: o.status,
+    total: o.total,
+    createdAt: o.created_at,
+    itemCount: o.item_count,
+    thumbnailUrl: o.thumbnail_url,
+  }));
 }
 
 export async function markRead(conversationId: number): Promise<void> {

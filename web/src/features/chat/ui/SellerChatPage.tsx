@@ -3,14 +3,13 @@
 // khách đó (lấy từ đơn của shop), trạng thái Đang gửi / Đã nhận / Đã xem. Màn hẹp: danh sách → luồng tin.
 // Tin tự động (lời chào / vắng mặt) do server gửi theo Cài đặt — không có nút ở đây.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSellerOrders } from '@/features/seller-orders';
 import { errorMessage } from '@/shared/api/errors';
 import { UploadError, uploadFile } from '@/shared/api/upload';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatRelative } from '@/shared/lib/format';
 import { Avatar, Button, Icon, Skeleton, Spinner, toast } from '@/shared/ui';
-import { useTyping } from '../application/chatThread';
+import { useConversationOrders, useTyping } from '../application/chatThread';
 import {
   useSellerConversations,
   useSellerMarkRead,
@@ -27,7 +26,6 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
   const { send, retry, pending } = useSellerSend(c.id);
   const read = useSellerMarkRead();
   const { typing, notifyTyping } = useTyping(c.id, q.isFetched);
-  const orders = useSellerOrders({ size: 50 });
   const [draft, setDraft] = useState('');
   const [menu, setMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -37,7 +35,8 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
   const lastIncoming = [...q.messages].reverse().find((m) => !m.mine)?.id ?? null;
   const seenIncoming = useRef<number | string | null>(null);
   const presence = presenceOf(c.customer.online, c.customer.lastActiveAt);
-  const theirOrders = (orders.data?.items ?? []).filter((o) => o.customer.id === c.customer.id);
+  const orders = useConversationOrders('seller', c.id, menu);
+  const theirOrders = orders.data ?? [];
 
   useEffect(() => {
     if (c.unread > 0) void read(c.id);
