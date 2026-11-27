@@ -4198,6 +4198,7 @@
       "delete": "Xóa",
       "delete_title": "Xác nhận xóa",
       "delete_desc": "Bạn muốn xóa thông báo này? Hành động này không thể hoàn tác.",
+      "delete_desc_sent": "Thông báo này đã phát — xóa sẽ gỡ khỏi hộp thư của mọi người nhận (kể cả lượt đọc). Hành động này không thể hoàn tác.",
       "delete_confirm": "Xóa thông báo",
       "deleted": "Đã xóa thông báo.",
       "compose_title": "Tạo thông báo toàn sàn (Broadcast)",

@@ -98,3 +98,31 @@ test('Chuyên viên tài chính tắt / bật lại / xóa banner trang chủ (U
   await expect(page.getByText('Đã xóa banner.')).toBeVisible();
   await expect(page.getByRole('row').filter({ hasText: title })).toHaveCount(0);
 });
+
+test('Admin soạn, phát rồi xóa thông báo toàn sàn (UC-NOT-05)', async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  await asStaff(context, baseURL!);
+  await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
+  const title = `Bảo trì E2E ${Date.now()}`;
+
+  await page.getByRole('button', { name: 'Tạo thông báo' }).click();
+  await page.getByLabel('Tiêu đề (Title)').fill(title);
+  await page
+    .getByRole('textbox', { name: 'Nội dung chi tiết' })
+    .fill('Hệ thống bảo trì 02:00 – 04:00.');
+  await page.getByRole('button', { name: 'Phát thông báo' }).click();
+  await page.getByRole('button', { name: 'Xác nhận phát' }).click();
+  await expect(page.getByText('Đã phát thông báo.')).toBeVisible();
+  const row = page.getByRole('row').filter({ hasText: title });
+  await expect(row).toHaveCount(1);
+
+  await row.getByRole('button', { name: new RegExp(title) }).click();
+  await page.getByRole('button', { name: 'Xóa', exact: true }).click();
+  await expect(page.getByText(/gỡ khỏi hộp thư của mọi người nhận/)).toBeVisible();
+  await page.getByRole('button', { name: 'Xóa thông báo' }).click();
+  await expect(page.getByText('Đã xóa thông báo.')).toBeVisible();
+  await expect(page.getByRole('row').filter({ hasText: title })).toHaveCount(0);
+});

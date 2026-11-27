@@ -168,7 +168,8 @@ function ComposeModal({
         input: {
           title: confirm.title,
           contentHtml: sanitizeHtml(confirm.contentHtml),
-          imageObjectKey: img.key,
+          // API 11.17: null = giữ ảnh cũ; '' = bỏ ảnh (người dùng bấm bỏ ảnh của bản đang sửa)
+          imageObjectKey: img.key ?? (editing?.imageUrl && !img.preview ? '' : null),
           imagePreview: img.preview,
           target: confirm.target,
           recipientEmails: parseEmails(confirm.emailsText).emails,
@@ -192,8 +193,24 @@ function ComposeModal({
         onError: (err) => {
           setConfirm(null);
           if (isApiError(err) && err.code === 'GNE-NOT-4221') {
-            setUnknown(String(err.details.unknown_emails ?? ''));
+            const raw = err.details.unknown_emails;
+            setUnknown(Array.isArray(raw) ? raw.join(', ') : String(raw ?? ''));
             form.setError('emailsText', { message: 'admin-marketing.notif.err.unknown' });
+          } else if (isApiError(err) && err.code === 'GNE-NOT-4091') {
+            // đã phát trong lúc đang sửa (cron hẹn giờ) — không sửa được nữa
+            toast.error(errorMessage(err, t));
+            onClose();
+          } else if (isApiError(err) && err.fieldErrors.length) {
+            // 422 theo trường của server (API 11.17) → đổ về đúng ô
+            let shown = false;
+            for (const fe of err.fieldErrors) {
+              const field = FIELD_OF[fe.field];
+              if (field) {
+                form.setError(field, { message: fe.message });
+                shown = true;
+              }
+            }
+            if (!shown) toast.error(errorMessage(err, t));
           } else toast.error(errorMessage(err, t));
         },
       },
@@ -368,6 +385,15 @@ function ComposeModal({
     </>
   );
 }
+
+/** Tên trường trong `errors[]` của API 11.17 → ô của form soạn. */
+const FIELD_OF: Record<string, keyof NotificationValues | undefined> = {
+  title: 'title',
+  content_html: 'contentHtml',
+  target: 'target',
+  recipient_emails: 'emailsText',
+  send_at: 'sendAt',
+};
 
 function DetailModal({
   id,
@@ -681,7 +707,11 @@ export default function PlatformNotificationsPage() {
         open={!!deleting}
         tone="danger"
         title={t('admin-marketing.notif.delete_title')}
-        message={t('admin-marketing.notif.delete_desc')}
+        message={t(
+          deleting && !deleting.scheduled
+            ? 'admin-marketing.notif.delete_desc_sent'
+            : 'admin-marketing.notif.delete_desc',
+        )}
         confirmLabel={t('admin-marketing.notif.delete_confirm')}
         loading={del.isPending}
         onCancel={() => setDeleting(null)}
