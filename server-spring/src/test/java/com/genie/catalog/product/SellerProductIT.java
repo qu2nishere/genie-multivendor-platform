@@ -3,7 +3,9 @@ package com.genie.catalog.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -120,6 +122,7 @@ class SellerProductIT extends IntegrationTestBase {
         var req = switch (method) {
             case "POST" -> post(url);
             case "PUT" -> put(url);
+            case "PATCH" -> patch(url);
             default -> throw new IllegalArgumentException(method);
         };
         return mvc.perform(req.header(HttpHeaders.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
@@ -441,5 +444,70 @@ class SellerProductIT extends IntegrationTestBase {
         mvc.perform(get("/api/v1/seller/categories/999999999/listing-rules").header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("GNE-CAT-4041"));
+    }
+
+    // ===== Ẩn / mở bán lại / xóa (UC-CAT-11; plan C1 D17) =====
+
+    private ResultActions remove(long id) throws Exception {
+        return mvc.perform(delete(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, token));
+    }
+
+    private String statusOf(long id) {
+        return jdbc.queryForObject("SELECT status FROM products WHERE id = ?", String.class, id);
+    }
+
+    @Test
+    void sellerHidesShowsAndDeletesProduct() throws Exception {
+        long id = published();
+        send("PATCH", URL + "/" + id, Map.of("status", "HIDDEN")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("HIDDEN"));
+        assertThat(statusOf(id)).isEqualTo("HIDDEN");
+        assertThat(jdbc.queryForObject("SELECT is_published FROM products WHERE id = ?", Boolean.class, id)).isFalse();
+
+        // ẩn lần nữa → sai trạng thái
+        send("PATCH", URL + "/" + id, Map.of("status", "HIDDEN")).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("GNE-CAT-4097"));
+
+        send("PATCH", URL + "/" + id, Map.of("status", "PUBLISHED")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("PUBLISHED"));
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
+
+        // giá trị lạ → 422
+        send("PATCH", URL + "/" + id, Map.of("status", "DELETED")).andExpect(status().isUnprocessableEntity());
+
+        remove(id).andExpect(status().isNoContent());
+        assertThat(statusOf(id)).isEqualTo("DELETED");
+        mvc.perform(get(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, token)).andExpect(status().isNotFound());
+        remove(id).andExpect(status().isNotFound());
+        // biến thể giữ nguyên cho đơn cũ
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM product_variants WHERE product_id = ? AND deleted_at IS NULL",
+                Integer.class, id)).isEqualTo(2);
+    }
+
+    @Test
+    void lockedProductCannotBeReopenedBySeller() throws Exception {
+        long id = published();
+        jdbc.update("UPDATE products SET status = 'HIDDEN', is_published = FALSE, is_locked = TRUE WHERE id = ?", id);
+        send("PATCH", URL + "/" + id, Map.of("status", "PUBLISHED")).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("GNE-CAT-4093"));
+        assertThat(statusOf(id)).isEqualTo("HIDDEN");
+    }
+
+    @Test
+    void deleteIsBlockedWhileStockIsReserved() throws Exception {
+        long id = published();
+        jdbc.update("UPDATE product_variants SET reserved_count = 1 WHERE product_id = ?", id);
+        remove(id).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("GNE-CAT-4094"));
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
+    }
+
+    @Test
+    void otherSellersCannotTouchTheProduct() throws Exception {
+        long id = published();
+        long other = data.vendor();
+        String otherToken = "Bearer " + jwtService.issue(other, UserRole.VENDOR, 1L).token();
+        mvc.perform(delete(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, otherToken))
+                .andExpect(status().isNotFound());
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
     }
 }
