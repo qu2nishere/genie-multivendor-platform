@@ -1627,6 +1627,10 @@ public class Product {
     @Column(length = 255)
     private String variantImageAttribute;     // NULLABLE — Tên thuộc tính quyết định ảnh biến thể, VD "Màu sắc"
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private String optionImagesJson;          // NULLABLE — Ảnh theo giá trị của MỌI nhóm phân loại {"Màu sắc": {"Đỏ": "<khóa>"}} (V26)
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;          // Thời điểm tạo sản phẩm
@@ -1793,6 +1797,9 @@ bất kỳ ──► DELETED (xoá mềm)
 **f) `variantImageAttribute` — giải bài toán ảnh theo biến thể**
 Sản phẩm có thể có 2 chiều biến thể: Màu (Đen/Trắng) × Size (S/M/L) = 6 SKU. Nhưng ảnh chỉ khác nhau theo **Màu**, không theo Size. Nếu gắn ảnh cho từng SKU thì phải upload trùng lặp 6 lần.
 Trường này lưu tên thuộc tính quyết định ảnh (VD `"Màu sắc"`). Khi khách chọn "Đen", giao diện đổi ảnh; khi chọn size, ảnh giữ nguyên. Đây chính xác là cách Shopee/Lazada hoạt động.
+
+**g) `optionImagesJson` — ảnh cho nhiều nhóm (V26, 2026-11-27)**
+Chủ dự án muốn nhiều nhóm cùng có ảnh (VD Màu sắc và Dung lượng). Ảnh của **mọi** nhóm lưu ở `option_images_json` dạng `{"<tên nhóm>": {"<giá trị>": "<khóa ảnh>"}}`. `variantImageAttribute` giữ nghĩa **nhóm ảnh chính**: ảnh của SKU (`product_variants.image_url` — giỏ, đơn hàng) lấy theo nhóm này. Trang sản phẩm: chọn giá trị nào có ảnh thì ảnh lớn đổi theo (ưu tiên nhóm đứng trước). Sản phẩm cũ (cột NULL) đọc ảnh nhóm chính từ SKU như trước.
 
 ---
 

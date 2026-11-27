@@ -15,6 +15,7 @@ import {
   useSaveProduct,
   useSellerProduct,
 } from '../../application/useSellerProducts';
+import { useProductDraft } from '../../application/useProductDraft';
 import {
   emptyForm,
   isReadOnly,
@@ -73,6 +74,13 @@ function Editor({ product }: { product: ProductDetail | null }) {
   const readOnly = isReadOnly(product?.status);
   const verified = me.data ? kycGroup(me.data.kycStatus) === 'VERIFIED' : false;
   const dirty = form.formState.isDirty;
+  // Bản nhập dở ở localStorage: F5 / đóng tab không mất dữ liệu, mở lại tự đổ lại (chờ duyệt = chỉ xem → không lưu)
+  const draft = useProductDraft(form, {
+    productId: product?.id ?? null,
+    productVersion: product?.version ?? null,
+    enabled: !readOnly,
+    onExpiredMedia: () => toast.info(t('seller-products.editor.draft_media_expired'), 8000),
+  });
 
   // Sau lần gửi đầu, cập nhật danh sách lỗi theo dữ liệu đang sửa
   const values = useWatch({ control: form.control });
@@ -96,6 +104,7 @@ function Editor({ product }: { product: ProductDetail | null }) {
       { id: product?.id ?? null, form: f, submit, version: product?.version ?? null },
       {
         onSuccess: (r) => {
+          draft.clear();
           form.reset(f);
           toast.success(
             !submit
@@ -290,7 +299,11 @@ function Editor({ product }: { product: ProductDetail | null }) {
         open={ask === 'leave'}
         tone="danger"
         onCancel={() => setAsk(null)}
-        onConfirm={back}
+        onConfirm={() => {
+          // chủ động bỏ thay đổi → không giữ bản nhập dở
+          draft.clear();
+          back();
+        }}
         title={t('seller-products.editor.leave_title')}
         message={t('seller-products.editor.leave_body')}
         cancelLabel={t('seller-products.editor.leave_stay')}
