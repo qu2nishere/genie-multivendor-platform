@@ -191,6 +191,25 @@ public class Product {
         this.isPublished = false;
     }
 
+    /** Sàn khóa: ẩn khỏi sàn, shop không tự mở lại được — phải sửa và gửi duyệt (UC-CAT-11; plan C1 D18) */
+    public void lockByPlatform(Long moderatorId, String reason) {
+        this.status = ProductStatus.HIDDEN;
+        this.isPublished = false;
+        this.isLocked = true;
+        this.moderatorId = moderatorId;
+        this.moderationReason = reason;
+        this.isRequeued = false;
+    }
+
+    /** Sàn mở khóa → bán lại ngay (UC-CAT-11; plan C1 D18) */
+    public void unlockByPlatform(Long moderatorId) {
+        this.status = ProductStatus.PUBLISHED;
+        this.isPublished = true;
+        this.isLocked = false;
+        this.moderatorId = moderatorId;
+        this.moderationReason = null;
+    }
+
     /** Shop mở bán lại sản phẩm đã tự ẩn — UC-CAT-11 (sàn khóa thì service chặn trước, plan C1 D17) */
     public void show() {
         this.status = ProductStatus.PUBLISHED;
