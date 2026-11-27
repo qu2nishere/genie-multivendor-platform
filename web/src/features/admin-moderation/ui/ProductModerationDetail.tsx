@@ -67,6 +67,7 @@ function Body({ p }: { p: ModerationDetail }) {
   const navigate = useNavigate();
   const decide = useModerationDecision();
   const [reason, setReason] = useState<ProductRejectReason>('MISSING_SAFETY_CERT');
+  const [shownImg, setShownImg] = useState(0);
   const [note, setNote] = useState('');
   const [confirm, setConfirm] = useState<'approve' | 'reject' | null>(null);
   const [doc, setDoc] = useState<ModerationDetail['documents'][number] | null>(null);
@@ -178,23 +179,58 @@ function Body({ p }: { p: ModerationDetail }) {
               <Icon name="image" size={16} />
               {t('admin-moderation.product.images')}
             </h3>
-            {p.images.map((src) => (
-              <button
-                key={src}
-                type="button"
-                onClick={() => setZoom(src)}
-                className="block w-full border-0 p-0 bg-transparent cursor-zoom-in rounded-md focus-visible:outline-none focus-visible:shadow-focus"
-                aria-label={t('admin-moderation.product.zoom')}
-              >
-                <img
-                  src={src}
-                  alt={p.name}
-                  width={400}
-                  height={400}
-                  className="w-full aspect-square object-cover rounded-md"
-                />
-              </button>
-            ))}
+            {/* Ảnh lớn (giữ nguyên tỉ lệ, không cắt) + dải ảnh nhỏ — thay cho xếp chồng mọi ảnh cỡ lớn */}
+            {p.images.length === 0 ? (
+              <div className="text-sm text-muted">{t('admin-moderation.product.no_images')}</div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setZoom(p.images[shownImg] ?? p.images[0])}
+                  className="relative block w-full border border-solid border-line-subtle p-0 bg-surface-sunken cursor-zoom-in rounded-md overflow-hidden focus-visible:outline-none focus-visible:shadow-focus"
+                  aria-label={t('admin-moderation.product.zoom')}
+                >
+                  <img
+                    src={p.images[shownImg] ?? p.images[0]}
+                    alt={p.name}
+                    width={400}
+                    height={400}
+                    className="w-full aspect-square object-contain"
+                  />
+                  <span className="absolute right-2 bottom-2 rounded-full bg-black/60 text-white text-xs font-semibold px-2 py-0.5">
+                    {Math.min(shownImg, p.images.length - 1) + 1}/{p.images.length}
+                  </span>
+                </button>
+                {p.images.length > 1 && (
+                  <div className="grid grid-cols-5 gap-2 mt-2.5">
+                    {p.images.map((src, i) => (
+                      <button
+                        key={src}
+                        type="button"
+                        aria-label={t('admin-moderation.product.thumb', { n: i + 1 })}
+                        aria-pressed={i === shownImg}
+                        onClick={() => setShownImg(i)}
+                        className={cn(
+                          'block p-0 aspect-square rounded-sm overflow-hidden cursor-pointer bg-surface-sunken border-2 border-solid',
+                          i === shownImg
+                            ? 'border-primary'
+                            : 'border-transparent hover:border-line-strong',
+                        )}
+                      >
+                        <img
+                          src={src}
+                          alt=""
+                          width={72}
+                          height={72}
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </section>
           <section className={card}>
             <h3 className={h3}>
