@@ -1858,10 +1858,10 @@ Hộp thoại "Có 3 phân loại đang có giá 0₫ và tồn kho 0" là cản
 - Lỗi mới: `422 GNE-CAT-4224` gửi duyệt khi shop chưa cấu hình kho lấy hàng (`details.field = "pickup_address"`); `409 GNE-CAT-4096` sửa sản phẩm đang chờ duyệt; `409 GNE-CAT-4097` thao tác không hợp với trạng thái.
 
 #### `PATCH /seller/products/{id}` — Ẩn / mở bán lại
-`{ "status": "HIDDEN" }` hoặc `{ "status": "PUBLISHED" }` (chỉ từ `HIDDEN` do shop tự ẩn). `200`. `409 GNE-CAT-4093` nếu bị sàn khóa.
+`{ "status": "HIDDEN" }` (chỉ từ `PUBLISHED`) hoặc `{ "status": "PUBLISHED" }` (chỉ từ `HIDDEN` do shop tự ẩn). `200` `{ id, status, requires_review: false }`. `409 GNE-CAT-4093` nếu bị sàn khóa; `409 GNE-CAT-4097` khi trạng thái hiện tại không cho phép (`details.current_status`); giá trị khác → `422 GNE-VAL-4220`.
 
 #### `DELETE /seller/products/{id}` — Xóa (mềm)
-`204`. `409 GNE-CAT-4094` khi còn đơn đang xử lý chứa sản phẩm.
+`204`. Mọi trạng thái trừ đã xóa (đã xóa / của shop khác → `404`). `409 GNE-CAT-4094` khi còn đơn đang xử lý hoặc biến thể đang được giữ chỗ (`reserved_count > 0`). Biến thể và ảnh giữ nguyên (đơn cũ còn tham chiếu).
 
 #### `GET /seller/categories/{id}/listing-rules` — Luật đăng bán theo ngành
 UC-CAT-15 · **Màn hình:** chip "Gợi ý thông số", dòng "Bắt buộc với ngành này: Bảo hành", nhãn "Bắt buộc với ngành này" ở khối Giấy tờ
@@ -1905,8 +1905,9 @@ UC-CAT-17 · **Màn hình:** Danh mục toàn sàn (cây có số sản phẩm +
 
 | Lỗi | Khi nào |
 |---|---|
-| `409 GNE-CAT-4091` | Trùng tên danh mục có sẵn — `details.existing_category: { "id", "name" }` |
+| `409 GNE-CAT-4091` | Trùng tên danh mục có sẵn **cùng cha** (bỏ dấu, không phân biệt hoa) — `details.existing_category: { "id", "name" }`; trùng đề xuất đang chờ của chính shop — `details.field = "proposal"` |
 | `422 GNE-CAT-4221` | Đã có 5 đề xuất đang chờ duyệt |
+| `422 GNE-VAL-4220` | Tên ngoài 2–100 ký tự, lý do > 500, `parent_id` không tồn tại / đang ẩn, cha đã ở cấp 3 (`TOO_DEEP`) |
 
 ### 10.7 Khuyến mãi — Voucher shop & Flash Sale
 UC-PRO-01, UC-PRO-05 · **Màn hình:** Khuyến mãi (banner Flash Sale đăng ký, 3 chỉ số, bảng mã giảm giá: Mã / Loại / Điều kiện / Đã dùng / Trạng thái / Kết thúc; Chỉnh sửa / Nhân bản / Tắt), modal "Tạo Voucher Shop", modal "Đăng ký Flash Sale"
@@ -2522,12 +2523,17 @@ Duyệt / từ chối dùng 11.12. Khóa / mở khóa:
 | `POST /admin/products/{id}/lock` | `{ "reason_code": "POLICY_VIOLATION" }` → `HIDDEN` + khóa (shop không tự mở được) |
 | `POST /admin/products/{id}/unlock` | — → `PUBLISHED` |
 
+- `GET /admin/products` (2026-11-27, plan C1 D19): `category_id` bắt buộc, tính **cả nhánh con**; `ALL` bỏ nháp và đã xóa; `PENDING` = chờ duyệt + AI nghi ngờ (`status` trả `PENDING_APPROVAL`); `HIDDEN_OR_LOCKED` = shop tự ẩn + sàn khóa; `price` = giá thấp nhất, `stock` = tổng tồn biến thể; `reason` chỉ có khi bị từ chối / bị khóa; phân trang trang số, `summary.counts` 4 tab.
+- `lock`: `reason_code` theo API 16 (như từ chối), `note?` (≤ 500, bắt buộc với `OTHER`); từ `PUBLISHED` / `HIDDEN` / `FLAGGED`, đã khóa → `409 GNE-CAT-4097`; `moderation_reason` lưu nhãn tiếng Việt. `unlock`: chỉ khi đang bị khóa, khác → `409 GNE-CAT-4097`. Cả hai ghi `system_logs PRODUCT_MODERATED` (`details.action = LOCK | UNLOCK`).
+
 #### Đề xuất danh mục
 | Method & Path | Body | Phản hồi |
 |---|---|---|
 | `GET /admin/category-proposals?status=PENDING` | — | `[{ "id": 81, "name": "Thú cưng (Pet)", "shop": { "id": 40, "name": "PetWorld VN" }, "parent": null, "reason": "…", "created_at": "..." }]` |
 | `POST /admin/category-proposals/{id}/approve` | `{ "commission_rate": 5.0 }` (tùy chọn) | `200` `{ "category": { "id": 7, "name": "Thú cưng (Pet)" } }` — tạo danh mục dưới `parent` |
 | `POST /admin/category-proposals/{id}/reject` | `{ "reason": "Đã có danh mục tương tự" }` (bắt buộc) | `200`; lý do gửi tới shop |
+
+Ghi chú (2026-11-27, plan C1 D20): `GET` nhận `status` = `PENDING` (mặc định, cũ trước) / `APPROVED` / `REJECTED`; dòng có thêm `code` (`CP-081`) và `status`. Duyệt tạo danh mục bằng luật của 11.11 *Thêm danh mục* (slug tự sinh; không gửi `commission_rate` = kế thừa; gửi thì cần thêm `UPDATE_COMMISSION`, khác → `403`); tên trùng phát sinh sau khi gửi → `409 GNE-CAT-4091`. Đề xuất không còn `PENDING` → `409 GNE-CAT-4097`. Lý do từ chối ≤ 500 ký tự. Chưa gửi thông báo tới shop (chờ cụm B6) — shop xem trạng thái ở màn Danh mục.
 
 ### 11.12 Duyệt sản phẩm
 UC-CAT-12, UC-CAT-13 · `MANAGE_CATALOG` · **Màn hình:** tab Chờ duyệt / Đã duyệt / Không duyệt / Cấu hình nhân viên; ô tìm sản phẩm hoặc nhà bán; bảng Sản phẩm / Nhà bán / Trạng thái (Chờ duyệt, AI nghi ngờ, Chờ duyệt lại, Đã duyệt, Từ chối) / Người duyệt (chọn để giao lại; "AI Hệ thống") / Kiểm duyệt. Trang chi tiết: dòng Gemini (quyết định, điểm rủi ro, vi phạm), lý do AI, ảnh, Hồ sơ pháp lý sản phẩm (Xem trực tiếp), thông tin cơ bản, mô tả, vận chuyển & kích thước, bảng SKU; thanh quyết định (lý do từ chối + ghi chú, Từ chối, Duyệt lên sàn, Chờ duyệt lại)
