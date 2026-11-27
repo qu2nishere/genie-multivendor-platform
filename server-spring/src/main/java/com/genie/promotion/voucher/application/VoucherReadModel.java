@@ -96,6 +96,15 @@ public class VoucherReadModel {
         return categoryIds.stream().map(names::get).filter(java.util.Objects::nonNull).toList();
     }
 
+    /** id → tên ngành. */
+    public Map<Long, String> categoryNameMap(Collection<Long> categoryIds) {
+        Map<Long, String> names = new HashMap<>();
+        if (categoryIds.isEmpty()) return names;
+        jdbc.query("SELECT id, name FROM categories WHERE id IN (:ids)", new MapSqlParameterSource("ids", categoryIds),
+                rs -> { names.put(rs.getLong("id"), rs.getString("name")); });
+        return names;
+    }
+
     public boolean hasSavers(long voucherId) {
         return Boolean.TRUE.equals(jdbc.queryForObject("SELECT EXISTS (SELECT 1 FROM user_vouchers WHERE voucher_id = :id)",
                 new MapSqlParameterSource("id", voucherId), Boolean.class));
