@@ -92,6 +92,10 @@ public class Product {
     @Column(length = 255)
     private String variantImageAttribute;     // NULLABLE — Tên thuộc tính quyết định ảnh biến thể, VD "Màu sắc"
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private String optionImagesJson;          // NULLABLE — Ảnh theo giá trị của MỌI nhóm phân loại {"Màu sắc": {"Đỏ": "<khóa>"}} (V26)
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;          // Thời điểm tạo sản phẩm
