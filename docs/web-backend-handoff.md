@@ -32,7 +32,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | `GET /public/feed` | `GET /public/recommendations?page&size` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
-| `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
+| ~~`POST /me/notifications/{id}/read` · `POST /me/notifications/read-all`~~ | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | ✅ Đã sửa (plan 2026-11-26 thông báo N05.04, `10f2e2e`) |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
 | ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
 | `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
@@ -202,10 +202,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
-| `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` |
-| `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` |
-| `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` |
-| `deletePlatformNotification` | marketing.api.ts | `DELETE /admin/platform-notifications/{id}` |
+| `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
+| `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
+| `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`) |
+| `deletePlatformNotification` | marketing.api.ts | `DELETE /admin/platform-notifications/{id}` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
 
 ### `admin-moderation`
 
@@ -315,9 +315,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listNotifications` | notifications.api.ts | `GET /me/notifications` |
-| `markAllNotificationsRead` | notifications.api.ts | `POST /me/notifications/read-all` |
-| `markNotificationRead` | notifications.api.ts | `POST /me/notifications/{id}/read` |
+| `listNotifications` | notifications.api.ts | `GET /me/notifications?category&cursor&limit` — **đã nối** (`PUBLIC_REAL_API=notifications`, plan 2026-11-26 thông báo) |
+| `markAllNotificationsRead` | notifications.api.ts | `POST /me/notifications/mark-all-read` — **đã nối** |
+| `markNotificationRead` | notifications.api.ts | `PATCH /me/notifications/{id}` — **đã nối** |
+| (realtime) | `notificationStream.ts` qua `shared/realtime/realtimeHub.ts` | WS `/user/queue/notifications` + `/topic/platform` (API 13) — một kết nối dùng chung cả ứng dụng |
 
 ### `orders`
 
