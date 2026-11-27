@@ -309,9 +309,14 @@ function Body({ p }: { p: ModerationDetail }) {
               <Icon name="layers" size={16} />
               {t('admin-moderation.product.skus')}
             </h3>
-            <div className="overflow-x-auto">
+            <div
+              className={cn(
+                'overflow-x-auto',
+                p.variants.length > 10 && 'max-h-[460px] overflow-y-auto',
+              )}
+            >
               <table className="w-full border-collapse text-[13px] tabular-nums">
-                <thead>
+                <thead className="sticky top-0 bg-surface-card">
                   <tr className="text-muted text-left">
                     <th className="px-2 py-[9px] whitespace-nowrap font-semibold">
                       {t('admin-moderation.product.sku.code')}
