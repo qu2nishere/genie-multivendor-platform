@@ -1,0 +1,182 @@
+### UC-SOC-01, UC-SOC-02, UC-VND-06 — Chat khách ↔ shop (API_SPEC 8.1–8.6, 13; plan 2026-11-26 chat M05.05, M07)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+# Realtime đi qua WebSocket /ws (STOMP): SEND /app/chat.send | chat.read | chat.typing, nhận /user/queue/chat —
+# REST dưới đây là đường dự phòng, cùng luật nghiệp vụ. Đăng nhập bị giới hạn 10 lần / phút / IP — chạy lần lượt.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập người mua — chủ shop Shoe Republic chat với shop KHÁC được (D5) — chép access_token vào @buyer
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "owner.shoe@genie.example", "password": "Genie@123" }
+
+### 2. Đăng nhập chủ shop TechZone (shop_id = 1) — chép vào @shop
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+### 3. Đăng nhập nhân viên (tài khoản nội bộ — chỉ xem storefront) — chép vào @staff
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+@buyer = <access_token bước 1>
+@shop = <access_token bước 2>
+@staff = <access_token bước 3>
+
+### 4. ĐÚNG — mở hội thoại với TechZone → 201 lần đầu, 200 lần sau (cùng id); có shop_stats; shop bật lời chào → có tin is_auto
+POST {{base}}/me/conversations
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "shop_id": 1 }
+
+@conv = <data.id bước 4>
+
+### 5. SAI — shop của chính mình → 409 GNE-SOC-4096
+POST {{base}}/me/conversations
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "shop_id": 1 }
+
+### 6. SAI — shop không tồn tại / chưa xác minh → 404 GNE-VND-4041
+POST {{base}}/me/conversations
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "shop_id": 999999 }
+
+### 7. SAI — nhân viên → 403 GNE-SEC-4030
+POST {{base}}/me/conversations
+Authorization: Bearer {{staff}}
+Content-Type: application/json
+
+{ "shop_id": 1 }
+
+### 8. ĐÚNG — gửi tin chữ → 201, sender = ME, status = DELIVERED, client_message_id trả lại
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "TEXT", "text": "Tai nghe còn màu đen không shop?", "client_message_id": "7d1c3b0e-5a2f-4c1e-9b7a-1f2e3d4c5b6a" }
+
+### 9. ĐÚNG — gửi lại CÙNG client_message_id → 200, cùng id (không tạo tin mới, không tăng bộ đếm)
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "TEXT", "text": "Tai nghe còn màu đen không shop?", "client_message_id": "7d1c3b0e-5a2f-4c1e-9b7a-1f2e3d4c5b6a" }
+
+### 10. SAI — tin rỗng (chỉ khoảng trắng) → 422 GNE-VAL-4220 (errors[0].field = text)
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "TEXT", "text": "   " }
+
+### 11. ĐÚNG — hộp thư phía khách: summary.unread_total, counterpart.type = SHOP, is_online / last_active_at
+GET {{base}}/me/conversations?limit=20
+Authorization: Bearer {{buyer}}
+
+### 12. ĐÚNG — hộp thư phía shop: counterpart.type = CUSTOMER, unread_count > 0
+GET {{base}}/seller/conversations
+Authorization: Bearer {{shop}}
+
+### 13. ĐÚNG — badge Seller Center: data.badges.unread_chats
+GET {{base}}/seller/me
+Authorization: Bearer {{shop}}
+
+### 14. ĐÚNG — shop trả lời → 201
+POST {{base}}/seller/conversations/{{conv}}/messages
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "type": "TEXT", "text": "Dạ còn đủ màu đen bạn nhé!" }
+
+### 15. ĐÚNG — shop đánh dấu đã xem → 204 (người mua nhận MESSAGE_SEEN; thông báo CHAT_MESSAGE của hội thoại thành đã đọc)
+POST {{base}}/seller/conversations/{{conv}}/read
+Authorization: Bearer {{shop}}
+
+### 16. ĐÚNG — lịch sử phía khách: tin của mình status = SEEN; cuộn lên bằng before = pagination.next_cursor
+GET {{base}}/me/conversations/{{conv}}/messages?limit=30
+Authorization: Bearer {{buyer}}
+
+### 17. SAI — cursor hỏng → 422
+GET {{base}}/me/conversations/{{conv}}/messages?before=rac
+Authorization: Bearer {{buyer}}
+
+### 18. SAI — nhân viên vào phía shop → 403 (đăng nhập shop khác, vd. owner.home@genie.example, rồi gọi lại → 404 GNE-SYS-4040)
+GET {{base}}/seller/conversations/{{conv}}/messages
+Authorization: Bearer {{staff}}
+
+# ===== UC-SOC-02 — ảnh, thẻ sản phẩm, thẻ đơn =====
+
+### 19. ĐÚNG — xin link tải ảnh chat (bucket riêng tư chat-media, ≤ 5 MB) → PUT tệp lên upload_url, chép object_key vào @img
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "purpose": "CHAT_IMAGE", "file_name": "anh.png", "content_type": "image/png", "content_length": 20000 }
+
+@img = <object_key bước 19 — dạng tmp/user/{id}/{uuid}.png>
+
+### 20. ĐÚNG — gửi ảnh → 201, image_url là link ký tạm 10 phút
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "IMAGE", "image_object_key": "{{img}}" }
+
+### 21. SAI — sai MIME / quá 5 MB bị chặn ngay ở bước xin link → 422
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "purpose": "CHAT_IMAGE", "file_name": "clip.mp4", "content_type": "video/mp4", "content_length": 6000000 }
+
+### 22. ĐÚNG — thẻ sản phẩm của TechZone (variant_id tùy chọn) → 201, product {id, slug, name, image_url, price, is_available}
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "PRODUCT_CARD", "product_id": 1 }
+
+### 23. SAI — sản phẩm của shop khác → 403 GNE-SOC-4031 (đổi product_id sang sản phẩm không thuộc TechZone)
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "PRODUCT_CARD", "product_id": 999999 }
+
+### 24. ĐÚNG — ô "Gửi đơn": đơn gần nhất giữa hai bên (8.6), mới nhất trước
+GET {{base}}/me/conversations/{{conv}}/orders?limit=10
+Authorization: Bearer {{buyer}}
+
+@order = <data[0].id bước 24 — cần có đơn giữa hai bên>
+
+### 25. ĐÚNG — thẻ đơn → 201, order {id, code, status}
+POST {{base}}/me/conversations/{{conv}}/messages
+Authorization: Bearer {{buyer}}
+Content-Type: application/json
+
+{ "type": "ORDER_CARD", "order_id": {{order}} }
+
+### 26. ĐÚNG — phía shop cũng chọn đơn được
+GET {{base}}/seller/conversations/{{conv}}/orders
+Authorization: Bearer {{shop}}
+
+# ===== UC-VND-06 — trả lời tự động =====
+
+### 27. ĐÚNG — bật lời chào + tin vắng mặt (đã có từ B4)
+PATCH {{base}}/seller/settings
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "auto_reply": { "enabled": true, "greeting": "Chào bạn 🧡 TechZone có thể giúp gì ạ?", "away_message": "Shop đang ngoài giờ, sẽ phản hồi trong 8:00–22:00 nhé!" } }
+
+### 28. Kiểm — khách nhắn lúc chủ shop không trực tuyến (không mở Seller Center) → có thêm tin is_auto = true (tối đa 1 lần / 60 phút)
+GET {{base}}/me/conversations/{{conv}}/messages?limit=5
+Authorization: Bearer {{buyer}}
