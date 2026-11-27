@@ -19,6 +19,16 @@ import {
 import { flashSchema, notificationSchema } from './marketing.schema';
 
 describe('voucher sàn', () => {
+  it('quà đổi Điểm không có nút Xóa (plan 2026-11-26 voucher D12)', () => {
+    expect(
+      voucherActions({ status: 'DISABLED', usage: { used: 0, limit: 10 }, isCoinReward: true }),
+    ).toEqual(['duplicate']);
+    expect(voucherActions({ status: 'DISABLED', usage: { used: 0, limit: 10 } })).toEqual([
+      'duplicate',
+      'delete',
+    ]);
+  });
+
   it('thao tác theo trạng thái', () => {
     expect(voucherActions({ status: 'ACTIVE', usage: { used: 3420, limit: 10000 } })).toEqual([
       'duplicate',

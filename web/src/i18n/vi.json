@@ -4022,7 +4022,8 @@
       "delete_title": "Xoá voucher",
       "delete_desc": "Bạn có chắc chắn muốn xoá vĩnh viễn voucher {code}? Hành động này không thể hoàn tác.",
       "delete_confirm": "Xoá vĩnh viễn",
-      "deleted": "Đã xoá voucher."
+      "deleted": "Đã xoá voucher.",
+      "coin_reward": "Quà đổi Điểm"
     },
     "flash": {
       "campaigns": "Chiến dịch",

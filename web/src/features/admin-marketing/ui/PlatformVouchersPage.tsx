@@ -116,6 +116,7 @@ function VoucherForm({ target, onClose }: { target: FormTarget; onClose: () => v
       initial={target.duplicate ? { ...base, code: '' } : base}
       categories={cats.data?.map((c) => ({ id: c.id, name: c.name }))}
       saving={save.isPending}
+      lockedFields={editing ? (q.data?.lockedFields ?? []) : []}
       onSave={(v) => save.mutateAsync({ id: editing ? target.id : null, input: toInput(v) })}
       onClose={onClose}
     />
@@ -255,6 +256,11 @@ export default function PlatformVouchersPage() {
                   >
                     <td className={td}>
                       <span className="font-mono font-semibold text-brand-600">{v.code}</span>
+                      {v.isCoinReward && (
+                        <Badge variant="neutral" className="ml-1.5">
+                          {t('admin-marketing.vouchers.coin_reward')}
+                        </Badge>
+                      )}
                       <span className="block text-xs text-muted max-w-[180px] truncate">
                         {v.title}
                       </span>

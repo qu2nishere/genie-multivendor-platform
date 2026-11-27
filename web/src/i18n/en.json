@@ -4022,7 +4022,8 @@
       "delete_title": "Delete voucher",
       "delete_desc": "Permanently delete voucher {code}? This cannot be undone.",
       "delete_confirm": "Delete permanently",
-      "deleted": "Voucher deleted."
+      "deleted": "Voucher deleted.",
+      "coin_reward": "Points reward"
     },
     "flash": {
       "campaigns": "Campaigns",
