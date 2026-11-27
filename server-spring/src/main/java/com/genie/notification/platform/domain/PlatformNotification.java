@@ -78,6 +78,22 @@ public class PlatformNotification {
         return this.dispatchedAt == null;
     }
 
+    /** Còn sửa được không (chỉ khi chưa phát — API 11.17, plan 2026-11-26 thông báo D15) — UC-NOT-05 */
+    public boolean isEditable() {
+        return this.dispatchedAt == null;
+    }
+
+    /** Đổi nội dung / đối tượng / lịch của bản chưa phát; đã phát → {@code IllegalStateException} (GNE-NOT-4091) — UC-NOT-05 */
+    public void changeContent(String title, String content, PlatformNotificationTarget target, String recipientIdsJson,
+                              OffsetDateTime sendAt) {
+        if (!isEditable()) throw new IllegalStateException("Thông báo đã phát");
+        this.title = title;
+        this.content = content;
+        this.target = target;
+        this.recipientUserIdsJson = target == PlatformNotificationTarget.SPECIFIC_USERS ? recipientIdsJson : null;
+        this.sendAt = sendAt;
+    }
+
     /** Phát: chốt số người nhận tại thời điểm phát — gọi đúng một lần (phát ngay hoặc cron hẹn giờ) — UC-NOT-05 */
     public void dispatch(long reach, OffsetDateTime at) {
         if (this.dispatchedAt != null) throw new IllegalStateException("Thông báo đã phát");
