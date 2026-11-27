@@ -1,8 +1,11 @@
 // Khuyến mãi của shop (API_SPEC 10.7): voucher shop (danh sách + summary, xem, tạo, sửa, tắt) và đăng ký
-// Flash Sale. Mock: dữ liệu prototype VendorPages.jsx VOUCHERS, FLASH_PRODUCTS; giữ trong phiên tab.
+// Flash Sale. Voucher nối thật theo cờ `seller-vouchers` (plan 2026-11-26 voucher V06, D21); Flash Sale vẫn mock
+// tới chuỗi C6. Mock: dữ liệu prototype VendorPages.jsx VOUCHERS, FLASH_PRODUCTS; giữ trong phiên tab.
 import { api, request } from '@/shared/api/http';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
-import { maxFlashPrice } from '../domain/promo.rules';
+import { isMocked } from '@/shared/config/env';
+import { isoDateVN } from '@/shared/lib/format';
+import { maxFlashPrice, voucherStartIso } from '../domain/promo.rules';
 import type {
   DiscountType,
   EligibleProduct,
@@ -14,10 +17,18 @@ import type {
   VoucherSummary,
 } from '../domain/promo.types';
 
+/** Voucher shop còn chạy mock không (cờ `PUBLIC_REAL_API=…,seller-vouchers`). */
+export const SELLER_VOUCHERS_MOCKED = isMocked('seller-vouchers');
+
+/** API dùng `FIXED_AMOUNT`, form dùng `FIXED`. */
+type ApiDiscountType = 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FIXED' | 'FREESHIP';
+const fromApiType = (t: ApiDiscountType): DiscountType => (t === 'FIXED_AMOUNT' ? 'FIXED' : t);
+const toApiType = (t: DiscountType): ApiDiscountType => (t === 'FIXED' ? 'FIXED_AMOUNT' : t);
+
 interface VoucherDto {
   id: number;
   code: string;
-  discount_type: DiscountType;
+  discount_type: ApiDiscountType;
   discount_value: number | null;
   max_discount: number | null;
   min_order_value: number;
@@ -27,7 +38,7 @@ interface VoucherDto {
 }
 interface VoucherInputDto {
   code: string;
-  discount_type: DiscountType;
+  discount_type: ApiDiscountType;
   discount_value: number | null;
   max_discount: number | null;
   min_order_value: number | null;
@@ -40,12 +51,13 @@ interface VoucherInputDto {
   category_ids: number[];
   product_ids: number[];
   excluded_category_ids: number[];
+  locked_fields?: string[];
 }
 
 const toVoucher = (d: VoucherDto): ShopVoucher => ({
   id: d.id,
   code: d.code,
-  discountType: d.discount_type,
+  discountType: fromApiType(d.discount_type),
   discountValue: d.discount_value,
   maxDiscount: d.max_discount,
   minOrderValue: d.min_order_value,
@@ -56,14 +68,15 @@ const toVoucher = (d: VoucherDto): ShopVoucher => ({
 const day = (s: string, end = false) => (s ? `${s}T${end ? '23:59:59' : '00:00:00'}+07:00` : '');
 const toInputDto = (v: VoucherInput): VoucherInputDto => ({
   code: v.code,
-  discount_type: v.discountType,
+  discount_type: SELLER_VOUCHERS_MOCKED ? v.discountType : toApiType(v.discountType),
   discount_value: v.discountType === 'FREESHIP' ? null : v.discountValue,
+  // FREESHIP: max_discount = trần hỗ trợ phí ship (API 10.7) — form chưa có ô riêng nên gửi null (hỗ trợ toàn bộ)
   max_discount: v.discountType === 'PERCENTAGE' ? v.maxDiscount : null,
   min_order_value: v.minOrderValue,
   usage_limit: v.usageLimit,
   usage_per_user: v.usagePerUser,
   budget: v.budget,
-  valid_from: day(v.validFrom),
+  valid_from: SELLER_VOUCHERS_MOCKED ? day(v.validFrom) : voucherStartIso(v.validFrom, isoDateVN()),
   valid_to: day(v.validTo, true),
   scope: v.scope,
   category_ids: v.scope === 'CATEGORY' ? v.categoryIds : [],
@@ -72,19 +85,20 @@ const toInputDto = (v: VoucherInput): VoucherInputDto => ({
 });
 const fromInputDto = (d: VoucherInputDto): VoucherInput => ({
   code: d.code,
-  discountType: d.discount_type,
+  discountType: fromApiType(d.discount_type),
   discountValue: d.discount_value,
   maxDiscount: d.max_discount,
   minOrderValue: d.min_order_value,
   usageLimit: d.usage_limit,
   usagePerUser: d.usage_per_user,
   budget: d.budget,
-  validFrom: d.valid_from.slice(0, 10),
-  validTo: d.valid_to.slice(0, 10),
+  validFrom: isoDateVN(new Date(d.valid_from)),
+  validTo: isoDateVN(new Date(d.valid_to)),
   scope: d.scope,
   categoryIds: d.category_ids,
   productIds: d.product_ids,
   excludedCategoryIds: d.excluded_category_ids,
+  lockedFields: d.locked_fields ?? [],
 });
 
 // ---- Mock ----
@@ -172,7 +186,7 @@ const toListDto = (v: MockVoucher): VoucherDto => ({
 });
 
 export async function listVouchers(): Promise<{ items: ShopVoucher[]; summary: VoucherSummary }> {
-  if (USE_MOCK) {
+  if (SELLER_VOUCHERS_MOCKED) {
     await mockDelay(180);
     const all = db.get().vouchers;
     return {
@@ -197,7 +211,7 @@ export async function listVouchers(): Promise<{ items: ShopVoucher[]; summary: V
 }
 
 export async function getVoucher(id: number): Promise<VoucherInput> {
-  if (USE_MOCK) {
+  if (SELLER_VOUCHERS_MOCKED) {
     await mockDelay(120);
     const v = db.get().vouchers.find((x) => x.id === id);
     if (!v) mockFail('GNE-VCH-4041');
@@ -209,7 +223,7 @@ export async function getVoucher(id: number): Promise<VoucherInput> {
 /** Tạo (id = null) hoặc sửa voucher. */
 export async function saveVoucher(id: number | null, v: VoucherInput): Promise<ShopVoucher> {
   const body = toInputDto(v);
-  if (USE_MOCK) {
+  if (SELLER_VOUCHERS_MOCKED) {
     await mockDelay(300);
     const s = db.get();
     if (s.vouchers.some((x) => x.code === v.code && x.id !== id)) mockFail('GNE-VCH-4092');
@@ -237,7 +251,7 @@ export async function saveVoucher(id: number | null, v: VoucherInput): Promise<S
 }
 
 export async function disableVoucher(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (SELLER_VOUCHERS_MOCKED) {
     await mockDelay(200);
     const s = db.get();
     db.set({
@@ -254,7 +268,7 @@ export async function listVoucherTargets(): Promise<{
   categories: { id: number; name: string }[];
   products: { id: number; name: string }[];
 }> {
-  if (USE_MOCK) {
+  if (SELLER_VOUCHERS_MOCKED) {
     await mockDelay(80);
     return {
       categories: [
@@ -274,6 +288,7 @@ export async function listVoucherTargets(): Promise<{
     api.get<{ id: number; name: string; children?: { id: number; name: string }[] }[]>(
       '/seller/categories',
     ),
+    // sản phẩm đang bán của chính shop (C1 — `GET /seller/products`, tối đa 100 / trang)
     api.get<{ id: number; name: string }[]>('/seller/products', {
       query: { status: 'PUBLISHED', size: 100 },
     }),
