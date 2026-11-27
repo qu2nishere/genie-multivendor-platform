@@ -338,6 +338,23 @@ export function SpecsTable({ form, readOnly, rules, issues }: SectionProps) {
   const show = issues.includes('specs');
   const cell =
     'min-w-0 border-0 bg-transparent px-3 py-2.5 text-sm text-strong outline-none focus:bg-blue-50 disabled:text-body';
+
+  // Đổi thứ tự dòng: kéo tay nắm ⋮⋮ (chuột / cảm ứng kéo thả HTML5) hoặc focus tay nắm rồi bấm ↑ / ↓
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [dragFrom, setDragFrom] = useState<number | null>(null);
+  const [dragOver, setDragOver] = useState<number | null>(null);
+  const move = (from: number, to: number) => {
+    if (from === to || to < 0 || to >= specs.length) return;
+    const next = [...specs];
+    const [row] = next.splice(from, 1);
+    next.splice(to, 0, row);
+    set(next);
+  };
+  // ô giá trị nhiều dòng: dòng đổi chỗ thì chiều cao phải tính lại theo nội dung mới
+  useEffect(() => {
+    tableRef.current?.querySelectorAll('textarea').forEach((el) => growToFit(el));
+  }, [specs]);
+
   return (
     <SectionCard
       id="sec-specs"
@@ -361,8 +378,12 @@ export function SpecsTable({ form, readOnly, rules, issues }: SectionProps) {
           ))}
         </div>
       )}
-      <div className="border border-solid border-line-subtle rounded-md overflow-hidden">
+      <div
+        ref={tableRef}
+        className="border border-solid border-line-subtle rounded-md overflow-hidden"
+      >
         <div className="flex bg-gray-25 text-xs font-semibold text-muted">
+          {!readOnly && <div className="w-9 flex-none" />}
           <div className="w-[220px] px-3 py-2.5 max-sm:w-[40%]">
             {t('seller-products.specs.name')}
           </div>
@@ -371,11 +392,68 @@ export function SpecsTable({ form, readOnly, rules, issues }: SectionProps) {
         </div>
         {rows.map((r, i) => {
           const empty = !r.name && !r.value;
+          const movable = !readOnly && i < specs.length && specs.length > 1;
           return (
             <div
               key={i}
-              className="flex items-center border-0 border-t border-solid border-line-subtle hover:bg-gray-50"
+              draggable={movable && dragFrom === i}
+              onDragStart={(e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', String(i));
+              }}
+              onDragOver={(e) => {
+                if (dragFrom === null || i >= specs.length) return;
+                e.preventDefault();
+                setDragOver(i);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragFrom !== null) move(dragFrom, i);
+                setDragFrom(null);
+                setDragOver(null);
+              }}
+              onDragEnd={() => {
+                setDragFrom(null);
+                setDragOver(null);
+              }}
+              className={cn(
+                'flex items-start border-0 border-t border-solid border-line-subtle hover:bg-gray-50',
+                dragFrom === i && 'opacity-50',
+                dragOver === i && dragFrom !== null && dragFrom !== i && 'bg-primary-tint',
+              )}
             >
+              {!readOnly && (
+                <div className="w-9 h-[41px] flex-none grid place-items-center">
+                  {movable && (
+                    <button
+                      type="button"
+                      aria-label={t('seller-products.specs.move', { name: r.name || i + 1 })}
+                      title={t('seller-products.specs.move_hint')}
+                      onMouseDown={() => setDragFrom(i)}
+                      onMouseUp={() => dragOver === null && setDragFrom(null)}
+                      onTouchStart={() => setDragFrom(i)}
+                      onKeyDown={(e) => {
+                        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+                        e.preventDefault();
+                        const to = e.key === 'ArrowUp' ? i - 1 : i + 1;
+                        move(i, to);
+                        // giữ focus trên tay nắm của dòng vừa chuyển để bấm tiếp
+                        requestAnimationFrame(() => {
+                          const handles =
+                            tableRef.current?.querySelectorAll<HTMLButtonElement>(
+                              '[data-spec-handle]',
+                            ) ?? [];
+                          handles[Math.max(0, Math.min(to, specs.length - 1))]?.focus();
+                        });
+                      }}
+                      data-spec-handle
+                      className="border-0 bg-transparent p-1 rounded cursor-grab active:cursor-grabbing text-subtle hover:text-strong hover:bg-gray-100 grid place-items-center"
+                    >
+                      <Icon name="grip-vertical" size={16} />
+                    </button>
+                  )}
+                </div>
+              )}
               <input
                 value={r.name}
                 disabled={readOnly}
