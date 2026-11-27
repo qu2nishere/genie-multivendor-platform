@@ -123,6 +123,18 @@ public abstract class VoucherTestSupport extends IntegrationTestBase {
         jdbc.update("UPDATE vouchers SET used_count = used_count + 1 WHERE id = ?", voucherId);
     }
 
+    /** Voucher quà đổi Điểm {@code COIN500} như seed (CSDL test không nạp seed) — chạy lại được. */
+    protected long coinRewardVoucher() {
+        jdbc.update("""
+                INSERT INTO vouchers (code, title, scope, type, discount_type, discount_value, min_order_value, usage_limit,
+                    usage_per_user, used_count, priority, valid_from, valid_to, is_active, version, total_discount_used,
+                    sponsor_type)
+                VALUES ('COIN500', 'Quà đổi Điểm: giảm 5.000₫', 'ALL', 'PLATFORM', 'FIXED_AMOUNT', 5000, 50000, 100000, 10, 0, 2,
+                    now() - interval '1 day', now() + interval '365 days', TRUE, 0, 0, 'PLATFORM')
+                ON CONFLICT (code) DO NOTHING""");
+        return jdbc.queryForObject("SELECT id FROM vouchers WHERE code = 'COIN500'", Long.class);
+    }
+
     protected long category() {
         return data.category();
     }
