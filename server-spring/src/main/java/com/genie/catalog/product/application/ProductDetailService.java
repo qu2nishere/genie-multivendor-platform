@@ -131,7 +131,7 @@ public class ProductDetailService {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 SELECT p.id, p.name, p.description, p.brand, p.brand_id, p.category_id, p.specs_json::text AS specs_json,
                        p.base_price, p.sold, p.rating, p.is_pre_order, p.pre_order_days, p.item_condition, p.origin,
-                       p.ships_from, p.variant_image_attribute,
+                       p.ships_from, p.variant_image_attribute, p.option_images_json::text AS option_images_json,
                        vp.id AS shop_id, vp.user_id AS vendor_id, vp.shop_name, vp.logo_url, vp.is_mall, vp.is_favorite,
                        vp.rating_avg AS shop_rating, vp.follower_count, vp.pickup_province, vp.created_at AS shop_created_at,
                        vp.vacation_starts_at, vp.vacation_ends_at, vp.vacation_message,
@@ -165,9 +165,14 @@ public class ProductDetailService {
                     Pricing.price(rs.getBigDecimal("price"), null), img));
         }, id);
         VariantMatrix.Result matrix = VariantMatrix.build(skus, (String) r.get("variant_image_attribute"));
+        // ảnh của giá trị: option_images_json (mọi nhóm có ảnh — V26), sản phẩm cũ dùng ảnh SKU của nhóm ảnh chính
+        Map<String, Map<String, String>> optionImages =
+                OptionImages.parse(json, (String) r.get("option_images_json"));
         List<ProductDetailView.OptionGroup> groups = matrix.groups().stream()
-                .map(g -> new ProductDetailView.OptionGroup(g.name(),
-                        g.values().stream().map(v -> new ProductDetailView.OptionValue(v.value(), v.imageUrl())).toList()))
+                .map(g -> new ProductDetailView.OptionGroup(g.name(), g.values().stream().map(v -> {
+                    String key = OptionImages.keyOf(optionImages, g.name(), v.value());
+                    return new ProductDetailView.OptionValue(v.value(), key != null ? media.product(key) : v.imageUrl());
+                }).toList()))
                 .toList();
         List<ProductSnapshot.SkuView> skuViews = matrix.variants().stream()
                 .map(v -> new ProductSnapshot.SkuView(v.id(), v.options(), v.price(), variantImages.get(v.id())))
