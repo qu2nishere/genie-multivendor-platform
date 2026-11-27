@@ -33,6 +33,26 @@ export const GROUP_NAMES = [
 
 export const variantKey = (options: string[]): string => options.join('|');
 
+/**
+ * "Áp dụng hàng loạt" có lọc theo giá trị: `match[k]` = giá trị của nhóm k cần khớp (null = mọi giá trị).
+ * Vd giá theo Dung lượng, màu nào cũng như nhau: match = ['128 GB', null] → đặt giá cho mọi màu của 128 GB.
+ * Ô để trống (null) trong `patch` thì giữ nguyên. Trả thêm số phân loại đã đổi.
+ */
+export function applyBulk(
+  variants: VariantRow[],
+  match: (string | null)[],
+  patch: { price: number | null; stock: number | null },
+): { variants: VariantRow[]; count: number } {
+  let count = 0;
+  const next = variants.map((v) => {
+    const hit = match.every((m, k) => m === null || v.options[k] === m);
+    if (!hit) return v;
+    count++;
+    return { ...v, price: patch.price ?? v.price, stock: patch.stock ?? v.stock };
+  });
+  return { variants: next, count };
+}
+
 /** Mọi tổ hợp giá trị của các nhóm có giá trị (thứ tự nhóm → thứ tự giá trị). */
 export function combos(groups: OptionGroup[]): string[][] {
   const active = groups.filter((g) => g.values.length > 0);
