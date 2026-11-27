@@ -2758,7 +2758,8 @@
     "empty": "Chưa có khách nào nhắn tin cho shop.",
     "orders": "Đơn hàng",
     "no_orders": "Khách chưa có đơn với shop",
-    "send_card": "Gửi thẻ {code}"
+    "send_card": "Gửi thẻ {code}",
+    "typing": "Khách đang nhập…"
   },
   "seller-promotions": {
     "title": "Khuyến mãi của Shop",

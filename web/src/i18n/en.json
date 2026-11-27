@@ -2758,7 +2758,8 @@
     "empty": "No customer has messaged your shop yet.",
     "orders": "Orders",
     "no_orders": "This customer has no orders with you",
-    "send_card": "Send {code}"
+    "send_card": "Send {code}",
+    "typing": "Customer is typing…"
   },
   "seller-promotions": {
     "title": "Shop promotions",

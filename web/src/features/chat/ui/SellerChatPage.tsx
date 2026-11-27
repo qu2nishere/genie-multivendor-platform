@@ -16,7 +16,13 @@ import {
   useSellerMessages,
   useSellerSend,
 } from '../application/useSellerChat';
-import { MAX_TEXT, mergeMessages, presenceOf, previewKey } from '../domain/chat.rules';
+import {
+  chatImageValid,
+  MAX_TEXT,
+  mergeMessages,
+  presenceOf,
+  previewKey,
+} from '../domain/chat.rules';
 import type { SellerConversation } from '../domain/chat.types';
 import { Bubble } from './ChatParts';
 
@@ -67,6 +73,7 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
   };
   const pick = async (f: File | undefined) => {
     if (!f) return;
+    if (!chatImageValid(f)) return void toast.error(t('chat.image_invalid'));
     setUploading(true);
     try {
       const u = await uploadFile(f, 'CHAT_IMAGE');
@@ -175,7 +182,7 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
         ))}
         {typing && (
           <p className="m-0 text-[11px] text-subtle" aria-live="polite">
-            {t('chat.typing')}
+            {t('seller-chat.typing')}
           </p>
         )}
       </div>

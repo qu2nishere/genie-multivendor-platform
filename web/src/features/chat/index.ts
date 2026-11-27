@@ -2,6 +2,7 @@
 export type { Conversation, ChatMessage, MessageType } from './domain/chat.types';
 export { totalUnread } from './domain/chat.rules';
 export { useConversations, useOpenConversation } from './application/useChat';
+export { useSellerChatBadgeSync } from './application/useSellerChat';
 export { default as ChatWidget } from './ui/ChatWidget';
 export { default as ChatPage, type ChatPageProps } from './ui/ChatPage';
 export { default as SellerChatPage } from './ui/SellerChatPage';
