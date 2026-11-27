@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/chat-live` (M00–M06) → `feature/chat-cards-auto-reply` (M07–M10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-27 — xong M00–M10 (chỉ còn mở PR M10.08) (78 / 79) |
+| **Cập nhật gần nhất** | 2026-11-27 — xong toàn bộ M00–M10 (79 / 79), PR #116 + #117 (79 / 79) |
 
 **Cách dùng**
 
@@ -58,8 +58,8 @@
 | M07 | Ảnh, thẻ sản phẩm, thẻ đơn (UC-SOC-02) — nhánh `feature/chat-cards-auto-reply` | 5 | 2 | 7 / 7 |
 | M08 | Trả lời tự động & tỉ lệ phản hồi (UC-VND-06) | 6 | 2 | 8 / 8 |
 | M09 | Kiểm thử & chạy thật | 3 | 1 | 4 / 4 |
-| M10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 8 / 9 |
-| **Tổng** | | **62** | **17** | **78 / 79** |
+| M10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 9 / 9 |
+| **Tổng** | | **62** | **17** | **79 / 79** |
 
 ## M00 — Chuẩn bị
 
@@ -171,7 +171,7 @@
 - [x] **M10.06** `Quản Lý UseCase.xlsx`
 - [x] **M10.07** README ngày (mục 7)
 - [x] **M10.C1** 🔖 COMMIT `docs(social): record live chat, chat cards and auto replies as implemented` · hash: `50bedc8`
-- [ ] **M10.08** Mở PR `feature/chat-live` (M01–M06) rồi `feature/chat-cards-auto-reply` (M07–M10) vào `develop`.
+- [x] **M10.08** Mở PR `feature/chat-live` (M01–M06) rồi `feature/chat-cards-auto-reply` (M07–M10) vào `develop`.
 
 ---
 
@@ -196,6 +196,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| M10.08 | PR #116 `feature/chat-live` (M01–M06, nền `feature/notification-platform-broadcast` #115) → PR #117 `feature/chat-cards-auto-reply` (M07–M10, nền `feature/chat-live`) — xếp chồng, đổi nền sang `develop` sau mỗi lần merge |
 | M08.06 | Chạy thật TC-CHAT-01: bật công tắc + lưu lời chào / tin vắng mặt qua `PATCH /seller/settings` thật → toast "Đã lưu cấu hình tự động trả lời", CSDL đúng; khung chat hiện nhãn "Tin nhắn tự động" |
 | M09.02 | Chromium (Playwright) 3 ngữ cảnh, web build `PUBLIC_REAL_API=…,notifications,platform-notifications,chat` + backend `local` (`PUBLIC_S3_URL=http://localhost:9000`) + Postgres + Redis + Silo + Mailpit — **15 / 15 ca đạt**. Lỗi phát hiện và đã sửa: ảnh GIF / > 5 MB không báo lỗi tại chỗ (`a526359`); badge Chat Seller không tự đổi + nhãn "đang gõ" phía shop sai (`9241f13`). Lỗi của chính kịch bản (chữ xem trước ở hộp thư trùng với bong bóng, popup banner che nút chat) đã chỉnh trong script |
 | M09.03 | 50 cặp khách ↔ 10 shop × 5 tin qua `/app/chat.send` (250 tin đồng thời): nhận 250 / 250, lưu 250, bộ đếm đúng 50 / 50; p50 161 ms, **p95 235 ms**, max 247 ms (< 300 ms). Token ký bằng khóa JWT máy dev (giới hạn đăng nhập 10 lần / phút / IP) |
@@ -218,3 +219,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | 2026-11-27 | M07–M08 (nhánh `feature/chat-cards-auto-reply`): ảnh riêng tư + thẻ sản phẩm / đơn + 8.6; lời chào / vắng mặt / tạm nghỉ, job tỉ lệ phản hồi 03:30 | `6e2b7cc` `a421a87` `898ae64` `3394a4a` |
 | 2026-11-27 | M09: kịch bản TC-CHAT-00…15, chạy thật 15 / 15 (Playwright), đo 50 cặp p95 235 ms; sửa 2 lỗi phát hiện khi chạy | `a526359` `9241f13` `916b0c9` |
 | 2026-11-27 | M10: OpenAPI, handoff, Usecase, checklist, báo cáo độc lập, Excel, README — **UC-SOC-01, UC-SOC-02, UC-VND-06 ✅ Đã triển khai** | `50bedc8` |
+| 2026-11-27 | Mở PR #116, #117 — **plan [2] xong 79 / 79** | #116 #117 |
