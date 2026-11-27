@@ -218,6 +218,26 @@ class ChatStompIT extends ChatTestSupport {
                 + "AND is_read = FALSE", Integer.class, p.shop().userId())).isZero();
     }
 
+    @Test
+    void ownerOnlineDuringBusinessHoursGetsNoAwayReplyButAtNightDoes() throws Exception {
+        Pair p = pair();
+        jdbc.update("UPDATE vendor_profiles SET auto_reply_enabled = TRUE, auto_reply_offline = 'Shop vắng' "
+                + "WHERE id = ?", p.shop().shopId());
+        Client owner = connect(p.shop().userId(), UserRole.VENDOR);
+        chat.send(p.buyer(), Side.CUSTOMER, p.conversationId(), SendCommand.text("14:00 giờ VN", null));
+        assertThat(owner.inbox().poll(3, TimeUnit.SECONDS)).isNotNull();
+        assertThat(autoMessages(p.conversationId())).isZero();
+
+        clock.set(java.time.Instant.parse("2026-06-08T16:00:00Z"));   // 23:00 giờ VN — vẫn online nhưng ngoài giờ
+        chat.send(p.buyer(), Side.CUSTOMER, p.conversationId(), SendCommand.text("23:00 giờ VN", null));
+        assertThat(autoMessages(p.conversationId())).isEqualTo(1);
+    }
+
+    private int autoMessages(long conv) {
+        return jdbc.queryForObject("SELECT count(*) FROM messages WHERE conversation_id = ? AND is_auto", Integer.class,
+                conv);
+    }
+
     private int chatNotifications(long userId) {
         return jdbc.queryForObject("SELECT count(*) FROM notifications WHERE user_id = ? AND type = 'CHAT_MESSAGE'",
                 Integer.class, userId);

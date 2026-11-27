@@ -55,6 +55,7 @@ public class ChatService {
     private final ChatProductLookup products;
     private final ChatOrderLookup orders;
     private final UploadService uploads;
+    private final AutoReplies autoReplies;
     private final NamedParameterJdbcTemplate jdbc;
     private final Clock clock;
     private final TransactionTemplate tx;
@@ -63,7 +64,7 @@ public class ChatService {
                        UserFacade users, ChatQueryService query, ChatMessageViews views, ChatIdempotency idempotency,
                        RateLimiter rateLimiter, NotificationFacade notifications, ChatRealtime realtime,
                        ChatProductLookup products, ChatOrderLookup orders, UploadService uploads,
-                       NamedParameterJdbcTemplate jdbc,
+                       AutoReplies autoReplies, NamedParameterJdbcTemplate jdbc,
                        Clock clock, PlatformTransactionManager transactionManager) {
         this.conversations = conversations;
         this.messages = messages;
@@ -78,6 +79,7 @@ public class ChatService {
         this.products = products;
         this.orders = orders;
         this.uploads = uploads;
+        this.autoReplies = autoReplies;
         this.jdbc = jdbc;
         this.clock = clock;
         this.tx = new TransactionTemplate(transactionManager);
@@ -99,7 +101,9 @@ public class ChatService {
                 throw new BusinessException(ErrorCode.CHAT_OWN_SHOP);
             }
             boolean created = conversations.insertIgnore(me, shop.vendorUserId()) == 1;
-            Conversation c = conversations.findByCustomerIdAndVendorId(me, shop.vendorUserId()).orElseThrow();
+            long id = conversations.findByCustomerIdAndVendorId(me, shop.vendorUserId()).orElseThrow().getId();
+            Conversation c = conversations.findByIdForUpdate(id).orElseThrow();
+            autoReplies.greet(c, shop, created, now());   // lời chào UC-VND-06 (D11a)
             return new Opened(query.opened(c, shop), created);
         });
     }
@@ -118,11 +122,15 @@ public class ChatService {
             rateLimiter.check("rl:chat:" + me, RATE_LIMIT, RATE_WINDOW);
             Message saved = tx.execute(status -> {
                 Conversation c = lockMember(me, side, conversationId);
-                ensureWritable(c);
+                ChatShop shop = ensureWritable(c);
                 Message m = build(c, me, type, text, cmd);
                 messages.save(m);
-                c.onNewMessage(m, c.sideOf(me) == Side.CUSTOMER);
+                boolean fromCustomer = c.sideOf(me) == Side.CUSTOMER;
+                c.onNewMessage(m, fromCustomer);
                 realtime.messageCreated(c, m, cmid);
+                if (fromCustomer) {
+                    autoReplies.afterCustomerMessage(c, shop, m.getCreatedAt());   // vắng mặt / tạm nghỉ (D11b–c)
+                }
                 return m;
             });
             idempotency.complete(me, cmid, saved.getId());
@@ -283,7 +291,7 @@ public class ChatService {
     }
 
     /** Shop còn hoạt động và khách còn hoạt động (D5, D18) — hội thoại cũ chỉ còn đọc. */
-    private void ensureWritable(Conversation c) {
+    private ChatShop ensureWritable(Conversation c) {
         ChatShop shop = shops.byVendorUser(c.getVendorId()).orElse(null);
         if (shop == null || !shop.active()) {
             throw new BusinessException(ErrorCode.SHOP_UNAVAILABLE);
@@ -291,6 +299,7 @@ public class ChatService {
         if (!users.isActive(c.getCustomerId())) {
             throw new BusinessException(ErrorCode.NOT_FOUND);
         }
+        return shop;
     }
 
     private OffsetDateTime now() {
