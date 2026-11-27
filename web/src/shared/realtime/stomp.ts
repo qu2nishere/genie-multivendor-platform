@@ -1,5 +1,5 @@
-// Client STOMP 1.2 tối giản trên WebSocket thuần (API_SPEC mục 13) — đủ cho kênh server → client: CONNECT kèm
-// access token, SUBSCRIBE, nhận MESSAGE, tự kết nối lại. Không dùng thư viện ngoài; gửi lên /app/** (chat) thêm sau.
+// Client STOMP 1.2 tối giản trên WebSocket thuần (API_SPEC mục 13): CONNECT kèm access token, SUBSCRIBE, nhận MESSAGE,
+// gửi SEND lên /app/** (chat — plan 2026-11-26 thông báo N05.01), tự kết nối lại. Không dùng thư viện ngoài.
 
 export interface StompFrame {
   command: string;
@@ -52,6 +52,8 @@ export interface StompOptions {
   token: () => string | null;
   /** Server từ chối CONNECT (token hết hạn) → thử làm mới; `false` = hết phiên, dừng kết nối lại. */
   refresh: () => Promise<boolean>;
+  /** Báo khi kết nối STOMP sẵn sàng (`true`) / mất (`false`) — chat dùng để chọn WebSocket hay REST dự phòng. */
+  onStatus?: (connected: boolean) => void;
 }
 
 /** Kết nối STOMP giữ các đăng ký qua những lần kết nối lại (chờ 2 → 4 → … tối đa 30 giây). */
@@ -63,16 +65,38 @@ export class StompConnection {
   private retry = 0;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private rejected = false;
+  private ready = false;
 
   constructor(private readonly opts: StompOptions) {}
+
+  /** Đã nhận CONNECTED và socket còn mở. */
+  get connected(): boolean {
+    return this.ready && this.ws?.readyState === WebSocket.OPEN;
+  }
+
+  /**
+   * Gửi khung SEND (thân JSON) — chỉ khi đang kết nối; trả `false` nếu chưa / mất kết nối để nơi gọi dùng REST dự phòng
+   * (không xếp hàng: tin nhắn chat phải có phản hồi rõ ràng).
+   */
+  send(destination: string, body: unknown): boolean {
+    if (!this.connected) return false;
+    this.ws?.send(
+      encodeFrame(
+        'SEND',
+        { destination, 'content-type': 'application/json' },
+        JSON.stringify(body ?? {}),
+      ),
+    );
+    return true;
+  }
 
   subscribe(destination: string, handler: MessageHandler): () => void {
     const id = `sub-${this.nextId++}`;
     this.subs.set(id, { destination, handler });
-    if (this.ws?.readyState === WebSocket.OPEN) this.send('SUBSCRIBE', { id, destination });
+    if (this.ws?.readyState === WebSocket.OPEN) this.frame('SUBSCRIBE', { id, destination });
     return () => {
       this.subs.delete(id);
-      if (this.ws?.readyState === WebSocket.OPEN) this.send('UNSUBSCRIBE', { id });
+      if (this.ws?.readyState === WebSocket.OPEN) this.frame('UNSUBSCRIBE', { id });
     };
   }
 
@@ -83,7 +107,7 @@ export class StompConnection {
     this.ws = ws;
     this.rejected = false;
     ws.onopen = () => {
-      this.send('CONNECT', {
+      this.frame('CONNECT', {
         'accept-version': '1.2',
         host: new URL(this.opts.url).host,
         'heart-beat': '0,0',
@@ -96,6 +120,10 @@ export class StompConnection {
     };
     ws.onclose = () => {
       if (this.ws === ws) this.ws = null;
+      if (this.ready) {
+        this.ready = false;
+        this.opts.onStatus?.(false);
+      }
       if (!this.stopped) void this.reconnect();
     };
   }
@@ -118,7 +146,9 @@ export class StompConnection {
   private handle(f: StompFrame): void {
     if (f.command === 'CONNECTED') {
       this.retry = 0;
-      for (const [id, s] of this.subs) this.send('SUBSCRIBE', { id, destination: s.destination });
+      for (const [id, s] of this.subs) this.frame('SUBSCRIBE', { id, destination: s.destination });
+      this.ready = true;
+      this.opts.onStatus?.(true);
     } else if (f.command === 'MESSAGE') {
       const sub = this.subs.get(f.headers.subscription ?? '');
       if (!sub) return;
@@ -143,7 +173,7 @@ export class StompConnection {
     this.timer = setTimeout(() => this.connect(), delay);
   }
 
-  private send(command: string, headers: Record<string, string>): void {
+  private frame(command: string, headers: Record<string, string>): void {
     this.ws?.send(encodeFrame(command, headers));
   }
 }

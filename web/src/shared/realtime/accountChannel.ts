@@ -1,9 +1,11 @@
 // Kênh realtime /user/queue/account (API_SPEC mục 13, plan B1): khi phiên bị thu hồi phía server — bị khóa, bị xóa,
 // đặt lại mật khẩu — mọi tab đang mở đăng xuất ngay, không phải tải lại trang; trang đăng nhập đọc lý do để báo.
 // Đổi quyền / chức danh nhân viên KHÔNG đăng xuất (D19): chỉ phát sự kiện để khung Admin tải lại menu.
-import { clearSession, getAccessToken, refreshAccessToken, $session } from '@/shared/auth/session';
-import { env, isMocked } from '@/shared/config/env';
-import { StompConnection } from './stomp';
+// Từ plan 2026-11-26 (thông báo N05.02): đi qua hub dùng chung (realtimeHub) thay vì tự giữ một StompConnection.
+import { clearSession } from '@/shared/auth/session';
+import { closeRealtime, startRealtime, subscribe } from './realtimeHub';
+
+export { wsUrlOf } from './realtimeHub';
 
 export const ACCOUNT_QUEUE = '/user/queue/account';
 /**
@@ -21,16 +23,6 @@ export const FORCED_LOGOUT_REASONS = [
 ] as const;
 export type ForcedLogoutReason = (typeof FORCED_LOGOUT_REASONS)[number] | 'DEFAULT';
 
-/** `http(s)://host/api/v1` → `ws(s)://host/ws`. */
-export function wsUrlOf(apiUrl: string): string {
-  const u = new URL(apiUrl);
-  u.protocol = u.protocol === 'https:' ? 'wss:' : 'ws:';
-  u.pathname = '/ws';
-  u.search = '';
-  u.hash = '';
-  return u.toString();
-}
-
 export function toForcedLogoutReason(raw: unknown): ForcedLogoutReason {
   return (FORCED_LOGOUT_REASONS as readonly unknown[]).includes(raw)
     ? (raw as ForcedLogoutReason)
@@ -38,46 +30,22 @@ export function toForcedLogoutReason(raw: unknown): ForcedLogoutReason {
 }
 
 let started = false;
-let conn: StompConnection | null = null;
 
-/** Gọi một lần từ Providers: theo dõi phiên — đăng nhập thì mở kênh, đăng xuất thì đóng. Chế độ mock bỏ qua. */
+/** Gọi một lần từ Providers: theo dõi phiên qua hub — đăng nhập thì mở kênh, đăng xuất thì đóng. Chế độ mock bỏ qua. */
 export function startAccountChannel(): void {
-  if (
-    started ||
-    typeof window === 'undefined' ||
-    typeof WebSocket === 'undefined' ||
-    isMocked('auth')
-  )
-    return;
+  if (started || typeof window === 'undefined') return;
   started = true;
-  $session.subscribe((s) => {
-    if (s.status === 'authenticated' && !conn) open();
-    else if (s.status !== 'authenticated' && conn) close();
-  });
-}
-
-function open(): void {
-  conn = new StompConnection({
-    url: wsUrlOf(env.PUBLIC_API_URL),
-    token: getAccessToken,
-    refresh: refreshAccessToken,
-  });
-  conn.subscribe(ACCOUNT_QUEUE, (body) => {
+  startRealtime();
+  subscribe(ACCOUNT_QUEUE, (body) => {
     const msg = body as { type?: string; reason?: string } | null;
     if (msg?.type === 'SESSION_REVOKED') forceLogout(toForcedLogoutReason(msg.reason));
     else if (msg?.type === 'PERMISSIONS_CHANGED')
       window.dispatchEvent(new CustomEvent(PERMISSIONS_CHANGED_EVENT));
   });
-  conn.connect();
-}
-
-function close(): void {
-  conn?.disconnect();
-  conn = null;
 }
 
 function forceLogout(reason: ForcedLogoutReason): void {
-  close();
+  closeRealtime();
   try {
     sessionStorage.setItem(FORCED_LOGOUT_KEY, reason);
   } catch {
