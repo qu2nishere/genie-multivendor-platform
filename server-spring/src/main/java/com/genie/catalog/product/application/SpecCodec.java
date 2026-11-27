@@ -37,7 +37,8 @@ public final class SpecCodec {
         for (SellerProductViews.Spec s : specs) {
             if (s == null || s.name() == null || s.value() == null) continue;
             String name = s.name().trim();
-            String value = s.value().trim();
+            // giữ xuống dòng của người bán (chuẩn hóa \r\n → \n, bỏ dòng trống thừa liên tiếp)
+            String value = s.value().replace("\r\n", "\n").replace('\r', '\n').replaceAll("\n{3,}", "\n\n").trim();
             if (name.isEmpty() || value.isEmpty()) continue;
             AttributeView attr = byName.get(NameNormalizer.normalize(name));
             out.add(new Entry(attr == null ? name : attr.code(), attr == null ? name : attr.name(), value, attr));

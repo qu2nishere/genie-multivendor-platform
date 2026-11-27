@@ -63,6 +63,8 @@ public class ProductWriteService {
     static final int MAX_IMAGES = 8;
     static final int MAX_DOCUMENTS = 4;
     static final int MAX_SPECS = 30;
+    /** Giá trị thông số được xuống dòng (vd "Tính năng màn hình") — web `SPEC_VALUE_MAX`. */
+    static final int MAX_SPEC_VALUE = 1000;
     static final int MAX_GROUPS = 2;
     static final int MAX_GROUP_VALUES = 20;
     static final int MAX_VARIANTS = 50;
@@ -264,8 +266,9 @@ public class ProductWriteService {
                 if (s.name() != null && s.name().trim().length() > 60) {
                     v.add(viol("specs[" + i + "].name", "TOO_LONG", s.name().length(), "Tên thông số tối đa 60 ký tự."));
                 }
-                if (s.value() != null && s.value().trim().length() > 255) {
-                    v.add(viol("specs[" + i + "].value", "TOO_LONG", s.value().length(), "Giá trị tối đa 255 ký tự."));
+                if (s.value() != null && s.value().trim().length() > MAX_SPEC_VALUE) {
+                    v.add(viol("specs[" + i + "].value", "TOO_LONG", s.value().length(),
+                            "Giá trị thông số tối đa " + MAX_SPEC_VALUE + " ký tự."));
                 }
             }
         }
