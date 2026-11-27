@@ -27,6 +27,43 @@ public abstract class NotificationTestSupport extends IntegrationTestBase {
     void notificationSupport() {
         data = new TestDataBuilder(jdbc);
         tx = new TransactionTemplate(transactionManager);
+        // Thông báo sàn / nhân viên không gắn người — dọn để các ca không thấy dữ liệu của nhau
+        jdbc.update("DELETE FROM platform_notifications");
+        jdbc.update("DELETE FROM admin_notifications");
+    }
+
+    /** Khách tạo lúc {@code createdAtIso} (thông báo sàn phát trước lúc này không hiện — D3). */
+    protected long customerCreatedAt(String createdAtIso) {
+        long id = customer();
+        jdbc.update("UPDATE users SET created_at = CAST(? AS TIMESTAMPTZ) WHERE id = ?", createdAtIso, id);
+        return id;
+    }
+
+    protected long vendorCreatedAt(String createdAtIso) {
+        long id = customerCreatedAt(createdAtIso);
+        jdbc.update("UPDATE users SET role = 'VENDOR' WHERE id = ?", id);
+        return id;
+    }
+
+    protected long insertPersonal(long userId, String type, String title, String createdAtIso, boolean read) {
+        return jdbc.queryForObject("INSERT INTO notifications (user_id, type, title, body, channel, delivery_status, "
+                + "retry_count, is_read, sent_at, created_at) VALUES (?, ?, ?, 'Thân', 'IN_APP', 'SENT', 0, ?, "
+                + "CAST(? AS TIMESTAMPTZ), CAST(? AS TIMESTAMPTZ)) RETURNING id", Long.class,
+                userId, type, title, read, createdAtIso, createdAtIso);
+    }
+
+    /** Thông báo sàn đã phát lúc {@code dispatchedAtIso} ({@code null} = đang hẹn giờ). */
+    protected long insertPlatform(String target, String recipientIdsJson, String title, String dispatchedAtIso) {
+        return jdbc.queryForObject("INSERT INTO platform_notifications (title, content, target, created_by, created_at, "
+                + "updated_at, reach_count, send_at, recipient_user_ids_json, dispatched_at) VALUES (?, '<p>Nội dung "
+                + "<b>sàn</b></p>', ?, 1, now(), now(), 10, NULL, CAST(? AS JSONB), CAST(? AS TIMESTAMPTZ)) RETURNING id",
+                Long.class, title, target, recipientIdsJson, dispatchedAtIso);
+    }
+
+    protected long insertAdmin(String type, String title, String createdAtIso) {
+        return jdbc.queryForObject("INSERT INTO admin_notifications (type, title, content, is_read, created_at, updated_at) "
+                + "VALUES (?, ?, 'Nội dung', FALSE, CAST(? AS TIMESTAMPTZ), now()) RETURNING id", Long.class,
+                type, title, createdAtIso);
     }
 
     protected long customer() {
