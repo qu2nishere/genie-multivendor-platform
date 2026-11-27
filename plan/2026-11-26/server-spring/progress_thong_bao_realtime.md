@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-27 — N05 xong (UC-NOT-01 phần code), tiếp N06 (thông báo sàn) (62 / 98) |
+| **Cập nhật gần nhất** | 2026-11-27 — N06, N07 xong, tiếp N08 (web Admin) (78 / 98) |
 
 **Cách dùng**
 
@@ -54,12 +54,12 @@
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 14 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 11 / 11 |
 | N05 | Nối web: hub realtime + chuông + hộp thư (UC-NOT-01) | 8 | 2 | 10 / 10 |
-| N06 | API quản trị thông báo sàn (UC-NOT-05) | 10 | 1 | 0 / 11 |
-| N07 | Phát & đẩy realtime thông báo sàn | 4 | 1 | 0 / 5 |
+| N06 | API quản trị thông báo sàn (UC-NOT-05) | 10 | 1 | 11 / 11 |
+| N07 | Phát & đẩy realtime thông báo sàn | 4 | 1 | 5 / 5 |
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **62 / 98** |
+| **Tổng** | | **81** | **17** | **78 / 98** |
 
 ## N00 — Chuẩn bị
 
@@ -143,25 +143,25 @@
 
 ## N06 — API quản trị thông báo sàn (UC-NOT-05)
 
-- [ ] **N06.01** `PlatformNotification`
-- [ ] **N06.02** `PlatformAudience` (D1, D3)
-- [ ] **N06.03** Request / kiểm trường
-- [ ] **N06.04** `PlatformNotificationAdminService.create`
-- [ ] **N06.05** `update`
-- [ ] **N06.06** `delete`
-- [ ] **N06.07** `PlatformNotificationQueryService`
-- [ ] **N06.08** `AdminPlatformNotificationController`
-- [ ] **N06.09** `AdminPlatformNotificationIT`
-- [ ] **N06.10** `PlatformNotificationSecurityIT`
-- [ ] **N06.C1** 🔖 COMMIT `feat(notification): let admins compose, schedule and delete platform notifications` · hash: `…`
+- [x] **N06.01** `PlatformNotification`
+- [x] **N06.02** `PlatformAudience` (D1, D3)
+- [x] **N06.03** Request / kiểm trường
+- [x] **N06.04** `PlatformNotificationAdminService.create`
+- [x] **N06.05** `update`
+- [x] **N06.06** `delete`
+- [x] **N06.07** `PlatformNotificationQueryService`
+- [x] **N06.08** `AdminPlatformNotificationController`
+- [x] **N06.09** `AdminPlatformNotificationIT`
+- [x] **N06.10** `PlatformNotificationSecurityIT`
+- [x] **N06.C1** 🔖 COMMIT `feat(notification): let admins compose, schedule and delete platform notifications` · hash: `02fc88f`
 
 ## N07 — Phát & đẩy realtime thông báo sàn
 
-- [ ] **N07.01** `PlatformNotificationDispatcher`
-- [ ] **N07.02** `PlatformNotificationDispatchJob` (D16)
-- [ ] **N07.03** `PlatformNotificationDispatchJobIT`
-- [ ] **N07.04** `NotificationRealtimeIT` (bổ sung)
-- [ ] **N07.C1** 🔖 COMMIT `feat(notification): dispatch scheduled broadcasts and push them to online recipients` · hash: `…`
+- [x] **N07.01** `PlatformNotificationDispatcher`
+- [x] **N07.02** `PlatformNotificationDispatchJob` (D16)
+- [x] **N07.03** `PlatformNotificationDispatchJobIT`
+- [x] **N07.04** `NotificationRealtimeIT` (bổ sung)
+- [x] **N07.C1** 🔖 COMMIT `feat(notification): dispatch scheduled broadcasts and push them to online recipients` · hash: `f4e07e5`
 
 ## N08 — Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư
 
@@ -214,6 +214,12 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N06.02 / N06.04 | **Khác plan:** đổi email → id bằng read-model SQL `users` trong `PlatformAudience.resolveEmails` (không cần thêm `UserFacade.idsByEmails` vào module auth của Khoa). Email phải thuộc khách / shop đang hoạt động; so khớp không phân biệt hoa thường |
+| N06.05–N06.07 | `PlatformNotification.changeContent` / `isEditable`. Sửa: `image_object_key` `null` = giữ ảnh, chuỗi rỗng = bỏ ảnh. Ảnh lưu **khóa đối tượng** `notice/{id}/…`, API trả URL công khai. Chi tiết đọc bằng SQL nên `flush()` trước khi trả. Tìm `q` không phân biệt dấu (`immutable_unaccent`). `created_by` = tên hồ sơ nhân viên hoặc email + ` (id)` |
+| N06.09–N06.10 | `AdminPlatformNotificationIT` 6 ca (phát ngay: `reach_count` theo luật D1 / D3, HTML độc bị lọc, khách thấy `ALL` không thấy `VENDOR`; `SPECIFIC_USERS` rỗng / email lạ → 4221 + `unknown_emails`, email viết hoa vẫn nhận; gom lỗi theo trường; hẹn giờ → sửa → `send_at` null phát ngay → sửa nữa 4091; ảnh thật lên Silo → xóa thông báo đã phát thì ảnh + hộp thư + lượt đọc mất; phân trang 5, lọc `target`, tìm không dấu), `PlatformNotificationSecurityIT` (Admin / nhân viên có quyền 200, Finance / Moderator / khách 403, không token 401, xin link `NOTIFICATION_IMAGE` thiếu quyền 403) |
+| N07.01 | Listener `AFTER_COMMIT` không đăng ký thêm "sau commit" được → thêm `UserChannel.sendNow` / `sendToTopicNow`. `ALL` → `/topic/platform`; còn lại → người đang online ∩ đối tượng (lô 500) → `/user/queue/notifications` kèm `unread_count` |
+| N07.02 | **Lỗi tự phát hiện khi chạy test:** `SELECT * … FOR UPDATE SKIP LOCKED` native không có cột cho trường `@Formula readCount` → đổi sang `lockDueIds` (chỉ khóa + lấy `id`) rồi `findById` trong cùng transaction |
+| N07.03–N07.04 | `PlatformNotificationDispatchJobIT` (tới giờ phát đúng 1 lần, chưa tới giờ không phát, tua đồng hồ thì phát, 3 luồng song song 6 dòng → đúng 6), `NotificationRealtimeIT` +2 ca STOMP (`ALL` qua `/topic/platform` có `content_html`; `SPECIFIC_USERS` chỉ người được chọn nhận, người khác không nhận cả ở topic; `VENDOR` không tới khách). Cổng: **235 unit + 390 IT** xanh |
 | N05.01–N05.02 | `stomp.ts`: `send()` (khung SEND JSON, trả `false` khi chưa kết nối — không xếp hàng, chat dùng REST dự phòng), `connected`, `onStatus`. `realtimeHub.ts`: một `StompConnection` cho cả app, mở / đóng theo `$session`, đăng ký giữ qua đăng xuất / đăng nhập lại; `accountChannel` chuyển sang hub (hành vi B1 không đổi, `wsUrlOf` re-export) |
 | N05.03–N05.05 | DTO thật theo API 3.12 (`NotificationDto`, `NotificationEventDto`), DTO prototype đổi tên `MockNotificationDto` (nhánh mock vẫn chạy). Luật thuần: `typeOfCategory`, `categoryOfType`, `appearanceOf` (icon / màu theo loại), `hrefOf(link, type, surface)` (đơn của shop → `/seller/orders`, hội thoại → `/chat` hoặc `/seller/chat`), `surfaceOf`. API theo cờ `notifications`, 2 endpoint đã sửa đúng spec. `notificationStream.ts`: một đăng ký `/user/queue/notifications` + `/topic/platform` cho cả trang → toast + âm "ting" (Web Audio) **một lần**, mỗi cây React chỉ làm mới cache; `BroadcastChannel('genie.notifications')` |
 | N05.06 | `NotificationsPanel`: tab lọc ở server (`category`), "Xem thêm" theo cursor (`useNotificationFeed` — `useInfiniteQuery`), "Đánh dấu tất cả đã đọc" theo tab, modal chi tiết hiện ảnh banner + `SafeHtml`. Modal chi tiết Seller Center cũng dùng `SafeHtml`. Lỗi tự phát hiện + sửa ngay (`cc02461`): bỏ thẻ lạ thì phải lọc con trước — trước đó `<span><img onerror></span>` lọt qua lớp phòng thủ client (server vẫn lọc nên không khai thác được). Repo không có jsdom → kiểm `cleanHtml` trên trình duyệt thật ở N09 |
@@ -253,3 +259,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | 2026-11-26 | N03: `NotificationFacade` (ghi sau commit + đẩy WebSocket), `AdminInboxFacade`, read-model đếm chưa đọc 3 nguồn, nguồn thông báo KYC / thiết bị mới / lệch Điểm / đặt COD; verify xanh 232 unit + 369 IT | `ba5b0c4` `34e27cf` `4dba62b` `436d7ef` |
 | 2026-11-27 | N04: `GET /me/notifications` (gộp `ntf_` / `pn_` / `an_`, cursor), `PATCH /{id}`, `POST /mark-all-read`, gói tin `NOTIFICATIONS_READ`; verify xanh 235 unit + 379 IT | `60d7620` |
 | 2026-11-27 | N05: hub WebSocket dùng chung + SEND; chuông / hộp thư web nối API thật theo cờ `notifications`, realtime (toast + âm báo, đồng bộ tab); sửa lỗ lọc HTML phía client | `8c21a11` `10f2e2e` `cc02461` |
+| 2026-11-27 | N06 + N07: API Admin thông báo sàn (soạn / phát / hẹn giờ / sửa / xóa, ảnh, nhật ký, thống kê tháng), bộ phát realtime theo đối tượng, cron 30 giây; verify xanh 235 unit + 390 IT | `02fc88f` `f4e07e5` |
