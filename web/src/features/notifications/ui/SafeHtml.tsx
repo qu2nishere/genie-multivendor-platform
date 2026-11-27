@@ -33,9 +33,12 @@ export function cleanHtml(html: string): string {
     for (const child of Array.from(el.children)) {
       if (!TAGS.has(child.tagName)) {
         // thẻ lạ: script / style / iframe bỏ hẳn; thẻ khác giữ chữ bên trong
-        if (['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED'].includes(child.tagName))
+        if (['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED'].includes(child.tagName)) {
           child.remove();
-        else child.replaceWith(...Array.from(child.childNodes));
+        } else {
+          walk(child); // lọc con trước khi bỏ thẻ bọc — con được đẩy ra ngoài cũng đã sạch
+          child.replaceWith(...Array.from(child.childNodes));
+        }
         continue;
       }
       for (const a of Array.from(child.attributes)) {
@@ -44,6 +47,7 @@ export function cleanHtml(html: string): string {
       if (child.tagName === 'A') {
         const href = child.getAttribute('href') ?? '';
         if (!(href.startsWith('https://') || (href.startsWith('/') && !href.startsWith('//')))) {
+          walk(child);
           child.replaceWith(...Array.from(child.childNodes));
           continue;
         }
