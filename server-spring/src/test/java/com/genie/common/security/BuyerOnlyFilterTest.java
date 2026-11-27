@@ -15,6 +15,9 @@ class BuyerOnlyFilterTest {
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/checkout/preview")).isTrue();
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/checkout-sessions")).isTrue();
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/checkout-sessions/9/payments")).isTrue();
+        // Kho Voucher (plan 2026-11-26 voucher D14)
+        assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/vouchers")).isTrue();
+        assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/vouchers/12")).isTrue();
     }
 
     @Test
@@ -22,6 +25,7 @@ class BuyerOnlyFilterTest {
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me")).isFalse();
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/orders")).isFalse();
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/me/cartography")).isFalse();
+        assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/public/vouchers")).isFalse();
         assertThat(BuyerOnlyFilter.isPurchasePath("/api/v1/admin/staff")).isFalse();
         assertThat(BuyerOnlyFilter.isPurchasePath(null)).isFalse();
     }
