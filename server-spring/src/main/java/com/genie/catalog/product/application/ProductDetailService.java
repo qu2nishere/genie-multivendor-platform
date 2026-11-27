@@ -236,15 +236,17 @@ public class ProductDetailService {
             return List.of();
         }
         Map<String, String> values = new LinkedHashMap<>();
+        JsonNode sellerOrder = null;
         try {
             JsonNode node = json.readTree(specsJson);
             if (node.isObject()) {
                 for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                     Map.Entry<String, JsonNode> e = it.next();
-                    if (!e.getValue().isNull()) {
+                    if (!e.getValue().isNull() && !SpecCodec.ORDER_KEY.equals(e.getKey())) {
                         values.put(e.getKey(), e.getValue().isTextual() ? e.getValue().asText() : e.getValue().toString());
                     }
                 }
+                sellerOrder = node.get(SpecCodec.ORDER_KEY);
             } else if (node.isArray()) {     // dạng cũ [{name, value}]
                 for (JsonNode n : node) {
                     if (n.hasNonNull("name") && n.hasNonNull("value")) {
@@ -256,16 +258,26 @@ public class ProductDetailService {
             return List.of();
         }
         List<ProductDetailView.Spec> out = new ArrayList<>();
+        // tên hiển thị của khóa là mã thuộc tính ngành
+        Map<String, String> names = new LinkedHashMap<>();
         if (categoryId != null) {
             jdbc.query("""
                     SELECT code, name FROM category_attributes WHERE category_id = ? AND is_active = TRUE
                      ORDER BY display_order, id""", rs -> {
-                String v = values.remove(rs.getString("code"));
-                if (v != null) {
-                    out.add(new ProductDetailView.Spec(rs.getString("name"), v));
-                }
+                names.put(rs.getString("code"), rs.getString("name"));
             }, categoryId);
         }
+        if (sellerOrder != null && sellerOrder.isArray()) {
+            // người bán đã tự sắp thứ tự dòng (plan C1, 2026-11-27) → hiện đúng thứ tự đó
+            SpecCodec.ordered(values, sellerOrder)
+                    .forEach((k, v) -> out.add(new ProductDetailView.Spec(names.getOrDefault(k, k), v)));
+            return out;
+        }
+        // dữ liệu cũ: thuộc tính ngành theo display_order trước, khóa tự do sau
+        names.forEach((code, name) -> {
+            String v = values.remove(code);
+            if (v != null) out.add(new ProductDetailView.Spec(name, v));
+        });
         values.forEach((k, v) -> out.add(new ProductDetailView.Spec(k, v)));
         return out;
     }

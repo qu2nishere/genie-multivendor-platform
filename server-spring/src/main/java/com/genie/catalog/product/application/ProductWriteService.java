@@ -509,7 +509,8 @@ public class ProductWriteService {
         p.setCondition(plan.condition.name());
         p.setOrigin(plan.origin);
         Map<String, String> specs = SpecCodec.toMap(plan.specs);
-        p.setSpecsJson(specs.isEmpty() ? null : store.toJson(specs));
+        // kèm thứ tự dòng người bán sắp (JSONB tự sắp khóa — SpecCodec.ORDER_KEY)
+        p.setSpecsJson(specs.isEmpty() ? null : store.toJson(SpecCodec.toStored(specs)));
         p.setWeight(plan.weight == null ? null : plan.weight.doubleValue());
         p.setLength(plan.dims == null || plan.dims.length() == null ? null : plan.dims.length().doubleValue());
         p.setWidth(plan.dims == null || plan.dims.width() == null ? null : plan.dims.width().doubleValue());
