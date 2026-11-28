@@ -14,15 +14,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Chặn tài khoản nội bộ ở mọi đường dẫn mua hàng — giỏ hàng {@code /me/cart/**} và đặt hàng / thanh toán
- * {@code /me/checkout/**}, {@code /me/checkout-sessions/**} (API_SPEC 6.1–6.13) → {@code 403 GNE-ORD-4031}.
+ * Chặn tài khoản nội bộ ở mọi đường dẫn mua hàng — giỏ hàng {@code /me/cart/**}, đặt hàng / thanh toán
+ * {@code /me/checkout/**}, {@code /me/checkout-sessions/**} (API_SPEC 6.1–6.13) và Kho Voucher {@code /me/vouchers/**}
+ * (API_SPEC 3.14) → {@code 403 GNE-ORD-4031}.
  * Đặt ở tầng bảo mật theo đường dẫn (sau {@link JwtAuthFilter}) để luật tự áp dụng cho mọi endpoint mua hàng, kể cả
  * endpoint module {@code order} hiện thực sau này. Nhân viên mua sắm bằng tài khoản khách hàng cá nhân (email riêng).
  */
 public class BuyerOnlyFilter extends OncePerRequestFilter {
 
-    /** Tiền tố đường dẫn mua hàng ({@code /me/checkout} phủ cả {@code /me/checkout-sessions}). */
-    static final List<String> PURCHASE_PREFIXES = List.of("/api/v1/me/cart", "/api/v1/me/checkout");
+    /**
+     * Tiền tố đường dẫn mua hàng ({@code /me/checkout} phủ cả {@code /me/checkout-sessions}); Kho Voucher {@code /me/vouchers}
+     * cũng là chức năng mua hàng (plan 2026-11-26 voucher D14).
+     */
+    static final List<String> PURCHASE_PREFIXES = List.of("/api/v1/me/cart", "/api/v1/me/checkout", "/api/v1/me/vouchers");
 
     private final ErrorResponseFactory errors;
 

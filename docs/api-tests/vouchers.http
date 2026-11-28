@@ -1,0 +1,192 @@
+### UC-PRO-01, UC-PRO-02, UC-PRO-03 — Voucher shop / sàn / Kho Voucher (API_SPEC 3.14, 5.13, 10.7, 11.14; plan 2026-11-26 voucher V09.02)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+# Đăng nhập bị giới hạn 10 lần / phút / IP (GNE-RAT-4290) — chạy lần lượt. Ngày giờ ISO có múi giờ (+07:00).
+@base = http://localhost:8080/api/v1
+
+### 1. Chủ TechZone — chép access_token vào @shop
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+### 2. Chủ Shoe Republic (shop khác) — chép vào @other
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "owner.shoe@genie.example", "password": "Genie@123" }
+
+### 3. Finance Officer (MANAGE_VOUCHER) — chép vào @fo
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "linh.tm@genie.example", "password": "Genie@123" }
+
+### 4. Moderator (không có MANAGE_VOUCHER) — chép vào @mod
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "phat.nt@genie.example", "password": "Genie@123" }
+
+@shop = <access_token bước 1>
+@other = <access_token bước 2>
+@fo = <access_token bước 3>
+@mod = <access_token bước 4>
+
+# ===================== UC-PRO-01 — Voucher shop =====================
+
+### 5. ĐÚNG — danh sách + 3 chỉ số (summary.active_count / usage_this_month / revenue_from_promotions_this_month)
+GET {{base}}/seller/vouchers?status=ACTIVE&page=1&size=10
+Authorization: Bearer {{shop}}
+
+### 6. ĐÚNG — tạo voucher % (mã chữ thường tự đổi HOA, tiêu đề tự sinh "Giảm 15% tối đa 50.000₫ đơn từ 200.000₫") → 201
+POST {{base}}/seller/vouchers
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "code": "summer26", "discount_type": "PERCENTAGE", "discount_value": 15, "max_discount": 50000, "min_order_value": 200000,
+  "usage_limit": 500, "usage_per_user": 1, "valid_from": "2026-12-01T00:00:00+07:00", "valid_to": "2026-12-31T23:59:59+07:00",
+  "scope": "ALL", "excluded_category_ids": [] }
+
+@sv = <data.id bước 6>
+
+### 7. SAI — trùng mã (kể cả khác hoa thường) → 409 GNE-VCH-4092
+POST {{base}}/seller/vouchers
+Authorization: Bearer {{other}}
+Content-Type: application/json
+
+{ "code": "SUMMER26", "discount_type": "FIXED_AMOUNT", "discount_value": 20000, "min_order_value": 100000, "usage_limit": 10,
+  "usage_per_user": 1, "valid_from": "2026-12-01T00:00:00+07:00", "valid_to": "2026-12-10T23:59:59+07:00" }
+
+### 8. SAI — gom lỗi một lần → 422 GNE-VAL-4220, errors[] (code, discount_value, max_discount, usage_limit, valid_to…)
+POST {{base}}/seller/vouchers
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "code": "ab", "discount_type": "PERCENTAGE", "discount_value": 150, "min_order_value": 0, "usage_limit": 0, "usage_per_user": 1,
+  "valid_from": "2026-12-01T00:00:00+07:00", "valid_to": "2026-11-30T00:00:00+07:00" }
+
+### 9. ĐÚNG — chi tiết (form sửa / nhân bản): 4 tập phạm vi + locked_fields
+GET {{base}}/seller/vouchers/{{sv}}
+Authorization: Bearer {{shop}}
+
+### 10. SAI — shop khác mở / sửa / tắt voucher của TechZone → 404
+GET {{base}}/seller/vouchers/{{sv}}
+Authorization: Bearer {{other}}
+
+### 11. ĐÚNG — sắp diễn ra & chưa ai lưu: sửa mọi trường (đổi loại sang giảm tiền) → 200, tiêu đề sinh lại
+PUT {{base}}/seller/vouchers/{{sv}}
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "code": "SUMMER26", "discount_type": "FIXED_AMOUNT", "discount_value": 30000, "min_order_value": 399000, "usage_limit": 500,
+  "usage_per_user": 1, "valid_from": "2026-12-01T00:00:00+07:00", "valid_to": "2026-12-31T23:59:59+07:00" }
+
+### 12. SAI — voucher ĐANG CHẠY (TECHZONE5 — lấy id bằng bước 5) đổi mức giảm → 409 GNE-VCH-4094 details.locked_fields
+# Kéo dài valid_to / tăng usage_limit / tăng budget thì 200.
+PUT {{base}}/seller/vouchers/<id TECHZONE5>
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "code": "TECHZONE5", "discount_type": "PERCENTAGE", "discount_value": 9, "max_discount": 200000, "min_order_value": 1000000,
+  "usage_limit": 200, "usage_per_user": 1, "valid_from": "<giữ nguyên valid_from>", "valid_to": "<giữ nguyên valid_to>" }
+
+### 13. ĐÚNG — tắt (huỷ lịch) → 200 status DISABLED; gọi lại vẫn 200; {"is_active": true} → 422 (tắt một chiều)
+PATCH {{base}}/seller/vouchers/{{sv}}
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "is_active": false }
+
+# ===================== UC-PRO-02 — Voucher sàn =====================
+
+### 14. ĐÚNG — danh sách + 5 chỉ số; dòng COIN500 có is_coin_reward = true
+GET {{base}}/admin/vouchers?page=1&size=20
+Authorization: Bearer {{fo}}
+
+### 15. SAI — Moderator → 403
+GET {{base}}/admin/vouchers
+Authorization: Bearer {{mod}}
+
+### 16. ĐÚNG — tạo voucher sàn đồng tài trợ (60% sàn) có ngân sách → 201, nhật ký VOUCHER_CREATED
+POST {{base}}/admin/vouchers
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "Siêu Sale Giữa Tháng", "code": "GENIE15DEC", "discount_type": "PERCENTAGE", "discount_value": 15, "max_discount": 100000,
+  "min_order_value": 500000, "usage_limit": 10000, "usage_per_user": 1, "budget": 500000000,
+  "valid_from": "2026-12-15T00:00:00+07:00", "valid_to": "2026-12-20T23:59:59+07:00", "scope": "ALL",
+  "funded_by": "CO_SPONSOR", "platform_share_percent": 60 }
+
+@pv = <data.id bước 16>
+
+### 17. SAI — CO_SPONSOR thiếu platform_share_percent → 422 (errors[0].field = platform_share_percent)
+POST {{base}}/admin/vouchers
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "Thiếu phần sàn", "code": "GENIENOSH", "discount_type": "FIXED_AMOUNT", "discount_value": 20000, "min_order_value": 100000,
+  "usage_limit": 100, "usage_per_user": 1, "valid_from": "2026-12-15T00:00:00+07:00", "valid_to": "2026-12-20T23:59:59+07:00",
+  "funded_by": "CO_SPONSOR" }
+
+### 18. ĐÚNG — sửa (đổi tên) → 200, nhật ký VOUCHER_UPDATED kèm details.changes
+PUT {{base}}/admin/vouchers/{{pv}}
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "title": "Siêu Sale 15.12", "code": "GENIE15DEC", "discount_type": "PERCENTAGE", "discount_value": 15, "max_discount": 100000,
+  "min_order_value": 500000, "usage_limit": 10000, "usage_per_user": 1, "budget": 500000000,
+  "valid_from": "2026-12-15T00:00:00+07:00", "valid_to": "2026-12-20T23:59:59+07:00", "scope": "ALL",
+  "funded_by": "CO_SPONSOR", "platform_share_percent": 60 }
+
+### 19. SAI — xóa khi còn sắp diễn ra → 409 GNE-VCH-4094 (tắt trước)
+DELETE {{base}}/admin/vouchers/{{pv}}
+Authorization: Bearer {{fo}}
+
+### 20. ĐÚNG — tắt (huỷ lịch) rồi xóa vĩnh viễn → 204 (đã có lượt dùng → 409 GNE-VCH-4093; quà đổi Điểm → 409 GNE-VCH-4094)
+PATCH {{base}}/admin/vouchers/{{pv}}
+Authorization: Bearer {{fo}}
+Content-Type: application/json
+
+{ "is_active": false }
+
+###
+DELETE {{base}}/admin/vouchers/{{pv}}
+Authorization: Bearer {{fo}}
+
+# ===================== UC-PRO-03 — Voucher công khai & Kho =====================
+
+### 21. ĐÚNG — "Mã giảm giá hot" trang chủ: chỉ sàn / freeship đang chạy hoặc sắp diễn ra, không có COIN*
+GET {{base}}/public/vouchers?featured=true&limit=4
+
+### 22. ĐÚNG — voucher của trang shop TechZone (shop_id = vendor_profiles.id = 1): shop.id = 1, shop.name
+GET {{base}}/public/vouchers?shop_id=1
+
+### 23. ĐÚNG — trang chiến dịch nhiều mã (≤ 20) + is_saved khi có token
+GET {{base}}/public/vouchers?codes=GENIE10,FREESHIP30K,GENIESOON
+Authorization: Bearer {{other}}
+
+### 24. ĐÚNG — lưu bằng mã → 201 is_saved = true; lưu lại → 409 GNE-VCH-4091
+POST {{base}}/me/vouchers
+Authorization: Bearer {{other}}
+Content-Type: application/json
+
+{ "code": "genie10" }
+
+### 25. SAI — quà đổi Điểm không lưu được bằng mã → 404 GNE-VCH-4041
+POST {{base}}/me/vouchers
+Authorization: Bearer {{other}}
+Content-Type: application/json
+
+{ "code": "COIN500" }
+
+### 26. ĐÚNG — Kho: tab AVAILABLE (gồm sắp diễn ra) / USED (kèm used_order_code) / EXPIRED, summary.counts theo loại
+GET {{base}}/me/vouchers?state=AVAILABLE&type=FREESHIP&page=1&size=20
+Authorization: Bearer {{other}}
+
+### 27. ĐÚNG — xóa khỏi Kho (idempotent) → 204
+DELETE {{base}}/me/vouchers/1
+Authorization: Bearer {{other}}
+
+### 28. SAI — tài khoản nội bộ không có Kho → 403 GNE-ORD-4031
+GET {{base}}/me/vouchers
+Authorization: Bearer {{mod}}

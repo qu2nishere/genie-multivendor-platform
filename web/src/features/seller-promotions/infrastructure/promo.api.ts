@@ -5,7 +5,7 @@ import { api, request } from '@/shared/api/http';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import { isoDateVN } from '@/shared/lib/format';
-import { maxFlashPrice, voucherStartIso } from '../domain/promo.rules';
+import { keepOriginalIso, maxFlashPrice, voucherStartIso } from '../domain/promo.rules';
 import type {
   DiscountType,
   EligibleProduct,
@@ -76,13 +76,23 @@ const toInputDto = (v: VoucherInput): VoucherInputDto => ({
   usage_limit: v.usageLimit,
   usage_per_user: v.usagePerUser,
   budget: v.budget,
-  valid_from: SELLER_VOUCHERS_MOCKED ? day(v.validFrom) : voucherStartIso(v.validFrom, isoDateVN()),
-  valid_to: day(v.validTo, true),
+  valid_from: SELLER_VOUCHERS_MOCKED
+    ? day(v.validFrom)
+    : keepOriginalIso(
+        v.validFrom,
+        v.validFromIso,
+        isoOfDay,
+        voucherStartIso(v.validFrom, isoDateVN()),
+      ),
+  valid_to: SELLER_VOUCHERS_MOCKED
+    ? day(v.validTo, true)
+    : keepOriginalIso(v.validTo, v.validToIso, isoOfDay, day(v.validTo, true)),
   scope: v.scope,
   category_ids: v.scope === 'CATEGORY' ? v.categoryIds : [],
   product_ids: v.scope === 'PRODUCT' ? v.productIds : [],
   excluded_category_ids: v.scope === 'PRODUCT' ? [] : v.excludedCategoryIds,
 });
+const isoOfDay = (iso: string) => isoDateVN(new Date(iso));
 const fromInputDto = (d: VoucherInputDto): VoucherInput => ({
   code: d.code,
   discountType: fromApiType(d.discount_type),
@@ -99,6 +109,8 @@ const fromInputDto = (d: VoucherInputDto): VoucherInput => ({
   productIds: d.product_ids,
   excludedCategoryIds: d.excluded_category_ids,
   lockedFields: d.locked_fields ?? [],
+  validFromIso: d.valid_from,
+  validToIso: d.valid_to,
 });
 
 // ---- Mock ----

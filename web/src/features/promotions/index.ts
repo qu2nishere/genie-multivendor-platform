@@ -8,6 +8,7 @@ export {
   getVouchersByCodes,
   saveVoucher,
   listShopVouchers,
+  listFeaturedVouchers,
 } from './infrastructure/voucher.api';
 export { useVouchersByCodes, useMyVouchers, useSaveVoucher } from './application/useVouchers';
 export {

@@ -814,7 +814,8 @@
       "go": "View banner {n}: {title}"
     },
     "voucher": {
-      "saved_toast": "Voucher saved"
+      "saved_toast": "Voucher saved",
+      "already_saved": "This voucher is already in your wallet."
     },
     "flash": {
       "meta_title": "Today's Flash Sale",
@@ -891,7 +892,8 @@
         "scope": "Scope",
         "valid": "Valid",
         "content": "Details"
-      }
+      },
+      "used_on_order": "Used on order {code}"
     }
   },
   "payment": {

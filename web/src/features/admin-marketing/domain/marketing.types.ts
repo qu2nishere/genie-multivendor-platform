@@ -50,6 +50,9 @@ export interface PlatformVoucherInput {
   platformSharePercent: number | null;
   /** Trường server khóa theo trạng thái (snake_case, API 11.14 `locked_fields`) — chỉ khi đọc chi tiết. */
   lockedFields?: string[];
+  /** Mốc ISO gốc (chỉ khi sửa) — giữ nguyên giờ nếu ngày không đổi. */
+  validFromIso?: string;
+  validToIso?: string;
 }
 
 // ---------- 11.15 Flash Sale ----------

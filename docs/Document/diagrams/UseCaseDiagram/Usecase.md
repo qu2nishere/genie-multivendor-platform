@@ -1910,7 +1910,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   12. Thẻ "FLASH SALE — Đăng ký gian hàng" dẫn tới UC-PRO-05.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-28)** — `promotion/voucher`: `/seller/vouchers` (danh sách theo trạng thái + 3 chỉ số, chi tiết kèm `locked_fields`, tạo / sửa / tắt một chiều), tiêu đề tự sinh, giới hạn giá trị, phạm vi ALL / CATEGORY / PRODUCT + loại trừ, luật sửa khi đang chạy (`409 GNE-VCH-4094`), xóa cache bộ lọc "Shop có voucher" sau commit; web nối thật cờ `seller-vouchers`. Test `VoucherTest`, `VoucherInputValidatorTest`, `SellerVoucherIT`; chạy thật `docs/kiem-thu/kich-ban-2026-11-26-voucher.md` (plan `plan/2026-11-26/server-spring/plan_voucher_b5.md`). Áp voucher khi mua thuộc UC-PRO-04 (C6).
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Voucher](../ClassDiagram/ENTITY.md#41-voucher--mã-giảm-giá), [VoucherCategory](../ClassDiagram/ENTITY.md#44-vouchercategory--voucherproduct--voucherexcludedcategory--voucherexcludedproduct).
 
@@ -1935,7 +1935,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Thao tác Nhân bản, Sửa (luật khóa trường như UC-PRO-01 b10, thêm được đổi tên chương trình), Tắt, **Xóa vĩnh viễn** (chỉ khi đã kết thúc / đã tắt **và** chưa có lượt dùng; voucher là quà đổi Điểm không đổi mã, không xóa); mọi thao tác ghi nhật ký `VOUCHER_*`; thẻ thống kê: đang chạy, lượt dùng hệ thống, tổng giảm giá đã dùng, voucher sắp ra mắt, ngân sách còn lại.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-28)** — `/admin/vouchers` (`MANAGE_VOUCHER`): 5 chỉ số, voucher `PLATFORM` / `FREESHIP`, sàn tài trợ hoặc đồng tài trợ (`platformSharePercent`), ngân sách (hết → `ENDED`), sửa theo luật khóa trường, huỷ lịch / tắt, xóa vĩnh viễn khi đã kết thúc + chưa dùng, quà đổi Điểm không đổi mã / không xóa, nhật ký `VOUCHER_*`; web nối thật cờ `admin-vouchers`. Test `AdminVoucherIT` (gồm đụng độ khóa dòng), `VoucherSecurityIT`; chạy thật 17 / 17 ca. Chia chi phí đồng tài trợ khi áp voucher thuộc C6.
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Voucher](../ClassDiagram/ENTITY.md#41-voucher--mã-giảm-giá), `VoucherExcludedCategory`, `VoucherExcludedProduct` (loại trừ ngành hàng / sản phẩm khỏi voucher sàn), [VoucherCategory](../ClassDiagram/ENTITY.md#44-vouchercategory--voucherproduct--voucherexcludedcategory--voucherexcludedproduct).
 
@@ -1960,7 +1960,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   9. Việc áp voucher khi thanh toán thuộc UC-PRO-04.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-28)** — `GET /public/vouchers` (featured / shop / code / codes, cache 60 giây, không trả quà đổi Điểm), `/me/vouchers` (lưu bằng mã hoặc id, chặn trùng, `USAGE_LIMIT_REACHED`, Kho 3 trạng thái + đếm theo loại + mã đơn đã dùng, xóa idempotent; tài khoản nội bộ `403 GNE-ORD-4031`); web nối thật cờ `vouchers` (trang chủ, trang shop SSR, chiến dịch, Kho). Test `PublicVoucherIT`, `VoucherWalletIT`, `VoucherCacheEvictionIT`; chạy thật 17 / 17 ca.
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [UserVoucher](../ClassDiagram/ENTITY.md#43-uservoucher--ví-voucher-của-người-dùng), [Voucher](../ClassDiagram/ENTITY.md#41-voucher--mã-giảm-giá).
 

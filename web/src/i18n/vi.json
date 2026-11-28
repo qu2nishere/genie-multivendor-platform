@@ -814,7 +814,8 @@
       "go": "Xem banner {n}: {title}"
     },
     "voucher": {
-      "saved_toast": "Đã lưu voucher thành công"
+      "saved_toast": "Đã lưu voucher thành công",
+      "already_saved": "Voucher đã có trong Kho của bạn."
     },
     "flash": {
       "meta_title": "Flash Sale hôm nay",
@@ -891,7 +892,8 @@
         "scope": "Phạm vi",
         "valid": "Hạn sử dụng",
         "content": "Nội dung voucher"
-      }
+      },
+      "used_on_order": "Đã dùng cho đơn {code}"
     }
   },
   "payment": {

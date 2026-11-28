@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   flashIssues,
   genCode,
+  keepOriginalIso,
   lockedKeys,
   maxFlashPrice,
   normalizeCode,
@@ -123,5 +124,15 @@ describe('voucher — nối API thật (plan 2026-11-26 voucher V06)', () => {
     expect(voucherStartIso('2026-06-08', '2026-06-08', now)).toBe('2026-06-08T03:15:00.000Z');
     expect(voucherStartIso('2026-06-10', '2026-06-08', now)).toBe('2026-06-10T00:00:00+07:00');
     expect(voucherStartIso('', '2026-06-08', now)).toBe('');
+  });
+});
+
+describe('sửa voucher đang chạy — giữ mốc giờ gốc (lỗi chạy thật V09.04)', () => {
+  const dayOf = (iso: string) => iso.slice(0, 10);
+  it('ngày không đổi → gửi lại ISO gốc; đổi ngày → giá trị mới', () => {
+    const iso = '2026-11-28T05:32:54.045Z';
+    expect(keepOriginalIso('2026-11-28', iso, dayOf, 'NEW')).toBe(iso);
+    expect(keepOriginalIso('2026-12-01', iso, dayOf, 'NEW')).toBe('NEW');
+    expect(keepOriginalIso('2026-11-28', undefined, dayOf, 'NEW')).toBe('NEW');
   });
 });

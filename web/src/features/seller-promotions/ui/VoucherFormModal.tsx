@@ -513,7 +513,11 @@ export function VoucherFormModal({
       lockedFields={editing ? (q.data?.lockedFields ?? []) : []}
       onSave={(vals) => {
         const { title: _t, fundedBy: _f, platformSharePercent: _p, ...input } = vals;
-        return save.mutateAsync({ id: editing ? target.id : null, input });
+        // sửa: giữ mốc giờ gốc khi ngày không đổi (form chỉ có ngày)
+        const times = editing
+          ? { validFromIso: q.data?.validFromIso, validToIso: q.data?.validToIso }
+          : {};
+        return save.mutateAsync({ id: editing ? target.id : null, input: { ...input, ...times } });
       }}
       onClose={onClose}
     />

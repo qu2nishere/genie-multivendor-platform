@@ -212,6 +212,11 @@ function Panel() {
                   {v.conditionLabel} · {v.scopeLabel}
                 </div>
                 {r && <div className={cn('font-semibold text-[11px] mt-0.5', r.cls)}>{r.text}</div>}
+                {v.status === 'used' && v.usedOrderCode && (
+                  <div className="text-[11px] text-muted mt-0.5">
+                    {t('promotions.wallet.used_on_order', { code: v.usedOrderCode })}
+                  </div>
+                )}
                 <div className="flex items-center gap-2 mt-[9px] flex-wrap">
                   <span
                     className={cn(

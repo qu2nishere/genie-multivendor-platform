@@ -73,6 +73,19 @@ export function voucherStartIso(day: string, today: string, now: Date = new Date
   return day === today ? now.toISOString() : `${day}T00:00:00+07:00`;
 }
 
+/**
+ * Form chỉ giữ NGÀY; khi sửa mà ngày không đổi thì gửi lại đúng mốc ISO gốc — nếu không, giờ bị đổi (00:00 / bây giờ)
+ * khiến server coi là đổi thời gian của voucher đang chạy (409 GNE-VCH-4094). Lỗi phát hiện khi chạy thật V09.04.
+ */
+export function keepOriginalIso(
+  day: string,
+  originalIso: string | null | undefined,
+  dayOfIso: (iso: string) => string,
+  fallback: string,
+): string {
+  return originalIso && day && dayOfIso(originalIso) === day ? originalIso : fallback;
+}
+
 export type VoucherAction = 'EDIT' | 'DUPLICATE' | 'DISABLE';
 export function voucherActions(s: VoucherStatus): VoucherAction[] {
   if (s === 'ACTIVE') return ['EDIT', 'DUPLICATE', 'DISABLE'];
