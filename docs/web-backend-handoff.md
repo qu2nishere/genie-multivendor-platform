@@ -58,7 +58,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 
 | Chức năng | Hiện tại (mock) | Khi có backend |
 |---|---|---|
-| Chat thời gian thực (8.x) | Hỏi lại 2 giây khi đang mở hội thoại, 15 giây hộp thư | WebSocket theo API_SPEC; giữ `client_message_id` làm Idempotency-Key |
+| ~~Chat thời gian thực (8.x)~~ | ✅ **Đã nối** (plan 2026-11-26 chat M06, cờ `chat`, `0018b21`) — `/user/queue/chat` qua hub WebSocket, gửi `/app/chat.send` (REST dự phòng cùng `client_message_id`); hỏi lại 30 giây chỉ khi mất kết nối | — |
 | Xuất CSV (sổ cái 11.9, báo cáo Tổng quan Admin / Seller) — nhật ký 11.10 đã gọi `…/export` thật | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
 | Phiếu gửi hàng | `window.print()` trang HTML | PDF A6 của hãng vận chuyển |
 | Chọn shop đích cho banner (Admin) | `shop.listShops` công khai | `GET /admin/shops` |
@@ -72,7 +72,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 
 | Hàm | Tệp | Dùng ở |
 |---|---|---|
-| `mockTyping` | `chat/infrastructure/chat.api.ts` | trạng thái "shop đang nhập" giả (`useChat`) — WebSocket sẽ gửi sự kiện typing |
+| ~~`mockTyping`~~ | `chat/infrastructure/chat.api.ts` | Chỉ còn ở nhánh mock — chạy thật dùng gói `TYPING` (`/app/chat.typing`, plan chat M06) |
 | `settleMockPayment` | `checkout/infrastructure/checkout.api.ts` | cổng VNPAY mô phỏng (`useCheckout`) |
 | `markReported` | `seller-reviews/infrastructure/review.api.ts` | đánh dấu đã báo cáo trong kho mock (`useShopReviews`) — server trả `is_reported_by_me` |
 
@@ -280,16 +280,17 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listConversations` | chat.api.ts | `GET /me/conversations` |
-| `openConversation` | chat.api.ts | `POST /me/conversations` |
-| `listMessages` | chat.api.ts | `GET /me/conversations/{conversationId}/messages` |
-| `mockTyping` | chat.api.ts | — |
-| `sendMessage` | chat.api.ts | `POST /me/conversations/{conversationId}/messages` |
-| `markRead` | chat.api.ts | `POST /me/conversations/{conversationId}/read` |
-| `listSellerConversations` | seller-chat.api.ts | `GET /seller/conversations` |
-| `listSellerMessages` | seller-chat.api.ts | `GET /seller/conversations/{id}/messages` |
-| `sendSellerMessage` | seller-chat.api.ts | `POST /seller/conversations/{id}/messages` |
-| `markSellerRead` | seller-chat.api.ts | `POST /seller/conversations/{id}/read` |
+| `listConversations` | chat.api.ts | `GET /me/conversations` — **đã nối** (`PUBLIC_REAL_API=chat`, plan 2026-11-26 chat) |
+| `openConversation` | chat.api.ts | `POST /me/conversations` — **đã nối** |
+| `listMessagesPage` | chat.api.ts | `GET /me/conversations/{conversationId}/messages?before=` — **đã nối** (cursor) |
+| `mockTyping` | chat.api.ts | — (mock; thật = gói `TYPING`) |
+| `sendMessage` | chat.api.ts | `POST /me/conversations/{conversationId}/messages` — **đã nối** (dự phòng của `/app/chat.send`) |
+| `markRead` | chat.api.ts | `POST /me/conversations/{conversationId}/read` — **đã nối** (dự phòng của `/app/chat.read`) |
+| `listConversationOrders` | chat.api.ts | `GET /me|seller/conversations/{id}/orders` (8.6) — **đã nối** |
+| `listSellerConversations` | seller-chat.api.ts | `GET /seller/conversations` — **đã nối** |
+| `listSellerMessagesPage` | seller-chat.api.ts | `GET /seller/conversations/{id}/messages?before=` — **đã nối** |
+| `sendSellerMessage` | seller-chat.api.ts | `POST /seller/conversations/{id}/messages` — **đã nối** |
+| `markSellerRead` | seller-chat.api.ts | `POST /seller/conversations/{id}/read` — **đã nối** |
 
 ### `checkout`
 

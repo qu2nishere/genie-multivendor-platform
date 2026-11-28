@@ -84,6 +84,14 @@ export function markSeen(pages: MessagePage[], upTo: number): MessagePage[] {
   }));
 }
 
+/** Ảnh chat hợp lệ trước khi nén / tải lên (UC-SOC-02 ngoại lệ — báo ngay tại chỗ): JPEG / PNG / WebP ≤ 5 MB. */
+export const CHAT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+export const CHAT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+export const chatImageValid = (f: { type: string; size: number }): boolean =>
+  (CHAT_IMAGE_TYPES as readonly string[]).includes(f.type) &&
+  f.size > 0 &&
+  f.size <= CHAT_IMAGE_MAX_BYTES;
+
 /** Còn hiện "đang gõ" không. */
 export const typingActive = (at: number | undefined, now: number): boolean =>
   at != null && now - at < TYPING_TTL_MS;

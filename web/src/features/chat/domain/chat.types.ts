@@ -64,6 +64,17 @@ export interface OpenedConversation {
   avgResponseMinutes: number | null;
 }
 
+/** Một dòng ô "Gửi đơn" (API_SPEC 8.6) — đơn gần nhất giữa đúng hai bên của hội thoại. */
+export interface OrderPick {
+  id: number;
+  code: string;
+  status: string;
+  total: number;
+  createdAt: string;
+  itemCount: number;
+  thumbnailUrl: string | null;
+}
+
 /** Hội thoại phía shop (8.1 `GET /seller/conversations` — bên kia là khách hàng). */
 export interface SellerConversation {
   id: number;

@@ -1612,7 +1612,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Câu trả lời theo từ khóa (FAQ rules) thuộc bản DATN.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — cấu hình `PATCH /seller/settings` khối `auto_reply` (B4); gửi tự động trong chat: `social/chat/application/AutoReplyPolicy` + `AutoReplies` (lời chào khi mở / mở lại sau 24 giờ, tin vắng mặt ngoài 08:00–22:00 hoặc chủ shop offline tối đa 1 lần / 60 phút, tin tạm nghỉ), tin `is_auto` không tính tỉ lệ phản hồi; `vendor/shop/application/ChatResponseRateJob` 03:30. Test `AutoReplyPolicyTest`, `AutoReplyIT`, `ChatResponseRateJobIT`; chạy thật `docs/kiem-thu/kich-ban-2026-11-26-chat.md` (plan `plan/2026-11-26/server-spring/plan_chat_khach_shop.md`).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn).
 
@@ -2156,7 +2156,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Gửi qua WebSocket `/app/chat.send` hoặc REST `POST …/messages` (dự phòng khi mất kết nối) — cùng một luật nghiệp vụ; `client_message_id` chống gửi trùng trong 24 giờ. Tối đa 20 tin / 10 giây / người, chữ ≤ 2.000 ký tự.
   - Tài khoản nhân viên / Admin không nhắn tin với shop; không nhắn tin với shop của chính mình (`GNE-SOC-4096`).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — `social/chat`: REST `/me|seller/conversations/**` (API 8.1–8.5) + STOMP `/app/chat.send|read|typing` → `/user/queue/chat` (simple broker một instance — Redis Pub/Sub là phần DATN); khóa dòng hội thoại, chống gửi trùng `client_message_id`, 20 tin / 10 giây, thông báo `CHAT_MESSAGE` khi người nhận offline, badge Seller `unread_chats`; web nối thật cờ `chat`. Test `ChatConversationIT`, `ChatStompIT`, `ChatSecurityIT`; chạy thật 15 / 15 ca, p95 235 ms với 50 cặp (`docs/kiem-thu/kich-ban-2026-11-26-chat.md`).
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Conversation](../ClassDiagram/ENTITY.md#111-conversation--cuộc-hội-thoại), [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn).
 
@@ -2183,7 +2183,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Khung chat có **câu hỏi gợi ý nhanh** cố định ("Sản phẩm còn hàng không?", "Khi nào giao tới?", "Có giảm thêm không ạ?", "Cho mình xem ảnh thật") — bấm là gửi.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — ảnh vào bucket riêng tư `chat-media` (`UploadPurpose.CHAT_IMAGE`, link ký 10 phút), thẻ sản phẩm (biến thể, thông tin hiện tại, `is_available`), thẻ đơn + ô chọn đơn `GET …/conversations/{id}/orders` (API 8.6) qua cổng `ChatProductLookup` / `ChatOrderLookup`; trạng thái Đang gửi → Đã nhận → Đã xem. Test `ChatCardsIT`; chạy thật `docs/kiem-thu/kich-ban-2026-11-26-chat.md`.
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn), [Conversation](../ClassDiagram/ENTITY.md#111-conversation--cuộc-hội-thoại), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop).
 

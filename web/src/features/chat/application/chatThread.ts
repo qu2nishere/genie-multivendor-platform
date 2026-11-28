@@ -3,7 +3,12 @@
 // kết nối (quá hạn chưa có ack → gửi lại bằng REST cùng client_message_id — không trùng tin), đã xem, đang gõ.
 // Mất kết nối → hỏi lại 30 giây; mock → hỏi lại 2 giây như trước.
 import { useStore } from '@nanostores/react';
-import { useInfiniteQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+} from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/shared/api/errors';
 import { newIdempotencyKey } from '@/shared/api/idempotency';
@@ -16,7 +21,13 @@ import {
   typingActive,
 } from '../domain/chat.rules';
 import type { ChatMessage, MessagePage, OutgoingMessage } from '../domain/chat.types';
-import { CHAT_MOCKED, mockTyping, outgoingBody, toMessage } from '../infrastructure/chat.api';
+import {
+  CHAT_MOCKED,
+  listConversationOrders,
+  mockTyping,
+  outgoingBody,
+  toMessage,
+} from '../infrastructure/chat.api';
 import { $typing, onChatEvent, sendChatFrame, useRealtimeConnected } from './chatRealtime';
 
 /** Một phía của chat (khách / shop). */
@@ -240,6 +251,20 @@ export function useThreadRead(side: ChatSideApi) {
     },
     [qc, side],
   );
+}
+
+/** Ô "Gửi đơn" (8.6) — chỉ tải khi mở menu. */
+export function useConversationOrders(
+  scope: 'me' | 'seller',
+  conversationId: number | null,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: [scope, 'conversations', conversationId ?? 0, 'orders'],
+    queryFn: () => listConversationOrders(scope, conversationId ?? 0),
+    enabled: enabled && conversationId != null,
+    staleTime: 30_000,
+  });
 }
 
 /** Bên kia đang gõ (tắt sau 4 giây) + hàm báo mình đang gõ (tối đa 1 lần / 2 giây). */

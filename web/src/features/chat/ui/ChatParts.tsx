@@ -2,16 +2,16 @@
 // đơn), chấm "đang gõ", tin nhanh, ô soạn (gửi ảnh ≤ 5 MB, gửi đơn với shop). Dùng cho khung chat nổi và
 // trang /chat.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { useOrders } from '@/features/orders';
 import { errorMessage } from '@/shared/api/errors';
 import { UploadError, uploadFile } from '@/shared/api/upload';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatDateTime, formatRelative, formatVND } from '@/shared/lib/format';
 import { Icon, Seal, Spinner, toast } from '@/shared/ui';
-import { useTyping } from '../application/chatThread';
+import { useConversationOrders, useTyping } from '../application/chatThread';
 import { useMarkRead, useMessages, useSendMessage } from '../application/useChat';
 import {
+  chatImageValid,
   MAX_TEXT,
   mergeMessages,
   presenceOf,
@@ -236,7 +236,6 @@ export function Thread({
   const { send, retry, pending } = useSendMessage(c.id);
   const read = useMarkRead();
   const { typing, notifyTyping } = useTyping(c.id, q.isFetched);
-  const orders = useOrders();
   const [draft, setDraft] = useState('');
   const [orderMenu, setOrderMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -244,7 +243,8 @@ export function Thread({
   const imgRef = useRef<HTMLInputElement>(null);
   const list = mergeMessages(q.messages, pending);
   const lastIncoming = [...q.messages].reverse().find((m) => !m.mine)?.id ?? null;
-  const shopOrders = (orders.data?.items ?? []).filter((o) => o.shop.id === c.shop.id).slice(0, 8);
+  const orders = useConversationOrders('me', c.id, orderMenu);
+  const shopOrders = orders.data ?? [];
 
   useEffect(() => {
     if (c.unread > 0) void read(c.id);
@@ -276,6 +276,7 @@ export function Thread({
   };
   const pickImage = async (f: File | undefined) => {
     if (!f) return;
+    if (!chatImageValid(f)) return void toast.error(t('chat.image_invalid'));
     setUploading(true);
     try {
       const up = await uploadFile(f, 'CHAT_IMAGE');
@@ -391,7 +392,12 @@ export function Thread({
           </button>
           {orderMenu && (
             <ul className="list-none m-0 absolute left-0 bottom-[calc(100%+6px)] w-[220px] bg-surface-card border border-solid border-line rounded-md shadow-md p-1 z-10">
-              {shopOrders.length === 0 && (
+              {orders.isPending && (
+                <li className="px-2.5 py-2">
+                  <Spinner size={14} />
+                </li>
+              )}
+              {!orders.isPending && shopOrders.length === 0 && (
                 <li className="px-2.5 py-2 text-xs text-muted">{t('chat.no_orders')}</li>
               )}
               {shopOrders.map((o) => (
@@ -401,7 +407,7 @@ export function Thread({
                     onClick={() => {
                       void send(
                         { type: 'ORDER_CARD', orderId: o.id },
-                        { order: { id: o.id, code: o.code } },
+                        { order: { id: o.id, code: o.code, status: o.status } },
                       );
                       setOrderMenu(false);
                     }}
