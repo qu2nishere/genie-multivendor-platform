@@ -5,7 +5,13 @@
 import StorefrontLayout from '@/layouts/StorefrontLayout.astro';
 import { MoneyRail } from '@/features/payment';
 import { listFeed, listProducts, ProductFeed, productHref } from '@/features/product';
-import { BannerPair, BannerPopup, HomeBanners, listLiveBanners } from '@/features/promotions';
+import {
+  BannerPair,
+  BannerPopup,
+  HomeBanners,
+  listFeaturedVouchers,
+  listLiveBanners,
+} from '@/features/promotions';
 import { FlashBand } from '@/features/promotions/server';
 import { listShops } from '@/features/shop';
 import { VerifiedShops } from '@/features/shop/server';
@@ -21,7 +27,7 @@ const site = Astro.site?.toString() ?? env.PUBLIC_WEB_URL;
 
 // Gợi ý trang chủ bắt đầu sau 6 sản phẩm của kệ hero (prototype: PRODUCTS[(i + 6) % n])
 const FEED_SIZE = 36;
-const [shelfPage, feed, flashPage, shops, top, side, middle, popup] = await Promise.all([
+const [shelfPage, feed, flashPage, shops, top, side, middle, popup, featured] = await Promise.all([
   listProducts({ size: 6 }),
   listFeed({ page: 1, size: FEED_SIZE, offset: 6 }),
   listProducts({ flash: true, size: 6 }),
@@ -30,10 +36,12 @@ const [shelfPage, feed, flashPage, shops, top, side, middle, popup] = await Prom
   listLiveBanners('HOME_TOP_SIDE'),
   listLiveBanners('HOME_MIDDLE'),
   listLiveBanners('POPUP'),
+  listFeaturedVouchers(4),
 ]);
 
-// Dải voucher (prototype Home.jsx SaveVoucher): chữ trên phiếu theo bản gốc
-const vouchers = [
+// Dải voucher (prototype Home.jsx SaveVoucher): chạy thật lấy "Mã giảm giá hot" từ API 5.13 (plan 2026-11-26 voucher
+// V08.01); mock giữ chữ trên phiếu theo bản gốc.
+const demoVouchers = [
   {
     code: 'GENIE30K',
     kind: 'platform',
@@ -59,6 +67,15 @@ const vouchers = [
     label: t('home.vouchers.sale_1212'),
   },
 ] as const;
+const vouchers =
+  featured === null
+    ? [...demoVouchers]
+    : featured.map((v) => ({
+        code: v.code,
+        kind: v.kind,
+        amount: v.amountLabel,
+        label: v.conditionLabel,
+      }));
 ---
 
 <StorefrontLayout
@@ -134,7 +151,7 @@ const vouchers = [
     )
   }
 
-  <FlashBand products={flashPage.items} vouchers={[...vouchers]} />
+  <FlashBand products={flashPage.items} vouchers={vouchers} />
 
   <section class="tr-section" aria-labelledby="shops-title">
     <div class="tr-section__head"><h2 id="shops-title">{t('home.shops.title')}</h2></div>

@@ -117,6 +117,29 @@ export async function listShopVouchers(shopId: number): Promise<Voucher[]> {
 }
 
 /**
+ * "Mã giảm giá hot" trang chủ (API 5.13 `featured=true`) — gọi được từ SSR (không token). Mock: `null` để trang dùng dải
+ * vé mẫu của prototype.
+ */
+export async function listFeaturedVouchers(limit = 4): Promise<Voucher[] | null> {
+  if (VOUCHERS_MOCKED) return null;
+  const baseUrl =
+    typeof window === 'undefined'
+      ? (env.INTERNAL_API_URL ?? env.PUBLIC_API_URL)
+      : env.PUBLIC_API_URL;
+  try {
+    return (
+      await request<ApiVoucherDto[]>('/public/vouchers', {
+        auth: false,
+        baseUrl,
+        query: { featured: true, limit },
+      })
+    ).data.map(fromApiVoucher);
+  } catch {
+    return []; // trang chủ không được hỏng vì dải voucher
+  }
+}
+
+/**
  * Tra voucher theo mã để "Áp dụng" trong Voucher Picker (POST /me/checkout/applicable-vouchers với
  * `code`, API_SPEC 6.9) — trả cả voucher chưa lưu. Không tồn tại → GNE-VCH-4041.
  */
