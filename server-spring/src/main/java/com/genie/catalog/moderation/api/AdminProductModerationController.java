@@ -2,11 +2,13 @@
 package com.genie.catalog.moderation.api;
 
 import com.genie.catalog.moderation.application.AdminCatalogProductService;
+import com.genie.catalog.moderation.application.AiScreeningSettings;
 import com.genie.catalog.moderation.application.ModerationDecisionService;
 import com.genie.catalog.moderation.application.ModerationQueueService;
 import com.genie.common.api.ApiResponse;
 import com.genie.common.api.ApiResponseFactory;
 import com.genie.common.api.PageResponse;
+import com.genie.common.error.InvalidRequestException;
 import com.genie.common.security.AuthUser;
 import com.genie.common.security.ClientInfo;
 import com.genie.common.security.CurrentUser;
@@ -33,13 +35,16 @@ public class AdminProductModerationController {
     private final ModerationDecisionService decisions;
     private final ApiResponseFactory responses;
     private final AdminCatalogProductService catalogProducts;
+    private final AiScreeningSettings aiSettings;
 
     public AdminProductModerationController(ModerationQueueService queue, ModerationDecisionService decisions,
-                                            ApiResponseFactory responses, AdminCatalogProductService catalogProducts) {
+                                            ApiResponseFactory responses, AdminCatalogProductService catalogProducts,
+                                            AiScreeningSettings aiSettings) {
         this.catalogProducts = catalogProducts;
         this.queue = queue;
         this.decisions = decisions;
         this.responses = responses;
+        this.aiSettings = aiSettings;
     }
 
     /** {@code reason_code} theo API 16 (MISSING_SAFETY_CERT, POLICY_VIOLATION, BAD_IMAGE, …, OTHER cần ghi chú). */
@@ -52,7 +57,10 @@ public class AdminProductModerationController {
     public record RedistributeResult(int reassignedCount) {
     }
 
-    @Operation(summary = "UC-CAT-13 — Hàng chờ duyệt sản phẩm (tab PENDING / PUBLISHED / REJECTED, summary.counts)")
+    public record AiSettingsRequest(Boolean enabled) {
+    }
+
+    @Operation(summary = "UC-CAT-13 — Hàng chờ duyệt sản phẩm (tab PENDING / PUBLISHED / REJECTED, lọc ai, summary.counts)")
     @GetMapping("/product-moderation")
     public ResponseEntity<PageResponse<ModerationQueueService.Row>> list(@RequestParam(required = false) String tab,
                                                                         @RequestParam(required = false) String q,
@@ -135,5 +143,23 @@ public class AdminProductModerationController {
     @PostMapping("/moderators/redistribute")
     public ResponseEntity<ApiResponse<RedistributeResult>> redistribute() {
         return responses.ok(new RedistributeResult(queue.redistribute()));
+    }
+
+    @Operation(summary = "UC-CAT-12 — Trạng thái kiểm duyệt tự động bằng AI")
+    @GetMapping("/product-moderation/ai-settings")
+    public ResponseEntity<ApiResponse<AiScreeningSettings.View>> aiSettings() {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(responses.body(aiSettings.view()));
+    }
+
+    @Operation(summary = "UC-CAT-12 — Bật / tắt kiểm duyệt tự động bằng AI (chỉ ADMIN)")
+    @PutMapping("/product-moderation/ai-settings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<AiScreeningSettings.View>> setAiSettings(@CurrentUser AuthUser me,
+                                                                               @RequestBody(required = false) AiSettingsRequest body,
+                                                                               ClientInfo client) {
+        if (body == null || body.enabled() == null) {
+            throw InvalidRequestException.of("enabled", "REQUIRED", null, "Thiếu trạng thái bật / tắt.");
+        }
+        return responses.ok(aiSettings.setEnabled(me.id(), body.enabled(), client));
     }
 }
