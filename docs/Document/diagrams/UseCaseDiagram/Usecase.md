@@ -2483,7 +2483,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Thông báo được ghi **sau khi** nghiệp vụ gốc commit, trong transaction riêng — lỗi thông báo không làm hỏng nghiệp vụ gốc.
   - Nhóm hiển thị (tab) suy từ `type` (API 3.12); tin nhắn chat khi người nhận không trực tuyến dùng loại `CHAT_MESSAGE` (một thông báo chưa đọc / hội thoại).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API. Đang làm theo `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện; schema `V27` đã có).
+  - *Hiện trạng:* **Đã triển khai (2026-11-27)** — backend + test + web nối API thật + chạy thật; plan `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện). Nguồn đã nối: đăng nhập thiết bị mới, kết quả / hồ sơ KYC, lệch số dư Điểm, đặt đơn COD; đơn đang giao / thanh toán / ví do C3, C4, C9 gọi `NotificationFacade`.
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân), [AdminNotification](../ClassDiagram/ENTITY.md#105-adminnotification--thông-báo-nội-bộ-cho-quản-trị-viên).
 
@@ -2528,7 +2528,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Phát nhầm:* Admin xóa thông báo (kể cả đã phát) → gỡ khỏi hộp thư mọi người; mọi thao tác ghi `system_logs`.
 - **Quan hệ Use Case:** `<<include>>` Tải tệp lên Silo (Presigned URL) — tác nhân phụ: `ACT-MIN` Silo S3 Storage.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đã triển khai (2026-11-27)** — backend + test + web nối API thật + chạy thật (13 / 13 ca); plan `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện), migration `V27`.
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [PlatformNotification](../ClassDiagram/ENTITY.md#102-platformnotification--thông-báo-phát-toàn-sàn), [UserPlatformNotificationRead](../ClassDiagram/ENTITY.md#103-userplatformnotificationread--đánh-dấu-đã-đọc-thông-báo-sàn).
 

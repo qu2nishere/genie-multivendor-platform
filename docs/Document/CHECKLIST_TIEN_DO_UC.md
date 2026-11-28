@@ -11,7 +11,7 @@
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm B1 Nhân viên & phân quyền: UC-ADM-01, 02, 03 (nhận 2026-11-19) · cụm B2 Danh mục & hoa hồng: UC-CAT-01, 14, 15 (nhận 2026-11-22) | Đang triển khai — AUTH: 4 đã xong, 5 đang làm (UC-AUTH-09 xong 2026-11-18); plan `plan/2026-11-14/auth.md`. B1: **3 / 3 ✅** (UC-ADM-01, 02 xong 2026-11-20; UC-ADM-03 xong 2026-11-24 — cron hết hạn đình chỉ làm bù ở plan rà soát 2026-11-24). B2: **3 / 3 ✅** (2026-11-24 — test bổ sung + sửa giao diện quản lý ngành con ở plan rà soát), plan `plan/2026-11-19/b2.md` |
-| **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm B5 Voucher: UC-PRO-01, 02, 03 · cụm B6 Chat & realtime: UC-SOC-01, 02, UC-VND-06, UC-NOT-01 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4 **7 / 7 ✅** — UC-VND-05 xong 2026-11-25 (nhánh `feature/vendor-k07-pickup`); UC-VND-01, 02, 03, 04, 07, 21 chạy thật 2026-11-25 (Playwright + AI Worker thật), sửa lỗi phát hiện ở nhánh `bugfix/b4-real-run-fixes`; UC-NOT-05 + B5 + B6 (8 UC): đã lập plan 2026-11-26 `plan/2026-11-26/server-spring/` (`plan_thong_bao_realtime.md`, `plan_chat_khach_shop.md`, `plan_voucher_b5.md` + progress), chưa bắt đầu code |
+| **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm B5 Voucher: UC-PRO-01, 02, 03 · cụm B6 Chat & realtime: UC-SOC-01, 02, UC-VND-06, UC-NOT-01 | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4 **7 / 7 ✅** — UC-VND-05 xong 2026-11-25 (nhánh `feature/vendor-k07-pickup`); UC-VND-01, 02, 03, 04, 07, 21 chạy thật 2026-11-25 (Playwright + AI Worker thật), sửa lỗi phát hiện ở nhánh `bugfix/b4-real-run-fixes`; UC-NOT-05 + B5 + B6 (8 UC): plan 2026-11-26 `plan/2026-11-26/server-spring/` — **UC-NOT-01, UC-NOT-05 ✅ 2026-11-27** (nhánh `feature/b56-shared-schema` → `feature/notification-inbox` → `feature/notification-platform-broadcast`); chat (UC-SOC-01, 02, UC-VND-06) và voucher B5 chưa bắt đầu |
 | **Nghiêm Phú Đăng Quân** | 7 use case cụm khám phá sản phẩm: Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | Cụm B3 Storefront đọc công khai — **7 / 7 UC ✅ Đã triển khai** (UC-CAT-02, 04, 06, 07, 16, 18 chạy thật 2026-11-21; UC-CAT-05 xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính từ facets làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` (66 / 66) |
 
 ## 1. Tổng quan
@@ -19,9 +19,9 @@
 | Chỉ số | Số lượng |
 |---|---:|
 | Tổng use case | **87** |
-| Đã triển khai (backend + test + web nối API thật) | **24** |
+| Đã triển khai (backend + test + web nối API thật) | **26** |
 | Đang triển khai | **21** |
-| Chưa có backend — giao diện đã dựng trên lớp mock | **32** |
+| Chưa có backend — giao diện đã dựng trên lớp mock | **30** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **10** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
 | Backend `server-spring` | 65 entity + `V1…V27`; nhiều module đã có nghiệp vụ — mới nhất chuỗi C2 giỏ → checkout (2026-11-26: 209 unit + 358 IT xanh) |
@@ -86,7 +86,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 07. Khuyến mãi, Voucher, Flash Sale & Điểm | 9 | 0 | 2 | 7 |
 | 08. Chat, Đánh giá & Theo dõi shop | 7 | 0 | 1 | 6 |
 | 09. Trả hàng, Hoàn tiền & Khiếu nại | 4 | 0 | 0 | 4 |
-| 10. Thông báo | 3 | 0 | 0 | 3 |
+| 10. Thông báo | 3 | 2 | 0 | 1 |
 | 11. Quản trị sàn, Nhân viên & Rút tiền | 8 | 3 | 2 | 3 |
 
 ## 2. Checklist từng use case
@@ -216,9 +216,9 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
-| `UC-NOT-01` | Thông báo trong ứng dụng thời gian thực (WebSocket) | S5 | Chuông + `/account/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | Nguyễn Ngọc Thiện |
+| `UC-NOT-01` | Thông báo trong ứng dụng thời gian thực (WebSocket) | S5 | Chuông + `/account/notifications` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>`NotificationFacade` (ghi sau commit + đẩy `/user/queue/notifications`), hộp thư gộp `ntf_` / `pn_` / `an_` cursor (`GET /me/notifications`, `PATCH /{id}`, `mark-all-read`), chuông nhân viên theo quyền, nguồn: đăng nhập thiết bị mới, kết quả / hồ sơ KYC, lệch số dư Điểm, đặt đơn COD; web một kết nối WebSocket dùng chung (cờ `notifications`), toast + âm báo, đồng bộ tab. Chạy thật 2026-11-27 bằng Chromium (Playwright) trên hệ thống thật — plan `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md`. Thông báo đơn đang giao / thanh toán / ví do C3, C4, C9 gọi facade khi làm</sub> | Nguyễn Ngọc Thiện |
 | `UC-NOT-03` | Gửi email giao dịch tự động | S5 | (nền) email giao dịch | — | ☐ | ☐ | — | ☐ | ⬜ Chưa triển khai<br><sub>xử lý phía máy chủ (cron / webhook / AI), giao diện chỉ hiển thị kết quả trên mock</sub> | — |
-| `UC-NOT-05` | Admin phát thông báo toàn sàn (Broadcast Platform Notification) | S8 | `/admin/notifications` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | Nguyễn Ngọc Thiện |
+| `UC-NOT-05` | Admin phát thông báo toàn sàn (Broadcast Platform Notification) | S8 | `/admin/notifications` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>`/admin/platform-notifications` (soạn / phát ngay / hẹn giờ / sửa khi chưa phát / xóa), đối tượng ALL / CUSTOMER / VENDOR / SPECIFIC_USERS, `reach_count` chốt lúc phát, lọc HTML phía server, ảnh `NOTIFICATION_IMAGE`, nhật ký `PLATFORM_NOTIFICATION_*`, cron 30 giây, đẩy `/topic/platform` (ALL) hoặc từng người đang trực tuyến; web cờ `platform-notifications`. Chạy thật 2026-11-27 (13 / 13 ca) — migration `V27`</sub> | Nguyễn Ngọc Thiện |
 
 ### Phân hệ 11 — QUẢN TRỊ SÀN, NHÂN VIÊN & RÚT TIỀN (PLATFORM ADMIN, STAFF & PAYOUTS)
 
@@ -374,3 +374,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-27 | CAT-11 | Plan C1 P05 phía sàn: khóa / mở khóa sản phẩm, `GET /admin/products` theo danh mục (cả nhánh con); web bật cờ `catalog-products`. Chưa build | (chưa commit) |
 | 2026-11-27 | CAT-17 | Plan C1 P08: đề xuất danh mục của shop + duyệt / từ chối của sàn (`CategoryProposalService`, 2 controller, `CategoryProposalIT`); web bật cờ `catalog-proposals`. Chưa build | (chưa commit) |
 | 2026-11-27 | CAT-09, 10, 11, 13, 17 | Chủ dự án chạy `./mvnw clean verify` (toàn bộ unit) + `SellerProductIT`, `ProductModerationIT`, `CategoryProposalIT` trên JDK 21 — xanh → **Test ☑** | — |
+| 2026-11-27 | NOT-01, NOT-05 | Plan thông báo 2026-11-26 (Nguyễn Ngọc Thiện) N00–N10: migration chung `V27` (dùng cho cả B5 / B6), hộp thư gộp 3 nguồn + realtime STOMP (`/user/queue/notifications`, `/topic/platform`), thông báo sàn (soạn / phát / hẹn giờ / sửa / xóa, đối tượng, ảnh, nhật ký, cron), nguồn thông báo KYC / thiết bị mới / lệch Điểm / đơn COD; web hub WebSocket dùng chung, chuông + hộp thư + màn Admin nối API thật. `./mvnw clean verify` 235 unit + 390 IT, `npm run verify` 77 file test; chạy thật 13 / 13 ca bằng Chromium (Playwright). **2 UC → ✅**. Tổng quan: Đã triển khai 24 → 26, Chưa (mock) 37 → 35; phân hệ 10: 2 / 0 / 1 | PR #112 + nhánh `feature/notification-inbox`, `feature/notification-platform-broadcast` |

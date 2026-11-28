@@ -4230,6 +4230,7 @@
       "delete": "Delete",
       "delete_title": "Confirm deletion",
       "delete_desc": "Delete this notification? This cannot be undone.",
+      "delete_desc_sent": "This notification has already been sent — deleting it removes it from every recipient’s inbox (including read counts). This cannot be undone.",
       "delete_confirm": "Delete notification",
       "deleted": "Notification deleted.",
       "compose_title": "New platform notification (Broadcast)",

@@ -50,6 +50,27 @@ public class UserChannel {
         });
     }
 
+    /**
+     * Gửi ngay tới một người — dùng trong listener {@code @TransactionalEventListener(AFTER_COMMIT)}: lúc đó đăng ký thêm
+     * "sau commit" không còn chạy nữa (plan 2026-11-26 thông báo N07.01). Lỗi gửi bị bỏ qua.
+     */
+    public void sendNow(long userId, String destination, Object payload) {
+        try {
+            template.convertAndSendToUser(String.valueOf(userId), destination, payload);
+        } catch (RuntimeException ignored) {
+            // realtime chỉ là phụ
+        }
+    }
+
+    /** Gửi ngay lên kênh chung — cùng lý do với {@link #sendNow}. */
+    public void sendToTopicNow(String topic, Object payload) {
+        try {
+            template.convertAndSend(topic, payload);
+        } catch (RuntimeException ignored) {
+            // realtime chỉ là phụ
+        }
+    }
+
     private static void runAfterCommit(Runnable send) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

@@ -1,0 +1,148 @@
+### UC-NOT-01, UC-NOT-05 — Hộp thư thông báo + Thông báo toàn sàn (API_SPEC 3.12, 11.17, 13, 4.1; plan 2026-11-26 thông báo N09.01)
+# REST Client (VS Code) / IntelliJ HTTP Client; backend profile local + dữ liệu mẫu (mật khẩu Genie@123).
+# Đăng nhập bị giới hạn 10 lần / phút / IP (GNE-RAT-4290) — chạy lần lượt.
+@base = http://localhost:8080/api/v1
+
+### 1. Đăng nhập Admin (có MANAGE_PLATFORM_NOTIFICATION) — chép access_token vào @admin
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "yen.dh@genie.example", "password": "Genie@123" }
+
+### 2. Đăng nhập Finance Officer (KHÔNG có MANAGE_PLATFORM_NOTIFICATION) — chép vào @fo
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "linh.tm@genie.example", "password": "Genie@123" }
+
+### 3. Đăng nhập chủ shop TechZone (vai trò VENDOR — nhận thông báo ALL / VENDOR) — chép vào @shop
+POST {{base}}/auth/sessions
+Content-Type: application/json
+
+{ "email": "mai.tran@gmail.com", "password": "Genie@123" }
+
+@admin = <access_token bước 1>
+@fo = <access_token bước 2>
+@shop = <access_token bước 3>
+
+### 4. ĐÚNG — xin link tải ảnh banner thông báo (PUT tệp lên upload_url, chép object_key vào @img)
+POST {{base}}/uploads/presigned-urls
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "purpose": "NOTIFICATION_IMAGE", "file_name": "sale.png", "content_type": "image/png", "content_length": 20000 }
+
+@img = <object_key bước 4 — dạng tmp/user/{id}/{uuid}.png>
+
+### 5. ĐÚNG — phát ngay cho mọi khách + shop → 201, is_scheduled=false, reach_count chốt lúc phát; HTML độc bị lọc
+POST {{base}}/admin/platform-notifications
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "Siêu sale 12.12 giảm tới 50%", "content_html": "<p onclick=\"x()\">Giảm tới <b>50%</b></p><script>alert(1)</script>",
+  "image_object_key": "{{img}}", "target": "ALL", "recipient_emails": [], "send_at": null }
+
+@pn = <id bước 5>
+
+### 6. ĐÚNG — chủ shop thấy dòng pn_ trong hộp thư (category SYSTEM, content_html đã lọc), summary.unread_count
+GET {{base}}/me/notifications?limit=5
+Authorization: Bearer {{shop}}
+
+### 7. ĐÚNG — lọc theo nhóm; cursor của bước 6 dùng ở cursor=
+GET {{base}}/me/notifications?category=SYSTEM&limit=5
+Authorization: Bearer {{shop}}
+
+### 8. ĐÚNG — đánh dấu đã đọc → 204 (gọi lại vẫn 204); Admin thấy read_count tăng
+PATCH {{base}}/me/notifications/pn_{{pn}}
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "is_read": true }
+
+### 9. LỖI — is_read:false → 422 GNE-VAL-4220
+PATCH {{base}}/me/notifications/pn_{{pn}}
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "is_read": false }
+
+### 10. ĐÚNG — đánh dấu tất cả theo nhóm → 204
+POST {{base}}/me/notifications/mark-all-read
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "category": null }
+
+### 11. ĐÚNG — Admin: bảng 5 dòng / trang + summary tháng (sent_this_month, total_reach, total_reads)
+GET {{base}}/admin/platform-notifications?page=1&size=5
+Authorization: Bearer {{admin}}
+
+### 12. ĐÚNG — tìm không dấu
+GET {{base}}/admin/platform-notifications?q=sieu sale&target=ALL
+Authorization: Bearer {{admin}}
+
+### 13. ĐÚNG — hẹn giờ (send_at ≥ now + 1 phút) → is_scheduled=true, reach_count=0; cron 30 giây phát khi tới giờ
+POST {{base}}/admin/platform-notifications
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "Bảo trì hệ thống 02:00 – 04:00", "content_html": "<p>Một số dịch vụ có thể gián đoạn.</p>",
+  "image_object_key": null, "target": "CUSTOMER", "recipient_emails": [], "send_at": "2026-12-31T02:00:00+07:00" }
+
+@sched = <id bước 13>
+
+### 14. ĐÚNG — sửa bản hẹn giờ (đổi giờ / nội dung); image_object_key null = giữ ảnh, "" = bỏ ảnh
+PUT {{base}}/admin/platform-notifications/{{sched}}
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "Bảo trì hệ thống 03:00 – 05:00", "content_html": "<p>Đổi giờ.</p>", "image_object_key": null,
+  "target": "CUSTOMER", "recipient_emails": [], "send_at": "2026-12-31T03:00:00+07:00" }
+
+### 15. LỖI — sửa bản ĐÃ phát → 409 GNE-NOT-4091
+PUT {{base}}/admin/platform-notifications/{{pn}}
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "Sửa", "content_html": "<p>x</p>", "target": "ALL", "recipient_emails": [], "send_at": null }
+
+### 16. LỖI — SPECIFIC_USERS có email lạ → 422 GNE-NOT-4221, details.unknown_emails
+POST {{base}}/admin/platform-notifications
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "Riêng", "content_html": "<p>Xin chào</p>", "target": "SPECIFIC_USERS",
+  "recipient_emails": ["mai.tran@gmail.com", "khong-ton-tai@genie.example"], "send_at": null }
+
+### 17. LỖI — gom lỗi theo trường (title rỗng, nội dung rỗng sau lọc, target sai, send_at quá gần) → 422 errors[]
+POST {{base}}/admin/platform-notifications
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "title": "", "content_html": "<script>x</script>", "target": "NOBODY", "recipient_emails": [], "send_at": "2026-01-01T00:00:00+07:00" }
+
+### 18. LỖI — Finance Officer không có quyền → 403
+GET {{base}}/admin/platform-notifications
+Authorization: Bearer {{fo}}
+
+### 19. LỖI — cursor hỏng → 422; id của người khác / sai tiền tố → 404
+GET {{base}}/me/notifications?cursor=hong
+Authorization: Bearer {{shop}}
+
+###
+PATCH {{base}}/me/notifications/ntf_1
+Authorization: Bearer {{shop}}
+Content-Type: application/json
+
+{ "is_read": true }
+
+### 20. ĐÚNG — xóa (kể cả đã phát — gỡ khỏi hộp thư mọi người, ảnh bị xóa sau commit) → 204; nhật ký PLATFORM_NOTIFICATION_DELETED
+DELETE {{base}}/admin/platform-notifications/{{pn}}
+Authorization: Bearer {{admin}}
+
+###
+DELETE {{base}}/admin/platform-notifications/{{sched}}
+Authorization: Bearer {{admin}}
+
+# Realtime (API_SPEC 13): STOMP ws://localhost:8080/ws, khung CONNECT kèm "Authorization: Bearer …", rồi
+# SUBSCRIBE /user/queue/notifications (NEW_NOTIFICATION / PLATFORM_NOTIFICATION / NOTIFICATIONS_READ) và /topic/platform (chỉ ALL).

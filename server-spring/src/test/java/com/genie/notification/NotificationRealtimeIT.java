@@ -62,6 +62,10 @@ class NotificationRealtimeIT extends NotificationTestSupport {
 
     /** Đăng nhập thật, mở WebSocket, đăng ký /user/queue/notifications. */
     private BlockingQueue<Map<String, Object>> listen(String email) throws Exception {
+        return listen(email, "/user/queue/notifications");
+    }
+
+    private BlockingQueue<Map<String, Object>> listen(String email, String destination) throws Exception {
         String token = accessTokenOf(login(email, PASSWORD));
         StompHeaders connect = new StompHeaders();
         connect.add(HttpHeaders.AUTHORIZATION, bearer(token));
@@ -69,7 +73,7 @@ class NotificationRealtimeIT extends NotificationTestSupport {
                 new StompSessionHandlerAdapter() { }).get(5, TimeUnit.SECONDS);
         sessions.add(s);
         BlockingQueue<Map<String, Object>> inbox = new ArrayBlockingQueue<>(16);
-        s.subscribe("/user/queue/notifications", new StompFrameHandler() {
+        s.subscribe(destination, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
                 return Map.class;
@@ -86,7 +90,55 @@ class NotificationRealtimeIT extends NotificationTestSupport {
     }
 
     private long user(String email) {
-        return createCustomer(email, PASSWORD).getId();
+        long id = createCustomer(email, PASSWORD).getId();
+        // thông báo sàn chỉ tới người có tài khoản trước lúc phát (đồng hồ test ở 2026-06-08) — D3
+        jdbc.update("UPDATE users SET created_at = '2026-01-01T00:00:00Z' WHERE id = ?", id);
+        return id;
+    }
+
+    private void broadcast(String json) throws Exception {
+        Long admin = jdbc.queryForObject("SELECT id FROM users WHERE email = 'yen.dh@genie.example'", Long.class);
+        int status = mvc.perform(post("/api/v1/admin/platform-notifications")
+                .header(HttpHeaders.AUTHORIZATION, auth(admin, com.genie.common.domain.UserRole.ADMIN))
+                .contentType(MediaType.APPLICATION_JSON).content(json)).andReturn().getResponse().getStatus();
+        assertThat(status).isEqualTo(201);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void broadcastToAllGoesThroughThePlatformTopic() throws Exception {
+        String email = uniqueEmail();
+        user(email);
+        BlockingQueue<Map<String, Object>> topic = listen(email, "/topic/platform");
+
+        broadcast("{\"title\":\"Siêu sale\",\"content_html\":\"<p>50%</p>\",\"target\":\"ALL\"}");
+
+        Map<String, Object> event = topic.poll(5, TimeUnit.SECONDS);
+        assertThat(event).isNotNull().containsEntry("type", "PLATFORM_NOTIFICATION");
+        Map<String, Object> n = (Map<String, Object>) event.get("notification");
+        assertThat(n.get("id").toString()).startsWith("pn_");
+        assertThat(n).containsEntry("type", "PLATFORM_ANNOUNCEMENT").containsEntry("content_html", "<p>50%</p>");
+    }
+
+    @Test
+    void targetedBroadcastReachesOnlyOnlineRecipients() throws Exception {
+        String picked = uniqueEmail();
+        user(picked);
+        String other = uniqueEmail();
+        user(other);
+        BlockingQueue<Map<String, Object>> mine = listen(picked);
+        BlockingQueue<Map<String, Object>> theirs = listen(other);
+        BlockingQueue<Map<String, Object>> theirTopic = listen(other, "/topic/platform");
+
+        broadcast("{\"title\":\"Riêng\",\"content_html\":\"<p>Cho bạn</p>\",\"target\":\"SPECIFIC_USERS\","
+                + "\"recipient_emails\":[\"" + picked + "\"]}");
+        Map<String, Object> event = mine.poll(5, TimeUnit.SECONDS);
+        assertThat(event).isNotNull().containsEntry("type", "PLATFORM_NOTIFICATION").containsEntry("unread_count", 1);
+        assertThat(theirs.poll(700, TimeUnit.MILLISECONDS)).isNull();
+        assertThat(theirTopic.poll(300, TimeUnit.MILLISECONDS)).isNull();
+
+        broadcast("{\"title\":\"Chỉ shop\",\"content_html\":\"<p>Phí</p>\",\"target\":\"VENDOR\"}");
+        assertThat(mine.poll(700, TimeUnit.MILLISECONDS)).isNull();   // khách thuần không nhận bản VENDOR
     }
 
     @Test

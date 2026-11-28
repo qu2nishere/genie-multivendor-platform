@@ -74,7 +74,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 | Số | File | Plan | Nội dung |
 |---|---|---|---|
 | `V25` | `V25__listing_and_checkout_schema.sql` | C1 + C2 (đã merge) | — |
-| `V27` (tạm — đổi theo thứ tự merge) | `V27__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
+| `V27` (đã chốt — PR #112) | `V27__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
 
 ## 6. Quy ước chung (trích TS 13, 14 — không lặp lại ở từng plan)
 
@@ -90,7 +90,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 
 | Thứ tự | Plan | Use case phải tick khi xong | Phụ trách | Xong plan |
 |:---:|---|---|---|:---:|
-| 1 | [1] Thông báo & realtime | `UC-NOT-01`, `UC-NOT-05` | Nguyễn Ngọc Thiện | ☐ |
+| 1 | [1] Thông báo & realtime | `UC-NOT-01`, `UC-NOT-05` — ✅ 2026-11-27 (chạy thật 13 / 13) | Nguyễn Ngọc Thiện | ☑ |
 | 2 | [2] Chat Khách – Shop | `UC-SOC-01`, `UC-SOC-02`, `UC-VND-06` | Nguyễn Ngọc Thiện | ☐ |
 | 3 | [3] Voucher B5 | `UC-PRO-01`, `UC-PRO-02`, `UC-PRO-03` | Nguyễn Ngọc Thiện | ☐ |
 
