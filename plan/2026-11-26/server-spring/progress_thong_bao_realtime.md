@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/b56-shared-schema` (N01) → `feature/notification-inbox` (N02–N05) → `feature/notification-platform-broadcast` (N06–N10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-26 — mới lập plan (0 / 98) |
+| **Cập nhật gần nhất** | 2026-11-26 — N01 xong (PR #112), bắt đầu N02 (17 / 98) |
 
 **Cách dùng**
 
@@ -23,33 +23,33 @@
 
 | # | Vấn đề | Đã chốt | Kết quả chốt / ngày |
 |---|---|:---:|---|
-| D1 | **Đối tượng nhận** của `target` | ☐ | |
-| D2 | **Đánh dấu "đã phát"** — bảng không có cột, thông báo hẹn giờ không biết cron đã phát chưa | ☐ | |
-| D3 | **`reach_count`** chốt lúc nào | ☐ | |
-| D4 | **Đẩy realtime thông báo sàn** — `/topic/platform` tới mọi người kể cả người không thuộc đối tượng | ☐ | |
-| D5 | **Gói tin realtime** trên `/user/queue/notifications` | ☐ | |
-| D6 | **Nhóm hiển thị (`category`)** từ `NotificationType` — và loại cho tin nhắn chat | ☐ | |
-| D7 | **Hộp thư nhân viên** `admin_notifications` (không có `user_id`) | ☐ | |
-| D8 | **Phân trang gộp 3 nguồn** (`ntf_`, `pn_`, `an_`) | ☐ | |
-| D9 | **Đánh dấu đã đọc** | ☐ | |
-| D10 | **Cách module khác tạo thông báo** | ☐ | |
-| D11 | **Nguồn thông báo nối ngay trong plan này** (có sự kiện thật) | ☐ | |
-| D12 | **Nội dung tiêu đề / thân** đa ngôn ngữ | ☐ | |
-| D13 | **Lọc HTML** `content_html` | ☐ | |
-| D14 | **Ảnh banner thông báo** | ☐ | |
-| D15 | **Sửa / xóa thông báo sàn** | ☐ | |
-| D16 | **Cron phát hẹn giờ** | ☐ | |
-| D17 | **Web: một kết nối WebSocket cho cả ứng dụng** | ☐ | |
-| D18 | **Âm báo & toast & nhiều tab** | ☐ | |
-| D19 | **Cờ nối web** | ☐ | |
-| D20 | **Ngoài phạm vi** | ☐ | |
+| D1 | **Đối tượng nhận** của `target` | ☑ | Như đề xuất · 2026-11-26 |
+| D2 | **Đánh dấu "đã phát"** — bảng không có cột, thông báo hẹn giờ không biết cron đã phát chưa | ☑ | Như đề xuất · 2026-11-26 |
+| D3 | **`reach_count`** chốt lúc nào | ☑ | Như đề xuất · 2026-11-26 |
+| D4 | **Đẩy realtime thông báo sàn** — `/topic/platform` tới mọi người kể cả người không thuộc đối tượng | ☑ | Như đề xuất · 2026-11-26 |
+| D5 | **Gói tin realtime** trên `/user/queue/notifications` | ☑ | Như đề xuất · 2026-11-26 |
+| D6 | **Nhóm hiển thị (`category`)** từ `NotificationType` — và loại cho tin nhắn chat | ☑ | Như đề xuất · 2026-11-26 |
+| D7 | **Hộp thư nhân viên** `admin_notifications` (không có `user_id`) | ☑ | Như đề xuất · 2026-11-26 |
+| D8 | **Phân trang gộp 3 nguồn** (`ntf_`, `pn_`, `an_`) | ☑ | Như đề xuất · 2026-11-26 |
+| D9 | **Đánh dấu đã đọc** | ☑ | Như đề xuất · 2026-11-26 |
+| D10 | **Cách module khác tạo thông báo** | ☑ | Như đề xuất · 2026-11-26 |
+| D11 | **Nguồn thông báo nối ngay trong plan này** (có sự kiện thật) | ☑ | Như đề xuất — (e) làm được: `CheckoutCreatedEvent(sessionId, userId, orderIds, paymentMethod, grandTotal)` đủ dữ liệu (N00.05) · 2026-11-26 |
+| D12 | **Nội dung tiêu đề / thân** đa ngôn ngữ | ☑ | Như đề xuất · 2026-11-26 |
+| D13 | **Lọc HTML** `content_html` | ☑ | Như đề xuất · 2026-11-26 |
+| D14 | **Ảnh banner thông báo** | ☑ | Như đề xuất · 2026-11-26 |
+| D15 | **Sửa / xóa thông báo sàn** | ☑ | Như đề xuất · 2026-11-26 |
+| D16 | **Cron phát hẹn giờ** | ☑ | Như đề xuất · 2026-11-26 |
+| D17 | **Web: một kết nối WebSocket cho cả ứng dụng** | ☑ | Như đề xuất · 2026-11-26 |
+| D18 | **Âm báo & toast & nhiều tab** | ☑ | Như đề xuất · 2026-11-26 |
+| D19 | **Cờ nối web** | ☑ | Như đề xuất · 2026-11-26 |
+| D20 | **Ngoài phạm vi** | ☑ | Như đề xuất · 2026-11-26 |
 
 ## Tổng quan
 
 | Giai đoạn | Nội dung | Task | Commit | Xong |
 |---|---|---:|---:|---:|
-| N00 | Chuẩn bị | 6 | 0 | 0 / 6 |
-| N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 0 / 11 |
+| N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
+| N01 | Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 0 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 0 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 0 / 11 |
@@ -59,30 +59,30 @@
 | N08 | Nối web màn Admin "Thông báo sàn" + hiển thị trong hộp thư | 5 | 1 | 0 / 6 |
 | N09 | Kiểm thử & chạy thật | 4 | 1 | 0 / 5 |
 | N10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 0 / 9 |
-| **Tổng** | | **81** | **17** | **0 / 98** |
+| **Tổng** | | **81** | **17** | **17 / 98** |
 
 ## N00 — Chuẩn bị
 
-- [ ] **N00.01** Kiểm danh tính git
-- [ ] **N00.02** Chốt D1–D20
-- [ ] **N00.03** Cập nhật `develop`
-- [ ] **N00.04** Kiểm số migration
-- [ ] **N00.05** Đọc chữ ký sự kiện
-- [ ] **N00.06** Đọc màn mock
+- [x] **N00.01** Kiểm danh tính git
+- [x] **N00.02** Chốt D1–D20
+- [x] **N00.03** Cập nhật `develop`
+- [x] **N00.04** Kiểm số migration
+- [x] **N00.05** Đọc chữ ký sự kiện
+- [x] **N00.06** Đọc màn mock
 
-## N01 — Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
+## N01 — Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
 
-- [ ] **N01.01** Tài liệu trước (TS 7.3)
-- [ ] **N01.02** `V26__b5_b6_notification_chat_voucher.sql`
-- [ ] **N01.03** Khối (b) hộp thư
-- [ ] **N01.04** Khối (c) chat
-- [ ] **N01.05** Khối (d) voucher
-- [ ] **N01.06** Khối (e) nhật ký
-- [ ] **N01.07** Entity & enum
-- [ ] **N01.08** Test
-- [ ] **N01.C1** 🔖 COMMIT `docs(db): add schema changes for notifications, chat and vouchers` · hash: `…`
-- [ ] **N01.C2** 🔖 COMMIT `feat(db): add shared schema for notification, chat and voucher clusters` · hash: `…`
-- [ ] **N01.09** Mở PR `feature/b56-shared-schema` → `develop` (mô tả: chỉ thêm cột / index / giá trị CHECK, tương thích ngược); sau khi merge mới tạo nhánh N02.
+- [x] **N01.01** Tài liệu trước (TS 7.3)
+- [x] **N01.02** `V27__b5_b6_notification_chat_voucher.sql`
+- [x] **N01.03** Khối (b) hộp thư
+- [x] **N01.04** Khối (c) chat
+- [x] **N01.05** Khối (d) voucher
+- [x] **N01.06** Khối (e) nhật ký
+- [x] **N01.07** Entity & enum
+- [x] **N01.08** Test
+- [x] **N01.C1** 🔖 COMMIT `docs(db): add schema changes for notifications, chat and vouchers` · hash: `51f57ac`
+- [x] **N01.C2** 🔖 COMMIT `feat(db): add shared schema for notification, chat and voucher clusters` · hash: `79c110d`
+- [x] **N01.09** Mở PR `feature/b56-shared-schema` → `develop` (mô tả: chỉ thêm cột / index / giá trị CHECK, tương thích ngược); sau khi merge mới tạo nhánh N02.
 
 ## N02 — Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`)
 
@@ -214,9 +214,21 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| N01.09 | PR #112 `feature/b56-shared-schema` → `develop` (https://github.com/qu2nishere/genie-multivendor-platform/pull/112). Không chờ duyệt: nhánh `feature/notification-inbox` **xếp chồng** lên `feature/b56-shared-schema` (như C2) — PR #112 merge xong thì `git rebase develop` |
+| N01.01 | ENTITY v1.6: 10.2 (`dispatchedAt`, `isDispatched/isScheduled/dispatch`), 11.2 (`isAuto`, cách suy `DELIVERED/SEEN`), Phụ lục A (`CHAT_MESSAGE` + bảng nhóm `category`, 7 `AuditAction`), bảng đếm enum (17 / 47), 13.1 (9 index), E.10, CHANGELOG; đồng bộ `GIAI_NGHIA_ENTITY.md`, `Diagram07`, `Diagram10` |
+| N01.07 | `PlatformNotification.dispatch()` kiểm tham số **trước** khi gán (viết test phát hiện: `dispatch(1, null)` từng gán `reachCount` rồi mới ném lỗi) |
+| N01.08 | Thêm `SchemaValidationIT.checkConstraintsAcceptEveryEnumValue`: đọc `pg_get_constraintdef` của `ck_system_logs_action_type`, `ck_notifications_type`, `ck_messages_type` và khẳng định chứa mọi giá trị enum Java — migration sau quên chép giá trị là đỏ ngay. `AuditActionCategoryTest` thêm 7 giá trị CONFIG; `PlatformNotificationTest` 5 ca. Cổng: `./mvnw clean verify` (JDK 21) **BUILD SUCCESS — 220 unit + 359 IT** (1 bỏ qua: `SearchPerformanceIT` chỉ chạy với `-Dperf`) |
+| Ghi nhớ N06 / V04 | Web màn Nhật ký (`admin-system`) có nhãn + tông màu theo từng `AuditAction` (`actionTone`, khóa `admin-system.audit.actions.*`) — khi ghi `PLATFORM_NOTIFICATION_*` / `VOUCHER_*` phải thêm nhãn vi / en + tông màu |
+| N00.01 | `git config user.name` = `Thien211105` (email cấu hình sẵn) — đúng |
+| N00.03 | Nhánh `feature/b56-shared-schema` tách từ `develop` @ `e10bb37` (đã gồm commit plan) |
+| N00.04 | `origin/develop` mới tới `V25`; không nhánh remote nào có `V26+` (quét `git ls-tree` mọi nhánh 2026-11-26) → giữ **`V26__b5_b6_notification_chat_voucher.sql`** |
+| N00.05 | `CheckoutCreatedEvent(sessionId, userId, orderIds, paymentMethod, grandTotal)` đủ cho D11e (shop lấy từ `orders.vendor_id` trong module order). `KycDecidedEvent.status` ∈ `VERIFIED`, `REJECTED`, `SUPPLEMENT_REQUESTED` (phát ở `KycDecisionService`, `KycReviewService`, `KycSupplementExpiryJob`). `NewDeviceLoginEvent(userId, email, deviceName, ipAddress, loginAt)`. `OrderStatusChangedEvent` / `OrderPaidEvent` vẫn `// TODO` (C3 / C4) |
+| N00.06 | Admin › Thông báo sàn: DTO mock (`marketing.dto.ts` `PlatformNotificationDto`, `…DetailDto`) **đã khớp API 11.17** (`code`, `content_preview`, `is_scheduled`, `read_count`, `reach_count`, `summary.*`, `content_html`, `recipient_emails`) → N08 chủ yếu bật cờ + xử lý lỗi. Hộp thư (`notifications.dto.ts`) lệch API 3.12: `type` chữ thường `order/promo/system/chat` + `icon/tint/bg`, `read_at` thay `is_read`, `link.action` thay `link.type`, `is_platform` → N05.03 viết lại DTO / mapper |
+| Môi trường | Máy có JDK 24 (mặc định — Lombok lỗi `TypeTag :: UNKNOWN`) và JDK 21 ở `~/.jdks/ms-21.0.10` → chạy Maven với `JAVA_HOME=~/.jdks/ms-21.0.10`. Bật Docker Desktop trước (Testcontainers). Không đứng trong `server-spring/target` khi `clean` (Windows khóa thư mục) |
 
 ## Nhật ký
 
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-26 | Lập plan + progress (81 task, 17 commit, 11 giai đoạn) — chưa bắt đầu làm | — |
+| 2026-11-26 | N00 (chốt D1–D20, kiểm `V27` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V27`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
