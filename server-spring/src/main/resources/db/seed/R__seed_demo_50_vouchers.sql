@@ -32,3 +32,34 @@ FROM (VALUES
 LEFT JOIN users u ON u.email = v.owner_email
 WHERE v.owner_email IS NULL OR u.id IS NOT NULL
 ON CONFLICT (code) DO NOTHING;
+
+-- plan 2026-11-26 voucher V09.01 (D1, D10, D8): demo đủ tab trạng thái + phạm vi theo ngành + freeship của shop.
+-- GENIESOON: voucher sàn SẮP DIỄN RA (bắt đầu sau 2 ngày) — tab "Sắp ra mắt" Admin, nhãn "Chưa tới giờ" ở Kho.
+-- TECHAUDIO10: TechZone chỉ áp cho ngành "Thiết bị âm thanh", loại trừ "Phụ kiện điện tử" (2 bảng phạm vi tra theo slug).
+-- TECHSHIP25: TechZone tài trợ phí ship (voucher SHOP + discount_type FREESHIP — lưu trần hỗ trợ vào discount_value).
+INSERT INTO vouchers (code, title, scope, type, discount_type, discount_value, max_discount_cap, min_order_value,
+                      usage_limit, usage_per_user, used_count, priority, vendor_id, valid_from, valid_to, is_active,
+                      version, budget, total_discount_used, notification_body, sponsor_type, platform_share_percent)
+SELECT v.code, v.title, v.scope, v.type, v.discount_type, v.discount_value, v.max_cap, v.min_order,
+       v.usage_limit, v.per_user, 0, v.priority, u.id,
+       now() + make_interval(days => v.start_in), now() + make_interval(days => v.start_in + v.valid_days), TRUE,
+       0, v.budget, 0, v.notification, v.sponsor, v.share
+FROM (VALUES
+    ('GENIESOON',   'Sale cuối tuần — giảm 15% tối đa 80.000₫',          'ALL',      'PLATFORM', 'PERCENTAGE', 15,     80000, 300000, 2000, 1, 2, NULL::text,           2, 14, 30000000, 'CO_SPONSOR', 'Sale cuối tuần sắp bắt đầu — lưu mã trước nhé!', 60),
+    ('TECHAUDIO10', 'Giảm 10% tối đa 150.000₫ đơn từ 500.000₫',          'CATEGORY', 'SHOP',     'PERCENTAGE', 10,     150000, 500000, 300, 1, 1, 'mai.tran@gmail.com', 0, 45, NULL,     'VENDOR',     NULL, NULL),
+    ('TECHSHIP25',  'Freeship tối đa 25.000₫ đơn từ 150.000₫',           'ALL',      'SHOP',     'FREESHIP',   25000,  25000, 150000, 500, 2, 1, 'mai.tran@gmail.com', 0, 45, NULL,     'VENDOR',     NULL, NULL)
+) AS v(code, title, scope, type, discount_type, discount_value, max_cap, min_order, usage_limit, per_user, priority,
+       owner_email, start_in, valid_days, budget, sponsor, notification, share)
+LEFT JOIN users u ON u.email = v.owner_email
+WHERE v.owner_email IS NULL OR u.id IS NOT NULL
+ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO voucher_categories (voucher_id, category_id, created_at)
+SELECT v.id, c.id, now() FROM vouchers v JOIN categories c ON c.slug = 'thiet-bi-am-thanh'
+WHERE v.code = 'TECHAUDIO10'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO voucher_excluded_categories (voucher_id, category_id, created_at)
+SELECT v.id, c.id, now() FROM vouchers v JOIN categories c ON c.slug = 'phu-kien-dien-tu'
+WHERE v.code = 'TECHAUDIO10'
+ON CONFLICT DO NOTHING;
