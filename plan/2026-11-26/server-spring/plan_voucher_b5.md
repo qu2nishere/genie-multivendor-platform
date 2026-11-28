@@ -9,7 +9,7 @@
 | **Theo dõi tiến độ** | [progress_voucher_b5.md](progress_voucher_b5.md) — cùng mã task `Vxx.yy` |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Phụ thuộc** | Plan [1] **N01** (`V26`: 2 index `vouchers`, 4 giá trị `AuditAction.VOUCHER_*`). Không phụ thuộc chat / thông báo — làm song song được |
+| **Phụ thuộc** | Plan [1] **N01** (`V27`: 2 index `vouchers`, 4 giá trị `AuditAction.VOUCHER_*`). Không phụ thuộc chat / thông báo — làm song song được |
 | **Mục tiêu** | 3 use case ⬜ → ✅ (đủ 5 lớp). **Không** áp voucher vào giá (UC-PRO-04 — chuỗi C6); plan này chỉ tạo / sửa / tắt / xóa / lưu voucher và hiển thị đúng |
 
 ---
@@ -18,7 +18,7 @@
 
 | Phần | Đã có | Còn thiếu |
 |---|---|---|
-| **Entity / bảng** (`V4__promotion.sql`) | `Voucher` (`code` UNIQUE, `title`, `scope`, `type` ∈ `SHOP, PLATFORM, FREESHIP`, `discount_type` ∈ `PERCENTAGE, FIXED_AMOUNT, FREESHIP`, `discount_value` NOT NULL, `max_discount_cap`, `min_order_value`, `usage_limit`, `usage_per_user`, `used_count`, `priority` NOT NULL, `vendor_id` = `users.id` chủ shop, `valid_from/to`, `is_active`, `@Version`, `budget`, `total_discount_used`, `notification_body`, `sponsor_type` ∈ `PLATFORM, VENDOR, CO_SPONSOR`, `platform_share_percent`; phương thức `isApplicable`, `calculateDiscount`, `consume`, `restore`, `validateConfig`), `UserVoucher` (UNIQUE `(user_id, voucher_id)`, `is_used` cột có nhưng entity để `@Transient`), `VoucherUsage` (UNIQUE `(voucher_id, checkout_session_id)`), 4 bảng phạm vi `voucher_categories / products / excluded_categories / excluded_products` | ⚠ `validateConfig` **chặn** `type = PLATFORM` + `sponsor = CO_SPONSOR` (mâu thuẫn API 11.14) → D7. Không có phương thức trạng thái `ACTIVE / SCHEDULED / ENDED / DISABLED`, luật sửa khi đang chạy. Không có index theo shop / loại → `V26` |
+| **Entity / bảng** (`V4__promotion.sql`) | `Voucher` (`code` UNIQUE, `title`, `scope`, `type` ∈ `SHOP, PLATFORM, FREESHIP`, `discount_type` ∈ `PERCENTAGE, FIXED_AMOUNT, FREESHIP`, `discount_value` NOT NULL, `max_discount_cap`, `min_order_value`, `usage_limit`, `usage_per_user`, `used_count`, `priority` NOT NULL, `vendor_id` = `users.id` chủ shop, `valid_from/to`, `is_active`, `@Version`, `budget`, `total_discount_used`, `notification_body`, `sponsor_type` ∈ `PLATFORM, VENDOR, CO_SPONSOR`, `platform_share_percent`; phương thức `isApplicable`, `calculateDiscount`, `consume`, `restore`, `validateConfig`), `UserVoucher` (UNIQUE `(user_id, voucher_id)`, `is_used` cột có nhưng entity để `@Transient`), `VoucherUsage` (UNIQUE `(voucher_id, checkout_session_id)`), 4 bảng phạm vi `voucher_categories / products / excluded_categories / excluded_products` | ⚠ `validateConfig` **chặn** `type = PLATFORM` + `sponsor = CO_SPONSOR` (mâu thuẫn API 11.14) → D7. Không có phương thức trạng thái `ACTIVE / SCHEDULED / ENDED / DISABLED`, luật sửa khi đang chạy. Không có index theo shop / loại → `V27` |
 | **Repository / service đã có** | `VoucherRepository.findByCode`, `findByCodeIn`, `findVendorIdsWithActiveShopVoucher` (bộ lọc "Shop có voucher" — B3 / plan 2026-11-24); `UserVoucherRepository.findByUserIdAndVoucherId`; `VoucherUsageRepository.countByUserIdAndVoucherId`; `PromotionSearchPorts` (cache 60 giây `promotion:shop_voucher_vendors`, có `evictCache()`); `VoucherView` (`$Voucher` — dùng ở đổi Điểm) — ⚠ `shop.id` đang gán **`vendor_id` (users.id)** thay vì `vendor_profiles.id`, `shop.name = null` | API voucher shop / sàn / công khai / kho; sửa `VoucherView` (D13) |
 | **Quà đổi Điểm** | `genie.coin.rewards[]` trỏ tới mã `COIN500 / COIN1000 / COIN2000` (seed `R__seed_demo_50_vouchers.sql`) — chỉ nhận qua `POST /me/coins/redemptions` | Danh sách công khai / lưu bằng mã **phải loại** các mã này (ghi trong seed) — D12 |
 | **Seed** | 12 voucher: 2 sàn, 1 freeship, 3 quà Điểm, 6 shop (TechZone ×2, Shoe Republic, Home & Living đã tắt, Beauty Box hết lượt) | Voucher sắp diễn ra / phạm vi ngành để demo tab (V09.01) |
@@ -38,7 +38,7 @@
 | N4 | Voucher shop luôn gắn `vendor_id = users.id` của người gọi (lấy từ token, **không** nhận từ body); kiểm sở hữu ở service (IDOR) — voucher của shop khác → `404` | TS 9 |
 | N5 | Mọi thay đổi voucher **SHOP** → `PromotionSearchPorts.evictCache()` **sau commit**; mọi thay đổi voucher công khai → xóa cache danh sách công khai (D15) sau commit | BAO_CAO UC-CAT-05; TS 4.5 |
 | N6 | Thay đổi voucher **sàn** ghi `system_logs` (`VOUCHER_CREATED / UPDATED / DISABLED / DELETED`, kèm `details.changes`) trong cùng transaction | NFR-08 |
-| N7 | Không đổi tên bảng / cột / enum (NFR-12); chỉ thêm index (đã ở `V26`) | TS 7.3 |
+| N7 | Không đổi tên bảng / cột / enum (NFR-12); chỉ thêm index (đã ở `V27`) | TS 7.3 |
 | N8 | JSON snake_case, vỏ `ApiResponse`; danh sách Seller / Admin / Kho phân trang `page / size` (API 10.7, 11.14, 3.14); `@Operation(summary = "UC-PRO-0x …")` | TS 8 |
 | N9 | Mỗi task có test: unit (`VoucherTest`, bộ kiểm input) + `*IT` Testcontainers | TS 14 |
 
@@ -174,7 +174,7 @@ Ký hiệu: `Vxx.yy` = task; `Vxx.Cn` = task commit.
 
 ### V00 — Chuẩn bị
 
-- **[V00.01]** Kiểm danh tính git; kiểm `V26` (plan [1] N01) đã có trên `develop` — chưa thì chờ / rebase.
+- **[V00.01]** Kiểm danh tính git; kiểm `V27` (plan [1] N01) đã có trên `develop` — chưa thì chờ / rebase.
 - **[V00.02]** Chốt D1–D22 vào progress.
 - **[V00.03]** Tạo nhánh `feature/voucher-management` từ `develop` mới nhất.
 - **[V00.04]** Đọc màn mock — Seller › Khuyến mãi (3 chỉ số, bảng Mã / Loại / Điều kiện / Đã dùng / Trạng thái / Kết thúc, modal "Tạo Voucher Shop", Nhân bản), Admin › Voucher sàn (5 chỉ số, tab trạng thái, modal), trang chủ (4 vé), trang shop (hàng voucher), trang chiến dịch, Tài khoản › Kho Voucher (4 tab, lịch sử, nhập mã, modal chi tiết); tìm mọi chỗ gọi `getVouchersByCodes`, `listShopVouchers`, `findVoucherByCode` (`grep`) để biết màn nào đổi.

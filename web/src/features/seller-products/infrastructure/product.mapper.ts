@@ -60,6 +60,9 @@ export const toDetail = (d: ProductDetailDto): ProductDetail => {
         imageKey: v.image_object_key ?? null,
         imageUrl: v.image_url ?? null,
       })),
+      // nhóm đang có ảnh / nhóm ảnh chính → bật "Dùng ảnh cho nhóm này"
+      withImages:
+        g.name === d.variant_image_group || (g.values ?? []).some((v) => !!v.image_object_key),
     })),
     variantImageGroup: d.variant_image_group ?? null,
     variants: variants.length
@@ -99,7 +102,11 @@ export const toInput = (
     .filter((g) => g.values.length)
     .map((g) => ({
       name: g.name.trim(),
-      values: g.values.map((v) => ({ value: v.value, image_object_key: v.imageKey })),
+      // nhóm đã tắt "Dùng ảnh" thì không gửi ảnh (kể cả khóa còn sót trong form)
+      values: g.values.map((v) => ({
+        value: v.value,
+        image_object_key: g.withImages ? v.imageKey : null,
+      })),
     })),
   variant_image_group: f.variantImageGroup,
   variants: f.variants.map(({ id, options, sku, price, stock }) => ({

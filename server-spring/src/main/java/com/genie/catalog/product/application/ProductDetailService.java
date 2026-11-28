@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.genie.catalog.product.domain.VariantAttributes;
 import com.genie.catalog.product.domain.VariantMatrix;
 import com.genie.catalog.search.domain.SlugUtil;
 import com.genie.common.cache.JsonCache;
@@ -130,7 +131,7 @@ public class ProductDetailService {
         List<Map<String, Object>> rows = jdbc.queryForList("""
                 SELECT p.id, p.name, p.description, p.brand, p.brand_id, p.category_id, p.specs_json::text AS specs_json,
                        p.base_price, p.sold, p.rating, p.is_pre_order, p.pre_order_days, p.item_condition, p.origin,
-                       p.ships_from, p.variant_image_attribute,
+                       p.ships_from, p.variant_image_attribute, p.option_images_json::text AS option_images_json,
                        vp.id AS shop_id, vp.user_id AS vendor_id, vp.shop_name, vp.logo_url, vp.is_mall, vp.is_favorite,
                        vp.rating_avg AS shop_rating, vp.follower_count, vp.pickup_province, vp.created_at AS shop_created_at,
                        vp.vacation_starts_at, vp.vacation_ends_at, vp.vacation_message,
@@ -151,20 +152,27 @@ public class ProductDetailService {
         List<VariantMatrix.Sku> skus = new ArrayList<>();
         Map<Long, String> variantImages = new HashMap<>();
         jdbc.query("""
-                SELECT v.id, v.attributes_json::text AS attrs, v.price,
+                SELECT v.id, v.attributes_json::text AS attrs, v.variant_name, v.price,
                        COALESCE(v.image_url, (SELECT i.image_url FROM product_images i WHERE i.variant_id = v.id
                                                ORDER BY i.display_order, i.id LIMIT 1)) AS image_url
                   FROM product_variants v WHERE v.product_id = ? AND v.deleted_at IS NULL ORDER BY v.id""", rs -> {
             long vid = rs.getLong("id");
             String img = media.product(rs.getString("image_url"));
             variantImages.put(vid, img);
-            skus.add(new VariantMatrix.Sku(vid, attributes(rs.getString("attrs")),
+            // thứ tự nhóm theo variant_name — JSONB tự sắp khóa (vd "Màu sắc" lên trước "Phiên bản")
+            skus.add(new VariantMatrix.Sku(vid, VariantAttributes.ordered(attributes(rs.getString("attrs")),
+                    rs.getString("variant_name")),
                     Pricing.price(rs.getBigDecimal("price"), null), img));
         }, id);
         VariantMatrix.Result matrix = VariantMatrix.build(skus, (String) r.get("variant_image_attribute"));
+        // ảnh của giá trị: option_images_json (mọi nhóm có ảnh — V26), sản phẩm cũ dùng ảnh SKU của nhóm ảnh chính
+        Map<String, Map<String, String>> optionImages =
+                OptionImages.parse(json, (String) r.get("option_images_json"));
         List<ProductDetailView.OptionGroup> groups = matrix.groups().stream()
-                .map(g -> new ProductDetailView.OptionGroup(g.name(),
-                        g.values().stream().map(v -> new ProductDetailView.OptionValue(v.value(), v.imageUrl())).toList()))
+                .map(g -> new ProductDetailView.OptionGroup(g.name(), g.values().stream().map(v -> {
+                    String key = OptionImages.keyOf(optionImages, g.name(), v.value());
+                    return new ProductDetailView.OptionValue(v.value(), key != null ? media.product(key) : v.imageUrl());
+                }).toList()))
                 .toList();
         List<ProductSnapshot.SkuView> skuViews = matrix.variants().stream()
                 .map(v -> new ProductSnapshot.SkuView(v.id(), v.options(), v.price(), variantImages.get(v.id())))
@@ -233,15 +241,17 @@ public class ProductDetailService {
             return List.of();
         }
         Map<String, String> values = new LinkedHashMap<>();
+        JsonNode sellerOrder = null;
         try {
             JsonNode node = json.readTree(specsJson);
             if (node.isObject()) {
                 for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                     Map.Entry<String, JsonNode> e = it.next();
-                    if (!e.getValue().isNull()) {
+                    if (!e.getValue().isNull() && !SpecCodec.ORDER_KEY.equals(e.getKey())) {
                         values.put(e.getKey(), e.getValue().isTextual() ? e.getValue().asText() : e.getValue().toString());
                     }
                 }
+                sellerOrder = node.get(SpecCodec.ORDER_KEY);
             } else if (node.isArray()) {     // dạng cũ [{name, value}]
                 for (JsonNode n : node) {
                     if (n.hasNonNull("name") && n.hasNonNull("value")) {
@@ -253,16 +263,26 @@ public class ProductDetailService {
             return List.of();
         }
         List<ProductDetailView.Spec> out = new ArrayList<>();
+        // tên hiển thị của khóa là mã thuộc tính ngành
+        Map<String, String> names = new LinkedHashMap<>();
         if (categoryId != null) {
             jdbc.query("""
                     SELECT code, name FROM category_attributes WHERE category_id = ? AND is_active = TRUE
                      ORDER BY display_order, id""", rs -> {
-                String v = values.remove(rs.getString("code"));
-                if (v != null) {
-                    out.add(new ProductDetailView.Spec(rs.getString("name"), v));
-                }
+                names.put(rs.getString("code"), rs.getString("name"));
             }, categoryId);
         }
+        if (sellerOrder != null && sellerOrder.isArray()) {
+            // người bán đã tự sắp thứ tự dòng (plan C1, 2026-11-27) → hiện đúng thứ tự đó
+            SpecCodec.ordered(values, sellerOrder)
+                    .forEach((k, v) -> out.add(new ProductDetailView.Spec(names.getOrDefault(k, k), v)));
+            return out;
+        }
+        // dữ liệu cũ: thuộc tính ngành theo display_order trước, khóa tự do sau
+        names.forEach((code, name) -> {
+            String v = values.remove(code);
+            if (v != null) out.add(new ProductDetailView.Spec(name, v));
+        });
         values.forEach((k, v) -> out.add(new ProductDetailView.Spec(k, v)));
         return out;
     }

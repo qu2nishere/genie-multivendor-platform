@@ -92,6 +92,10 @@ public class Product {
     @Column(length = 255)
     private String variantImageAttribute;     // NULLABLE — Tên thuộc tính quyết định ảnh biến thể, VD "Màu sắc"
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private String optionImagesJson;          // NULLABLE — Ảnh theo giá trị của MỌI nhóm phân loại {"Màu sắc": {"Đỏ": "<khóa>"}} (V26)
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;          // Thời điểm tạo sản phẩm
@@ -184,6 +188,37 @@ public class Product {
     /** Shop tự ẩn sản phẩm — UC-CAT-11 */
     public void hide() {
         this.status = ProductStatus.HIDDEN;
+        this.isPublished = false;
+    }
+
+    /** Sàn khóa: ẩn khỏi sàn, shop không tự mở lại được — phải sửa và gửi duyệt (UC-CAT-11; plan C1 D18) */
+    public void lockByPlatform(Long moderatorId, String reason) {
+        this.status = ProductStatus.HIDDEN;
+        this.isPublished = false;
+        this.isLocked = true;
+        this.moderatorId = moderatorId;
+        this.moderationReason = reason;
+        this.isRequeued = false;
+    }
+
+    /** Sàn mở khóa → bán lại ngay (UC-CAT-11; plan C1 D18) */
+    public void unlockByPlatform(Long moderatorId) {
+        this.status = ProductStatus.PUBLISHED;
+        this.isPublished = true;
+        this.isLocked = false;
+        this.moderatorId = moderatorId;
+        this.moderationReason = null;
+    }
+
+    /** Shop mở bán lại sản phẩm đã tự ẩn — UC-CAT-11 (sàn khóa thì service chặn trước, plan C1 D17) */
+    public void show() {
+        this.status = ProductStatus.PUBLISHED;
+        this.isPublished = true;
+    }
+
+    /** Xóa mềm — giữ biến thể / ảnh vì đơn cũ còn tham chiếu (UC-CAT-11; plan C1 D17) */
+    public void markDeleted() {
+        this.status = ProductStatus.DELETED;
         this.isPublished = false;
     }
 

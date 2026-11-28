@@ -2,6 +2,7 @@ package com.genie.catalog.moderation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -114,6 +115,7 @@ class ProductModerationIT extends IntegrationTestBase {
             case "GET" -> get(url);
             case "POST" -> post(url);
             case "PUT" -> put(url);
+            case "PATCH" -> patch(url);
             default -> throw new IllegalArgumentException(method);
         };
         req.header(HttpHeaders.AUTHORIZATION, token);
@@ -295,5 +297,54 @@ class ProductModerationIT extends IntegrationTestBase {
         call("PUT", "/api/v1/admin/moderators/availability", (String) mod[1],
                 Map.of("items", List.of(Map.of("staff_id", cs[0], "is_accepting", true))))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    // ===== Khóa / mở khóa của sàn + sản phẩm theo danh mục (UC-CAT-11; API 11.11; plan C1 D18, D19) =====
+
+    @Test
+    void staffLocksUnlocksAndBrowsesProductsByCategory() throws Exception {
+        String admin = adminToken();
+        long live = pending("PUBLISHED", "2026-11-20T00:00:00Z", null);
+        jdbc.update("UPDATE products SET is_published = TRUE WHERE id = ?", live);
+        pending("PENDING_APPROVAL", "2026-11-21T00:00:00Z", null);
+        String list = "/api/v1/admin/products?category_id=" + category;
+
+        String body = call("GET", list + "&tab=ALL", admin, null).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+        assertThat(((Number) JsonPath.read(body, "$.summary.counts.ALL")).intValue()).isEqualTo(2);
+        assertThat(((Number) JsonPath.read(body, "$.summary.counts.PENDING")).intValue()).isEqualTo(1);
+
+        // lý do lạ → 422; khóa → ẩn + cờ khóa + nhãn lý do
+        call("POST", "/api/v1/admin/products/" + live + "/lock", admin, Map.of("reason_code", "NOPE"))
+                .andExpect(status().isUnprocessableEntity());
+        call("POST", "/api/v1/admin/products/" + live + "/lock", admin, Map.of("reason_code", "BAD_IMAGE"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.status").value("HIDDEN"));
+        assertThat(jdbc.queryForObject("SELECT is_locked FROM products WHERE id = ?", Boolean.class, live)).isTrue();
+        assertThat(jdbc.queryForObject("SELECT moderation_reason FROM products WHERE id = ?", String.class, live))
+                .isEqualTo("Ảnh sản phẩm không đạt");
+        call("POST", "/api/v1/admin/products/" + live + "/lock", admin, Map.of("reason_code", "BAD_IMAGE"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("GNE-CAT-4097"));
+
+        call("GET", list + "&tab=HIDDEN_OR_LOCKED", admin, null).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value(live))
+                .andExpect(jsonPath("$.data[0].is_locked").value(true))
+                .andExpect(jsonPath("$.data[0].reason").value("Ảnh sản phẩm không đạt"));
+
+        // shop không tự mở bán lại sản phẩm bị sàn khóa
+        call("PATCH", "/api/v1/seller/products/" + live, vendorToken, Map.of("status", "PUBLISHED"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("GNE-CAT-4093"));
+
+        call("POST", "/api/v1/admin/products/" + live + "/unlock", admin, null)
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.status").value("PUBLISHED"));
+        assertThat(jdbc.queryForObject("SELECT is_locked FROM products WHERE id = ?", Boolean.class, live)).isFalse();
+        call("POST", "/api/v1/admin/products/" + live + "/unlock", admin, null)
+                .andExpect(status().isConflict());
+        assertThat(jdbc.queryForObject(
+                "SELECT count(*) FROM system_logs WHERE reference_id = ? AND CAST(details AS jsonb) ->> 'action' IN ('LOCK', 'UNLOCK')",
+                Integer.class, String.valueOf(live))).isEqualTo(2);
+
+        // thiếu danh mục / tab lạ → 422
+        call("GET", "/api/v1/admin/products", admin, null).andExpect(status().isUnprocessableEntity());
+        call("GET", list + "&tab=NOPE", admin, null).andExpect(status().isUnprocessableEntity());
     }
 }

@@ -18,7 +18,7 @@
 
 | Phần | Đã có | Còn thiếu |
 |---|---|---|
-| **Entity / bảng** (`V11__chat.sql`) | `Conversation` (`customer_id`, `vendor_id` = **`users.id` chủ shop**, UNIQUE cặp; `last_message_snippet/at`, `customer_unread_count`, `vendor_unread_count`; `onNewMessage`, `markReadBy`), `Message` (`type` ∈ `TEXT, IMAGE, PRODUCT_CARD, ORDER_CARD`, `content`, `attachment_url`, `is_read`, `product_variant_id`, `order_id`; FK SET NULL), index `(conversation_id, created_at DESC)`. Repository rỗng | ⚠ Không có `read_at` (UC-SOC-02 nhắc `readAt`) → D3. Không có `client_message_id` → D4. Không có cờ tin tự động → **`V26` thêm `is_auto`** (plan [1] N01.04). Không có index danh sách hội thoại theo phía → `V26` |
+| **Entity / bảng** (`V11__chat.sql`) | `Conversation` (`customer_id`, `vendor_id` = **`users.id` chủ shop**, UNIQUE cặp; `last_message_snippet/at`, `customer_unread_count`, `vendor_unread_count`; `onNewMessage`, `markReadBy`), `Message` (`type` ∈ `TEXT, IMAGE, PRODUCT_CARD, ORDER_CARD`, `content`, `attachment_url`, `is_read`, `product_variant_id`, `order_id`; FK SET NULL), index `(conversation_id, created_at DESC)`. Repository rỗng | ⚠ Không có `read_at` (UC-SOC-02 nhắc `readAt`) → D3. Không có `client_message_id` → D4. Không có cờ tin tự động → **`V27` thêm `is_auto`** (plan [1] N01.04). Không có index danh sách hội thoại theo phía → `V27` |
 | **Package** | `social/chat/{api,application,domain}` chỉ entity | Toàn bộ service / controller / STOMP handler |
 | **UC-VND-06 — phần cấu hình** | **Đã có từ B4** (UC-VND-21): `PATCH /seller/settings` khối `auto_reply` (`enabled`, `greeting`, `away_message` ≤ 500) → `VendorProfile.configureAutoReply`, `422 GNE-VND-4222` khi bật mà rỗng; `GET /seller/settings` trả `auto_reply`; web `seller-settings` đã nối (cờ `vendor`) | **Phần gửi tự động trong chat** (UC-VND-06 bước 4–5) chưa có — plan này làm |
 | **Shop** | `VendorProfile.chatResponseRate` (NULL — "job hằng ngày" chưa có), `isMall`, `vacationStartsAt/EndsAt/Message` (UC-VND-19 chưa làm, cột có sẵn); cổng `SellerBadgeContributor` (vendor — chờ chat trả `unread_chats`); cổng KYC `/seller/**` (`KycGateInterceptor`) đã phủ `/seller/conversations/**` → shop chưa `VERIFIED` nhận `403 GNE-VND-4031` | Cổng tra shop cho chat; job tỉ lệ phản hồi |
@@ -178,7 +178,7 @@ Ký hiệu: `Mxx.yy` = task; `Mxx.Cn` = task commit.
 
 ### M00 — Chuẩn bị
 
-- **[M00.01]** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V26`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
+- **[M00.01]** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V27`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
 - **[M00.02]** Chốt D1–D20 vào progress.
 - **[M00.03]** Tạo nhánh `feature/chat-live` từ `develop` mới nhất.
 - **[M00.04]** Đọc màn mock — khung chat nổi (hộp thư nhiều shop, luồng tin, tin nhanh 4 câu, gửi ảnh, gửi đơn, thẻ sản phẩm, 3 trạng thái), `/chat`, Seller › Chat (danh sách, online, badge); ghi trường DTO mock để đối chiếu API 8.

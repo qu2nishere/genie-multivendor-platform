@@ -60,6 +60,8 @@ export interface OptionValue {
 export interface OptionGroup {
   name: string;
   values: OptionValue[];
+  /** Nhóm này có ảnh theo từng giá trị (chọn được nhiều nhóm — V26). Chỉ dùng ở form, không gửi lên API. */
+  withImages?: boolean;
 }
 
 export interface VariantRow {

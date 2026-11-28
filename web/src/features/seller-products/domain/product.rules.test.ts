@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyBulk,
   combos,
   emptyForm,
   missingSpecs,
@@ -60,6 +61,28 @@ describe('ma trận phân loại', () => {
         { id: null, options: ['c'], sku: null, price: 10, stock: 0 },
       ]),
     ).toBe(2);
+  });
+});
+
+describe('áp dụng hàng loạt theo giá trị', () => {
+  const rows = [
+    { id: null, options: ['128 GB', 'Đỏ'], sku: null, price: null, stock: null },
+    { id: null, options: ['128 GB', 'Vàng'], sku: null, price: null, stock: 3 },
+    { id: null, options: ['512 GB', 'Đỏ'], sku: null, price: null, stock: null },
+  ];
+  it('giá theo dung lượng: mọi màu của 128 GB cùng giá, tồn giữ nguyên', () => {
+    const r = applyBulk(rows, ['128 GB', null], { price: 20_000_000, stock: null });
+    expect(r.count).toBe(2);
+    expect(r.variants.map((v) => v.price)).toEqual([20_000_000, 20_000_000, null]);
+    expect(r.variants[1].stock).toBe(3);
+  });
+  it('không lọc = mọi phân loại', () => {
+    expect(applyBulk(rows, [null, null], { price: null, stock: 5 }).count).toBe(3);
+  });
+  it('lọc theo cả hai nhóm', () => {
+    const r = applyBulk(rows, ['512 GB', 'Đỏ'], { price: 30_000_000, stock: 1 });
+    expect(r.count).toBe(1);
+    expect(r.variants[2]).toMatchObject({ price: 30_000_000, stock: 1 });
   });
 });
 

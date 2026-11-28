@@ -21,6 +21,12 @@ export const STORAGE_KEYS = {
 } as const satisfies Record<string, { area: StorageArea; key: string }>;
 
 export type StorageArea = 'local' | 'session';
+
+/**
+ * Khóa động theo người dùng (không nằm trong bảng trên): bản nhập dở form đăng bán Seller Center
+ * `seller.product_draft.<userId>.<productId|new>` (localStorage, hạn 7 ngày) — xóa hết khi đăng xuất.
+ */
+export const PRODUCT_DRAFT_PREFIX = 'seller.product_draft.';
 export type StorageKeyName = keyof typeof STORAGE_KEYS;
 
 function areaOf(kind: StorageArea): Storage | null {
@@ -53,6 +59,23 @@ export function writeRaw(kind: StorageArea, key: string, value: string): void {
 export function removeRaw(kind: StorageArea, key: string): void {
   try {
     areaOf(kind)?.removeItem(fullKey(key));
+  } catch {
+    /* bỏ qua */
+  }
+}
+
+/** Xóa mọi khóa bắt đầu bằng `prefix` (sau `genie.`) — dùng cho khóa động theo người dùng. */
+export function removeByPrefix(kind: StorageArea, prefix: string): void {
+  try {
+    const s = areaOf(kind);
+    if (!s) return;
+    const full = fullKey(prefix);
+    const keys: string[] = [];
+    for (let i = 0; i < s.length; i++) {
+      const k = s.key(i);
+      if (k && k.startsWith(full)) keys.push(k);
+    }
+    keys.forEach((k) => s.removeItem(k));
   } catch {
     /* bỏ qua */
   }
@@ -123,6 +146,8 @@ export function clearUserData(): void {
   (['checkoutDraft', 'checkoutIdem', 'searchRecent', 'recentViewed'] as const).forEach((k) =>
     store.remove(k),
   );
+  // máy dùng chung: không để lại dữ liệu sản phẩm đang nhập dở của shop
+  removeByPrefix('local', PRODUCT_DRAFT_PREFIX);
 }
 
 /** Nghe tab khác đổi một khóa (sự kiện `storage`) — dùng cho mini-cart, theme, yêu thích. */
