@@ -17,7 +17,7 @@
 | **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm **B5 Voucher** (UC-PRO-01, 02, 03) · cụm **B6 Chat & realtime** (UC-SOC-01, 02, UC-VND-06, UC-NOT-01) | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: **7 / 7 ✅** (2026-11-25 — UC-VND-05 làm xong ở nhánh `feature/vendor-k07-pickup`; 6 UC còn lại chạy thật bằng Playwright + AI Worker thật, sửa lỗi ở nhánh `bugfix/b4-real-run-fixes`) — xem cụm B4 mục 5. UC-NOT-05, B5, B6: plan 2026-11-26 (`plan/2026-11-26/server-spring/`) — **UC-NOT-01, UC-NOT-05 ✅ 2026-11-27**; **chat UC-SOC-01, 02, UC-VND-06 ✅ 2026-11-27** (B6 xong 4 / 4); **B5 UC-PRO-01, 02, 03 ✅ 2026-11-28** (B5 xong 3 / 3) |
 | **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | **7 / 7 ✅ Đã triển khai** (6 UC chạy thật 2026-11-21; *Lọc nâng cao & Sắp xếp* (UC-CAT-05) xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính, làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
-Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
+Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công. **Chuỗi C3 → C11** (lập plan 2026-11-28, `plan/2026-11-28/`): *Phụ trách* = **theo `git config user.name` của người làm plan** — không phân công tên cố định; người nhận chạy `git config user.name` ở task đầu của plan và dùng đúng tên đó khi tick.
 
 ## 1. Tiêu chí "độc lập"
 
@@ -210,6 +210,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* cần *Tạo phiên Checkout*; *Xử lý IPN & webhook SePay* «include» *Ghi nhận ký quỹ* và *Ghi sổ cái*; cần VNPay sandbox + webhook SePay.
 
+*Plan (lập 2026-11-28):* [`plan_thanh_toan_ky_quy_c3.md`](../../plan/2026-11-28/server-spring/plan_thanh_toan_ky_quy_c3.md) + [progress](../../plan/2026-11-28/server-spring/progress_thanh_toan_ky_quy_c3.md) — mã task `Exx.yy`, 57 task + 11 task commit; nhánh xếp chồng `feature/c3-ledger-escrow` → `c3-vnpay` → `c3-sepay-vietqr` → `c3-escrow-release`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
+
 ### C4. Vận chuyển (5 use case)
 - Người bán xác nhận / từ chối đơn hàng mới (UC-LOG-16)
 - Tiếp nhận đơn hàng & Đóng gói tại kho shop (UC-LOG-01)
@@ -219,6 +221,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* cần đơn đã thanh toán; *Đẩy vận đơn sang GHN* «include» *Điều phối đa hãng vận chuyển*; webhook GHN.
 
+*Plan (lập 2026-11-28):* [`plan_van_chuyen_c4.md`](../../plan/2026-11-28/server-spring/plan_van_chuyen_c4.md) + [progress](../../plan/2026-11-28/server-spring/progress_van_chuyen_c4.md) — mã task `Hxx.yy`, 54 task + 12 task commit; nhánh xếp chồng `feature/c4-seller-orders` → `c4-ghn-shipment` → `c4-carrier-webhook` → `c4-cod-reconciliation`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
+
 ### C5. Sau giao hàng (4 use case)
 - Khách hàng theo dõi chi tiết hành trình đơn hàng (UC-ORD-09)
 - Khách hàng yêu cầu hủy đơn hàng (UC-ORD-10)
@@ -226,6 +230,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Hệ thống tự động hoàn tất đơn sau 7 ngày từ khi Delivered (UC-ORD-12)
 
 *Phụ thuộc:* cần đơn + vận đơn + ký quỹ; *Tự động hoàn tất đơn* «include» *Tự động giải phóng tiền ký quỹ*.
+
+*Plan (lập 2026-11-28):* [`plan_sau_giao_hang_c5.md`](../../plan/2026-11-28/server-spring/plan_sau_giao_hang_c5.md) + [progress](../../plan/2026-11-28/server-spring/progress_sau_giao_hang_c5.md) — mã task `Dxx.yy`, 35 task + 8 task commit; nhánh xếp chồng `feature/c5-buyer-orders` → `c5-cancel-complete`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
 
 ### C6. Khuyến mãi khi mua (4 use case)
 - Thuật toán Stacking Voucher 3 Tầng & Điểm tự động khi Checkout (UC-PRO-04)
@@ -235,6 +241,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* *Stacking Voucher* «extend» *Xem trước đơn hàng*; *Sử dụng Điểm Genie* «extend» *Stacking Voucher*; *Mua hàng Flash Sale* «extend» *Tạo phiên Checkout*; cần cụm B5 có voucher.
 
+*Plan (lập 2026-11-28):* [`plan_khuyen_mai_khi_mua_c6.md`](../../plan/2026-11-28/server-spring/plan_khuyen_mai_khi_mua_c6.md) + [progress](../../plan/2026-11-28/server-spring/progress_khuyen_mai_khi_mua_c6.md) — mã task `Xxx.yy`, 49 task + 15 task commit; nhánh xếp chồng `feature/c6-voucher-stacking` → `c6-coins-at-checkout` → `c6-flash-sale`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
+
 ### C7. Đánh giá (4 use case)
 - Đánh giá sản phẩm đã mua & Tải ảnh thực tế (UC-SOC-03)
 - Người bán phản hồi đánh giá của khách hàng (UC-SOC-04)
@@ -242,6 +250,8 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Phân tích cảm xúc đánh giá bằng PhoBERT (UC-AI-07)
 
 *Phụ thuộc:* *Đánh giá sản phẩm đã mua* yêu cầu đơn `COMPLETED`; *Phân tích cảm xúc* cần PhoBERT trong AI Worker.
+
+*Plan (lập 2026-11-28):* [`plan_danh_gia_c7.md`](../../plan/2026-11-28/server-spring/plan_danh_gia_c7.md) + [progress](../../plan/2026-11-28/server-spring/progress_danh_gia_c7.md) — mã task `Rxx.yy`, 45 task + 11 task commit; nhánh xếp chồng `feature/c7-reviews` → `c7-review-moderation` → `c7-sentiment-backend` (+ AI Worker `feature/ai-worker-sentiment`). Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). Phần AI Worker (PhoBERT ONNX) tách plan riêng [`server-python/plan_phan_tich_cam_xuc.md`](../../plan/2026-11-28/server-python/plan_phan_tich_cam_xuc.md) (mã `Zxx.yy`, 27 task + 8 commit), hợp đồng HTTP chốt ở R00.05 ↔ Z00.03. *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
 
 ### C8. Trả hàng & hoàn tiền (4 use case)
 - Tạo yêu cầu Trả hàng / Hoàn tiền (UC-SUP-01)
@@ -251,12 +261,16 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* *Tạo yêu cầu Trả hàng* «extend» *Khách hàng xác nhận "Đã nhận hàng thành công"*; dùng ký quỹ + sổ cái.
 
+*Plan (lập 2026-11-28):* [`plan_tra_hang_hoan_tien_c8.md`](../../plan/2026-11-28/server-spring/plan_tra_hang_hoan_tien_c8.md) + [progress](../../plan/2026-11-28/server-spring/progress_tra_hang_hoan_tien_c8.md) — mã task `Uxx.yy`, 45 task + 13 task commit; nhánh xếp chồng `feature/c8-refund-requests` → `c8-refund-execution` → `c8-disputes`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
+
 ### C9. Ví & rút tiền (3 use case)
 - Xem ví & sổ giao dịch người bán (UC-VND-20)
 - Người bán gửi yêu cầu rút tiền từ Ví về Ngân hàng (UC-ADM-04)
 - Nhân viên sàn phê duyệt & Thực hiện lệnh chuyển khoản — Payout (UC-ADM-05)
 
 *Phụ thuộc:* cần ví có tiền từ *Tự động giải phóng tiền ký quỹ*; *Gửi yêu cầu rút tiền* dùng tài khoản do *Đăng ký tài khoản nhận giải ngân* (cụm B4) tạo.
+
+*Plan (lập 2026-11-28):* [`plan_vi_rut_tien_c9.md`](../../plan/2026-11-28/server-spring/plan_vi_rut_tien_c9.md) + [progress](../../plan/2026-11-28/server-spring/progress_vi_rut_tien_c9.md) — mã task `Ixx.yy`, 34 task + 8 task commit; nhánh xếp chồng `feature/c9-seller-wallet` → `c9-payouts`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
 
 ### C10. Báo cáo (3 use case)
 - Xem báo cáo doanh thu & Phân tích bán hàng (UC-VND-08)
@@ -265,10 +279,14 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 
 *Phụ thuộc:* đọc đơn / ký quỹ — viết code sớm được nhưng không có số liệu để kiểm; *Chế độ tạm nghỉ* chặn khi shop còn đơn đang xử lý.
 
+*Plan (lập 2026-11-28):* [`plan_bao_cao_c10.md`](../../plan/2026-11-28/server-spring/plan_bao_cao_c10.md) + [progress](../../plan/2026-11-28/server-spring/progress_bao_cao_c10.md) — mã task `Qxx.yy`, 34 task + 8 task commit; nhánh xếp chồng `feature/c10-vacation` → `c10-seller-analytics` → `c10-admin-dashboard`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
+
 ### C11. Email giao dịch (1 use case)
 - Gửi email giao dịch tự động (UC-NOT-03)
 
 *Phụ thuộc:* hạ tầng `EmailSender` đã có; nội dung email gắn với từng use case phát sự kiện (đặt hàng, thanh toán, hoàn tiền…).
+
+*Plan (lập 2026-11-28):* [`plan_email_giao_dich_c11.md`](../../plan/2026-11-28/server-spring/plan_email_giao_dich_c11.md) + [progress](../../plan/2026-11-28/server-spring/progress_email_giao_dich_c11.md) — mã task `Jxx.yy`, 35 task + 12 task commit; nhánh xếp chồng `feature/c11-email-outbox` → `c11-transaction-emails`. Thứ tự / phụ thuộc / đồ thị module: [README ngày](../../plan/2026-11-28/README.md). *Phụ trách:* theo `git config user.name` của người làm plan (không ghi tên cố định).
 
 ## 7. ⚠️ Điểm chung dễ xung đột khi chạy nhiều plan song song
 
