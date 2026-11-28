@@ -1,9 +1,10 @@
 // Duyệt sản phẩm (API_SPEC 11.12). Mock: hàng / trạng thái ở kho dùng chung adminModerationStore
 // (huy hiệu nav + "Việc cần xử lý" đổi theo), chi tiết ở moderation.mock.ts.
 import { api, getPage } from '@/shared/api/http';
-import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginatePage } from '@/shared/api/mock';
 import { adminModerationStore, type MockModerationRow } from '@/shared/api/mock/admin';
 import type { Page } from '@/shared/api/types';
+import { isMocked } from '@/shared/config/env';
 import {
   inModerationTab,
   matchesQuery,
@@ -21,6 +22,9 @@ import type {
 } from '../domain/moderation.types';
 import type { ModerationDetailDto, ModerationRowDto, ModeratorDto } from './moderation.dto';
 import { MODERATION_EXTRA, moderatorsStore } from './moderation.mock';
+
+// Hàng chờ duyệt sản phẩm + nhân viên duyệt nối backend bằng cờ `product-moderation` (plan C1 P10.03).
+const USE_MOCK = isMocked('product-moderation');
 
 const toRow = (d: ModerationRowDto): ModerationRow => ({
   productId: d.product_id,
@@ -45,18 +49,23 @@ const toDetail = (d: ModerationDetailDto): ModerationDetail => ({
       }
     : null,
   decisionReason: d.decision_reason,
-  images: d.images,
-  documents: d.documents.map((x) => ({ id: x.id, fileName: x.file_name, url: x.url })),
-  categoryPath: d.category_path,
-  brand: d.brand,
+  // API thật để trống các ô shop chưa nhập (nháp gửi duyệt thiếu thương hiệu, kích thước…) → hiện "—" / 0
+  images: d.images ?? [],
+  documents: (d.documents ?? []).map((x) => ({ id: x.id, fileName: x.file_name, url: x.url })),
+  categoryPath: d.category_path ?? '—',
+  brand: d.brand ?? '—',
   condition: d.condition,
-  origin: d.origin,
-  descriptionHtml: d.description_html,
-  weightGrams: d.weight_grams,
-  dimensionsCm: d.dimensions_cm,
-  shipsFrom: d.ships_from,
+  origin: d.origin ?? '—',
+  descriptionHtml: d.description_html ?? '',
+  weightGrams: d.weight_grams ?? 0,
+  dimensionsCm: {
+    length: d.dimensions_cm?.length ?? 0,
+    width: d.dimensions_cm?.width ?? 0,
+    height: d.dimensions_cm?.height ?? 0,
+  },
+  shipsFrom: d.ships_from ?? '—',
   shippingPayer: d.shipping_payer,
-  variants: d.variants,
+  variants: d.variants ?? [],
 });
 
 const toModerator = (d: ModeratorDto): Moderator => ({

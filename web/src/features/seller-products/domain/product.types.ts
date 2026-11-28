@@ -7,6 +7,7 @@ export type ShippingPayer = 'BUYER' | 'SELLER';
 export interface SellerProductRow {
   id: number;
   name: string;
+  /** '' = nháp chưa có ảnh. */
   imageUrl: string;
   variantCount: number;
   priceMin: number;
@@ -59,6 +60,8 @@ export interface OptionValue {
 export interface OptionGroup {
   name: string;
   values: OptionValue[];
+  /** Nhóm này có ảnh theo từng giá trị (chọn được nhiều nhóm — V26). Chỉ dùng ở form, không gửi lên API. */
+  withImages?: boolean;
 }
 
 export interface VariantRow {
@@ -89,7 +92,6 @@ export interface ProductForm {
   weightGrams: number | null;
   dims: { length: number | null; width: number | null; height: number | null };
   shippingPayer: ShippingPayer;
-  freeShippingThreshold: number | null;
   isPreOrder: boolean;
   preOrderDays: number | null;
 }
@@ -98,6 +100,10 @@ export interface ProductDetail extends ProductForm {
   id: number;
   status: ProductStatus;
   rejectReason: string | null;
+  /** Gửi lại khi lưu để phát hiện sửa trên dữ liệu cũ (409 GNE-CAT-4097 — plan C1 D24); mock = null. */
+  version: number | null;
+  /** Sàn khóa (UC-CAT-11): shop không tự hiện lại được. */
+  isLocked: boolean;
 }
 
 export interface SaveResult {

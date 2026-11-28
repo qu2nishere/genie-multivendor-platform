@@ -1,8 +1,11 @@
 package com.genie.catalog.category.application;
 
+import com.genie.catalog.attribute.application.AttributeView;
+import com.genie.catalog.attribute.application.ListingAttributes;
 import com.genie.catalog.category.domain.Category;
 import com.genie.catalog.category.domain.CategoryRepository;
 import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +20,14 @@ public class CategoryFacade {
     private final CategoryRepository categories;
     private final CategoryCatalog catalog;
     private final CommissionService commissions;
+    private final ListingAttributes listingAttributes;
 
-    public CategoryFacade(CategoryRepository categories, CategoryCatalog catalog, CommissionService commissions) {
+    public CategoryFacade(CategoryRepository categories, CategoryCatalog catalog, CommissionService commissions,
+                          ListingAttributes listingAttributes) {
         this.categories = categories;
         this.catalog = catalog;
         this.commissions = commissions;
+        this.listingAttributes = listingAttributes;
     }
 
     /** Danh mục {@code categoryId} tồn tại và đang hiển thị. */
@@ -37,5 +43,13 @@ public class CategoryFacade {
      */
     public BigDecimal effectiveCommissionRate(long categoryId) {
         return commissions.effectiveRate(catalog.index(), categoryId, commissions.defaultRate());
+    }
+
+    /**
+     * Thuộc tính đang dùng của ngành, gồm cả kế thừa từ ngành cha, xếp từ gốc xuống — form đăng bán & kiểm thuộc tính bắt
+     * buộc khi gửi duyệt (UC-CAT-09; plan C1 D8, plan B2 C06.02). Ngành không tồn tại → danh sách rỗng.
+     */
+    public List<AttributeView> attributesFor(long categoryId) {
+        return listingAttributes.effectiveFor(categoryId);
     }
 }

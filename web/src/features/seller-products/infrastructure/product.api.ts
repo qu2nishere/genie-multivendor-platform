@@ -1,7 +1,7 @@
 // Sản phẩm của shop (API_SPEC 10.5), danh mục toàn sàn + đề xuất (10.6), thương hiệu. Mock ghi kho dùng
 // chung `sellerProductsStore` (Tổng quan, tìm nhanh đọc) + kho chi tiết form.
 import { api, request } from '@/shared/api/http';
-import { mockDelay, mockFail, paginatePage, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, paginatePage } from '@/shared/api/mock';
 import { isMocked } from '@/shared/config/env';
 import {
   sellerOrdersStore,
@@ -39,6 +39,11 @@ import {
   productDetailsStore,
   proposalsStore,
 } from './product.mock';
+
+// Nối dần (plan C1 D22): sản phẩm + danh mục người bán + thương hiệu = `seller-products`; đề xuất danh mục =
+// `catalog-proposals` (UC-CAT-17, chưa có backend).
+const USE_MOCK = isMocked('seller-products');
+const PROPOSALS_MOCK = isMocked('catalog-proposals');
 
 const TABS: ProductTab[] = ['ALL', 'PUBLISHED', 'DRAFT', 'PENDING_APPROVAL', 'REJECTED', 'HIDDEN'];
 
@@ -178,7 +183,6 @@ function mockSave(id: number | null, f: ProductForm, submit: boolean): SaveResul
     weight_grams: f.weightGrams,
     dimensions_cm: f.dims,
     shipping_payer: f.shippingPayer,
-    free_shipping_threshold: input.free_shipping_threshold,
     is_pre_order: f.isPreOrder,
     pre_order_days: input.pre_order_days,
   };
@@ -207,12 +211,13 @@ export async function saveProduct(
   id: number | null,
   f: ProductForm,
   submit: boolean,
+  version: number | null = null,
 ): Promise<SaveResult> {
   if (USE_MOCK) {
     await mockDelay(450);
     return mockSave(id, f, submit);
   }
-  const body = toInput(f, submit);
+  const body = toInput(f, submit, version);
   const d = id
     ? await api.put<{ id: number; status: ProductStatus; requires_review: boolean }>(
         `/seller/products/${id}`,
@@ -273,7 +278,7 @@ const toNode = (d: {
   children: d.children?.map(toNode),
 });
 
-/** Cây 3 cấp cho ô chọn danh mục (5.1 GET /public/categories — nhóm `catalog`, plan B2 C08.02). */
+/** Cây danh mục cho ô chọn (thật 2 cấp, mock 3 cấp) (5.1 GET /public/categories — nhóm `catalog`, plan B2 C08.02). */
 export async function getCategoryTree(): Promise<CategoryNode[]> {
   if (isMocked('catalog')) {
     await mockDelay(120);
@@ -325,7 +330,7 @@ export async function listCatalog(): Promise<CatalogNode[]> {
 }
 
 export async function listProposals(): Promise<CategoryProposal[]> {
-  if (USE_MOCK) {
+  if (PROPOSALS_MOCK) {
     await mockDelay(150);
     return proposalsStore.get().map(toProposal);
   }
@@ -337,7 +342,7 @@ export async function createProposal(v: {
   parentId: number | null;
   reason: string;
 }): Promise<CategoryProposal> {
-  if (USE_MOCK) {
+  if (PROPOSALS_MOCK) {
     await mockDelay(300);
     const names = CATALOG.flatMap((c) => [c, ...(c.children ?? [])]);
     const dup = names.find((n) => n.name.toLowerCase() === v.name.trim().toLowerCase());
