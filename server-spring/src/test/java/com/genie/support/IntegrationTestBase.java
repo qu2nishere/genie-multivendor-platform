@@ -154,6 +154,9 @@ public abstract class IntegrationTestBase {
     protected FakePickupShopRegistrar ghnPickup;
 
     @Autowired
+    protected FakeProductScreeningClient aiScreening;
+
+    @Autowired
     protected JdbcTemplate jdbc;
 
     @Autowired
@@ -220,6 +223,7 @@ public abstract class IntegrationTestBase {
         aiWorker.clear();
         kycSampler.set(false);
         geocoder.clear();
+        aiScreening.clear();
         var connectionFactory = redis.getConnectionFactory();
         if (connectionFactory != null) {
             connectionFactory.getConnection().serverCommands().flushAll();
@@ -302,6 +306,13 @@ public abstract class IntegrationTestBase {
         @Primary
         FakePickupShopRegistrar fakePickupShopRegistrar() {
             return new FakePickupShopRegistrar();
+        }
+
+        /** {@code @Primary} → thay {@code StubScreeningClient} / {@code GeminiScreeningClient} cho UC-CAT-12. */
+        @Bean
+        @Primary
+        FakeProductScreeningClient fakeProductScreeningClient() {
+            return new FakeProductScreeningClient();
         }
     }
 }

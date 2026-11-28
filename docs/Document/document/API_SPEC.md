@@ -2571,19 +2571,20 @@ Ghi chú (2026-11-27, plan C1 D20): `GET` nhận `status` = `PENDING` (mặc đ�
 ### 11.12 Duyệt sản phẩm
 UC-CAT-12, UC-CAT-13 · `MANAGE_CATALOG` · **Màn hình:** tab Chờ duyệt / Đã duyệt / Không duyệt / Cấu hình nhân viên; ô tìm sản phẩm hoặc nhà bán; bảng Sản phẩm / Nhà bán / Trạng thái (Chờ duyệt, AI nghi ngờ, Chờ duyệt lại, Đã duyệt, Từ chối) / Người duyệt (chọn để giao lại; "AI Hệ thống") / Kiểm duyệt. Trang chi tiết: dòng Gemini (quyết định, điểm rủi ro, vi phạm), lý do AI, ảnh, Hồ sơ pháp lý sản phẩm (Xem trực tiếp), thông tin cơ bản, mô tả, vận chuyển & kích thước, bảng SKU; thanh quyết định (lý do từ chối + ghi chú, Từ chối, Duyệt lên sàn, Chờ duyệt lại)
 
-#### `GET /admin/product-moderation?tab=PENDING&q&page&size`
-`tab` ∈ `PENDING` (`PENDING_APPROVAL` + `FLAGGED`, `FLAGGED` lên đầu), `PUBLISHED`, `REJECTED`.
+#### `GET /admin/product-moderation?tab=PENDING&q&ai&page&size`
+`tab` ∈ `PENDING` (`PENDING_APPROVAL` + `FLAGGED`, `FLAGGED` lên đầu), `PUBLISHED`, `REJECTED`. Tham số tùy chọn `ai` ∈ `NOT_SCREENED | FAILED | PASSED | SUSPECTED | REJECTED` (giá trị lạ → `422`; không ảnh hưởng `summary.counts`; `pagination.total_items` đếm sau khi lọc).
 ```json
-[ { "product_id": 1283, "name": "Nước hoa mini chính hãng 10ml", "image_url": "...", "shop": { "id": 12, "name": "Beauty Box" }, "status": "FLAGGED", "is_requeued": false, "assignee": { "id": 8, "name": "Nguyễn Thảo Vy" }, "rejected_by_ai": false, "submitted_at": "2026-06-08T11:05:00+07:00" } ]
+[ { "product_id": 1283, "name": "Nước hoa mini chính hãng 10ml", "image_url": "...", "shop": { "id": 12, "name": "Beauty Box" }, "status": "FLAGGED", "is_requeued": false, "assignee": { "id": 8, "name": "Nguyễn Thảo Vy" }, "rejected_by_ai": false, "submitted_at": "2026-06-08T11:05:00+07:00", "ai_check": "SUSPECTED" } ]
 ```
-`summary.counts` theo tab.
+`summary.counts` theo tab. `ai_check` là nhãn kết quả AI của **lần gửi duyệt hiện tại** (`created_at >= submitted_at`): `NOT_SCREENED` (chưa chấm), `FAILED` (`fallback_to_manual = true`), `PASSED` (`APPROVE`), `SUSPECTED` (`NEED_REVIEW` hoặc `REJECT` < ngưỡng), `REJECTED` (`REJECT` ≥ ngưỡng).
 
 #### `GET /admin/product-moderation/{product_id}`
 ```json
 {
   "product_id": 1283, "name": "Nước hoa mini chính hãng 10ml", "status": "FLAGGED", "is_requeued": false, "submitted_at": "...",
   "shop": { "id": 12, "name": "Beauty Box" },
-  "ai_result": { "decision": "NEED_REVIEW", "risk_score": 62, "violations": ["COUNTERFEIT"], "reasoning": "Ảnh sản phẩm trùng logo thương hiệu lớn nhưng giấy ủy quyền chưa khớp tên shop." },
+  "ai_result": { "decision": "NEED_REVIEW", "risk_score": 62, "violations": ["COUNTERFEIT"], "reasoning": "Ảnh sản phẩm trùng logo thương hiệu lớn nhưng giấy ủy quyền chưa khớp tên shop.", "fallback": false, "created_at": "2026-06-08T11:06:00+07:00" },
+  "ai_check": "SUSPECTED",
   "decision_reason": null,
   "images": ["..."],
   "documents": [ { "id": 52, "file_name": "giay-uy-quyen.pdf", "url": "https://s3.genie.vn/product-docs/...?X-Amz-Expires=300" } ],
@@ -2620,6 +2621,17 @@ Ghi `system_logs PRODUCT_MODERATED`.
 | `GET /admin/moderators` | — | `[{ "staff_id": 7, "name": "Lê Minh Tú", "is_accepting": true }]` |
 | `PUT /admin/moderators/availability` | `{ "items": [ { "staff_id": 9, "is_accepting": false } ] }` ("Lưu cấu hình") | `200` |
 | `POST /admin/moderators/redistribute` | — ("Phân phối lại" — chia đều hàng chờ cho người đang nhận việc) | `200` `{ "reassigned_count": 3 }` |
+
+#### Cấu hình kiểm duyệt sản phẩm tự động bằng AI (UC-CAT-12)
+| Method & Path | Quyền | Body | Phản hồi |
+|---|---|---|---|
+| `GET /admin/product-moderation/ai-settings` | `MANAGE_CATALOG` | — | `{ "enabled": false, "mode": "stub", "model": "stub", "reject_threshold": 85, "configured": true, "updated_at": null, "updated_by": null }` |
+| `PUT /admin/product-moderation/ai-settings` | **chỉ `ROLE_ADMIN`** (`STAFF` → `403`) | `{ "enabled": true }` (thiếu → `422`) | Trả lại cấu hình sau khi đổi; ghi `system_logs PRODUCT_MODERATED` (`reference_id = "ai_screening"`, `details.action = AI_SCREENING_ON \| AI_SCREENING_OFF`) |
+
+**Hiện thực sàng lọc AI (2026-11-28, plan C1 P06, `c1_auto_product.md` A1–A11):**
+- Mặc định **TẮT** khi chưa có khóa `moderation.ai_screening.enabled` trong `platform_settings`; khi tắt, sản phẩm gửi duyệt vào thẳng hàng chờ thủ công.
+- Khi bật: sau commit `ProductSubmittedEvent`, chạy bất đồng bộ ngoài transaction (`GEMINI_MODE=stub|http`, tối đa 8 ảnh thu nhỏ ≤ 1024 px JPEG / WebP ≤ 4 MB gồm ảnh chung, ảnh phân loại, ảnh SKU và ảnh trong mô tả thuộc kho nội bộ, không gửi dữ liệu cá nhân chủ shop). Nếu Gemini chặn vì an toàn (`SAFETY`, `PROHIBITED_CONTENT`, `BLOCKLIST`, `IMAGE_SAFETY`) → tự từ chối ngay không thử lại với `PROHIBITED_ITEM` (`risk_score = 95`), lý do *"Nội dung tin đăng bị bộ lọc an toàn của Gemini chặn (…)"*. Lỗi mạng / 429 / 5xx thử lại 3 lần (2 s / 8 s), hết lượt hoặc sai schema → lưu `fallback_to_manual = true`, giữ `PENDING_APPROVAL`.
+- Áp kết quả (A7, A8): luôn lưu `product_moderation_results`; chỉ đổi trạng thái nếu sản phẩm vẫn `PENDING_APPROVAL` và `submitted_at` khớp (cắt micro giây). `REJECT` & `risk_score ≥ ngưỡng` → `REJECTED` (`moderator_id = NULL`, `rejected_by_ai = true`), audit `AI_REJECT`, phát `ProductModeratedEvent` với `reason_code = "AI_AUTO"` (email nhãn *"Không đạt kiểm duyệt tự động"*); `REJECT` dưới ngưỡng hoặc `NEED_REVIEW` → `FLAGGED` (lên đầu hàng chờ); `APPROVE` → giữ `PENDING_APPROVAL` (AI không tự đăng bán). Job `ProductScreeningSweepJob` chạy mỗi 5 phút quét bù sản phẩm sót trong `[now - 24h, now - 3m]`.
 
 ### 11.13 Người dùng
 UC-ADM-03 · `MANAGE_USER` · **Màn hình:** tab Tất cả / Khách hàng / Shop / Đang khóa; tìm email, SĐT, tên shop; bảng Tài khoản / Loại / SĐT / Số đơn / Cảnh báo / Trạng thái (+ lý do · thời hạn); Khóa tài khoản (lý do, thời hạn 7 ngày / 30 ngày / Vô thời hạn), Mở khóa (lý do bắt buộc)
@@ -2952,7 +2964,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | Sổ cái tài chính | `VIEW_FINANCE` | `GET /admin/ledger-entries`, `GET /admin/ledger-entries/export` |
 | Nhật ký hệ thống | `VIEW_AUDIT_LOG` | `GET /admin/audit-logs`, `GET /admin/audit-logs/export` |
 | Danh mục toàn sàn | `MANAGE_CATALOG` | `GET/POST/PATCH/DELETE /admin/categories`, `…/attributes`, `GET /admin/products?category_id=`, `POST /admin/products/{id}/lock|unlock`, `GET /admin/category-proposals`, `POST …/approve|reject` |
-| Duyệt sản phẩm | `MANAGE_CATALOG` | `GET /admin/product-moderation`, `GET /admin/product-moderation/{id}`, `POST /admin/products/{id}/approve|reject|requeue`, `PUT /admin/products/{id}/assignee`, `GET /admin/moderators`, `PUT /admin/moderators/availability`, `POST /admin/moderators/redistribute` |
+| Duyệt sản phẩm | `MANAGE_CATALOG` | `GET /admin/product-moderation`, `GET /admin/product-moderation/{id}`, `POST /admin/products/{id}/approve|reject|requeue`, `PUT /admin/products/{id}/assignee`, `GET /admin/moderators`, `PUT /admin/moderators/availability`, `POST /admin/moderators/redistribute`, `GET /admin/product-moderation/ai-settings`, `PUT /admin/product-moderation/ai-settings` (chỉ `ADMIN`) |
 | Người dùng | `MANAGE_USER` | `GET /admin/users`, `POST /admin/users/{id}/suspend|reactivate` |
 | Voucher sàn | `MANAGE_VOUCHER` | `GET/POST/PUT/PATCH/DELETE /admin/vouchers` |
 | Flash Sale | `MANAGE_VOUCHER` | `GET/POST /admin/flash-sales`, `POST …/schedule|end`, `PATCH …/items/{item_id}` |

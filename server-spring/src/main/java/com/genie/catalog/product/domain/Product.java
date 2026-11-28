@@ -238,6 +238,15 @@ public class Product {
         this.moderationReason = reason;
     }
 
+    /** AI tự từ chối (REJECT, rủi ro ≥ ngưỡng) — không có người duyệt; giao diện hiện "AI Hệ thống" (UC-CAT-12; D13) */
+    public void rejectByAi(String reason) {
+        this.status = ProductStatus.REJECTED;
+        this.isPublished = false;
+        this.moderatorId = null;
+        this.moderationReason = reason;
+        this.isRequeued = false;
+    }
+
 
     /** Đang nằm trong hàng chờ duyệt — shop chỉ xem, không sửa (UC-CAT-10 bước 8; plan C1 D3) */
     public boolean isUnderReview() {

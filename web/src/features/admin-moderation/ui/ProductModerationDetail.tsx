@@ -29,7 +29,7 @@ import {
   type ProductRejectReason,
 } from '../domain/moderation.rules';
 import type { ModerationDetail } from '../domain/moderation.types';
-import { LABEL } from './moderationLabel';
+import { AI_LABEL, LABEL } from './moderationLabel';
 
 const card = 'bg-surface-card rounded-lg shadow-sm px-[18px] py-4';
 const h3 = 'flex items-center gap-[7px] m-0 mb-3 text-sm font-bold text-strong';
@@ -79,8 +79,8 @@ function Body({ p }: { p: ModerationDetail }) {
   const rejectText = reasonLabel + (note.trim() ? `: ${note.trim()}` : '');
   const desc = useMemo(() => htmlToText(p.descriptionHtml), [p.descriptionHtml]);
   const aiRejected = p.status === 'REJECTED' && p.rejectedByAi;
-  const reasonText =
-    p.status === 'REJECTED' ? (p.decisionReason ?? p.ai?.reasoning) : p.ai?.reasoning;
+  const aiReasoning = p.ai?.fallback ? null : p.ai?.reasoning;
+  const reasonText = p.status === 'REJECTED' ? (p.decisionReason ?? aiReasoning) : aiReasoning;
   const d = p.dimensionsCm;
 
   const run = (kind: 'approve' | 'reject' | 'requeue') =>
@@ -99,7 +99,7 @@ function Body({ p }: { p: ModerationDetail }) {
     );
 
   return (
-    <div className="max-w-[1180px]">
+    <div className="w-full">
       <Link
         to="/product-moderation"
         className="inline-flex items-center gap-1.5 text-sm text-muted no-underline hover:underline mb-3.5"
@@ -126,24 +126,61 @@ function Body({ p }: { p: ModerationDetail }) {
         </span>
       </div>
 
-      {p.ai && (
+      {p.aiCheck === 'NOT_SCREENED' ? (
+        <div className="flex items-start gap-2.5 px-4 py-3 mb-3 rounded-md bg-surface-card shadow-sm text-sm text-body">
+          <Icon name="clock" size={18} className="text-muted mt-0.5 flex-none" />
+          <div>
+            <div className="font-semibold text-strong">
+              {t('admin-moderation.product.ai_detail.not_screened')}
+            </div>
+            <div className="text-xs text-muted mt-0.5">
+              {t('admin-moderation.product.ai_detail.not_screened_hint')}
+            </div>
+          </div>
+        </div>
+      ) : p.aiCheck === 'FAILED' ? (
         <div className="flex items-center gap-2.5 px-4 py-3 mb-3 rounded-md bg-surface-card shadow-sm text-sm text-body flex-wrap">
-          <Icon name="cpu" size={18} className="text-blue-600" />
-          <b>Gemini:</b> <span className="font-mono">{p.ai.decision}</span>
-          <span>
-            · {t('admin-moderation.product.risk')}{' '}
-            <b className={RISK_TEXT[riskTone(p.ai.riskScore)]}>{p.ai.riskScore}/100</b>
+          <Icon name="cpu" size={18} className="text-muted flex-none" />
+          <span className="font-semibold text-strong">
+            {t('admin-moderation.product.ai_detail.failed')}
           </span>
-          {p.ai.violations.length > 0 ? (
-            p.ai.violations.map((v) => (
-              <Badge key={v} variant="danger">
-                {v}
-              </Badge>
-            ))
-          ) : (
-            <span className="text-muted">· {t('admin-moderation.product.no_violation')}</span>
+          {p.ai?.screenedAt && (
+            <span className="text-xs text-muted ml-auto">
+              {t('admin-moderation.product.ai_detail.screened_at', {
+                time: formatDateTime(p.ai.screenedAt, { locale }),
+              })}
+            </span>
           )}
         </div>
+      ) : (
+        p.ai && (
+          <div className="flex items-center gap-2.5 px-4 py-3 mb-3 rounded-md bg-surface-card shadow-sm text-sm text-body flex-wrap">
+            <Badge variant={AI_LABEL[p.aiCheck].variant} icon={AI_LABEL[p.aiCheck].icon}>
+              {t(`admin-moderation.product.ai_check.${p.aiCheck}`)}
+            </Badge>
+            <b>Gemini:</b> <span className="font-mono">{p.ai.decision}</span>
+            <span>
+              · {t('admin-moderation.product.risk')}{' '}
+              <b className={RISK_TEXT[riskTone(p.ai.riskScore)]}>{p.ai.riskScore}/100</b>
+            </span>
+            {p.ai.violations.length > 0 ? (
+              p.ai.violations.map((v) => (
+                <Badge key={v} variant="danger">
+                  {v}
+                </Badge>
+              ))
+            ) : (
+              <span className="text-muted">· {t('admin-moderation.product.no_violation')}</span>
+            )}
+            {p.ai.screenedAt && (
+              <span className="text-xs text-muted ml-auto">
+                {t('admin-moderation.product.ai_detail.screened_at', {
+                  time: formatDateTime(p.ai.screenedAt, { locale }),
+                })}
+              </span>
+            )}
+          </div>
+        )
       )}
       {reasonText && (
         <div
@@ -172,7 +209,8 @@ function Body({ p }: { p: ModerationDetail }) {
         </div>
       )}
 
-      <div className="grid grid-cols-[2fr_3fr] gap-4 items-start max-md:grid-cols-1">
+      {/* 2 cột cao bằng nhau (items-stretch): thẻ Hồ sơ pháp lý giãn xuống ngang đáy thẻ SKU bên phải */}
+      <div className="grid grid-cols-[minmax(320px,520px)_minmax(0,1fr)] gap-4 items-stretch max-md:grid-cols-1">
         <div className="flex flex-col gap-4">
           <section className={card}>
             <h3 className={h3}>
@@ -232,13 +270,18 @@ function Body({ p }: { p: ModerationDetail }) {
               </>
             )}
           </section>
-          <section className={card}>
+          <section className={cn(card, 'flex-1 flex flex-col')}>
             <h3 className={h3}>
               <Icon name="file-text" size={16} />
               {t('admin-moderation.product.docs')}
             </h3>
             {p.documents.length === 0 && (
-              <div className="text-sm text-muted">{t('admin-moderation.product.no_docs')}</div>
+              <div className="flex-1 grid place-items-center text-center text-sm text-muted py-6">
+                <span className="flex flex-col items-center gap-2">
+                  <Icon name="file-text" size={28} className="text-subtle" />
+                  {t('admin-moderation.product.no_docs')}
+                </span>
+              </div>
             )}
             <ul className="list-none m-0 p-0">
               {p.documents.map((x) => (

@@ -14,19 +14,26 @@ import {
   type ProductRejectReason,
 } from '../domain/moderation.rules';
 import type {
+  AiCheck,
+  AiScreeningSettings,
   ModerationCounts,
   ModerationDetail,
   ModerationRow,
   ModerationTab,
   Moderator,
 } from '../domain/moderation.types';
-import type { ModerationDetailDto, ModerationRowDto, ModeratorDto } from './moderation.dto';
-import { MODERATION_EXTRA, moderatorsStore } from './moderation.mock';
+import type {
+  AiSettingsDto,
+  ModerationDetailDto,
+  ModerationRowDto,
+  ModeratorDto,
+} from './moderation.dto';
+import { aiSettingsStore, MODERATION_EXTRA, moderatorsStore } from './moderation.mock';
 
 // Hàng chờ duyệt sản phẩm + nhân viên duyệt nối backend bằng cờ `product-moderation` (plan C1 P10.03).
 const USE_MOCK = isMocked('product-moderation');
 
-const toRow = (d: ModerationRowDto): ModerationRow => ({
+export const toRow = (d: ModerationRowDto): ModerationRow => ({
   productId: d.product_id,
   name: d.name,
   imageUrl: d.image_url,
@@ -36,9 +43,10 @@ const toRow = (d: ModerationRowDto): ModerationRow => ({
   assignee: d.assignee,
   rejectedByAi: d.rejected_by_ai,
   submittedAt: d.submitted_at,
+  aiCheck: d.ai_check,
 });
 
-const toDetail = (d: ModerationDetailDto): ModerationDetail => ({
+export const toDetail = (d: ModerationDetailDto): ModerationDetail => ({
   ...toRow(d),
   ai: d.ai_result
     ? {
@@ -46,6 +54,8 @@ const toDetail = (d: ModerationDetailDto): ModerationDetail => ({
         riskScore: d.ai_result.risk_score,
         violations: d.ai_result.violations,
         reasoning: d.ai_result.reasoning,
+        fallback: d.ai_result.fallback,
+        screenedAt: d.ai_result.created_at,
       }
     : null,
   decisionReason: d.decision_reason,
@@ -74,6 +84,16 @@ const toModerator = (d: ModeratorDto): Moderator => ({
   accepting: d.is_accepting,
 });
 
+export const toAiSettings = (d: AiSettingsDto): AiScreeningSettings => ({
+  enabled: d.enabled,
+  mode: d.mode,
+  model: d.model,
+  rejectThreshold: d.reject_threshold,
+  configured: d.configured,
+  updatedAt: d.updated_at,
+  updatedBy: d.updated_by,
+});
+
 export interface ModerationPage extends Page<ModerationRow> {
   counts: ModerationCounts;
 }
@@ -84,6 +104,7 @@ export async function listModeration(
   tab: ModerationTab,
   q = '',
   page = 1,
+  ai?: AiCheck,
 ): Promise<ModerationPage> {
   if (USE_MOCK) {
     await mockDelay(180);
@@ -92,14 +113,17 @@ export async function listModeration(
     const counts = Object.fromEntries(
       MODERATION_TABS.map((t) => [t, all.filter((r) => inModerationTab(r.status, t)).length]),
     ) as ModerationCounts;
-    const p = paginatePage(sortQueue(found.filter((r) => inModerationTab(r.status, tab))), {
+    const filtered = found.filter(
+      (r) => inModerationTab(r.status, tab) && (!ai || r.aiCheck === ai),
+    );
+    const p = paginatePage(sortQueue(filtered), {
       page,
       size: SIZE,
     });
     return { ...p, counts };
   }
   const res = await getPage<ModerationRowDto, ModerationRow>('/admin/product-moderation', toRow, {
-    query: { tab, q: q.trim() || undefined, page, size: SIZE },
+    query: { tab, q: q.trim() || undefined, ai, page, size: SIZE },
   });
   const c = (res.summary.counts ?? {}) as Partial<ModerationCounts>;
   return {
@@ -232,4 +256,28 @@ export async function redistributeQueue(): Promise<number> {
   }
   return (await api.post<{ reassigned_count: number }>('/admin/moderators/redistribute'))
     .reassigned_count;
+}
+
+export async function fetchAiSettings(): Promise<AiScreeningSettings> {
+  if (USE_MOCK) {
+    await mockDelay(150);
+    return toAiSettings(aiSettingsStore.get());
+  }
+  return toAiSettings(await api.get<AiSettingsDto>('/admin/product-moderation/ai-settings'));
+}
+
+export async function saveAiSettings(enabled: boolean): Promise<AiScreeningSettings> {
+  if (USE_MOCK) {
+    await mockDelay(200);
+    aiSettingsStore.set({
+      ...aiSettingsStore.get(),
+      enabled,
+      updated_at: new Date().toISOString(),
+      updated_by: 'Admin',
+    });
+    return toAiSettings(aiSettingsStore.get());
+  }
+  return toAiSettings(
+    await api.put<AiSettingsDto>('/admin/product-moderation/ai-settings', { enabled }),
+  );
 }

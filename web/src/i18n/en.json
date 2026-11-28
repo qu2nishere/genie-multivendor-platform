@@ -3616,6 +3616,41 @@
         "confirm": "Redistribute",
         "redistributed": "{count} products redistributed."
       },
+      "ai_settings": {
+        "title": "Automatic AI moderation",
+        "desc": "Submitted products are screened by Gemini first: clear violations (risk ≥ {threshold}) are rejected automatically, suspicious ones go to the top of the queue. AI never publishes products.",
+        "meta": "Model: {model} · Mode: {mode} · Reject threshold: {threshold}",
+        "mode": {
+          "http": "Live",
+          "stub": "Simulated"
+        },
+        "updated": "Last changed {time} by {name}",
+        "not_configured": "GEMINI_API_KEY is not set — every screening falls back to manual review.",
+        "admin_only": "Only administrators can turn this on or off.",
+        "toggle": "Turn automatic moderation on or off",
+        "confirm_on": "Turn on automatic moderation? Every submitted product will be sent to Gemini (API costs apply).",
+        "confirm_off": "Turn off automatic moderation? Submitted products will go straight to the manual queue.",
+        "saved_on": "Automatic moderation is on.",
+        "saved_off": "Automatic moderation is off."
+      },
+      "ai_check": {
+        "NOT_SCREENED": "Not screened",
+        "FAILED": "AI failed",
+        "PASSED": "AI: Passed",
+        "SUSPECTED": "AI: Suspected",
+        "REJECTED": "AI: Rejected"
+      },
+      "ai_filter": {
+        "label": "Filter by AI result",
+        "all": "All AI results",
+        "empty": "No products match the AI filter."
+      },
+      "ai_detail": {
+        "not_screened": "Not screened by AI",
+        "not_screened_hint": "AI screening is off or still running for this submission — review it manually as usual.",
+        "failed": "AI failed — sent to manual review",
+        "screened_at": "Screened at {time}"
+      },
       "back": "Back to the list",
       "detail_title": "Product review #{id}",
       "meta": "Created: {at} · Seller: {shop}",
@@ -3693,7 +3728,11 @@
       },
       "err": {
         "note_long": "At most 500 characters."
-      }
+      },
+      "view": "View",
+      "assignee_none": "Unassigned",
+      "result_count": "{count} products",
+      "submitted_at": "Submitted {time}"
     }
   },
   "admin-catalog": {

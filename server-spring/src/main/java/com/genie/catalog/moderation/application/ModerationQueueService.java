@@ -49,18 +49,29 @@ public class ModerationQueueService {
     public static final List<String> TABS = List.of("PENDING", "PUBLISHED", "REJECTED");
     static final Duration DOCUMENT_LINK_TTL = Duration.ofMinutes(5);
 
+    /** Kết quả AI của lần gửi duyệt hiện tại (mới nhất, tạo sau submitted_at) — update_gemini.md mục 1. */
+    private static final String AI_JOIN = " " + """
+            LEFT JOIN LATERAL (
+                SELECT r.decision, r.risk_score, r.fallback_to_manual
+                  FROM product_moderation_results r
+                 WHERE p.submitted_at IS NOT NULL AND r.product_id = p.id AND r.created_at >= p.submitted_at
+                 ORDER BY r.created_at DESC, r.id DESC
+                 LIMIT 1
+            ) ai ON TRUE""";
+
     public record IdName(long id, String name) {
     }
 
     /** Một dòng hàng chờ (API 11.12). {@code rejectedByAi}: bị từ chối tự động (không có người duyệt). */
     public record Row(long productId, String name, String imageUrl, IdName shop, String status, boolean isRequeued,
-                      IdName assignee, boolean rejectedByAi, OffsetDateTime submittedAt) {
+                      IdName assignee, boolean rejectedByAi, OffsetDateTime submittedAt, String aiCheck) {
     }
 
     public record Page(List<Row> items, PageResponse.Pagination pagination, Map<String, Long> counts) {
     }
 
-    public record AiResult(String decision, int riskScore, List<String> violations, String reasoning) {
+    public record AiResult(String decision, int riskScore, List<String> violations, String reasoning,
+                           boolean fallback, OffsetDateTime createdAt) {
     }
 
     public record DocumentLink(long id, String fileName, String url) {
@@ -74,9 +85,9 @@ public class ModerationQueueService {
 
     /** Trang chi tiết duyệt (API 11.12). {@code decisionReason}: lý do từ chối / khóa đã lưu (AI hoặc người). */
     public record Detail(long productId, String name, String status, boolean isRequeued, OffsetDateTime submittedAt,
-                         IdName shop, IdName assignee, boolean rejectedByAi, AiResult aiResult, String decisionReason,
-                         List<String> images, String videoUrl, List<DocumentLink> documents, String categoryPath,
-                         String brand, String condition, String origin, String descriptionHtml,
+                         IdName shop, IdName assignee, boolean rejectedByAi, AiResult aiResult, String aiCheck,
+                         String decisionReason, List<String> images, String videoUrl, List<DocumentLink> documents,
+                         String categoryPath, String brand, String condition, String origin, String descriptionHtml,
                          List<SellerProductViews.Spec> specs, Integer weightGrams, Dimensions dimensionsCm,
                          String shipsFrom, String shippingPayer, List<VariantLine> variants) {
     }
@@ -91,10 +102,12 @@ public class ModerationQueueService {
     private final MediaUrls media;
     private final ObjectStorage storage;
     private final ObjectMapper json;
+    private final AiScreeningSettings aiSettings;
 
     public ModerationQueueService(NamedParameterJdbcTemplate jdbc, ProductRepository products, ProductListingStore store,
                                   ModeratorPool pool, CategoryCatalog catalog, CategoryFacade categories,
-                                  BrandService brands, MediaUrls media, ObjectStorage storage, ObjectMapper json) {
+                                  BrandService brands, MediaUrls media, ObjectStorage storage, ObjectMapper json,
+                                  AiScreeningSettings aiSettings) {
         this.jdbc = jdbc;
         this.products = products;
         this.store = store;
@@ -105,21 +118,24 @@ public class ModerationQueueService {
         this.media = media;
         this.storage = storage;
         this.json = json;
+        this.aiSettings = aiSettings;
     }
 
     // ===== Danh sách =====
 
     @Transactional(readOnly = true)
-    public Page list(String tab, String q, Integer page, Integer size) {
+    public Page list(String tab, String q, String ai, Integer page, Integer size) {
         String t = tab == null || tab.isBlank() ? "PENDING" : tab.trim().toUpperCase();
         if (!TABS.contains(t)) {
             throw InvalidRequestException.of("tab", "INVALID_VALUE", tab, "Tab: PENDING, PUBLISHED hoặc REJECTED.");
         }
+        AiCheck aiCheckFilter = parseAiFilter(ai);
         int p = page == null || page < 1 ? 1 : page;
         int s = size == null ? 20 : Math.max(1, Math.min(size, 100));
+        int threshold = aiSettings.rejectThreshold();
         String needle = q == null || q.isBlank() ? null : q.trim();
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("q", needle).addValue("limit", s)
-                .addValue("offset", (p - 1) * s);
+                .addValue("offset", (p - 1) * s).addValue("th", threshold);
         // Khối văn bản """ cắt khoảng trắng đầu dòng → phải tự thêm dấu cách, nếu không thành "WHERE TRUEAND" (lỗi SQL)
         String search = needle == null ? "" : " " + """
                 AND (immutable_unaccent(lower(p.name)) LIKE '%' || immutable_unaccent(lower(:q)) || '%'
@@ -145,15 +161,28 @@ public class ModerationQueueService {
             case "PUBLISHED" -> " AND p.status = 'PUBLISHED' ORDER BY p.updated_at DESC, p.id DESC";
             default -> " AND p.status = 'REJECTED' ORDER BY p.updated_at DESC, p.id DESC";
         };
-        // điều kiện tìm kiếm phải đứng trước ORDER BY
         int orderAt = filterAndOrder.indexOf(" ORDER BY");
+        String tabFilter = filterAndOrder.substring(0, orderAt);
+        String aiFilter = aiFilterSql(aiCheckFilter);
+
+        long total;
+        if (aiCheckFilter == null) {
+            total = counts.get(t);
+        } else {
+            Long c = jdbc.queryForObject("""
+                    SELECT count(*) FROM products p JOIN vendor_profiles vp ON vp.user_id = p.vendor_id"""
+                    + AI_JOIN + " WHERE TRUE" + tabFilter + search + aiFilter, params, Long.class);
+            total = c == null ? 0L : c;
+        }
+
         String sql = """
                 SELECT p.id, p.name, p.status, p.is_requeued, p.moderator_id, p.submitted_at, vp.id AS shop_id,
                        vp.shop_name,
+                       ai.decision AS ai_decision, ai.risk_score AS ai_risk, ai.fallback_to_manual AS ai_fallback,
                        (SELECT i.image_url FROM product_images i WHERE i.product_id = p.id AND i.variant_id IS NULL
                          ORDER BY i.is_primary DESC NULLS LAST, i.display_order, i.id LIMIT 1) AS image
-                  FROM products p JOIN vendor_profiles vp ON vp.user_id = p.vendor_id WHERE TRUE"""
-                + filterAndOrder.substring(0, orderAt) + search + filterAndOrder.substring(orderAt)
+                  FROM products p JOIN vendor_profiles vp ON vp.user_id = p.vendor_id"""
+                + AI_JOIN + " WHERE TRUE" + tabFilter + search + aiFilter + filterAndOrder.substring(orderAt)
                 + " LIMIT :limit OFFSET :offset";
         List<Map<String, Object>> raw = jdbc.queryForList(sql, params);
         Set<Long> staff = raw.stream().map(r -> (Number) r.get("moderator_id")).filter(java.util.Objects::nonNull)
@@ -162,13 +191,40 @@ public class ModerationQueueService {
         List<Row> rows = raw.stream().map(r -> {
             Long mod = r.get("moderator_id") == null ? null : ((Number) r.get("moderator_id")).longValue();
             String status = (String) r.get("status");
+            String check = AiCheck.of(
+                    (String) r.get("ai_decision"),
+                    r.get("ai_risk") == null ? null : ((Number) r.get("ai_risk")).intValue(),
+                    (Boolean) r.get("ai_fallback"),
+                    threshold).name();
             return new Row(((Number) r.get("id")).longValue(), (String) r.get("name"), media.product((String) r.get("image")),
                     new IdName(((Number) r.get("shop_id")).longValue(), (String) r.get("shop_name")), status,
                     Boolean.TRUE.equals(r.get("is_requeued")),
                     mod == null ? null : new IdName(mod, names.getOrDefault(mod, "#" + mod)),
-                    "REJECTED".equals(status) && mod == null, toOffset(r.get("submitted_at")));
+                    "REJECTED".equals(status) && mod == null, toOffset(r.get("submitted_at")), check);
         }).toList();
-        return new Page(rows, PageResponse.Pagination.of(p, s, counts.get(t)), counts);
+        return new Page(rows, PageResponse.Pagination.of(p, s, total), counts);
+    }
+
+    private static AiCheck parseAiFilter(String ai) {
+        if (ai == null || ai.isBlank()) return null;
+        try {
+            return AiCheck.valueOf(ai.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw InvalidRequestException.of("ai", "INVALID_VALUE", ai,
+                    "Nhãn AI: NOT_SCREENED, FAILED, PASSED, SUSPECTED, REJECTED.");
+        }
+    }
+
+    private static String aiFilterSql(AiCheck check) {
+        if (check == null) return "";
+        return switch (check) {
+            case NOT_SCREENED -> " AND ai.decision IS NULL";
+            case FAILED -> " AND ai.fallback_to_manual = TRUE";
+            case PASSED -> " AND ai.fallback_to_manual = FALSE AND ai.decision = 'APPROVE'";
+            case SUSPECTED -> " AND ai.fallback_to_manual = FALSE"
+                    + " AND (ai.decision = 'NEED_REVIEW' OR (ai.decision = 'REJECT' AND ai.risk_score < :th))";
+            case REJECTED -> " AND ai.fallback_to_manual = FALSE AND ai.decision = 'REJECT' AND ai.risk_score >= :th";
+        };
     }
 
     // ===== Chi tiết =====
@@ -198,9 +254,15 @@ public class ModerationQueueService {
         String brand = p.getBrandId() == null ? p.getBrand()
                 : brands.find(p.getBrandId()).map(BrandService.BrandView::name).orElse(p.getBrand());
         String status = p.getStatus().name();
+        AiResult ai = currentAiResult(productId, p.getSubmittedAt());
+        String aiCheck = AiCheck.of(
+                ai == null ? null : ai.decision(),
+                ai == null ? null : ai.riskScore(),
+                ai == null ? null : ai.fallback(),
+                aiSettings.rejectThreshold()).name();
         return new Detail(p.getId(), p.getName(), status, Boolean.TRUE.equals(p.getIsRequeued()), p.getSubmittedAt(),
                 new IdName(((Number) shop.get("id")).longValue(), (String) shop.get("shop_name")), assignee,
-                "REJECTED".equals(status) && p.getModeratorId() == null, latestAiResult(productId),
+                "REJECTED".equals(status) && p.getModeratorId() == null, ai, aiCheck,
                 p.getModerationReason(), store.galleryKeys(productId).stream().map(media::product).toList(),
                 media.product(p.getVideoUrl()), docs, categoryPath(p.getCategoryId()), brand,
                 p.getItemCondition() == null ? "NEW" : p.getItemCondition().name(), p.getOrigin(), p.getDescription(),
@@ -263,13 +325,17 @@ public class ModerationQueueService {
 
     // ===== Tiện ích =====
 
-    private AiResult latestAiResult(long productId) {
+    private AiResult currentAiResult(long productId, OffsetDateTime submittedAt) {
+        if (submittedAt == null) return null;
         List<AiResult> rows = jdbc.query("""
-                SELECT decision, risk_score, violations_json::text AS v, reasoning FROM product_moderation_results
-                 WHERE product_id = :p ORDER BY created_at DESC, id DESC LIMIT 1""",
-                new MapSqlParameterSource("p", productId),
+                SELECT decision, risk_score, violations_json::text AS v, reasoning, fallback_to_manual, created_at
+                  FROM product_moderation_results
+                 WHERE product_id = :p AND created_at >= :since
+                 ORDER BY created_at DESC, id DESC LIMIT 1""",
+                new MapSqlParameterSource("p", productId).addValue("since", submittedAt),
                 (rs, i) -> new AiResult(rs.getString("decision"), rs.getInt("risk_score"), violations(rs.getString("v")),
-                        rs.getString("reasoning")));
+                        rs.getString("reasoning"), rs.getBoolean("fallback_to_manual"),
+                        toOffset(rs.getTimestamp("created_at"))));
         return rows.isEmpty() ? null : rows.get(0);
     }
 

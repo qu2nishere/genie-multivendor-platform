@@ -51,8 +51,10 @@ public class ProductModerationMailer {
             template = MailTemplate.PRODUCT_APPROVED;
         } else {
             template = MailTemplate.PRODUCT_REJECTED;
-            String label = ModerationDecisionService.REJECT_REASONS.getOrDefault(e.reasonCode(), e.reasonCode());
-            vars.put("reason", e.note() == null ? label : label + " — " + e.note());
+            String label = "AI_AUTO".equals(e.reasonCode())
+                    ? "Không đạt kiểm duyệt tự động"
+                    : ModerationDecisionService.REJECT_REASONS.getOrDefault(e.reasonCode(), e.reasonCode());
+            vars.put("reason", e.note() == null || e.note().isBlank() ? label : label + " — " + e.note());
         }
         try {
             mail.send(email, template, vars, Locale.forLanguageTag("vi"));

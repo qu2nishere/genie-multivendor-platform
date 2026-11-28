@@ -51,7 +51,7 @@ export default function ProductsPage() {
   const fail = (e: unknown) => toast.error(errorMessage(e, t));
 
   return (
-    <div className="max-w-[1180px]">
+    <div className="w-full">
       <div className="flex items-center gap-3 mb-4 flex-wrap">
         <div className="flex-1 min-w-0">
           <Tabs<ProductTab>
@@ -154,7 +154,7 @@ export default function ProductsPage() {
                           )}
                           <Link
                             to={`/products/${p.id}/edit`}
-                            className="font-medium text-strong max-w-[280px] truncate no-underline hover:underline"
+                            className="font-medium text-strong max-w-[520px] truncate no-underline hover:underline"
                             title={p.name}
                           >
                             {p.name}
