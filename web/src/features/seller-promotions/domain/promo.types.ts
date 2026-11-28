@@ -39,6 +39,9 @@ export interface VoucherInput {
   excludedCategoryIds: number[];
   /** Trường server đang khóa theo trạng thái (API 10.7 — `locked_fields`, snake_case); chỉ có khi đọc chi tiết. */
   lockedFields?: string[];
+  /** Mốc ISO gốc của `valid_from` / `valid_to` (chỉ khi sửa) — giữ nguyên giờ nếu ngày không đổi. */
+  validFromIso?: string;
+  validToIso?: string;
 }
 
 export interface FlashCampaign {

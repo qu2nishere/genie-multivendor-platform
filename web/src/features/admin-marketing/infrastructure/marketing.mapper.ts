@@ -40,6 +40,9 @@ const dayStart = (d: string) => `${d}T00:00:00+07:00`;
 const dayEnd = (d: string) => `${d}T23:59:59+07:00`;
 const dayOf = (iso: string) => isoDateVN(new Date(iso));
 /** Bắt đầu hôm nay → thời điểm hiện tại (API không nhận quá khứ khi tạo — 11.14). */
+/** Ngày không đổi khi sửa → gửi lại mốc ISO gốc (server khóa đổi giờ của voucher đang chạy — 11.14). */
+const keep = (day: string, iso: string | undefined, fallback: string) =>
+  iso && day && dayOf(iso) === day ? iso : fallback;
 const startOf = (d: string) => (d && d === isoDateVN() ? new Date().toISOString() : dayStart(d));
 
 export const toVoucherInputDto = (v: PlatformVoucherInput): PlatformVoucherInputDto => ({
@@ -52,8 +55,8 @@ export const toVoucherInputDto = (v: PlatformVoucherInput): PlatformVoucherInput
   usage_limit: v.usageLimit ?? 0,
   usage_per_user: v.usagePerUser ?? 1,
   budget: v.budget,
-  valid_from: startOf(v.validFrom),
-  valid_to: dayEnd(v.validTo),
+  valid_from: keep(v.validFrom, v.validFromIso, startOf(v.validFrom)),
+  valid_to: keep(v.validTo, v.validToIso, dayEnd(v.validTo)),
   scope: v.scope,
   category_ids: v.scope === 'CATEGORY' ? v.categoryIds : [],
   excluded_category_ids: v.excludedCategoryIds,
@@ -79,6 +82,8 @@ export const toVoucherInput = (d: PlatformVoucherInputDto): PlatformVoucherInput
   fundedBy: d.funded_by,
   platformSharePercent: d.platform_share_percent,
   lockedFields: d.locked_fields ?? [],
+  validFromIso: d.valid_from,
+  validToIso: d.valid_to,
 });
 
 export const toCampaign = (d: FlashCampaignDto): FlashCampaign => ({

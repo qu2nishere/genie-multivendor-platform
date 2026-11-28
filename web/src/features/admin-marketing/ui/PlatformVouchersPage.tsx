@@ -117,7 +117,14 @@ function VoucherForm({ target, onClose }: { target: FormTarget; onClose: () => v
       categories={cats.data?.map((c) => ({ id: c.id, name: c.name }))}
       saving={save.isPending}
       lockedFields={editing ? (q.data?.lockedFields ?? []) : []}
-      onSave={(v) => save.mutateAsync({ id: editing ? target.id : null, input: toInput(v) })}
+      onSave={(v) =>
+        save.mutateAsync({
+          id: editing ? target.id : null,
+          input: editing
+            ? { ...toInput(v), validFromIso: q.data?.validFromIso, validToIso: q.data?.validToIso }
+            : toInput(v),
+        })
+      }
       onClose={onClose}
     />
   );
