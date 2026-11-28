@@ -64,9 +64,10 @@ public class AdminProductModerationController {
     @GetMapping("/product-moderation")
     public ResponseEntity<PageResponse<ModerationQueueService.Row>> list(@RequestParam(required = false) String tab,
                                                                         @RequestParam(required = false) String q,
+                                                                        @RequestParam(required = false) String ai,
                                                                         @RequestParam(required = false) Integer page,
                                                                         @RequestParam(required = false) Integer size) {
-        ModerationQueueService.Page result = queue.list(tab, q, page, size);
+        ModerationQueueService.Page result = queue.list(tab, q, ai, page, size);
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
                 .body(responses.pageBody(result.items(), result.pagination(), Map.of("counts", result.counts())));
     }
