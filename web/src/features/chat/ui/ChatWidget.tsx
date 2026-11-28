@@ -11,18 +11,22 @@ import { Icon, Seal } from '@/shared/ui';
 import { useConversations } from '../application/useChat';
 import { sortConversations, totalUnread } from '../domain/chat.rules';
 import type { Conversation } from '../domain/chat.types';
-import { ConversationList, Thread } from './ChatParts';
+import { ConversationList, presenceText, Thread } from './ChatParts';
 
 const hdrBtn =
   'w-[30px] h-[30px] rounded-md border-0 bg-transparent text-inverse cursor-pointer grid place-items-center flex-none hover:bg-white/10';
 
 function Widget() {
-  const { t } = useT();
+  const { t, locale } = useT();
   const session = useStore($session);
   const authed = session.status === 'authenticated';
+  // tài khoản nội bộ chỉ xem storefront — không có chat (plan 2026-11-26 chat D5)
+  const internal =
+    session.status === 'authenticated' &&
+    session.user.roles.some((r) => r === 'STAFF' || r === 'ADMIN');
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<Conversation | null>(null);
-  const q = useConversations(authed);
+  const q = useConversations(authed && !internal);
   const items = sortConversations(q.data ?? []);
   const unread = totalUnread(items);
   useEffect(() => {
@@ -30,6 +34,7 @@ function Widget() {
   }, [open]);
   const cur = active ? (items.find((c) => c.id === active.id) ?? active) : null;
 
+  if (internal) return null;
   return (
     <div className="tr-chatdock fixed right-5 bottom-5 z-[850] font-sans">
       {open && authed && (
@@ -53,7 +58,7 @@ function Widget() {
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">{cur.shop.name}</div>
                   <div className="text-[11px] opacity-85">
-                    {t(cur.shop.online ? 'chat.online' : 'chat.offline')}
+                    {presenceText(t, locale, cur.shop.online, cur.shop.lastActiveAt)}
                   </div>
                 </div>
                 <a

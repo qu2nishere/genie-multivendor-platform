@@ -1603,16 +1603,16 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Shop vào Cài đặt → Tuỳ chọn vận hành → bật "Tự động trả lời chat".
   2. Nhập (1) Lời chào khi khách mở khung chat; (2) Tin nhắn trả lời khi shop vắng mặt (ngoài 08:00–22:00 hoặc không có nhân viên trực tuyến).
-  3. Bấm "Lưu cài đặt" → `PUT /api/v1/vendor/auto-reply`.
-  4. Khi khách mở hội thoại: hệ thống gửi lời chào (tin nhắn hệ thống đứng tên shop, không tính là phản hồi của shop khi đo tỉ lệ phản hồi).
-  5. Khi shop tạm nghỉ (UC-VND-19): tin nhắn tự động dùng `vacationMessage`.
+  3. Bấm "Lưu cài đặt" → `PATCH /api/v1/seller/settings` khối `auto_reply` (API_SPEC 10.11 — đã có từ cụm B4).
+  4. Khi khách mở hội thoại **mới** (hoặc mở lại sau ≥ 24 giờ không có tin): hệ thống gửi lời chào (tin `isAuto` đứng tên shop, không tính là phản hồi của shop khi đo tỉ lệ phản hồi).
+  5. Khi khách nhắn lúc shop vắng mặt (ngoài 08:00–22:00 giờ Việt Nam hoặc chủ shop không có kết nối nào): gửi tin vắng mặt, tối đa 1 lần / hội thoại / 60 phút. Khi shop tạm nghỉ (UC-VND-19): dùng `vacationMessage` thay tin vắng mặt.
 - **Luồng thay thế / Ngoại lệ:**
   - *Để trống cả hai nội dung mà bật công tắc:* báo lỗi yêu cầu nhập ít nhất một nội dung.
 - **Quan hệ Use Case:** Không có.
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Câu trả lời theo từ khóa (FAQ rules) thuộc bản DATN.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — cấu hình `PATCH /seller/settings` khối `auto_reply` (B4); gửi tự động trong chat: `social/chat/application/AutoReplyPolicy` + `AutoReplies` (lời chào khi mở / mở lại sau 24 giờ, tin vắng mặt ngoài 08:00–22:00 hoặc chủ shop offline tối đa 1 lần / 60 phút, tin tạm nghỉ), tin `is_auto` không tính tỉ lệ phản hồi; `vendor/shop/application/ChatResponseRateJob` 03:30. Test `AutoReplyPolicyTest`, `AutoReplyIT`, `ChatResponseRateJobIT`; chạy thật `docs/kiem-thu/kich-ban-2026-11-26-chat.md` (plan `plan/2026-11-26/server-spring/plan_chat_khach_shop.md`).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [VendorProfile](../ClassDiagram/ENTITY.md#14-vendorprofile--hồ-sơ-người-bán-shop), [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn).
 
@@ -2152,9 +2152,11 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Shop đang ngoài giờ làm việc:* Nếu shop bật trả lời tự động (`autoReplyEnabled`), hệ thống tự động sinh 1 tin nhắn trả lời với nội dung `autoReplyOffline` gửi lại cho khách.
 - **Quan hệ Use Case:** được mở rộng bởi `UC-SOC-02` (điểm «Gửi tin nhắn»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
-  - Sử dụng Redis Pub/Sub làm message bus để đảm bảo chat hoạt động thông suốt kể cả khi hệ thống chạy nhiều cụm server (Horizontal Scaling).
+  - Sử dụng Redis Pub/Sub làm message bus để đảm bảo chat hoạt động thông suốt kể cả khi hệ thống chạy nhiều cụm server (Horizontal Scaling) — **bản DATN**; TLCN chạy một instance nên dùng simple broker STOMP trong bộ nhớ (bước 7–8).
+  - Gửi qua WebSocket `/app/chat.send` hoặc REST `POST …/messages` (dự phòng khi mất kết nối) — cùng một luật nghiệp vụ; `client_message_id` chống gửi trùng trong 24 giờ. Tối đa 20 tin / 10 giây / người, chữ ≤ 2.000 ký tự.
+  - Tài khoản nhân viên / Admin không nhắn tin với shop; không nhắn tin với shop của chính mình (`GNE-SOC-4096`).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — `social/chat`: REST `/me|seller/conversations/**` (API 8.1–8.5) + STOMP `/app/chat.send|read|typing` → `/user/queue/chat` (simple broker một instance — Redis Pub/Sub là phần DATN); khóa dòng hội thoại, chống gửi trùng `client_message_id`, 20 tin / 10 giây, thông báo `CHAT_MESSAGE` khi người nhận offline, badge Seller `unread_chats`; web nối thật cờ `chat`. Test `ChatConversationIT`, `ChatStompIT`, `ChatSecurityIT`; chạy thật 15 / 15 ca, p95 235 ms với 50 cặp (`docs/kiem-thu/kich-ban-2026-11-26-chat.md`).
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Conversation](../ClassDiagram/ENTITY.md#111-conversation--cuộc-hội-thoại), [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn).
 
@@ -2172,7 +2174,8 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   2. *Ảnh:* chọn ảnh (≤ 5 MB) → tải lên Silo qua Presigned URL → gửi `attachmentUrl`, `type = IMAGE`.
   3. *Thẻ đơn hàng:* người bán chọn đơn của khách → gửi thẻ mã đơn, trạng thái, mã vận đơn (`ORDER_CARD`, `content` JSON).
   4. Bấm thẻ sản phẩm mở trang sản phẩm; bấm thẻ đơn mở trang theo dõi đơn.
-  5. Trạng thái tin nhắn: "Đang gửi…" → "Đã nhận" (WebSocket ack) → "Đã xem" (sự kiện `CHAT_READ_RECEIPT` khi bên kia mở hội thoại, cập nhật `readAt`).
+  5. Trạng thái tin nhắn: "Đang gửi…" (chỉ phía client) → "Đã nhận" (server lưu xong, gói `MESSAGE_CREATED` trả về người gửi) → "Đã xem" (sự kiện `MESSAGE_SEEN` khi bên kia mở hội thoại — suy từ `messages.isRead`, không có cột `readAt`).
+  6. Chọn đơn để gửi thẻ: `GET …/conversations/{id}/orders` (API_SPEC 8.6) — chỉ đơn giữa đúng hai bên của hội thoại.
 - **Luồng thay thế / Ngoại lệ:**
   - *Ảnh vượt dung lượng / sai định dạng:* báo lỗi, không gửi.
   - *Khách chưa đăng nhập bấm Chat:* yêu cầu đăng nhập ("Bạn cần đăng nhập để có thể nhắn tin trực tiếp với Shop").
@@ -2180,7 +2183,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
   - Khung chat có **câu hỏi gợi ý nhanh** cố định ("Sản phẩm còn hàng không?", "Khi nào giao tới?", "Có giảm thêm không ạ?", "Cho mình xem ảnh thật") — bấm là gửi.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+   - *Hiện trạng:* **Đã triển khai (2026-11-27)** — ảnh vào bucket riêng tư `chat-media` (`UploadPurpose.CHAT_IMAGE`, link ký 10 phút), thẻ sản phẩm (biến thể, thông tin hiện tại, `is_available`), thẻ đơn + ô chọn đơn `GET …/conversations/{id}/orders` (API 8.6) qua cổng `ChatProductLookup` / `ChatOrderLookup`; trạng thái Đang gửi → Đã nhận → Đã xem. Test `ChatCardsIT`; chạy thật `docs/kiem-thu/kich-ban-2026-11-26-chat.md`.
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Message](../ClassDiagram/ENTITY.md#112-message--tin-nhắn), [Conversation](../ClassDiagram/ENTITY.md#111-conversation--cuộc-hội-thoại), [ProductVariant](../ClassDiagram/ENTITY.md#23-productvariant--biến-thể-sản-phẩm-sku), [Order](../ClassDiagram/ENTITY.md#52-order--đơn-hàng-theo-từng-shop).
 
@@ -2478,8 +2481,12 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   8. Loại cảnh báo bảo mật `NEW_DEVICE_LOGIN` (UC-AUTH-02).
   9. **Chuông Admin Console** dùng bảng riêng `admin_notifications` (hộp thư chung của đội vận hành, không gắn `userId`): `NEW_ORDER` khi đơn thanh toán thành công (UC-PAY-03), `USER_APPROVAL` khi shop nộp hồ sơ KYC (UC-VND-02), `WITHDRAW_REQUEST` khi shop yêu cầu rút tiền (UC-ADM-04), `ESCROW_DISCREPANCY` khi lệch số dư ví / sổ cái, `SYSTEM_ALERT`; mỗi bản ghi có `referenceUrl` tới trang xử lý; nhân viên mở → `AdminNotification.markRead()`; badge = số chưa đọc (`GET /admin/notifications/unread-count`).
 - **Quan hệ Use Case:** Không có.
+- **Ràng buộc nghiệp vụ & Kỹ thuật:**
+  - TLCN chạy **một instance** backend: bước 3–4 dùng simple broker STOMP trong bộ nhớ (không qua Redis Pub/Sub); Redis Pub/Sub cho nhiều instance thuộc bản DATN. Mất kết nối WebSocket thì thông báo vẫn nằm trong hộp thư (`GET /me/notifications`).
+  - Thông báo được ghi **sau khi** nghiệp vụ gốc commit, trong transaction riêng — lỗi thông báo không làm hỏng nghiệp vụ gốc.
+  - Nhóm hiển thị (tab) suy từ `type` (API 3.12); tin nhắn chat khi người nhận không trực tuyến dùng loại `CHAT_MESSAGE` (một thông báo chưa đọc / hội thoại).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đã triển khai (2026-11-27)** — backend + test + web nối API thật + chạy thật; plan `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện). Nguồn đã nối: đăng nhập thiết bị mới, kết quả / hồ sơ KYC, lệch số dư Điểm, đặt đơn COD; đơn đang giao / thanh toán / ví do C3, C4, C9 gọi `NotificationFacade`.
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân), [AdminNotification](../ClassDiagram/ENTITY.md#105-adminnotification--thông-báo-nội-bộ-cho-quản-trị-viên).
 
@@ -2515,15 +2522,16 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Một dòng `platform_notifications` (fan-out on read); trạng thái đã đọc ghi khi người dùng mở.
 - **Luồng sự kiện chính:**
   1. Admin nhập tiêu đề ("Siêu sale 9.9 giảm tới 50%…"), nội dung (rich-text, chèn ảnh / liên kết), ảnh banner (Silo), đối tượng (`ALL`, `CUSTOMER`, `VENDOR`, `SPECIFIC_USERS`).
-  2. Bấm "Phát thông báo" → lưu `platform_notifications`, chốt `reachCount` = số người thuộc đối tượng.
+  2. Bấm "Phát thông báo" → lưu `platform_notifications`, chốt `reachCount` = số người thuộc đối tượng **tại thời điểm phát** (`dispatchedAt`); người đăng ký sau lúc phát không nhận thông báo cũ. Đối tượng `ALL` = khách + shop đang hoạt động (nhân viên / Admin không nhận).
   3. Phát sự kiện `PLATFORM_NOTIFICATION` qua WebSocket tới người dùng đang trực tuyến thuộc đối tượng.
   4. Người dùng mở thông báo → ghi `user_platform_notification_reads` (mỗi người 1 lần).
   5. Admin xem thống kê: số đã gửi, đã đọc, tỉ lệ đọc (`readCount / reachCount`).
 - **Luồng thay thế / Ngoại lệ:**
-  - *Hẹn giờ phát:* lưu nháp kèm thời điểm, Cron phát đúng giờ.
+  - *Hẹn giờ phát:* lưu kèm thời điểm (`dispatchedAt` để trống), Cron (30 giây / lần) phát đúng giờ; chỉ sửa được khi chưa phát (`GNE-NOT-4091`).
+  - *Phát nhầm:* Admin xóa thông báo (kể cả đã phát) → gỡ khỏi hộp thư mọi người; mọi thao tác ghi `system_logs`.
 - **Quan hệ Use Case:** `<<include>>` Tải tệp lên Silo (Presigned URL) — tác nhân phụ: `ACT-MIN` Silo S3 Storage.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* **Đã triển khai (2026-11-27)** — backend + test + web nối API thật + chạy thật (13 / 13 ca); plan `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện), migration `V27`.
   - *Kế hoạch:* Sprint 8 (tuần 15–16) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [PlatformNotification](../ClassDiagram/ENTITY.md#102-platformnotification--thông-báo-phát-toàn-sàn), [UserPlatformNotificationRead](../ClassDiagram/ENTITY.md#103-userplatformnotificationread--đánh-dấu-đã-đọc-thông-báo-sàn).
 

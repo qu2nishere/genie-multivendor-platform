@@ -2,16 +2,23 @@
 // 8.2 "mở hội thoại"). Mock: 3 hội thoại của prototype vendor/Chat.jsx; tin của shop "Đã nhận" rồi "Đã xem"
 // sau ~1,2 s; số chưa đọc ghi vào kho dùng chung để huy hiệu nav + Tổng quan đổi theo.
 import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
 import { sellerChatUnreadStore } from '@/shared/api/mock/seller';
 import { productImg } from '@/shared/lib/assets';
 import type {
   ChatMessage,
+  MessagePage,
   MessageType,
   OutgoingMessage,
   SellerConversation,
 } from '../domain/chat.types';
-import { toMessage, type MessageDto } from './chat.api';
+import {
+  CHAT_MOCKED,
+  fetchMessagePage,
+  outgoingBody,
+  toMessage,
+  type MessageDto,
+} from './chat.api';
 
 interface CustomerDto {
   type: 'CUSTOMER';
@@ -151,7 +158,7 @@ const settle = (d: MessageDto): MessageDto =>
 const preview = (d: MessageDto) => (d.type === 'TEXT' ? d.text : null);
 
 export async function listSellerConversations(): Promise<SellerConversation[]> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     await mockDelay(150);
     return db.get().map((t) => {
       const last = t.messages.at(-1);
@@ -170,17 +177,18 @@ export async function listSellerConversations(): Promise<SellerConversation[]> {
   ).map(toConversation);
 }
 
-export async function listSellerMessages(id: number): Promise<ChatMessage[]> {
-  if (USE_MOCK) {
+/** 8.3 phía shop — một trang tin (cũ → mới). */
+export async function listSellerMessagesPage(
+  id: number,
+  before: string | null,
+): Promise<MessagePage> {
+  if (CHAT_MOCKED) {
     await mockDelay(120);
     const t = db.get().find((x) => x.id === id);
     if (!t) mockFail('GNE-SOC-4031');
-    return t.messages.map(settle).map(toMessage);
+    return { items: t.messages.map(settle).map(toMessage), nextCursor: null };
   }
-  const r = await api.get<MessageDto[]>(`/seller/conversations/${id}/messages`, {
-    query: { limit: 30 },
-  });
-  return r.map(toMessage).reverse();
+  return fetchMessagePage(`/seller/conversations/${id}/messages`, before);
 }
 
 export async function sendSellerMessage(
@@ -189,7 +197,7 @@ export async function sendSellerMessage(
   clientId: string,
   card?: { order?: { id: number; code: string } },
 ): Promise<ChatMessage> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     await mockDelay(220);
     const all = db.get();
     const t = all.find((x) => x.id === id);
@@ -206,24 +214,13 @@ export async function sendSellerMessage(
     save(all.map((x) => (x.id === id ? { ...x, messages: [...x.messages, dto] } : x)));
     return toMessage(dto);
   }
-  const body =
-    out.type === 'TEXT'
-      ? { type: 'TEXT', text: out.text }
-      : out.type === 'IMAGE'
-        ? { type: 'IMAGE', image_object_key: out.imageObjectKey }
-        : out.type === 'PRODUCT_CARD'
-          ? { type: 'PRODUCT_CARD', product_id: out.productId }
-          : { type: 'ORDER_CARD', order_id: out.orderId };
   return toMessage(
-    await api.post<MessageDto>(`/seller/conversations/${id}/messages`, {
-      ...body,
-      client_message_id: clientId,
-    }),
+    await api.post<MessageDto>(`/seller/conversations/${id}/messages`, outgoingBody(out, clientId)),
   );
 }
 
 export async function markSellerRead(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     save(db.get().map((x) => (x.id === id ? { ...x, unread: 0 } : x)));
     return;
   }

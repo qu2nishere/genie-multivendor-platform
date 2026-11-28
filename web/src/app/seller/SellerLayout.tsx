@@ -5,6 +5,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { signOut } from '@/features/auth';
+import { useSellerChatBadgeSync } from '@/features/chat';
 import {
   kycGroup,
   navBadge,
@@ -145,6 +146,7 @@ function LangSwitch() {
 }
 
 export function SellerLayout({ ctx, children }: { ctx: SellerContext; children: ReactNode }) {
+  useSellerChatBadgeSync(); // badge nav Chat đổi ngay khi có tin mới (plan 2026-11-26 chat M06.04)
   const { t } = useT();
   const { pathname } = useLocation();
   const section = sectionOf(pathname);

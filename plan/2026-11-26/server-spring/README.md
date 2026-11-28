@@ -61,7 +61,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 |---|---|
 | **Migration** | Một migration chung `V27__b5_b6_notification_chat_voucher.sql` (task **N01**, nhánh riêng, merge vào `develop` trước — giống tiền lệ `V25` chung của C1 / C2). Trước khi mở PR: `git fetch && git log origin/develop --oneline -- server-spring/src/main/resources/db/migration`; nếu C1 / C2 đã chiếm `V27` thì đổi thành số kế tiếp và **chép đủ** danh sách `ck_system_logs_action_type` của migration mới nhất. Sau khi merge không sửa; cần thêm → số kế tiếp |
 | `common/error/ErrorCode.java` + `web/src/shared/api/error-codes.ts` + `errors.GNE-*` (vi / en) | [1]: `GNE-NOT-4091`, `GNE-NOT-4221` · [2]: `GNE-SOC-4031`, `GNE-SOC-4096` (mới) · [3]: `GNE-VCH-4041`, `4091`, `4092`, `4093`, `4094` (mới), `4221` (đã có trong API 15, chưa có trong code). Thêm đúng khối miền, cùng commit với API 15 |
-| `common/storage/UploadPurpose.java` | [1]: `PLATFORM_NOTICE_IMAGE` (`content-assets`, quyền `MANAGE_PLATFORM_NOTIFICATION`) · [2]: `CHAT_IMAGE` (`chat-media` riêng tư) — LUU_TRU 5.4 đã đặt sẵn tên |
+| `common/storage/UploadPurpose.java` | [1]: `NOTIFICATION_IMAGE` (`content-assets`, quyền `MANAGE_PLATFORM_NOTIFICATION`) · [2]: `CHAT_IMAGE` (`chat-media` riêng tư) — LUU_TRU 5.4 đã đặt sẵn tên |
 | `common/audit/AuditAction.java` + `category()` | Giá trị mới chỉ thêm trong `V27`: `PLATFORM_NOTIFICATION_PUBLISHED / UPDATED / DELETED` ([1]), `VOUCHER_CREATED / UPDATED / DISABLED / DELETED` ([3]) — cả hai nhóm `CONFIG` |
 | `common/realtime/UserChannel` | [1] thêm hằng `NOTIFICATIONS = "/queue/notifications"`; [2] thêm `CHAT = "/queue/chat"` — chỉ thêm hằng, không đổi chữ ký |
 | `web/src/shared/realtime/` | [1] N05 tách `accountChannel` thành hub dùng chung (`realtimeHub.ts`) + thêm `send()`; [2] chỉ **dùng** hub, không tạo `StompConnection` thứ hai |
@@ -74,7 +74,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 | Số | File | Plan | Nội dung |
 |---|---|---|---|
 | `V25` | `V25__listing_and_checkout_schema.sql` | C1 + C2 (đã merge) | — |
-| `V27` (tạm — đổi theo thứ tự merge) | `V27__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
+| `V27` (đã chốt — PR #112) | `V27__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
 
 ## 6. Quy ước chung (trích TS 13, 14 — không lặp lại ở từng plan)
 
@@ -90,8 +90,8 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 
 | Thứ tự | Plan | Use case phải tick khi xong | Phụ trách | Xong plan |
 |:---:|---|---|---|:---:|
-| 1 | [1] Thông báo & realtime | `UC-NOT-01`, `UC-NOT-05` | Nguyễn Ngọc Thiện | ☐ |
-| 2 | [2] Chat Khách – Shop | `UC-SOC-01`, `UC-SOC-02`, `UC-VND-06` | Nguyễn Ngọc Thiện | ☐ |
+| 1 | [1] Thông báo & realtime | `UC-NOT-01`, `UC-NOT-05` — ✅ 2026-11-27 (chạy thật 13 / 13) | Nguyễn Ngọc Thiện | ☑ |
+| 2 | [2] Chat Khách – Shop | `UC-SOC-01`, `UC-SOC-02`, `UC-VND-06` — ✅ 2026-11-27 (chạy thật 15 / 15, 50 cặp p95 235 ms) | Nguyễn Ngọc Thiện | ☑ |
 | 3 | [3] Voucher B5 | `UC-PRO-01`, `UC-PRO-02`, `UC-PRO-03` — ✅ 2026-11-28 (chạy thật 17 / 17) | Nguyễn Ngọc Thiện | ☑ |
 
 Khi cả 3 dòng `☑`: tổng quan checklist dự kiến **Đã triển khai +8** (24 → 32 theo số 2026-11-26; đếm lại từ các dòng UC lúc đóng plan), phân hệ 07: +3, 08: +2, 05: +1, 10: +2.

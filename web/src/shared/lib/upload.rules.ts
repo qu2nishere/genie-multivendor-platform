@@ -33,7 +33,8 @@ export const UPLOAD_LIMITS: Record<UploadPurpose, { mime: string[]; maxBytes: nu
   REVIEW_IMAGE: { mime: ['image/jpeg', 'image/png'], maxBytes: 5 * MB },
   REVIEW_VIDEO: { mime: ['video/mp4'], maxBytes: 30 * MB },
   REFUND_EVIDENCE: { mime: ['image/jpeg', 'image/png', 'video/mp4'], maxBytes: 10 * MB },
-  CHAT_IMAGE: { mime: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], maxBytes: 5 * MB },
+  // API_SPEC 4.1 — server chỉ nhận JPEG / PNG / WebP (plan 2026-11-26 chat D7)
+  CHAT_IMAGE: { mime: ['image/jpeg', 'image/png', 'image/webp'], maxBytes: 5 * MB },
   SHOP_LOGO: { mime: ['image/jpeg', 'image/png'], maxBytes: 1 * MB },
   SHOP_COVER: { mime: ['image/jpeg', 'image/png'], maxBytes: 2 * MB },
   PRODUCT_IMAGE: { mime: MEDIA, maxBytes: 5 * MB },
