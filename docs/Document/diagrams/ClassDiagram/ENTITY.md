@@ -6139,7 +6139,7 @@ public class PlatformNotification {
     @Column(columnDefinition = "jsonb")
     private String recipientUserIdsJson;      // NULLABLE — Mảng users.id khi target = SPECIFIC_USERS — UC-NOT-05 (TLCN v1.3)
 
-    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm ĐÃ PHÁT thật (phát ngay = lúc tạo; hẹn giờ = lúc cron phát); NULL = chưa phát (đang hẹn giờ). Hộp thư người dùng chỉ đọc dòng đã phát — UC-NOT-05 (V26, plan 2026-11-26 thông báo D2)
+    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm ĐÃ PHÁT thật (phát ngay = lúc tạo; hẹn giờ = lúc cron phát); NULL = chưa phát (đang hẹn giờ). Hộp thư người dùng chỉ đọc dòng đã phát — UC-NOT-05 (V27, plan 2026-11-26 thông báo D2)
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 
@@ -6563,7 +6563,7 @@ public class Message {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isAuto = false;           // Tin tự động của shop (lời chào / vắng mặt / tạm nghỉ — UC-VND-06): đứng tên shop, KHÔNG tính vào tỉ lệ phản hồi (V26, plan 2026-11-26 chat D11)
+    private Boolean isAuto = false;           // Tin tự động của shop (lời chào / vắng mặt / tạm nghỉ — UC-VND-06): đứng tên shop, KHÔNG tính vào tỉ lệ phản hồi (V27, plan 2026-11-26 chat D11)
     // Trạng thái hiển thị (API 8.3) suy ra, không lưu: tin đã lưu = DELIVERED, isRead = true = SEEN (SENT chỉ có phía client) — plan chat D3
 
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
@@ -6780,13 +6780,13 @@ Mọi lần đổi ghi `SystemLog COMMISSION_UPDATED` (`reference_id = "DEFAULT"
 | `escrow_ledgers` | `(status, release_eligible_at)` partial `WHERE status = 'HELD'` | UC-PAY-07 cron giải ngân |
 | `payment_transactions` | `UNIQUE (idempotency_key)`, `UNIQUE (gateway_transaction_id)` | UC-PAY-03 IPN VNPay / webhook SePay idempotent |
 | `notifications` | `(user_id, is_read, created_at DESC)` | UC-NOT-01 hộp thông báo |
-| `notifications` | `uk_notifications_chat_unread` UNIQUE `(user_id, reference_id)` partial `WHERE type = 'CHAT_MESSAGE' AND is_read = FALSE` *(V26)* | UC-SOC-01 một thông báo chat chưa đọc / hội thoại (`INSERT … ON CONFLICT`) |
-| `platform_notifications` | `idx_platform_notifications_dispatched (dispatched_at DESC)` partial `WHERE dispatched_at IS NOT NULL`, `idx_platform_notifications_pending (send_at)` partial `WHERE dispatched_at IS NULL` *(V26)* | UC-NOT-05 hộp thư (fan-out on read), cron phát hẹn giờ |
-| `user_platform_notification_reads` | `idx_user_platform_notification_reads_notification (platform_notification_id)` *(V26)* | UC-NOT-05 đếm lượt đọc (`readCount`) |
-| `admin_notifications` | `idx_admin_notifications_read_created (is_read, created_at DESC)` *(V26)* | UC-NOT-01 chuông Admin Console |
+| `notifications` | `uk_notifications_chat_unread` UNIQUE `(user_id, reference_id)` partial `WHERE type = 'CHAT_MESSAGE' AND is_read = FALSE` *(V27)* | UC-SOC-01 một thông báo chat chưa đọc / hội thoại (`INSERT … ON CONFLICT`) |
+| `platform_notifications` | `idx_platform_notifications_dispatched (dispatched_at DESC)` partial `WHERE dispatched_at IS NOT NULL`, `idx_platform_notifications_pending (send_at)` partial `WHERE dispatched_at IS NULL` *(V27)* | UC-NOT-05 hộp thư (fan-out on read), cron phát hẹn giờ |
+| `user_platform_notification_reads` | `idx_user_platform_notification_reads_notification (platform_notification_id)` *(V27)* | UC-NOT-05 đếm lượt đọc (`readCount`) |
+| `admin_notifications` | `idx_admin_notifications_read_created (is_read, created_at DESC)` *(V27)* | UC-NOT-01 chuông Admin Console |
 | `messages` | `(conversation_id, created_at DESC)` | UC-SOC-01 tải lịch sử chat |
-| `conversations` | `idx_conversations_customer_last (customer_id, last_message_at DESC)`, `idx_conversations_vendor_last (vendor_id, last_message_at DESC)` *(V26)* | UC-SOC-01 hộp thư chat hai phía |
-| `vouchers` | `idx_vouchers_vendor_valid_to (vendor_id, valid_to DESC)` partial `WHERE vendor_id IS NOT NULL`, `idx_vouchers_type_valid_to (type, valid_to DESC)` *(V26)* | UC-PRO-01 / UC-PRO-02 danh sách quản lý, UC-PRO-03 voucher công khai |
+| `conversations` | `idx_conversations_customer_last (customer_id, last_message_at DESC)`, `idx_conversations_vendor_last (vendor_id, last_message_at DESC)` *(V27)* | UC-SOC-01 hộp thư chat hai phía |
+| `vouchers` | `idx_vouchers_vendor_valid_to (vendor_id, valid_to DESC)` partial `WHERE vendor_id IS NOT NULL`, `idx_vouchers_type_valid_to (type, valid_to DESC)` *(V27)* | UC-PRO-01 / UC-PRO-02 danh sách quản lý, UC-PRO-03 voucher công khai |
 | `product_reviews` | `(vendor_id, created_at DESC)` + biểu thức `((aspect_sentiment_json ->> 'overall'))` | UC-AI-07 / UC-VND-08 tỉ lệ cảm xúc theo shop, UC-SOC-05 ưu tiên đánh giá tiêu cực |
 | `system_logs` | `(created_at, action_type)` | UC-ADM-03 tra cứu kiểm toán |
 | `users` | `uk_users_email_lower` UNIQUE `(lower(email))` *(V14)* | UC-AUTH-01/02 email không phân biệt hoa thường |
@@ -6943,7 +6943,7 @@ enum NotificationType {                                                         
     ORDER_STATUS_CHANGED, KYC_APPROVED, KYC_REJECTED, PAYMENT_SUCCESS, PAYMENT_FAILED, ESCROW_RELEASED,
     WALLET_CREDITED, SYSTEM_ALERT, REFUND_PROCESSED, NEW_PLATFORM_VOUCHER, NEW_VENDOR_VOUCHER, NEW_ORDER_FOR_VENDOR,
     FLASH_SALE_REMINDER, NEW_DEVICE_LOGIN, PRODUCT_APPROVED, PRODUCT_REJECTED,  // cảnh báo đăng nhập thiết bị lạ (UC-AUTH-02), kết quả duyệt SP (UC-CAT-12/13)
-    CHAT_MESSAGE                                                                // tin nhắn mới khi người nhận offline — tab "Chat" (UC-SOC-01, V26; một thông báo chưa đọc / hội thoại)
+    CHAT_MESSAGE                                                                // tin nhắn mới khi người nhận offline — tab "Chat" (UC-SOC-01, V27; một thông báo chưa đọc / hội thoại)
 }
 // Nhóm hiển thị (API 3.12 category, plan 2026-11-26 thông báo D6) — NotificationCategory.of(type), không lưu CSDL:
 //   ORDER = ORDER_STATUS_CHANGED, PAYMENT_SUCCESS, PAYMENT_FAILED, REFUND_PROCESSED, NEW_ORDER_FOR_VENDOR, ESCROW_RELEASED, WALLET_CREDITED
@@ -6972,8 +6972,8 @@ enum AuditAction {                                                              
     BANNER_CHANGED,                                          // CHỈ CÒN cho bản ghi cũ (V18: tạo / sửa / bật / tắt / xóa gộp một mã, details.op) — code mới ghi 5 mã BANNER_* bên dưới
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED, // Mở shop & KYC (V20, plan 2026-11-16 D3): yêu cầu bổ sung, đưa lại hàng chờ, nhân viên mở giấy tờ (NFR-07), đổi / xóa tài khoản nhận tiền
     BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED, // Banner theo động từ cụ thể (V24, plan 2026-11-22 nhật ký banner N1) — details.changes {trường: {from, to}} khi sửa
-    PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED, // Thông báo sàn (V26, UC-NOT-05)
-    VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED                    // Voucher sàn (V26, UC-PRO-02) — details.changes khi sửa
+    PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED, // Thông báo sàn (V27, UC-NOT-05)
+    VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED                    // Voucher sàn (V27, UC-PRO-02) — details.changes khi sửa
 }
 ```
 
@@ -7226,14 +7226,14 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
 | 48 | `RefundRequest` | `status` | `RefundStatus` | 9 | Sơ đồ 6 |
 | 49 | `RefundEvidence` | `mediaType` | `MediaType` | 2 | Sơ đồ 6 |
 | 50 | `ReviewReport` | `reason` | `ReviewReportReason` | 3 | Sơ đồ 7 |
-| 51 | `Notification` | `type` | `NotificationType` | 17 (+ `CHAT_MESSAGE`, V26) | Sơ đồ 10 |
+| 51 | `Notification` | `type` | `NotificationType` | 17 (+ `CHAT_MESSAGE`, V27) | Sơ đồ 10 |
 | 52 | `Notification` | `channel` | `NotificationChannel` | 2 | Sơ đồ 10 |
 | 53 | `Notification` | `deliveryStatus` | `NotificationDeliveryStatus` | 4 | Sơ đồ 10 |
 | 54 | `PlatformNotification` | `target` | `PlatformNotificationTarget` | 4 | Sơ đồ 10 |
 | 55 | `HomeBanner` | `position` | `BannerPosition` | 6 | Sơ đồ 10 |
 | 56 | `AdminNotification` | `type` | `AdminNotificationType` | 5 | Sơ đồ 10 |
 | 57 | `Message` | `type` | `MessageType` | 4 | Sơ đồ 7 |
-| 58 | `SystemLog` | `actionType` | `AuditAction` | 47 (22 + 8 AUTH V14 + 1 V18 + 4 V20 + 5 V24 + 7 V26) | Sơ đồ 10 |
+| 58 | `SystemLog` | `actionType` | `AuditAction` | 47 (22 + 8 AUTH V14 + 1 V18 + 4 V20 + 5 V24 + 7 V27) | Sơ đồ 10 |
 | 59 | `Address` | `label` | `AddressLabel` | 2 | Sơ đồ 1 |
 | 60 | `FlashSaleItem` | `status` | `FlashSaleItemStatus` | 3 | Sơ đồ 9 |
 | 61 | `CodRemittance` | `carrierType` | `CarrierType` | 5 | Sơ đồ 5 |
@@ -7983,10 +7983,10 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
 
 ## CHANGELOG
 
-### TLCN v1.6 — 2026-11-26 (cụm B5 Voucher, B6 Chat & realtime, UC-NOT-05 — `V26`)
+### TLCN v1.6 — 2026-11-26 (cụm B5 Voucher, B6 Chat & realtime, UC-NOT-05 — `V27`)
 - Nhóm 10: `PlatformNotification` thêm `dispatchedAt` + `isDispatched()`, `isScheduled()`, `dispatch()`; `NotificationType` thêm `CHAT_MESSAGE` (16 → 17) và bảng nhóm hiển thị `category`.
 - Nhóm 11: `Message` thêm `isAuto` (tin tự động của shop); trạng thái `DELIVERED / SEEN` suy từ `isRead`.
-- Phụ lục A: `AuditAction` + `PLATFORM_NOTIFICATION_PUBLISHED / UPDATED / DELETED`, `VOUCHER_CREATED / UPDATED / DISABLED / DELETED` (nhóm CONFIG). Mục 13.1: 9 index của `V26`. Plan `plan/2026-11-26/server-spring/` (README mục 5).
+- Phụ lục A: `AuditAction` + `PLATFORM_NOTIFICATION_PUBLISHED / UPDATED / DELETED`, `VOUCHER_CREATED / UPDATED / DISABLED / DELETED` (nhóm CONFIG). Mục 13.1: 9 index của `V27`. Plan `plan/2026-11-26/server-spring/` (README mục 5).
 
 ### TLCN v1.5 — 2026-11-18 (Mở shop & KYC — `V20`)
 - Nhóm 1: `VendorProfile` thêm 9 cột (`shopNameChangedAt`, `contactPhone`, `contactEmail`, `kycDocumentsMetaJson`, `kycBiometricConsent`, `kycSupplementDocumentsJson`, `kycSupplementDeadlineAt`, `kycManualReviewRequestedAt`, `pickupPhone`) và 17 phương thức (`register`, `saveKycDraft`, `attachKycDocuments`, `requestManualReview`, `requeueForReview`, `expireSupplement`, `renameShop`, `updatePickup`, `setPayoutAccount`, `clearPayoutAccount`…); `submitKyc` / `approveKyc` / `rejectKyc` siết trạng thái nguồn; `requestSupplement` nhận danh sách giấy tờ + hạn 7 ngày. Ảnh giấy tờ (`idFrontUrl`…) lưu **khóa đối tượng đã mã hóa AES-256-GCM** (`kyc-dossiers/vendor/{id}/…enc`), không phải URL.
