@@ -14,6 +14,7 @@ import {
   stockOf,
   stockState,
   variantLabel,
+  selectedImage,
 } from './product.rules';
 import type { ProductSummary, VariantGroup } from './product.types';
 
@@ -122,5 +123,26 @@ describe('product.rules', () => {
     expect(skuOf(p, { 'Màu sắc': 1, 'Phiên bản': 1 })).toBe(111);
     expect(skuOf(p, { 'Màu sắc': 1, 'Phiên bản': null })).toBeNull();
     expect(skuOf(p, { 'Màu sắc': 2, 'Phiên bản': 0 })).toBeNull();
+  });
+});
+
+describe('ảnh theo phân loại đang chọn', () => {
+  const groups: VariantGroup[] = [
+    {
+      name: 'Màu sắc',
+      controlsStock: true,
+      options: [
+        { label: 'Đỏ', priceDelta: 0, image: 'https://cdn/do.webp' },
+        { label: 'Đen', priceDelta: 0, image: null },
+      ],
+    },
+    { name: 'Dung lượng', controlsStock: false, options: [{ label: '128 GB', priceDelta: 0 }] },
+  ];
+  it('chọn màu có ảnh → ảnh của màu đó', () => {
+    expect(selectedImage(groups, { 'Màu sắc': 0, 'Dung lượng': 0 })).toBe('https://cdn/do.webp');
+  });
+  it('màu không có ảnh / chưa chọn → null', () => {
+    expect(selectedImage(groups, { 'Màu sắc': 1 })).toBeNull();
+    expect(selectedImage(groups, {})).toBeNull();
   });
 });

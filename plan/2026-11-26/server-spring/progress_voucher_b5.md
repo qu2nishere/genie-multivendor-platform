@@ -65,7 +65,7 @@
 
 ## V00 — Chuẩn bị
 
-- [ ] **V00.01** Kiểm danh tính git; kiểm `V26` (plan [1] N01) đã có trên `develop`
+- [ ] **V00.01** Kiểm danh tính git; kiểm `V27` (plan [1] N01) đã có trên `develop`
 - [ ] **V00.02** Chốt D1–D22 vào progress.
 - [ ] **V00.03** Tạo nhánh `feature/voucher-management` từ `develop` mới nhất.
 - [ ] **V00.04** Đọc màn mock

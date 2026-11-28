@@ -308,7 +308,7 @@ public class Message {
 
     @Builder.Default
     @Column(nullable = false)
-    private Boolean isAuto = false;           // Tin tự động của shop (UC-VND-06), không tính tỉ lệ phản hồi (V26)
+    private Boolean isAuto = false;           // Tin tự động của shop (UC-VND-06), không tính tỉ lệ phản hồi (V27)
 
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.

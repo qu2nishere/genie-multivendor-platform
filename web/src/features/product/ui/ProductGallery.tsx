@@ -1,6 +1,8 @@
 // Thư viện ảnh sản phẩm + Lightbox (prototype ProductDetail.jsx .tr-gallery, Lightbox) — plan G08.24.
 // Ảnh chính SSR với fetchpriority=high (G08.51); bấm ảnh mở lightbox: ←/→ đổi ảnh, Esc đóng,
-// bẫy focus, trả focus về ảnh chính. Island client:idle.
+// bẫy focus, trả focus về ảnh chính. Island client:idle. Chọn phân loại có ảnh (vd màu Đỏ) ở khối mua → ảnh lớn
+// đổi sang ảnh của phân loại đó (nghe $selection); bấm một ảnh nhỏ thì quay về thư viện ảnh.
+import { useStore } from '@nanostores/react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap';
@@ -8,10 +10,15 @@ import { useScrollLock } from '@/shared/hooks/useScrollLock';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { Icon } from '@/shared/ui';
+import { $selection } from '../application/selection.store';
+import { selectedImage } from '../domain/product.rules';
+import type { VariantGroup } from '../domain/product.types';
 
 export interface ProductGalleryProps {
   images: string[];
   title: string;
+  /** Nhóm phân loại (ảnh theo lựa chọn) — có thì ảnh lớn đổi theo lựa chọn ở khối mua. */
+  variantGroups?: VariantGroup[];
 }
 
 const LB_BTN =
@@ -106,11 +113,20 @@ function Lightbox({
   );
 }
 
-export default function ProductGallery({ images, title }: ProductGalleryProps) {
+export default function ProductGallery({ images, title, variantGroups = [] }: ProductGalleryProps) {
   const { t } = useT();
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
   const main = useRef<HTMLButtonElement>(null);
+  const sel = useStore($selection);
+  const picked = selectedImage(variantGroups, sel);
+  // bấm ảnh nhỏ khi đang xem ảnh phân loại → ẩn ảnh phân loại đó cho tới khi đổi lựa chọn
+  const [dismissed, setDismissed] = useState<string | null>(null);
+  // đổi lựa chọn (kể cả chọn lại đúng màu cũ) → hiện lại ảnh phân loại
+  useEffect(() => setDismissed(null), [sel]);
+  const variantImg = picked && picked !== dismissed ? picked : null;
+  const shown = variantImg ? [variantImg, ...images] : images;
+  const current = variantImg ?? images[active];
 
   return (
     <>
@@ -118,16 +134,16 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
         ref={main}
         type="button"
         className="tr-gallery block aspect-square w-full cursor-zoom-in overflow-hidden rounded-md border-0 bg-gray-100 p-0"
-        onClick={() => images.length > 0 && setOpen(true)}
+        onClick={() => shown.length > 0 && setOpen(true)}
         aria-label={t('product.gallery.zoom', { title })}
       >
-        {images[active] ? (
+        {current ? (
           <img
-            src={images[active]}
+            src={current}
             alt={title}
             width={440}
             height={440}
-            fetchPriority={active === 0 ? 'high' : undefined}
+            fetchPriority={active === 0 && !variantImg ? 'high' : undefined}
             className="h-full w-full object-cover"
           />
         ) : (
@@ -147,11 +163,16 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
             key={`${src}-${i}`}
             type="button"
             aria-label={t('product.gallery.thumb', { n: i + 1 })}
-            aria-pressed={i === active}
-            onClick={() => setActive(i)}
+            aria-pressed={!variantImg && i === active}
+            onClick={() => {
+              setActive(i);
+              if (variantImg) setDismissed(variantImg);
+            }}
             className={cn(
               'h-16 w-16 cursor-pointer overflow-hidden rounded-sm border-2 border-solid bg-transparent p-0',
-              i === active ? 'border-primary' : 'border-transparent hover:border-line-strong',
+              !variantImg && i === active
+                ? 'border-primary'
+                : 'border-transparent hover:border-line-strong',
             )}
           >
             <img
@@ -167,8 +188,8 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
       </div>
       {open && (
         <Lightbox
-          images={images}
-          start={active}
+          images={shown}
+          start={variantImg ? 0 : active}
           title={title}
           onClose={() => {
             setOpen(false);

@@ -13,14 +13,14 @@ export interface ModerationDetailDto extends ModerationRowDto {
   decision_reason: string | null;
   images: string[];
   documents: { id: number; file_name: string; url: string }[];
-  category_path: string;
-  brand: string;
+  category_path: string | null;
+  brand: string | null;
   condition: 'NEW' | 'USED' | 'REFURBISHED';
-  origin: string;
-  description_html: string;
-  weight_grams: number;
-  dimensions_cm: { length: number; width: number; height: number };
-  ships_from: string;
+  origin: string | null;
+  description_html: string | null;
+  weight_grams: number | null;
+  dimensions_cm: { length: number | null; width: number | null; height: number | null } | null;
+  ships_from: string | null;
   shipping_payer: 'BUYER' | 'SELLER';
   variants: { sku: string; name: string; price: number; stock: number }[];
 }

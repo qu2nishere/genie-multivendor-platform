@@ -63,7 +63,7 @@
 
 ## M00 — Chuẩn bị
 
-- [ ] **M00.01** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V26`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
+- [ ] **M00.01** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V27`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
 - [ ] **M00.02** Chốt D1–D20 vào progress.
 - [ ] **M00.03** Tạo nhánh `feature/chat-live` từ `develop` mới nhất.
 - [ ] **M00.04** Đọc màn mock

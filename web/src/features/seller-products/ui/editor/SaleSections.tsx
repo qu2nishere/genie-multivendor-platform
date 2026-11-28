@@ -2,26 +2,37 @@
 // áp dụng nhanh, bảng giá / tồn / SKU theo tổ hợp, kiểm giá > 0, ≤ 50 phân loại) và Vận chuyển (G11.29: cân
 // nặng, kích thước, phí ship, đặt trước 7–30 ngày) — prototype VariantSection, GroupNameCombo, TagInput,
 // ShippingInfo.
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { useShopSettings } from '@/features/seller-settings';
 import { errorMessage } from '@/shared/api/errors';
 import { UploadError, uploadFile } from '@/shared/api/upload';
 import { useClickOutside } from '@/shared/hooks/useClickOutside';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
-import { Badge, Button, Icon, Input, Radio, Select, Switch, toast } from '@/shared/ui';
+import { Badge, Button, Checkbox, Icon, Input, Radio, Select, Switch, toast } from '@/shared/ui';
 import {
+  applyBulk,
   GROUP_NAMES,
   MAX_GROUPS,
   MAX_VARIANTS,
   PRE_ORDER_MAX,
   PRE_ORDER_MIN,
   invalidPrice,
-  skuPreview,
   syncVariants,
 } from '../../domain/product.rules';
 import type { OptionGroup, VariantRow } from '../../domain/product.types';
-import { errCls, hintCls, labCls, SectionCard, toInt, type SectionProps } from './editorKit';
+import {
+  errCls,
+  groupDigits,
+  hintCls,
+  labCls,
+  onGroupedChange,
+  SectionCard,
+  toInt,
+  type SectionProps,
+} from './editorKit';
 
 function GroupNameCombo({
   value,
@@ -42,7 +53,7 @@ function GroupNameCombo({
   const matches = GROUP_NAMES.filter((b) => b.toLowerCase().includes(value.trim().toLowerCase()));
   const exact = GROUP_NAMES.some((b) => b.toLowerCase() === value.trim().toLowerCase());
   return (
-    <div ref={box} className="relative w-[200px] max-sm:w-full">
+    <div ref={box} className="relative w-[260px] max-sm:w-full">
       <input
         value={value}
         disabled={disabled}
@@ -57,7 +68,7 @@ function GroupNameCombo({
         onFocus={() => setOpen(true)}
         onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
         placeholder={t('seller-products.variants.group_placeholder')}
-        className="w-full h-10 border-[1.5px] border-solid border-line rounded-md px-3 text-sm text-strong bg-surface-card outline-none focus:border-primary"
+        className="w-full h-10 border-[1.5px] border-solid border-line rounded-md px-3 text-sm text-strong bg-surface-card outline-none focus:border-primary disabled:bg-surface-sunken"
       />
       {open && !disabled && (
         <ul
@@ -98,63 +109,135 @@ function GroupNameCombo({
   );
 }
 
-function TagInput({
-  values,
+/**
+ * Ô giá trị của một nhóm: mỗi giá trị là một thẻ; nhóm được chọn làm "ảnh theo phân loại" thì thẻ có thêm ô ảnh nhỏ
+ * ngay bên trái (bấm để tải ảnh) — ảnh gắn thẳng vào giá trị, không tách khung riêng.
+ */
+/** Ô nhập giá trị + nút Thêm — nằm cạnh tên nhóm ở đầu thẻ (Enter / dấu phẩy cũng thêm). */
+function ValueAdder({
+  existing,
   onAdd,
-  onRemove,
-  disabled,
   label,
 }: {
-  values: string[];
+  existing: string[];
   onAdd: (v: string) => void;
-  onRemove: (v: string) => void;
-  disabled: boolean;
   label: string;
 }) {
   const { t } = useT();
   const [v, setV] = useState('');
   const add = () => {
     const x = v.trim();
-    if (x && !values.includes(x)) onAdd(x);
+    if (x && !existing.includes(x)) onAdd(x);
     setV('');
   };
   return (
+    <span className="inline-flex items-center gap-1.5 max-sm:w-full">
+      <input
+        value={v}
+        aria-label={label}
+        placeholder={t('seller-products.variants.value_placeholder')}
+        onChange={(e) => setV(e.target.value)}
+        onKeyDown={(e) => {
+          // Telex / VNI đang ghép chữ: Enter thuộc về bộ gõ, chưa phải "thêm giá trị"
+          if (e.nativeEvent.isComposing) return;
+          if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            add();
+          }
+        }}
+        onBlur={add}
+        maxLength={30}
+        className="w-[200px] h-10 border-[1.5px] border-solid border-line rounded-md px-3 text-sm text-strong outline-none bg-surface-card focus:border-primary max-sm:flex-1"
+      />
+      <Button
+        variant="secondary"
+        iconLeft="plus"
+        disabled={!v.trim()}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={add}
+      >
+        {t('seller-products.variants.add_value')}
+      </Button>
+    </span>
+  );
+}
+
+function ValueTags({
+  values,
+  withImages,
+  uploading,
+  onRemove,
+  onPickImage,
+  disabled,
+}: {
+  values: OptionGroup['values'];
+  withImages: boolean;
+  uploading: string | null;
+  onRemove: (v: string) => void;
+  onPickImage: (value: string, f: File | undefined) => void;
+  disabled: boolean;
+}) {
+  const { t } = useT();
+  if (values.length === 0) {
+    return <p className="m-0 text-sm text-subtle">{t('seller-products.variants.no_values')}</p>;
+  }
+  return (
     <div className="flex flex-wrap gap-2 items-center">
-      {values.map((val) => (
+      {values.map((o) => (
         <span
-          key={val}
-          className="inline-flex items-center gap-1.5 bg-gray-100 rounded-full px-2.5 py-1 text-[13px] font-semibold text-body"
+          key={o.value}
+          className={cn(
+            'inline-flex items-center gap-2 bg-surface-card border border-solid border-line rounded-md text-[13px] font-semibold text-strong',
+            withImages ? 'h-11 pl-1 pr-2' : 'h-9 pl-3 pr-2',
+          )}
         >
-          {val}
+          {withImages && (
+            <label
+              className={cn(
+                'w-9 h-9 rounded-sm overflow-hidden grid place-items-center flex-none',
+                o.imageUrl ? '' : 'border-[1.5px] border-dashed border-line-strong text-subtle',
+                !disabled && 'cursor-pointer hover:border-primary hover:text-brand-600',
+              )}
+              title={t('seller-products.variants.image_for', { value: o.value })}
+            >
+              <input
+                type="file"
+                className="sr-only"
+                disabled={disabled || uploading !== null}
+                accept="image/jpeg,image/png,image/webp"
+                aria-label={t('seller-products.variants.image_for', { value: o.value })}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = '';
+                  onPickImage(o.value, f);
+                }}
+              />
+              {o.imageUrl ? (
+                <img
+                  src={o.imageUrl}
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="w-9 h-9 object-cover"
+                />
+              ) : (
+                <Icon name={uploading === o.value ? 'clock' : 'image-plus'} size={16} />
+              )}
+            </label>
+          )}
+          {o.value}
           {!disabled && (
             <button
               type="button"
-              aria-label={t('seller-products.variants.remove_value', { value: val })}
-              onClick={() => onRemove(val)}
-              className="border-0 bg-transparent cursor-pointer grid place-items-center text-subtle hover:text-red-600 p-0"
+              aria-label={t('seller-products.variants.remove_value', { value: o.value })}
+              onClick={() => onRemove(o.value)}
+              className="border-0 bg-transparent cursor-pointer grid place-items-center w-6 h-6 rounded-full text-subtle hover:text-red-600 hover:bg-red-50 p-0"
             >
-              <Icon name="x" size={13} />
+              <Icon name="x" size={14} />
             </button>
           )}
         </span>
       ))}
-      {!disabled && (
-        <input
-          value={v}
-          aria-label={label}
-          placeholder={t('seller-products.variants.value_placeholder')}
-          onChange={(e) => setV(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ',') {
-              e.preventDefault();
-              add();
-            }
-          }}
-          onBlur={add}
-          maxLength={30}
-          className="min-w-[110px] h-[30px] border-[1.5px] border-dashed border-line-strong rounded-full px-3 text-[13px] outline-none bg-transparent focus:border-primary"
-        />
-      )}
     </div>
   );
 }
@@ -163,11 +246,12 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
   const { t } = useT();
   const groups = useWatch({ control: form.control, name: 'groups' });
   const variants = useWatch({ control: form.control, name: 'variants' });
-  const imgGroup = useWatch({ control: form.control, name: 'variantImageGroup' });
   const [bulk, setBulk] = useState<{ price: number | null; stock: number | null }>({
     price: null,
     stock: null,
   });
+  // lọc dòng "Áp dụng hàng loạt" theo giá trị từng nhóm ('' = mọi giá trị) — giá theo Dung lượng, màu nào cũng như nhau
+  const [bulkMatch, setBulkMatch] = useState<string[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
 
   const setGroups = (next: OptionGroup[]) => {
@@ -175,10 +259,27 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
     form.setValue('variants', syncVariants(next, form.getValues('variants')), {
       shouldDirty: true,
     });
-    const names = next.filter((g) => g.values.length).map((g) => g.name);
-    if (imgGroup && !names.includes(imgGroup)) form.setValue('variantImageGroup', names[0] ?? null);
-    if (!imgGroup && names[0]) form.setValue('variantImageGroup', names[0]);
+    // nhóm ảnh chính (ảnh của SKU — giỏ, đơn hàng) = nhóm đầu tiên đang dùng ảnh
+    const primary =
+      next.find((g) => g.withImages && g.name.trim() && g.values.length)?.name ?? null;
+    if (primary !== form.getValues('variantImageGroup'))
+      form.setValue('variantImageGroup', primary, { shouldDirty: true });
   };
+  // Bật / tắt ảnh cho một nhóm (chọn được nhiều nhóm); tắt thì bỏ ảnh đã gắn của nhóm đó
+  const toggleImages = (i: number, on: boolean) =>
+    setGroups(
+      groups.map((g, k) =>
+        k !== i
+          ? g
+          : {
+              ...g,
+              withImages: on,
+              values: on
+                ? g.values
+                : g.values.map((v) => ({ ...v, imageKey: null, imageUrl: null })),
+            },
+      ),
+    );
   const setGroup = (i: number, patch: Partial<OptionGroup>) =>
     setGroups(groups.map((g, k) => (k === i ? { ...g, ...patch } : g)));
   const setVariants = (next: VariantRow[]) =>
@@ -189,7 +290,8 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
   const active = groups.filter((g) => g.values.length > 0);
   const over = variants.length > MAX_VARIANTS;
   const priceBad = issues.includes('price');
-  const imgG = active.find((g) => g.name === imgGroup) ?? active[0];
+  // các nhóm đang dùng ảnh, theo thứ tự nhóm (ảnh nhỏ ở bảng giá lấy nhóm đầu tiên có ảnh)
+  const imageGroups = groups.filter((g) => g.withImages && g.name.trim() && g.values.length);
 
   const pickValueImage = async (gi: number, value: string, f: File | undefined) => {
     if (!f) return;
@@ -215,6 +317,48 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
     }
   };
 
+  // bộ lọc của dòng Áp dụng hàng loạt: vừa giới hạn phạm vi áp dụng, vừa lọc các dòng đang hiện
+  const match = active.map((g, k) => {
+    const m = bulkMatch[k] ?? '';
+    return m && g.values.some((x) => x.value === m) ? m : null;
+  });
+  const filtering = match.some((m) => m !== null);
+  // giữ chỉ số gốc (setCell sửa theo vị trí trong toàn bộ danh sách)
+  const shownRows = variants
+    .map((v, i) => ({ v, i }))
+    .filter(({ v }) => match.every((m, k) => m === null || v.options[k] === m));
+  const ROWS_BEFORE_SCROLL = 10;
+  // Bộ cột dùng chung cho khung lọc và bảng giá (table-fixed): cột nhóm chia đều phần còn lại
+  const cols = (
+    <colgroup>
+      {active.map((_, k) => (
+        <col key={k} />
+      ))}
+      <col className="w-[240px]" />
+      <col className="w-[190px]" />
+      <col className="w-[150px]" />
+    </colgroup>
+  );
+  // bề rộng thanh cuộn dọc của bảng giá → khung lọc chừa đúng chừng đó để các cột thẳng nhau
+  const scrollBox = useRef<HTMLDivElement>(null);
+  const [gutter, setGutter] = useState(0);
+  useEffect(() => {
+    const el = scrollBox.current;
+    if (!el) return undefined;
+    const measure = () => setGutter(Math.max(0, el.offsetWidth - el.clientWidth - 2));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shownRows.length, active.length]);
+
+  const runBulk = () => {
+    const r = applyBulk(variants, match, bulk);
+    setVariants(r.variants);
+    toast.success(t('seller-products.variants.bulk_done', { count: r.count }));
+    setBulk({ price: null, stock: null });
+  };
+
   return (
     <SectionCard
       id="sec-variants"
@@ -222,123 +366,137 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
       title={t('seller-products.variants.title')}
       error={priceBad || over}
       right={
-        <span className="ml-auto flex items-center gap-2.5">
+        <span className="ml-auto">
           <Badge variant="neutral">
             {t('seller-products.variants.max_groups', { n: MAX_GROUPS })}
           </Badge>
-          {!readOnly && groups.length < MAX_GROUPS && (
-            <Button
-              variant="ghost"
-              size="sm"
-              iconLeft="plus"
-              onClick={() => setGroups([...groups, { name: '', values: [] }])}
-            >
-              {t('seller-products.variants.add_group')}
-            </Button>
-          )}
         </span>
       }
     >
-      {groups.map((g, i) => (
-        <div
-          key={i}
-          className="border border-solid border-line-subtle rounded-md px-[15px] py-[13px] mb-2.5"
-        >
-          <div className="flex items-center gap-2.5 mb-2.5 flex-wrap">
-            <span className="text-xs font-semibold text-muted">
-              {t('seller-products.variants.group_n', { n: i + 1 })}
-            </span>
-            <GroupNameCombo
-              value={g.name}
-              disabled={readOnly}
-              label={t('seller-products.variants.group_name', { n: i + 1 })}
-              onChange={(name) => setGroup(i, { name })}
-            />
-            {!readOnly && (
-              <Button
-                variant="ghost"
-                size="sm"
-                iconLeft="trash-2"
-                className="ml-auto !text-red-600"
-                onClick={() => setGroups(groups.filter((_, k) => k !== i))}
-              >
-                {t('seller-products.variants.remove_group')}
-              </Button>
-            )}
-          </div>
-          <TagInput
-            values={g.values.map((v) => v.value)}
-            disabled={readOnly}
-            label={t('seller-products.variants.values_of', { name: g.name || i + 1 })}
-            onAdd={(value) =>
-              setGroup(i, { values: [...g.values, { value, imageKey: null, imageUrl: null }] })
-            }
-            onRemove={(value) => setGroup(i, { values: g.values.filter((x) => x.value !== value) })}
-          />
-        </div>
-      ))}
-
-      {imgG && (
-        <div className="border border-solid border-line-subtle rounded-md px-[15px] py-[13px] mb-2.5">
-          <div className="flex items-center gap-2.5 mb-2.5 flex-wrap">
-            <span className="text-xs font-semibold text-muted">
-              {t('seller-products.variants.images_by')}
-            </span>
-            <div className="w-[180px]">
-              <Select
-                aria-label={t('seller-products.variants.images_by')}
-                value={imgG.name}
+      {groups.map((g, i) => {
+        const taken = groups.filter((_, k) => k !== i).map((x) => x.name);
+        const quick = GROUP_NAMES.filter((n) => !taken.includes(n)).slice(0, 5);
+        const hasImages = !!g.withImages && !!g.name.trim() && g.values.length > 0;
+        return (
+          <div
+            key={i}
+            className="border border-solid border-line-subtle rounded-md mb-3 overflow-hidden"
+          >
+            {/* Đầu thẻ: số nhóm + tên nhóm + xóa */}
+            <div className="flex items-center gap-3 flex-wrap bg-surface-sunken px-4 py-3">
+              <span className="w-6 h-6 rounded-full bg-primary text-primary-on text-xs font-bold grid place-items-center flex-none">
+                {i + 1}
+              </span>
+              <span className="text-[13px] font-semibold text-strong whitespace-nowrap">
+                {t('seller-products.variants.group_label')}
+              </span>
+              <GroupNameCombo
+                value={g.name}
                 disabled={readOnly}
-                onChange={(v) => form.setValue('variantImageGroup', v, { shouldDirty: true })}
-                options={active.map((g, k) => ({
-                  value: g.name,
-                  label: g.name || t('seller-products.variants.group_n', { n: k + 1 }),
-                }))}
+                label={t('seller-products.variants.group_name', { n: i + 1 })}
+                onChange={(name) => setGroup(i, { name })}
               />
+              {!readOnly && (
+                <ValueAdder
+                  existing={g.values.map((x) => x.value)}
+                  label={t('seller-products.variants.values_of', { name: g.name || i + 1 })}
+                  onAdd={(value) =>
+                    setGroup(i, {
+                      values: [...g.values, { value, imageKey: null, imageUrl: null }],
+                    })
+                  }
+                />
+              )}
+              {!readOnly && (
+                <button
+                  type="button"
+                  aria-label={t('seller-products.variants.remove_group_n', { n: i + 1 })}
+                  title={t('seller-products.variants.remove_group')}
+                  onClick={() => setGroups(groups.filter((_, k) => k !== i))}
+                  className="ml-auto w-9 h-9 rounded-md border-0 bg-transparent cursor-pointer grid place-items-center text-subtle hover:text-red-600 hover:bg-red-50"
+                >
+                  <Icon name="trash-2" size={17} />
+                </button>
+              )}
+            </div>
+
+            <div className="px-4 py-3.5">
+              {!readOnly && !g.name.trim() && (
+                <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                  <span className="text-xs text-muted">
+                    {t('seller-products.variants.suggest')}
+                  </span>
+                  {quick.map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setGroup(i, { name: n })}
+                      className="h-7 px-2.5 rounded-full border border-solid border-line bg-surface-card text-xs font-semibold text-body cursor-pointer hover:border-primary hover:text-brand-600"
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <ValueTags
+                values={g.values}
+                withImages={hasImages}
+                uploading={uploading}
+                disabled={readOnly}
+                onRemove={(value) =>
+                  setGroup(i, { values: g.values.filter((x) => x.value !== value) })
+                }
+                onPickImage={(value, f) => void pickValueImage(i, value, f)}
+              />
+              <div className="flex items-center gap-3 flex-wrap mt-2">
+                {!readOnly && (
+                  <p className="m-0 text-xs text-muted">
+                    {t('seller-products.variants.value_hint')}
+                  </p>
+                )}
+                {/* Bật ảnh cho nhóm này — tick được ở nhiều nhóm (vd Màu sắc và Dung lượng) */}
+                {g.values.length > 0 && !!g.name.trim() && (
+                  <span className="ml-auto">
+                    <Checkbox
+                      checked={!!g.withImages}
+                      disabled={readOnly}
+                      onChange={(e) => toggleImages(i, e.target.checked)}
+                      className="text-xs"
+                    >
+                      {t('seller-products.variants.images_here')}
+                    </Checkbox>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2.5">
-            {imgG.values.map((v) => {
-              const gi = groups.indexOf(imgG);
-              return (
-                <label
-                  key={v.value}
-                  className={cn(
-                    'flex items-center gap-2 text-sm text-body',
-                    !readOnly && 'cursor-pointer',
-                  )}
-                >
-                  <input
-                    type="file"
-                    className="sr-only"
-                    disabled={readOnly || uploading !== null}
-                    accept="image/jpeg,image/png,image/webp"
-                    aria-label={t('seller-products.variants.image_for', { value: v.value })}
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      e.target.value = '';
-                      void pickValueImage(gi, v.value, f);
-                    }}
-                  />
-                  {v.imageUrl ? (
-                    <img
-                      src={v.imageUrl}
-                      alt=""
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-sm object-cover"
-                    />
-                  ) : (
-                    <span className="w-9 h-9 rounded-sm border-[1.5px] border-dashed border-line-strong grid place-items-center text-subtle">
-                      <Icon name={uploading === v.value ? 'clock' : 'image-plus'} size={16} />
-                    </span>
-                  )}
-                  {v.value}
-                </label>
-              );
-            })}
-          </div>
-        </div>
+        );
+      })}
+
+      {!readOnly && groups.length < MAX_GROUPS && (
+        <button
+          type="button"
+          onClick={() =>
+            setGroups([...groups, { name: '', values: [], withImages: groups.length === 0 }])
+          }
+          className="flex items-center gap-3 w-full mb-4 px-4 py-3 border-[1.5px] border-dashed border-line-strong rounded-md bg-transparent cursor-pointer text-left hover:border-primary hover:bg-primary-tint"
+        >
+          <span className="w-8 h-8 rounded-full bg-primary-tint text-brand-600 grid place-items-center flex-none">
+            <Icon name="plus" size={17} />
+          </span>
+          <span>
+            <span className="block text-sm font-semibold text-strong">
+              {groups.length === 0
+                ? t('seller-products.variants.add_group_cta')
+                : t('seller-products.variants.add_group_second')}
+            </span>
+            <span className="block text-xs text-muted mt-0.5">
+              {groups.length === 0
+                ? t('seller-products.variants.add_group_hint', { n: MAX_GROUPS })
+                : t('seller-products.variants.add_group_second_hint')}
+            </span>
+          </span>
+        </button>
       )}
 
       {over && (
@@ -350,7 +508,11 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
 
       {active.length === 0 ? (
         <div className="mt-1.5">
-          <p className="m-0 mb-3 text-sm text-muted">{t('seller-products.variants.single_hint')}</p>
+          <p className="m-0 mb-3 text-sm text-muted">
+            {groups.length === 0
+              ? t('seller-products.variants.single_hint')
+              : t('seller-products.variants.need_values')}
+          </p>
           <div className="flex gap-3.5 max-sm:flex-col">
             <div className="flex-1">
               <Input
@@ -359,13 +521,13 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
                 iconRight="banknote"
                 placeholder="0"
                 disabled={readOnly}
-                value={variants[0]?.price ?? ''}
+                value={groupDigits(variants[0]?.price)}
                 error={
                   priceBad && !(variants[0]?.price && variants[0].price > 0)
                     ? t('seller-products.err.price')
                     : undefined
                 }
-                onChange={(e) => setCell(0, { price: toInt(e.target.value) })}
+                onChange={(e) => onGroupedChange(e, (n) => setCell(0, { price: n }))}
               />
             </div>
             <div className="flex-1">
@@ -374,56 +536,128 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
                 inputMode="numeric"
                 placeholder="0"
                 disabled={readOnly}
-                value={variants[0]?.stock ?? ''}
-                onChange={(e) => setCell(0, { stock: toInt(e.target.value) })}
+                value={groupDigits(variants[0]?.stock)}
+                onChange={(e) => onGroupedChange(e, (n) => setCell(0, { stock: n }))}
               />
             </div>
           </div>
         </div>
       ) : (
         <>
-          {!readOnly && (
-            <div className="flex items-end gap-2.5 flex-wrap bg-surface-sunken rounded-md px-3.5 py-3 mt-1.5 mb-3.5">
-              <span className="text-xs font-semibold text-muted mb-[11px]">
+          <p className="m-0 mb-2 text-sm font-semibold text-strong">
+            {t('seller-products.variants.table_title', { count: variants.length })}
+          </p>
+          {!readOnly && active.length > 1 && (
+            <p className={cn(hintCls, 'flex gap-[7px] mt-0 mb-2.5')}>
+              <Icon name="info" size={14} className="flex-none mt-px" />
+              {t('seller-products.variants.price_by_group_hint', {
+                a: active[0].name || 1,
+                b: active[1].name || 2,
+              })}
+            </p>
+          )}
+          {/* Lọc & áp dụng hàng loạt: bảng 1 dòng NGOÀI khung cuộn (menu chọn không bị che), dùng chung bộ cột với
+              bảng giá bên dưới → ô Màu sắc / Dung lượng / Giá / Tồn kho thẳng cột; chừa bề rộng thanh cuộn của bảng dưới */}
+          {!readOnly && variants.length > 1 && (
+            <div
+              className="bg-primary-tint rounded-md border border-solid border-transparent mb-2.5"
+              style={{ paddingRight: gutter }}
+            >
+              <div className="px-3.5 pt-2.5 text-xs font-semibold text-brand-700">
                 {t('seller-products.variants.bulk')}
-              </span>
-              <div className="w-[150px]">
-                <Input
-                  label={t('seller-products.variants.price_short')}
-                  inputMode="numeric"
-                  iconRight="banknote"
-                  value={bulk.price ?? ''}
-                  onChange={(e) => setBulk((b) => ({ ...b, price: toInt(e.target.value) }))}
-                />
               </div>
-              <div className="w-[110px]">
-                <Input
-                  label={t('seller-products.variants.stock')}
-                  inputMode="numeric"
-                  value={bulk.stock ?? ''}
-                  onChange={(e) => setBulk((b) => ({ ...b, stock: toInt(e.target.value) }))}
-                />
-              </div>
-              <Button
-                variant="secondary"
-                disabled={bulk.price === null && bulk.stock === null}
-                onClick={() =>
-                  setVariants(
-                    variants.map((v) => ({
-                      ...v,
-                      price: bulk.price ?? v.price,
-                      stock: bulk.stock ?? v.stock,
-                    })),
-                  )
-                }
-              >
-                {t('seller-products.variants.apply')}
-              </Button>
+              <table className="w-full table-fixed border-collapse min-w-[560px] max-sm:min-w-0">
+                {cols}
+                <tbody>
+                  <tr>
+                    {active.map((g, k) => (
+                      <td key={k} className="px-3.5 py-2.5 align-top">
+                        <Select
+                          aria-label={t('seller-products.variants.bulk_filter', {
+                            name: g.name || k + 1,
+                          })}
+                          value={bulkMatch[k] ?? ''}
+                          onChange={(v) =>
+                            setBulkMatch((m) => {
+                              const next = [...m];
+                              next[k] = v;
+                              return next;
+                            })
+                          }
+                          options={[
+                            {
+                              value: '',
+                              label: t('seller-products.variants.bulk_all', {
+                                name: g.name || k + 1,
+                              }),
+                            },
+                            ...g.values.map((x) => ({ value: x.value, label: x.value })),
+                          ]}
+                        />
+                      </td>
+                    ))}
+                    <td className="px-3.5 py-2.5 align-top">
+                      <Input
+                        aria-label={t('seller-products.variants.bulk_price')}
+                        inputMode="numeric"
+                        placeholder={t('seller-products.variants.price_short')}
+                        value={groupDigits(bulk.price)}
+                        onChange={(e) =>
+                          onGroupedChange(e, (n) => setBulk((b) => ({ ...b, price: n })))
+                        }
+                      />
+                    </td>
+                    <td className="px-3.5 py-2.5 align-top">
+                      <Input
+                        aria-label={t('seller-products.variants.bulk_stock')}
+                        inputMode="numeric"
+                        placeholder={t('seller-products.variants.stock')}
+                        value={groupDigits(bulk.stock)}
+                        onChange={(e) =>
+                          onGroupedChange(e, (n) => setBulk((b) => ({ ...b, stock: n })))
+                        }
+                      />
+                    </td>
+                    <td className="px-3.5 py-2.5 align-top">
+                      <Button
+                        block
+                        disabled={bulk.price === null && bulk.stock === null}
+                        onClick={runBulk}
+                      >
+                        {t('seller-products.variants.apply')}
+                      </Button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           )}
-          <div className="relative overflow-x-auto border border-solid border-line-subtle rounded-md">
-            <table className="w-full border-collapse min-w-[560px]">
-              <thead>
+          {filtering && (
+            <p className="m-0 mb-2 text-xs text-muted flex items-center gap-2 flex-wrap">
+              {t('seller-products.variants.filtered', {
+                shown: shownRows.length,
+                total: variants.length,
+              })}
+              <button
+                type="button"
+                onClick={() => setBulkMatch([])}
+                className="border-0 bg-transparent p-0 cursor-pointer text-xs font-semibold text-brand-600 hover:underline"
+              >
+                {t('seller-products.variants.filter_clear')}
+              </button>
+            </p>
+          )}
+          {/* Hơn 10 dòng: khung cuộn dọc, hàng tiêu đề dính trên cùng */}
+          <div
+            ref={scrollBox}
+            className={cn(
+              'relative overflow-x-auto border border-solid border-line-subtle rounded-md',
+              shownRows.length > ROWS_BEFORE_SCROLL && 'max-h-[660px] overflow-y-auto',
+            )}
+          >
+            <table className="w-full table-fixed border-collapse min-w-[560px]">
+              {cols}
+              <thead className="sticky top-0 z-[1] bg-surface-card">
                 <tr className="text-xs font-semibold text-muted text-left bg-gray-25">
                   {active.map((g, i) => (
                     <th key={i} scope="col" className="px-3.5 py-2.5">
@@ -442,9 +676,13 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
                 </tr>
               </thead>
               <tbody>
-                {variants.map((v, i) => {
+                {shownRows.map(({ v, i }) => {
                   const bad = invalidPrice(v) || (priceBad && v.price === null);
                   const name = v.options.join(' / ');
+                  const img =
+                    imageGroups
+                      .map((g) => g.values.find((x) => v.options.includes(x.value))?.imageUrl)
+                      .find(Boolean) ?? null;
                   return (
                     <tr
                       key={v.options.join('|')}
@@ -452,18 +690,29 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
                     >
                       {v.options.map((o, k) => (
                         <td key={k} className="px-3.5 py-2 text-body">
-                          {o}
+                          <span className="inline-flex items-center gap-2">
+                            {k === 0 && img && (
+                              <img
+                                src={img}
+                                alt=""
+                                width={28}
+                                height={28}
+                                className="w-7 h-7 rounded-sm object-cover"
+                              />
+                            )}
+                            {o}
+                          </span>
                         </td>
                       ))}
-                      <td className="px-3.5 py-2 w-[150px]">
+                      <td className="px-3.5 py-2">
                         <Input
                           aria-label={t('seller-products.variants.price_of', { name })}
                           inputMode="numeric"
                           placeholder="0"
                           disabled={readOnly}
                           invalid={bad}
-                          value={v.price ?? ''}
-                          onChange={(e) => setCell(i, { price: toInt(e.target.value) })}
+                          value={groupDigits(v.price)}
+                          onChange={(e) => onGroupedChange(e, (n) => setCell(i, { price: n }))}
                         />
                         {bad && (
                           <div className="text-[11px] text-red-600 mt-[3px]">
@@ -471,24 +720,38 @@ export function VariantSection({ form, readOnly, issues }: SectionProps) {
                           </div>
                         )}
                       </td>
-                      <td className="px-3.5 py-2 w-[110px]">
+                      <td className="px-3.5 py-2">
                         <Input
                           aria-label={t('seller-products.variants.stock_of', { name })}
                           inputMode="numeric"
                           placeholder="0"
                           disabled={readOnly}
-                          value={v.stock ?? ''}
-                          onChange={(e) => setCell(i, { stock: toInt(e.target.value) })}
+                          value={groupDigits(v.stock)}
+                          onChange={(e) => onGroupedChange(e, (n) => setCell(i, { stock: n }))}
                         />
                       </td>
-                      <td className="px-3.5 py-2 w-[150px]">
-                        <span className="code text-xs text-muted">
-                          {v.sku ?? skuPreview(v.options)}
-                        </span>
+                      <td className="px-3.5 py-2">
+                        {v.sku ? (
+                          <span className="code text-xs text-body">{v.sku}</span>
+                        ) : (
+                          <span className="text-xs text-subtle italic">
+                            {t('seller-products.variants.sku_auto')}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );
                 })}
+                {shownRows.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={active.length + 3}
+                      className="px-3.5 py-6 text-center text-sm text-muted"
+                    >
+                      {t('seller-products.variants.filter_empty')}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -503,8 +766,9 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
   const payer = useWatch({ control: form.control, name: 'shippingPayer' });
   const dims = useWatch({ control: form.control, name: 'dims' });
   const weight = useWatch({ control: form.control, name: 'weightGrams' });
-  const threshold = useWatch({ control: form.control, name: 'freeShippingThreshold' });
   const pre = useWatch({ control: form.control, name: 'isPreOrder' });
+  const pickup = useShopSettings().data?.pickup;
+  const fromText = [pickup?.ward?.name, pickup?.province?.name].filter(Boolean).join(', ');
   const days = useWatch({ control: form.control, name: 'preOrderDays' });
   const dayBad = pre && (days === null || days < PRE_ORDER_MIN || days > PRE_ORDER_MAX);
   const weightBad = issues.includes('weight');
@@ -568,9 +832,14 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
       <div className="grid grid-cols-2 gap-[18px] max-md:grid-cols-1">
         <div>
           <span className={labCls}>{t('seller-products.shipping.from')}</span>
+          {/* Địa chỉ lấy hàng thật của shop (Cài đặt › Địa chỉ lấy hàng — API 10.11) */}
           <div className="flex items-center gap-2 h-11 px-3 rounded-md bg-surface-sunken text-sm text-body">
             <Icon name="map-pin" size={16} className="text-subtle" />
-            {t('seller-products.shipping.from_value')}
+            {fromText || (
+              <Link to="/settings" className="text-brand-600 font-semibold">
+                {t('seller-products.shipping.from_none')}
+              </Link>
+            )}
           </div>
           <p className={hintCls}>{t('seller-products.shipping.from_hint')}</p>
         </div>
@@ -586,31 +855,18 @@ export function ShippingInfo({ form, readOnly, issues }: SectionProps) {
             >
               {t('seller-products.shipping.buyer')}
             </Radio>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Radio
-                name="payer"
-                checked={payer === 'SELLER'}
-                disabled={readOnly}
-                onChange={() => form.setValue('shippingPayer', 'SELLER', { shouldDirty: true })}
-                className="text-sm"
-              >
-                {t('seller-products.shipping.seller')}
-              </Radio>
-              <input
-                aria-label={t('seller-products.shipping.threshold')}
-                inputMode="numeric"
-                disabled={readOnly || payer !== 'SELLER'}
-                value={threshold ?? ''}
-                onChange={(e) =>
-                  form.setValue('freeShippingThreshold', toInt(e.target.value), {
-                    shouldDirty: true,
-                  })
-                }
-                className="w-[110px] h-9 border-[1.5px] border-solid border-line rounded-md px-2.5 text-sm outline-none disabled:opacity-50"
-              />
-              <span className="text-muted text-sm">₫</span>
-            </div>
+            <Radio
+              name="payer"
+              checked={payer === 'SELLER'}
+              disabled={readOnly}
+              onChange={() => form.setValue('shippingPayer', 'SELLER', { shouldDirty: true })}
+              className="text-sm"
+            >
+              {t('seller-products.shipping.seller')}
+            </Radio>
           </div>
+          {/* Mức đơn được freeship đặt ở cấp shop (plan C1 D23) */}
+          <p className={hintCls}>{t('seller-products.shipping.threshold_hint')}</p>
         </fieldset>
       </div>
       <div className="flex items-center gap-3 mt-4 pt-3.5 border-0 border-t border-solid border-line-subtle flex-wrap">

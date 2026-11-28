@@ -1,4 +1,4 @@
--- V26 — migration chung của 3 plan 2026-11-26 (Nguyễn Ngọc Thiện; plan/2026-11-26/server-spring/README mục 5):
+-- V27 — migration chung của 3 plan 2026-11-26 (Nguyễn Ngọc Thiện; plan/2026-11-26/server-spring/README mục 5):
 --   [1] Thông báo thời gian thực + Thông báo toàn sàn (UC-NOT-01, UC-NOT-05) — plan_thong_bao_realtime.md N01, D2, D6
 --   [2] Chat Khách – Shop + tự trả lời (UC-SOC-01, 02, UC-VND-06) — plan_chat_khach_shop.md D11
 --   [3] Voucher shop / sàn / Kho voucher (UC-PRO-01, 02, 03) — plan_voucher_b5.md D16

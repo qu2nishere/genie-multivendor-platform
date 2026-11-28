@@ -49,7 +49,7 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong |
 |---|---|---:|---:|---:|
 | N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
-| N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
+| N01 | Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 10 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 14 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 11 / 11 |
@@ -70,10 +70,10 @@
 - [x] **N00.05** Đọc chữ ký sự kiện
 - [x] **N00.06** Đọc màn mock
 
-## N01 — Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
+## N01 — Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
 
 - [x] **N01.01** Tài liệu trước (TS 7.3)
-- [x] **N01.02** `V26__b5_b6_notification_chat_voucher.sql`
+- [x] **N01.02** `V27__b5_b6_notification_chat_voucher.sql`
 - [x] **N01.03** Khối (b) hộp thư
 - [x] **N01.04** Khối (c) chat
 - [x] **N01.05** Khối (d) voucher
@@ -248,7 +248,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-26 | Lập plan + progress (81 task, 17 commit, 11 giai đoạn) — chưa bắt đầu làm | — |
-| 2026-11-26 | N00 (chốt D1–D20, kiểm `V26` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V26`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
+| 2026-11-26 | N00 (chốt D1–D20, kiểm `V27` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V27`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
 | 2026-11-26 | N02: API_SPEC 3.12 / 4.1 / 11.17 / 13 + Usecase UC-NOT-01 / 05; jsoup; mã lỗi `GNE-NOT-*`, `NOTIFICATION_IMAGE`, `OnlineUsers`, `HtmlSanitizer`; verify xanh 228 unit + 359 IT. Nhánh `feature/notification-inbox` xếp chồng trên `feature/b56-shared-schema` | `5bc76c5` `88636db` `f8bf25b` |
 | 2026-11-26 | N03: `NotificationFacade` (ghi sau commit + đẩy WebSocket), `AdminInboxFacade`, read-model đếm chưa đọc 3 nguồn, nguồn thông báo KYC / thiết bị mới / lệch Điểm / đặt COD; verify xanh 232 unit + 369 IT | `ba5b0c4` `34e27cf` `4dba62b` `436d7ef` |
 | 2026-11-27 | N04: `GET /me/notifications` (gộp `ntf_` / `pn_` / `an_`, cursor), `PATCH /{id}`, `POST /mark-all-read`, gói tin `NOTIFICATIONS_READ`; verify xanh 235 unit + 379 IT | `60d7620` |

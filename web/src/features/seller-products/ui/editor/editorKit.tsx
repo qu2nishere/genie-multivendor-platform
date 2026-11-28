@@ -1,5 +1,5 @@
 // Phần dùng chung của form đăng bán (prototype Products.jsx card / cardHead / lab / hint).
-import type { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { cn } from '@/shared/lib/cn';
 import { Icon, type IconName } from '@/shared/ui';
@@ -62,3 +62,27 @@ export const toInt = (s: string): number | null => {
   const d = s.replace(/\D/g, '');
   return d === '' ? null : Number(d);
 };
+
+/** 1200000 → "1.200.000": dấu chấm ngăn hàng nghìn kiểu Việt Nam, hiện ngay khi đang gõ (ô giá / tồn kho). */
+export const groupDigits = (n: number | null | undefined): string =>
+  n == null ? '' : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+/**
+ * onChange cho ô số có dấu chấm ngăn nghìn: đọc số (bỏ dấu chấm) rồi đặt lại con trỏ ngay sau chữ số vừa gõ —
+ * thêm / bớt dấu chấm không làm con trỏ nhảy về cuối ô.
+ */
+export function onGroupedChange(e: ChangeEvent<HTMLInputElement>, set: (n: number | null) => void) {
+  const el = e.target;
+  const caret = el.selectionStart ?? el.value.length;
+  const digitsBefore = el.value.slice(0, caret).replace(/\D/g, '').length;
+  set(toInt(el.value));
+  requestAnimationFrame(() => {
+    if (document.activeElement !== el) return;
+    const v = el.value;
+    let pos = 0;
+    for (let seen = 0; pos < v.length && seen < digitsBefore; pos++) {
+      if (/\d/.test(v[pos])) seen++;
+    }
+    el.setSelectionRange(pos, pos);
+  });
+}
