@@ -8,11 +8,11 @@
 
 | UC | GD | BE | Test | Nối | Chạy | Trạng thái hiện tại | Mục tiêu |
 |---|:---:|:---:|:---:|:---:|:---:|---|---|
-| UC-ORD-01 Giỏ hàng | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-04 Xem trước & tách giỏ | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-07 Phiên checkout & đơn con | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai | ✅ |
-| UC-ORD-08 Cron hủy đơn quá hạn | — | ☑ | ☑ | — | ☐ | 🟡 Đang triển khai | ✅ |
+| UC-ORD-01 Giỏ hàng | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai | ✅ |
+| UC-ORD-06 Phí vận chuyển GHN | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai | ✅ |
+| UC-ORD-04 Xem trước & tách giỏ | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai | ✅ |
+| UC-ORD-07 Phiên checkout & đơn con | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai | ✅ |
+| UC-ORD-08 Cron hủy đơn quá hạn | — | ☑ | ☑ | — | ☑ | ✅ Đã triển khai | ✅ |
 
 **Tổng quan dự án (CHECKLIST 2026-11-25):** Đã triển khai 24 / 87 → mục tiêu **29** / 87 khi đóng plan (đếm lại từ các dòng UC lúc đóng — C1 có thể đã đổi số).
 
@@ -220,3 +220,4 @@ develop ─┬─ feature/c2-cart ─── feature/c2-shipping-fee ─── fe
 
 **Kết luận:** tính phí theo địa chỉ 2 cấp **được**, nhưng qua `POST /v2/shipping-order/preview` thay cho `/v2/shipping-order/fee`. Kho gửi lấy theo header `ShopId` (không cần `from_district_id`), nên kho của shop cũng không cần mã quận — chỉ cần shop có `ghn_shop_id` thật. Môi trường thử chập chờn (vài lần trả "To address conflict" / "Chưa truyền serviceID" rồi gọi lại thì được) → giữ bảng phí dự phòng + `is_estimated_fee` khi lỗi. **Việc cần làm (task mới O11.01):** đổi `HttpGhnFeeClient` sang `preview` (gửi tên / SĐT / địa chỉ người nhận từ `AddressSnapshot`, `to_ward_code` mới, `is_new_to_address: true`), bỏ điều kiện "hai đầu phải có mã quận" trong `ShippingFeeQuoter` (chỉ cần `ghnShopId`), sửa `HttpGhnFeeClientTest`, API 6.8 / `Usecase.md` UC-ORD-06.
 | 2026-11-26 | — | Gộp migration với C1: `V25__listing_and_checkout_schema.sql` (có `uk_cart_items_cart_variant`, `idx_checkout_sessions_open_expires`) → D15 ☑; sửa tên cột `reservation_expires_at` → `expires_at` trong luồng 3.4, 3.5, D13; phần phối hợp chuyển vào plan **mục 8** (bỏ file ranh giới riêng); O00.03 = chờ PR schema | `feature/c1` | (chưa commit) |
+| 2026-11-28 | — | Chạy thật trên giao diện: Nghiêm Phú Đăng Quân xác nhận đạt (kịch bản `docs/kiem-thu/kich-ban-2026-11-26-c2.md`) → Chạy ☑ cho 5 UC, cập nhật CHECKLIST / báo cáo UC độc lập / Usecase.md / Excel | nhánh `feature/c2-run-status` |
