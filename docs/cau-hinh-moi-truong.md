@@ -200,7 +200,7 @@ Cột **Mặc định dev** = giá trị khi không đặt biến và chạy pro
 | Zalo | `ZALO_APP_ID`, `ZALO_APP_SECRET` |
 | Thanh toán | `VNPAY_TMN_CODE`, `VNPAY_HASH_SECRET`, `VNPAY_URL`, `VNPAY_RETURN_URL`, `SEPAY_API_KEY`, `SEPAY_ACCOUNT_NUMBER` |
 | Vận chuyển | `GHN_TOKEN`, `GHN_SHOP_ID`, `GHN_PICKUP_MODE` (`stub` mặc định — giả lập đăng ký kho lấy hàng UC-VND-05; `http` gọi GHN `v2/shop/register`, cần `GHN_TOKEN`), `GHTK_TOKEN`, `VTP_TOKEN`, `JT_KEY` |
-| AI | `GEMINI_API_KEY` |
+| AI | `GEMINI_API_KEY`, `GEMINI_MODE` (`stub` mặc định — giả lập theo từ khóa; `http` gọi Google Gemini REST API), `GEMINI_MODEL` (`gemini-3.8-flash` — khóa mới tạo không dùng được `gemini-2.5-flash`, Google trả 404 "no longer available to new users"), `GEMINI_REJECT_THRESHOLD` (`85`, kẹp 1–100), `GEMINI_TIMEOUT_SECONDS` (`60`), `GEMINI_FALLBACK_MODEL` (`gemini-3.8-flash-lite` — dùng cho lần thử cuối khi model chính quá tải / quá hạn). Đọc trực tiếp bằng `@Value` / `@ConditionalOnProperty` (không khai trong `application*.yml`). Bật / tắt tính năng ở **Admin › Duyệt sản phẩm › Cấu hình** (bảng `platform_settings`, khóa `moderation.ai_screening.enabled`, mặc định tắt; chỉ `ADMIN` đổi được) |
 
 ### 6.6 Vận hành
 

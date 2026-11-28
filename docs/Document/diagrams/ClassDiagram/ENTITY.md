@@ -1720,6 +1720,15 @@ public class Product {
         this.moderationReason = reason;
     }
 
+    /** AI tự từ chối (REJECT, rủi ro ≥ ngưỡng) — không có người duyệt; giao diện hiện "AI Hệ thống" (UC-CAT-12; D13) */
+    public void rejectByAi(String reason) {
+        this.status = ProductStatus.REJECTED;
+        this.isPublished = false;
+        this.moderatorId = null;
+        this.moderationReason = reason;
+        this.isRequeued = false;
+    }
+
     /** Shop tự ẩn sản phẩm — UC-CAT-11 */
     public void hide() {
         this.status = ProductStatus.HIDDEN;
@@ -2362,7 +2371,7 @@ public class ProductModerationResult {
     private Long productId;                   // FK → products.id
 
     @Column(nullable = false, length = 60)
-    private String modelName;                 // Mô hình đã dùng: "gemini-2.5-flash" (TLCN) / tên model AI Worker (DATN)
+    private String modelName;                 // Mô hình đã dùng: "gemini-2.5-flash" (TLCN) / "stub" khi chạy giả lập / tên model AI Worker (DATN)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

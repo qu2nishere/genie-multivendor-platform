@@ -4,6 +4,14 @@ export type ModerationTab = 'PENDING' | 'PUBLISHED' | 'REJECTED';
 /** Nhãn hiển thị: PENDING_APPROVAL + is_requeued → "Chờ duyệt lại". */
 export type ModerationLabel = ModerationStatus | 'REQUEUED';
 export type AiDecision = 'APPROVE' | 'REJECT' | 'NEED_REVIEW';
+export type AiCheck = 'NOT_SCREENED' | 'FAILED' | 'PASSED' | 'SUSPECTED' | 'REJECTED';
+export const AI_CHECKS: readonly AiCheck[] = [
+  'PASSED',
+  'SUSPECTED',
+  'REJECTED',
+  'FAILED',
+  'NOT_SCREENED',
+];
 
 export interface ModerationRow {
   productId: number;
@@ -15,6 +23,7 @@ export interface ModerationRow {
   assignee: { id: number; name: string } | null;
   rejectedByAi: boolean;
   submittedAt: string;
+  aiCheck: AiCheck;
 }
 
 export interface ModerationDetail extends ModerationRow {
@@ -23,6 +32,8 @@ export interface ModerationDetail extends ModerationRow {
     riskScore: number;
     violations: string[];
     reasoning: string | null;
+    fallback: boolean;
+    screenedAt: string;
   } | null;
   decisionReason: string | null;
   images: string[];
@@ -43,6 +54,16 @@ export interface Moderator {
   staffId: number;
   name: string;
   accepting: boolean;
+}
+
+export interface AiScreeningSettings {
+  enabled: boolean;
+  mode: 'stub' | 'http';
+  model: string;
+  rejectThreshold: number;
+  configured: boolean;
+  updatedAt: string | null;
+  updatedBy: string | null;
 }
 
 export type ModerationCounts = Record<ModerationTab, number>;

@@ -3616,6 +3616,41 @@
         "confirm": "Xác nhận phân phối",
         "redistributed": "Đã phân phối lại {count} sản phẩm."
       },
+      "ai_settings": {
+        "title": "Kiểm duyệt tự động bằng AI",
+        "desc": "Sản phẩm gửi duyệt được Gemini chấm trước: vi phạm rõ (rủi ro ≥ {threshold}) bị từ chối tự động, nghi ngờ được đưa lên đầu hàng chờ. AI không tự đăng bán.",
+        "meta": "Mô hình: {model} · Chế độ: {mode} · Ngưỡng từ chối: {threshold}",
+        "mode": {
+          "http": "Thật",
+          "stub": "Giả lập"
+        },
+        "updated": "Cập nhật lần cuối: {time} bởi {name}",
+        "not_configured": "Chưa cấu hình GEMINI_API_KEY — mọi lần chấm sẽ chuyển duyệt thủ công.",
+        "admin_only": "Chỉ Quản trị viên được bật / tắt.",
+        "toggle": "Bật / tắt kiểm duyệt tự động",
+        "confirm_on": "Bật kiểm duyệt tự động? Mỗi sản phẩm gửi duyệt sẽ được gửi sang Gemini (tốn phí API).",
+        "confirm_off": "Tắt kiểm duyệt tự động? Sản phẩm gửi duyệt sẽ vào thẳng hàng chờ thủ công.",
+        "saved_on": "Đã bật kiểm duyệt tự động.",
+        "saved_off": "Đã tắt kiểm duyệt tự động."
+      },
+      "ai_check": {
+        "NOT_SCREENED": "Chưa chấm AI",
+        "FAILED": "AI lỗi",
+        "PASSED": "AI: Đạt",
+        "SUSPECTED": "AI: Nghi ngờ",
+        "REJECTED": "AI: Từ chối"
+      },
+      "ai_filter": {
+        "label": "Lọc theo kết quả AI",
+        "all": "Mọi kết quả AI",
+        "empty": "Không có sản phẩm khớp bộ lọc AI."
+      },
+      "ai_detail": {
+        "not_screened": "Chưa được AI đánh giá",
+        "not_screened_hint": "AI đang tắt hoặc chưa chấm xong lần gửi này — duyệt thủ công như bình thường.",
+        "failed": "AI lỗi — chuyển duyệt thủ công",
+        "screened_at": "Chấm lúc {time}"
+      },
       "back": "Quay lại danh sách",
       "detail_title": "Duyệt Sản phẩm #{id}",
       "meta": "Ngày tạo: {at} · Nhà bán: {shop}",
@@ -3693,7 +3728,11 @@
       },
       "err": {
         "note_long": "Tối đa 500 ký tự."
-      }
+      },
+      "view": "Xem",
+      "assignee_none": "Chưa phân công",
+      "result_count": "{count} sản phẩm",
+      "submitted_at": "Gửi {time}"
     }
   },
   "admin-catalog": {

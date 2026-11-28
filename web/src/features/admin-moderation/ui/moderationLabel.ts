@@ -1,6 +1,6 @@
 // Nhãn trạng thái duyệt sản phẩm (prototype ProductModeration.jsx STATE): màu + icon.
 import type { BadgeVariant, IconName } from '@/shared/ui';
-import type { ModerationLabel } from '../domain/moderation.types';
+import type { AiCheck, ModerationLabel } from '../domain/moderation.types';
 
 export const LABEL: Record<ModerationLabel, { variant: BadgeVariant; icon: IconName }> = {
   PENDING_APPROVAL: { variant: 'warning', icon: 'clock' },
@@ -8,4 +8,12 @@ export const LABEL: Record<ModerationLabel, { variant: BadgeVariant; icon: IconN
   REQUEUED: { variant: 'warning', icon: 'refresh-cw' },
   PUBLISHED: { variant: 'success', icon: 'circle-check' },
   REJECTED: { variant: 'danger', icon: 'ban' },
+};
+
+export const AI_LABEL: Record<AiCheck, { variant: BadgeVariant; icon: IconName }> = {
+  PASSED: { variant: 'success', icon: 'circle-check' },
+  SUSPECTED: { variant: 'warning', icon: 'triangle-alert' },
+  REJECTED: { variant: 'danger', icon: 'ban' },
+  FAILED: { variant: 'neutral', icon: 'cpu' },
+  NOT_SCREENED: { variant: 'neutral', icon: 'clock' },
 };

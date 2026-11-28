@@ -1,17 +1,19 @@
 // Kiểm duyệt đánh giá + duyệt sản phẩm (TanStack Query). Mỗi thao tác làm mới mọi truy vấn ['admin', …].
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ProductRejectReason } from '../domain/moderation.rules';
-import type { ModerationTab, Moderator } from '../domain/moderation.types';
+import type { AiCheck, ModerationTab, Moderator } from '../domain/moderation.types';
 import type { ReportState } from '../domain/review.types';
 import {
   approveProduct,
   assignModerator,
+  fetchAiSettings,
   getModeration,
   listModeration,
   listModerators,
   redistributeQueue,
   rejectProduct,
   requeueProduct,
+  saveAiSettings,
   saveModeratorAvailability,
 } from '../infrastructure/moderation.api';
 import { listReviewReports, setReviewVisibility } from '../infrastructure/review.api';
@@ -41,10 +43,10 @@ export const useReviewVisibility = () =>
   );
 
 // ---------- Sản phẩm ----------
-export const useModerationQueue = (tab: ModerationTab, q: string, page: number) =>
+export const useModerationQueue = (tab: ModerationTab, q: string, page: number, ai?: AiCheck) =>
   useQuery({
-    queryKey: [...ADMIN, 'moderation', 'list', tab, q, page],
-    queryFn: () => listModeration(tab, q, page),
+    queryKey: [...ADMIN, 'moderation', 'list', tab, q, page, ai ?? 'ALL'],
+    queryFn: () => listModeration(tab, q, page, ai),
     placeholderData: keepPreviousData,
   });
 
@@ -79,3 +81,14 @@ export const useSaveModerators = () =>
   useAdminMutation((items: Moderator[]) => saveModeratorAvailability(items));
 
 export const useRedistribute = () => useAdminMutation(() => redistributeQueue());
+
+export const useAiSettings = () =>
+  useQuery({ queryKey: [...ADMIN, 'ai-settings'], queryFn: fetchAiSettings });
+
+export const useSaveAiSettings = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: saveAiSettings,
+    onSuccess: (data) => qc.setQueryData([...ADMIN, 'ai-settings'], data),
+  });
+};

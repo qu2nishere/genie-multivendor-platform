@@ -832,7 +832,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - Khóa `GEMINI_API_KEY`, tên model, ngưỡng tự từ chối đặt trong biến môi trường / cấu hình; chi phí ước tính ở `kien-thuc/BAO_CAO_DU_TOAN_CHI_PHI_VA_GIAI_PHAP_AI_v1.0.md`.
   - Bản DATN giữ phương án AI Worker tự host (CLIP + từ điển từ cấm); hai bản dùng chung bảng `product_moderation_results`.
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai — xử lý phía máy chủ (cron / webhook / AI), chưa có backend; giao diện chỉ hiển thị kết quả trên lớp mock.
+  - *Hiện trạng:* Đang triển khai (2026-11-28, plan C1 P06) — BE ☑, Test ☑ (`ProductScreeningIT` 10/10, `StubScreeningClientTest`, `GeminiScreeningClientTest`, web `AiScreeningCard` + `npm run verify` xanh); còn Chạy ☐ (chờ chủ dự án chạy thật trên giao diện).
   - *Kế hoạch:* Sprint 7 (tuần 13–14) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Product](../ClassDiagram/ENTITY.md#22-product--sản-phẩm-spu), [ProductModerationResult](../ClassDiagram/ENTITY.md#210-productmoderationresult--kết-quả-kiểm-duyệt-sản-phẩm-tự-động), [ProductDocument](../ClassDiagram/ENTITY.md#28-productdocument--giấy-tờ-chứng-thực-sản-phẩm), [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân).
 
