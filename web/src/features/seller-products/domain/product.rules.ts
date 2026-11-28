@@ -13,6 +13,8 @@ export const MAX_IMAGES = 8;
 export const MAX_GROUPS = 2;
 export const MAX_VARIANTS = 50;
 export const MAX_DOCS = 4;
+/** Giá trị một dòng thông số (được xuống dòng) — khớp backend `ProductWriteService.MAX_SPEC_VALUE`. */
+export const SPEC_VALUE_MAX = 1000;
 export const DESC_MAX = 10_000;
 export const PRE_ORDER_MIN = 7;
 export const PRE_ORDER_MAX = 30;
@@ -32,6 +34,26 @@ export const GROUP_NAMES = [
 ];
 
 export const variantKey = (options: string[]): string => options.join('|');
+
+/**
+ * "Áp dụng hàng loạt" có lọc theo giá trị: `match[k]` = giá trị của nhóm k cần khớp (null = mọi giá trị).
+ * Vd giá theo Dung lượng, màu nào cũng như nhau: match = ['128 GB', null] → đặt giá cho mọi màu của 128 GB.
+ * Ô để trống (null) trong `patch` thì giữ nguyên. Trả thêm số phân loại đã đổi.
+ */
+export function applyBulk(
+  variants: VariantRow[],
+  match: (string | null)[],
+  patch: { price: number | null; stock: number | null },
+): { variants: VariantRow[]; count: number } {
+  let count = 0;
+  const next = variants.map((v) => {
+    const hit = match.every((m, k) => m === null || v.options[k] === m);
+    if (!hit) return v;
+    count++;
+    return { ...v, price: patch.price ?? v.price, stock: patch.stock ?? v.stock };
+  });
+  return { variants: next, count };
+}
 
 /** Mọi tổ hợp giá trị của các nhóm có giá trị (thứ tự nhóm → thứ tự giá trị). */
 export function combos(groups: OptionGroup[]): string[][] {
@@ -119,7 +141,8 @@ export function publishIssues(
   const out: PublishIssue[] = [];
   if (f.images.length === 0 || f.images.length > MAX_IMAGES) out.push('images');
   if (f.name.trim().length < 5) out.push('name');
-  if (f.categoryPath.length < 3) out.push('category');
+  // Ô chọn chỉ ghi ngành lá (2 cấp thật / 3 cấp mock) → có đường dẫn là đủ
+  if (f.categoryPath.length === 0) out.push('category');
   if (rules?.requiresDocuments && f.documents.length === 0) out.push('documents');
   if (missingSpecs(f.specs, rules).length) out.push('specs');
   if (f.variants.length > MAX_VARIANTS) out.push('variants_limit');
@@ -191,7 +214,6 @@ export const emptyForm = (): ProductForm => ({
   weightGrams: null,
   dims: { length: null, width: null, height: null },
   shippingPayer: 'BUYER',
-  freeShippingThreshold: null,
   isPreOrder: false,
   preOrderDays: null,
 });

@@ -24,7 +24,6 @@ export const basicsSchema = z
     width: optNum,
     height: optNum,
     shippingPayer: z.enum(['BUYER', 'SELLER']),
-    freeShippingThreshold: optNum,
     isPreOrder: z.boolean(),
     preOrderDays: z.number().int().nullable(),
   })
@@ -38,11 +37,7 @@ export const basicsSchema = z
       path: ['preOrderDays'],
       message: 'seller-products.err.pre_order',
     },
-  )
-  .refine((v) => v.shippingPayer === 'BUYER' || (v.freeShippingThreshold ?? 0) > 0, {
-    path: ['freeShippingThreshold'],
-    message: 'seller-products.err.free_ship',
-  });
+  );
 export type BasicsValues = z.infer<typeof basicsSchema>;
 
 export const proposalSchema = z.object({

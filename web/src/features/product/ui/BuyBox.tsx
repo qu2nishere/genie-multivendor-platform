@@ -29,6 +29,7 @@ import {
   maxQty,
   missingGroups,
   priceOf,
+  selectedImage,
   skuOf,
   stockFor,
   variantLabel,
@@ -119,7 +120,8 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
       productSlug: p.slug,
       shopId: p.shopId,
       title: p.title,
-      image: p.images[0] ?? p.image,
+      // ảnh của phân loại đã chọn (vd màu Đỏ) — không có thì ảnh chính
+      image: selectedImage(p.variantGroups, sel) ?? p.images[0] ?? p.image,
       variantLabel: variantLabel(p.variantGroups, sel),
       price,
       originalPrice: p.originalPrice,
@@ -208,13 +210,22 @@ function Box({ product: p, shopName, vacationUntil }: BuyBoxProps) {
                     onClick={() => pick(g.name, i)}
                     className={chip(on, out)}
                   >
-                    {o.swatch && (
+                    {o.image ? (
+                      <img
+                        src={o.image}
+                        alt=""
+                        width={26}
+                        height={26}
+                        loading="lazy"
+                        className="-ml-1.5 h-[26px] w-[26px] flex-none rounded-sm object-cover"
+                      />
+                    ) : o.swatch ? (
                       <span
                         aria-hidden="true"
                         className="h-3.5 w-3.5 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,.12)]"
                         style={{ background: o.swatch }}
                       />
-                    )}
+                    ) : null}
                     {o.label}
                     {/* prototype: chỉ nhóm không quyết định tồn (Phiên bản) ghi chênh giá */}
                     {o.priceDelta && !g.controlsStock
