@@ -40,7 +40,7 @@ class AuditActionCategoryTest {
                 AuditAction.BANNER_DELETED)) {
             assertThat(banner.category()).as(banner.name()).isEqualTo(AuditCategory.CONFIG);
         }
-        // Thông báo sàn (UC-NOT-05) + voucher sàn (UC-PRO-02) — V26, plan 2026-11-26
+        // Thông báo sàn (UC-NOT-05) + voucher sàn (UC-PRO-02) — V27, plan 2026-11-26
         for (AuditAction config : List.of(AuditAction.PLATFORM_NOTIFICATION_PUBLISHED,
                 AuditAction.PLATFORM_NOTIFICATION_UPDATED, AuditAction.PLATFORM_NOTIFICATION_DELETED,
                 AuditAction.VOUCHER_CREATED, AuditAction.VOUCHER_UPDATED, AuditAction.VOUCHER_DISABLED,

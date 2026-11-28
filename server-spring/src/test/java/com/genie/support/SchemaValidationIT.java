@@ -41,7 +41,7 @@ class SchemaValidationIT {
 
     /**
      * Mỗi giá trị enum Java phải nằm trong {@code CHECK} của cột tương ứng — migration sửa ràng buộc mà quên chép
-     * giá trị cũ / mới thì đỏ ở đây thay vì lỗi lúc ghi thật (plan 2026-11-26 N01.08, V26).
+     * giá trị cũ / mới thì đỏ ở đây thay vì lỗi lúc ghi thật (plan 2026-11-26 N01.08, V27).
      */
     @Test
     void checkConstraintsAcceptEveryEnumValue() {

@@ -49,7 +49,7 @@
 | Giai đoạn | Nội dung | Task | Commit | Xong |
 |---|---|---:|---:|---:|
 | N00 | Chuẩn bị | 6 | 0 | 6 / 6 |
-| N01 | Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
+| N01 | Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước) | 9 | 2 | 11 / 11 |
 | N02 | Tài liệu API & hằng số dùng chung (nhánh `feature/notification-inbox`) | 7 | 3 | 10 / 10 |
 | N03 | Tạo thông báo cá nhân & hộp thư nhân viên (UC-NOT-01) | 10 | 4 | 14 / 14 |
 | N04 | API hộp thư `/me/notifications` | 10 | 1 | 11 / 11 |
@@ -70,10 +70,10 @@
 - [x] **N00.05** Đọc chữ ký sự kiện
 - [x] **N00.06** Đọc màn mock
 
-## N01 — Migration chung `V26` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
+## N01 — Migration chung `V27` (nhánh `feature/b56-shared-schema`, PR riêng — merge trước)
 
 - [x] **N01.01** Tài liệu trước (TS 7.3)
-- [x] **N01.02** `V26__b5_b6_notification_chat_voucher.sql`
+- [x] **N01.02** `V27__b5_b6_notification_chat_voucher.sql`
 - [x] **N01.03** Khối (b) hộp thư
 - [x] **N01.04** Khối (c) chat
 - [x] **N01.05** Khối (d) voucher
@@ -216,7 +216,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 |---|---|
 | N10.08 | PR xếp chồng: #112 `feature/b56-shared-schema` → `develop`; #114 `feature/notification-inbox` → nền #112; #115 `feature/notification-platform-broadcast` → nền #114. Mỗi PR merge xong thì đổi nền PR kế tiếp sang `develop` |
 | N10.01 | `/v3/api-docs` có đủ 8 endpoint, summary `UC-NOT-01` (3) / `UC-NOT-05` (5) |
-| N10.02–N10.07 | Handoff: dòng 35 gạch (đã sửa), nhóm `notifications` + `platform-notifications` đã nối, ghi kênh realtime. Usecase: *Hiện trạng* 2 UC. Checklist: 2 UC ✅ (5 lớp), Tổng quan Đã triển khai 24 → 26, mock 37 → 35, phân hệ 10: 2 / 0 / 1, dòng Nhật ký, bảng Thành viên. BAO_CAO: dòng UC-NOT-05 ✅, bảng trạng thái cụm B6 (UC-NOT-01 ✅, 3 UC chat còn lại), hiện trạng thành viên. Excel: cột S hai dòng = "Đã triển khai", cột AA giữ "Nguyễn Ngọc Thiện", sheet Thành viên. README ngày: tick plan [1], `V26` đã chốt |
+| N10.02–N10.07 | Handoff: dòng 35 gạch (đã sửa), nhóm `notifications` + `platform-notifications` đã nối, ghi kênh realtime. Usecase: *Hiện trạng* 2 UC. Checklist: 2 UC ✅ (5 lớp), Tổng quan Đã triển khai 24 → 26, mock 37 → 35, phân hệ 10: 2 / 0 / 1, dòng Nhật ký, bảng Thành viên. BAO_CAO: dòng UC-NOT-05 ✅, bảng trạng thái cụm B6 (UC-NOT-01 ✅, 3 UC chat còn lại), hiện trạng thành viên. Excel: cột S hai dòng = "Đã triển khai", cột AA giữ "Nguyễn Ngọc Thiện", sheet Thành viên. README ngày: tick plan [1], `V27` đã chốt |
 | N09.03 | **Chạy thật 13 / 13 đạt** (2026-11-27): Chromium + Playwright, 6 ngữ cảnh (khách 2 tab + "iPhone", chủ shop, Admin, Moderator) trên web bản build `PUBLIC_REAL_API=…,notifications,platform-notifications` + backend `local` JDK 21 + Postgres + Redis + Silo + Mailpit; kết quả chi tiết ở `docs/kiem-thu/kich-ban-2026-11-26-thong-bao.md`. Lỗi phát hiện + sửa: form soạn reset sau lần vẽ đầu làm mất chữ vừa gõ → `useLayoutEffect` (`e856c14`). Môi trường: `.env` gốc đặt `PUBLIC_S3_URL=http://host.docker.internal:9000` (cho AI Worker) → trình duyệt không PUT ảnh lên Silo được; chạy backend với `PUBLIC_S3_URL=http://localhost:9000` (không sửa `.env` của người dùng). Script chạy thật để ở scratchpad (`notif_realrun.mjs`), không commit |
 | N09.04 | `GET /me/notifications?limit=20` p50 10 ms / p95 35 ms (55 lượt). Phát `ALL` tới 8 kết nối STOMP thật: nhận đủ trong ≤ 17 ms (tính cả POST). **Khác plan:** không mở được 200 kết nối vì đăng nhập giới hạn 10 lần / phút / IP (đúng thiết kế bảo mật) — đo với 8 |
 | N08.01 | DTO / mapper màn Admin đã khớp API 11.17 từ trước (N00.06) — chỉ đổi 4 hàm sang cờ riêng `isMocked('platform-notifications')` |
@@ -264,7 +264,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | Ngày | Việc đã làm | Commit |
 |---|---|---|
 | 2026-11-26 | Lập plan + progress (81 task, 17 commit, 11 giai đoạn) — chưa bắt đầu làm | — |
-| 2026-11-26 | N00 (chốt D1–D20, kiểm `V26` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V26`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
+| 2026-11-26 | N00 (chốt D1–D20, kiểm `V27` trống, đọc sự kiện + DTO mock) và N01 (ENTITY v1.6, migration `V27`, entity / enum, test ràng buộc CHECK ↔ enum); verify xanh 220 unit + 359 IT | `51f57ac` `79c110d` |
 | 2026-11-26 | N02: API_SPEC 3.12 / 4.1 / 11.17 / 13 + Usecase UC-NOT-01 / 05; jsoup; mã lỗi `GNE-NOT-*`, `NOTIFICATION_IMAGE`, `OnlineUsers`, `HtmlSanitizer`; verify xanh 228 unit + 359 IT. Nhánh `feature/notification-inbox` xếp chồng trên `feature/b56-shared-schema` | `5bc76c5` `88636db` `f8bf25b` |
 | 2026-11-26 | N03: `NotificationFacade` (ghi sau commit + đẩy WebSocket), `AdminInboxFacade`, read-model đếm chưa đọc 3 nguồn, nguồn thông báo KYC / thiết bị mới / lệch Điểm / đặt COD; verify xanh 232 unit + 369 IT | `ba5b0c4` `34e27cf` `4dba62b` `436d7ef` |
 | 2026-11-27 | N04: `GET /me/notifications` (gộp `ntf_` / `pn_` / `an_`, cursor), `PATCH /{id}`, `POST /mark-all-read`, gói tin `NOTIFICATIONS_READ`; verify xanh 235 unit + 379 IT | `60d7620` |

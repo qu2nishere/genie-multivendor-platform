@@ -20,7 +20,7 @@
 ## 2. Thứ tự & phụ thuộc
 
 ```
-[1] N01 — migration chung V26 (nhánh feature/b56-shared-schema, PR riêng, merge TRƯỚC) ──┬──► [1] N02… Thông báo (UC-NOT-01, UC-NOT-05)
+[1] N01 — migration chung V27 (nhánh feature/b56-shared-schema, PR riêng, merge TRƯỚC) ──┬──► [1] N02… Thông báo (UC-NOT-01, UC-NOT-05)
                                                                                          ├──► [2] Chat (cần N01 + hub realtime web N05 + NotificationFacade N03)
                                                                                          └──► [3] Voucher (chỉ cần N01; làm song song được với [1] sau khi N01 merge)
 [1] N05 (hub WebSocket dùng chung phía web, có gửi khung SEND) ─────────────────────────► [2] M06 (chat nối WebSocket)
@@ -59,10 +59,10 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 
 | Điểm chung | Quy ước |
 |---|---|
-| **Migration** | Một migration chung `V26__b5_b6_notification_chat_voucher.sql` (task **N01**, nhánh riêng, merge vào `develop` trước — giống tiền lệ `V25` chung của C1 / C2). Trước khi mở PR: `git fetch && git log origin/develop --oneline -- server-spring/src/main/resources/db/migration`; nếu C1 / C2 đã chiếm `V26` thì đổi thành số kế tiếp và **chép đủ** danh sách `ck_system_logs_action_type` của migration mới nhất. Sau khi merge không sửa; cần thêm → số kế tiếp |
+| **Migration** | Một migration chung `V27__b5_b6_notification_chat_voucher.sql` (task **N01**, nhánh riêng, merge vào `develop` trước — giống tiền lệ `V25` chung của C1 / C2). Trước khi mở PR: `git fetch && git log origin/develop --oneline -- server-spring/src/main/resources/db/migration`; nếu C1 / C2 đã chiếm `V27` thì đổi thành số kế tiếp và **chép đủ** danh sách `ck_system_logs_action_type` của migration mới nhất. Sau khi merge không sửa; cần thêm → số kế tiếp |
 | `common/error/ErrorCode.java` + `web/src/shared/api/error-codes.ts` + `errors.GNE-*` (vi / en) | [1]: `GNE-NOT-4091`, `GNE-NOT-4221` · [2]: `GNE-SOC-4031`, `GNE-SOC-4096` (mới) · [3]: `GNE-VCH-4041`, `4091`, `4092`, `4093`, `4094` (mới), `4221` (đã có trong API 15, chưa có trong code). Thêm đúng khối miền, cùng commit với API 15 |
 | `common/storage/UploadPurpose.java` | [1]: `NOTIFICATION_IMAGE` (`content-assets`, quyền `MANAGE_PLATFORM_NOTIFICATION`) · [2]: `CHAT_IMAGE` (`chat-media` riêng tư) — LUU_TRU 5.4 đã đặt sẵn tên |
-| `common/audit/AuditAction.java` + `category()` | Giá trị mới chỉ thêm trong `V26`: `PLATFORM_NOTIFICATION_PUBLISHED / UPDATED / DELETED` ([1]), `VOUCHER_CREATED / UPDATED / DISABLED / DELETED` ([3]) — cả hai nhóm `CONFIG` |
+| `common/audit/AuditAction.java` + `category()` | Giá trị mới chỉ thêm trong `V27`: `PLATFORM_NOTIFICATION_PUBLISHED / UPDATED / DELETED` ([1]), `VOUCHER_CREATED / UPDATED / DISABLED / DELETED` ([3]) — cả hai nhóm `CONFIG` |
 | `common/realtime/UserChannel` | [1] thêm hằng `NOTIFICATIONS = "/queue/notifications"`; [2] thêm `CHAT = "/queue/chat"` — chỉ thêm hằng, không đổi chữ ký |
 | `web/src/shared/realtime/` | [1] N05 tách `accountChannel` thành hub dùng chung (`realtimeHub.ts`) + thêm `send()`; [2] chỉ **dùng** hub, không tạo `StompConnection` thứ hai |
 | `promotion/voucher/application/PromotionSearchPorts` | [3] gọi `evictCache()` **sau commit** mỗi khi tạo / sửa / tắt / xóa voucher SHOP (báo cáo độc lập dòng UC-CAT-05) |
@@ -74,7 +74,7 @@ Thông tin shop / đơn hàng mà `promotion` cần (tên shop, `shop_id`, mã �
 | Số | File | Plan | Nội dung |
 |---|---|---|---|
 | `V25` | `V25__listing_and_checkout_schema.sql` | C1 + C2 (đã merge) | — |
-| `V26` (đã chốt — PR #112) | `V26__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
+| `V27` (đã chốt — PR #112) | `V27__b5_b6_notification_chat_voucher.sql` | [1] N01 (dùng chung cả 3 plan) | (a) `platform_notifications.dispatched_at` + 2 index; index `user_platform_notification_reads (platform_notification_id)`; (b) `NotificationType.CHAT_MESSAGE` (sửa `ck_notifications_type`) + index duy nhất một-thông-báo-chưa-đọc-mỗi-hội-thoại; index `admin_notifications (is_read, created_at)`; (c) `messages.is_auto`; 2 index `conversations` theo `last_message_at`; (d) 2 index `vouchers`; (e) 7 giá trị `AuditAction` (sửa `ck_system_logs_action_type`) |
 
 ## 6. Quy ước chung (trích TS 13, 14 — không lặp lại ở từng plan)
 

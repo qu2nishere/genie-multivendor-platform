@@ -10,7 +10,7 @@
 |---|---|
 | `web/.env` | `PUBLIC_USE_MOCK=true` và `PUBLIC_REAL_API` có thêm `notifications,platform-notifications` (cùng các nhóm đã có) |
 | Backend | `PUBLIC_S3_URL` phải là địa chỉ **trình duyệt mở được** (máy dev: `http://localhost:9000`). Nếu `.env` gốc đặt `http://host.docker.internal:9000` (cho AI Worker trong Docker) thì link tải ảnh lên Silo không mở được từ trình duyệt → chạy backend với `PUBLIC_S3_URL=http://localhost:9000` |
-| Migration | `V26__b5_b6_notification_chat_voucher.sql` đã áp (backend tự chạy Flyway) |
+| Migration | `V27__b5_b6_notification_chat_voucher.sql` đã áp (backend tự chạy Flyway) |
 
 **Tài khoản:** khách thuần = tài khoản **mới** đăng ký (OTP qua Mailpit `http://localhost:8025`); chủ shop = `mai.tran@gmail.com`; Admin = `yen.dh@genie.example`; nhân viên Moderator = `phat.nt@genie.example`; Finance Officer = `linh.tm@genie.example`.
 
