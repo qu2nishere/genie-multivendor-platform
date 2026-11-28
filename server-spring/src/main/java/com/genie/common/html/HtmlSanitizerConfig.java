@@ -9,9 +9,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HtmlSanitizerConfig {
 
-    /** Tiền tố URL công khai của {@code content-assets} (cùng cách ghép với {@code S3ObjectStorage.publicUrl}). */
+    /**
+     * Tiền tố URL công khai của {@code content-assets} (cùng cách ghép với {@code S3ObjectStorage.publicUrl}). Tên bean
+     * khác {@code htmlSanitizer} — tên đó đã thuộc {@code catalog.product.application.HtmlSanitizer} (plan C1).
+     */
     @Bean
-    HtmlSanitizer htmlSanitizer(ObjectStorage storage) {
+    HtmlSanitizer contentHtmlSanitizer(ObjectStorage storage) {
         return new HtmlSanitizer(List.of(storage.publicUrl("content-assets", "")));
     }
 }
