@@ -16,8 +16,14 @@ import java.util.Map;
  * API dùng {@code [{name, value}]} (theo <b>tên</b>), CSDL lưu {@code {"<mã thuộc tính>": "<giá trị>"}} để bộ lọc / trang chi
  * tiết dùng chung khóa máy. Khớp tên không dấu, không phân biệt hoa thường; dòng không khớp thuộc tính nào giữ khóa = tên
  * người bán nhập (trang chi tiết hiện nguyên tên).
+ * <p><b>Thứ tự dòng:</b> JSONB tự sắp khóa nên thứ tự người bán kéo thả bị mất → lưu thêm khóa {@link #ORDER_KEY} là mảng
+ * các khóa theo đúng thứ tự (chỉ khi ≥ 2 dòng). Bộ lọc tìm kiếm đọc theo từng mã ({@code specs_json ->> 'code'}) nên không
+ * bị ảnh hưởng; mọi chỗ đọc toàn bộ đối tượng phải bỏ khóa này ({@link #parse}, {@code ProductDetailService.specs}).
  */
 public final class SpecCodec {
+
+    /** Khóa phụ giữ thứ tự dòng thông số trong {@code specs_json} (mã thuộc tính không bắt đầu bằng {@code _}). */
+    public static final String ORDER_KEY = "__order";
 
     /** Dòng thông số đã gom: {@code key} = mã thuộc tính hoặc tên tự do. */
     record Entry(String key, String name, String value, AttributeView attribute) {
@@ -37,7 +43,8 @@ public final class SpecCodec {
         for (SellerProductViews.Spec s : specs) {
             if (s == null || s.name() == null || s.value() == null) continue;
             String name = s.name().trim();
-            String value = s.value().trim();
+            // giữ xuống dòng của người bán (chuẩn hóa \r\n → \n, bỏ dòng trống thừa liên tiếp)
+            String value = s.value().replace("\r\n", "\n").replace('\r', '\n').replaceAll("\n{3,}", "\n\n").trim();
             if (name.isEmpty() || value.isEmpty()) continue;
             AttributeView attr = byName.get(NameNormalizer.normalize(name));
             out.add(new Entry(attr == null ? name : attr.code(), attr == null ? name : attr.name(), value, attr));
@@ -51,6 +58,25 @@ public final class SpecCodec {
         return map;
     }
 
+    /** Giá trị ghi vào {@code specs_json}: các khóa → giá trị + {@link #ORDER_KEY} (thứ tự người bán sắp). */
+    static Map<String, Object> toStored(Map<String, String> specs) {
+        Map<String, Object> out = new LinkedHashMap<>(specs);
+        if (specs.size() > 1) out.put(ORDER_KEY, new ArrayList<>(specs.keySet()));
+        return out;
+    }
+
+    /** Xếp lại {@code values} theo mảng {@link #ORDER_KEY} (khóa không có trong mảng giữ cuối, theo thứ tự cũ). */
+    public static Map<String, String> ordered(Map<String, String> values, JsonNode order) {
+        if (order == null || !order.isArray() || values.size() < 2) return values;
+        Map<String, String> out = new LinkedHashMap<>();
+        for (JsonNode k : order) {
+            String key = k.asText();
+            if (values.containsKey(key)) out.put(key, values.get(key));
+        }
+        values.forEach(out::putIfAbsent);
+        return out;
+    }
+
     /** {@code specs_json} (đối tượng theo mã, hoặc dạng cũ mảng {@code [{name, value}]}) → map khóa → giá trị. */
     public static Map<String, String> parse(ObjectMapper json, String raw) {
         Map<String, String> values = new LinkedHashMap<>();
@@ -60,10 +86,11 @@ public final class SpecCodec {
             if (node.isObject()) {
                 for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
                     Map.Entry<String, JsonNode> e = it.next();
-                    if (!e.getValue().isNull()) {
+                    if (!e.getValue().isNull() && !ORDER_KEY.equals(e.getKey())) {
                         values.put(e.getKey(), e.getValue().isTextual() ? e.getValue().asText() : e.getValue().toString());
                     }
                 }
+                return ordered(values, node.get(ORDER_KEY));
             } else if (node.isArray()) {
                 for (JsonNode n : node) {
                     if (n.hasNonNull("name") && n.hasNonNull("value")) {

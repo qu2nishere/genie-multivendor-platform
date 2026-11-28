@@ -3,7 +3,9 @@ package com.genie.catalog.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -120,6 +122,7 @@ class SellerProductIT extends IntegrationTestBase {
         var req = switch (method) {
             case "POST" -> post(url);
             case "PUT" -> put(url);
+            case "PATCH" -> patch(url);
             default -> throw new IllegalArgumentException(method);
         };
         return mvc.perform(req.header(HttpHeaders.AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON)
@@ -378,6 +381,43 @@ class SellerProductIT extends IntegrationTestBase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void imagesForTwoOptionGroupsAreStoredAndReturned() throws Exception {
+        Map<String, Object> body = fullBody(false);
+        body.put("option_groups", List.of(
+                Map.of("name", "Màu sắc", "values", List.of(
+                        Map.of("value", "Đen", "image_object_key", tmpImage()), Map.of("value", "Trắng"))),
+                Map.of("name", "Dung lượng", "values", List.of(
+                        Map.of("value", "128 GB", "image_object_key", tmpImage()), Map.of("value", "256 GB")))));
+        body.put("variant_image_group", "Màu sắc");
+        List<Map<String, Object>> variants = new ArrayList<>();
+        for (String c : List.of("Đen", "Trắng")) {
+            for (String g : List.of("128 GB", "256 GB")) {
+                Map<String, Object> v = variant(null, c, null, 300_000, 1);
+                v.put("options", List.of(c, g));
+                variants.add(v);
+            }
+        }
+        body.put("variants", variants);
+        long id = created(send("POST", URL, body).andExpect(status().isCreated()));
+
+        String json = jdbc.queryForObject("SELECT option_images_json::text FROM products WHERE id = ?", String.class, id);
+        assertThat(json).contains("Màu sắc").contains("Đen").contains("Dung lượng").contains("128 GB");
+        assertThat(jdbc.queryForObject("SELECT variant_image_attribute FROM products WHERE id = ?", String.class, id))
+                .isEqualTo("Màu sắc");
+        // ảnh SKU theo nhóm ảnh chính (Màu sắc): 2 SKU màu Đen có ảnh
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM product_variants WHERE product_id = ? AND image_url IS NOT NULL",
+                Integer.class, id)).isEqualTo(2);
+
+        List<Map<String, Object>> groups = (List<Map<String, Object>>) detail(id).get("option_groups");
+        assertThat(groups).extracting(g -> g.get("name")).containsExactly("Màu sắc", "Dung lượng");
+        Map<String, Object> gb128 = ((List<Map<String, Object>>) groups.get(1).get("values")).get(0);
+        assertThat(gb128.get("value")).isEqualTo("128 GB");
+        assertThat((String) gb128.get("image_object_key")).startsWith("vendor/" + vendor + "/product/" + id + "/");
+        assertThat(gb128.get("image_url")).isNotNull();
+    }
+
+    @Test
     void shopNotVerifiedIsBlockedByKycGate() throws Exception {
         jdbc.update("UPDATE vendor_profiles SET kyc_status = 'PENDING' WHERE user_id = ?", vendor);
         send("POST", URL, Map.of("submit", false, "name", "x")).andExpect(status().isForbidden())
@@ -404,5 +444,70 @@ class SellerProductIT extends IntegrationTestBase {
         mvc.perform(get("/api/v1/seller/categories/999999999/listing-rules").header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("GNE-CAT-4041"));
+    }
+
+    // ===== Ẩn / mở bán lại / xóa (UC-CAT-11; plan C1 D17) =====
+
+    private ResultActions remove(long id) throws Exception {
+        return mvc.perform(delete(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, token));
+    }
+
+    private String statusOf(long id) {
+        return jdbc.queryForObject("SELECT status FROM products WHERE id = ?", String.class, id);
+    }
+
+    @Test
+    void sellerHidesShowsAndDeletesProduct() throws Exception {
+        long id = published();
+        send("PATCH", URL + "/" + id, Map.of("status", "HIDDEN")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("HIDDEN"));
+        assertThat(statusOf(id)).isEqualTo("HIDDEN");
+        assertThat(jdbc.queryForObject("SELECT is_published FROM products WHERE id = ?", Boolean.class, id)).isFalse();
+
+        // ẩn lần nữa → sai trạng thái
+        send("PATCH", URL + "/" + id, Map.of("status", "HIDDEN")).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("GNE-CAT-4097"));
+
+        send("PATCH", URL + "/" + id, Map.of("status", "PUBLISHED")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("PUBLISHED"));
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
+
+        // giá trị lạ → 422
+        send("PATCH", URL + "/" + id, Map.of("status", "DELETED")).andExpect(status().isUnprocessableEntity());
+
+        remove(id).andExpect(status().isNoContent());
+        assertThat(statusOf(id)).isEqualTo("DELETED");
+        mvc.perform(get(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, token)).andExpect(status().isNotFound());
+        remove(id).andExpect(status().isNotFound());
+        // biến thể giữ nguyên cho đơn cũ
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM product_variants WHERE product_id = ? AND deleted_at IS NULL",
+                Integer.class, id)).isEqualTo(2);
+    }
+
+    @Test
+    void lockedProductCannotBeReopenedBySeller() throws Exception {
+        long id = published();
+        jdbc.update("UPDATE products SET status = 'HIDDEN', is_published = FALSE, is_locked = TRUE WHERE id = ?", id);
+        send("PATCH", URL + "/" + id, Map.of("status", "PUBLISHED")).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("GNE-CAT-4093"));
+        assertThat(statusOf(id)).isEqualTo("HIDDEN");
+    }
+
+    @Test
+    void deleteIsBlockedWhileStockIsReserved() throws Exception {
+        long id = published();
+        jdbc.update("UPDATE product_variants SET reserved_count = 1 WHERE product_id = ?", id);
+        remove(id).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("GNE-CAT-4094"));
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
+    }
+
+    @Test
+    void otherSellersCannotTouchTheProduct() throws Exception {
+        long id = published();
+        long other = data.vendor();
+        String otherToken = "Bearer " + jwtService.issue(other, UserRole.VENDOR, 1L).token();
+        mvc.perform(delete(URL + "/" + id).header(HttpHeaders.AUTHORIZATION, otherToken))
+                .andExpect(status().isNotFound());
+        assertThat(statusOf(id)).isEqualTo("PUBLISHED");
     }
 }

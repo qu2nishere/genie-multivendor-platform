@@ -65,7 +65,7 @@
 
 ## V00 — Chuẩn bị
 
-- [x] **V00.01** Kiểm danh tính git; kiểm `V26` (plan [1] N01) đã có trên `develop`
+- [x] **V00.01** Kiểm danh tính git; kiểm `V27` (plan [1] N01) đã có trên `develop`
 - [x] **V00.02** Chốt D1–D22 vào progress.
 - [x] **V00.03** Tạo nhánh `feature/voucher-management` từ `develop` mới nhất.
 - [x] **V00.04** Đọc màn mock
@@ -187,8 +187,8 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
-| V10.08 | PR #120 `feature/voucher-management` (V01–V04, V06–V07, nền `develop` + `V26` của #112) → PR #121 `feature/voucher-wallet` (V05, V08–V10, nền #120); #121 ghi rõ dòng `BuyerOnlyFilter` nhờ Nguyễn Quốc Khoa duyệt |
-| V00.01 | Nhánh `feature/voucher-management` tạo từ `origin/develop` (đã có C1 `#113`) + gộp `feature/b56-shared-schema` (`V26` — PR #112 chưa merge); `feature/voucher-wallet` xếp chồng trên nhánh này |
+| V10.08 | PR #120 `feature/voucher-management` (V01–V04, V06–V07, nền `develop` + `V27` của #112) → PR #121 `feature/voucher-wallet` (V05, V08–V10, nền #120); #121 ghi rõ dòng `BuyerOnlyFilter` nhờ Nguyễn Quốc Khoa duyệt |
+| V00.01 | Nhánh `feature/voucher-management` tạo từ `origin/develop` (đã có C1 `#113`) + gộp `feature/b56-shared-schema` (`V27` — PR #112 chưa merge); `feature/voucher-wallet` xếp chồng trên nhánh này |
 | V03–V04 | Một service `VoucherManagementService` + `VoucherManagementQuery` cho cả voucher shop và sàn (cùng luật, khác quyền / nhật ký) thay cho 2 service riêng như cây file dự kiến |
 | V02–V05 | Test: `VoucherTest` 9, `VoucherInputValidatorTest` 11, `VoucherStatusSqlIT` 1, `SellerVoucherIT` 8, `AdminVoucherIT` 5, `VoucherSecurityIT` 2, `PublicVoucherIT` 4, `VoucherWalletIT` 5, `VoucherCacheEvictionIT` 2, `BuyerOnlyFilterTest` (thêm 3 ca); toàn nhánh `./mvnw clean verify` 250 unit + 401 IT xanh |
 | V08.01 | Thêm `listFeaturedVouchers` — trang chủ trước đó ghi cứng 4 mã mẫu không có trong dữ liệu thật (`c37f7e0`) |

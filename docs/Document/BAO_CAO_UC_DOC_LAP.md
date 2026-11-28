@@ -167,7 +167,7 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Cấu hình tin nhắn trả lời tự động (UC-VND-06)
 - Thông báo trong ứng dụng thời gian thực — WebSocket (UC-NOT-01)
 
-*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — 2 plan: `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (UC-NOT-01 + UC-NOT-05, N00–N10) và `plan_chat_khach_shop.md` (UC-SOC-01, 02, UC-VND-06, M00–M10); migration chung `V26` (tạm) cho cả B5 / B6. Chưa bắt đầu code. Lưu ý: phần *cấu hình* tự trả lời (UC-VND-06 bước 1–3) đã có từ B4 (`PATCH /seller/settings` khối `auto_reply`) — plan chat làm phần gửi tự động.
+*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — 2 plan: `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (UC-NOT-01 + UC-NOT-05, N00–N10) và `plan_chat_khach_shop.md` (UC-SOC-01, 02, UC-VND-06, M00–M10); migration chung `V27` (tạm) cho cả B5 / B6. Chưa bắt đầu code. Lưu ý: phần *cấu hình* tự trả lời (UC-VND-06 bước 1–3) đã có từ B4 (`PATCH /seller/settings` khối `auto_reply`) — plan chat làm phần gửi tự động.
 
 *Ghi chú:* cùng hạ tầng WebSocket / STOMP. *Gửi thẻ sản phẩm, hình ảnh trong chat* «extend» *Nhắn tin trò chuyện*; *Tin nhắn trả lời tự động* cần chat. *Thông báo thời gian thực* là nền mà nhiều use case khác đẩy thông báo vào → làm cụm này *sớm* thì các nhóm khác đỡ chờ.
 

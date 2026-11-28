@@ -50,12 +50,18 @@ export default function VendorCatalogPage() {
       },
       onError: (e) => {
         if (isApiError(e) && e.code === 'GNE-CAT-4091') {
+          // API trả { id, name } của danh mục trùng (mock cũ trả chuỗi tên)
           const ex = e.details.existing_category;
+          const exName =
+            typeof ex === 'string'
+              ? ex
+              : typeof ex === 'object' && ex !== null && 'name' in ex
+                ? String((ex as { name: unknown }).name)
+                : null;
           form.setError('name', {
-            message:
-              typeof ex === 'string'
-                ? t('seller-products.catalog.err.dup', { name: ex })
-                : errorMessage(e, t),
+            message: exName
+              ? t('seller-products.catalog.err.dup', { name: exName })
+              : errorMessage(e, t),
           });
         } else form.setError('root', { message: errorMessage(e, t) });
       },

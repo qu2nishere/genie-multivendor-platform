@@ -9,6 +9,8 @@ export interface VariantOption {
   priceDelta: number;
   /** Tồn kho theo lựa chọn (chỉ nhóm quyết định tồn — prototype: màu). */
   stock?: number;
+  /** Ảnh riêng của lựa chọn (người bán gắn theo phân loại — API 5.6 `option_groups[].values[].image_url`). */
+  image?: string | null;
 }
 
 export interface VariantGroup {

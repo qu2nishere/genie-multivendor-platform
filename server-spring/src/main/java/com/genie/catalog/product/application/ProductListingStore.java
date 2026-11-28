@@ -3,6 +3,7 @@ package com.genie.catalog.product.application;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.genie.catalog.product.domain.VariantAttributes;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
@@ -66,11 +67,13 @@ public class ProductListingStore {
 
     public List<VariantRow> activeVariants(long productId) {
         return jdbc.query("""
-                SELECT id, sku, price, stock_count, reserved_count, attributes_json::text AS attrs, image_url
+                SELECT id, sku, price, stock_count, reserved_count, attributes_json::text AS attrs, variant_name, image_url
                   FROM product_variants WHERE product_id = :p AND deleted_at IS NULL ORDER BY id""",
                 new MapSqlParameterSource("p", productId),
+                // thứ tự nhóm theo variant_name — JSONB tự sắp khóa (vd "Màu sắc" lên trước "Phiên bản")
                 (rs, i) -> new VariantRow(rs.getLong("id"), rs.getString("sku"), rs.getBigDecimal("price"),
-                        rs.getInt("stock_count"), rs.getInt("reserved_count"), attributes(rs.getString("attrs")),
+                        rs.getInt("stock_count"), rs.getInt("reserved_count"),
+                        VariantAttributes.ordered(attributes(rs.getString("attrs")), rs.getString("variant_name")),
                         rs.getString("image_url")));
     }
 

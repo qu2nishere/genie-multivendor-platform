@@ -168,7 +168,12 @@ const viewSrc = Astro.url.searchParams.get('src') ?? '';
 
         <div class="grid grid-cols-[440px_1fr] gap-6 rounded-lg bg-surface-card p-5 shadow-sm max-lg:grid-cols-[minmax(0,360px)_1fr] max-md:grid-cols-1 max-md:p-3">
           <div class="min-w-0">
-            <ProductGallery client:idle images={p.images} title={p.title} />
+            <ProductGallery
+              client:idle
+              images={p.images}
+              title={p.title}
+              variantGroups={p.variantGroups}
+            />
             <WishShare
               client:idle
               productId={p.id}

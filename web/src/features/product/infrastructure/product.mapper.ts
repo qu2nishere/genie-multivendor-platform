@@ -99,6 +99,7 @@ export function fromDetailDto(d: ProductDetailApiDto): Product {
       label: v.value,
       priceDelta: 0,
       stock: d.variants.filter((x) => x.options[gi] === v.value).reduce((n, x) => n + x.stock, 0),
+      image: v.image_url,
     })),
   }));
   const skus: ProductSku[] = d.variants.map((v) => ({

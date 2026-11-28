@@ -33,7 +33,7 @@ public enum NotificationType {                                                  
     ORDER_STATUS_CHANGED, KYC_APPROVED, KYC_REJECTED, PAYMENT_SUCCESS, PAYMENT_FAILED, ESCROW_RELEASED,
     WALLET_CREDITED, SYSTEM_ALERT, REFUND_PROCESSED, NEW_PLATFORM_VOUCHER, NEW_VENDOR_VOUCHER, NEW_ORDER_FOR_VENDOR,
     FLASH_SALE_REMINDER, NEW_DEVICE_LOGIN, PRODUCT_APPROVED, PRODUCT_REJECTED,  // cảnh báo đăng nhập thiết bị lạ (UC-AUTH-02), kết quả duyệt SP (UC-CAT-12/13)
-    CHAT_MESSAGE                                                                // tin nhắn mới khi người nhận offline (UC-SOC-01, V26)
+    CHAT_MESSAGE                                                                // tin nhắn mới khi người nhận offline (UC-SOC-01, V27)
 }
 
 public enum NotificationChannel { IN_APP, EMAIL }   // ← Notification.channel (mở rộng: PUSH, SMS, ZNS, WEBSOCKET)
@@ -57,8 +57,8 @@ public enum AuditAction {                                                       
     BANNER_CHANGED,                                          // V18 — chỉ còn cho bản ghi cũ (plan 2026-11-22 nhật ký banner N2)
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED, // V20 — plan 2026-11-16 Mở shop & KYC D3
     BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED, // V24 — plan 2026-11-22 nhật ký banner N1
-    PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED, // V26 — UC-NOT-05
-    VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED                    // V26 — UC-PRO-02
+    PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED, // V27 — UC-NOT-05
+    VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED                    // V27 — UC-PRO-02
 }
 
 // ============================== ENTITIES (6) ==============================
@@ -187,7 +187,7 @@ public class PlatformNotification {
     @Column(columnDefinition = "jsonb")
     private String recipientUserIdsJson;      // NULLABLE — Mảng users.id khi target = SPECIFIC_USERS — UC-NOT-05 (TLCN v1.3)
 
-    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm đã phát; NULL = đang hẹn giờ — UC-NOT-05 (V26)
+    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm đã phát; NULL = đang hẹn giờ — UC-NOT-05 (V27)
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 

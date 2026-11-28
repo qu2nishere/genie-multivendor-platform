@@ -1,6 +1,7 @@
 // API_SPEC 11.12 Duyệt sản phẩm — UC-CAT-13 (plan C1 P07.05). Quyền MANAGE_CATALOG.
 package com.genie.catalog.moderation.api;
 
+import com.genie.catalog.moderation.application.AdminCatalogProductService;
 import com.genie.catalog.moderation.application.ModerationDecisionService;
 import com.genie.catalog.moderation.application.ModerationQueueService;
 import com.genie.common.api.ApiResponse;
@@ -31,9 +32,11 @@ public class AdminProductModerationController {
     private final ModerationQueueService queue;
     private final ModerationDecisionService decisions;
     private final ApiResponseFactory responses;
+    private final AdminCatalogProductService catalogProducts;
 
     public AdminProductModerationController(ModerationQueueService queue, ModerationDecisionService decisions,
-                                            ApiResponseFactory responses) {
+                                            ApiResponseFactory responses, AdminCatalogProductService catalogProducts) {
+        this.catalogProducts = catalogProducts;
         this.queue = queue;
         this.decisions = decisions;
         this.responses = responses;
@@ -81,6 +84,35 @@ public class AdminProductModerationController {
                                                                                ClientInfo client) {
         return responses.ok(decisions.reject(me.id(), id, body == null ? null : body.reasonCode(),
                 body == null ? null : body.note(), client));
+    }
+
+    @Operation(summary = "UC-CAT-11 — Sản phẩm theo danh mục (cả nhánh con) cho Admin")
+    @GetMapping("/products")
+    public ResponseEntity<PageResponse<AdminCatalogProductService.Row>> products(
+            @RequestParam(name = "category_id", required = false) Long categoryId,
+            @RequestParam(required = false) String tab,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+        AdminCatalogProductService.Page result = catalogProducts.list(categoryId, tab, page, size);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+                .body(responses.pageBody(result.items(), result.pagination(), Map.of("counts", result.counts())));
+    }
+
+    @Operation(summary = "UC-CAT-11 — Sàn khóa sản phẩm (ẩn, shop không tự mở lại)")
+    @PostMapping("/products/{id}/lock")
+    public ResponseEntity<ApiResponse<ModerationDecisionService.Result>> lock(@CurrentUser AuthUser me,
+                                                                             @PathVariable long id,
+                                                                             @RequestBody RejectRequest body,
+                                                                             ClientInfo client) {
+        return responses.ok(decisions.lockProduct(me.id(), id, body == null ? null : body.reasonCode(),
+                body == null ? null : body.note(), client));
+    }
+
+    @Operation(summary = "UC-CAT-11 — Sàn mở khóa sản phẩm (bán lại ngay)")
+    @PostMapping("/products/{id}/unlock")
+    public ResponseEntity<ApiResponse<ModerationDecisionService.Result>> unlock(@CurrentUser AuthUser me,
+                                                                               @PathVariable long id, ClientInfo client) {
+        return responses.ok(decisions.unlockProduct(me.id(), id, client));
     }
 
     @Operation(summary = "UC-CAT-13 — Đưa sản phẩm đã quyết về hàng chờ (Chờ duyệt lại)")

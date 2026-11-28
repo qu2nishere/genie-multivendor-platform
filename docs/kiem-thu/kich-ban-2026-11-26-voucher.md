@@ -9,7 +9,7 @@
 | Nơi | Giá trị |
 |---|---|
 | `web/.env` | `PUBLIC_USE_MOCK=true` và `PUBLIC_REAL_API` có thêm `seller-vouchers,admin-vouchers,vouchers` (cùng các nhóm đã có). Flash Sale (Seller / Admin) và tra mã trong Voucher Picker vẫn mock tới chuỗi C6 |
-| Migration | `V26__b5_b6_notification_chat_voucher.sql` (2 index `vouchers`, 4 `AuditAction.VOUCHER_*`) |
+| Migration | `V27__b5_b6_notification_chat_voucher.sql` (2 index `vouchers`, 4 `AuditAction.VOUCHER_*`) |
 | Seed | `R__seed_demo_50_vouchers.sql` có thêm `GENIESOON` (sàn, sắp diễn ra, đồng tài trợ), `TECHAUDIO10` (TechZone theo ngành *Thiết bị âm thanh*, loại trừ *Phụ kiện điện tử*), `TECHSHIP25` (TechZone tài trợ phí ship) |
 
 **Tài khoản:** chủ TechZone (`shop_id = 1`) = `mai.tran@gmail.com`; Finance Officer (`MANAGE_VOUCHER`) = `linh.tm@genie.example`; nhân viên không có quyền voucher = `phat.nt@genie.example`; khách = tài khoản **mới** đăng ký (OTP qua Mailpit `http://localhost:8025`).

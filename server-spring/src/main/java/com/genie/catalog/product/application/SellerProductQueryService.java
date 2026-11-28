@@ -144,7 +144,8 @@ public class SellerProductQueryService {
         SellerProductViews.IdName brand = p.getBrandId() == null ? null : brands.find(p.getBrandId())
                 .map(b -> new SellerProductViews.IdName(b.id(), b.name())).orElse(null);
 
-        Matrix matrix = matrix(store.activeVariants(productId), p.getVariantImageAttribute());
+        Matrix matrix = matrix(store.activeVariants(productId), p.getVariantImageAttribute(),
+                OptionImages.parse(json, p.getOptionImagesJson()));
         String st = p.getStatus().name();
         boolean locked = Boolean.TRUE.equals(p.getIsLocked());
         return new SellerProductViews.Detail(p.getId(), p.getVersion() == null ? 0 : p.getVersion(), shopStatus(st),
@@ -175,13 +176,18 @@ public class SellerProductQueryService {
     record Matrix(List<SellerProductViews.OptionGroup> groups, List<SellerProductViews.Variant> variants) {
     }
 
-    /** Dựng nhóm phân loại + bảng SKU từ {@code attributes_json} các biến thể (thứ tự giá trị = thứ tự biến thể). */
-    Matrix matrix(List<ProductListingStore.VariantRow> rows, String imageGroup) {
+    /**
+     * Dựng nhóm phân loại + bảng SKU từ {@code attributes_json} các biến thể (thứ tự giá trị = thứ tự biến thể). Ảnh của
+     * giá trị: {@code option_images_json} (mọi nhóm — V26), sản phẩm cũ lấy ảnh SKU của nhóm {@code imageGroup}.
+     */
+    Matrix matrix(List<ProductListingStore.VariantRow> rows, String imageGroup,
+                  Map<String, Map<String, String>> optionImages) {
         Map<String, Map<String, String>> groups = new LinkedHashMap<>();   // nhóm → (giá trị → khóa ảnh)
         for (ProductListingStore.VariantRow r : rows) {
             r.attributes().forEach((g, v) -> {
                 Map<String, String> values = groups.computeIfAbsent(g, k -> new LinkedHashMap<>());
-                String img = g.equals(imageGroup) ? r.imageUrl() : null;
+                String img = OptionImages.keyOf(optionImages, g, v);
+                if (img == null && g.equals(imageGroup)) img = r.imageUrl();
                 values.merge(v, img == null ? "" : img, (old, neu) -> old.isEmpty() ? neu : old);
             });
         }
