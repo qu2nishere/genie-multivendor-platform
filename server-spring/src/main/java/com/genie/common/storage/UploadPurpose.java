@@ -18,6 +18,20 @@ public enum UploadPurpose {
             "MANAGE_VOUCHER"),
 
     /**
+     * Ảnh banner của thông báo toàn sàn (UC-NOT-05; API_SPEC 4.1; plan 2026-11-26 thông báo D14) — {@code content-assets}
+     * công khai, JPEG / PNG / WebP ≤ 5 MB, quyền {@code MANAGE_PLATFORM_NOTIFICATION}; khóa chính thức {@code notice/{id}/…}.
+     */
+    /**
+     * Ảnh gửi trong chat (UC-SOC-02; API_SPEC 4.1; plan 2026-11-26 chat D7) — bucket RIÊNG TƯ {@code chat-media},
+     * JPEG / PNG / WebP ≤ 5 MB, ai đã đăng nhập cũng xin được; khóa chính thức {@code conversation/{id}/…}, chỉ đọc qua
+     * link ký tạm 10 phút (người xem phải là thành viên hội thoại — kiểm ở module chat).
+     */
+    CHAT_IMAGE("chat-media", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, false, false, null),
+
+    NOTIFICATION_IMAGE("content-assets", Set.of("image/jpeg", "image/png", "image/webp"), 5L * 1024 * 1024, 0, true, false,
+            "MANAGE_PLATFORM_NOTIFICATION"),
+
+    /**
      * Giấy tờ KYC (UC-VND-02; plan Mở shop & KYC D4) — bucket RIÊNG TƯ {@code kyc-dossiers}, PDF / JPEG / PNG ≤ 10 MB,
      * ảnh ≥ 20 KB (ảnh quá nhỏ không đọc được QR / MRZ), link tải lên 10 phút, chỉ VENDOR. Tệp {@code tmp/} được backend
      * mã hóa AES-256-GCM khi nộp hồ sơ ({@code KycDossierStorage}) — không bao giờ để bản rõ ở khóa chính thức.

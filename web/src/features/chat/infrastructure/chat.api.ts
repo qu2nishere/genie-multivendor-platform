@@ -1,17 +1,24 @@
-// Chat khách ↔ shop (API_SPEC 8.1–8.5). Thời gian thực qua WebSocket (mục 13) chưa nối — client hỏi lại
-// tin mỗi vài giây khi đang mở hội thoại. Mock: 4 hội thoại mẫu của prototype, shop tự trả lời sau ~1,1 s
-// (như "tự trả lời" của shop — UC-VND-06), giữ trong phiên tab.
-import { api } from '@/shared/api/http';
-import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
+// Chat khách ↔ shop (API_SPEC 8.1–8.6). Nối thật theo cờ `chat` (plan 2026-11-26 chat M06.01, D19); realtime qua hub
+// WebSocket (application/chatRealtime.ts), REST ở đây là đường dự phòng. Mock: 4 hội thoại mẫu của prototype, shop tự
+// trả lời sau ~1,1 s (như "tự trả lời" của shop — UC-VND-06), giữ trong phiên tab.
+import { api, request } from '@/shared/api/http';
+import { mockDelay, mockFail, mockState } from '@/shared/api/mock';
+import type { CursorPagination } from '@/shared/api/types';
+import { isMocked } from '@/shared/config/env';
 import { SEED_PRODUCTS, SEED_SHOPS } from '@/shared/api/mock/seed';
 import { productImg } from '@/shared/lib/assets';
 import type {
   ChatMessage,
   Conversation,
+  MessagePage,
   MessageType,
   OpenedConversation,
+  OrderPick,
   OutgoingMessage,
 } from '../domain/chat.types';
+
+/** Feature chat còn chạy mock không (cờ `PUBLIC_REAL_API=…,chat`). */
+export const CHAT_MOCKED = isMocked('chat');
 
 // ---- DTO ----
 interface CounterpartDto {
@@ -34,12 +41,44 @@ export interface MessageDto {
   sender: 'ME' | 'THEM';
   type: MessageType;
   text: string | null;
-  product: { id: number; slug?: string; name: string; image_url: string; price: number } | null;
-  order: { id: number; code: string } | null;
+  product: {
+    id: number;
+    variant_id?: number | null;
+    slug?: string;
+    name: string;
+    image_url: string | null;
+    price: number | null;
+    is_available?: boolean;
+  } | null;
+  order: { id: number; code: string; status?: string | null } | null;
   image_url: string | null;
   sent_at: string;
   status: 'SENT' | 'DELIVERED' | 'SEEN';
   client_message_id: string | null;
+  is_auto?: boolean;
+}
+
+/** Thân 8.4 / khung `/app/chat.send` (snake_case). */
+export function outgoingBody(m: OutgoingMessage, clientId: string): Record<string, unknown> {
+  const body =
+    m.type === 'TEXT'
+      ? { type: 'TEXT', text: m.text }
+      : m.type === 'IMAGE'
+        ? { type: 'IMAGE', image_object_key: m.imageObjectKey }
+        : m.type === 'PRODUCT_CARD'
+          ? { type: 'PRODUCT_CARD', product_id: m.productId, variant_id: m.variantId ?? null }
+          : { type: 'ORDER_CARD', order_id: m.orderId };
+  return { ...body, client_message_id: clientId };
+}
+
+/** GET 8.3 (khách hoặc shop): trang tin mới nhất trước → trả cũ → mới + cursor tải tin cũ hơn. */
+export async function fetchMessagePage(path: string, before: string | null): Promise<MessagePage> {
+  const res = await request<MessageDto[]>(path, {
+    method: 'GET',
+    query: { limit: 30, ...(before ? { before } : {}) },
+  });
+  const p = res.pagination as CursorPagination | undefined;
+  return { items: (res.data ?? []).map(toMessage).reverse(), nextCursor: p?.next_cursor ?? null };
 }
 
 const toConversation = (d: ConversationDto): Conversation => ({
@@ -69,12 +108,14 @@ export const toMessage = (d: MessageDto): ChatMessage => ({
     name: d.product.name,
     image: d.product.image_url,
     price: d.product.price,
+    available: d.product.is_available ?? d.product.price != null,
   },
   order: d.order,
   imageUrl: d.image_url,
   sentAt: d.sent_at,
   status: d.status,
   clientId: d.client_message_id,
+  auto: d.is_auto ?? false,
 });
 
 // ---- Mock ----
@@ -113,6 +154,7 @@ const msg = (
   image_url: null,
   status: 'SEEN',
   client_message_id: null,
+  is_auto: false,
   ...o,
 });
 
@@ -293,7 +335,7 @@ function convDto(t: MockThread): ConversationDto {
 
 // ---- API ----
 export async function listConversations(): Promise<Conversation[]> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     await mockDelay(120);
     return threads().map(convDto).map(toConversation);
   }
@@ -304,7 +346,7 @@ export async function listConversations(): Promise<Conversation[]> {
 
 /** POST /me/conversations — mở hoặc lấy hội thoại với shop. */
 export async function openConversation(shopId: number): Promise<OpenedConversation> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     await mockDelay(150);
     const sh = shopOf(shopId);
     if (!sh) mockFail('GNE-VAL-4220');
@@ -328,7 +370,9 @@ export async function openConversation(shopId: number): Promise<OpenedConversati
     };
   }
   const r = await api.post<
-    ConversationDto & { shop_stats: { chat_response_rate: number; avg_response_minutes: number } }
+    ConversationDto & {
+      shop_stats: { chat_response_rate: number | null; avg_response_minutes: number | null };
+    }
   >('/me/conversations', { shop_id: shopId });
   return {
     conversation: toConversation(r),
@@ -337,22 +381,23 @@ export async function openConversation(shopId: number): Promise<OpenedConversati
   };
 }
 
-export async function listMessages(conversationId: number): Promise<ChatMessage[]> {
-  if (USE_MOCK) {
+/** 8.3 — một trang tin (cũ → mới); `before` = cursor trang trước. */
+export async function listMessagesPage(
+  conversationId: number,
+  before: string | null,
+): Promise<MessagePage> {
+  if (CHAT_MOCKED) {
     await mockDelay(80);
     const t = threads().find((x) => x.id === conversationId);
     if (!t) mockFail('GNE-SOC-4031');
-    return t.messages.map(toMessage);
+    return { items: t.messages.map(toMessage), nextCursor: null };
   }
-  const r = await api.get<MessageDto[]>(`/me/conversations/${conversationId}/messages`, {
-    query: { limit: 30 },
-  });
-  return r.map(toMessage).reverse();
+  return fetchMessagePage(`/me/conversations/${conversationId}/messages`, before);
 }
 
-/** Shop đang gõ (mock: còn tin trả lời chờ tới hạn). Thật: sự kiện WebSocket. */
+/** Shop đang gõ (mock: còn tin trả lời chờ tới hạn). Thật: sự kiện WebSocket `TYPING`. */
 export function mockTyping(conversationId: number): boolean {
-  if (!USE_MOCK) return false;
+  if (!CHAT_MOCKED) return false;
   return !!db.get().threads.find((x) => x.id === conversationId)?.pending;
 }
 
@@ -362,7 +407,7 @@ export async function sendMessage(
   clientId: string,
   card?: { product?: MessageDto['product']; order?: MessageDto['order'] },
 ): Promise<ChatMessage> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     await mockDelay(250);
     const s = db.get();
     const t = s.threads.find((x) => x.id === conversationId);
@@ -390,24 +435,69 @@ export async function sendMessage(
     });
     return toMessage(dto);
   }
-  const body =
-    m.type === 'TEXT'
-      ? { type: 'TEXT', text: m.text }
-      : m.type === 'IMAGE'
-        ? { type: 'IMAGE', image_object_key: m.imageObjectKey }
-        : m.type === 'PRODUCT_CARD'
-          ? { type: 'PRODUCT_CARD', product_id: m.productId }
-          : { type: 'ORDER_CARD', order_id: m.orderId };
   return toMessage(
-    await api.post<MessageDto>(`/me/conversations/${conversationId}/messages`, {
-      ...body,
-      client_message_id: clientId,
-    }),
+    await api.post<MessageDto>(
+      `/me/conversations/${conversationId}/messages`,
+      outgoingBody(m, clientId),
+    ),
   );
 }
 
+interface OrderPickDto {
+  id: number;
+  code: string;
+  status: string;
+  total: number;
+  created_at: string;
+  item_count: number;
+  thumbnail_url: string | null;
+}
+
+/** Mock: hai đơn mẫu cho ô "Gửi đơn". */
+const MOCK_ORDER_PICKS: OrderPickDto[] = [
+  {
+    id: 44,
+    code: 'TR-20260608-000044',
+    status: 'DELIVERING',
+    total: 389000,
+    created_at: daysAgo(1, 10),
+    item_count: 1,
+    thumbnail_url: null,
+  },
+  {
+    id: 41,
+    code: 'TR-20260601-000041',
+    status: 'COMPLETED',
+    total: 129000,
+    created_at: daysAgo(7, 10),
+    item_count: 2,
+    thumbnail_url: null,
+  },
+];
+
+/** 8.6 — `scope` = `me` (khách) hoặc `seller` (shop). */
+export async function listConversationOrders(
+  scope: 'me' | 'seller',
+  conversationId: number,
+): Promise<OrderPick[]> {
+  const rows = CHAT_MOCKED
+    ? (await mockDelay(100), MOCK_ORDER_PICKS)
+    : await api.get<OrderPickDto[]>(`/${scope}/conversations/${conversationId}/orders`, {
+        query: { limit: 10 },
+      });
+  return rows.map((o) => ({
+    id: o.id,
+    code: o.code,
+    status: o.status,
+    total: o.total,
+    createdAt: o.created_at,
+    itemCount: o.item_count,
+    thumbnailUrl: o.thumbnail_url,
+  }));
+}
+
 export async function markRead(conversationId: number): Promise<void> {
-  if (USE_MOCK) {
+  if (CHAT_MOCKED) {
     const s = db.get();
     db.set({
       ...s,

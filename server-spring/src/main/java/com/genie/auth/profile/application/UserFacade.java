@@ -73,6 +73,16 @@ public class UserFacade {
         return users.findById(userId).map(summaries::summaryOf);
     }
 
+    /** Tên / ảnh của nhiều người trong một lần gọi (danh sách hội thoại chat — plan 2026-11-26 chat M03.07). */
+    @Transactional(readOnly = true)
+    public Map<Long, UserSummary> findSummaries(Collection<Long> userIds) {
+        Map<Long, UserSummary> out = new java.util.HashMap<>();
+        if (!userIds.isEmpty()) {
+            users.findAllById(new java.util.HashSet<>(userIds)).forEach(u -> out.put(u.getId(), summaries.summaryOf(u)));
+        }
+        return out;
+    }
+
     @Transactional(readOnly = true)
     public boolean isActive(long userId) {
         return users.findById(userId).map(User::isActive).orElse(false);

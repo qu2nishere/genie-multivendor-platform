@@ -41,9 +41,8 @@ public class Message {
     @Column(nullable = false)
     private Boolean isRead = false;           // Người nhận đã đọc tin này chưa
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private OffsetDateTime createdAt;          // Thời điểm gửi
+    private OffsetDateTime createdAt;          // Thời điểm gửi — đặt từ Clock lúc tạo (plan chat M03.02; khung giờ / cursor dùng cùng đồng hồ)
     private Long productVariantId;            // NULLABLE — FK → product_variants.id (khi type = PRODUCT_CARD — UC-SOC-02)
     private Long orderId;                     // NULLABLE — FK → orders.id (khi type = ORDER_CARD — UC-SOC-02, TLCN v1.3)
 
@@ -57,5 +56,39 @@ public class Message {
     /** Tin đã đọc — UC-SOC-01 */
     public void markRead() {
         this.isRead = true;
+    }
+
+    // ===== Factory (plan chat M03.02, M07, M08) =====
+
+    public static Message text(long conversationId, long senderId, String text, OffsetDateTime at) {
+        return base(conversationId, senderId, MessageType.TEXT, at).content(text).build();
+    }
+
+    /** {@code objectKey} = khóa chính thức trong bucket riêng tư {@code chat-media} (không lưu URL — N6). */
+    public static Message image(long conversationId, long senderId, String objectKey, OffsetDateTime at) {
+        return base(conversationId, senderId, MessageType.IMAGE, at).attachmentUrl(objectKey).build();
+    }
+
+    public static Message productCard(long conversationId, long senderId, long variantId, OffsetDateTime at) {
+        return base(conversationId, senderId, MessageType.PRODUCT_CARD, at).productVariantId(variantId).build();
+    }
+
+    public static Message orderCard(long conversationId, long senderId, long orderId, OffsetDateTime at) {
+        return base(conversationId, senderId, MessageType.ORDER_CARD, at).orderId(orderId).build();
+    }
+
+    /** Tin tự động của shop (lời chào / vắng mặt / tạm nghỉ — UC-VND-06): đứng tên chủ shop, {@code is_auto}. */
+    public static Message auto(long conversationId, long vendorUserId, String text, OffsetDateTime at) {
+        return base(conversationId, vendorUserId, MessageType.TEXT, at).content(text).isAuto(true).build();
+    }
+
+    private static MessageBuilder base(long conversationId, long senderId, MessageType type, OffsetDateTime at) {
+        return Message.builder().conversationId(conversationId).senderId(senderId).type(type).createdAt(at)
+                .isRead(false).isAuto(false);
+    }
+
+    /** Trạng thái hiển thị (D3): đã lưu = {@code DELIVERED}; bên nhận đã mở hội thoại = {@code SEEN}. */
+    public String status() {
+        return Boolean.TRUE.equals(isRead) ? "SEEN" : "DELIVERED";
     }
 }

@@ -13,7 +13,7 @@ import { useConversations, useOpenConversation } from '../application/useChat';
 import { sortConversations } from '../domain/chat.rules';
 import type { Conversation } from '../domain/chat.types';
 import { sendMessage } from '../application/chatSend';
-import { ConversationList, Thread } from './ChatParts';
+import { ConversationList, presenceText, Thread } from './ChatParts';
 
 export interface ChatPageProps {
   shopId: number | null;
@@ -22,7 +22,7 @@ export interface ChatPageProps {
 }
 
 function Screen({ shopId, productId, orderId }: ChatPageProps) {
-  const { t } = useT();
+  const { t, locale } = useT();
   const q = useConversations();
   const open = useOpenConversation();
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -40,7 +40,9 @@ function Screen({ shopId, productId, orderId }: ChatPageProps) {
         setActiveId(r.conversation.id);
         if (r.responseRate != null)
           setResponse(
-            t('chat.response', { rate: r.responseRate, minutes: r.avgResponseMinutes ?? 0 }),
+            r.avgResponseMinutes != null
+              ? t('chat.response', { rate: r.responseRate, minutes: r.avgResponseMinutes })
+              : t('chat.response_rate', { rate: r.responseRate }),
           );
         try {
           if (productId) {
@@ -129,7 +131,7 @@ function Screen({ shopId, productId, orderId }: ChatPageProps) {
                     )}
                   </div>
                   <div className="text-xs text-muted">
-                    {t(active.shop.online ? 'chat.online' : 'chat.offline')}
+                    {presenceText(t, locale, active.shop.online, active.shop.lastActiveAt)}
                   </div>
                 </div>
               </div>

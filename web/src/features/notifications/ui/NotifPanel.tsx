@@ -56,7 +56,7 @@ export function NotifPanel({
         <span className="font-bold text-sm text-strong">{t('notifications.panel.title')}</span>
         <button
           type="button"
-          onClick={() => markAll.mutate()}
+          onClick={() => markAll.mutate('all')}
           className="ml-auto text-xs font-semibold text-brand-600 bg-transparent border-0 cursor-pointer hover:underline focus-visible:outline-none focus-visible:shadow-focus rounded-xs"
         >
           {t('notifications.panel.mark_all')}

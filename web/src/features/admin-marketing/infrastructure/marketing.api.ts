@@ -376,6 +376,8 @@ export async function deleteBanner(id: string): Promise<void> {
 }
 
 // ---------- 11.17 Thông báo sàn ----------
+// Cờ `platform-notifications` (plan 2026-11-26 thông báo D19, N08.01) — tách khỏi USE_MOCK chung để bật riêng.
+const NOTIFICATION_MOCK = isMocked('platform-notifications');
 export interface NotificationPage extends Page<PlatformNotification> {
   summary: NotificationSummary;
 }
@@ -385,7 +387,7 @@ export async function listPlatformNotifications(
   q: string,
   page: number,
 ): Promise<NotificationPage> {
-  if (USE_MOCK) {
+  if (NOTIFICATION_MOCK) {
     await mockDelay(180);
     const all = notificationsStore.get();
     const needle = q.trim().toLowerCase();
@@ -428,7 +430,7 @@ export async function listPlatformNotifications(
 }
 
 export async function getPlatformNotification(id: number): Promise<PlatformNotificationDetail> {
-  if (USE_MOCK) {
+  if (NOTIFICATION_MOCK) {
     await mockDelay(120);
     const n = notificationsStore.get().find((x) => x.id === id);
     if (!n) mockFail('GNE-SYS-4040', { status: 404 });
@@ -453,7 +455,7 @@ export async function savePlatformNotification(
     recipient_emails: n.target === 'SPECIFIC_USERS' ? n.recipientEmails : [],
     send_at: n.sendAt,
   };
-  if (USE_MOCK) {
+  if (NOTIFICATION_MOCK) {
     await mockDelay(300);
     if (n.target === 'SPECIFIC_USERS') {
       const unknown = n.recipientEmails.filter((e) => !KNOWN_EMAILS.includes(e));
@@ -489,7 +491,7 @@ export async function savePlatformNotification(
 }
 
 export async function deletePlatformNotification(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (NOTIFICATION_MOCK) {
     await mockDelay(150);
     notificationsStore.set(notificationsStore.get().filter((x) => x.id !== id));
     return;

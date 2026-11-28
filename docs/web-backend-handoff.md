@@ -32,7 +32,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | `GET /public/feed` | `GET /public/recommendations?page&size` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/{id}/related` | `GET /public/products/{id}/similar?limit=6` | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
 | `GET /public/products/facets` | `GET /public/products?…&include_facets=true` (trả cùng danh sách) | ✅ Đã sửa (plan 2026-11-17, `d8e824d`) |
-| `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
+| ~~`POST /me/notifications/{id}/read` · `POST /me/notifications/read-all`~~ | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | ✅ Đã sửa (plan 2026-11-26 thông báo N05.04, `10f2e2e`) |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
 | ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
 | `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
@@ -58,7 +58,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 
 | Chức năng | Hiện tại (mock) | Khi có backend |
 |---|---|---|
-| Chat thời gian thực (8.x) | Hỏi lại 2 giây khi đang mở hội thoại, 15 giây hộp thư | WebSocket theo API_SPEC; giữ `client_message_id` làm Idempotency-Key |
+| ~~Chat thời gian thực (8.x)~~ | ✅ **Đã nối** (plan 2026-11-26 chat M06, cờ `chat`, `0018b21`) — `/user/queue/chat` qua hub WebSocket, gửi `/app/chat.send` (REST dự phòng cùng `client_message_id`); hỏi lại 30 giây chỉ khi mất kết nối | — |
 | Xuất CSV (sổ cái 11.9, báo cáo Tổng quan Admin / Seller) — nhật ký 11.10 đã gọi `…/export` thật | Tạo CSV ở trình duyệt từ dòng đang lọc | Gọi endpoint `…/export` của spec (tệp lớn, đúng toàn bộ dữ liệu) |
 | Phiếu gửi hàng | `window.print()` trang HTML | PDF A6 của hãng vận chuyển |
 | Chọn shop đích cho banner (Admin) | `shop.listShops` công khai | `GET /admin/shops` |
@@ -72,7 +72,7 @@ khi nối, server tính lại và client **không** gửi kèm.
 
 | Hàm | Tệp | Dùng ở |
 |---|---|---|
-| `mockTyping` | `chat/infrastructure/chat.api.ts` | trạng thái "shop đang nhập" giả (`useChat`) — WebSocket sẽ gửi sự kiện typing |
+| ~~`mockTyping`~~ | `chat/infrastructure/chat.api.ts` | Chỉ còn ở nhánh mock — chạy thật dùng gói `TYPING` (`/app/chat.typing`, plan chat M06) |
 | `settleMockPayment` | `checkout/infrastructure/checkout.api.ts` | cổng VNPAY mô phỏng (`useCheckout`) |
 | `markReported` | `seller-reviews/infrastructure/review.api.ts` | đánh dấu đã báo cáo trong kho mock (`useShopReviews`) — server trả `is_reported_by_me` |
 
@@ -202,10 +202,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `saveBanner` | marketing.api.ts | `PUT /admin/banners/{id}`<br>`POST /admin/banners` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `setBannerActive` | marketing.api.ts | `PATCH /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
 | `deleteBanner` | marketing.api.ts | `DELETE /admin/banners/{id}` — **đã nối** (`PUBLIC_REAL_API=banner`) |
-| `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` |
-| `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` |
-| `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` |
-| `deletePlatformNotification` | marketing.api.ts | `DELETE /admin/platform-notifications/{id}` |
+| `listPlatformNotifications` | marketing.api.ts | `GET /admin/platform-notifications` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
+| `getPlatformNotification` | marketing.api.ts | `GET /admin/platform-notifications/{id}` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
+| `savePlatformNotification` | marketing.api.ts | `PUT /admin/platform-notifications/{id}`<br>`POST /admin/platform-notifications` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`) |
+| `deletePlatformNotification` | marketing.api.ts | `DELETE /admin/platform-notifications/{id}` — **đã nối** (`PUBLIC_REAL_API=platform-notifications`, plan 2026-11-26 thông báo) |
 
 ### `admin-moderation`
 
@@ -280,16 +280,17 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listConversations` | chat.api.ts | `GET /me/conversations` |
-| `openConversation` | chat.api.ts | `POST /me/conversations` |
-| `listMessages` | chat.api.ts | `GET /me/conversations/{conversationId}/messages` |
-| `mockTyping` | chat.api.ts | — |
-| `sendMessage` | chat.api.ts | `POST /me/conversations/{conversationId}/messages` |
-| `markRead` | chat.api.ts | `POST /me/conversations/{conversationId}/read` |
-| `listSellerConversations` | seller-chat.api.ts | `GET /seller/conversations` |
-| `listSellerMessages` | seller-chat.api.ts | `GET /seller/conversations/{id}/messages` |
-| `sendSellerMessage` | seller-chat.api.ts | `POST /seller/conversations/{id}/messages` |
-| `markSellerRead` | seller-chat.api.ts | `POST /seller/conversations/{id}/read` |
+| `listConversations` | chat.api.ts | `GET /me/conversations` — **đã nối** (`PUBLIC_REAL_API=chat`, plan 2026-11-26 chat) |
+| `openConversation` | chat.api.ts | `POST /me/conversations` — **đã nối** |
+| `listMessagesPage` | chat.api.ts | `GET /me/conversations/{conversationId}/messages?before=` — **đã nối** (cursor) |
+| `mockTyping` | chat.api.ts | — (mock; thật = gói `TYPING`) |
+| `sendMessage` | chat.api.ts | `POST /me/conversations/{conversationId}/messages` — **đã nối** (dự phòng của `/app/chat.send`) |
+| `markRead` | chat.api.ts | `POST /me/conversations/{conversationId}/read` — **đã nối** (dự phòng của `/app/chat.read`) |
+| `listConversationOrders` | chat.api.ts | `GET /me|seller/conversations/{id}/orders` (8.6) — **đã nối** |
+| `listSellerConversations` | seller-chat.api.ts | `GET /seller/conversations` — **đã nối** |
+| `listSellerMessagesPage` | seller-chat.api.ts | `GET /seller/conversations/{id}/messages?before=` — **đã nối** |
+| `sendSellerMessage` | seller-chat.api.ts | `POST /seller/conversations/{id}/messages` — **đã nối** |
+| `markSellerRead` | seller-chat.api.ts | `POST /seller/conversations/{id}/read` — **đã nối** |
 
 ### `checkout`
 
@@ -315,9 +316,10 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listNotifications` | notifications.api.ts | `GET /me/notifications` |
-| `markAllNotificationsRead` | notifications.api.ts | `POST /me/notifications/read-all` |
-| `markNotificationRead` | notifications.api.ts | `POST /me/notifications/{id}/read` |
+| `listNotifications` | notifications.api.ts | `GET /me/notifications?category&cursor&limit` — **đã nối** (`PUBLIC_REAL_API=notifications`, plan 2026-11-26 thông báo) |
+| `markAllNotificationsRead` | notifications.api.ts | `POST /me/notifications/mark-all-read` — **đã nối** |
+| `markNotificationRead` | notifications.api.ts | `PATCH /me/notifications/{id}` — **đã nối** |
+| (realtime) | `notificationStream.ts` qua `shared/realtime/realtimeHub.ts` | WS `/user/queue/notifications` + `/topic/platform` (API 13) — một kết nối dùng chung cả ứng dụng |
 
 ### `orders`
 

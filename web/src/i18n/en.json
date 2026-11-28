@@ -152,6 +152,7 @@
     "GNE-SOC-4093": "You've already reported this review.",
     "GNE-SOC-4094": "The shop has already replied to this review.",
     "GNE-SOC-4095": "You cannot follow your own shop.",
+    "GNE-SOC-4096": "You cannot message your own shop.",
     "GNE-SOC-4221": "Replies can't contain phone numbers.",
     "GNE-VND-4031": "The shop isn't verified (KYC) yet.",
     "GNE-VND-4041": "This shop doesn't exist or is no longer active.",
@@ -1812,7 +1813,13 @@
     "open_full": "Open full page",
     "launcher": "Chat with shops",
     "launcher_unread": "Chat with shops, {count} unread",
-    "response": "Replies {rate}% · within about {minutes} min"
+    "response": "Replies {rate}% · within about {minutes} min",
+    "response_rate": "Replies {rate}%",
+    "active_ago": "Active {time}",
+    "product_unavailable": "No longer available",
+    "auto_reply": "Automatic message",
+    "retry": "Retry",
+    "load_older": "Load older messages"
   },
   "seller-onboarding": {
     "landing": {
@@ -2782,7 +2789,8 @@
     "empty": "No customer has messaged your shop yet.",
     "orders": "Orders",
     "no_orders": "This customer has no orders with you",
-    "send_card": "Send {code}"
+    "send_card": "Send {code}",
+    "typing": "Customer is typing…"
   },
   "seller-promotions": {
     "title": "Shop promotions",
@@ -4256,6 +4264,7 @@
       "delete": "Delete",
       "delete_title": "Confirm deletion",
       "delete_desc": "Delete this notification? This cannot be undone.",
+      "delete_desc_sent": "This notification has already been sent — deleting it removes it from every recipient’s inbox (including read counts). This cannot be undone.",
       "delete_confirm": "Delete notification",
       "deleted": "Notification deleted.",
       "compose_title": "New platform notification (Broadcast)",
