@@ -14,7 +14,7 @@
 | Thành viên | Phụ trách | Hiện trạng |
 |---|---|---|
 | **Nguyễn Quốc Khoa** | Toàn bộ phân hệ 01 — Xác thực & Tài khoản (9 use case `UC-AUTH-*`) · cụm **B1 Nhân viên & phân quyền** (UC-ADM-01, 02, 03) · cụm **B2 Danh mục sàn** (UC-CAT-01, 14, 15) | AUTH: đang triển khai — xem mục 3 (UC-AUTH-09 xong 2026-11-18; còn phần còn lại của UC-AUTH-03, 08), plan `plan/2026-11-14/auth.md`. B1: **3 / 3 ✅** (UC-ADM-03 xong 2026-11-24). B2: **3 / 3 ✅** (2026-11-24). Phần còn thiếu của B1 / B2 do Nguyễn Ngọc Thiện rà soát làm bù — plan `plan/2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` |
-| **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm **B5 Voucher** (UC-PRO-01, 02, 03) · cụm **B6 Chat & realtime** (UC-SOC-01, 02, UC-VND-06, UC-NOT-01) | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: **7 / 7 ✅** (2026-11-25 — UC-VND-05 làm xong ở nhánh `feature/vendor-k07-pickup`; 6 UC còn lại chạy thật bằng Playwright + AI Worker thật, sửa lỗi ở nhánh `bugfix/b4-real-run-fixes`) — xem cụm B4 mục 5. UC-NOT-05, B5, B6: **đã lập plan 2026-11-26** (`plan/2026-11-26/server-spring/` — 3 plan + progress), chưa bắt đầu code |
+| **Nguyễn Ngọc Thiện** | 21 use case: Tra cứu nhật ký kiểm toán hệ thống bất biến (UC-ADM-07) · Quản lý banner trang chủ & chiến dịch tĩnh (UC-ADM-12) · Điểm danh nhận Điểm hàng ngày & Duy trì chuỗi điểm danh (UC-PRO-08) + Tra cứu số dư Điểm Genie & Lịch sử biến động Điểm (UC-PRO-09) · Quản lý danh sách sản phẩm yêu thích (UC-CAT-08) · Khách hàng theo dõi gian hàng (UC-SOC-06) · cụm B4 Mở shop & KYC: UC-VND-01, 02, 03, 04, 05, 07, 21 · **nhận 2026-11-26:** Admin phát thông báo toàn sàn (UC-NOT-05) · cụm **B5 Voucher** (UC-PRO-01, 02, 03) · cụm **B6 Chat & realtime** (UC-SOC-01, 02, UC-VND-06, UC-NOT-01) | Đang triển khai — seed dữ liệu mẫu xong (nhánh `feature/db-seed-demo`); UC-ADM-07 chờ chạy thật (nhánh `feature/admin-audit-log`); UC-ADM-12 chờ chạy thật (nhánh `feature/admin-home-banner`); UC-PRO-08, PRO-09 chờ chạy thật (nhánh `feature/promotion-coin-checkin`); UC-CAT-08 chờ chạy thật (nhánh `feature/catalog-wishlist`); UC-SOC-06 chờ chạy thật (nhánh `feature/social-shop-follow`); B4: **7 / 7 ✅** (2026-11-25 — UC-VND-05 làm xong ở nhánh `feature/vendor-k07-pickup`; 6 UC còn lại chạy thật bằng Playwright + AI Worker thật, sửa lỗi ở nhánh `bugfix/b4-real-run-fixes`) — xem cụm B4 mục 5. UC-NOT-05, B5, B6: plan 2026-11-26 (`plan/2026-11-26/server-spring/`) — **B5 UC-PRO-01, 02, 03 ✅ 2026-11-28**; UC-NOT-01, 05 và chat B6 ở nhánh plan [1], [2] |
 | **Nghiêm Phú Đăng Quân** | Cụm **B3 Storefront đọc công khai** (7 use case): Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) · Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) · Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) · Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) · Xem gợi ý sản phẩm tương tự (UC-CAT-07) · Xem trang gian hàng (UC-CAT-16) · Chia sẻ sản phẩm bằng liên kết — Deeplink (UC-CAT-18) | **7 / 7 ✅ Đã triển khai** (6 UC chạy thật 2026-11-21; *Lọc nâng cao & Sắp xếp* (UC-CAT-05) xong 2026-11-24 — lọc "Shop có voucher" + bộ lọc thuộc tính, làm bù ở plan rà soát 2026-11-24); plan `plan/2026-11-17/server-spring/plan_tim_kiem_va_trang_san_pham.md` |
 
 Cụm / chuỗi ở mục 5, 6 không ghi *Phụ trách* = chưa phân công.
@@ -122,7 +122,7 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 |---|---|---|
 | Tìm kiếm sản phẩm theo từ khóa (UC-CAT-02) | ✅ Đã triển khai | — |
 | Gợi ý từ khóa tìm kiếm & Xu hướng (UC-CAT-04) | ✅ Đã triển khai | — |
-| Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) | ✅ Đã triển khai | — (lọc "Shop có voucher" do module promotion cài 2026-11-24; cụm B5 tạo / sửa voucher shop phải xóa cache `promotion:shop_voucher_vendors`) |
+| Lọc nâng cao & Sắp xếp sản phẩm đa tiêu chí (UC-CAT-05) | ✅ Đã triển khai | — (lọc "Shop có voucher" do module promotion cài 2026-11-24; cụm B5 đã xóa cache `promotion:shop_voucher_vendors` sau commit mỗi lần tạo / sửa / tắt voucher shop — 2026-11-28) |
 | Xem chi tiết sản phẩm, ma trận biến thể SKU & Tồn kho (UC-CAT-06) | ✅ Đã triển khai | — |
 | Xem gợi ý sản phẩm tương tự (UC-CAT-07) | ✅ Đã triển khai | — |
 | Xem trang gian hàng (UC-CAT-16) | ✅ Đã triển khai | — |
@@ -151,7 +151,13 @@ Một use case được xếp **độc lập** khi thỏa cả 3 điều kiện:
 - Khách hàng thu thập Voucher vào Kho Voucher cá nhân (UC-PRO-03)
 - Tạo & Quản lý Voucher Gian hàng (UC-PRO-01)
 
-*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — plan `plan/2026-11-26/server-spring/plan_voucher_b5.md` (+ progress, V00–V10), nhánh `feature/voucher-management` → `feature/voucher-wallet`. Chưa bắt đầu code.
+*Phụ trách:* **Nguyễn Ngọc Thiện** (nhận 2026-11-26) — plan `plan/2026-11-26/server-spring/plan_voucher_b5.md` (+ progress, V00–V10), nhánh `feature/voucher-management` → `feature/voucher-wallet`. **Xong 3 / 3 (2026-11-28).**
+
+| Use case | Trạng thái | Còn lại |
+|---|---|---|
+| Tạo & Quản lý Voucher Gian hàng (UC-PRO-01) | ✅ Đã triển khai (2026-11-28) | — (áp vào giá ở C6) |
+| Tạo & Quản lý Voucher Toàn sàn (UC-PRO-02) | ✅ Đã triển khai (2026-11-28) | — (chia chi phí đồng tài trợ khi áp ở C6) |
+| Khách hàng thu thập Voucher vào Kho Voucher cá nhân (UC-PRO-03) | ✅ Đã triển khai (2026-11-28) | — (Voucher Picker / tra mã khi thanh toán ở C6) |
 
 *Ghi chú:* chỉ tạo / sửa / lưu voucher. *Voucher Gian hàng* cần shop `VERIFIED` (seed được). Việc **áp** voucher khi mua (*Thuật toán Stacking Voucher 3 Tầng & Điểm*) thuộc nhóm C.
 
@@ -272,5 +278,5 @@ Use case độc lập về nghiệp vụ nhưng các nhánh vẫn sửa chung v�
 ## 8. Thứ tự đề xuất
 
 1. **Song song ngay:** nhóm A (bắt đầu *Quản lý sổ địa chỉ giao hàng chuẩn GHN* và *Tra cứu nhật ký kiểm toán hệ thống*) + cụm **B1 Nhân viên & phân quyền** + cụm **B2 Danh mục sàn**.
-2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed — 6 / 7 đã xong 2026-11-21), **B4 Mở shop & KYC** (**7 / 7 ✅** 2026-11-25), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher**.
+2. **Tiếp theo:** **B3 Storefront đọc công khai** (trên seed — 6 / 7 đã xong 2026-11-21), **B4 Mở shop & KYC** (**7 / 7 ✅** 2026-11-25), **B6 Chat & realtime** (WebSocket làm nền), **B5 Voucher** (**3 / 3 ✅** 2026-11-28 — C6 dùng được voucher đã có).
 3. **Sau cùng:** nhóm C theo chuỗi C1 Đăng bán → C2 Giỏ → Checkout → C3 Thanh toán & ký quỹ → C4 Vận chuyển → C5 Sau giao hàng → C6 Khuyến mãi khi mua / C7 Đánh giá / C8 Trả hàng & hoàn tiền / C9 Ví & rút tiền → C10 Báo cáo, C11 Email giao dịch.

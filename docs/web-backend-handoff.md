@@ -35,7 +35,7 @@ chưa khớp `API_SPEC.md`** (mục 2).
 | `POST /me/notifications/{id}/read` · `POST /me/notifications/read-all` | `PATCH /me/notifications/{id}` · `POST /me/notifications/mark-all-read` | Sửa mã |
 | `POST /reviews/{reviewId}/helpful` | `PUT` / `DELETE /reviews/{id}/helpful-vote` | Sửa mã (bỏ hữu ích = `DELETE`) |
 | ~~`POST /public/banners/{id}/events`~~ | `POST /public/banner-events` (id trong body) | **Đã sửa** (plan 2026-11-16 banner B06.03) |
-| `GET /public/shops/{shopId}/vouchers` | `GET /public/vouchers?shop_id=` | Sửa mã |
+| ~~`GET /public/shops/{shopId}/vouchers`~~ | `GET /public/vouchers?shop_id=` | ✅ Đã sửa (plan 2026-11-26 voucher V08.01, `d24ed35`) |
 | `POST` / `DELETE /me/identities/GOOGLE` | `POST /me/identities/{provider}` (`google` chữ thường) | Sửa mã |
 | `GET /public/campaigns/{slug}` · `GET /public/campaigns/slugs` | Chưa có — spec dựng trang chiến dịch bằng `GET /public/products?discount_min=` + `GET /public/vouchers?code=` | **Bổ sung spec** (trang `/campaign/[slug]` cần tiêu đề, banner, mốc thời gian, mã voucher; sitemap cần danh sách slug) |
 | ~~`GET /public/categories/{categoryId}/attribute-filters`~~ | Không làm endpoint riêng — dùng `summary.facets.attribute` của `GET /public/products?category_id=&include_facets=true` (API 5.3) | **Đã xử lý** 2026-11-24 (plan `2026-11-24/server-spring/plan_hoan_thien_b1_b2_b3.md` D9, H11) |
@@ -187,11 +187,11 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `listPlatformVouchers` | marketing.api.ts | `GET /admin/vouchers` |
-| `getPlatformVoucher` | marketing.api.ts | `GET /admin/vouchers/{id}` |
-| `savePlatformVoucher` | marketing.api.ts | `PUT /admin/vouchers/{id}`<br>`POST /admin/vouchers` |
-| `disablePlatformVoucher` | marketing.api.ts | `PATCH /admin/vouchers/{id}` |
-| `deletePlatformVoucher` | marketing.api.ts | `DELETE /admin/vouchers/{id}` |
+| `listPlatformVouchers` | marketing.api.ts | `GET /admin/vouchers` — **đã nối** (`PUBLIC_REAL_API=admin-vouchers`, plan 2026-11-26 voucher) |
+| `getPlatformVoucher` | marketing.api.ts | `GET /admin/vouchers/{id}` — **đã nối** |
+| `savePlatformVoucher` | marketing.api.ts | `PUT /admin/vouchers/{id}`<br>`POST /admin/vouchers` — **đã nối** |
+| `disablePlatformVoucher` | marketing.api.ts | `PATCH /admin/vouchers/{id}` — **đã nối** |
+| `deletePlatformVoucher` | marketing.api.ts | `DELETE /admin/vouchers/{id}` — **đã nối** |
 | `listCampaigns` | marketing.api.ts | `GET /admin/flash-sales` |
 | `getCampaign` | marketing.api.ts | `GET /admin/flash-sales/{id}` |
 | `createCampaign` | marketing.api.ts | `POST /admin/flash-sales` |
@@ -348,12 +348,13 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 | `trackBanner` | banner.api.ts | `POST /public/banner-events` (gom lô 5 giây + `sendBeacon`) — **đã nối** |
 | `getCampaign` | campaign.api.ts | `GET /public/campaigns/{slug}` |
 | `listCampaignSlugs` | campaign.api.ts | `GET /public/campaigns/slugs` |
-| `listMyVouchers` | voucher.api.ts | `GET /me/vouchers` |
-| `getVouchersByCodes` | voucher.api.ts | `GET /public/vouchers` |
-| `saveVoucher` | voucher.api.ts | `POST /me/vouchers` |
-| `listShopVouchers` | voucher.api.ts | `GET /public/shops/{shopId}/vouchers` |
-| `findVoucherByCode` | voucher.api.ts | `POST /me/checkout/applicable-vouchers` |
-| `removeVoucher` | voucher.api.ts | `DELETE /me/vouchers/{id}` |
+| `listMyVouchers` | voucher.api.ts | `GET /me/vouchers?state=` — **đã nối** (`PUBLIC_REAL_API=vouchers`, plan 2026-11-26 voucher) |
+| `getVouchersByCodes` | voucher.api.ts | `GET /public/vouchers?codes=` — **đã nối** |
+| `listFeaturedVouchers` | voucher.api.ts | `GET /public/vouchers?featured=true` — **đã nối** (trang chủ, SSR) |
+| `saveVoucher` | voucher.api.ts | `POST /me/vouchers` — **đã nối** |
+| `listShopVouchers` | voucher.api.ts | `GET /public/vouchers?shop_id=` — **đã nối** (SSR) |
+| `findVoucherByCode` | voucher.api.ts | `POST /me/checkout/applicable-vouchers` — còn mock (UC-PRO-04, chuỗi C6) |
+| `removeVoucher` | voucher.api.ts | `DELETE /me/vouchers/{id}` — **đã nối** |
 
 ### `refunds`
 
@@ -440,9 +441,9 @@ Cột "Endpoint" là đường dẫn ở nhánh gọi thật hiện tại (tiề
 
 | Hàm | Tệp | Endpoint (nhánh thật) |
 |---|---|---|
-| `getVoucher` | promo.api.ts | `GET /seller/vouchers/{id}` |
-| `saveVoucher` | promo.api.ts | `PUT /seller/vouchers/{id}`<br>`POST /seller/vouchers` |
-| `disableVoucher` | promo.api.ts | `PATCH /seller/vouchers/{id}` |
+| `getVoucher` | promo.api.ts | `GET /seller/vouchers/{id}` — **đã nối** (`PUBLIC_REAL_API=seller-vouchers`) |
+| `saveVoucher` | promo.api.ts | `PUT /seller/vouchers/{id}`<br>`POST /seller/vouchers` — **đã nối** |
+| `disableVoucher` | promo.api.ts | `PATCH /seller/vouchers/{id}` — **đã nối** (Flash Sale cùng file vẫn mock — C6) |
 | `listFlashCampaigns` | promo.api.ts | `GET /seller/flash-sales` |
 | `listEligible` | promo.api.ts | `GET /seller/flash-sales/{campaignId}/eligible-products` |
 | `listFlashItems` | promo.api.ts | `GET /seller/flash-sales/{campaignId}/items` |
