@@ -9,7 +9,7 @@
 | Base URL | `https://api.genie.vn/api/v1` (staging: `https://api.staging.genie.vn/api/v1`) |
 | Định dạng | JSON `snake_case`, UTF-8 |
 | Tài liệu gốc | LLD.md mục 8 & 12, TECH_STACK_VA_QUY_UOC.md mục 8–9, ENTITY.md, Usecase.md, BAO_CAO_DOI_CHIEU_GIAO_DIEN.md |
-| Lịch sử | 1.8 (2026-11-26): plan thông báo (UC-NOT-01, UC-NOT-05 — `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md`) — 3.12 bảng `type → category` (thêm `CHAT_MESSAGE`, `link.type = CONVERSATION`), phân trang cursor gộp 3 nguồn, `image_url`, dòng `an_` lọc theo quyền + đọc chung, `is_read: false` → 422, `pn_` ngoài đối tượng → 404; 4.1 hiện thực `NOTIFICATION_IMAGE`; 11.17 tiêu đề ≤ 100, lọc HTML phía server, `send_at` ≥ now + 1 phút / ≤ 90 ngày, ≤ 500 email, `reach_count` chốt lúc phát, `is_scheduled` = chưa phát, xóa được cả khi đã phát; 13 gói tin `/user/queue/notifications` + luật `/topic/platform` chỉ cho `ALL` · 1.7 (2026-11-22): plan B2 danh mục & hoa hồng — 5.1 ẩn cả nhánh khi cha ẩn, header `Cache-Control`; 5.2 thêm `parent_id`; 11.8 khung 3,5–8 % (thay 0–50), mặc định lưu `platform_settings`, quyền đổi hoa hồng; 11.11 thêm `description`, `level`, `requires_business_license`, `effective_commission_rate`, `details` của `GNE-CAT-4091 / 4092`, luật di chuyển / xóa, `summary.inherited` + luật trùng `code` trong nhánh, `data_type` không đổi được · 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
+| Lịch sử | 1.9 (2026-11-27): plan chat (UC-SOC-01, 02, UC-VND-06 — `plan/2026-11-26/server-spring/plan_chat_khach_shop.md`) — 8.1 cursor + `summary.unread_total`, chỉ hội thoại đã có tin; 8.2 `409 GNE-SOC-4096`, tài khoản nội bộ 403, lời chào tự động; 8.3 `status` chỉ `DELIVERED` / `SEEN`, `is_auto`, `product.slug` / `is_available`, `order.status`; 8.4 `variant_id`, ảnh `tmp/` của chính người gửi, ≤ 2.000 ký tự, 20 tin / 10 giây, gửi lại cùng `client_message_id` → cùng tin; **thêm 8.6** chọn đơn cho thẻ đơn hàng; 13 gói tin `/user/queue/chat`; 4.1 hiện thực `CHAT_IMAGE`; 15 `GNE-SOC-4096` · 1.8 (2026-11-26): plan thông báo (UC-NOT-01, UC-NOT-05 — `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md`) — 3.12 bảng `type → category` (thêm `CHAT_MESSAGE`, `link.type = CONVERSATION`), phân trang cursor gộp 3 nguồn, `image_url`, dòng `an_` lọc theo quyền + đọc chung, `is_read: false` → 422, `pn_` ngoài đối tượng → 404; 4.1 hiện thực `NOTIFICATION_IMAGE`; 11.17 tiêu đề ≤ 100, lọc HTML phía server, `send_at` ≥ now + 1 phút / ≤ 90 ngày, ≤ 500 email, `reach_count` chốt lúc phát, `is_scheduled` = chưa phát, xóa được cả khi đã phát; 13 gói tin `/user/queue/notifications` + luật `/topic/platform` chỉ cho `ALL` · 1.7 (2026-11-22): plan B2 danh mục & hoa hồng — 5.1 ẩn cả nhánh khi cha ẩn, header `Cache-Control`; 5.2 thêm `parent_id`; 11.8 khung 3,5–8 % (thay 0–50), mặc định lưu `platform_settings`, quyền đổi hoa hồng; 11.11 thêm `description`, `level`, `requires_business_license`, `effective_commission_rate`, `details` của `GNE-CAT-4091 / 4092`, luật di chuyển / xóa, `summary.inherited` + luật trùng `code` trong nhánh, `data_type` không đổi được · 1.6 (2026-11-19): plan B1 nhân viên & phân quyền — 2.11 thêm `POST /auth/staff-activations/otp-challenges` và `challenge_id`, `OtpPurpose.STAFF_ACTIVATION`; 11.13 `suspension` tách `reason_code` / `note`; 11.18 trạng thái `INVITATION_EXPIRED` + `invitation_expires_at`, `staff_title = CUSTOM` khi STAFF không gắn chức danh, mã mới `GNE-ADM-4093`; 16.2 thêm `StaffStatus`; 0.1 + mục 6: tài khoản nội bộ không dùng giỏ hàng / đặt hàng (`403 GNE-ORD-4031`, 2026-11-20); 11.18 email nhân viên theo `STAFF_EMAIL_DOMAINS`, thêm `GET /admin/staff/email-check` + `details.taken_by` ở `GNE-ADM-4091`; 2.10 + 3.3 + 15 mã `GNE-AUTH-4033` (tài khoản nội bộ không đăng nhập / liên kết Google, Zalo); 11.13 hiện thực `/admin/users`; 13 hiện thực WebSocket + kênh `/user/queue/account` (2026-11-21) · 1.5 (2026-11-18): Mở shop & KYC hiện thực — 4.1 thêm `KYC_DOCUMENT` / `SHOP_LOGO` / `SHOP_COVER`, 9.2 giữ phiên, 10.11 thêm `GET /seller/payout-account`, 10.12 `document_file_names`, 11.3 `is_mall` + quyền hoa hồng, 12 hợp đồng callback AI Worker mới (ADR 0011) · 1.4 (2026-11-16): mục 2–3 chỉnh theo backend AUTH thật (đăng ký chưa tạo `users` tới khi OTP đúng, `GNE-AUTH-4012`, refresh trả kèm `user`, callback OAuth cố định + `next`, thêm `POST /me/identities/{provider}/authorize`, liên kết Google phải trùng email `GNE-AUTH-4098`, gỡ liên kết cần `current_password`, xóa tài khoản giữ phiên hiện tại); thêm mã `GNE-SYS-4040/4050/5000`; mục 5.18 bổ sung 6 endpoint công khai giao diện đang dùng; trường `product_slug` ở giỏ / `$OrderItem`; mục 17.5 đối chiếu 21 endpoint lệch giữa mã web và spec; kho tệp MinIO → Silo (ADR 0009 — mã `GNE-MINIO-5003` giữ nguyên) · 1.3 (2026-11-08): đồng bộ với hợp đồng Swagger `genie-api-spec` — đổi `GNE-WAL-4002/4033/4034` thành `GNE-WAL-4221/4222/4092` cho khớp định dạng mã, thêm 7 mã lỗi còn thiếu (`GNE-AUTH-4097`, `GNE-ORD-4041`, `GNE-CAT-4095`, `GNE-VND-4096`, `GNE-VND-4224`, `GNE-NOT-4221`, `GNE-ADM-4092`), chốt cấu trúc phản hồi 6.3 / 7.6 / 7.8, `client_message_id`, payload webhook SePay / hãng vận chuyển / KYC nội bộ (mục 17.4) · 1.2 (2026-11-08): rà phủ toàn bộ — thêm mở khóa tài khoản qua email, tìm nhanh ở Seller Center, mục 12.2 tác vụ nền & email tự động (UC-ORD-08, UC-ORD-12, UC-PAY-07, UC-NOT-03) · 1.1 (2026-11-08): bổ sung đổi email, từ khóa xu hướng, chi tiết đơn phía shop, cảm xúc đánh giá (PhoBERT), phong tỏa ký quỹ, xóa banner; mọi chênh lệch ở mục 17 đã xử lý · 1.0 (2026-11-08): bản đầu |
 
 > **Cách đọc:** mỗi endpoint ghi *màn hình dùng nó*, *quyền*, *mã UC*, rồi tới request/response mẫu. Đối tượng dùng lại nhiều lần được định nghĩa một lần ở **mục 1 (Schema dùng chung)** và gọi bằng tên `$TênSchema` — khi chuyển sang OpenAPI, mỗi `$TênSchema` là một `components/schemas`.
 >
@@ -859,7 +859,7 @@ hoặc `{ "voucher_id": 1 }`. `201` `$Voucher`.
 
 Sai MIME/kích thước → `422 GNE-VAL-4220` ngay khi xin URL; server kiểm tra lại khi nhận `object_key` (`statObject`). URL hết hạn sau 15 phút (KYC 10 phút) → `GNE-MINIO-5003` khi PUT, xin URL mới. URL được ký theo tên miền công khai `PUBLIC_S3_URL` (`https://s3.genie.vn`, Nginx → Silo).
 
-**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. **2026-11-18 (Mở shop & KYC):** `KYC_DOCUMENT` (`kyc-dossiers` riêng tư, ảnh ≥ 20 KB — nhỏ hơn → `422 {min_bytes}`, link 10 phút, chỉ VENDOR; backend mã hóa AES-256-GCM khi nộp hồ sơ, bản rõ không ở khóa chính thức — ADR 0011), `SHOP_LOGO` / `SHOP_COVER` (`avatar-assets`, chỉ VENDOR, lưu vào `vendor/{shop_id}/{logo|cover}/…`). **2026-11-26 (Thông báo sàn):** `NOTIFICATION_IMAGE` (`content-assets` công khai, JPEG / PNG / WebP ≤ 5 MB, quyền `MANAGE_PLATFORM_NOTIFICATION`; khóa chính thức `notice/{id}/{uuid}.{ext}`). Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
+**Hiện thực (2026-11-16):** đã có `purpose = AVATAR` (bucket `avatar-assets`, `image/jpeg`, `image/png`, 1 MB); khóa tạm thật dạng `tmp/user/{userId}/{uuid}.{ext}` → khóa chính thức `user/{userId}/{uuid}.{ext}`. Các `purpose` khác do từng phân hệ thêm vào `UploadPurpose` khi làm. **2026-11-18 (Mở shop & KYC):** `KYC_DOCUMENT` (`kyc-dossiers` riêng tư, ảnh ≥ 20 KB — nhỏ hơn → `422 {min_bytes}`, link 10 phút, chỉ VENDOR; backend mã hóa AES-256-GCM khi nộp hồ sơ, bản rõ không ở khóa chính thức — ADR 0011), `SHOP_LOGO` / `SHOP_COVER` (`avatar-assets`, chỉ VENDOR, lưu vào `vendor/{shop_id}/{logo|cover}/…`). **2026-11-27 (Chat):** `CHAT_IMAGE` (`chat-media` riêng tư, JPEG / PNG / WebP ≤ 5 MB, mọi người đã đăng nhập; khóa chính thức `conversation/{id}/{uuid}.{ext}`, chỉ đọc qua link ký 10 phút). **2026-11-26 (Thông báo sàn):** `NOTIFICATION_IMAGE` (`content-assets` công khai, JPEG / PNG / WebP ≤ 5 MB, quyền `MANAGE_PLATFORM_NOTIFICATION`; khóa chính thức `notice/{id}/{uuid}.{ext}`). Kho tệp là **Silo** (`pgsty/silo`, fork cộng đồng của MinIO, cùng API S3 — ADR 0009); tên mã lỗi `GNE-MINIO-5003` giữ nguyên để không đổi hợp đồng.
 
 ---
 
@@ -1536,6 +1536,7 @@ Hai nhóm đường dẫn cùng DTO: khách dùng `/me/conversations/**`, shop d
 ]
 ```
 Phía shop `counterpart.type = CUSTOMER`. Ảnh / thẻ sản phẩm / thẻ đơn có `preview` = `null`, client hiện "[Hình ảnh]", "[Sản phẩm]", "[Đơn hàng]".
+Phân trang cursor (`pagination.next_cursor`), `limit` 1–50; chỉ liệt kê hội thoại **đã có ít nhất một tin**, mới nhất trước. `summary.unread_total` = tổng chưa đọc phía người gọi (badge nút chat / nav Chat). Phía khách `counterpart.id` = `shop_id` (`vendor_profiles.id`); `is_online` = chủ shop đang có kết nối WebSocket; `last_active_at` = lần ngắt kết nối gần nhất.
 
 ### 8.2 `POST /me/conversations` — Mở (hoặc lấy) hội thoại với shop
 **Màn hình:** "Chat ngay" (trang sản phẩm, trang shop), "Chat" (giỏ hàng, theo dõi đơn), "Liên hệ Shop"
@@ -1547,7 +1548,15 @@ Phía shop `counterpart.type = CUSTOMER`. Ảnh / thẻ sản phẩm / thẻ đ�
 ```json
 { "id": 3301, "counterpart": "...", "shop_stats": { "chat_response_rate": 98.0, "avg_response_minutes": 4 }, "unread_count": 0 }
 ```
-`shop_stats` cho dòng "Phản hồi 98% · trong vài phút". Thẻ sản phẩm / đơn được gửi tự động khi mở từ trang sản phẩm / đơn: client gửi tiếp một tin `PRODUCT_CARD` / `ORDER_CARD` (8.4).
+`shop_stats` cho dòng "Phản hồi 98% · trong vài phút" (`chat_response_rate` = % hội thoại khách mở trong 30 ngày được shop trả lời **không tự động** trong 24 giờ — job hằng ngày; `avg_response_minutes` = trung vị phút tới tin trả lời đầu; cả hai `null` khi chưa đủ dữ liệu). Thẻ sản phẩm / đơn được gửi tự động khi mở từ trang sản phẩm / đơn: client gửi tiếp một tin `PRODUCT_CARD` / `ORDER_CARD` (8.4).
+
+| Lỗi | Khi nào |
+|---|---|
+| `403 GNE-SEC-4030` | Tài khoản nhân viên / Admin (chỉ xem storefront) |
+| `404 GNE-VND-4041` | Shop không tồn tại, chưa `VERIFIED` hoặc chủ shop không hoạt động |
+| `409 GNE-SOC-4096` | Nhắn tin với shop của chính mình |
+
+Shop bật tự trả lời và có lời chào → hội thoại **mới tạo** (hoặc mở lại sau ≥ 24 giờ không có tin) nhận ngay một tin lời chào `is_auto`.
 
 ### 8.3 `GET /me/conversations/{id}/messages?before=<cursor>&limit=30`
 ```json
@@ -1558,22 +1567,34 @@ Phía shop `counterpart.type = CUSTOMER`. Ảnh / thẻ sản phẩm / thẻ đ�
   { "id": 99013, "sender": "THEM", "type": "IMAGE", "image_url": "https://s3.genie.vn/chat-media/...?X-Amz-...", "sent_at": "...", "status": "SEEN" }
 ]
 ```
-`sender` ∈ `ME, THEM`; `status` (chỉ ý nghĩa với tin của mình) ∈ `SENT, DELIVERED, SEEN`. Mới nhất trước; cuộn lên dùng `next_cursor`.
+`sender` ∈ `ME, THEM`; `status` (chỉ ý nghĩa với tin của mình): server trả `DELIVERED` (đã lưu — "Đã nhận") hoặc `SEEN` (bên kia đã mở hội thoại — "Đã xem"); `SENT` / "Đang gửi…" chỉ tồn tại phía client tới khi có ack. Mới nhất trước; cuộn lên dùng `before=<next_cursor>` (cursor mờ), `limit` 1–50 (mặc định 30).
+- `is_auto = true` với tin tự động của shop (lời chào / vắng mặt / tạm nghỉ — UC-VND-06): đứng tên shop, không tính tỉ lệ phản hồi.
+- Thẻ sản phẩm trả thông tin **hiện tại** `{ id, slug, name, image_url, price, is_available }` — sản phẩm đã ẩn / xóa → `is_available = false`, `price = null`. Thẻ đơn `{ id, code, status }`.
+- Ảnh trong chat nằm bucket riêng tư `chat-media`: `image_url` là link ký tạm 10 phút, tạo lại mỗi lần đọc.
 Mỗi tin có đủ các khóa `text`, `product`, `order`, `image_url`, `client_message_id` (khóa không dùng theo `type` là `null`, §0.5); `client_message_id` là UUID client gửi ở 8.4, trả lại để khớp bong bóng "Đang gửi…" (`null` với tin cũ / tin của bên kia).
 
 ### 8.4 `POST /me/conversations/{id}/messages` — Gửi tin
 ```json
 { "type": "TEXT", "text": "Sản phẩm còn hàng không?" }
 ```
-Các dạng khác: `{ "type": "IMAGE", "image_object_key": "tmp/chat-media/..." }`, `{ "type": "PRODUCT_CARD", "product_id": 1 }`, `{ "type": "ORDER_CARD", "order_id": 44 }`. Thêm `client_message_id` (UUID) để client khớp bong bóng "Đang gửi…" khi nhận lại. `201` → tin như 8.3. Shop bật tự trả lời → server tự gửi lời chào / tin vắng mặt / tin tạm nghỉ (UC-VND-06, UC-VND-19).
+Các dạng khác: `{ "type": "IMAGE", "image_object_key": "tmp/user/{id}/…" }` (khóa tạm của **chính người gửi**, `purpose = CHAT_IMAGE`), `{ "type": "PRODUCT_CARD", "product_id": 1, "variant_id": 25 }` (`variant_id` tùy chọn — mặc định biến thể còn bán giá thấp nhất), `{ "type": "ORDER_CARD", "order_id": 44 }`. Thêm `client_message_id` (UUID) để client khớp bong bóng "Đang gửi…" khi nhận lại; gửi lại cùng `client_message_id` trong 24 giờ → trả lại đúng tin đã lưu (`200`, không tạo tin mới). `201` → tin như 8.3. Chữ 1–2.000 ký tự (cắt khoảng trắng, bỏ ký tự điều khiển). Tối đa 20 tin / 10 giây / người (`429 GNE-RAT-4290`). Khách gửi tin lúc shop **vắng** (ngoài 08:00–22:00 giờ VN hoặc chủ shop không trực tuyến) → server gửi tin vắng mặt `is_auto` (tối đa 1 lần / hội thoại / 60 phút); shop đang tạm nghỉ → dùng tin tạm nghỉ (UC-VND-06, UC-VND-19). Người nhận không trực tuyến → thông báo in-app `CHAT_MESSAGE` (gộp một thông báo chưa đọc / hội thoại).
 
 | Lỗi | Khi nào |
 |---|---|
-| `403 GNE-SOC-4031` | Đơn / sản phẩm không thuộc hội thoại này |
-| `422 GNE-VAL-4220` | Tin rỗng, ảnh > 5 MB |
+| `403 GNE-SOC-4031` | Đơn / sản phẩm không thuộc hội thoại này (sản phẩm phải của shop trong hội thoại và đang bán; đơn phải đúng cặp khách – shop) |
+| `404 GNE-SYS-4040` | Hội thoại không phải của người gọi |
+| `404 GNE-VND-4041` | Shop đã ngừng hoạt động (hội thoại cũ chỉ còn đọc) |
+| `422 GNE-VAL-4220` | Tin rỗng / quá dài, ảnh không phải khóa tạm của người gửi, biến thể không thuộc sản phẩm |
+| `429 GNE-RAT-4290` | Gửi quá 20 tin / 10 giây |
 
 ### 8.5 `POST /me/conversations/{id}/read` — Đánh dấu đã xem
-`204`. Đặt `unread_count = 0`, bắn sự kiện "Đã xem" cho bên kia.
+`204`. Đặt `unread_count = 0`, bắn sự kiện "Đã xem" cho bên kia; thông báo `CHAT_MESSAGE` chưa đọc của hội thoại cũng được đánh dấu đọc.
+
+### 8.6 `GET /me/conversations/{id}/orders?limit=10` (shop: `GET /seller/conversations/{id}/orders`) — Chọn đơn để gửi thẻ
+**Màn hình:** nút "Gửi đơn" trong khung chat (hai phía). Đơn gần nhất **giữa đúng hai bên** của hội thoại, mới nhất trước; `limit` 1–20.
+```json
+[ { "id": 44, "code": "TR-20260608-000044", "status": "PENDING_PAYMENT", "total": 389000, "created_at": "2026-06-08T10:00:00+07:00", "item_count": 2, "thumbnail_url": "https://…" } ]
+```
 
 ---
 
@@ -2827,13 +2848,13 @@ Các use case hệ thống không có API gọi từ client nhưng làm thay đ�
 
 ## 13. Realtime — WebSocket (STOMP)
 
-Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNECT`. **Hiện thực (2026-11-21):** WebSocket thuần (không SockJS), simple broker trong bộ nhớ; token sai / đã thu hồi → khung `ERROR` rồi đóng; chỉ được `SUBSCRIBE` `/user/queue/**` và `/topic/platform`; origin theo `CORS_ALLOWED_ORIGINS`. Tin JSON snake_case. Đã có kênh `/user/queue/account`; `/user/queue/notifications` + `/topic/platform` theo plan thông báo 2026-11-26; các kênh khác chờ plan Chat / Payment. TLCN một instance — không dùng Redis Pub/Sub (DATN). Swagger không mô tả được STOMP — Apidog hỗ trợ tab WebSocket, hoặc ghi chú như dưới.
+Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNECT`. **Hiện thực (2026-11-21):** WebSocket thuần (không SockJS), simple broker trong bộ nhớ; token sai / đã thu hồi → khung `ERROR` rồi đóng; chỉ được `SUBSCRIBE` `/user/queue/**` và `/topic/platform`; origin theo `CORS_ALLOWED_ORIGINS`. Tin JSON snake_case. Đã có kênh `/user/queue/account`; `/user/queue/notifications` + `/topic/platform` theo plan thông báo 2026-11-26; `/user/queue/chat` + `/app/chat.*` theo plan chat 2026-11-26; các kênh khác chờ plan Payment. TLCN một instance — không dùng Redis Pub/Sub (DATN). Swagger không mô tả được STOMP — Apidog hỗ trợ tab WebSocket, hoặc ghi chú như dưới.
 
 | Kênh | Hướng | Dữ liệu | Màn hình cập nhật |
 |---|---|---|---|
 | `/user/queue/account` | server → client | (1) `{ "type": "SESSION_REVOKED", "reason": "SUSPENDED" }` — gửi sau commit mỗi khi server thu hồi mọi phiên; `reason` ∈ `SUSPENDED` (bị khóa), `ACCOUNT_DELETED`, `PASSWORD_CHANGED`, `SUSPICIOUS_REUSE`… (2) `{ "type": "PERMISSIONS_CHANGED" }` — Admin vừa đổi quyền / chức danh của nhân viên, phiên giữ nguyên (thêm 2026-11-21, plan B1 D18, D19) | (1) Mọi trang: đăng xuất ngay, về `/auth/login` kèm câu báo theo lý do. (2) Admin Console: tải lại `/admin/me` + menu; đang ở màn vừa mất quyền → về trang chính kèm thông báo |
 | `/user/queue/notifications` | server → client | `{ "type": "NEW_NOTIFICATION" \| "PLATFORM_NOTIFICATION", "notification": <phần tử 3.12>, "unread_count": 4 }` khi có thông báo mới (gửi sau commit); `{ "type": "NOTIFICATIONS_READ", "ids": ["ntf_1"] \| null, "category": null, "unread_count": 0 }` sau khi chính người đó đánh dấu đọc (đồng bộ tab / thiết bị khác) | Chuông header (Storefront, Seller, Admin), toast + âm báo |
-| `/user/queue/chat` | server → client | `{ "conversation_id", "message": {…8.3}, "unread_total" }`; sự kiện `MESSAGE_DELIVERED`, `MESSAGE_SEEN`, `TYPING` | Khung chat, badge nút chat, badge nav Chat (Seller) |
+| `/user/queue/chat` | server → client | `{ "type": "MESSAGE_CREATED", "conversation_id", "message": <8.3 theo góc nhìn người nhận>, "client_message_id", "unread_total" }` (gửi cho **cả hai** bên sau commit — bên gửi dùng làm ack "Đã nhận"); `{ "type": "MESSAGE_SEEN", "conversation_id", "up_to_message_id" }`; `{ "type": "TYPING", "conversation_id" }` (không lưu, tối đa 1 / 2 giây); `{ "type": "MESSAGE_FAILED", "client_message_id", "code", "message" }` khi gửi qua `/app/chat.send` lỗi nghiệp vụ | Khung chat, badge nút chat, badge nav Chat (Seller) |
 | `/user/queue/payments` | server → client | `{ "checkout_session_id", "status": "COMPLETED" }` | Ô VietQR tự chuyển trang "Thanh toán thành công" |
 | `/user/queue/counters` | server → client | `{ "cart_items", "unread_notifications", "orders_to_confirm" }` | Badge giỏ, badge "Đơn hàng" Seller |
 | `/user/queue/admin-queues` | server → client | như `GET /admin/queues` | Badge nav Admin, "Việc cần xử lý" |
@@ -3017,6 +3038,7 @@ Endpoint `wss://api.genie.vn/ws`, header `Authorization: Bearer …` khi `CONNEC
 | `GNE-SOC-4093` | 409 | Đã báo cáo đánh giá này | mới |
 | `GNE-SOC-4094` | 409 | Shop đã phản hồi đánh giá | mới |
 | `GNE-SOC-4095` | 409 | Theo dõi shop của chính mình | mới |
+| `GNE-SOC-4096` | 409 | Nhắn tin với shop của chính mình | mới (v1.9) |
 | `GNE-SOC-4221` | 422 | Phản hồi chứa số điện thoại | mới |
 | `GNE-VND-4031` | 403 | Shop chưa `VERIFIED` (cổng KYC) | mới |
 | `GNE-VND-4041` | 404 | Gian hàng không tồn tại, chưa duyệt KYC hoặc đã ngừng hoạt động (trang shop công khai 5.11) | mới (v1.5) |

@@ -1603,9 +1603,9 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Luồng sự kiện chính:**
   1. Shop vào Cài đặt → Tuỳ chọn vận hành → bật "Tự động trả lời chat".
   2. Nhập (1) Lời chào khi khách mở khung chat; (2) Tin nhắn trả lời khi shop vắng mặt (ngoài 08:00–22:00 hoặc không có nhân viên trực tuyến).
-  3. Bấm "Lưu cài đặt" → `PUT /api/v1/vendor/auto-reply`.
-  4. Khi khách mở hội thoại: hệ thống gửi lời chào (tin nhắn hệ thống đứng tên shop, không tính là phản hồi của shop khi đo tỉ lệ phản hồi).
-  5. Khi shop tạm nghỉ (UC-VND-19): tin nhắn tự động dùng `vacationMessage`.
+  3. Bấm "Lưu cài đặt" → `PATCH /api/v1/seller/settings` khối `auto_reply` (API_SPEC 10.11 — đã có từ cụm B4).
+  4. Khi khách mở hội thoại **mới** (hoặc mở lại sau ≥ 24 giờ không có tin): hệ thống gửi lời chào (tin `isAuto` đứng tên shop, không tính là phản hồi của shop khi đo tỉ lệ phản hồi).
+  5. Khi khách nhắn lúc shop vắng mặt (ngoài 08:00–22:00 giờ Việt Nam hoặc chủ shop không có kết nối nào): gửi tin vắng mặt, tối đa 1 lần / hội thoại / 60 phút. Khi shop tạm nghỉ (UC-VND-19): dùng `vacationMessage` thay tin vắng mặt.
 - **Luồng thay thế / Ngoại lệ:**
   - *Để trống cả hai nội dung mà bật công tắc:* báo lỗi yêu cầu nhập ít nhất một nội dung.
 - **Quan hệ Use Case:** Không có.
@@ -2152,7 +2152,9 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   - *Shop đang ngoài giờ làm việc:* Nếu shop bật trả lời tự động (`autoReplyEnabled`), hệ thống tự động sinh 1 tin nhắn trả lời với nội dung `autoReplyOffline` gửi lại cho khách.
 - **Quan hệ Use Case:** được mở rộng bởi `UC-SOC-02` (điểm «Gửi tin nhắn»).
 - **Ràng buộc nghiệp vụ & Kỹ thuật:**
-  - Sử dụng Redis Pub/Sub làm message bus để đảm bảo chat hoạt động thông suốt kể cả khi hệ thống chạy nhiều cụm server (Horizontal Scaling).
+  - Sử dụng Redis Pub/Sub làm message bus để đảm bảo chat hoạt động thông suốt kể cả khi hệ thống chạy nhiều cụm server (Horizontal Scaling) — **bản DATN**; TLCN chạy một instance nên dùng simple broker STOMP trong bộ nhớ (bước 7–8).
+  - Gửi qua WebSocket `/app/chat.send` hoặc REST `POST …/messages` (dự phòng khi mất kết nối) — cùng một luật nghiệp vụ; `client_message_id` chống gửi trùng trong 24 giờ. Tối đa 20 tin / 10 giây / người, chữ ≤ 2.000 ký tự.
+  - Tài khoản nhân viên / Admin không nhắn tin với shop; không nhắn tin với shop của chính mình (`GNE-SOC-4096`).
 - **Đối chiếu Hiện trạng & Thực thể:**
   - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
   - *Kế hoạch:* Sprint 6 (tuần 11–12) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
@@ -2172,7 +2174,8 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   2. *Ảnh:* chọn ảnh (≤ 5 MB) → tải lên Silo qua Presigned URL → gửi `attachmentUrl`, `type = IMAGE`.
   3. *Thẻ đơn hàng:* người bán chọn đơn của khách → gửi thẻ mã đơn, trạng thái, mã vận đơn (`ORDER_CARD`, `content` JSON).
   4. Bấm thẻ sản phẩm mở trang sản phẩm; bấm thẻ đơn mở trang theo dõi đơn.
-  5. Trạng thái tin nhắn: "Đang gửi…" → "Đã nhận" (WebSocket ack) → "Đã xem" (sự kiện `CHAT_READ_RECEIPT` khi bên kia mở hội thoại, cập nhật `readAt`).
+  5. Trạng thái tin nhắn: "Đang gửi…" (chỉ phía client) → "Đã nhận" (server lưu xong, gói `MESSAGE_CREATED` trả về người gửi) → "Đã xem" (sự kiện `MESSAGE_SEEN` khi bên kia mở hội thoại — suy từ `messages.isRead`, không có cột `readAt`).
+  6. Chọn đơn để gửi thẻ: `GET …/conversations/{id}/orders` (API_SPEC 8.6) — chỉ đơn giữa đúng hai bên của hội thoại.
 - **Luồng thay thế / Ngoại lệ:**
   - *Ảnh vượt dung lượng / sai định dạng:* báo lỗi, không gửi.
   - *Khách chưa đăng nhập bấm Chat:* yêu cầu đăng nhập ("Bạn cần đăng nhập để có thể nhắn tin trực tiếp với Shop").

@@ -10,38 +10,55 @@ import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { formatRelative } from '@/shared/lib/format';
 import { Avatar, Button, Icon, Skeleton, Spinner, toast } from '@/shared/ui';
+import { useTyping } from '../application/chatThread';
 import {
   useSellerConversations,
   useSellerMarkRead,
   useSellerMessages,
   useSellerSend,
 } from '../application/useSellerChat';
-import { mergeMessages, previewKey } from '../domain/chat.rules';
+import { MAX_TEXT, mergeMessages, presenceOf, previewKey } from '../domain/chat.rules';
 import type { SellerConversation } from '../domain/chat.types';
 import { Bubble } from './ChatParts';
 
 function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
-  const { t } = useT();
+  const { t, locale } = useT();
   const q = useSellerMessages(c.id);
-  const { send, pending } = useSellerSend(c.id);
+  const { send, retry, pending } = useSellerSend(c.id);
   const read = useSellerMarkRead();
+  const { typing, notifyTyping } = useTyping(c.id, q.isFetched);
   const orders = useSellerOrders({ size: 50 });
   const [draft, setDraft] = useState('');
   const [menu, setMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
   const body = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLInputElement>(null);
-  const list = mergeMessages(q.data ?? [], pending);
+  const list = mergeMessages(q.messages, pending);
+  const lastIncoming = [...q.messages].reverse().find((m) => !m.mine)?.id ?? null;
+  const seenIncoming = useRef<number | string | null>(null);
+  const presence = presenceOf(c.customer.online, c.customer.lastActiveAt);
   const theirOrders = (orders.data?.items ?? []).filter((o) => o.customer.id === c.customer.id);
 
   useEffect(() => {
-    if (c.unread > 0) read.mutate(c.id);
+    if (c.unread > 0) void read(c.id);
     // chỉ khi mở hội thoại
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [c.id]);
+  // tin mới của khách tới khi đang mở hội thoại → "Đã xem" ngay
+  useEffect(() => {
+    if (lastIncoming == null || !q.isFetched) return;
+    if (seenIncoming.current == null) {
+      seenIncoming.current = lastIncoming;
+      return;
+    }
+    if (lastIncoming !== seenIncoming.current && document.visibilityState === 'visible') {
+      seenIncoming.current = lastIncoming;
+      void read(c.id);
+    }
+  }, [lastIncoming, q.isFetched, c.id, read]);
   useEffect(() => {
     if (body.current) body.current.scrollTop = body.current.scrollHeight;
-  }, [list.length]);
+  }, [list.length, typing]);
 
   const sendText = () => {
     const v = draft.trim();
@@ -82,7 +99,11 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
         <div className="min-w-0">
           <div className="font-semibold text-sm text-strong truncate">{c.customer.name}</div>
           <div className={cn('text-[11px]', c.customer.online ? 'text-mint-600' : 'text-subtle')}>
-            {c.customer.online ? `● ${t('chat.online')}` : t('chat.offline')}
+            {c.customer.online
+              ? `● ${t('chat.online')}`
+              : t(presence.key, {
+                  time: presence.at ? formatRelative(presence.at, { locale }) : '',
+                })}
           </div>
         </div>
         <div className="relative ml-auto">
@@ -106,7 +127,10 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
                     type="button"
                     className="w-full text-left px-2.5 py-2 rounded-sm font-mono text-xs text-body border-0 bg-transparent cursor-pointer hover:bg-gray-50"
                     onClick={() => {
-                      void send({ type: 'ORDER_CARD', orderId: o.id }, { id: o.id, code: o.code });
+                      void send(
+                        { type: 'ORDER_CARD', orderId: o.id },
+                        { order: { id: o.id, code: o.code } },
+                      );
                       setMenu(false);
                     }}
                   >
@@ -129,14 +153,32 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
             <Spinner />
           </div>
         )}
+        {q.hasOlder && (
+          <div className="text-center mb-2">
+            <button
+              type="button"
+              onClick={q.loadOlder}
+              disabled={q.loadingOlder}
+              className="border-0 bg-transparent text-xs font-semibold text-link cursor-pointer"
+            >
+              {q.loadingOlder ? <Spinner size={14} /> : t('chat.load_older')}
+            </button>
+          </div>
+        )}
         {list.map((m) => (
           <Bubble
             key={String(m.id)}
             m={m}
             avatar={<Avatar name={c.customer.name} src={c.customer.avatarUrl} size={28} />}
             orderHref={(o) => `/seller/orders?q=${encodeURIComponent(o.code)}`}
+            onRetry={retry}
           />
         ))}
+        {typing && (
+          <p className="m-0 text-[11px] text-subtle" aria-live="polite">
+            {t('chat.typing')}
+          </p>
+        )}
       </div>
       <form
         className="flex items-center gap-2.5 px-4 py-3 border-0 border-t border-solid border-line flex-none"
@@ -166,8 +208,11 @@ function Thread({ c, onBack }: { c: SellerConversation; onBack: () => void }) {
         </button>
         <input
           value={draft}
-          maxLength={1000}
-          onChange={(e) => setDraft(e.target.value)}
+          maxLength={MAX_TEXT}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            if (e.target.value) notifyTyping();
+          }}
           placeholder={t('chat.placeholder')}
           aria-label={t('chat.placeholder')}
           className="flex-1 min-w-0 h-[42px] border-[1.5px] border-solid border-line rounded-pill px-4 text-base outline-none bg-surface-card focus:border-primary"

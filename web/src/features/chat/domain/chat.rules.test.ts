@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { mergeMessages, previewKey, sortConversations, statusKey, totalUnread } from './chat.rules';
+import {
+  flattenPages,
+  insertMessage,
+  markSeen,
+  mergeMessages,
+  presenceOf,
+  previewKey,
+  sortConversations,
+  statusKey,
+  totalUnread,
+  typingActive,
+} from './chat.rules';
 import type { ChatMessage, Conversation } from './chat.types';
 
 const m = (over: Partial<ChatMessage>): ChatMessage => ({
@@ -13,6 +24,7 @@ const m = (over: Partial<ChatMessage>): ChatMessage => ({
   sentAt: '2026-06-08T14:00:00Z',
   status: 'SENT',
   clientId: null,
+  auto: false,
   ...over,
 });
 const c = (id: number, at: string | null, unread = 0): Conversation => ({
@@ -45,5 +57,46 @@ describe('chat.rules', () => {
     expect(out.map((x) => x.id)).toEqual([1, 'b']);
     expect(statusKey(out[1])).toBe('chat.status.SENDING');
     expect(statusKey(m({ mine: false }))).toBeNull();
+  });
+
+  it('gộp trang (trang 0 mới nhất) thành luồng cũ → mới, bỏ trùng', () => {
+    const pages = [
+      { items: [m({ id: 3 }), m({ id: 4 })], nextCursor: 'c1' },
+      { items: [m({ id: 1 }), m({ id: 2 }), m({ id: 3 })], nextCursor: null },
+    ];
+    expect(flattenPages(pages).map((x) => x.id)).toEqual([1, 2, 3, 4]);
+  });
+
+  it('tin realtime tới trước / tới hai lần (ack + REST dự phòng) không bị nhân đôi', () => {
+    const pages = [{ items: [m({ id: 1 })], nextCursor: null }];
+    const once = insertMessage(pages, m({ id: 2, clientId: null }));
+    const twice = insertMessage(once, m({ id: 2, clientId: 'x' }));
+    expect(flattenPages(twice).map((x) => x.id)).toEqual([1, 2]);
+    expect(flattenPages(twice)[1].clientId).toBe('x');
+    expect(insertMessage([], m({ id: 9 }))[0].items).toHaveLength(1);
+  });
+
+  it('đã xem: chỉ tin của mình có id ≤ up_to', () => {
+    const pages = [
+      {
+        items: [
+          m({ id: 1, status: 'DELIVERED' }),
+          m({ id: 2, mine: false, status: 'DELIVERED' }),
+          m({ id: 3, status: 'DELIVERED' }),
+        ],
+        nextCursor: null,
+      },
+    ];
+    const out = flattenPages(markSeen(pages, 2));
+    expect(out.map((x) => x.status)).toEqual(['SEEN', 'DELIVERED', 'DELIVERED']);
+  });
+
+  it('đang gõ tắt sau 4 giây; trạng thái hoạt động', () => {
+    expect(typingActive(1000, 4999)).toBe(true);
+    expect(typingActive(1000, 5000)).toBe(false);
+    expect(typingActive(undefined, 1)).toBe(false);
+    expect(presenceOf(true, '2026-06-08T00:00:00Z')).toEqual({ key: 'chat.online', at: null });
+    expect(presenceOf(false, '2026-06-08T00:00:00Z').key).toBe('chat.active_ago');
+    expect(presenceOf(false, null).key).toBe('chat.offline');
   });
 });
