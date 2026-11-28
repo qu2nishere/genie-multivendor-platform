@@ -20,7 +20,7 @@ public enum AuditAction {                                                       
     KYC_SUPPLEMENT_REQUESTED, KYC_REQUEUED, KYC_DOCUMENT_VIEWED, PAYOUT_ACCOUNT_CHANGED,
     // ===== Banner theo động từ cụ thể (plan 2026-11-22 nhật ký banner N1, V24) — sửa kèm details.changes {trường: {from, to}} =====
     BANNER_CREATED, BANNER_UPDATED, BANNER_ACTIVATED, BANNER_DEACTIVATED, BANNER_DELETED,
-    // ===== Thông báo toàn sàn (UC-NOT-05) + voucher sàn (UC-PRO-02) — plan 2026-11-26, V26 =====
+    // ===== Thông báo toàn sàn (UC-NOT-05) + voucher sàn (UC-PRO-02) — plan 2026-11-26, V27 =====
     PLATFORM_NOTIFICATION_PUBLISHED, PLATFORM_NOTIFICATION_UPDATED, PLATFORM_NOTIFICATION_DELETED,
     VOUCHER_CREATED, VOUCHER_UPDATED, VOUCHER_DISABLED, VOUCHER_DELETED;
 
