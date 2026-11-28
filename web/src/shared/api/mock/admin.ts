@@ -348,6 +348,7 @@ export interface MockModerationRow {
   assignee: { id: number; name: string } | null;
   rejected_by_ai: boolean;
   submitted_at: string;
+  ai_check: 'NOT_SCREENED' | 'FAILED' | 'PASSED' | 'SUSPECTED' | 'REJECTED';
   decision_reason: string | null;
 }
 
@@ -379,6 +380,7 @@ const mod = (
     assignee: a ? { id: a.staff_id, name: a.name } : null,
     rejected_by_ai: false,
     submitted_at: `${at}:00+07:00`,
+    ai_check: 'PASSED',
     decision_reason: null,
     ...extra,
   };
@@ -394,6 +396,7 @@ export const adminModerationStore = mockState<MockModerationRow[]>('admin.modera
     'PENDING_APPROVAL',
     7,
     '2026-06-08T15:20',
+    { ai_check: 'PASSED' },
   ),
   mod(
     1283,
@@ -404,6 +407,7 @@ export const adminModerationStore = mockState<MockModerationRow[]>('admin.modera
     'FLAGGED',
     8,
     '2026-06-08T11:05',
+    { ai_check: 'SUSPECTED' },
   ),
   mod(
     1279,
@@ -414,7 +418,7 @@ export const adminModerationStore = mockState<MockModerationRow[]>('admin.modera
     'PENDING_APPROVAL',
     7,
     '2026-06-07T19:12',
-    { is_requeued: true },
+    { is_requeued: true, ai_check: 'FAILED' },
   ),
   mod(
     1270,
@@ -425,6 +429,7 @@ export const adminModerationStore = mockState<MockModerationRow[]>('admin.modera
     'PUBLISHED',
     7,
     '2026-06-05T09:30',
+    { ai_check: 'PASSED' },
   ),
   mod(
     1266,
@@ -437,6 +442,7 @@ export const adminModerationStore = mockState<MockModerationRow[]>('admin.modera
     '2026-06-04T14:45',
     {
       rejected_by_ai: true,
+      ai_check: 'REJECTED',
       decision_reason:
         'Không có giấy tờ chứng nhận hợp quy cho thiết bị sạc; ảnh có dấu hiệu lấy từ website khác.',
     },

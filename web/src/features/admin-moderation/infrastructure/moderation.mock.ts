@@ -3,7 +3,12 @@
 import { mockState } from '@/shared/api/mock';
 import { MODERATORS } from '@/shared/api/mock/admin';
 import { productImg } from '@/shared/lib/assets';
-import type { ModerationDetailDto, ModerationRowDto, ModeratorDto } from './moderation.dto';
+import type {
+  AiSettingsDto,
+  ModerationDetailDto,
+  ModerationRowDto,
+  ModeratorDto,
+} from './moderation.dto';
 
 export type ModerationExtraDto = Omit<
   ModerationDetailDto,
@@ -18,7 +23,14 @@ const sku = (rows: [string, string, number, number][]) =>
 
 export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
   1284: {
-    ai_result: { decision: 'APPROVE', risk_score: 12, violations: [], reasoning: null },
+    ai_result: {
+      decision: 'APPROVE',
+      risk_score: 12,
+      violations: [],
+      reasoning: null,
+      fallback: false,
+      created_at: '2026-06-08T15:21:00+07:00',
+    },
     images: [productImg('lamp')],
     documents: docs(['hoa-don-nhap-hang.pdf']),
     category_path: 'Nhà cửa > Nội thất > Đèn',
@@ -42,6 +54,8 @@ export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
       violations: ['COUNTERFEIT'],
       reasoning:
         'Ảnh sản phẩm trùng logo thương hiệu lớn nhưng giấy ủy quyền chưa khớp tên shop. Cần người kiểm tra.',
+      fallback: false,
+      created_at: '2026-06-08T11:06:00+07:00',
     },
     images: [productImg('perfume')],
     documents: docs(['giay-uy-quyen.pdf', 'phieu-cong-bo-my-pham.pdf']),
@@ -57,7 +71,14 @@ export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
     variants: sku([['PF-10', '10ml', 129000, 300]]),
   },
   1279: {
-    ai_result: { decision: 'APPROVE', risk_score: 18, violations: [], reasoning: null },
+    ai_result: {
+      decision: 'NEED_REVIEW',
+      risk_score: 50,
+      violations: [],
+      reasoning: null,
+      fallback: true,
+      created_at: '2026-06-07T19:13:00+07:00',
+    },
     images: [productImg('headphones')],
     documents: docs(['ce-certificate.pdf']),
     category_path: 'Điện tử > Tai nghe & Loa > Tai nghe Bluetooth',
@@ -76,7 +97,14 @@ export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
     ]),
   },
   1270: {
-    ai_result: { decision: 'APPROVE', risk_score: 9, violations: [], reasoning: null },
+    ai_result: {
+      decision: 'APPROVE',
+      risk_score: 9,
+      violations: [],
+      reasoning: null,
+      fallback: false,
+      created_at: '2026-06-05T09:31:00+07:00',
+    },
     images: [productImg('keyboard')],
     documents: docs(['hoa-don-nhap-hang.pdf']),
     category_path: 'Điện tử > Máy tính & Laptop > Bàn phím',
@@ -97,6 +125,8 @@ export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
       violations: ['PROHIBITED_ITEM', 'BAD_IMAGE'],
       reasoning:
         'Không có giấy tờ chứng nhận hợp quy cho thiết bị sạc; ảnh có dấu hiệu lấy từ website khác.',
+      fallback: false,
+      created_at: '2026-06-04T14:46:00+07:00',
     },
     images: [productImg('phone')],
     documents: [],
@@ -116,3 +146,13 @@ export const MODERATION_EXTRA: Record<number, ModerationExtraDto> = {
 export const moderatorsStore = mockState<ModeratorDto[]>('admin.moderators', () =>
   MODERATORS.map((m) => ({ ...m })),
 );
+
+export const aiSettingsStore = mockState<AiSettingsDto>('admin.ai_settings', () => ({
+  enabled: false,
+  mode: 'stub',
+  model: 'stub',
+  reject_threshold: 85,
+  configured: true,
+  updated_at: null,
+  updated_by: null,
+}));

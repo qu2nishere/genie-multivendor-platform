@@ -9,6 +9,8 @@ export interface ModerationDetailDto extends ModerationRowDto {
     risk_score: number;
     violations: string[];
     reasoning: string | null;
+    fallback: boolean;
+    created_at: string;
   } | null;
   decision_reason: string | null;
   images: string[];
@@ -29,4 +31,14 @@ export interface ModeratorDto {
   staff_id: number;
   name: string;
   is_accepting: boolean;
+}
+
+export interface AiSettingsDto {
+  enabled: boolean;
+  mode: 'stub' | 'http';
+  model: string;
+  reject_threshold: number;
+  configured: boolean;
+  updated_at: string | null;
+  updated_by: string | null;
 }
