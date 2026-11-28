@@ -1903,10 +1903,10 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   5. Chọn thời gian hiệu lực: Ngày bắt đầu (`validFrom`) và Ngày kết thúc (`validTo`).
   6. Phạm vi áp dụng: tất cả sản phẩm của Shop (`scope = ALL`; giới hạn theo sản phẩm / danh mục để bản mở rộng).
   7. Bấm "Lưu và Kích hoạt".
-  8. Hệ thống validate dữ liệu, tạo bản ghi `vouchers`. Trạng thái: `ACTIVE` (nếu bắt đầu ngay) hoặc `SCHEDULED`.
+  8. Hệ thống validate dữ liệu (lỗi trả một lần theo từng ô), **tự sinh tiêu đề** từ điều kiện ("Giảm 15% tối đa 50.000₫ đơn từ 200.000₫"), tạo bản ghi `vouchers`. Trạng thái: `ACTIVE` (nếu bắt đầu ngay) hoặc `SCHEDULED`.
   9. Loại giảm: **%**, **tiền**, **Freeship** (shop tài trợ); phạm vi: **toàn shop / danh mục cụ thể / sản phẩm cụ thể**, kèm **loại trừ** danh mục / sản phẩm (4 bảng phạm vi); mã 6–12 ký tự chữ HOA và số (nút "Tự tạo").
-  10. Danh sách voucher shop: Đang chạy / Đã lên lịch / Đã kết thúc; thao tác **Chỉnh sửa**, **Nhân bản**, **Tắt** (hộp xác nhận).
-  11. Thẻ thống kê: Voucher đang chạy, **Lượt dùng tháng này**, **Doanh thu từ khuyến mãi** (Σ giá trị đơn đã hoàn tất có `OrderDiscount` của shop).
+  10. Danh sách voucher shop: Đang chạy / Đã lên lịch / Đã kết thúc / Đã tắt; thao tác **Chỉnh sửa**, **Nhân bản**, **Tắt** (hộp xác nhận; tắt bản đã lên lịch = huỷ lịch; tắt là một chiều). Công bằng với người đã lưu mã: voucher **đã lên lịch và chưa ai lưu** sửa được mọi trường; **đang chạy** (hoặc đã có người lưu) chỉ được kéo dài ngày kết thúc, tăng số lượt / ngân sách — trường khác bị khóa (`409 GNE-VCH-4094`); đã kết thúc / đã tắt thì dùng *Nhân bản*.
+  11. Thẻ thống kê: Voucher đang chạy, **Lượt dùng tháng này**, **Doanh thu từ khuyến mãi** (Σ giá trị đơn đã hoàn tất có `OrderDiscount` của shop — bằng 0 tới khi luồng đặt hàng áp voucher, UC-PRO-04).
   12. Thẻ "FLASH SALE — Đăng ký gian hàng" dẫn tới UC-PRO-05.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
@@ -1931,8 +1931,8 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   5. Chọn thời gian hiệu lực và bấm "Phát hành".
   6. Hệ thống hiển thị Voucher trên mục "Mã giảm giá hot" ở trang chủ storefront.
   7. Trường: **tên chương trình**, mã (6–12 ký tự), loại %, tiền, **Freeship**; mức giảm, giảm tối đa, đơn tối thiểu, số lượng phát hành, giới hạn / người, **ngân sách tối đa** (voucher tự tắt khi tổng giảm vượt `budget`), thời gian hiệu lực (ngày bắt đầu không ở quá khứ).
-  8. Phạm vi toàn sàn / danh mục cụ thể kèm **loại trừ**; nhà tài trợ **Genie** hoặc **Co-sponsor với Shop** (`sponsorType = CO_SPONSOR`, `platformSharePercent`).
-  9. Thao tác Nhân bản, Sửa, Tắt, **Xóa vĩnh viễn** (chỉ khi chưa có lượt dùng); thẻ thống kê: đang chạy, lượt dùng hệ thống, tổng giảm giá đã dùng, voucher sắp ra mắt, ngân sách còn lại.
+  8. Phạm vi toàn sàn / danh mục cụ thể kèm **loại trừ**; nhà tài trợ **Genie** hoặc **Co-sponsor với Shop** (`sponsorType = CO_SPONSOR`, `platformSharePercent` 1–99 — voucher không gắn shop cụ thể; phần shop chịu chia cho shop có sản phẩm trong đơn khi áp voucher, UC-PRO-04).
+  9. Thao tác Nhân bản, Sửa (luật khóa trường như UC-PRO-01 b10, thêm được đổi tên chương trình), Tắt, **Xóa vĩnh viễn** (chỉ khi đã kết thúc / đã tắt **và** chưa có lượt dùng; voucher là quà đổi Điểm không đổi mã, không xóa); mọi thao tác ghi nhật ký `VOUCHER_*`; thẻ thống kê: đang chạy, lượt dùng hệ thống, tổng giảm giá đã dùng, voucher sắp ra mắt, ngân sách còn lại.
 - **Quan hệ Use Case:** Không có.
 - **Đối chiếu Hiện trạng & Thực thể:**
   - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
@@ -1952,7 +1952,7 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   1. Khách hàng lướt xem Banner trang chủ, trang chi tiết shop hoặc trang sản phẩm.
   2. Thấy thẻ Voucher kèm nút "Lưu mã".
   3. Bấm "Lưu mã".
-  4. Backend kiểm tra: Khách hàng chưa từng lưu mã này, hoặc chưa vượt quá giới hạn lượt dùng cá nhân (`perUserLimit`).
+  4. Backend kiểm tra: voucher đang chạy hoặc sắp diễn ra (lưu trước được), không phải quà đổi Điểm (chỉ nhận qua UC-PRO-09), shop của voucher còn hoạt động (ngược lại `404 GNE-VCH-4041`); khách chưa từng lưu mã này (`409 GNE-VCH-4091`) và chưa dùng đủ lượt cá nhân (`usagePerUser` — `409 GNE-VCH-4091` `USAGE_LIMIT_REACHED`). Tài khoản nội bộ không có Kho voucher (`403 GNE-ORD-4031`). Bấm hai lần chỉ tạo một bản ghi.
   5. Tạo bản ghi trong bảng `user_vouchers`: `userId`, `voucherId`, `isUsed = false`, `savedAt = now()`.
   6. Nút bấm trên giao diện chuyển thành "Đã lưu vào ví".
   7. **Kho Voucher** (Tài khoản): tab Tất cả / Voucher Sàn / Voucher Shop / Freeship; thẻ voucher hiển thị "Chưa tới giờ" (chưa đến `validFrom`), "Dùng ngay", lượt đã dùng.

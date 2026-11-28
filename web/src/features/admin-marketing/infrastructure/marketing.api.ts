@@ -64,6 +64,9 @@ import {
 
 const nextId = (ids: number[]) => Math.max(0, ...ids) + 1;
 
+/** Voucher sàn còn mock không (cờ `PUBLIC_REAL_API=…,admin-vouchers` — plan 2026-11-26 voucher V07, D21). */
+export const ADMIN_VOUCHERS_MOCKED = isMocked('admin-vouchers');
+
 // ---------- 11.14 Voucher sàn ----------
 export interface VoucherList {
   items: PlatformVoucher[];
@@ -71,7 +74,7 @@ export interface VoucherList {
 }
 
 export async function listPlatformVouchers(tab: VoucherTab): Promise<VoucherList> {
-  if (USE_MOCK) {
+  if (ADMIN_VOUCHERS_MOCKED) {
     await mockDelay(180);
     const rows = vouchersStore.get();
     return {
@@ -102,7 +105,7 @@ export async function listPlatformVouchers(tab: VoucherTab): Promise<VoucherList
 }
 
 export async function getPlatformVoucher(id: number): Promise<PlatformVoucherInput> {
-  if (USE_MOCK) {
+  if (ADMIN_VOUCHERS_MOCKED) {
     await mockDelay(120);
     const v = vouchersStore.get().find((x) => x.id === id);
     if (!v) mockFail('GNE-VCH-4041');
@@ -116,7 +119,7 @@ export async function savePlatformVoucher(
   v: PlatformVoucherInput,
 ): Promise<PlatformVoucher> {
   const body = toVoucherInputDto(v);
-  if (USE_MOCK) {
+  if (ADMIN_VOUCHERS_MOCKED) {
     await mockDelay(300);
     const rows = vouchersStore.get();
     if (rows.some((x) => x.code === body.code && x.id !== id)) mockFail('GNE-VCH-4092');
@@ -157,7 +160,7 @@ export async function savePlatformVoucher(
 
 /** Tắt (đang chạy) / Huỷ lịch (sắp diễn ra). */
 export async function disablePlatformVoucher(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (ADMIN_VOUCHERS_MOCKED) {
     await mockDelay(200);
     vouchersStore.set(
       vouchersStore.get().map((x) => (x.id === id ? { ...x, status: 'DISABLED' } : x)),
@@ -168,7 +171,7 @@ export async function disablePlatformVoucher(id: number): Promise<void> {
 }
 
 export async function deletePlatformVoucher(id: number): Promise<void> {
-  if (USE_MOCK) {
+  if (ADMIN_VOUCHERS_MOCKED) {
     await mockDelay(200);
     const v = vouchersStore.get().find((x) => x.id === id);
     if (!v) mockFail('GNE-VCH-4041');

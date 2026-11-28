@@ -30,6 +30,7 @@ class CoinRedemptionIT extends CoinTestSupport {
     @Autowired
     CoinBalanceHasher hasher;
 
+    /** Quà đổi Điểm 1 lượt / người — ghi đè cả {@code usage_per_user} vì IT khác có thể đã tạo COIN500 theo seed (10). */
     @BeforeEach
     void vouchers() {
         at("2026-06-01T09:00");
@@ -40,7 +41,7 @@ class CoinRedemptionIT extends CoinTestSupport {
                     + "usage_limit, usage_per_user, used_count, priority, valid_from, valid_to, is_active, version, "
                     + "total_discount_used, sponsor_type) VALUES (?, ?, 'ALL', 'PLATFORM', 'FIXED_AMOUNT', ?, ?, 100000, 1, 0, "
                     + "2, ?, ?, TRUE, 0, 0, 'PLATFORM') ON CONFLICT (code) DO UPDATE SET valid_from = EXCLUDED.valid_from, "
-                    + "valid_to = EXCLUDED.valid_to, is_active = TRUE", v[0], "Quà " + v[0], v[1], v[2], from, to);
+                    + "valid_to = EXCLUDED.valid_to, is_active = TRUE, usage_per_user = EXCLUDED.usage_per_user", v[0], "Quà " + v[0], v[1], v[2], from, to);
         }
     }
 

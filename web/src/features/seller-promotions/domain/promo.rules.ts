@@ -32,6 +32,47 @@ export function flashIssues(
   return out;
 }
 
+/** Trường form (camelCase) ← tên trường API (snake_case) cho lỗi 422 / `locked_fields`. */
+const FIELD_MAP = {
+  title: 'title',
+  code: 'code',
+  discount_type: 'discountType',
+  discount_value: 'discountValue',
+  max_discount: 'maxDiscount',
+  min_order_value: 'minOrderValue',
+  usage_limit: 'usageLimit',
+  usage_per_user: 'usagePerUser',
+  budget: 'budget',
+  valid_from: 'validFrom',
+  valid_to: 'validTo',
+  scope: 'scope',
+  category_ids: 'categoryIds',
+  product_ids: 'productIds',
+  excluded_category_ids: 'excludedCategoryIds',
+  funded_by: 'fundedBy',
+  platform_share_percent: 'platformSharePercent',
+} as const;
+export type VoucherField = (typeof FIELD_MAP)[keyof typeof FIELD_MAP];
+
+export const voucherFieldOf = (apiField: string): VoucherField | null =>
+  (FIELD_MAP as Record<string, VoucherField>)[apiField] ?? null;
+
+/** Tập trường form bị khóa từ `locked_fields` (phạm vi khóa thì khóa cả 3 tập ngành / sản phẩm). */
+export function lockedKeys(apiFields: readonly string[]): Set<string> {
+  const out = new Set<string>();
+  for (const f of apiFields) {
+    const k = voucherFieldOf(f);
+    if (k) out.add(k);
+  }
+  return out;
+}
+
+/** Ngày "YYYY-MM-DD" của form → ISO giờ VN; bắt đầu HÔM NAY thì gửi thời điểm hiện tại (API không nhận quá khứ). */
+export function voucherStartIso(day: string, today: string, now: Date = new Date()): string {
+  if (!day) return '';
+  return day === today ? now.toISOString() : `${day}T00:00:00+07:00`;
+}
+
 export type VoucherAction = 'EDIT' | 'DUPLICATE' | 'DISABLE';
 export function voucherActions(s: VoucherStatus): VoucherAction[] {
   if (s === 'ACTIVE') return ['EDIT', 'DUPLICATE', 'DISABLE'];

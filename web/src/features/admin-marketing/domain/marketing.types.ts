@@ -19,6 +19,7 @@ export interface PlatformVoucher {
   validTo: string;
   fundedBy: 'PLATFORM' | 'CO_SPONSOR';
   status: ManagedVoucherStatus;
+  isCoinReward: boolean;
 }
 
 export interface PlatformVoucherSummary {
@@ -47,6 +48,8 @@ export interface PlatformVoucherInput {
   excludedCategoryIds: number[];
   fundedBy: 'PLATFORM' | 'CO_SPONSOR';
   platformSharePercent: number | null;
+  /** Trường server khóa theo trạng thái (snake_case, API 11.14 `locked_fields`) — chỉ khi đọc chi tiết. */
+  lockedFields?: string[];
 }
 
 // ---------- 11.15 Flash Sale ----------

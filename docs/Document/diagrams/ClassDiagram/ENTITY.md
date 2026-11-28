@@ -2786,13 +2786,142 @@ public class Voucher {
         this.totalDiscountUsed = this.totalDiscountUsed.subtract(discount).max(BigDecimal.ZERO);
     }
 
-    /** Kiểm tra cấu hình khi tạo/sửa: SHOP bắt buộc vendorId & shop tài trợ; PLATFORM không gắn shop & sàn tài trợ — UC-PRO-01, UC-PRO-02 */
+    // ===== Vòng đời & quản lý (plan 2026-11-26 voucher D1–D4, D7, D8, D11, D18) =====
+
+    /** Trạng thái quản lý tại {@code now} — {@link VoucherStatus} (D1). */
+    public VoucherStatus status(OffsetDateTime now) {
+        if (!Boolean.TRUE.equals(this.isActive)) return budgetExhausted() ? VoucherStatus.ENDED : VoucherStatus.DISABLED;
+        if (now.isBefore(this.validFrom)) return VoucherStatus.SCHEDULED;
+        if (!now.isBefore(this.validTo) || this.usedCount >= this.usageLimit || budgetExhausted()) return VoucherStatus.ENDED;
+        return VoucherStatus.ACTIVE;
+    }
+
+    /** Ngân sách đã tiêu hết. */
+    public boolean budgetExhausted() {
+        return this.budget != null && this.totalDiscountUsed.compareTo(this.budget) >= 0;
+    }
+
+    /** Voucher shop: shop tài trợ, ưu tiên 1 (D6, D11) — UC-PRO-01 */
+    public static Voucher createShop(long vendorUserId, VoucherTerms t) {
+        Voucher v = fromTerms(t, VoucherType.SHOP, 1);
+        v.vendorId = vendorUserId;
+        v.sponsorType = FundingParty.VENDOR;
+        v.validateConfig();
+        return v;
+    }
+
+    /** Voucher sàn: FREESHIP khi giảm phí ship (ưu tiên 3), còn lại PLATFORM (ưu tiên 2); sàn hoặc đồng tài trợ (D7) — UC-PRO-02 */
+    public static Voucher createPlatform(VoucherTerms t, FundingParty sponsor, BigDecimal platformSharePercent) {
+        boolean freeship = t.discountType() == DiscountType.FREESHIP;
+        Voucher v = fromTerms(t, freeship ? VoucherType.FREESHIP : VoucherType.PLATFORM, freeship ? 3 : 2);
+        v.sponsorType = sponsor;
+        v.platformSharePercent = sponsor == FundingParty.CO_SPONSOR ? platformSharePercent : null;
+        v.validateConfig();
+        return v;
+    }
+
+    private static Voucher fromTerms(VoucherTerms t, VoucherType type, int priority) {
+        // FREESHIP: discount_value NOT NULL → lưu trần hỗ trợ (0 = hỗ trợ toàn bộ phí ship) — D8
+        BigDecimal value = t.discountType() == DiscountType.FREESHIP
+                ? (t.maxDiscountCap() == null ? BigDecimal.ZERO : t.maxDiscountCap()) : t.discountValue();
+        return Voucher.builder().code(t.code()).title(t.title()).scope(t.scope()).type(type)
+                .discountType(t.discountType()).discountValue(value).maxDiscountCap(t.maxDiscountCap())
+                .minOrderValue(t.minOrderValue()).usageLimit(t.usageLimit()).usagePerUser(t.usagePerUser())
+                .usedCount(0).priority(priority).validFrom(t.validFrom()).validTo(t.validTo()).isActive(true)
+                .budget(t.budget()).totalDiscountUsed(BigDecimal.ZERO).notificationBody(t.notificationBody()).build();
+    }
+
+    /**
+     * Sửa được mọi trường khi {@code SCHEDULED} và chưa ai lưu vào Kho (D3) — công bằng với người đã lưu: điều kiện họ đã
+     * thấy không bị đổi.
+     */
+    public boolean fullyEditable(boolean hasSavers, OffsetDateTime now) {
+        return status(now) == VoucherStatus.SCHEDULED && !hasSavers;
+    }
+
+    /**
+     * Các trường bản nháp {@code draft} định đổi mà luật D3 khóa — đang chạy chỉ được đổi tiêu đề, nội dung thông báo,
+     * KÉO DÀI {@code valid_to}, TĂNG {@code usage_limit} / {@code budget}. Đã kết thúc / đã tắt → {@code ["status"]}.
+     * Rỗng = được sửa. Phạm vi (4 bảng) service tự so.
+     */
+    public List<String> lockedChanges(Voucher draft, boolean hasSavers, OffsetDateTime now) {
+        VoucherStatus st = status(now);
+        if (st == VoucherStatus.ENDED || st == VoucherStatus.DISABLED) return List.of("status");
+        if (fullyEditable(hasSavers, now)) return List.of();
+        List<String> locked = new ArrayList<>();
+        if (!this.code.equals(draft.code)) locked.add("code");
+        if (this.discountType != draft.discountType) locked.add("discount_type");
+        if (!sameMoney(this.discountValue, draft.discountValue)) locked.add("discount_value");
+        if (!sameMoney(this.maxDiscountCap, draft.maxDiscountCap)) locked.add("max_discount");
+        if (!sameMoney(this.minOrderValue, draft.minOrderValue)) locked.add("min_order_value");
+        if (!this.usagePerUser.equals(draft.usagePerUser)) locked.add("usage_per_user");
+        if (!this.validFrom.isEqual(draft.validFrom)) locked.add("valid_from");
+        if (draft.validTo.isBefore(this.validTo)) locked.add("valid_to");
+        if (draft.usageLimit < this.usageLimit) locked.add("usage_limit");
+        if (this.budget != null && (draft.budget == null ? false : draft.budget.compareTo(this.budget) < 0)) locked.add("budget");
+        if (this.budget == null && draft.budget != null) locked.add("budget");
+        if (this.scope != draft.scope) locked.add("scope");
+        if (this.sponsorType != draft.sponsorType) locked.add("funded_by");
+        if (!sameMoney(this.platformSharePercent, draft.platformSharePercent)) locked.add("platform_share_percent");
+        return locked;
+    }
+
+    /** Chép bản nháp đã qua {@link #lockedChanges} (đủ trường khi {@code full}, ngược lại chỉ trường được phép) — UC-PRO-01, 02 */
+    public void applyEdit(Voucher draft, boolean full) {
+        this.title = draft.title;
+        this.validTo = draft.validTo;
+        this.usageLimit = draft.usageLimit;
+        this.budget = draft.budget;
+        this.notificationBody = draft.notificationBody;
+        if (full) {
+            this.code = draft.code;
+            this.discountType = draft.discountType;
+            this.discountValue = draft.discountValue;
+            this.maxDiscountCap = draft.maxDiscountCap;
+            this.minOrderValue = draft.minOrderValue;
+            this.usagePerUser = draft.usagePerUser;
+            this.validFrom = draft.validFrom;
+            this.scope = draft.scope;
+            this.type = draft.type;
+            this.priority = draft.priority;
+            this.sponsorType = draft.sponsorType;
+            this.platformSharePercent = draft.platformSharePercent;
+        }
+        validateConfig();
+    }
+
+    /** Tắt một chiều (D4) — tắt bản SCHEDULED = huỷ lịch; tắt lại không lỗi — UC-PRO-01, 02 */
+    public void disable() {
+        this.isActive = false;
+    }
+
+    /** Xóa vĩnh viễn được: đã kết thúc / đã tắt và chưa có lượt dùng (D18) — UC-PRO-02 */
+    public boolean isDeletable(boolean hasUsages, OffsetDateTime now) {
+        VoucherStatus st = status(now);
+        return (st == VoucherStatus.ENDED || st == VoucherStatus.DISABLED) && !hasUsages;
+    }
+
+    private static boolean sameMoney(BigDecimal a, BigDecimal b) {
+        return a == null ? b == null : b != null && a.compareTo(b) == 0;
+    }
+
+    /**
+     * Kiểm tra cấu hình khi tạo/sửa: SHOP bắt buộc vendorId & shop tài trợ; PLATFORM / FREESHIP không gắn shop, sàn tài trợ
+     * hoặc đồng tài trợ ({@code platformSharePercent} 1–99) — UC-PRO-01, UC-PRO-02 (plan 2026-11-26 voucher D7)
+     */
     public void validateConfig() {
         if (this.type == VoucherType.SHOP && (this.vendorId == null || this.sponsorType != FundingParty.VENDOR))
             throw new IllegalArgumentException("Voucher SHOP phải có vendorId và sponsorType = VENDOR");
-        if (this.type == VoucherType.PLATFORM && (this.vendorId != null || this.sponsorType != FundingParty.PLATFORM))
-            throw new IllegalArgumentException("Voucher PLATFORM không gắn shop và sponsorType = PLATFORM");
-        if (this.validTo.isBefore(this.validFrom)) throw new IllegalArgumentException("validTo phải sau validFrom");
+        if (this.type != VoucherType.SHOP) {
+            if (this.vendorId != null || this.sponsorType == FundingParty.VENDOR)
+                throw new IllegalArgumentException("Voucher sàn không gắn shop và sponsorType ∈ PLATFORM, CO_SPONSOR");
+            boolean co = this.sponsorType == FundingParty.CO_SPONSOR;
+            boolean shareOk = this.platformSharePercent != null && this.platformSharePercent.compareTo(BigDecimal.ONE) >= 0
+                    && this.platformSharePercent.compareTo(BigDecimal.valueOf(99)) <= 0;
+            if (co != shareOk || (!co && this.platformSharePercent != null))
+                throw new IllegalArgumentException("platformSharePercent 1–99 chỉ dùng khi CO_SPONSOR");
+        }
+        if (!this.validTo.isAfter(this.validFrom)) throw new IllegalArgumentException("validTo phải sau validFrom");
     }
 }
 ```
@@ -7344,7 +7473,7 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
   6. `VoucherUsage` («PK» id, «FK» voucherId, «FK» userId, «FK» checkoutSessionId, «FK» orderId)
   7. `UserVoucher` («PK» id, «FK» userId, «FK» voucherId)
 * **Các Enum liên kết (4 enum):** `DiscountType`, `FundingParty`, `VoucherScope`, `VoucherType`.
-* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Voucher`: isApplicable(), calculateDiscount(), consume(), restore(), validateConfig() · `VoucherCategory`: matches() · `VoucherProduct`: matches() · `VoucherExcludedCategory`: matches() · `VoucherExcludedProduct`: matches() · `VoucherUsage`: of() · `UserVoucher`: markUsed()
+* **Ngăn Operations (phương thức nghiệp vụ — chi tiết Phụ lục E):** `Voucher`: isApplicable(), calculateDiscount(), consume(), restore(), status(), budgetExhausted(), createShop(), createPlatform(), fullyEditable(), lockedChanges(), applyEdit(), disable(), isDeletable(), validateConfig() · `VoucherCategory`: matches() · `VoucherProduct`: matches() · `VoucherExcludedCategory`: matches() · `VoucherExcludedProduct`: matches() · `VoucherUsage`: of() · `UserVoucher`: markUsed()
 * **Ma trận quan hệ:**
   - `Voucher` 0..* → 0..1 `VendorProfile`
   - `VoucherUsage` 0..* → 0..1 `Order`
@@ -7818,7 +7947,16 @@ Mỗi quan hệ giữa 2 entity trong hệ thống được phân định rõ r�
 |  | `+ calculateDiscount(base: BigDecimal): BigDecimal` | Tính số tiền giảm (có trần, không vượt giá trị) | UC-PRO-03 |
 |  | `+ consume(discount: BigDecimal): void` | Ghi nhận một lượt dùng (service dùng @Version), hết ngân sách tự tắt | UC-PRO-03 |
 |  | `+ restore(discount: BigDecimal): void` | Hoàn lượt khi đơn bị hủy / hết hạn thanh toán | UC-ORD-08 |
-|  | `+ validateConfig(): void` | Kiểm tra cấu hình khi tạo/sửa: SHOP bắt buộc vendorId & shop tài trợ; PLATFORM không gắn shop & sàn tài trợ | UC-PRO-01, UC-PRO-02 |
+|  | `+ status(now): VoucherStatus` | Trạng thái quản lý `ACTIVE / SCHEDULED / ENDED / DISABLED` suy từ cột (hết ngân sách → `ENDED`) | UC-PRO-01, UC-PRO-02 |
+|  | `+ budgetExhausted(): boolean` | `totalDiscountUsed ≥ budget` | UC-PRO-02 |
+|  | `+ createShop(vendorUserId, terms): Voucher` | Voucher shop: `type = SHOP`, shop tài trợ, ưu tiên 1 | UC-PRO-01 |
+|  | `+ createPlatform(terms, sponsor, share): Voucher` | Voucher sàn `PLATFORM` (ưu tiên 2) hoặc `FREESHIP` (ưu tiên 3); sàn / đồng tài trợ | UC-PRO-02 |
+|  | `+ fullyEditable(hasSavers, now): boolean` | Sửa mọi trường khi `SCHEDULED` và chưa ai lưu vào Kho | UC-PRO-01, UC-PRO-02 |
+|  | `+ lockedChanges(draft, hasSavers, now): List<String>` | Trường bị khóa khi sửa voucher đang chạy (chỉ được đổi tiêu đề, kéo dài hạn, tăng lượt / ngân sách) | UC-PRO-01, UC-PRO-02 |
+|  | `+ applyEdit(draft, full): void` | Chép bản nháp đã kiểm (đủ trường hoặc chỉ trường được phép) | UC-PRO-01, UC-PRO-02 |
+|  | `+ disable(): void` | Tắt một chiều (tắt bản sắp diễn ra = huỷ lịch) | UC-PRO-01, UC-PRO-02 |
+|  | `+ isDeletable(hasUsages, now): boolean` | Xóa vĩnh viễn khi đã kết thúc / đã tắt và chưa có lượt dùng | UC-PRO-02 |
+|  | `+ validateConfig(): void` | Kiểm tra cấu hình khi tạo/sửa: SHOP bắt buộc vendorId & shop tài trợ; PLATFORM / FREESHIP không gắn shop, sàn tài trợ hoặc đồng tài trợ (`platformSharePercent` 1–99) | UC-PRO-01, UC-PRO-02 |
 | `VoucherCategory` | `+ matches(categoryId: Long): boolean` | Phạm vi áp dụng của voucher | UC-PRO-01 |
 | `VoucherExcludedCategory` | `+ matches(categoryId: Long): boolean` | Phạm vi loại trừ của voucher | UC-PRO-01 |
 | `VoucherExcludedProduct` | `+ matches(productId: Long): boolean` | Phạm vi loại trừ của voucher | UC-PRO-01 |

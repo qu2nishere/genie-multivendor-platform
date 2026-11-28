@@ -122,6 +122,14 @@ public enum ErrorCode {
     REWARD_ALREADY_HELD("GNE-PRO-4092", HttpStatus.CONFLICT, "Bạn đang có voucher này trong Kho Voucher."),
     INSUFFICIENT_COINS("GNE-PRO-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Bạn không đủ Điểm để thực hiện."),
 
+    // ===== Voucher (API_SPEC 3.14, 5.13, 10.7, 11.14, 15 — UC-PRO-01/02/03; plan 2026-11-26 voucher V02.01) =====
+    VOUCHER_NOT_FOUND("GNE-VCH-4041", HttpStatus.NOT_FOUND, "Mã voucher không tồn tại hoặc đã hết hạn."),
+    VOUCHER_ALREADY_SAVED("GNE-VCH-4091", HttpStatus.CONFLICT, "Voucher đã được lưu trước đó."),
+    VOUCHER_CODE_TAKEN("GNE-VCH-4092", HttpStatus.CONFLICT, "Mã voucher đã tồn tại."),
+    VOUCHER_HAS_USAGES("GNE-VCH-4093", HttpStatus.CONFLICT, "Voucher đã có lượt dùng, không thể xóa."),
+    VOUCHER_LOCKED("GNE-VCH-4094", HttpStatus.CONFLICT, "Không thể sửa hoặc xóa voucher ở trạng thái hiện tại."),
+    VOUCHER_NOT_APPLICABLE("GNE-VCH-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Voucher không áp dụng được cho đơn này."),
+
     // ===== Gian hàng — trang shop công khai (API_SPEC 5.11, 15 — UC-CAT-16) =====
     SHOP_UNAVAILABLE("GNE-VND-4041", HttpStatus.NOT_FOUND, "Gian hàng không tồn tại hoặc đã ngừng hoạt động."),
 

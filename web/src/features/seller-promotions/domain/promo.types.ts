@@ -37,6 +37,8 @@ export interface VoucherInput {
   categoryIds: number[];
   productIds: number[];
   excludedCategoryIds: number[];
+  /** Trường server đang khóa theo trạng thái (API 10.7 — `locked_fields`, snake_case); chỉ có khi đọc chi tiết. */
+  lockedFields?: string[];
 }
 
 export interface FlashCampaign {

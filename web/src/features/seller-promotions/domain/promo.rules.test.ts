@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { flashIssues, genCode, maxFlashPrice, normalizeCode, voucherActions } from './promo.rules';
+import {
+  flashIssues,
+  genCode,
+  lockedKeys,
+  maxFlashPrice,
+  normalizeCode,
+  voucherActions,
+  voucherFieldOf,
+  voucherStartIso,
+} from './promo.rules';
 import { voucherSchema, voucherSchemaFor } from './promo.schema';
 
 describe('promo.rules', () => {
@@ -94,5 +103,25 @@ describe('voucherSchemaFor platform (voucher sàn G12.33)', () => {
   it('sửa voucher cũ được giữ ngày bắt đầu đã qua', () => {
     const edit = voucherSchemaFor('platform', { isNew: false, today: '2026-06-20' });
     expect(edit.safeParse(ok).success).toBe(true);
+  });
+});
+
+describe('voucher — nối API thật (plan 2026-11-26 voucher V06)', () => {
+  it('đổi tên trường lỗi / khóa của API sang ô form', () => {
+    expect(voucherFieldOf('min_order_value')).toBe('minOrderValue');
+    expect(voucherFieldOf('platform_share_percent')).toBe('platformSharePercent');
+    expect(voucherFieldOf('status')).toBeNull();
+    expect([...lockedKeys(['code', 'discount_value', 'scope', 'status'])]).toEqual([
+      'code',
+      'discountValue',
+      'scope',
+    ]);
+  });
+
+  it('bắt đầu hôm nay gửi thời điểm hiện tại, ngày khác gửi 00:00 giờ VN', () => {
+    const now = new Date('2026-06-08T03:15:00Z');
+    expect(voucherStartIso('2026-06-08', '2026-06-08', now)).toBe('2026-06-08T03:15:00.000Z');
+    expect(voucherStartIso('2026-06-10', '2026-06-08', now)).toBe('2026-06-10T00:00:00+07:00');
+    expect(voucherStartIso('', '2026-06-08', now)).toBe('');
   });
 });

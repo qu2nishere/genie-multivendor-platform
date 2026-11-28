@@ -7,6 +7,7 @@
 import { useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { errorMessage, isApiError } from '@/shared/api/errors';
+import { lockedKeys, voucherFieldOf } from '../domain/promo.rules';
 import { useT } from '@/shared/hooks/useT';
 import { cn } from '@/shared/lib/cn';
 import { isoDateVN } from '@/shared/lib/format';
@@ -76,6 +77,8 @@ export interface VoucherEditorProps {
   /** Lưu; ném ApiError GNE-VCH-4092 thì form báo trùng mã dưới ô. Trả mã đã lưu để báo thành công. */
   onSave: (v: VoucherValues) => Promise<{ code: string }>;
   onClose: () => void;
+  /** Trường server khóa (voucher đang chạy / đã có người lưu — API 10.7, snake_case). */
+  lockedFields?: string[];
 }
 
 export function VoucherEditor({
@@ -87,9 +90,12 @@ export function VoucherEditor({
   saving,
   onSave,
   onClose,
+  lockedFields = [],
 }: VoucherEditorProps) {
   const { t } = useT();
   const platform = mode === 'platform';
+  const locked = lockedKeys(lockedFields);
+  const lk = (k: keyof VoucherValues) => locked.has(k);
   const schema = useMemo(
     () => voucherSchemaFor(mode, { isNew: !editing, today: isoDateVN() }),
     [mode, editing],
@@ -117,7 +123,25 @@ export function VoucherEditor({
     } catch (e) {
       if (isApiError(e) && e.code === 'GNE-VCH-4092')
         form.setError('code', { message: 'errors.GNE-VCH-4092' });
-      else toast.error(errorMessage(e, t));
+      else if (isApiError(e) && e.fieldErrors.length) {
+        // lỗi theo trường của server (422) → hiện dưới đúng ô
+        let placed = false;
+        for (const fe of e.fieldErrors) {
+          const k = voucherFieldOf(fe.field);
+          if (k) {
+            form.setError(k, { message: fe.message });
+            placed = true;
+          }
+        }
+        if (!placed) toast.error(errorMessage(e, t));
+      } else if (isApiError(e) && e.code === 'GNE-VCH-4094') {
+        const fields = (e.details.locked_fields as string[] | undefined) ?? [];
+        toast.error(
+          t('seller-promotions.form.locked_error', {
+            fields: fields.map((f) => t(`seller-promotions.field.${f}`)).join(', '),
+          }),
+        );
+      } else toast.error(errorMessage(e, t));
     }
   });
 
@@ -156,12 +180,22 @@ export function VoucherEditor({
       }
     >
       <form className="flex flex-col gap-[15px]" onSubmit={(e) => void submit(e)} noValidate>
+        {locked.size > 0 && (
+          <p
+            className="m-0 flex gap-2 items-start bg-amber-50 text-amber-800 rounded-md px-3 py-2.5 text-[13px]"
+            role="note"
+          >
+            <Icon name="lock" size={15} className="mt-0.5 flex-none" />
+            {t('seller-promotions.form.locked_note')}
+          </p>
+        )}
         {platform && (
           <Input
             label={t('seller-promotions.form.title')}
             placeholder={t('seller-promotions.form.title_placeholder')}
             required
             maxLength={100}
+            disabled={lk('title')}
             value={v.title ?? ''}
             onChange={(e) => set('title', e.target.value)}
             error={err(errors.title?.message)}
@@ -172,7 +206,7 @@ export function VoucherEditor({
             <label htmlFor="v-code" className={labCls}>
               {t('seller-promotions.form.code')}
             </label>
-            {!editing && (
+            {!editing && !lk('code') && (
               <button
                 type="button"
                 onClick={() => set('code', genCode())}
@@ -186,7 +220,7 @@ export function VoucherEditor({
           <Input
             id="v-code"
             value={v.code ?? ''}
-            disabled={editing}
+            disabled={editing || lk('code')}
             onChange={(e) => set('code', normalizeCode(e.target.value))}
             placeholder={platform ? 'VD: GENIE50' : 'VD: SUMMER2026'}
             error={err(errors.code?.message)}
@@ -203,6 +237,7 @@ export function VoucherEditor({
                   key={id}
                   type="button"
                   aria-pressed={on}
+                  disabled={lk('discountType')}
                   onClick={() => set('discountType', id)}
                   className={cn(
                     'flex-1 inline-flex items-center justify-center gap-1.5 h-10 rounded-md border-[1.5px] border-solid font-semibold text-[13px] cursor-pointer',
@@ -231,6 +266,7 @@ export function VoucherEditor({
                 inputMode="numeric"
                 iconRight={v.discountType === 'PERCENTAGE' ? 'percent' : 'banknote'}
                 value={v.discountValue ?? ''}
+                disabled={lk('discountValue')}
                 onChange={(e) => set('discountValue', int(e.target.value))}
                 error={err(errors.discountValue?.message)}
               />
@@ -243,7 +279,9 @@ export function VoucherEditor({
                   iconRight="banknote"
                   placeholder={platform ? '100000' : '50000'}
                   value={v.maxDiscount ?? ''}
+                  disabled={lk('maxDiscount')}
                   onChange={(e) => set('maxDiscount', int(e.target.value))}
+                  error={err(errors.maxDiscount?.message)}
                 />
               </div>
             )}
@@ -257,7 +295,9 @@ export function VoucherEditor({
               iconRight="banknote"
               placeholder={platform ? '500000' : '200000'}
               value={v.minOrderValue ?? ''}
+              disabled={lk('minOrderValue')}
               onChange={(e) => set('minOrderValue', int(e.target.value))}
+              error={err(errors.minOrderValue?.message)}
             />
           </div>
           <div className="flex-1">
@@ -277,7 +317,9 @@ export function VoucherEditor({
               label={t('seller-promotions.form.per_user')}
               inputMode="numeric"
               value={v.usagePerUser ?? ''}
+              disabled={lk('usagePerUser')}
               onChange={(e) => set('usagePerUser', int(e.target.value))}
+              error={err(errors.usagePerUser?.message)}
             />
           </div>
           <div className="flex-1">
@@ -288,6 +330,7 @@ export function VoucherEditor({
               placeholder={platform ? '500000000' : '5000000'}
               value={v.budget ?? ''}
               onChange={(e) => set('budget', int(e.target.value))}
+              error={err(errors.budget?.message)}
             />
           </div>
         </div>
@@ -298,6 +341,7 @@ export function VoucherEditor({
               type="date"
               aria-label={t('seller-promotions.form.from')}
               value={v.validFrom ?? ''}
+              disabled={lk('validFrom')}
               onChange={(e) => set('validFrom', e.target.value)}
               className={cn(dateCls, errors.validFrom ? 'border-red-500' : 'border-line')}
             />
@@ -324,6 +368,7 @@ export function VoucherEditor({
               label={t('seller-promotions.form.sponsor')}
               className="flex-1"
               value={v.fundedBy ?? 'PLATFORM'}
+              disabled={lk('fundedBy')}
               onChange={(x) => set('fundedBy', x)}
               options={[
                 { value: 'PLATFORM', label: t('seller-promotions.form.sponsor_platform') },
@@ -338,6 +383,7 @@ export function VoucherEditor({
                 iconRight="percent"
                 placeholder="50"
                 value={v.platformSharePercent ?? ''}
+                disabled={lk('platformSharePercent')}
                 onChange={(e) => set('platformSharePercent', int(e.target.value.slice(0, 3)))}
                 error={err(errors.platformSharePercent?.message)}
               />
@@ -349,7 +395,7 @@ export function VoucherEditor({
           {!categories ? (
             <Skeleton lines={3} className="mt-2" />
           ) : (
-            <div className="flex flex-col gap-1 mt-2">
+            <fieldset disabled={lk('scope')} className="flex flex-col gap-1 mt-2 border-0 p-0 m-0">
               <Radio name="vscope" checked={v.scope === 'ALL'} onChange={() => set('scope', 'ALL')}>
                 {t(
                   platform
@@ -422,7 +468,7 @@ export function VoucherEditor({
                   ]}
                 />
               )}
-            </div>
+            </fieldset>
           )}
         </fieldset>
       </form>
@@ -464,6 +510,7 @@ export function VoucherFormModal({
       categories={targets.data?.categories}
       products={targets.data?.products}
       saving={save.isPending}
+      lockedFields={editing ? (q.data?.lockedFields ?? []) : []}
       onSave={(vals) => {
         const { title: _t, fundedBy: _f, platformSharePercent: _p, ...input } = vals;
         return save.mutateAsync({ id: editing ? target.id : null, input });

@@ -119,6 +119,7 @@
     "GNE-VCH-4091": "You've already saved this voucher.",
     "GNE-VCH-4092": "This voucher code already exists.",
     "GNE-VCH-4093": "This voucher has been used and can't be deleted.",
+    "GNE-VCH-4094": "This voucher cannot be changed or deleted in its current state.",
     "GNE-VCH-4221": "This voucher can't be applied to this order.",
     "GNE-USR-4091": "You have orders in progress, so the account can't be deleted yet.",
     "GNE-USR-4092": "The default address can't be deleted.",
@@ -2884,7 +2885,9 @@
       "sponsor_platform": "Genie",
       "sponsor_co": "Co-sponsored with shops",
       "share": "Platform share (%)",
-      "scope_platform": "Whole platform"
+      "scope_platform": "Whole platform",
+      "locked_note": "This voucher is running or already saved by buyers: you can only rename it, extend the end date or raise the quantity or budget.",
+      "locked_error": "Cannot change: {fields}. Duplicate it to create a new voucher."
     },
     "flash": {
       "banner": "{name} — Register your products",
@@ -2907,6 +2910,28 @@
         "APPROVED": "Approved",
         "REJECTED": "Rejected"
       }
+    },
+    "field": {
+      "title": "Campaign name",
+      "code": "Voucher code",
+      "discount_type": "Discount type",
+      "discount_value": "Discount",
+      "max_discount": "Max discount",
+      "min_order_value": "Minimum order",
+      "usage_limit": "Quantity",
+      "usage_per_user": "Uses per buyer",
+      "budget": "Budget",
+      "valid_from": "Start date",
+      "valid_to": "End date",
+      "scope": "Scope",
+      "category_ids": "Categories",
+      "product_ids": "Products",
+      "excluded_category_ids": "Excluded categories",
+      "excluded_product_ids": "Excluded products",
+      "funded_by": "Sponsor",
+      "platform_share_percent": "Platform share",
+      "notification_body": "Notification text",
+      "status": "Status"
     }
   },
   "seller-reviews": {
@@ -4034,7 +4059,8 @@
       "delete_title": "Delete voucher",
       "delete_desc": "Permanently delete voucher {code}? This cannot be undone.",
       "delete_confirm": "Delete permanently",
-      "deleted": "Voucher deleted."
+      "deleted": "Voucher deleted.",
+      "coin_reward": "Points reward"
     },
     "flash": {
       "campaigns": "Campaigns",

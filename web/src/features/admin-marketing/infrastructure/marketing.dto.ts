@@ -13,6 +13,8 @@ export interface PlatformVoucherDto {
   valid_to: string;
   funded_by: 'PLATFORM' | 'CO_SPONSOR';
   status: 'ACTIVE' | 'SCHEDULED' | 'ENDED' | 'DISABLED';
+  /** Voucher là quà đổi Điểm — không đổi mã, không xóa (API 11.14). */
+  is_coin_reward?: boolean;
 }
 
 export interface PlatformVoucherInputDto {
@@ -32,6 +34,8 @@ export interface PlatformVoucherInputDto {
   excluded_category_ids: number[];
   funded_by: 'PLATFORM' | 'CO_SPONSOR';
   platform_share_percent: number | null;
+  is_coin_reward?: boolean;
+  locked_fields?: string[];
 }
 
 export interface FlashCampaignDto {

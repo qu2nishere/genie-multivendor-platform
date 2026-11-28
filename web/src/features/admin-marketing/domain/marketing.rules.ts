@@ -19,10 +19,11 @@ export const inVoucherTab = (s: ManagedVoucherStatus, tab: VoucherTab): boolean 
 
 /** Thao tác: chạy / sắp diễn ra → Nhân bản, Sửa, Tắt (sắp diễn ra: Huỷ); kết thúc → Nhân bản, Xoá (khi chưa dùng). */
 export function voucherActions(
-  v: Pick<PlatformVoucher, 'status' | 'usage'>,
+  v: Pick<PlatformVoucher, 'status' | 'usage'> & { isCoinReward?: boolean },
 ): ('duplicate' | 'edit' | 'disable' | 'cancel' | 'delete')[] {
   if (v.status === 'ENDED' || v.status === 'DISABLED')
-    return v.usage.used === 0 ? ['duplicate', 'delete'] : ['duplicate'];
+    // quà đổi Điểm không xóa (cấu hình genie.coin.rewards trỏ theo mã — API 11.14)
+    return v.usage.used === 0 && !v.isCoinReward ? ['duplicate', 'delete'] : ['duplicate'];
   return ['duplicate', 'edit', v.status === 'SCHEDULED' ? 'cancel' : 'disable'];
 }
 
