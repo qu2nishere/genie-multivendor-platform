@@ -1,12 +1,18 @@
-// Voucher của người dùng: kho voucher, lưu voucher. Mock khi USE_MOCK; sau này /api/v1/me/vouchers.
+// Voucher của người dùng: kho voucher, lưu voucher, vé "Lưu" ở trang chủ / shop / chiến dịch. Nối thật theo cờ `vouchers`
+// (plan 2026-11-26 voucher V08, D21 — API_SPEC 3.14, 5.13). Tra mã trong Voucher Picker (6.9) vẫn mock tới chuỗi C6.
 import { api, request } from '@/shared/api/http';
-import { env } from '@/shared/config/env';
+import { env, isMocked } from '@/shared/config/env';
 import { mockDelay, mockFail, mockState, USE_MOCK } from '@/shared/api/mock';
 import { activityStore } from '@/shared/api/mock/activity';
 import { formatNumber, formatVND } from '@/shared/lib/format';
 import type { Voucher } from '../domain/voucher.types';
+import type { ApiVoucherDto } from './voucher.api-dto';
+import { fromApiVoucher } from './voucher.api-mapper';
 import type { VoucherDto } from './voucher.dto';
 import { toVoucher } from './voucher.mapper';
+
+/** Voucher phía khách còn mock không (cờ `PUBLIC_REAL_API=…,vouchers`). */
+export const VOUCHERS_MOCKED = isMocked('vouchers');
 import { VOUCHER_DTOS } from './voucher.mock';
 
 // Mã đã lưu trong phiên mock (giữ qua các trang trong tab)
@@ -48,44 +54,51 @@ function redeemedDtos(): VoucherDto[] {
   }));
 }
 
+/** Kho Voucher — gộp 3 trạng thái (UI tự chia tab Dùng được / Hết hiệu lực / Đã dùng). */
 export async function listMyVouchers(): Promise<Voucher[]> {
-  if (USE_MOCK) {
+  if (VOUCHERS_MOCKED) {
     await mockDelay();
     return [...redeemedDtos(), ...VOUCHER_DTOS.map(withSaved).filter((v) => v.saved)].map(
       toVoucher,
     );
   }
-  return (await api.get<VoucherDto[]>('/me/vouchers')).map(toVoucher);
+  const pages = await Promise.all(
+    (['AVAILABLE', 'USED', 'EXPIRED'] as const).map((state) =>
+      api.get<ApiVoucherDto[]>('/me/vouchers', { query: { state, size: 50 } }),
+    ),
+  );
+  return pages.flat().map(fromApiVoucher);
 }
 
 /** Voucher theo mã (để hiện trạng thái đã lưu của ticket trên trang chủ / shop / chiến dịch). */
 export async function getVouchersByCodes(codes: string[]): Promise<Voucher[]> {
-  if (USE_MOCK) {
+  if (VOUCHERS_MOCKED) {
     await mockDelay(80);
     return VOUCHER_DTOS.filter((v) => codes.includes(v.code))
       .map(withSaved)
       .map(toVoucher);
   }
+  if (!codes.length) return [];
   return (
-    await api.get<VoucherDto[]>('/public/vouchers', { query: { codes: codes.join(',') } })
-  ).map(toVoucher);
+    await api.get<ApiVoucherDto[]>('/public/vouchers', { query: { codes: codes.join(',') } })
+  ).map(fromApiVoucher);
 }
 
 /** Lưu voucher vào Kho Voucher; đã lưu → GNE-VCH-4091, mã không tồn tại → GNE-VCH-4041. */
 export async function saveVoucher(code: string): Promise<void> {
-  if (USE_MOCK) {
+  if (VOUCHERS_MOCKED) {
     await mockDelay(150);
     if (!VOUCHER_DTOS.some((v) => v.code === code)) mockFail('GNE-VCH-4041');
     if (savedCodes.has(code)) mockFail('GNE-VCH-4091');
     savedCodes.add(code);
     return;
   }
-  await api.post('/me/vouchers', { code });
+  await api.post('/me/vouchers', { code: code.trim().toUpperCase() });
 }
 
 /** Voucher shop đang chạy (trang shop) — công khai, gọi được từ SSR. */
 export async function listShopVouchers(shopId: number): Promise<Voucher[]> {
-  if (USE_MOCK) {
+  if (VOUCHERS_MOCKED) {
     await mockDelay(80);
     return VOUCHER_DTOS.filter((v) => v.shop_id === shopId && v.status === 'active').map(toVoucher);
   }
@@ -93,9 +106,14 @@ export async function listShopVouchers(shopId: number): Promise<Voucher[]> {
     typeof window === 'undefined'
       ? (env.INTERNAL_API_URL ?? env.PUBLIC_API_URL)
       : env.PUBLIC_API_URL;
+  // API 5.13 (sửa đường dẫn lệch spec — handoff): SSR gọi không token → không có is_saved
   return (
-    await request<VoucherDto[]>(`/public/shops/${shopId}/vouchers`, { auth: false, baseUrl })
-  ).data.map(toVoucher);
+    await request<ApiVoucherDto[]>('/public/vouchers', {
+      auth: false,
+      baseUrl,
+      query: { shop_id: shopId },
+    })
+  ).data.map(fromApiVoucher);
 }
 
 /**
@@ -121,7 +139,7 @@ export async function findVoucherByCode(code: string): Promise<Voucher> {
 
 /** DELETE /me/vouchers/{id} — xóa khỏi Kho Voucher. */
 export async function removeVoucher(v: Pick<Voucher, 'id' | 'code'>): Promise<void> {
-  if (USE_MOCK) {
+  if (VOUCHERS_MOCKED) {
     await mockDelay(150);
     savedCodes.delete(v.code);
     return;

@@ -26,4 +26,6 @@ export interface Voucher {
   status: VoucherStatus;
   usedCount: number;
   usageLimit: number;
+  /** Mã đơn lần dùng gần nhất (Kho — "Đã sử dụng"). */
+  usedOrderCode?: string | null;
 }
