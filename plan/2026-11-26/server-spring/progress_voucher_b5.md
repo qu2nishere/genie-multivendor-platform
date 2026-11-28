@@ -8,7 +8,7 @@
 | **Nhánh** | `feature/voucher-management` (V01–V04, V06–V07) → `feature/voucher-wallet` (V05, V08–V10) |
 | **Phụ trách** | **Nguyễn Ngọc Thiện** — lập plan và thực hiện (nhận 2026-11-26) |
 | **Người commit** | danh tính git đã cấu hình trong repo (`Thien211105`) — không `--author`, không `--no-verify`, không `Co-Authored-By` |
-| **Cập nhật gần nhất** | 2026-11-28 — xong V00–V10 (chỉ còn mở PR V10.08) (67 / 68) |
+| **Cập nhật gần nhất** | 2026-11-28 — xong toàn bộ V00–V10 (68 / 68), PR #120 + #121 (68 / 68) |
 
 **Cách dùng**
 
@@ -60,8 +60,8 @@
 | V07 | Nối web Admin › Voucher sàn (UC-PRO-02) | 2 | 1 | 3 / 3 |
 | V08 | Nối web Storefront & Kho Voucher (UC-PRO-03) | 4 | 1 | 5 / 5 |
 | V09 | Dữ liệu demo, kiểm thử & chạy thật | 4 | 2 | 6 / 6 |
-| V10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 8 / 9 |
-| **Tổng** | | **55** | **13** | **67 / 68** |
+| V10 | Hoàn thiện use case & tick tiến độ | 8 | 1 | 9 / 9 |
+| **Tổng** | | **55** | **13** | **68 / 68** |
 
 ## V00 — Chuẩn bị
 
@@ -162,7 +162,7 @@
 - [x] **V10.06** `Quản Lý UseCase.xlsx`
 - [x] **V10.07** README ngày (mục 7)
 - [x] **V10.C1** 🔖 COMMIT `docs(promotion): record shop vouchers, platform vouchers and voucher wallet as implemented` · hash: `228757e`
-- [ ] **V10.08** Mở PR `feature/voucher-management` (V01–V04, V06–V07) rồi `feature/voucher-wallet` (V05, V08–V10) vào `develop`; PR thứ nhất ghi rõ `BuyerOnlyFilter` không đổi (đổi ở PR hai) và nhờ Nguyễn Quốc Khoa duyệt dòng đó.
+- [x] **V10.08** Mở PR `feature/voucher-management` (V01–V04, V06–V07) rồi `feature/voucher-wallet` (V05, V08–V10) vào `develop`; PR thứ nhất ghi rõ `BuyerOnlyFilter` không đổi (đổi ở PR hai) và nhờ Nguyễn Quốc Khoa duyệt dòng đó.
 
 ---
 
@@ -187,6 +187,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 
 | Task | Ghi chú |
 |---|---|
+| V10.08 | PR #120 `feature/voucher-management` (V01–V04, V06–V07, nền `develop` + `V26` của #112) → PR #121 `feature/voucher-wallet` (V05, V08–V10, nền #120); #121 ghi rõ dòng `BuyerOnlyFilter` nhờ Nguyễn Quốc Khoa duyệt |
 | V00.01 | Nhánh `feature/voucher-management` tạo từ `origin/develop` (đã có C1 `#113`) + gộp `feature/b56-shared-schema` (`V26` — PR #112 chưa merge); `feature/voucher-wallet` xếp chồng trên nhánh này |
 | V03–V04 | Một service `VoucherManagementService` + `VoucherManagementQuery` cho cả voucher shop và sàn (cùng luật, khác quyền / nhật ký) thay cho 2 service riêng như cây file dự kiến |
 | V02–V05 | Test: `VoucherTest` 9, `VoucherInputValidatorTest` 11, `VoucherStatusSqlIT` 1, `SellerVoucherIT` 8, `AdminVoucherIT` 5, `VoucherSecurityIT` 2, `PublicVoucherIT` 4, `VoucherWalletIT` 5, `VoucherCacheEvictionIT` 2, `BuyerOnlyFilterTest` (thêm 3 ca); toàn nhánh `./mvnw clean verify` 250 unit + 401 IT xanh |
@@ -204,3 +205,4 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | 2026-11-27 | V06–V07: web Seller › Khuyến mãi + Admin › Voucher sàn nối thật (khóa ô theo `locked_fields`) | `b2c496e` `3333092` |
 | 2026-11-28 | V05, V08 (nhánh `feature/voucher-wallet`): `$Voucher` đúng `shop_id`, `/public/vouchers`, Kho `/me/vouchers`, chặn tài khoản nội bộ; web trang chủ / shop / chiến dịch / Kho | `dde4f8f` … `c37f7e0` |
 | 2026-11-28 | V09–V10: seed demo, `vouchers.http`, chạy thật 17 / 17, sửa lỗi giờ khi sửa voucher; tài liệu — **UC-PRO-01, 02, 03 ✅** | `65fbdbb` `a0ae85f` `770eccc` `228757e` |
+| 2026-11-28 | Mở PR #120, #121 — **plan [3] xong 68 / 68** | #120 #121 |
