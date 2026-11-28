@@ -70,12 +70,12 @@
 | **A1 — Nút bật / tắt** | Lưu ở `platform_settings`, khóa **`moderation.ai_screening.enabled`**, giá trị JSON `true` / `false`. **Chưa có dòng = TẮT** (an toàn: không tốn tiền API khi chưa cấu hình). Chỉ người có **vai trò ADMIN** được đổi (`@PreAuthorize("hasRole('ADMIN')")`); nhân viên có `MANAGE_CATALOG` chỉ **xem** trạng thái |
 | **A2 — Khi TẮT** | Listener và job quét **không gọi AI, không ghi kết quả**. Sản phẩm giữ `PENDING_APPROVAL`, vào hàng chờ thủ công như hiện nay. Bật lại không chấm lùi những sản phẩm gửi lúc đang tắt **quá 24 giờ** (giới hạn chi phí — mục 4.9) |
 | **A3 — Chọn bản cài** | Biến môi trường **`GEMINI_MODE=stub|http`**, mặc định **`stub`** (không cần khóa, chạy được CI / máy dev). `http` = gọi Gemini thật, cần `GEMINI_API_KEY` |
-| **A4 — Tham số** | `GEMINI_MODEL` (mặc định `gemini-2.5-flash`), `GEMINI_REJECT_THRESHOLD` (mặc định `85`), `GEMINI_TIMEOUT_SECONDS` (mặc định `20`). Đọc bằng `@Value`, **không** thêm vào yml |
+| **A4 — Tham số** | `GEMINI_MODEL` (mặc định `gemini-3.8-flash` — đổi 2026-11-28: khóa mới tạo gọi `gemini-2.5-flash` bị Google trả 404 "no longer available to new users"), `GEMINI_REJECT_THRESHOLD` (mặc định `85`), `GEMINI_TIMEOUT_SECONDS` (mặc định `60` — đổi 2026-11-28, `gemini-3.8-flash` có ảnh thường quá 20 giây). Đọc bằng `@Value`, **không** thêm vào yml |
 | **A5 — Thử lại** | Tối đa **3 lần gọi** cho một lần chấm; chờ **2 s** rồi **8 s** giữa các lần. Chỉ thử lại khi: HTTP 429, 5xx, timeout, lỗi mạng. HTTP 400 / 401 / 403 / 404 → **không** thử lại. Hết lượt hoặc JSON sai schema → kết quả **fallback** (A6) |
 | **A6 — Fallback** | `ProductModerationResult.fallback(...)` (`NEED_REVIEW`, `risk 50`, `fallback_to_manual = true`, `raw_response` = thông điệp lỗi ≤ 2.000 ký tự). Sản phẩm **giữ `PENDING_APPROVAL`** (không `flag`) — lỗi kỹ thuật không phải dấu hiệu vi phạm; trang chi tiết vẫn thấy dòng "AI lỗi — duyệt thủ công" nhờ `fallback_to_manual` |
 | **A7 — Áp kết quả (D13)** | `REJECT` **và** `risk ≥ ngưỡng` → **`REJECTED`** bởi AI (`moderator_id = NULL`, giao diện "AI Hệ thống"), gửi email cho shop. `REJECT` dưới ngưỡng **hoặc** `NEED_REVIEW` (không fallback) → **`FLAGGED`** (lên đầu hàng chờ, người duyệt đã gán giữ nguyên). `APPROVE` → **giữ `PENDING_APPROVAL`** |
 | **A8 — Kết quả về muộn** | Chỉ áp khi sản phẩm **vẫn** `PENDING_APPROVAL` **và** `submitted_at` khớp lần gửi được chấm (so sánh đến **micro giây** — mục 4.7 bước 3). Không khớp → chỉ lưu dòng kết quả, không đổi trạng thái |
-| **A9 — Ảnh** | Gửi **inline base64**, tối đa **4 ảnh** chung (không ảnh phân loại), mỗi ảnh ≤ **4 MB** (lớn hơn → bỏ ảnh đó), MIME theo đuôi tệp (`jpg/jpeg → image/jpeg`, `png → image/png`, `webp → image/webp`; đuôi khác → bỏ). Ảnh đọc từ `ObjectStorage` (Silo dev không truy cập được từ Internet nên **không** gửi URL) |
+| **A9 — Ảnh** | Đã mở rộng 2026-11-28 — xem [`update_gemini.md`](./update_gemini.md) **B-D3, B-D4** (tối đa 8 ảnh gồm ảnh chung + ảnh phân loại + ảnh SKU + ảnh mô tả nội bộ, thu nhỏ cạnh dài ≤ 1024 px JPEG 0,85 qua `ScreeningImageResizer`, tổng thô ≤ 9 MB) |
 | **A10 — Nhật ký** | Bật / tắt: `system_logs` `PRODUCT_MODERATED`, `reference_id = "ai_screening"`, `details = {action: "AI_SCREENING_ON" | "AI_SCREENING_OFF"}`. AI tự từ chối: `PRODUCT_MODERATED`, `userId = null`, `reference_id = <productId>`, `details = {action: "AI_REJECT", from_status, to_status, risk_score, model}` |
 | **A11 — Thông báo** | Chỉ email cho shop khi **AI tự từ chối** (dùng lại `PRODUCT_REJECTED`). `FLAGGED` / `APPROVE` không báo shop (vẫn "Chờ duyệt"). Module `notification` (B6) **đã có** `NotificationFacade` + loại `PRODUCT_APPROVED / PRODUCT_REJECTED` nhưng **chưa ai** gửi in-app cho kết quả duyệt (cả duyệt tay) — P06 **không** tự nối; khi nối thì nối chung cho mọi `ProductModeratedEvent` (việc riêng, báo Thiện) |
 
@@ -242,16 +242,16 @@ Mã lạ trong phản hồi → **bỏ đi** (không làm hỏng cả kết qu�
 public class StubScreeningClient implements ProductScreeningClient { … }
 ```
 
-Luật (so khớp trên `name + " " + descriptionText`, **chữ thường, bỏ dấu** bằng `NameNormalizer.normalize` rồi so với từ khóa đã chuẩn hóa):
+Luật (so khớp **nguyên từ** trên `name + " " + descriptionText`, **giữ dấu** — chỉ chuẩn hóa NFC + chữ thường; mẫu `(?<![\p{L}\p{N}])<từ>(?![\p{L}\p{N}])`). **Không** bỏ dấu rồi tìm chuỗi con: sẽ bắt nhầm "thuộc" (→ thuoc), "bổ sung" (→ sung), "hàng giá" (→ hang gia) — lỗi đã gặp, sửa 2026-11-28:
 
 | Chứa một trong | Kết quả |
 |---|---|
-| `hang nhai`, `fake`, `replica`, `super fake`, `hang gia` | `REJECT`, risk **90**, violations `["COUNTERFEIT"]`, reasoning "Mô tả có dấu hiệu hàng giả / hàng nhái." |
-| `thuoc`, `vu khi`, `sung`, `dan duoc` | `NEED_REVIEW`, risk **60**, `["PROHIBITED_ITEM"]`, "Có thể là hàng cấm / hạn chế kinh doanh — cần người duyệt kiểm tra." |
-| `ban re`, `gia soc` **và** `minPrice < 1000` | `REJECT`, risk **70**, `["PRICE_ANOMALY"]` (dưới ngưỡng 85 → `FLAGGED`) |
+| `hàng nhái`, `hang nhai`, `hàng giả`, `fake`, `replica`, `super fake` | `REJECT`, risk **90**, violations `["COUNTERFEIT"]`, reasoning "Mô tả có dấu hiệu hàng giả / hàng nhái." |
+| `thuốc`, `vũ khí`, `súng`, `đạn dược` (chỉ bản có dấu) | `NEED_REVIEW`, risk **60**, `["PROHIBITED_ITEM"]`, "Có thể là hàng cấm / hạn chế kinh doanh — cần người duyệt kiểm tra." |
+| `bán rẻ`, `giá sốc`, `ban re`, `gia soc` **và** `minPrice < 1000` | `REJECT`, risk **70**, `["PRICE_ANOMALY"]` (dưới ngưỡng 85 → `FLAGGED`) |
 | còn lại | `APPROVE`, risk **10**, `[]`, "Không phát hiện vi phạm." |
 
-`modelName = "stub"`, `rawResponse = null`. Thêm `catalog/moderation/infra/StubScreeningClientTest` (4 ca, mỗi luật một ca, có ca chữ có dấu "Hàng Nhái" → REJECT).
+`modelName = "stub"`, `rawResponse = null`. Thêm `catalog/moderation/infra/StubScreeningClientTest` (mỗi luật một ca, ca "Hàng Nhái" → REJECT, ca "thuộc / bổ sung / hàng giá tốt" → APPROVE, ca nguyên từ "fakeless" → APPROVE).
 
 ### 4.5 `catalog/moderation/infra/GeminiScreeningClient.java` (mới)
 
@@ -307,6 +307,8 @@ Kiểm: `decision` thuộc enum; `risk_score` là số nguyên, **kẹp 0–100*
 `rawResponse` = nguyên văn thân phản hồi HTTP, cắt **10.000** ký tự. `modelName` = `model`.
 
 **Thử lại (A5):** vòng lặp tối đa 3 lần. Bắt `HttpClientErrorException.TooManyRequests`, `HttpServerErrorException`, `ResourceAccessException` (timeout / mạng) → chờ `2 s` rồi `8 s` (`Thread.sleep`, đặt thời gian chờ trong một trường `long[] backoffMillis = {2000, 8000}` để test truyền `{0, 0}` qua constructor phụ dành cho test). Các `HttpClientErrorException` khác → ném `ScreeningFailedException` ngay. Log `WARN` mỗi lần lỗi (không in khóa, không in base64 ảnh).
+
+> **Cập nhật 2026-11-28 (`update_gemini.md` Phần B):** thân request bổ sung `safetySettings` (`BLOCK_NONE` 4 nhóm — B-D2), mỗi ảnh gắn nhãn chữ `"Ảnh i (…)"` đứng trước `inline_data` (B-D5), `SYSTEM_PROMPT` thêm mục "Kiểm tra ảnh (bắt buộc)", `parseVerdict` kiểm `SAFETY_BLOCKS` (`SAFETY`, `PROHIBITED_CONTENT`, `BLOCKLIST`, `IMAGE_SAFETY`) trước `candidates` rỗng → trả thẳng `REJECT 95 PROHIBITED_ITEM` không thử lại (B-D1).
 
 #### 4.5.1 SYSTEM_PROMPT (hằng số `static final String`, giữ nguyên văn)
 
@@ -465,7 +467,9 @@ public class ProductScreeningSweepJob {
     @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Ho_Chi_Minh")
     public void sweep() {
         if (!settings.enabled()) return;
-        for (Candidate c : claim()) screening.screen(c.productId(), c.submittedAt());
+        // KHÔNG gọi Gemini trên luồng lịch: Spring mặc định chỉ 1 luồng @Scheduled → 20 sản phẩm × ~70 s chặn mọi job khác.
+        // Giao từng sản phẩm cho ProductScreeningListener.screenLater (@Async) — sửa 2026-11-28.
+        for (Candidate c : claim()) listener.screenLater(c.productId(), c.submittedAt());
     }
 }
 ```
@@ -650,7 +654,7 @@ Nội dung thẻ (Tailwind theo token, không màu cứng; kiểm tương phản
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
-- Công tắc: `shared/ui` **không có** `Switch` / `Toggle` (rà 2026-11-28) → tự dựng trong `AiScreeningCard.tsx`: `<button type="button" role="switch" aria-checked={enabled} aria-label={t('…toggle')}>` (rãnh `w-11 h-6 rounded-full`, nút tròn `translate-x` theo trạng thái, màu `bg-primary` / `bg-line-strong` theo token, `focus-visible:shadow-focus`, `disabled:opacity-50 disabled:cursor-not-allowed`). **Không** thêm thư viện.
+- Công tắc: dùng `Switch` có sẵn (`shared/ui/Choice.tsx`, xuất ở `shared/ui/index.ts`) + `ConfirmDialog` (`shared/ui/Modal`). (Bản rà 2026-11-28 ghi nhầm là không có — đã sửa.) Màu cảnh báo dùng `text-amber-600` (dự án **không có** token `text-warning`). **Không** thêm thư viện.
 - Là ADMIN khi `$session.get()` là `authenticated` và `user.roles.includes('ADMIN')` (dùng `useStore($session)` từ `@nanostores/react`). Không phải ADMIN → công tắc `disabled` + dòng ⓘ.
 - Bấm bật / tắt: mở `Modal` xác nhận (bật: "Bật kiểm duyệt tự động? Mỗi sản phẩm gửi duyệt sẽ được gửi sang Gemini (tốn phí API)."; tắt: "Tắt kiểm duyệt tự động? Sản phẩm gửi duyệt sẽ vào thẳng hàng chờ thủ công."), xác nhận → `save.mutate(!enabled)`; thành công → `toast.success`; lỗi → `toast.error(errorMessage(e, t))`.
 - Ngày giờ qua `shared/lib/format.ts`. Icon qua `<Icon name="shield-check">` — bộ icon (`shared/ui/icon/icons.ts`) **không có** `sparkles` / `bot`; không thêm icon mới.
@@ -752,8 +756,33 @@ PR vào **`develop`** theo `.github/pull_request_template.md`, tiêu đề đún
 
 ## 10. Định nghĩa "xong"
 
-- [ ] `./mvnw clean verify` xanh (JDK 21), gồm `ProductScreeningIT`, `StubScreeningClientTest`, `GeminiScreeningClientTest`, `ModuleBoundaryTest`.
-- [ ] `npm run verify` xanh.
+- [x] `./mvnw clean verify` xanh (JDK 21), gồm `ProductScreeningIT`, `StubScreeningClientTest`, `GeminiScreeningClientTest`, `ModuleBoundaryTest`.
+- [x] `npm run verify` xanh.
 - [ ] Kịch bản mục 7 chạy đúng trên máy chủ dự án (chế độ `stub`; `http` nếu có khóa).
-- [ ] `c1.md`, `CHECKLIST_TIEN_DO_UC.md`, `Usecase.md`, `API_SPEC.md`, `ENTITY.md`, `cau-hinh-moi-truong.md` đã cập nhật như mục 6.
+- [x] `c1.md`, `CHECKLIST_TIEN_DO_UC.md`, `Usecase.md`, `API_SPEC.md`, `ENTITY.md`, `cau-hinh-moi-truong.md` đã cập nhật như mục 6.
 - [ ] Commit theo mục 8 khi chủ dự án yêu cầu; PR vào `develop`.
+
+> **Ghi chú lệch nhỏ so với code thật (rà 2026-11-28 khi triển khai):**
+> 1. Bảng `products` dùng cột `description` (không phải `description_html` như ghi ở bảng mục 4.6) → `ScreeningRequestBuilder` đọc `p.description`.
+> 2. Bảng `users` không có cột `full_name` (tên hiển thị nằm ở `admin_profiles.full_name` / `customer_profiles.full_name`) → `AiScreeningSettings.adminName` đọc `COALESCE(ap.full_name, cp.full_name, u.email)`.
+> 3. `web/src/shared/ui` đã có sẵn `Switch` và `ConfirmDialog` (đang dùng trong `StaffConfig` của `ProductModerationPage.tsx`) → `AiScreeningCard.tsx` tái sử dụng trực tiếp hai component này thay vì tự dựng lại.
+> 4. `Usecase.md` nằm tại `docs/Document/diagrams/UseCaseDiagram/Usecase.md` (không có thư mục con `Document/`).
+
+---
+
+## 11. Bổ sung sau P06
+
+- **Phần A** — Nhãn `ai_check` cho người kiểm duyệt (hàng chờ, chi tiết "AI lỗi" / "Chưa chấm", bộ lọc `?ai=`): xem [`update_gemini.md`](./update_gemini.md) mục 0–8.
+- **Phần B** — Xử lý nội dung nhạy cảm (`safetySettings`, `SAFETY_BLOCKS`, thu nhỏ ảnh `ScreeningImageResizer`, gom ảnh phân loại & mô tả, nhãn ảnh): xem [`update_gemini.md`](./update_gemini.md) mục 9–16.
+
+---
+
+## 11. Ghi chú sau khi rà code (2026-11-28)
+
+- Stub đổi sang so khớp nguyên từ, giữ dấu (mục 4.4) — bản đầu gắn cờ nhầm gần như mọi mô tả có "thuộc" / "bổ sung".
+- Job quét giao việc cho `ProductScreeningListener.screenLater` (`@Async`) — mục 4.9.
+- `.env` của dự án (`DotEnvEnvironmentPostProcessor`) **không cắt chú thích cuối dòng**: ghi `GEMINI_MODE=http`, `GEMINI_REJECT_THRESHOLD=85` **không** kèm `# …` trên cùng dòng, nếu không backend không khởi động (không bean nào khớp / `@Value int` lỗi).
+- `GEMINI_MODE` chỉ nhận `stub` hoặc `http` — giá trị khác làm không có bean `ProductScreeningClient`.
+- Mặc định `GEMINI_MODEL` đổi sang **`gemini-3.8-flash`** (2026-11-28): khóa API mới tạo gọi `gemini-2.5-flash` nhận `404 "This model … is no longer available to new users"`. Kiểm model khóa dùng được: `curl -H "x-goog-api-key: ${KEY}" "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200"` (zsh: luôn viết `${M}:generateContent` có ngoặc nhọn). Gặp `503` (quá tải) là tạm thời — client tự thử lại 3 lần rồi mới chuyển "AI lỗi".
+- **Quá hạn đọc phản hồi** (2026-11-28): `SocketTimeoutException` lúc đọc header bị Spring bọc thành `RestClientException` (không phải `ResourceAccessException`) → trước rơi vào "lỗi bất ngờ", không thử lại. `GeminiScreeningClient` thêm nhánh `catch (RestClientException)`: nguyên nhân là `IOException` → thử lại như 5xx; khác → `ScreeningFailedException`. Timeout mặc định 20 → **60 giây**.
+- **Model dự phòng** (2026-11-28): `gemini-3.8-flash` hay quá hạn / `503` lúc đông → `GEMINI_FALLBACK_MODEL` (mặc định `gemini-3.8-flash-lite`) dùng cho **lần thử thứ 3**; `model_name` của kết quả ghi đúng model đã trả lời. Để trống biến = chỉ dùng model chính. Test `lastAttemptFallsBackToLighterModelWhenPrimaryIsOverloaded`.
