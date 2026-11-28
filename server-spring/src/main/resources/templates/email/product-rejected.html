@@ -1,0 +1,138 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:attr="lang=${lang}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title th:text="${lang == 'en'} ? 'Your product was not approved' : 'Sản phẩm của bạn chưa được duyệt'">Sản phẩm của bạn chưa được duyệt</title>
+</head>
+<!--
+  Email kết quả kiểm duyệt sản phẩm: TỪ CHỐI / SÀN KHÓA (UC-CAT-11, UC-CAT-13 bước 5; plan C1 D14) — cùng bố cục kyc-rejected.html.
+  Biến: name, storeName, productName, productId, reason, lang; chung: shopName, brandColor, brandTint, bannerUrl, webUrl…
+-->
+<body style="margin:0;padding:0;background-color:#F3F5F4;"
+      th:with="en=${lang == 'en'}">
+  <!-- Dòng xem trước trong hộp thư -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F3F5F4;font-size:1px;line-height:1px;"
+       th:text="${en} ? 'Your product was not approved — see why and how to resubmit.' : 'Sản phẩm chưa được duyệt — xem lý do và cách gửi lại.'">
+    Sản phẩm chưa được duyệt — xem lý do và cách gửi lại.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F3F5F4;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:100%;max-width:600px;background-color:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid #E3E8E6;">
+
+          <!-- Banner Genie Shop -->
+          <tr th:if="${bannerUrl != null}">
+            <td style="padding:0;line-height:0;font-size:0;">
+              <a th:href="${webUrl}" href="#" target="_blank" style="text-decoration:none;">
+                <img th:src="${bannerUrl}" th:width="${bannerWidth}" th:height="${bannerHeight}" th:alt="${shopName}"
+                     src="" width="600" height="200" alt="Genie Shop"
+                     style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;">
+              </a>
+            </td>
+          </tr>
+          <tr th:if="${bannerUrl == null}">
+            <td align="center" th:style="'background-color:' + ${brandColor} + ';padding:36px 24px;'"
+                style="background-color:#1F7356;padding:36px 24px;">
+              <div style="font-family:Arial,Helvetica,sans-serif;font-size:28px;font-weight:bold;color:#FFFFFF;letter-spacing:1px;"
+                   th:text="${shopName}">Genie Shop</div>
+            </td>
+          </tr>
+
+          <!-- Lời chào + nội dung chính -->
+          <tr>
+            <td style="padding:32px 40px 8px 40px;font-family:Arial,Helvetica,sans-serif;color:#1C2B26;">
+              <p style="margin:0 0 16px 0;font-size:18px;line-height:28px;">
+                <span th:text="${en} ? 'Hello' : 'Xin chào'">Xin chào</span>
+                <span th:text="${name}" th:style="'color:' + ${brandColor} + ';background-color:' + ${brandTint}
+                        + ';font-weight:bold;padding:2px 8px;border-radius:6px;'"
+                      style="color:#1F7356;background-color:#E8F5EF;font-weight:bold;padding:2px 8px;border-radius:6px;">Nguyễn Văn A</span>,
+              </p>
+              <p style="margin:0 0 8px 0;font-size:15px;line-height:24px;color:#3D4A45;text-align:justify;">
+                <th:block th:if="${en}">The product <b th:text="${productName}">Tai nghe ANC</b> of your shop <b th:text="${storeName}">TechZone</b> was <b>not approved</b>.</th:block>
+                <th:block th:unless="${en}">Sản phẩm <b th:text="${productName}">Tai nghe ANC</b> của shop <b th:text="${storeName}">TechZone</b> <b>chưa được duyệt</b>.</th:block>
+              </p>
+            </td>
+          </tr>
+          <!-- Chi tiết -->
+          <tr>
+            <td style="padding:16px 40px 8px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                     th:style="'background-color:' + ${brandTint} + ';border-radius:10px;'"
+                     style="background-color:#E8F5EF;border-radius:10px;">
+                <tr>
+                  <td style="padding:16px 20px 4px 20px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#3D4A45;text-transform:uppercase;letter-spacing:1px;"
+                      th:text="${en} ? 'Reason' : 'Lý do'">Chi tiết</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 20px 16px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:26px;color:#1C2B26;">
+                    <span th:text="${reason}">Ảnh sản phẩm không đạt: ảnh mờ, có chữ chèn.</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 40px 0 40px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#3D4A45;text-align:justify;">
+              <th:block th:if="${en}">Please edit the product according to the reason above and submit it for review again.</th:block>
+              <th:block th:unless="${en}">Bạn hãy sửa sản phẩm theo lý do trên rồi bấm <b>"Gửi kiểm duyệt"</b> để gửi duyệt lại.</th:block>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:16px 40px 8px 40px;">
+              <a th:href="${webUrl + '/seller/products/' + productId + '/edit'}" href="#" target="_blank"
+                 th:style="'display:inline-block;background-color:' + ${brandColor} + ';color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:8px;'"
+                 style="display:inline-block;background-color:#1F7356;color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:8px;"
+                 th:text="${en} ? 'Edit the product' : 'Sửa sản phẩm'">Sửa sản phẩm</a>
+            </td>
+          </tr>
+          <!-- Lời chúc -->
+          <tr>
+            <td style="padding:24px 40px 0 40px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#3D4A45;">
+              <p style="margin:0;">
+                <th:block th:if="${en}">Wishing you and your family good health and joyful shopping moments with Genie&nbsp;Shop!&nbsp;🌿</th:block>
+                <th:block th:unless="${en}">Chúc bạn và gia đình luôn dồi dào sức khỏe, bình an và có những trải nghiệm mua sắm thật vui cùng Genie&nbsp;Shop!&nbsp;🌿</th:block>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Chữ ký + đèn thần -->
+          <tr>
+            <td style="padding:0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td valign="top" style="padding:16px 8px 32px 40px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#3D4A45;">
+                    <p style="margin:0;">
+                      <span th:text="${en} ? 'Warm regards,' : 'Trân trọng,'">Trân trọng,</span><br>
+                      <b th:style="'color:' + ${brandColor} + ';'" style="color:#1F7356;"
+                         th:text="${en} ? ('The ' + ${shopName} + ' team') : ('Đội ngũ ' + ${shopName})">Đội ngũ Genie Shop</b>
+                    </p>
+                  </td>
+                  <td th:if="${lightUrl != null}" valign="bottom" align="right" width="164" style="width:164px;padding:0 16px 0 0;line-height:0;font-size:0;">
+                    <img th:src="${lightUrl}" th:width="${lightWidth}" src="" width="148" alt=""
+                         style="display:block;width:148px;max-width:148px;height:auto;border:0;outline:none;">
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Chân email -->
+          <tr>
+            <td align="center" style="background-color:#F7F9F8;border-top:1px solid #E3E8E6;padding:20px 40px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#8A9691;">
+              <span th:text="${en} ? 'This is an automated email, please do not reply.' : 'Đây là email tự động, vui lòng không trả lời.'">Đây là email tự động, vui lòng không trả lời.</span><br>
+              <a th:href="${webUrl}" href="#" target="_blank" th:style="'color:' + ${brandColor} + ';text-decoration:none;'"
+                 style="color:#1F7356;text-decoration:none;" th:text="${shopName}">Genie Shop</a>
+              &nbsp;·&nbsp;© 2026
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

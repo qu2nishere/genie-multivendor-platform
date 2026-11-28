@@ -74,6 +74,17 @@ public enum ErrorCode {
     CATEGORY_DUPLICATE("GNE-CAT-4091", HttpStatus.CONFLICT, "Tên hoặc đường dẫn danh mục đã tồn tại."),
     CATEGORY_NOT_DELETABLE("GNE-CAT-4092", HttpStatus.CONFLICT, "Danh mục còn sản phẩm hoặc danh mục con."),
     ATTRIBUTE_CODE_DUPLICATE("GNE-CAT-4095", HttpStatus.CONFLICT, "Mã thuộc tính đã có trong ngành này."),
+    // ----- Đăng bán sản phẩm (API_SPEC 10.5, 10.6, 15 — UC-CAT-09…11, 17: plan C1 D16) -----
+    PRODUCT_LOCKED("GNE-CAT-4093", HttpStatus.CONFLICT, "Sản phẩm đang bị sàn khóa."),
+    PRODUCT_HAS_OPEN_ORDERS("GNE-CAT-4094", HttpStatus.CONFLICT, "Sản phẩm còn đơn đang xử lý."),
+    PRODUCT_UNDER_REVIEW("GNE-CAT-4096", HttpStatus.CONFLICT,
+            "Sản phẩm đang chờ duyệt. Bạn chỉ có thể xem thông tin cho tới khi có kết quả."),
+    PRODUCT_STATE_CONFLICT("GNE-CAT-4097", HttpStatus.CONFLICT, "Trạng thái hiện tại không cho phép thao tác này."),
+    CATEGORY_PROPOSAL_LIMIT("GNE-CAT-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Bạn đã có 5 đề xuất danh mục đang chờ duyệt."),
+    PRODUCT_DOCUMENTS_REQUIRED("GNE-CAT-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Ngành hàng này bắt buộc giấy tờ chứng thực."),
+    PRODUCT_SPECS_MISSING("GNE-CAT-4223", HttpStatus.UNPROCESSABLE_ENTITY, "Còn thiếu thông số bắt buộc của ngành hàng."),
+    PICKUP_ADDRESS_REQUIRED("GNE-CAT-4224", HttpStatus.UNPROCESSABLE_ENTITY,
+            "Shop chưa cấu hình kho lấy hàng — vào Cài đặt › Kho lấy hàng trước khi gửi duyệt sản phẩm."),
 
     // ===== Tương tác — theo dõi shop (API_SPEC 3.11, 15 — UC-SOC-06) =====
     CANNOT_FOLLOW_OWN_SHOP("GNE-SOC-4095", HttpStatus.CONFLICT, "Không thể theo dõi shop của chính mình."),

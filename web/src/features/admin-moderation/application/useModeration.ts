@@ -22,7 +22,8 @@ function useAdminMutation<A, R>(fn: (a: A) => Promise<R>) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: fn,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ADMIN }),
+    // Cả khi lỗi: 409 GNE-CAT-4097 = người khác vừa quyết định → tải lại để thấy trạng thái mới (plan C1 P10.03)
+    onSettled: () => qc.invalidateQueries({ queryKey: ADMIN }),
   });
 }
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyBulk,
   combos,
   emptyForm,
   missingSpecs,
@@ -63,6 +64,28 @@ describe('ma trận phân loại', () => {
   });
 });
 
+describe('áp dụng hàng loạt theo giá trị', () => {
+  const rows = [
+    { id: null, options: ['128 GB', 'Đỏ'], sku: null, price: null, stock: null },
+    { id: null, options: ['128 GB', 'Vàng'], sku: null, price: null, stock: 3 },
+    { id: null, options: ['512 GB', 'Đỏ'], sku: null, price: null, stock: null },
+  ];
+  it('giá theo dung lượng: mọi màu của 128 GB cùng giá, tồn giữ nguyên', () => {
+    const r = applyBulk(rows, ['128 GB', null], { price: 20_000_000, stock: null });
+    expect(r.count).toBe(2);
+    expect(r.variants.map((v) => v.price)).toEqual([20_000_000, 20_000_000, null]);
+    expect(r.variants[1].stock).toBe(3);
+  });
+  it('không lọc = mọi phân loại', () => {
+    expect(applyBulk(rows, [null, null], { price: null, stock: 5 }).count).toBe(3);
+  });
+  it('lọc theo cả hai nhóm', () => {
+    const r = applyBulk(rows, ['512 GB', 'Đỏ'], { price: 30_000_000, stock: 1 });
+    expect(r.count).toBe(1);
+    expect(r.variants[2]).toMatchObject({ price: 30_000_000, stock: 1 });
+  });
+});
+
 describe('thông số + điều kiện gửi duyệt', () => {
   it('thông số bắt buộc / gợi ý', () => {
     expect(missingSpecs([{ name: 'Bảo hành', value: ' ' }], rules)).toEqual(['Bảo hành']);
@@ -80,6 +103,17 @@ describe('thông số + điều kiện gửi duyệt', () => {
       'price',
       'weight',
     ]);
+  });
+
+  it('ngành lá cấp 2 (cây thật) là đủ danh mục', () => {
+    const f: ProductForm = {
+      ...emptyForm(),
+      categoryPath: [
+        { id: 1, name: 'Phụ kiện' },
+        { id: 12, name: 'Đồng hồ & Trang sức' },
+      ],
+    };
+    expect(publishIssues(f, rules)).not.toContain('category');
   });
 
   it('độ dài mô tả không tính thẻ (xuống dòng tính 1 ký tự như innerText)', () => {
@@ -108,11 +142,10 @@ describe('lược đồ', () => {
     width: 20,
     height: 10,
     shippingPayer: 'BUYER' as const,
-    freeShippingThreshold: null,
     isPreOrder: false,
     preOrderDays: null,
   };
-  it('đặt trước 7–30 ngày; freeship cần mức đơn', () => {
+  it('đặt trước 7–30 ngày; shop trả phí không cần mức đơn', () => {
     expect(basicsSchema.safeParse(base).success).toBe(true);
     expect(basicsSchema.safeParse({ ...base, isPreOrder: true, preOrderDays: 5 }).success).toBe(
       false,
@@ -120,7 +153,7 @@ describe('lược đồ', () => {
     expect(basicsSchema.safeParse({ ...base, isPreOrder: true, preOrderDays: 14 }).success).toBe(
       true,
     );
-    expect(basicsSchema.safeParse({ ...base, shippingPayer: 'SELLER' }).success).toBe(false);
+    expect(basicsSchema.safeParse({ ...base, shippingPayer: 'SELLER' }).success).toBe(true);
   });
   it('đề xuất danh mục cần lý do', () => {
     expect(proposalSchema.safeParse({ name: 'Đồng hồ', parentId: 1, reason: '' }).success).toBe(
