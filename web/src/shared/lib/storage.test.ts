@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { clearUserData, readJson, store, STORAGE_PREFIX, writeJson } from './storage';
+import {
+  clearUserData,
+  PRODUCT_DRAFT_PREFIX,
+  readJson,
+  readRaw,
+  store,
+  STORAGE_PREFIX,
+  writeJson,
+  writeRaw,
+} from './storage';
 
 class MemoryStorage implements Storage {
   private m = new Map<string, string>();
@@ -68,6 +77,16 @@ describe('storage', () => {
     clearUserData();
     expect(store.get('theme')).toBe('genie');
     expect(store.get('checkoutDraft')).toBeNull();
+  });
+
+  it('clearUserData xóa mọi bản nhập dở form đăng bán, giữ khóa khác', () => {
+    writeRaw('local', `${PRODUCT_DRAFT_PREFIX}7.new`, '{}');
+    writeRaw('local', `${PRODUCT_DRAFT_PREFIX}7.42`, '{}');
+    writeRaw('local', 'seller.other', 'x');
+    clearUserData();
+    expect(readRaw('local', `${PRODUCT_DRAFT_PREFIX}7.new`)).toBeNull();
+    expect(readRaw('local', `${PRODUCT_DRAFT_PREFIX}7.42`)).toBeNull();
+    expect(readRaw('local', 'seller.other')).toBe('x');
   });
 
   it('không có window (SSR) → không lỗi', () => {

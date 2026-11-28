@@ -59,7 +59,7 @@ public class PlatformNotification {
     @Column(columnDefinition = "jsonb")
     private String recipientUserIdsJson;      // NULLABLE — Mảng users.id khi target = SPECIFIC_USERS — UC-NOT-05 (TLCN v1.3)
 
-    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm đã phát; NULL = đang hẹn giờ — UC-NOT-05 (V26, plan 2026-11-26 thông báo D2)
+    private OffsetDateTime dispatchedAt;       // NULLABLE — Thời điểm đã phát; NULL = đang hẹn giờ — UC-NOT-05 (V27, plan 2026-11-26 thông báo D2)
     // ===== Phương thức nghiệp vụ (Domain Methods — ngăn Operations của Class Diagram) =====
     // Getter/Setter do Lombok sinh, KHÔNG vẽ trên diagram; chỉ vẽ các phương thức dưới đây.
 

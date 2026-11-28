@@ -63,7 +63,7 @@
 
 ## M00 — Chuẩn bị
 
-- [x] **M00.01** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V26`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
+- [x] **M00.01** Kiểm danh tính git; kiểm plan [1] đã merge N01 (có `messages.is_auto`, `V27`) và N03.04 / N05.02 (hoặc rebase lên nhánh plan [1] nếu chưa merge; ghi vào progress).
 - [x] **M00.02** Chốt D1–D20 vào progress.
 - [x] **M00.03** Tạo nhánh `feature/chat-live` từ `develop` mới nhất.
 - [x] **M00.04** Đọc màn mock
@@ -202,7 +202,7 @@ Ghi ở đây: lý do bỏ qua task (`[-]`), chỗ làm khác plan, số đo, s�
 | M09.03 | 50 cặp khách ↔ 10 shop × 5 tin qua `/app/chat.send` (250 tin đồng thời): nhận 250 / 250, lưu 250, bộ đếm đúng 50 / 50; p50 161 ms, **p95 235 ms**, max 247 ms (< 300 ms). Token ký bằng khóa JWT máy dev (giới hạn đăng nhập 10 lần / phút / IP) |
 | M10.01 | `/v3/api-docs`: 11 endpoint REST chat (plan ước 12 — 8.2 chỉ có phía khách), summary `UC-SOC-01` / `UC-SOC-02`; STOMP ghi ở API 13 |
 | M10.02–M10.07 | Handoff: dòng chat realtime + `mockTyping` gạch (đã nối), nhóm `chat` ghi "đã nối". Usecase: *Hiện trạng* 3 UC. Checklist: 3 UC ✅ (5 lớp), Đã triển khai 26 → 29, mock 35 → 32, phân hệ 05: 8 / 0 / 3, phân hệ 08: 2 / 1 / 4, bảng Thành viên, Nhật ký. BAO_CAO: bảng cụm B6 (4 / 4 ✅), mục 8. Excel: cột S 3 dòng (50, 70, 71) = "Đã triển khai", cột AA giữ "Nguyễn Ngọc Thiện", sheet Thành viên C7. README ngày: tick plan [2]. Backend `./mvnw clean verify` 254 unit + 432 IT xanh; web `npm run verify` 78 file test xanh |
-| M00.01 | Nhánh xếp chồng trên `feature/notification-platform-broadcast` (plan [1] chưa merge — PR #112 / #114 / #115); có sẵn `V26` (`messages.is_auto`), `NotificationFacade.upsertChat`, hub `send` |
+| M00.01 | Nhánh xếp chồng trên `feature/notification-platform-broadcast` (plan [1] chưa merge — PR #112 / #114 / #115); có sẵn `V27` (`messages.is_auto`), `NotificationFacade.upsertChat`, hub `send` |
 | M00.04 | DTO mock của web đã khớp API 8 (`counterpart`, `last_message`, `client_message_id`); thêm `is_auto`, `product.is_available` / `variant_id`, `order.status` |
 | M00.05 | Seed không có khách thuần — chạy thật dùng `owner.shoe@genie.example` (chủ shop chat với shop KHÁC — D5) làm người mua ↔ `mai.tran@gmail.com` (TechZone, shop_id 1) |
 | M02–M08 | Test: `ChatPortsIT` 7, `ChatConversationIT` 13, `ChatStompIT` 7 (STOMP thật), `ChatSecurityIT` 5, `ChatCardsIT` 4 (Silo thật), `AutoReplyIT` 5, `ChatResponseRateJobIT` 1; unit `ConversationTest` 4, `ChatRulesTest` 4, `AutoReplyPolicyTest` 11; web `chat.rules.test.ts` 7, `chat.mapper.test.ts` 3 |

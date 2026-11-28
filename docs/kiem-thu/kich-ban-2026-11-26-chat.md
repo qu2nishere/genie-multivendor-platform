@@ -11,7 +11,7 @@
 | `web/.env` | `PUBLIC_USE_MOCK=true` và `PUBLIC_REAL_API` có thêm `chat` (cùng `notifications`, `platform-notifications`, `product`, `upload`… đã có) |
 | Backend | `PUBLIC_S3_URL=http://localhost:9000` (địa chỉ trình duyệt mở được — link tải ảnh lên Silo và link ký xem ảnh chat) |
 | Silo | bucket riêng tư `chat-media` (`deploy/silo/init.sh` đã tạo) |
-| Migration | `V26__b5_b6_notification_chat_voucher.sql` (`messages.is_auto`, index hội thoại, `NotificationType.CHAT_MESSAGE`) |
+| Migration | `V27__b5_b6_notification_chat_voucher.sql` (`messages.is_auto`, index hội thoại, `NotificationType.CHAT_MESSAGE`) |
 
 **Tài khoản:** khách thuần = tài khoản **mới** đăng ký (OTP qua Mailpit `http://localhost:8025`); chủ shop TechZone (`shop_id = 1`) = `mai.tran@gmail.com`; nhân viên = `phat.nt@genie.example`. Đơn giữa khách mới và TechZone (cho thẻ đơn) tạo bằng SQL ở bước chuẩn bị (luồng đặt hàng C2 cũng tạo được).
 

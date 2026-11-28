@@ -74,6 +74,19 @@ export function missingGroups(groups: VariantGroup[], sel: Selection): string[] 
   return groups.filter((g) => sel[g.name] == null).map((g) => g.name);
 }
 
+/**
+ * Ảnh của lựa chọn đang chọn (nhóm đầu tiên có lựa chọn mang ảnh — thường là Màu sắc) → ảnh lớn của thư viện ảnh
+ * và ảnh dòng giỏ hàng đổi theo; không có → null (giữ ảnh sản phẩm).
+ */
+export function selectedImage(groups: VariantGroup[], sel: Selection): string | null {
+  for (const g of groups) {
+    const i = sel[g.name];
+    const img = i != null ? g.options[i]?.image : null;
+    if (img) return img;
+  }
+  return null;
+}
+
 export function variantLabel(groups: VariantGroup[], sel: Selection): string {
   return groups
     .map((g) => {

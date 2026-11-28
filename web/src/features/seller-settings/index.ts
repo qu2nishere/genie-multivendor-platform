@@ -22,4 +22,5 @@ export {
   SELLER_ME_KEY,
 } from './application/useSellerShop';
 export type { ShopSettings } from './domain/settings.types';
+export { useShopSettings } from './application/useSettings';
 export { default as SettingsPage } from './ui/SettingsPage';

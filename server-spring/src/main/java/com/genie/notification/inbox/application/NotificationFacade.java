@@ -90,7 +90,7 @@ public class NotificationFacade {
     /**
      * Tin nhắn chat mới khi người nhận không trực tuyến (UC-SOC-01; plan chat M04.03): giữ <b>một</b> thông báo
      * {@code CHAT_MESSAGE} chưa đọc cho mỗi (người nhận, hội thoại) — có rồi thì cập nhật nội dung + đưa lên đầu
-     * ({@code uk_notifications_chat_unread}, V26). Ghi sau commit của transaction hiện tại.
+     * ({@code uk_notifications_chat_unread}, V27). Ghi sau commit của transaction hiện tại.
      */
     public void upsertChat(long recipientId, long conversationId, String title, String body) {
         afterCurrentCommit(() -> deliverChat(recipientId, conversationId, title, body));

@@ -57,6 +57,13 @@
             <version>${bouncycastle.version}</version>
         </dependency>
 
+        <!-- Lọc HTML mô tả sản phẩm chống XSS (UC-CAT-09 bước 14; plan C1 D9) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.18.3</version>
+        </dependency>
+
         <!-- CSDL & migration -->
         <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><scope>runtime</scope></dependency>
         <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
