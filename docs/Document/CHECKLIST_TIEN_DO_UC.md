@@ -19,8 +19,8 @@
 | Chỉ số | Số lượng |
 |---|---:|
 | Tổng use case | **87** |
-| Đã triển khai (backend + test + web nối API thật) | **32** |
-| Đang triển khai | **21** |
+| Đã triển khai (backend + test + web nối API thật) | **37** |
+| Đang triển khai | **16** |
 | Chưa có backend — giao diện đã dựng trên lớp mock | **24** |
 | Chưa có backend — xử lý phía máy chủ (cron / webhook / AI) | **10** |
 | Giao diện `web/` (Storefront + Seller + Admin, 34 feature, chạy mock) | **429 / 429 task — xong** |
@@ -79,7 +79,7 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 |---|---:|---:|---:|---:|
 | 01. Xác thực & Tài khoản | 9 | 4 | 5 | 0 |
 | 02. Danh mục, Sản phẩm & Tìm kiếm | 17 | 10 | 6 | 1 |
-| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 0 | 5 | 4 |
+| 03. Giỏ hàng, Đặt hàng & Đơn hàng | 9 | 5 | 0 | 4 |
 | 04. Thanh toán, Ký quỹ & Sổ cái | 5 | 0 | 0 | 5 |
 | 05. Gian hàng & KYC người bán | 11 | 8 | 0 | 3 |
 | 06. Vận chuyển 3PL | 5 | 0 | 0 | 5 |
@@ -131,11 +131,11 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 
 | Mã | Use case | Sprint | Màn hình (web) | GD | BE | Test | Nối | Chạy | Trạng thái | Phụ trách |
 |---|---|---|---|:---:|:---:|:---:|:---:|:---:|---|---|
-| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-cart`): API 6.1–6.7 + `/public/variants`, `CartIT` / `CartMergeIT`; web nối qua `PUBLIC_REAL_API=cart`; chưa chạy thật</sub> | — |
-| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-checkout-preview`): `POST /me/checkout/preview` + `CheckoutPricer` dùng chung với đặt hàng; chưa áp voucher / Điểm (cổng `CheckoutDiscountPolicy` chờ C6 — web ẩn ô Voucher / Điểm); chưa chạy thật</sub> | — |
-| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2: `ShippingFeeQuoter` + bảng dự phòng 15k / 30k + `HttpGhnFeeClient` (`GHN_MODE=http`, địa giới 2 cấp qua GHN `preview` — đã gọi thật trên GHN thử); web lấy phí từ 6.8 (`PUBLIC_REAL_API=checkout`, nhãn "phí tạm tính"); chưa chạy thật</sub> | — |
-| `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☑ | ☑ | ☑ | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-checkout-session`): `POST /me/checkout-sessions` (Idempotency-Key) + `GET …/{id}`; COD hoàn tất ngay, VNPAY / VIETQR chờ thanh toán qua cổng giả lập `PaymentInitiator` (C3 cài thật); chặn xóa tài khoản / sản phẩm còn đơn mở; chưa chạy thật</sub> | — |
-| `UC-ORD-08` | Tự động hủy đơn quá hạn thanh toán & Hoàn kho (Sweeper Cron) | S3 | (nền) đơn tự hủy ở `/orders` | — | ☑ | ☑ | — | ☐ | 🟡 Đang triển khai<br><sub>plan C2 (`feature/c2-order-sweeper`): `ExpiredSessionSweeper` 60 giây, lô 50, `SKIP LOCKED`, nhả giữ chỗ có điều kiện (an toàn khi IPN đến cùng lúc), đơn → `AUTO_CANCELLED`, nhật ký `ORDER_STATUS_CHANGED`; chưa chạy thật</sub> | — |
+| `UC-ORD-01` | Quản lý giỏ hàng mua sắm cá nhân (Shopping Cart) | S3 | `/cart`, mini-cart | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>plan C2 (`feature/c2-cart`): API 6.1–6.7 + `/public/variants`, `CartIT` / `CartMergeIT`; web nối qua `PUBLIC_REAL_API=cart`; đã chạy thật 2026-11-28 (Nghiêm Phú Đăng Quân xác nhận đạt)</sub> | — |
+| `UC-ORD-04` | Xem trước đơn hàng & Tách giỏ hàng đa nhà bán (Cart Preview & Splitting) | S3 | `/cart`, `/checkout` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>plan C2 (`feature/c2-checkout-preview`): `POST /me/checkout/preview` + `CheckoutPricer` dùng chung với đặt hàng; chưa áp voucher / Điểm (cổng `CheckoutDiscountPolicy` chờ C6 — web ẩn ô Voucher / Điểm); đã chạy thật 2026-11-28 (Nghiêm Phú Đăng Quân xác nhận đạt)</sub> | — |
+| `UC-ORD-06` | Tính phí vận chuyển qua GHN API | S3 | `/checkout` (phí ship) | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>plan C2: `ShippingFeeQuoter` + bảng dự phòng 15k / 30k + `HttpGhnFeeClient` (`GHN_MODE=http`, địa giới 2 cấp qua GHN `preview` — đã gọi thật trên GHN thử); web lấy phí từ 6.8 (`PUBLIC_REAL_API=checkout`, nhãn "phí tạm tính"); đã chạy thật 2026-11-28 (Nghiêm Phú Đăng Quân xác nhận đạt)</sub> | — |
+| `UC-ORD-07` | Tạo phiên Checkout & Các Đơn hàng con theo Shop (PersistCheckout) | S3 | `/checkout` → `/checkout/result` | ☑ | ☑ | ☑ | ☑ | ☑ | ✅ Đã triển khai<br><sub>plan C2 (`feature/c2-checkout-session`): `POST /me/checkout-sessions` (Idempotency-Key) + `GET …/{id}`; COD hoàn tất ngay, VNPAY / VIETQR chờ thanh toán qua cổng giả lập `PaymentInitiator` (C3 cài thật); chặn xóa tài khoản / sản phẩm còn đơn mở; đã chạy thật 2026-11-28 (Nghiêm Phú Đăng Quân xác nhận đạt)</sub> | — |
+| `UC-ORD-08` | Tự động hủy đơn quá hạn thanh toán & Hoàn kho (Sweeper Cron) | S3 | (nền) đơn tự hủy ở `/orders` | — | ☑ | ☑ | — | ☑ | ✅ Đã triển khai<br><sub>plan C2 (`feature/c2-order-sweeper`): `ExpiredSessionSweeper` 60 giây, lô 50, `SKIP LOCKED`, nhả giữ chỗ có điều kiện (an toàn khi IPN đến cùng lúc), đơn → `AUTO_CANCELLED`, nhật ký `ORDER_STATUS_CHANGED`; đã chạy thật 2026-11-28 (Nghiêm Phú Đăng Quân xác nhận đạt)</sub> | — |
 | `UC-ORD-09` | Khách hàng theo dõi chi tiết hành trình đơn hàng | S4 | `/orders`, `/orders/{id}` | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ORD-10` | Khách hàng yêu cầu hủy đơn hàng | S4 | `/orders/{id}` › Hủy đơn | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
 | `UC-ORD-11` | Khách hàng xác nhận "Đã nhận hàng thành công" | S4 | `/orders/{id}` › Đã nhận hàng | ☑ | ☐ | ☐ | ☐ | ☐ | ⬜ Chưa triển khai<br><sub>giao diện đã dựng trên lớp mock</sub> | — |
@@ -378,3 +378,4 @@ GD ──► BE ──► Test ──► Nối ──► Chạy   ⇒  ✅ Đã 
 | 2026-11-26 | NOT-05, PRO-01, PRO-02, PRO-03, SOC-01, SOC-02, VND-06, NOT-01 | Phân công **Nguyễn Ngọc Thiện** (UC-NOT-05 + cụm B5 Voucher + cụm B6 Chat & realtime — 8 UC); lập 3 plan + progress ở `plan/2026-11-26/server-spring/` (README: sổ migration chung `V27` tạm, đồ thị phụ thuộc module tránh vòng, thứ tự [1] Thông báo → [2] Chat → [3] Voucher). Ghi nhận: phần cấu hình tự trả lời của UC-VND-06 đã có từ B4 (`PATCH /seller/settings`). Trạng thái 8 UC không đổi (⬜). Đồng bộ cột Phụ trách ở `BAO_CAO_UC_DOC_LAP.md` và cột AA + sheet *Thành viên* của Excel | — |
 | 2026-11-27 | SOC-01, SOC-02, VND-06 | Plan chat 2026-11-26 (Nguyễn Ngọc Thiện) M00–M10: `social/chat` — cổng `ChatShopDirectory` / `ChatProductLookup` / `ChatOrderLookup` (cài ở vendor / catalog / order, không vòng phụ thuộc), hội thoại + tin chữ (khóa dòng, chống trùng, rate limit, cursor), STOMP `/app/chat.*` + thông báo khi offline, REST hai phía + badge `unread_chats`, ảnh riêng tư / thẻ sản phẩm / thẻ đơn + API 8.6, tự trả lời + job tỉ lệ phản hồi; web nối thật cờ `chat` qua hub WebSocket. 254 unit + 432 IT xanh; chạy thật 15 / 15 ca (Playwright), 50 cặp p95 235 ms — **3 UC ✅**; cụm B6 xong 4 / 4. Tổng quan: Đã triển khai 26 → 29, mock 35 → 32; phân hệ 05: 8 / 0 / 3, phân hệ 08: 2 / 1 / 4 | `eda5f69` … `916b0c9` (nhánh `feature/chat-live`, `feature/chat-cards-auto-reply`) |
 | 2026-11-28 | PRO-01, PRO-02, PRO-03 | Plan voucher B5 2026-11-26 (Nguyễn Ngọc Thiện) V00–V10: miền `Voucher` (trạng thái, luật sửa, đồng tài trợ), `/seller/vouchers`, `/admin/vouchers` (ngân sách, nhật ký `VOUCHER_*`, xóa), `/public/vouchers` + Kho `/me/vouchers`, cache công khai + bộ lọc "Shop có voucher" xóa sau commit, `BuyerOnlyFilter` chặn Kho với tài khoản nội bộ; web nối thật 3 cờ; seed thêm 3 voucher demo. 250 unit + 401 IT xanh; chạy thật 17 / 17 ca (Playwright) — **3 UC ✅**. Tổng quan: Đã triển khai 24 → 27, mock 34 → 31; phân hệ 07: 3 / 2 / 4 | `5afe663` … `770eccc` (nhánh `feature/voucher-management`, `feature/voucher-wallet`) |
+| 2026-11-28 | ORD-01, ORD-04, ORD-06, ORD-07, ORD-08 | Chuỗi C2 Giỏ → Checkout: Nghiêm Phú Đăng Quân xác nhận đã chạy thật trên giao diện với hệ thống thật (kịch bản `docs/kiem-thu/kich-ban-2026-11-26-c2.md`) — đạt → **Chạy ☑**, 5 UC **✅ Đã triển khai** (code ở PR #110, #111) | — |
