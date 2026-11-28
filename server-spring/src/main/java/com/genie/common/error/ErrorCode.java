@@ -108,6 +108,12 @@ public enum ErrorCode {
     BANNER_SLOT_FULL("GNE-BNR-4221", HttpStatus.UNPROCESSABLE_ENTITY, "Vị trí này đã đủ 8 banner đang hiển thị."),
     BANNER_TARGET_FORBIDDEN("GNE-BNR-4222", HttpStatus.UNPROCESSABLE_ENTITY, "Liên kết banner phải là đường dẫn trong sàn."),
 
+    // ===== Thông báo sàn (API_SPEC 11.17, 15 — UC-NOT-05; plan 2026-11-26 thông báo N02.05) =====
+    PLATFORM_NOTIFICATION_DISPATCHED("GNE-NOT-4091", HttpStatus.CONFLICT, "Thông báo đã phát, không sửa được."),
+    /** {@code details.unknown_emails} khi có email không tồn tại. */
+    PLATFORM_NOTIFICATION_RECIPIENTS("GNE-NOT-4221", HttpStatus.UNPROCESSABLE_ENTITY,
+            "Danh sách người nhận rỗng hoặc có email không tồn tại."),
+
     // ===== Điểm Genie (API_SPEC 3.13, 15 — UC-PRO-08, UC-PRO-09) =====
     ALREADY_CHECKED_IN("GNE-PRO-4091", HttpStatus.CONFLICT, "Hôm nay bạn đã điểm danh rồi."),
     REWARD_ALREADY_HELD("GNE-PRO-4092", HttpStatus.CONFLICT, "Bạn đang có voucher này trong Kho Voucher."),

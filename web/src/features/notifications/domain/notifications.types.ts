@@ -17,4 +17,14 @@ export interface AppNotification {
   href: string | null;
   /** Thông báo toàn sàn do Admin phát. */
   platform: boolean;
+  /** Ảnh banner / minh họa (API thật). */
+  imageUrl?: string | null;
+  /** HTML đã lọc của thông báo sàn — modal chi tiết (API thật). */
+  contentHtml?: string | null;
 }
+
+/** Nhóm hiển thị phía API (API_SPEC 3.12 `category`). */
+export type ApiCategory = 'ORDER' | 'PROMOTION' | 'SYSTEM' | 'CHAT';
+
+/** Bề mặt đang mở — cùng một đích đổi route theo bề mặt (vd hội thoại: `/chat` hay `/seller/chat`). */
+export type NotificationSurface = 'storefront' | 'seller' | 'admin';

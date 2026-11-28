@@ -16,6 +16,12 @@ public class UserChannel {
     /** Sự kiện tài khoản: phiên bị thu hồi (khóa, xóa, đổi quyền, đổi mật khẩu…). */
     public static final String ACCOUNT = "/queue/account";
 
+    /** Thông báo mới / đã đọc — chuông header (API_SPEC 13; UC-NOT-01, UC-NOT-05). */
+    public static final String NOTIFICATIONS = "/queue/notifications";
+
+    /** Kênh chung: thông báo sàn {@code target = ALL} (API_SPEC 13) — client nào đã đăng nhập cũng đăng ký được. */
+    public static final String PLATFORM_TOPIC = "/topic/platform";
+
     private final SimpMessagingTemplate template;
 
     public UserChannel(SimpMessagingTemplate template) {
@@ -30,6 +36,21 @@ public class UserChannel {
                 // realtime chỉ là phụ — client vẫn bị chặn ở lần gọi API kế tiếp
             }
         };
+        runAfterCommit(send);
+    }
+
+    /** Gửi lên kênh chung {@code /topic/**} (mọi người đang đăng ký nhận) — cùng luật sau commit / nuốt lỗi. */
+    public void sendToTopicAfterCommit(String topic, Object payload) {
+        runAfterCommit(() -> {
+            try {
+                template.convertAndSend(topic, payload);
+            } catch (RuntimeException ignored) {
+                // realtime chỉ là phụ — dữ liệu vẫn có ở API
+            }
+        });
+    }
+
+    private static void runAfterCommit(Runnable send) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override

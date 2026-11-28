@@ -28,6 +28,7 @@
         <logstash-encoder.version>8.0</logstash-encoder.version>
         <archunit.version>1.3.0</archunit.version>
         <bouncycastle.version>1.78.1</bouncycastle.version>
+        <jsoup.version>1.18.3</jsoup.version>
         <!-- Ghi đè BOM Spring Boot (1.19.x): runner GitHub dùng Docker Engine 29, chỉ nhận Docker API ≥ 1.40 -->
         <testcontainers.version>1.21.4</testcontainers.version>
     </properties>
@@ -67,6 +68,13 @@
         <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><scope>runtime</scope></dependency>
         <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
         <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-database-postgresql</artifactId></dependency>
+
+        <!-- Lọc HTML do người dùng nhập (nội dung thông báo sàn — plan 2026-11-26 thông báo D13) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
 
         <!-- Thử lại (@Retryable) -->
         <dependency><groupId>org.springframework.retry</groupId><artifactId>spring-retry</artifactId></dependency>

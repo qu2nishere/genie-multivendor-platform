@@ -2478,8 +2478,12 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
   8. Loại cảnh báo bảo mật `NEW_DEVICE_LOGIN` (UC-AUTH-02).
   9. **Chuông Admin Console** dùng bảng riêng `admin_notifications` (hộp thư chung của đội vận hành, không gắn `userId`): `NEW_ORDER` khi đơn thanh toán thành công (UC-PAY-03), `USER_APPROVAL` khi shop nộp hồ sơ KYC (UC-VND-02), `WITHDRAW_REQUEST` khi shop yêu cầu rút tiền (UC-ADM-04), `ESCROW_DISCREPANCY` khi lệch số dư ví / sổ cái, `SYSTEM_ALERT`; mỗi bản ghi có `referenceUrl` tới trang xử lý; nhân viên mở → `AdminNotification.markRead()`; badge = số chưa đọc (`GET /admin/notifications/unread-count`).
 - **Quan hệ Use Case:** Không có.
+- **Ràng buộc nghiệp vụ & Kỹ thuật:**
+  - TLCN chạy **một instance** backend: bước 3–4 dùng simple broker STOMP trong bộ nhớ (không qua Redis Pub/Sub); Redis Pub/Sub cho nhiều instance thuộc bản DATN. Mất kết nối WebSocket thì thông báo vẫn nằm trong hộp thư (`GET /me/notifications`).
+  - Thông báo được ghi **sau khi** nghiệp vụ gốc commit, trong transaction riêng — lỗi thông báo không làm hỏng nghiệp vụ gốc.
+  - Nhóm hiển thị (tab) suy từ `type` (API 3.12); tin nhắn chat khi người nhận không trực tuyến dùng loại `CHAT_MESSAGE` (một thông báo chưa đọc / hội thoại).
 - **Đối chiếu Hiện trạng & Thực thể:**
-  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
+  - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API. Đang làm theo `plan/2026-11-26/server-spring/plan_thong_bao_realtime.md` (phụ trách Nguyễn Ngọc Thiện; schema `V27` đã có).
   - *Kế hoạch:* Sprint 5 (tuần 9–10) — [implement.md](../../kien-thuc/implement.md) Phần 1.2.
   - *Thực thể CSDL:* [Notification](../ClassDiagram/ENTITY.md#101-notification--thông-báo-cá-nhân), [AdminNotification](../ClassDiagram/ENTITY.md#105-adminnotification--thông-báo-nội-bộ-cho-quản-trị-viên).
 
@@ -2515,12 +2519,13 @@ Genie TLCN là sàn TMĐT đa người bán **khép kín vòng nghiệp vụ và
 - **Hậu điều kiện:** Một dòng `platform_notifications` (fan-out on read); trạng thái đã đọc ghi khi người dùng mở.
 - **Luồng sự kiện chính:**
   1. Admin nhập tiêu đề ("Siêu sale 9.9 giảm tới 50%…"), nội dung (rich-text, chèn ảnh / liên kết), ảnh banner (Silo), đối tượng (`ALL`, `CUSTOMER`, `VENDOR`, `SPECIFIC_USERS`).
-  2. Bấm "Phát thông báo" → lưu `platform_notifications`, chốt `reachCount` = số người thuộc đối tượng.
+  2. Bấm "Phát thông báo" → lưu `platform_notifications`, chốt `reachCount` = số người thuộc đối tượng **tại thời điểm phát** (`dispatchedAt`); người đăng ký sau lúc phát không nhận thông báo cũ. Đối tượng `ALL` = khách + shop đang hoạt động (nhân viên / Admin không nhận).
   3. Phát sự kiện `PLATFORM_NOTIFICATION` qua WebSocket tới người dùng đang trực tuyến thuộc đối tượng.
   4. Người dùng mở thông báo → ghi `user_platform_notification_reads` (mỗi người 1 lần).
   5. Admin xem thống kê: số đã gửi, đã đọc, tỉ lệ đọc (`readCount / reachCount`).
 - **Luồng thay thế / Ngoại lệ:**
-  - *Hẹn giờ phát:* lưu nháp kèm thời điểm, Cron phát đúng giờ.
+  - *Hẹn giờ phát:* lưu kèm thời điểm (`dispatchedAt` để trống), Cron (30 giây / lần) phát đúng giờ; chỉ sửa được khi chưa phát (`GNE-NOT-4091`).
+  - *Phát nhầm:* Admin xóa thông báo (kể cả đã phát) → gỡ khỏi hộp thư mọi người; mọi thao tác ghi `system_logs`.
 - **Quan hệ Use Case:** `<<include>>` Tải tệp lên Silo (Presigned URL) — tác nhân phụ: `ACT-MIN` Silo S3 Storage.
 - **Đối chiếu Hiện trạng & Thực thể:**
   - *Hiện trạng:* Chưa triển khai backend — giao diện đã dựng xong trên lớp mock (`web/`, plan G00–G13), chờ API.
