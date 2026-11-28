@@ -182,7 +182,7 @@ function Editor({ product }: { product: ProductDetail | null }) {
   const sectionProps = { form, readOnly, rules, issues };
 
   return (
-    <div className="max-w-[1180px]">
+    <div className="w-full">
       {readOnly && (
         <div
           className="flex gap-2.5 items-center bg-amber-50 rounded-md px-4 py-3 mb-3.5 text-sm text-body"
